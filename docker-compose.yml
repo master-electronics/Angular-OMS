@@ -1,7 +1,0 @@
-nginx:
-    container_name: nginx
-    build: .
-    restart: always
-    ports:
-        - "443:443" # for testing purposes, (un)comment as required
-        - "80:80" # for testing purposes, (un)comment as required

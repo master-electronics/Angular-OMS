@@ -50,5 +50,5 @@ Thumbs.db
 .env
 
 # cert
-/nginx/misc/cert.key
-/nginx/misc/cert.pem
+/misc/cert.key
+/misc/cert.pem
