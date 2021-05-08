@@ -4,8 +4,8 @@
   "scripts": {
     "start": "ng serve",
     "test": "ng test",
-    "build": "NODE_ENV=production ng build --configuration=local",
-    "build:dev": "NODE_ENV=production ng build --configuration=d1",
+    "build": "NODE_ENV=production ng build --configuration=d1",
+    "build:local": "NODE_ENV=production ng build --configuration=local",
     "build:prod": "NODE_ENV=production ng build --configuration=p1",
     "lint": "prettier -w ./src; tsc --noEmit",
     "e2e": "ng e2e",
