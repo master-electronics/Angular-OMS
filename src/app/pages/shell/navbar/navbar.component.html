@@ -1,0 +1,134 @@
+<nav class="bg-gray-100 border-b-2 border-indigo-500 dark:bg-gray-900">
+  <div class="px-4 mx-auto">
+    <div class="flex items-center justify-between h-10">
+      <div class="flex items-center">
+        <p class="text-gray-800 md:text-lg dark:text-gray-100">{{ title }}</p>
+        <div class="hidden md:block">
+          <div class="flex items-baseline md:ml-10 space-x-4">
+            <a
+              class="block px-3 py-2 text-base font-medium text-gray-800 dark:text-gray-100 hover:text-gray-500 dark:hover:text-white rounded-md"
+              routerLink="/home"
+            >
+              Home
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="flex items-center ml-4 md:ml-6">
+          <button aria-label="theme" class="focus:outline-none rounded-md" (click)="toggleDark()">
+            <svg
+              *ngIf="dark"
+              class="w-6 text-gray-500 bg-white rounded-full"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              />
+            </svg>
+            <svg
+              *ngIf="!dark"
+              class="w-6 text-gray-100 bg-black rounded-full"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              />
+            </svg>
+          </button>
+
+          <div class="relative ml-3 group">
+            <div class="inline-block text-left">
+              <button
+                #userButton
+                class="h-full focus:outline-none rounded-md"
+                (click)="toggleUser()"
+                (window.mousedown)="onGlobalClick($event)"
+              >
+                <img class="w-6 mt-1" src="../../../assets/icon/master_logo.svg" alt="user_icon" />
+              </button>
+              <div
+                class="absolute right-0 w-40 h-50 -mt-18 bg-white shadow-lg rounded-md dark:bg-gray-900"
+                *ngIf="this.showUser"
+                #userMenu
+              >
+                <div class="py-1">
+                  <a
+                    class="block px-4 py-2 text-gray-700 text-md hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
+                  >
+                    <span class="flex flex-col text-xl font-bold">{{ username }}</span>
+                  </a>
+                  <a
+                    class="block px-4 py-2 text-gray-700 text-md hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
+                  >
+                    <div class="flex flex-row">
+                      <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="{2}"
+                          d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"
+                        />
+                      </svg>
+                      <span class="flex flex-col pl-2">Account</span>
+                    </div>
+                  </a>
+                  <button
+                    class="block w-full px-4 py-2 text-gray-700 text-md hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600"
+                    (click)="logout()"
+                  >
+                    <div class="flex flex-row">
+                      <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      <span class="flex flex-col pl-2">Logout</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex -mr-2 md:hidden">
+        <button
+          aria-label="quickAccess"
+          class="inline-flex items-center justify-center p-2 text-gray-800 dark:text-gray-100 hover:text-gray-300 rounded-md focus:outline-none"
+          (click)="toggleNavbar()"
+        >
+          <svg width="25" height="25" fill="currentColor" viewBox="0 0 1792 1792">
+            <path
+              d="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="md:hidden" [ngClass]="showMenu ? '' : 'hidden'">
+    <div class="relative z-50 px-2 pt-2 pb-3 bg-gray-100 dark:bg-gray-800 space-y-1 sm:px-3">
+      <a
+        class="block px-3 py-2 text-base font-medium text-gray-800 dark:text-gray-100 hover:text-gray-500 dark:hover:text-white rounded-md"
+        routerLink="/home"
+        (click)="toggleNavbar()"
+      >
+        Home
+      </a>
+    </div>
+  </div>
+</nav>

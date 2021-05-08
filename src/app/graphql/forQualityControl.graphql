@@ -1,0 +1,10 @@
+query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
+  fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
+    Status
+    Quantity
+    DemandQuantity
+    ROHS
+    DateCode
+    CountryOfOrigin
+  }
+}

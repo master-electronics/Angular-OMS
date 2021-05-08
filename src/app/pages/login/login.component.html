@@ -1,0 +1,80 @@
+<div
+  class="flex items-center justify-center h-screen bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 ..."
+>
+  <div class="max-w-lg px-6 lg:w-5/12 md:w-8/12">
+    <div class="flex flex-col w-full mb-6 bg-white border-0 rounded-lg shadow-lg">
+      <!-- title of login form -->
+      <div class="px-6 py-6 mb-0 rounded-t">
+        <div class="mb-3 text-center">
+          <h4 class="text-base font-bold text-gray-600">Sign in with</h4>
+        </div>
+        <hr class="mt-6 border-gray-400 border-b-1" />
+      </div>
+      <!-- login form -->
+      <div class="flex-auto px-4 py-6 pt-0 lg:px-10">
+        <form focusInvalidInput [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- two input box -->
+          <div class="z-0 w-full relative mt-4">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder=" "
+              formControlName="username"
+              class="float-input"
+              #username
+            />
+            <label for="username" class="float-label"> USERNAME </label>
+            <div
+              class="text-red-500 text-sm"
+              *ngIf="this.f.username.invalid && (this.f.username.dirty || this.f.username.touched)"
+            >
+              <div *ngIf="this.f.username.errors.required">Username is required.</div>
+            </div>
+          </div>
+          <div class="z-0 w-full relative mt-4">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder=" "
+              formControlName="password"
+              class="float-input"
+              #password
+            />
+            <label for="password" class="float-label"> PASSWORD </label>
+            <div
+              class="text-red-500 text-sm"
+              *ngIf="this.f.password.invalid && (this.f.password.dirty || this.f.password.touched)"
+            >
+              <div *ngIf="this.f.password.errors.required">Password is required.</div>
+            </div>
+          </div>
+          <!-- show password check box -->
+          <div class="mt-3">
+            <label class="inline-flex items-center cursor-pointer"
+              ><input
+                type="checkbox"
+                class="w-5 h-5 ml-1 text-gray-800 form-checkbox"
+                (click)="toggleShowPassword()"
+              /><span class="ml-2 text-sm font-semibold text-gray-700">Show password</span></label
+            >
+          </div>
+          <!-- submit button -->
+          <div class="mt-2 md:mt-6">
+            <form-button
+              [styles]="buttonStyles"
+              [type]="'submit'"
+              [disabled]="isLoading"
+              [isLoading]="isLoading"
+              [label]="buttonLabel"
+            ></form-button>
+          </div>
+          <div class="mt-2 md:mt-6">
+            <message-bar [message]="message" [type]="messageType"></message-bar>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

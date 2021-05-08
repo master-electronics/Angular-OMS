@@ -1,0 +1,81 @@
+<div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <div class="flex flex-col md:mt-6 ...">
+    <!-- Top location info table -->
+    <form
+      focusInvalidInput
+      [formGroup]="containerForm"
+      class="mt-2 md:mt-6"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="z-0 w-full relative mt-4">
+        <input
+          type="text"
+          name="containerNumber"
+          placeholder=" "
+          formControlName="containerNumber"
+          class="float-input"
+          autocomplete="off"
+          maxlength="15"
+          #containerNumber
+        />
+        <label for="containerNumber" class="float-label"> Container# </label>
+        <div
+          class="text-red-500 text-sm absolute"
+          *ngIf="
+            this.f.containerNumber.invalid &&
+            (this.f.containerNumber.dirty || this.f.containerNumber.touched)
+          "
+        >
+          <div *ngIf="this.f.containerNumber.errors.required">Container is required.</div>
+          <div *ngIf="this.f.containerNumber.errors.pattern">Container Example: 50-01-01</div>
+        </div>
+      </div>
+      <div class="mt-6 md:mt-10">
+        <form-button
+          [styles]="buttonStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="buttonLabel"
+        ></form-button>
+      </div>
+      <div class="mt-2 md:mt-6">
+        <message-bar [message]="message" [type]="messageType"></message-bar>
+      </div>
+    </form>
+    <!-- ITN location info of selected order -->
+    <table class="w-full">
+      <thead class="grid grid-cols-3 gap-3 justify-items-start">
+        <th>ITN</th>
+        <th>Location</th>
+        <th>Barcode</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let container of containerList" class="grid grid-cols-3 gap-3">
+          <td>{{ container.InternalTrackingNumber }}</td>
+          <td>
+            {{
+              container.Container.Aisle +
+                container.Container.Section +
+                container.Container.Shelf +
+                container.Container.ShelfDetail
+            }}
+          </td>
+          <td>{{ container.Container.Barcode }}</td>
+        </tr>
+        <tr *ngFor="let container of selectedList" class="text-green-500 grid grid-cols-3 gap-3">
+          <td>{{ container.InternalTrackingNumber }}</td>
+          <td>
+            {{
+              container.Container.Aisle +
+                container.Container.Section +
+                container.Container.Shelf +
+                container.Container.ShelfDetail
+            }}
+          </td>
+          <td>{{ container.Container.Barcode }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+query fetchContainerForAggregationIn($Barcode: String!, $DistributionCenter: String!) {
+  findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    _id
+    Row
+    Type {
+      IsMobile
+    }
+    INVENTORies {
+      InternalTrackingNumber
+    }
+  }
+}
+
+query pickOrdersForAggregationOut(
+  $agInDone: Int!
+  $agOutPresent: Int!
+  $agOutPicking: Int!
+  $limit: Int
+) {
+  agInDone: findOrder(StatusID: $agInDone, limit: $limit) {
+    ...orderInfo
+  }
+  agOutPresent: findOrder(StatusID: $agOutPresent, limit: $limit) {
+    ...orderInfo
+  }
+  agOutPicking: findOrder(StatusID: $agOutPicking, limit: $limit) {
+    ...orderInfo
+  }
+}
+
+fragment orderInfo on Order {
+  _id
+  DistributionCenter
+  OrderNumber
+  NOSINumber
+  StatusID
+  Status {
+    Name
+  }
+  LastUpdated
+}
+
+query fetchOrderStatus(
+  $_id: Int
+  $DistributionCenter: String
+  $OrderNumber: String
+  $NOSINumber: String
+) {
+  findOrder(
+    _id: $_id
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  ) {
+    _id
+    StatusID
+  }
+}
+
+mutation updateOrderStatus(
+  $_id: Int
+  $DistributionCenter: String
+  $OrderNumber: String
+  $NOSINumber: String
+  $StatusID: Int
+  $Order: OrderUpdate!
+) {
+  updateOrderStatus(
+    _id: $_id
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    StatusID: $StatusID
+    Order: $Order
+  ) {
+    success
+    message
+  }
+}
+
+query fetchLocationForAggregationOut(
+  $DistributionCenter: String
+  $OrderNumber: String
+  $NOSINumber: String
+) {
+  findOrder(
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  ) {
+    INVENTORies {
+      Container {
+        Barcode
+        DistributionCenter
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      InternalTrackingNumber
+    }
+  }
+}

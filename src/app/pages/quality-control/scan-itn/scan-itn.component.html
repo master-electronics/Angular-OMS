@@ -1,0 +1,33 @@
+<div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <div class="flex flex-col mt-4 md:mt-10 ...">
+    <form focusInvalidInput [formGroup]="ITNForm" (ngSubmit)="onSubmit()">
+      <div class="z-0 w-full relative mt-4">
+        <input
+          oninput="this.value = this.value.toUpperCase()"
+          type="text"
+          name="ITN"
+          placeholder=" "
+          formControlName="ITN"
+          class="float-input"
+          autocomplete="off"
+          #ITN
+        />
+        <label for="ITN" class="float-label"> ITN </label>
+        <span class="text-sm text-red-600 hidden" #ITNError></span>
+      </div>
+
+      <div class="mt-6">
+        <form-button
+          [styles]="buttonStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="buttonLabel"
+        ></form-button>
+      </div>
+      <div class="mt-6">
+        <message-bar [message]="message" [type]="'error'"></message-bar>
+      </div>
+    </form>
+  </div>
+</div>

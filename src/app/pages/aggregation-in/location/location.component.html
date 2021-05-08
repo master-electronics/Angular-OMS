@@ -1,0 +1,80 @@
+<div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <div class="flex flex-col md:mt-6 ...">
+    <!-- Top location info table -->
+    <div class="font-bold text-black dark:text-white">
+      <h1 *ngIf="!locations">First Container</h1>
+      <div *ngIf="locations">
+        <h1>Locations:</h1>
+        <div class="justify-center text-lg grid grid-cols-3">
+          <div class="grid grid-flow-col col-span-2 grid-rows-3">
+            <ul *ngFor="let locationID of locations">
+              <span class="text-yellow-600">{{ locationID }}</span>
+            </ul>
+          </div>
+          <button
+            *ngIf="!newLocation"
+            class="py-2 flex items-center justify-center h-16 px-2 bg-blue-600 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700"
+            (click)="toggleNewLocation()"
+          >
+            New location
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location input form -->
+    <form focusInvalidInput [formGroup]="locationForm" class="mt-2 md:mt-6" (ngSubmit)="onSubmit()">
+      <div class="z-0 w-full relative mt-4">
+        <input
+          oninput="this.value = this.value.toUpperCase()"
+          type="text"
+          name="location"
+          placeholder=" "
+          formControlName="location"
+          class="float-input"
+          autocomplete="off"
+          maxlength="20"
+          #location
+        />
+        <label for="location" class="float-label"> location# </label>
+        <div
+          class="text-red-500 text-sm absolute"
+          *ngIf="this.f.location.invalid && (this.f.location.dirty || this.f.location.touched)"
+        >
+          <div *ngIf="this.f.location.errors.required">Location is required.</div>
+          <div *ngIf="this.f.location.errors.regex">Location Example: 01AG0101A00 or 50-01-01</div>
+        </div>
+      </div>
+      <div class="mt-6 md:mt-10">
+        <form-button
+          [styles]="buttonStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="buttonLabel"
+        ></form-button>
+      </div>
+      <div class="mt-2 md:mt-6">
+        <message-bar [message]="message" [type]="messageType" class="md:mt-4"></message-bar>
+      </div>
+    </form>
+
+    <!-- ITN info table -->
+    <div *ngIf="!isRelocation" class="mt-2 md:mt-6">
+      <div class="text-black grid grid-cols-2 dark:text-white">
+        <div *ngFor="let detail of ITNInfo | slice: 0:6; let i = index">
+          <div class="grid grid-cols-2 gap-2">
+            <span class="justify-self-end self-center text-xs">{{ detail.key }}</span>
+            <span class="text-blue-600 font-semibold">{{ detail.value }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="text-black grid grid-cols-4 dark:text-white">
+        <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[6].key }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
+        <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[7].key }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div class="mx-auto md:max-w-2xl flex flex-col text-black dark:text-white">
+  <!-- user verify and input data -->
+  <p class="font-bold text-lg py-5">ITN#: 123123123</p>
+  <section class="flex flex-col">
+    <div class="grid grid-cols-3 font-semibold text-lg text-indigo-600">
+      <p>Pack Information</p>
+      <p class="col-span-2">User Input</p>
+    </div>
+    <form
+      focusInvalidInput
+      [formGroup]="verifyPack"
+      (ngSubmit)="onSubmit()"
+      class="border-t border-gray-200 dark:border-gray-800"
+    >
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>Quantity:</p>
+          <p>{{ Quantity }}</p>
+        </dt>
+        <div class="z-0 w-full relative mt-2 col-span-2">
+          <input
+            type="number"
+            name="quantity"
+            placeholder=" "
+            formControlName="quantity"
+            class="float-input"
+            autocomplete="off"
+            #quantity
+          />
+          <label for="quantity" class="float-label"> Quantity </label>
+          <span class="text-sm text-red-600 hidden" id="quantityError">Quantity is required</span>
+        </div>
+      </div>
+
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>DateCode:</p>
+          <p>{{ DateCode }}</p>
+        </dt>
+        <div class="z-0 w-full relative mt-4 col-span-2">
+          <input
+            type="text"
+            name="dateCode"
+            placeholder=" "
+            formControlName="dateCode"
+            class="float-input"
+            autocomplete="off"
+            #dateCode
+          />
+          <label for="dateCode" class="float-label"> DateCode </label>
+          <span class="text-sm text-red-600 hidden" id="dateCodeError"></span>
+        </div>
+      </div>
+
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>ROHS:</p>
+          <p>{{ ROHS }}</p>
+        </dt>
+        <div class="relative z-0 w-full col-span-2 mt-2">
+          <select name="ROHS" class="float-input" formControlName="ROHS">
+            <option value="" selected disabled hidden></option>
+            <option value="1" class="text-black">Yes</option>
+            <option value="0" class="text-black">No</option>
+            <option value="null" class="text-black">Unknow</option>
+          </select>
+          <label for="ROHS" class="float-label">ROHS</label>
+          <span class="text-sm text-red-600 hidden" id="ROHSError">ROHS is required</span>
+        </div>
+      </div>
+
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>Country of Origin:</p>
+          <p>{{ CountryOfOrigin }}</p>
+        </dt>
+        <div class="col-span-2">
+          <label for="countryOfOrigin" class="text-sm">Country of Origin</label>
+          <div>
+            <ng-autocomplete
+              oninput="this.value = this.value.toUpperCase()"
+              [data]="countryData"
+              [focusFirst]="true"
+              [searchKeyword]="COOkeyword"
+              [itemTemplate]="COOTemplate"
+              [notFoundTemplate]="notFoundTemplate"
+              formControlName="countryOfOrigin"
+              class="text-black"
+            >
+            </ng-autocomplete>
+            <ng-template #COOTemplate let-item>
+              <div class="grid grid-cols-6">
+                <span [innerHTML]="item.ISO2" class="ml-4"></span>
+                <span [innerHTML]="item.CountryName" class="col-span-5"></span>
+              </div>
+            </ng-template>
+          </div>
+          <span class="text-sm text-red-600 hidden" id="cooError"></span>
+        </div>
+      </div>
+
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2"></dt>
+        <div class="col-span-2">
+          <label for="countMethod" class="text-sm">Count Method</label>
+          <div>
+            <ng-autocomplete
+              [data]="countMethodData"
+              [focusFirst]="true"
+              [searchKeyword]="countMethodKeyword"
+              [itemTemplate]="CMTemplate"
+              [notFoundTemplate]="notFoundTemplate"
+              formControlName="countMethod"
+              class="text-black"
+            >
+            </ng-autocomplete>
+            <ng-template #CMTemplate let-item>
+              <span [innerHTML]="item.name" class="ml-4"></span>
+            </ng-template>
+
+            <ng-template #notFoundTemplate let-notFound>
+              <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+
+          <span class="text-sm text-red-600 hidden" id="cooError"></span>
+        </div>
+      </div>
+
+      <div class="py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <form-button
+          [styles]="holdStyles"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="'Hold'"
+        ></form-button>
+        <form-button
+          [styles]="backStyles"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="'Back'"
+          (onClickEmt)="back()"
+        ></form-button>
+        <form-button
+          [styles]="submitStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="buttonLabel"
+        ></form-button>
+      </div>
+      <div class="mt-6 grid grid-cols-2">
+        <message-bar [message]="message" [type]="messageType"></message-bar>
+      </div>
+    </form>
+  </section>
+</div>

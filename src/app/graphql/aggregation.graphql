@@ -1,0 +1,50 @@
+query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
+  verifyContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    success
+    isRelocation
+    message
+    ITNList
+    qcContainer
+  }
+}
+
+query fetchInventoryInfo($InternalTrackingNumber: String!, $DistributionCenter: String!) {
+  fetchInventoryInfo(
+    InternalTrackingNumber: $InternalTrackingNumber
+    DistributionCenter: $DistributionCenter
+  ) {
+    OrderNumber
+    ShippingMethod
+    PriorityPinkPaper
+    CustomerNumber
+    Quantity
+    ProductCode
+    PartNumber
+    ITNCount
+    ITNTotal
+    Locations
+  }
+}
+
+mutation aggregationIn(
+  $qcContainer: Int!
+  $ITNList: [String!]!
+  $Barcode: String!
+  $DistributionCenter: String!
+  $newLocation: Boolean!
+  $isLastITN: Boolean!
+  $LocationList: [String!]
+) {
+  aggregationIn(
+    qcContainer: $qcContainer
+    ITNList: $ITNList
+    Barcode: $Barcode
+    DistributionCenter: $DistributionCenter
+    newLocation: $newLocation
+    isLastITN: $isLastITN
+    locationList: $LocationList
+  ) {
+    success
+    message
+  }
+}
