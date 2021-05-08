@@ -18,6 +18,6 @@
   "compilerOptions": {
     "sourceMap": true,
     "target": "es2015",
-    "lib": ["es2018", "dom", "esnext.asynciterable"]
+    "lib": ["es2017", "dom", "esnext.asynciterable"]
   }
 }
