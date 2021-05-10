@@ -3,13 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve",
-    "test": "ng test",
     "build": "NODE_ENV=production ng build --configuration=d1",
     "build:local": "NODE_ENV=production ng build --configuration=local",
-    "gqlgen": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config GQLmerp.yml",
-    "graphql:codegen": "graphql codegen",
-    "graphql:coverage": "graphql coverage",
-    "graphql:validate": "graphql validate"
+    "gql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config GQLmerp.yml",
+    "gql:codegen": "graphql codegen",
+    "gql:coverage": "graphql coverage",
+    "gql:validate": "graphql validate"
   },
   "private": true,
   "dependencies": {
