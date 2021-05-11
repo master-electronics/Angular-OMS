@@ -69,8 +69,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     let country = this.countryData.find((element) => element.ISO2 === this.CountryOfOrigin);
     country ? 0 : (country = this.countryData.find((element) => element.ISO2 === 'UNKNOW'));
     this.verifyPack.setValue({
-      quantity: this.Quantity,
-      dateCode: this.DateCode,
+      quantity: this.Quantity || '',
+      dateCode: this.DateCode || '',
       ROHS: this.ROHS === 'Unknow' ? 'null' : this.ROHS === 'Yes' ? 1 : 0,
       countMethod: '',
       countryOfOrigin: country,
@@ -78,7 +78,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.quantityInput.nativeElement.focus();
+    this.quantityInput.nativeElement.select();
   }
 
   onSubmit() {

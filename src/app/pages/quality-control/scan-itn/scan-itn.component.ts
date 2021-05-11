@@ -51,7 +51,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.ITNError.nativeElement.classList.add('hidden');
-    this.verfiyITN;
+    this.verfiyITN();
   }
 
   verfiyITN() {
