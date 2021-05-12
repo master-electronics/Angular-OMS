@@ -129,10 +129,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(
           (result) => {
             if (result.data.aggregationIn.success) {
-              let resultMessage = `Put to ${this.locationForm.get('location').value}.`;
+              let resultMessage = `Placed in ${this.locationForm.get('location').value}.`;
               let resultType = `info`;
               if (this.isLastITN) {
-                resultMessage = resultMessage.concat(`\nOrder ${this.ITNInfo[0].value} is done.`);
+                resultMessage = resultMessage.concat(
+                  `\nOrder ${this.ITNInfo[0].value} is complete.`
+                );
                 resultType = 'success';
               }
               this.router.navigate(['agin'], {
