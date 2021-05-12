@@ -25,7 +25,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   locations: string[];
   binContainer: string;
   newLocation = false;
-  buttonLabel = 'put to the shelf';
+  buttonLabel = 'place to the shelf';
   buttonStyles = 'bg-indigo-800';
   ITNInfo = [
     { key: 'Order#', value: '' },
