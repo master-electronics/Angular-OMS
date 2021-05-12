@@ -81,17 +81,22 @@
               [ngClass]="{ 'text-red-500': detail.value === 'Yes' }"
               >{{ detail.key }}</span
             >
-            <span class="font-semibold" [ngClass]="{ 'text-red-500': detail.value === 'Yes' }">{{
-              detail.value
-            }}</span>
+            <span
+              class="font-semibold"
+              [ngClass]="{
+                'text-red-500': detail.value === 'Yes',
+                'text-blue-600': detail.value !== 'Yes'
+              }"
+              >{{ detail.value }}</span
+            >
           </div>
         </div>
       </div>
       <div class="text-black grid grid-cols-4 dark:text-white">
         <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[6].key }}</span>
-        <span class="col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
         <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[7].key }}</span>
-        <span class="col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
       </div>
     </div>
   </div>
