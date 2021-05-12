@@ -87,10 +87,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     this.message = '';
-    if (this.totalITNs === this.selectedList.length) {
-      this.updateOrderStatus();
-      return;
-    }
     if (this.containerForm.valid) {
       this.selectContainer();
     }
@@ -159,6 +155,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.totalITNs === this.selectedList.length) {
       this.buttonLabel = `Aggregation Out`;
       this.buttonStyles = `bg-green-500`;
+      this.updateOrderStatus();
     } else {
       this.containerInput.nativeElement.select();
     }

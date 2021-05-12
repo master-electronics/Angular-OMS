@@ -13,7 +13,19 @@
           </div>
           <button
             *ngIf="!newLocation"
-            class="py-2 flex items-center justify-center h-16 px-2 bg-blue-600 rounded font-semibold text-sm text-blue-100 hover:bg-blue-700"
+            class="
+              py-2
+              flex
+              items-center
+              justify-center
+              h-16
+              px-2
+              bg-blue-600
+              rounded
+              font-semibold
+              text-sm text-blue-100
+              hover:bg-blue-700
+            "
             (click)="toggleNewLocation()"
           >
             New location
@@ -64,16 +76,22 @@
       <div class="text-black grid grid-cols-2 dark:text-white">
         <div *ngFor="let detail of ITNInfo | slice: 0:6; let i = index">
           <div class="grid grid-cols-2 gap-2">
-            <span class="justify-self-end self-center text-xs">{{ detail.key }}</span>
-            <span class="text-blue-600 font-semibold">{{ detail.value }}</span>
+            <span
+              class="justify-self-end self-center text-xs"
+              [ngClass]="{ 'text-red-500': detail.value === 'Yes' }"
+              >{{ detail.key }}</span
+            >
+            <span class="font-semibold" [ngClass]="{ 'text-red-500': detail.value === 'Yes' }">{{
+              detail.value
+            }}</span>
           </div>
         </div>
       </div>
       <div class="text-black grid grid-cols-4 dark:text-white">
         <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[6].key }}</span>
-        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
+        <span class="col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
         <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[7].key }}</span>
-        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
+        <span class="col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
       </div>
     </div>
   </div>
