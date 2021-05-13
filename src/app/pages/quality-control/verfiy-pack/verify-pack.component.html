@@ -77,10 +77,10 @@
           <label for="countryOfOrigin" class="text-sm text-gray-500">Country of Origin</label>
           <div>
             <ng-autocomplete
-              oninput="this.value = this.value.toUpperCase()"
               [data]="countryData"
               [focusFirst]="true"
               [searchKeyword]="COOkeyword"
+              [customFilter]="COOFilter"
               [itemTemplate]="COOTemplate"
               [notFoundTemplate]="notFoundTemplate"
               formControlName="countryOfOrigin"
@@ -88,10 +88,7 @@
             >
             </ng-autocomplete>
             <ng-template #COOTemplate let-item>
-              <div class="grid grid-cols-6">
-                <span [innerHTML]="item.ISO2" class="ml-4"></span>
-                <span [innerHTML]="item.CountryName" class="col-span-5"></span>
-              </div>
+              <a [innerHTML]="item.name" class="ml-2"></a>
             </ng-template>
 
             <ng-template #notFoundTemplate let-notFound>

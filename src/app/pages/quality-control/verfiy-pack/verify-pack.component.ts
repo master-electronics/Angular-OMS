@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { FormBuilder, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import Country from '../../../shared/country';
+import Countries from '../../../shared/countries';
 import { QualityControlService } from '../quality-control.server';
 import { FetchPackInfoByItNfromMerpQuery } from '../../../graphql/forQualityControl.graphql-gen';
 import { timestamp } from 'rxjs/operators';
@@ -37,8 +37,21 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 6, content: 'Factory Real' },
   ];
   // set autocomplete input box
-  countryData = Country;
-  COOkeyword = 'ISO2';
+  countryData = Countries;
+  COOkeyword = 'name';
+  COOFilter(countryData: { _id: number; name: string }[], query: string) {
+    let result = [];
+    if (query.length < 3) {
+      countryData.map((country) => {
+        if (query.toUpperCase() === country.name.substring(0, query.length)) result.push(country);
+      });
+      return result;
+    }
+    countryData.map((country) => {
+      if (country.name.substring(4, 4 + query.length) === query.toUpperCase()) result.push(country);
+    });
+    return result;
+  }
   // form group
   verifyPack = this.fb.group({
     quantity: ['', [Validators.required]],
@@ -68,8 +81,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.CountryOfOrigin = coo ? coo : 'Unknow';
     this.Quantity = parseInt(this.route.snapshot.queryParams['quantity']);
     this.DateCode = this.route.snapshot.queryParams['DateCode'];
-    let country = this.countryData.find((element) => element.ISO2 === this.CountryOfOrigin);
-    country ? 0 : (country = this.countryData.find((element) => element.ISO2 === 'UNKNOW'));
+    let country = this.countryData.find(
+      (element) => element.name.substring(0, 2) === this.CountryOfOrigin
+    );
+    country ? 0 : (country = this.countryData.find((element) => element.name === 'UNKNOW'));
     this.verifyPack.setValue({
       quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
