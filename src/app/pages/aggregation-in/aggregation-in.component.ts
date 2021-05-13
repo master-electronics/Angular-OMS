@@ -76,7 +76,7 @@ export class AggregationInComponent implements OnInit, OnDestroy, AfterViewInit 
             }
             // if has error, return error message
             this.message = this.checkVaild(res);
-            this.message ? (this.messageType = 'error') : 0;
+            this.message && (this.messageType = 'error');
             this.containerInput.nativeElement.select();
           },
           (error) => {

@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleUser(): void {
     this.showUser = !this.showUser;
-    this.showUser ? (this.showMenu = false) : 0;
+    this.showUser && (this.showMenu = false);
   }
 
   @HostListener('document:mousedown', ['$event'])

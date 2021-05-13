@@ -72,9 +72,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ITNList = this.route.snapshot.queryParams['ITNList'];
     this.qcContainer = parseInt(this.route.snapshot.queryParams['qcContainer']);
     this.binContainer = this.route.snapshot.queryParams['Bin'];
-    this.ITNList === undefined || this.qcContainer === undefined
-      ? this.router.navigate(['agin'])
-      : 0;
+    (this.ITNList === undefined || this.qcContainer === undefined) &&
+      this.router.navigate(['agin']);
     this.isRelocation = this.route.snapshot.queryParams['isRelocation'] === 'true';
     if (this.ITNList[0].length !== 10) {
       this.ITNList = [this.ITNList];
@@ -173,7 +172,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         .valueChanges.subscribe(
           (result) => {
             this.isLoading = result.loading;
-            result.error ? (this.message = result.error.message) : 0;
+            result.error && (this.message = result.error.message);
             const data = result.data.fetchInventoryInfo;
             this.ITNInfo[0].value = data.OrderNumber;
             this.ITNInfo[1].value = data.PriorityPinkPaper === '1' ? 'Yes' : 'No';
@@ -194,7 +193,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 .reverse()
                 .map((element) => {
                   if (element) {
-                    this.locationsSet.size < 3 ? this.locationsSet.add(element) : 0;
+                    this.locationsSet.size < 3 && this.locationsSet.add(element);
                   }
                 });
               if (this.locationsSet.size !== 0) {

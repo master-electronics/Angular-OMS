@@ -73,7 +73,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         .valueChanges.subscribe(
           (result) => {
             this.isLoading = result.loading;
-            result.error ? (this.message = result.error.message) : 0;
+            result.error && (this.message = result.error.message);
             this.containerList = result.data.findOrder[0].INVENTORies;
             this.totalITNs = this.containerList.length;
           },
