@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import Country from '../../../shared/country';
 import { QualityControlService } from '../quality-control.server';
 import { FetchPackInfoByItNfromMerpQuery } from '../../../graphql/forQualityControl.graphql-gen';
+import { timestamp } from 'rxjs/operators';
 
 @Component({
   selector: 'verify-pack',
@@ -15,11 +16,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   dateCodeRegex = '[0-9]{3,4}';
   isLoading = false;
   messageType = 'error';
-  submitStyles = 'bg-green-800';
-  backStyles = 'bg-indigo-800';
+  submitStyles = 'bg-indigo-800';
+  backStyles = 'bg-gray-500';
   holdStyles = 'bg-yellow-700';
   buttonLabel = 'submit';
   message = '';
+  modal = true;
   // input data
   Quantity: number;
   DateCode: string;
@@ -71,7 +73,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.verifyPack.setValue({
       quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
-      ROHS: this.ROHS === 'Unknow' ? 'null' : this.ROHS === 'Yes' ? 1 : 0,
+      ROHS: this.ROHS === 'Yes' ? 1 : 0,
       countMethod: '',
       countryOfOrigin: country,
     });
@@ -87,6 +89,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   back(): void {
     this.router.navigate(['qc/scanitn']);
+  }
+
+  toggleModal(): void {
+    this.modal = !this.modal;
   }
 
   ngOnDestroy() {
