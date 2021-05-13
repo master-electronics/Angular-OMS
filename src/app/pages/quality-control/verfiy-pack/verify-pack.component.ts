@@ -18,26 +18,25 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   messageType = 'error';
   submitStyles = 'bg-indigo-800';
   backStyles = 'bg-gray-500';
-  holdStyles = 'bg-yellow-700';
+  holdStyles = 'bg-yellow-500';
   buttonLabel = 'submit';
   message = '';
-  modal = true;
+  isModalHidden = true;
   // input data
+  ITN: string;
   Quantity: number;
   DateCode: string;
   ROHS: string;
   CountryOfOrigin: string;
-  CountMethod: number;
-  // set autocomplete input box
-  countMethodData = [
-    { name: '1. Factory bag' },
-    { name: '2. Factory box' },
-    { name: '3. B/C' },
-    { name: '4. Reel/TUB' },
-    { name: '5. Scale' },
-    { name: '6. Factory Real' },
+  countMethods = [
+    { id: 1, content: 'Factory bag' },
+    { id: 2, content: 'Factory box' },
+    { id: 3, content: 'B/C' },
+    { id: 4, content: 'Reel/TUB' },
+    { id: 5, content: 'Scale' },
+    { id: 6, content: 'Factory Real' },
   ];
-  countMethodKeyword = 'name';
+  // set autocomplete input box
   countryData = Country;
   COOkeyword = 'ISO2';
   // form group
@@ -62,6 +61,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.qcService.changeTab(2);
+    this.ITN = this.route.snapshot.queryParams['ITN'];
     const ROHStext = this.route.snapshot.queryParams['ROHS'];
     this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknow';
     const coo = this.route.snapshot.queryParams['CountryOfOrigin'];
@@ -92,7 +92,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleModal(): void {
-    this.modal = !this.modal;
+    this.isModalHidden = !this.isModalHidden;
   }
 
   ngOnDestroy() {

@@ -11,9 +11,16 @@ import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
+import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
 
 @NgModule({
-  declarations: [QualityControlComponent, ScanItnComponent, StepTabsComponent, VerifyPackComponent],
+  declarations: [
+    QualityControlComponent,
+    ScanItnComponent,
+    StepTabsComponent,
+    VerifyPackComponent,
+    HoldModalComponent,
+  ],
   imports: [
     CommonModule,
     QualityControlRoutingModule,
