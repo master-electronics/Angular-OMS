@@ -57,15 +57,28 @@
           <p>ROHS:</p>
           <p>{{ ROHS }}</p>
         </dt>
-        <div class="relative z-0 w-full col-span-2 mt-2">
-          <select name="ROHS" class="float-input" formControlName="ROHS">
-            <option value="" selected disabled hidden></option>
-            <option value="1" class="text-black">Yes</option>
-            <option value="0" class="text-black">No</option>
-          </select>
-          <label for="ROHS" class="float-label">ROHS</label>
-          <span class="text-sm text-red-600 hidden" id="ROHSError">ROHS is required</span>
-        </div>
+        <fieldset class="relative z-0 p-px w-full mt-2">
+          <legend class="origin-0 absolute -top-3 text-gray-500 transform scale-75">ROHS</legend>
+          <div class="grid grid-cols-2 pb-2 pt-3 space-x-4">
+            <label *ngFor="let ROHS of ROHSOptions">
+              <input
+                type="radio"
+                name="ROHS"
+                formControlName="ROHS"
+                [value]="ROHS.id"
+                class="
+                  mr-2
+                  text-black
+                  border-2 border-gray-300
+                  focus:border-gray-300
+                  focus:ring-black
+                "
+              />
+              {{ ROHS.name }}
+            </label>
+          </div>
+          <span class="hidden text-red-600 text-sm" id="error">Option has to be selected</span>
+        </fieldset>
       </div>
 
       <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
@@ -102,31 +115,26 @@
       <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2"></dt>
         <div class="col-span-2">
-          <div class="mt-2">
-            <fieldset class="relative z-0 mb-5 p-px w-full">
-              <legend class="origin-0 absolute -top-3 transform text-gray-500">Count Method</legend>
-              <div class="block pb-2 pt-3 space-x-4" *ngFor="let option of countMethods">
-                <label>
+          <div class="mt-6">
+            <fieldset class="relative z-0 mb-5 p-px">
+              <legend class="origin-0 absolute -top-8 transform text-gray-500">Count Method</legend>
+              <div class="grid grid-cols-2 gap-4">
+                <label *ngFor="let countMethod of countMethods">
                   <input
                     type="radio"
-                    name="radio"
-                    [value]="option.id"
-                    class="
-                      mr-2
-                      text-black
-                      border-2 border-gray-300
-                      focus:border-gray-300
-                      focus:ring-black
-                    "
+                    name="countMethods"
+                    value="{{ countMethod.id }}"
+                    formControlName="countMethods"
+                    class="mr-2 text-black border-2 border-gray-300 focus:border-gray-300"
                   />
-                  {{ option.content }}
+                  {{ countMethod.content }}
                 </label>
               </div>
-              <span class="hidden text-red-600 text-sm" id="error">Option has to be selected</span>
+              <span class="hidden text-red-600 text-sm" id="CountMethodError"
+                >Option has to be selected</span
+              >
             </fieldset>
           </div>
-
-          <span class="text-sm text-red-600 hidden" id="cooError"></span>
         </div>
       </div>
 

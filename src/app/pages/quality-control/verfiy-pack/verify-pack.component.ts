@@ -24,18 +24,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isModalHidden = true;
   // input data
   ITN: string;
+  ROHS: string;
   Quantity: number;
   DateCode: string;
-  ROHS: string;
   CountryOfOrigin: string;
-  countMethods = [
-    { id: 1, content: 'Factory bag' },
-    { id: 2, content: 'Factory box' },
-    { id: 3, content: 'B/C' },
-    { id: 4, content: 'Reel/TUB' },
-    { id: 5, content: 'Scale' },
-    { id: 6, content: 'Factory Real' },
-  ];
   // set autocomplete input box
   countryData = Countries;
   COOkeyword = 'name';
@@ -52,11 +44,25 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     return result;
   }
+  // Count method input list
+  countMethods = [
+    { id: 1, content: 'Factory bag' },
+    { id: 2, content: 'Factory box' },
+    { id: 3, content: 'B/C' },
+    { id: 4, content: 'Reel/TUB' },
+    { id: 5, content: 'Scale' },
+    { id: 6, content: 'Factory Real' },
+  ];
+  ROHSOptions = [
+    { id: 1, name: 'Yes' },
+    { id: 0, name: 'No' },
+  ];
+
   // form group
   verifyPack = this.fb.group({
     quantity: ['', [Validators.required]],
     dateCode: ['', [Validators.required, Validators.pattern(this.dateCodeRegex)]],
-    countMethod: ['', [Validators.required]],
+    countMethods: ['', [Validators.required]],
     countryOfOrigin: ['', [Validators.required]],
     ROHS: ['', [Validators.required]],
   });
@@ -89,7 +95,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
       ROHS: this.ROHS === 'Yes' ? 1 : 0,
-      countMethod: '',
+      countMethods: '',
       countryOfOrigin: country,
     });
   }
