@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import Countries from '../../../shared/countries';
 import { QualityControlService } from '../quality-control.server';
-import { FetchPackInfoByItNfromMerpQuery } from '../../../graphql/forQualityControl.graphql-gen';
-import { timestamp } from 'rxjs/operators';
 
 @Component({
   selector: 'verify-pack',

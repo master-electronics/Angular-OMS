@@ -10,7 +10,7 @@
     "config": {
       "SourceDir": "src",
       "DistributionDir": "dist",
-      "BuildCommand": "yarn build gql",
+      "BuildCommand": "",
       "StartCommand": "ng serve"
     }
   }
