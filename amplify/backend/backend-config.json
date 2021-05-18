@@ -17,11 +17,5 @@
       }
     }
   },
-  "function": {
-    "ORM": {
-      "providerPlugin": "awscloudformation",
-      "service": "LambdaLayer",
-      "build": true
-    }
-  }
+  "function": {}
 }
