@@ -1,5 +1,5 @@
 {
-  "AppSyncApiName": "test",
+  "AppSyncApiName": "wms",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false
 }
