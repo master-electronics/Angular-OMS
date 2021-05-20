@@ -10,37 +10,6 @@
       "StackName": "amplify-amplify276d604275ac4-staging-83939",
       "StackId": "arn:aws:cloudformation:us-east-2:679076900765:stack/amplify-amplify276d604275ac4-staging-83939/edfefd40-afd8-11eb-a62f-0ae4b0720876",
       "AmplifyAppId": "d2al7sqt9tlwmw"
-    },
-    "nonCFNdata": {
-      "function": {
-        "ORM": {
-          "layerVersionMap": {
-            "1": {
-              "permissions": [
-                {
-                  "type": "public"
-                },
-                {
-                  "type": "private"
-                }
-              ],
-              "hash": "3QJszWdPfrg99JNbkFI34HSieBuPDm0JDS7wpGt0ssY="
-            }
-          }
-        }
-      }
-    },
-    "categories": {
-      "function": {
-        "aggregation": {
-          "deploymentBucketName": "amplify-amplify276d604275ac4-staging-83939-deployment",
-          "s3Key": "amplify-builds/aggregation-6a4472456c6377696864-build.zip"
-        },
-        "ORM": {
-          "deploymentBucketName": "amplify-amplify276d604275ac4-staging-83939-deployment",
-          "s3Key": "amplify-builds/ORM-build.zip"
-        }
-      }
     }
   }
 }

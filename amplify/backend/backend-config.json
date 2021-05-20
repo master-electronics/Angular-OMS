@@ -17,25 +17,5 @@
       }
     }
   },
-  "function": {
-    "aggregation": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "ORM",
-          "attributes": [
-            "Arn"
-          ]
-        }
-      ]
-    },
-    "ORM": {
-      "providerPlugin": "awscloudformation",
-      "service": "LambdaLayer",
-      "build": true
-    }
-  }
+  "function": {}
 }

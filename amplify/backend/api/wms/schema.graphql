@@ -1,157 +1,29 @@
-type Blog @model {
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Car {
+  id: ID!
+  color: String!
+  parking: Parking
+}
+
+type Parking {
   id: ID!
   name: String!
-  posts: [Post] @connection(keyName: "byBlog", fields: ["id"])
+  car: Car!
+  price: Int!
 }
 
-type Post @model @key(name: "byBlog", fields: ["blogID"]) {
-  id: ID!
-  title: String!
-  blogID: ID!
-  blog: Blog @connection(fields: ["blogID"])
-  comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
-}
-
-type Comment @model @key(name: "byPost", fields: ["postID", "content"]) {
-  id: ID!
-  postID: ID!
-  post: Post @connection(fields: ["postID"])
-  content: String!
-}
-
-type Container @model {
-  _id: Int!
-  Type: ContainerType!
-  Equipment: Equipment
-  INVENTORies: [Inventory]
-  Barcode: String!
-  DistributionCenter: String!
-  Zone: String
-  Warehouse: String
-  Row: String
-  Aisle: String
-  Section: String
-  Shelf: String
-  ShelfDetail: String
-}
-
-type ContainerType {
-  _id: Int!
-  CONTAINERs: [Container]
-  Type: String!
-  IsMobile: Boolean!
-}
-
-type Equipment {
-  _id: Int!
-  CONTAINERs: [Container]
-  Name: String!
-}
-
-type Order {
-  _id: Int!
-  Status: OrderStatus!
-  INVENTORies: [Inventory]
-  StatusID: Int!
-  DistributionCenter: String!
-  OrderNumber: String!
-  NOSINumber: String!
-  LastUpdated: String
-}
-
-type OrderStatus {
-  _id: Int!
-  Name: String!
-}
-
-type Inventory {
-  _id: Int!
-  Container: Container!
-  Order: Order
-  ALLOCATIONs: [Allocation]
-  InternalTrackingNumber: String!
-  ProductCode: String!
-  PartNumber: String!
-  Quantity: Float!
-  ROHS: Boolean!
-  Cost: Float
-  DateCode: String
-  CountryOfOrigin: String
-  ParentITN: String
-  ExpirationDate: String
-  HoldCode: String
-  CycleCountDate: String
-  CycleCountUser: String
-  LastUpdated: String
-}
-
-type Allocation {
-  _id: Int!
-  Inventory: Inventory
-  DistributionCenter: String!
-  OrderNumber: String!
-  NOSINumber: String!
-  OrderLineNumber: String!
-  SequenceNumber: String!
-  Quantity: Float
+input InputCreateCar {
+  color: String!
 }
 
 type Query {
-  findContainer(_id: Int, Barcode: String, DistributionCenter: String, limit: Int): [Container]
-  findInventory(_id: Int, InternalTrackingNumber: String, limit: Int): [Inventory]
-  findOrder(
-    _id: Int
-    DistributionCenter: String
-    OrderNumber: String
-    NOSINumber: String
-    StatusID: Int
-    limit: Int
-  ): [Order]
+  getParking(id: ID!): Parking
 }
 
 type Mutation {
-  updateContainerLocation(_id: Int!, Container: ContainerUpdate!): Response!
-  updateInventory(_id: Int!, Inventory: InventoryUpdate!): Response!
-  updateOrderStatus(
-    _id: Int
-    DistributionCenter: String
-    OrderNumber: String
-    NOSINumber: String
-    StatusID: Int
-    Order: OrderUpdate!
-  ): Response!
-}
-
-input ContainerUpdate {
-  DistributionCenter: String
-  Zone: String
-  Warehouse: String
-  Row: String
-  Aisle: String
-  Section: String
-  Shelf: String
-  ShelfDetail: String
-}
-
-input InventoryUpdate {
-  ContainerID: Int
-  InternalTrackingNumber: String
-  ProductCode: String
-  PartNumber: String
-  Quantity: Float
-  ROHS: Boolean
-  Cost: Float
-  DateCode: String
-  CountryOfOrigin: String
-  ParentITN: String
-  ExpirationDate: String
-  HoldCode: String
-  CycleCountDate: String
-  CycleCountUser: String
-  LastUpdated: String
-}
-
-input OrderUpdate {
-  StatusID: Int
-  LastUpdated: String
+  createCar(input: InputCreateCar): Car
 }
