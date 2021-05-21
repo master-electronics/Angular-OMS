@@ -17,5 +17,11 @@
       }
     }
   },
-  "function": {}
+  "function": {
+    "getParking": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  }
 }
