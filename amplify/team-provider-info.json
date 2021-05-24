@@ -15,7 +15,7 @@
       "function": {
         "getParking": {
           "deploymentBucketName": "amplify-amplify276d604275ac4-staging-83939-deployment",
-          "s3Key": "amplify-builds/getParking-7354417a625663435854-build.zip"
+          "s3Key": "amplify-builds/getParking-30336d6b775354572f2f-build.zip"
         }
       }
     }
