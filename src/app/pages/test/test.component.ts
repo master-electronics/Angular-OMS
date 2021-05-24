@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { APIService } from '../../API.service';
 
 @Component({
   selector: 'app-test',
@@ -9,14 +8,11 @@ export class TestComponent implements OnInit {
   isMobile: boolean;
   title = 'Test';
   test;
-  constructor(private api: APIService) {
+  constructor() {
     //
   }
 
   async ngOnInit() {
-    this.api.GetParking('PRK00').then((event) => {
-      this.test = event;
-      console.log(this.test);
-    });
+    //
   }
 }
