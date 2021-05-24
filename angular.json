@@ -82,10 +82,10 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "ag-wms:build",
-            "ssl": true,
-            "sslCert": "misc/cert.pem",
-            "sslKey": "misc/cert.key"
+            "browserTarget": "ag-wms:build"
+            // "ssl": true,
+            // "sslCert": "misc/cert.pem",
+            // "sslKey": "misc/cert.key"
           },
           "configurations": {
             "production": {
