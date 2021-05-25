@@ -10,6 +10,14 @@
       "StackName": "amplify-agwms-dev-172650",
       "StackId": "arn:aws:cloudformation:us-east-2:679076900765:stack/amplify-agwms-dev-172650/e7bf4650-bcef-11eb-a4df-068b51f91754",
       "AmplifyAppId": "d2lbil93tjxmdg"
+    },
+    "categories": {
+      "function": {
+        "agwmsDemoTest": {
+          "deploymentBucketName": "amplify-agwms-dev-172650-deployment",
+          "s3Key": "amplify-builds/agwmsDemoTest-552b673374574e6a4f69-build.zip"
+        }
+      }
     }
   },
   "test": {

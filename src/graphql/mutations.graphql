@@ -1,0 +1,16 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateCar($input: InputCreateCar) {
+  createCar(input: $input) {
+    id
+    color
+    parking {
+      id
+      name
+      car {
+        id
+        color
+      }
+      price
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "id": "PRK00"
+  },
+  "identity": null,
+  "source": null,
+  "request": {},
+  "prev": null,
+  "info": {
+    "selectionSetList": [
+      "id",
+      "name",
+      "car",
+      "car/id",
+      "car/color",
+      "car/parking",
+      "car/parking/id",
+      "car/parking/name",
+      "car/parking/price"
+    ],
+    "selectionSetGraphQL": "...",
+    "parentTypeName": "Query",
+    "fieldName": "getParking",
+    "variables": {}
+  },
+  "stash": {}
+}

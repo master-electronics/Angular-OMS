@@ -1,0 +1,31 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+#
+# Demo
+#
+type Car {
+  id: ID!
+  color: String!
+  parking: Parking
+}
+
+type Parking {
+  id: ID!
+  name: String!
+  car: Car!
+  price: Int!
+}
+
+input InputCreateCar {
+  color: String!
+}
+
+type Query {
+  getParking(id: ID!): Parking
+}
+
+type Mutation {
+  createCar(input: InputCreateCar): Car
+}
