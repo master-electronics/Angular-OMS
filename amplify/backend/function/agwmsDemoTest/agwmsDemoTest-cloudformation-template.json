@@ -69,7 +69,12 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
-            }
+            },
+            "RDS_URL": "database-2.crzbs4i8445u.us-east-2.rds.amazonaws.com",
+            "RDS_PORT": "5432",
+            "RDS_USER": "postgres",
+            "RDS_PASSWORD": "2823319wzy",
+            "RDS_DATABASE": "postgres"
           }
         },
         "Role": {
