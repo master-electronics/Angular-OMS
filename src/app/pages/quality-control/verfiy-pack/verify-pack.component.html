@@ -1,7 +1,26 @@
 <div class="mx-auto md:max-w-2xl flex flex-col text-black dark:text-white">
-  <p class="font-bold text-lg py-5">ITN#: {{ ITN }}</p>
+  <!-- item picture and detail link -->
+  <section>
+    <div class="grid grid-cols-3">
+      <p class="font-bold">ITN: {{ ITN }}</p>
+      <p class="font-bold">PRC: {{ PRC }}</p>
+      <p class="font-bold">PartNumber: {{ PartNumber }}</p>
+    </div>
+    <div *ngIf="MICPartNumber" class="grid grid-cols-4 mt-2">
+      <div class="col-span-2 h-40">
+        <img [src]="imgURL" alt="ProductImage" />
+      </div>
+      <div class="grid grid-rows-2 items-center">
+        <a [href]="productURL" target="_blank" class="text-lg font-bold text-indigo-600">Product</a>
+        <a [href]="specSheetURL" target="_blank" class="text-lg font-bold text-indigo-600"
+          >Spec sheet</a
+        >
+      </div>
+    </div>
+  </section>
+  <!-- User input form -->
   <section class="flex flex-col">
-    <div class="grid grid-cols-3 font-semibold text-lg text-indigo-600">
+    <div class="grid grid-cols-3 font-semibold text-lg">
       <p>Pack Information</p>
       <p class="col-span-2">User Input</p>
     </div>

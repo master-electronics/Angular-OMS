@@ -60,6 +60,7 @@ export type ContainerUpdate = {
   ShelfDetail?: Maybe<Scalars['String']>;
 };
 
+
 export type Equipment = {
   __typename?: 'Equipment';
   _id: Scalars['Int'];
@@ -123,6 +124,7 @@ export type Mutation = {
   updateOrderStatus: Response;
 };
 
+
 export type MutationAggregationInArgs = {
   qcContainer: Scalars['Int'];
   ITNList: Array<Scalars['String']>;
@@ -133,15 +135,18 @@ export type MutationAggregationInArgs = {
   locationList?: Maybe<Array<Scalars['String']>>;
 };
 
+
 export type MutationUpdateContainerLocationArgs = {
   _id: Scalars['Int'];
   Container: ContainerUpdate;
 };
 
+
 export type MutationUpdateInventoryArgs = {
   _id: Scalars['Int'];
   Inventory: InventoryUpdate;
 };
+
 
 export type MutationUpdateOrderStatusArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -177,12 +182,20 @@ export type OrderUpdate = {
 
 export type PackInfoFromMerp = {
   __typename?: 'PackInfoFromMerp';
+  ProductCode?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   DemandQuantity?: Maybe<Scalars['Float']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
+};
+
+export type ProdunctInfoFromMerp = {
+  __typename?: 'ProdunctInfoFromMerp';
+  HazardMaterialLevel?: Maybe<Scalars['Boolean']>;
+  MICPartNumber?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -194,19 +207,23 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
-  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
+  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
+
 
 export type QueryVerifyContainerArgs = {
   Barcode: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
+
 export type QueryFetchInventoryInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
+
 
 export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -215,11 +232,13 @@ export type QueryFindContainerArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
+
 
 export type QueryFindOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -230,14 +249,22 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFetchPackInfoFromMerpArgs = {
+  InternalTrackingNumber: Scalars['String'];
+};
+
+
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
 
-export type QueryFetchPackInfoFromMerpArgs = {
-  InternalTrackingNumber: Scalars['String'];
+
+export type QueryFetchProductInfoFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 export type Response = {
