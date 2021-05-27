@@ -7,8 +7,8 @@
       <p class="font-bold">PartNumber: {{ PartNumber }}</p>
     </div>
     <div *ngIf="MICPartNumber" class="grid grid-cols-4 mt-2">
-      <div class="col-span-2 h-40">
-        <img [src]="imgURL" alt="ProductImage" />
+      <div class="col-span-2">
+        <img [src]="imgURL" class="h-40" alt="ProductImage" />
       </div>
       <div class="grid grid-rows-2 items-center">
         <a [href]="productURL" target="_blank" class="text-lg font-bold text-indigo-600">Product</a>
