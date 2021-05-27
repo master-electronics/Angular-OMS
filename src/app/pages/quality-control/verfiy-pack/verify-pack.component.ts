@@ -59,9 +59,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 3, content: 'B/C' },
     { id: 4, content: 'Reel/TUB' },
     { id: 5, content: 'Scale' },
-    { id: 6, content: 'Factory Real' },
+    { id: 6, content: 'Factory Reel' },
   ];
-  ROHSOptions = [
+  booleanOptions = [
     { id: 1, name: 'Yes' },
     { id: 0, name: 'No' },
   ];
@@ -73,6 +73,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     countMethods: ['', [Validators.required]],
     countryOfOrigin: ['', [Validators.required]],
     ROHS: ['', [Validators.required]],
+    HML: ['', [Validators.required]],
   });
 
   private subscription = new Subscription();
@@ -94,19 +95,20 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.PRC = this.route.snapshot.queryParams['PRC'];
     this.PartNumber = this.route.snapshot.queryParams['PartNumber'];
     const ROHStext = this.route.snapshot.queryParams['ROHS'];
-    this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknow';
+    this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknown';
     const coo = this.route.snapshot.queryParams['CountryOfOrigin'];
-    this.CountryOfOrigin = coo ? coo : 'Unknow';
+    this.CountryOfOrigin = coo ? coo : 'Unknown';
     this.Quantity = parseInt(this.route.snapshot.queryParams['Quantity']);
     this.DateCode = this.route.snapshot.queryParams['DateCode'];
     let country = this.countryData.find(
       (element) => element.name.substring(0, 2) === this.CountryOfOrigin
     );
-    country ? 0 : (country = this.countryData.find((element) => element.name === 'UNKNOW'));
+    country ? 0 : (country = this.countryData.find((element) => element.name === 'UNKNOWN'));
     this.verifyPack.setValue({
       quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
       ROHS: this.ROHS === 'Yes' ? 1 : 0,
+      HML: this.HazardMaterialLevel ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
     });

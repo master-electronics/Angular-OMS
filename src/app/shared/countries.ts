@@ -1,5 +1,5 @@
 const countries = [
-  { _id: 1, name: 'UNKNOW' },
+  { _id: 1, name: 'UNKNOWN' },
   { _id: 2, name: 'US: UNITED STATES' },
   { _id: 3, name: 'CA: CANADA' },
   { _id: 4, name: 'BJ: BENIN' },
