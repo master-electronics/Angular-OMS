@@ -1,7 +1,31 @@
 <div class="mx-auto md:max-w-2xl flex flex-col text-black dark:text-white">
-  <p class="font-bold text-lg py-5">ITN#: {{ ITN }}</p>
+  <!-- item picture and detail link -->
+  <section>
+    <div class="grid grid-cols-3">
+      <p class="font-bold">ITN: {{ ITN }}</p>
+      <p class="font-bold">PRC: {{ PRC }}</p>
+      <p class="font-bold">PartNumber: {{ PartNumber }}</p>
+    </div>
+    <div *ngIf="isImgExist" class="grid grid-cols-4 mt-2">
+      <div class="col-span-2">
+        <img
+          [src]="imgURL"
+          class="h-40"
+          alt="ProductImage"
+          onError="this.src='assets/img/image-not-found.png'"
+        />
+      </div>
+      <div class="grid grid-rows-2 items-center">
+        <a [href]="productURL" target="_blank" class="text-lg font-bold text-indigo-600">Product</a>
+        <a [href]="specSheetURL" target="_blank" class="text-lg font-bold text-indigo-600"
+          >Spec sheet</a
+        >
+      </div>
+    </div>
+  </section>
+  <!-- User input form -->
   <section class="flex flex-col">
-    <div class="grid grid-cols-3 font-semibold text-lg text-indigo-600">
+    <div class="grid grid-cols-3 font-semibold text-lg">
       <p>Pack Information</p>
       <p class="col-span-2">User Input</p>
     </div>
@@ -11,7 +35,7 @@
       (ngSubmit)="onSubmit()"
       class="border-t border-gray-200 dark:border-gray-800"
     >
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>Quantity:</p>
           <p>{{ Quantity }}</p>
@@ -31,10 +55,11 @@
         </div>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>DateCode:</p>
-          <p>{{ DateCode }}</p>
+          <p *ngIf="DateCode">{{ DateCode }}</p>
+          <p *ngIf="!DateCode">Unknown</p>
         </dt>
         <div class="z-0 w-full relative mt-4 col-span-2">
           <input
@@ -51,7 +76,7 @@
         </div>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>ROHS:</p>
           <p>{{ ROHS }}</p>
@@ -59,7 +84,7 @@
         <fieldset class="relative z-0 p-px w-full mt-2">
           <legend class="origin-0 absolute -top-3 text-gray-500 transform scale-75">ROHS</legend>
           <div class="grid grid-cols-2 pb-2 pt-3 space-x-4">
-            <label *ngFor="let ROHS of ROHSOptions">
+            <label *ngFor="let ROHS of booleanOptions">
               <input
                 type="radio"
                 name="ROHS"
@@ -80,6 +105,34 @@
         </fieldset>
       </div>
 
+      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>HML:</p>
+          <p>{{ HazardMaterialLevel }}</p>
+        </dt>
+        <fieldset class="relative z-0 p-px w-full mt-2">
+          <legend class="origin-0 absolute -top-3 text-gray-500 transform scale-75">HML</legend>
+          <div class="grid grid-cols-2 pb-2 pt-3 space-x-4">
+            <label *ngFor="let HML of booleanOptions">
+              <input
+                type="radio"
+                name="HML"
+                formControlName="HML"
+                [value]="HML.id"
+                class="
+                  mr-2
+                  text-black
+                  border-2 border-gray-300
+                  focus:border-gray-300
+                  focus:ring-black
+                "
+              />
+              {{ HML.name }}
+            </label>
+          </div>
+          <span class="hidden text-red-600 text-sm" id="error">Option has to be selected</span>
+        </fieldset>
+      </div>
       <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 dark:bg-gray-700">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>Country of Origin:</p>

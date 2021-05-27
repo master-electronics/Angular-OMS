@@ -17,6 +17,8 @@ export type Scalars = {
   Datetime: any;
 };
 
+
+
 export type Allocation = {
   __typename?: 'Allocation';
   _id: Scalars['Int'];
@@ -64,6 +66,7 @@ export type ContainerUpdate = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
 };
+
 
 export type Equipment = {
   __typename?: 'Equipment';
@@ -128,6 +131,7 @@ export type Mutation = {
   updateOrderStatus: Response;
 };
 
+
 export type MutationAggregationInArgs = {
   qcContainer: Scalars['Int'];
   ITNList: Array<Scalars['String']>;
@@ -138,15 +142,18 @@ export type MutationAggregationInArgs = {
   locationList?: Maybe<Array<Scalars['String']>>;
 };
 
+
 export type MutationUpdateContainerLocationArgs = {
   _id: Scalars['Int'];
   Container: ContainerUpdate;
 };
 
+
 export type MutationUpdateInventoryArgs = {
   _id: Scalars['Int'];
   Inventory: InventoryUpdate;
 };
+
 
 export type MutationUpdateOrderStatusArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -182,12 +189,20 @@ export type OrderUpdate = {
 
 export type PackInfoFromMerp = {
   __typename?: 'PackInfoFromMerp';
+  ProductCode?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   DemandQuantity?: Maybe<Scalars['Float']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
+};
+
+export type ProdunctInfoFromMerp = {
+  __typename?: 'ProdunctInfoFromMerp';
+  HazardMaterialLevel?: Maybe<Scalars['Boolean']>;
+  MICPartNumber?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -199,19 +214,23 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
-  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
+  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
+
 
 export type QueryVerifyContainerArgs = {
   Barcode: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
+
 export type QueryFetchInventoryInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
+
 
 export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -220,11 +239,13 @@ export type QueryFindContainerArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
+
 
 export type QueryFindOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -235,14 +256,22 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFetchPackInfoFromMerpArgs = {
+  InternalTrackingNumber: Scalars['String'];
+};
+
+
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
 
-export type QueryFetchPackInfoFromMerpArgs = {
-  InternalTrackingNumber: Scalars['String'];
+
+export type QueryFetchProductInfoFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 export type Response = {
@@ -278,38 +307,70 @@ export type FetchPackInfoByItNfromMerpQueryVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
 }>;
 
-export type FetchPackInfoByItNfromMerpQuery = { __typename?: 'Query' } & {
-  fetchPackInfoFromMerp?: Types.Maybe<
-    { __typename?: 'PackInfoFromMerp' } & Pick<
-      Types.PackInfoFromMerp,
-      'Status' | 'Quantity' | 'DemandQuantity' | 'ROHS' | 'DateCode' | 'CountryOfOrigin'
-    >
-  >;
-};
+
+export type FetchPackInfoByItNfromMerpQuery = (
+  { __typename?: 'Query' }
+  & { fetchPackInfoFromMerp?: Types.Maybe<(
+    { __typename?: 'PackInfoFromMerp' }
+    & Pick<Types.PackInfoFromMerp, 'ProductCode' | 'PartNumber' | 'Status' | 'Quantity' | 'DemandQuantity' | 'ROHS' | 'DateCode' | 'CountryOfOrigin'>
+  )> }
+);
+
+export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
+  PartNumber: Types.Scalars['String'];
+  ProductCode: Types.Scalars['String'];
+}>;
+
+
+export type FetchProductInfoFromMerpQuery = (
+  { __typename?: 'Query' }
+  & { fetchProductInfoFromMerp?: Types.Maybe<(
+    { __typename?: 'ProdunctInfoFromMerp' }
+    & Pick<Types.ProdunctInfoFromMerp, 'MICPartNumber' | 'HazardMaterialLevel'>
+  )> }
+);
 
 export const FetchPackInfoByItNfromMerpDocument = gql`
-  query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
-    fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
-      Status
-      Quantity
-      DemandQuantity
-      ROHS
-      DateCode
-      CountryOfOrigin
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FetchPackInfoByItNfromMerpGQL extends Apollo.Query<
-  FetchPackInfoByItNfromMerpQuery,
-  FetchPackInfoByItNfromMerpQueryVariables
-> {
-  document = FetchPackInfoByItNfromMerpDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
+    query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
+  fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
+    ProductCode
+    PartNumber
+    Status
+    Quantity
+    DemandQuantity
+    ROHS
+    DateCode
+    CountryOfOrigin
   }
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchPackInfoByItNfromMerpGQL extends Apollo.Query<FetchPackInfoByItNfromMerpQuery, FetchPackInfoByItNfromMerpQueryVariables> {
+    document = FetchPackInfoByItNfromMerpDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchProductInfoFromMerpDocument = gql`
+    query fetchProductInfoFromMerp($PartNumber: String!, $ProductCode: String!) {
+  fetchProductInfoFromMerp(PartNumber: $PartNumber, ProductCode: $ProductCode) {
+    MICPartNumber
+    HazardMaterialLevel
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchProductInfoFromMerpGQL extends Apollo.Query<FetchProductInfoFromMerpQuery, FetchProductInfoFromMerpQueryVariables> {
+    document = FetchProductInfoFromMerpDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

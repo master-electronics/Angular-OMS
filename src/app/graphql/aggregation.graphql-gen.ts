@@ -17,6 +17,8 @@ export type Scalars = {
   Datetime: any;
 };
 
+
+
 export type Allocation = {
   __typename?: 'Allocation';
   _id: Scalars['Int'];
@@ -64,6 +66,7 @@ export type ContainerUpdate = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
 };
+
 
 export type Equipment = {
   __typename?: 'Equipment';
@@ -128,6 +131,7 @@ export type Mutation = {
   updateOrderStatus: Response;
 };
 
+
 export type MutationAggregationInArgs = {
   qcContainer: Scalars['Int'];
   ITNList: Array<Scalars['String']>;
@@ -138,15 +142,18 @@ export type MutationAggregationInArgs = {
   locationList?: Maybe<Array<Scalars['String']>>;
 };
 
+
 export type MutationUpdateContainerLocationArgs = {
   _id: Scalars['Int'];
   Container: ContainerUpdate;
 };
 
+
 export type MutationUpdateInventoryArgs = {
   _id: Scalars['Int'];
   Inventory: InventoryUpdate;
 };
+
 
 export type MutationUpdateOrderStatusArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -182,12 +189,20 @@ export type OrderUpdate = {
 
 export type PackInfoFromMerp = {
   __typename?: 'PackInfoFromMerp';
+  ProductCode?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   DemandQuantity?: Maybe<Scalars['Float']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
+};
+
+export type ProdunctInfoFromMerp = {
+  __typename?: 'ProdunctInfoFromMerp';
+  HazardMaterialLevel?: Maybe<Scalars['Boolean']>;
+  MICPartNumber?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -199,19 +214,23 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
-  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
+  fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
+
 
 export type QueryVerifyContainerArgs = {
   Barcode: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
+
 export type QueryFetchInventoryInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
+
 
 export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -220,11 +239,13 @@ export type QueryFindContainerArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
+
 
 export type QueryFindOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -235,14 +256,22 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFetchPackInfoFromMerpArgs = {
+  InternalTrackingNumber: Scalars['String'];
+};
+
+
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
 
-export type QueryFetchPackInfoFromMerpArgs = {
-  InternalTrackingNumber: Scalars['String'];
+
+export type QueryFetchProductInfoFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 export type Response = {
@@ -279,35 +308,28 @@ export type VerifyContainerQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
 }>;
 
-export type VerifyContainerQuery = { __typename?: 'Query' } & {
-  verifyContainer: { __typename?: 'verifyContainerResponse' } & Pick<
-    Types.VerifyContainerResponse,
-    'success' | 'isRelocation' | 'message' | 'ITNList' | 'qcContainer'
-  >;
-};
+
+export type VerifyContainerQuery = (
+  { __typename?: 'Query' }
+  & { verifyContainer: (
+    { __typename?: 'verifyContainerResponse' }
+    & Pick<Types.VerifyContainerResponse, 'success' | 'isRelocation' | 'message' | 'ITNList' | 'qcContainer'>
+  ) }
+);
 
 export type FetchInventoryInfoQueryVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
   DistributionCenter: Types.Scalars['String'];
 }>;
 
-export type FetchInventoryInfoQuery = { __typename?: 'Query' } & {
-  fetchInventoryInfo?: Types.Maybe<
-    { __typename?: 'inventoryInfo' } & Pick<
-      Types.InventoryInfo,
-      | 'OrderNumber'
-      | 'ShippingMethod'
-      | 'PriorityPinkPaper'
-      | 'CustomerNumber'
-      | 'Quantity'
-      | 'ProductCode'
-      | 'PartNumber'
-      | 'ITNCount'
-      | 'ITNTotal'
-      | 'Locations'
-    >
-  >;
-};
+
+export type FetchInventoryInfoQuery = (
+  { __typename?: 'Query' }
+  & { fetchInventoryInfo?: Types.Maybe<(
+    { __typename?: 'inventoryInfo' }
+    & Pick<Types.InventoryInfo, 'OrderNumber' | 'ShippingMethod' | 'PriorityPinkPaper' | 'CustomerNumber' | 'Quantity' | 'ProductCode' | 'PartNumber' | 'ITNCount' | 'ITNTotal' | 'Locations'>
+  )> }
+);
 
 export type AggregationInMutationVariables = Types.Exact<{
   qcContainer: Types.Scalars['Int'];
@@ -319,103 +341,91 @@ export type AggregationInMutationVariables = Types.Exact<{
   LocationList?: Types.Maybe<Array<Types.Scalars['String']> | Types.Scalars['String']>;
 }>;
 
-export type AggregationInMutation = { __typename?: 'Mutation' } & {
-  aggregationIn: { __typename?: 'Response' } & Pick<Types.Response, 'success' | 'message'>;
-};
+
+export type AggregationInMutation = (
+  { __typename?: 'Mutation' }
+  & { aggregationIn: (
+    { __typename?: 'Response' }
+    & Pick<Types.Response, 'success' | 'message'>
+  ) }
+);
 
 export const VerifyContainerDocument = gql`
-  query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
-    verifyContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
-      success
-      isRelocation
-      message
-      ITNList
-      qcContainer
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class VerifyContainerGQL extends Apollo.Query<
-  VerifyContainerQuery,
-  VerifyContainerQueryVariables
-> {
-  document = VerifyContainerDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
+    query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
+  verifyContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    success
+    isRelocation
+    message
+    ITNList
+    qcContainer
   }
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyContainerGQL extends Apollo.Query<VerifyContainerQuery, VerifyContainerQueryVariables> {
+    document = VerifyContainerDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchInventoryInfoDocument = gql`
-  query fetchInventoryInfo($InternalTrackingNumber: String!, $DistributionCenter: String!) {
-    fetchInventoryInfo(
-      InternalTrackingNumber: $InternalTrackingNumber
-      DistributionCenter: $DistributionCenter
-    ) {
-      OrderNumber
-      ShippingMethod
-      PriorityPinkPaper
-      CustomerNumber
-      Quantity
-      ProductCode
-      PartNumber
-      ITNCount
-      ITNTotal
-      Locations
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FetchInventoryInfoGQL extends Apollo.Query<
-  FetchInventoryInfoQuery,
-  FetchInventoryInfoQueryVariables
-> {
-  document = FetchInventoryInfoDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const AggregationInDocument = gql`
-  mutation aggregationIn(
-    $qcContainer: Int!
-    $ITNList: [String!]!
-    $Barcode: String!
-    $DistributionCenter: String!
-    $newLocation: Boolean!
-    $isLastITN: Boolean!
-    $LocationList: [String!]
+    query fetchInventoryInfo($InternalTrackingNumber: String!, $DistributionCenter: String!) {
+  fetchInventoryInfo(
+    InternalTrackingNumber: $InternalTrackingNumber
+    DistributionCenter: $DistributionCenter
   ) {
-    aggregationIn(
-      qcContainer: $qcContainer
-      ITNList: $ITNList
-      Barcode: $Barcode
-      DistributionCenter: $DistributionCenter
-      newLocation: $newLocation
-      isLastITN: $isLastITN
-      locationList: $LocationList
-    ) {
-      success
-      message
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class AggregationInGQL extends Apollo.Mutation<
-  AggregationInMutation,
-  AggregationInMutationVariables
-> {
-  document = AggregationInDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
+    OrderNumber
+    ShippingMethod
+    PriorityPinkPaper
+    CustomerNumber
+    Quantity
+    ProductCode
+    PartNumber
+    ITNCount
+    ITNTotal
+    Locations
   }
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchInventoryInfoGQL extends Apollo.Query<FetchInventoryInfoQuery, FetchInventoryInfoQueryVariables> {
+    document = FetchInventoryInfoDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const AggregationInDocument = gql`
+    mutation aggregationIn($qcContainer: Int!, $ITNList: [String!]!, $Barcode: String!, $DistributionCenter: String!, $newLocation: Boolean!, $isLastITN: Boolean!, $LocationList: [String!]) {
+  aggregationIn(
+    qcContainer: $qcContainer
+    ITNList: $ITNList
+    Barcode: $Barcode
+    DistributionCenter: $DistributionCenter
+    newLocation: $newLocation
+    isLastITN: $isLastITN
+    locationList: $LocationList
+  ) {
+    success
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AggregationInGQL extends Apollo.Mutation<AggregationInMutation, AggregationInMutationVariables> {
+    document = AggregationInDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

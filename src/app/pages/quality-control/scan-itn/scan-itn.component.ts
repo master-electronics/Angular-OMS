@@ -77,7 +77,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               this.router.navigate(['qc/verifypack'], {
                 queryParams: {
                   ITN: this.ITNForm.get('ITN').value,
-                  quantity: res.data.fetchPackInfoFromMerp.Quantity,
+                  PartNumber: res.data.fetchPackInfoFromMerp.PartNumber,
+                  PRC: res.data.fetchPackInfoFromMerp.ProductCode,
+                  Quantity: res.data.fetchPackInfoFromMerp.Quantity,
                   ROHS: res.data.fetchPackInfoFromMerp.ROHS,
                   DateCode: res.data.fetchPackInfoFromMerp.DateCode,
                   CountryOfOrigin: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
@@ -100,7 +102,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //
     this.subscription.unsubscribe();
   }
 }
