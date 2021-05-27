@@ -6,9 +6,14 @@
       <p class="font-bold">PRC: {{ PRC }}</p>
       <p class="font-bold">PartNumber: {{ PartNumber }}</p>
     </div>
-    <div *ngIf="MICPartNumber" class="grid grid-cols-4 mt-2">
+    <div *ngIf="isImgExist" class="grid grid-cols-4 mt-2">
       <div class="col-span-2">
-        <img [src]="imgURL" class="h-40" alt="ProductImage" />
+        <img
+          [src]="imgURL"
+          class="h-40"
+          alt="ProductImage"
+          onError="this.src='assets/img/image-not-found.png'"
+        />
       </div>
       <div class="grid grid-rows-2 items-center">
         <a [href]="productURL" target="_blank" class="text-lg font-bold text-indigo-600">Product</a>

@@ -15,6 +15,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   imgURL = 'https://www.onlinecomponents.com/images/parts/largeimages/';
   productURL = 'https://www.onlinecomponents.com/en/grayhill/';
   specSheetURL = 'https://www.onlinecomponents.com/en/datasheet/';
+  isImgExist = true;
   ITNRegex = '[a-zA-Z0-9]{10}';
   dateCodeRegex = '[0-9]{3,4}';
   isLoading = false;
@@ -87,7 +88,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('quantity') quantityInput: ElementRef;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.qcService.changeTab(2);
     this.ITN = this.route.snapshot.queryParams['ITN'];
     this.PRC = this.route.snapshot.queryParams['PRC'];
@@ -109,10 +110,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       countMethods: '',
       countryOfOrigin: country,
     });
-    this.fetchProductInfo();
+    await this.fetchProductInfo();
   }
 
-  fetchProductInfo() {
+  async fetchProductInfo() {
     this.subscription.add(
       this.fetchProductInfoFromMerp
         .watch({ PartNumber: this.PartNumber, ProductCode: this.PRC })
