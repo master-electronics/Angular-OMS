@@ -8,7 +8,10 @@ query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
   }
 }
 
-query fetchInventoryInfo($InternalTrackingNumber: String!, $DistributionCenter: String!) {
+query fetchInventoryInfo(
+  $InternalTrackingNumber: String!
+  $DistributionCenter: String!
+) {
   fetchInventoryInfo(
     InternalTrackingNumber: $InternalTrackingNumber
     DistributionCenter: $DistributionCenter

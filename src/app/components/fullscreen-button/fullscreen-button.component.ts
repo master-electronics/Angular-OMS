@@ -16,7 +16,10 @@ export class FullscreenButtonComponent {
     this.isFullscreen = !this.isFullscreen;
   }
 
-  constructor(@Inject(DOCUMENT) private document: any, private commonService: CommonService) {
+  constructor(
+    @Inject(DOCUMENT) private document: any,
+    private commonService: CommonService
+  ) {
     this.elem = document.documentElement;
   }
 

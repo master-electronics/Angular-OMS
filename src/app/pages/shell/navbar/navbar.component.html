@@ -27,7 +27,11 @@
       </div>
       <div class="block">
         <div class="flex items-center ml-4 md:ml-6">
-          <button aria-label="theme" class="focus:outline-none rounded-md" (click)="toggleDark()">
+          <button
+            aria-label="theme"
+            class="focus:outline-none rounded-md"
+            (click)="toggleDark()"
+          >
             <svg
               *ngIf="dark"
               class="w-6 text-gray-500 bg-white rounded-full"
@@ -66,7 +70,11 @@
                 (click)="toggleUser()"
                 (window.mousedown)="onGlobalClick($event)"
               >
-                <img class="w-6 mt-1" src="../../../assets/icon/master_logo.svg" alt="user_icon" />
+                <img
+                  class="w-6 mt-1"
+                  src="../../../assets/icon/master_logo.svg"
+                  alt="user_icon"
+                />
               </button>
               <div
                 class="
@@ -97,7 +105,9 @@
                       dark:hover:bg-gray-600
                     "
                   >
-                    <span class="flex flex-col text-xl font-bold">{{ username }}</span>
+                    <span class="flex flex-col text-xl font-bold">{{
+                      username
+                    }}</span>
                   </a>
                   <a
                     class="
@@ -113,7 +123,12 @@
                     "
                   >
                     <div class="flex flex-row">
-                      <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg
+                        class="w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -140,7 +155,12 @@
                     (click)="logout()"
                   >
                     <div class="flex flex-row">
-                      <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg
+                        class="w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path
                           stroke-linecap="round"
                           stroke-linejoin="round"
@@ -173,7 +193,12 @@
           "
           (click)="toggleNavbar()"
         >
-          <svg width="25" height="25" fill="currentColor" viewBox="0 0 1792 1792">
+          <svg
+            width="25"
+            height="25"
+            fill="currentColor"
+            viewBox="0 0 1792 1792"
+          >
             <path
               d="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
             ></path>
@@ -183,7 +208,19 @@
     </div>
   </div>
   <div class="md:hidden" [ngClass]="showMenu ? '' : 'hidden'">
-    <div class="relative z-50 px-2 pt-2 pb-3 bg-gray-100 dark:bg-gray-800 space-y-1 sm:px-3">
+    <div
+      class="
+        relative
+        z-50
+        px-2
+        pt-2
+        pb-3
+        bg-gray-100
+        dark:bg-gray-800
+        space-y-1
+        sm:px-3
+      "
+    >
       <a
         class="
           block

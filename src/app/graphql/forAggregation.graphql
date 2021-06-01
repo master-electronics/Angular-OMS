@@ -1,4 +1,7 @@
-query fetchContainerForAggregationIn($Barcode: String!, $DistributionCenter: String!) {
+query fetchContainerForAggregationIn(
+  $Barcode: String!
+  $DistributionCenter: String!
+) {
   findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
     _id
     Row

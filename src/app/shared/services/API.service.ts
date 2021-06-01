@@ -64,15 +64,24 @@ export class APIService {
   }
 
   onWriteToTable(data: unknown): Observable<unknown> {
-    return this.httprequest.post(`${environment.apiUrl}/PvxTable/writeToTable/`, data);
+    return this.httprequest.post(
+      `${environment.apiUrl}/PvxTable/writeToTable/`,
+      data
+    );
   }
 
   onGetFromTable(data: unknown): Observable<unknown> {
-    return this.httprequest.post(`${environment.apiUrl}/PvxTable/getFromTable/`, data);
+    return this.httprequest.post(
+      `${environment.apiUrl}/PvxTable/getFromTable/`,
+      data
+    );
   }
 
   onGetPickrt(data: unknown): Observable<unknown> {
-    return this.httprequest.post(`${environment.apiUrl}/PvxTable/pickrt/`, data);
+    return this.httprequest.post(
+      `${environment.apiUrl}/PvxTable/pickrt/`,
+      data
+    );
   }
 
   onVerifyITN(data: unknown): Observable<unknown> {
@@ -80,7 +89,10 @@ export class APIService {
   }
 
   onCallFunction(body: unknown): Observable<unknown> {
-    return this.httprequest.post(`${environment.apiUrl}/FrontendFunction/functionCall`, body);
+    return this.httprequest.post(
+      `${environment.apiUrl}/FrontendFunction/functionCall`,
+      body
+    );
   }
 
   onGetLogin(body: unknown): Observable<unknown> {

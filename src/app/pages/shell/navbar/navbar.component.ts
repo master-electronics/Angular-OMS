@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ElementRef, HostListener } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ElementRef,
+  HostListener,
+} from '@angular/core';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
 import { Subscription } from 'rxjs';

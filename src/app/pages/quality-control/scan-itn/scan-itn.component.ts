@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -82,7 +89,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                   Quantity: res.data.fetchPackInfoFromMerp.Quantity,
                   ROHS: res.data.fetchPackInfoFromMerp.ROHS,
                   DateCode: res.data.fetchPackInfoFromMerp.DateCode,
-                  CountryOfOrigin: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
+                  CountryOfOrigin:
+                    res.data.fetchPackInfoFromMerp.CountryOfOrigin,
                 },
               });
             } else {

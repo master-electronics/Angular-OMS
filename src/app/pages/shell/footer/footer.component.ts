@@ -10,6 +10,8 @@ export class FooterComponent implements OnInit {
   userInfo: string;
   constructor(private authenticationService: AuthenticationService) {}
   ngOnInit(): void {
-    this.authenticationService.rxjsUser.subscribe((userinfo) => (this.userInfo = userinfo));
+    this.authenticationService.rxjsUser.subscribe(
+      (userinfo) => (this.userInfo = userinfo)
+    );
   }
 }

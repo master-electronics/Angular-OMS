@@ -15,7 +15,12 @@ import { LoaderComponent } from './loader/loader.component';
     FullscreenButtonComponent,
     LoaderComponent,
   ],
-  exports: [SubmitButtonComponent, MessageBarComponent, FullscreenButtonComponent, LoaderComponent],
+  exports: [
+    SubmitButtonComponent,
+    MessageBarComponent,
+    FullscreenButtonComponent,
+    LoaderComponent,
+  ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class SharedComponentModule {}

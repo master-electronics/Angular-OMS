@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://unpkg.com/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      href="https://unpkg.com/tailwindcss@2.0.3/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body
     class="flex items-center justify-center h-screen overflow-hidden"
@@ -32,8 +35,9 @@
         --tw-rotate: 0;
         --tw-skew-x: 0;
         --tw-skew-y: 0;
-        transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y))
-          rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+        transform: translateX(var(--tw-translate-x))
+          translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
+          skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
           scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
         --tw-scale-x: 0.75;
         --tw-scale-y: 0.75;
@@ -50,7 +54,18 @@
     </style>
 
     <div class="p-0 min-h-screen bg-gray-100 sm:p-12">
-      <div class="mx-auto px-6 py-12 max-w-md bg-white border-0 shadow-lg sm:rounded-3xl">
+      <div
+        class="
+          mx-auto
+          px-6
+          py-12
+          max-w-md
+          bg-white
+          border-0
+          shadow-lg
+          sm:rounded-3xl
+        "
+      >
         <h1 class="mb-8 text-2xl font-bold">Form With Floating Labels</h1>
         <form id="form" novalidate>
           <div class="relative z-0 mb-5 w-full">
@@ -75,10 +90,14 @@
                 focus:ring-0
               "
             />
-            <label for="name" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+            <label
+              for="name"
+              class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
               >Enter name</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Name is required</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Name is required</span
+            >
           </div>
 
           <div class="relative z-0 mb-5 w-full">
@@ -102,10 +121,14 @@
                 focus:ring-0
               "
             />
-            <label for="email" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+            <label
+              for="email"
+              class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
               >Enter email address</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Email address is required</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Email address is required</span
+            >
           </div>
 
           <div class="relative z-0 mb-5 w-full">
@@ -129,14 +152,20 @@
                 focus:ring-0
               "
             />
-            <label for="password" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+            <label
+              for="password"
+              class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
               >Enter password</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Password is required</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Password is required</span
+            >
           </div>
 
           <fieldset class="relative z-0 mb-5 p-px w-full">
-            <legend class="origin-0 absolute -top-3 text-gray-500 transform scale-75">
+            <legend
+              class="origin-0 absolute -top-3 text-gray-500 transform scale-75"
+            >
               Choose an option
             </legend>
             <div class="block pb-2 pt-3 space-x-4">
@@ -171,7 +200,9 @@
                 Option 2
               </label>
             </div>
-            <span class="hidden text-red-600 text-sm" id="error">Option has to be selected</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Option has to be selected</span
+            >
           </fieldset>
 
           <div class="relative z-0 mb-5 w-full">
@@ -203,10 +234,14 @@
               <option value="4">Option 4</option>
               <option value="5">Option 5</option>
             </select>
-            <label for="select" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+            <label
+              for="select"
+              class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
               >Select an option</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Option has to be selected</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Option has to be selected</span
+            >
           </div>
 
           <div class="flex flex-row space-x-4">
@@ -232,10 +267,14 @@
                   focus:ring-0
                 "
               />
-              <label for="date" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+              <label
+                for="date"
+                class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
                 >Date</label
               >
-              <span class="hidden text-red-600 text-sm" id="error">Date is required</span>
+              <span class="hidden text-red-600 text-sm" id="error"
+                >Date is required</span
+              >
             </div>
             <div class="relative z-0 w-full">
               <input
@@ -259,10 +298,14 @@
                   focus:ring-0
                 "
               />
-              <label for="time" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+              <label
+                for="time"
+                class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
                 >Time</label
               >
-              <span class="hidden text-red-600 text-sm" id="error">Time is required</span>
+              <span class="hidden text-red-600 text-sm" id="error"
+                >Time is required</span
+              >
             </div>
           </div>
 
@@ -291,10 +334,20 @@
             <div class="absolute left-0 top-0 ml-1 mt-3 text-gray-400">$</div>
             <label
               for="money"
-              class="-z-1 origin-0 absolute left-5 top-3 text-gray-500 duration-300"
+              class="
+                -z-1
+                origin-0
+                absolute
+                left-5
+                top-3
+                text-gray-500
+                duration-300
+              "
               >Amount</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Amount is required</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Amount is required</span
+            >
           </div>
 
           <div class="relative z-0 mb-5 w-full">
@@ -319,11 +372,17 @@
                 focus:ring-0
               "
             />
-            <div class="absolute right-0 top-0 mr-4 mt-3 text-gray-400">min</div>
-            <label for="duration" class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
+            <div class="absolute right-0 top-0 mr-4 mt-3 text-gray-400">
+              min
+            </div>
+            <label
+              for="duration"
+              class="-z-1 origin-0 absolute top-3 text-gray-500 duration-300"
               >Duration</label
             >
-            <span class="hidden text-red-600 text-sm" id="error">Duration is required</span>
+            <span class="hidden text-red-600 text-sm" id="error"
+              >Duration is required</span
+            >
           </div>
 
           <button

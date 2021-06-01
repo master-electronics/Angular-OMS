@@ -55,17 +55,20 @@ export class LoginComponent implements OnDestroy {
   verifyUser() {
     this.isLoading = true;
     this.message = '';
-    this.authenticationService.login(this.f.username.value, this.f.password.value).subscribe({
-      next: () => {
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
-        this.router.navigateByUrl(returnUrl);
-      },
-      error: (err) => {
-        this.message = err.error;
-        this.messageType = 'error';
-        this.isLoading = false;
-      },
-    });
+    this.authenticationService
+      .login(this.f.username.value, this.f.password.value)
+      .subscribe({
+        next: () => {
+          const returnUrl =
+            this.route.snapshot.queryParams['returnUrl'] || '/home';
+          this.router.navigateByUrl(returnUrl);
+        },
+        error: (err) => {
+          this.message = err.error;
+          this.messageType = 'error';
+          this.isLoading = false;
+        },
+      });
   }
 
   ngOnDestroy() {

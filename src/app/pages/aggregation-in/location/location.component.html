@@ -35,7 +35,12 @@
     </div>
 
     <!-- Location input form -->
-    <form focusInvalidInput [formGroup]="locationForm" class="mt-2 md:mt-6" (ngSubmit)="onSubmit()">
+    <form
+      focusInvalidInput
+      [formGroup]="locationForm"
+      class="mt-2 md:mt-6"
+      (ngSubmit)="onSubmit()"
+    >
       <div class="z-0 w-full relative mt-4">
         <input
           oninput="this.value = this.value.toUpperCase()"
@@ -51,10 +56,17 @@
         <label for="location" class="float-label"> location# </label>
         <div
           class="text-red-500 text-sm absolute"
-          *ngIf="this.f.location.invalid && (this.f.location.dirty || this.f.location.touched)"
+          *ngIf="
+            this.f.location.invalid &&
+            (this.f.location.dirty || this.f.location.touched)
+          "
         >
-          <div *ngIf="this.f.location.errors.required">Location is required.</div>
-          <div *ngIf="this.f.location.errors.regex">Location Example: 01AG0101A00 or 50-01-01</div>
+          <div *ngIf="this.f.location.errors.required">
+            Location is required.
+          </div>
+          <div *ngIf="this.f.location.errors.regex">
+            Location Example: 01AG0101A00 or 50-01-01
+          </div>
         </div>
       </div>
       <div class="mt-6 md:mt-10">
@@ -67,7 +79,11 @@
         ></form-button>
       </div>
       <div class="mt-2 md:mt-6">
-        <message-bar [message]="message" [type]="messageType" class="md:mt-4"></message-bar>
+        <message-bar
+          [message]="message"
+          [type]="messageType"
+          class="md:mt-4"
+        ></message-bar>
       </div>
     </form>
 
@@ -93,10 +109,18 @@
         </div>
       </div>
       <div class="text-black grid grid-cols-4 dark:text-white">
-        <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[6].key }}</span>
-        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[6].value }}</span>
-        <span class="justify-self-end self-center mr-1 text-xs">{{ ITNInfo[7].key }}</span>
-        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{ ITNInfo[7].value }}</span>
+        <span class="justify-self-end self-center mr-1 text-xs">{{
+          ITNInfo[6].key
+        }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{
+          ITNInfo[6].value
+        }}</span>
+        <span class="justify-self-end self-center mr-1 text-xs">{{
+          ITNInfo[7].key
+        }}</span>
+        <span class="text-blue-600 col-span-3 ml-1 font-semibold">{{
+          ITNInfo[7].value
+        }}</span>
       </div>
     </div>
   </div>

@@ -8,8 +8,18 @@ import { CustomerInfoComponent } from './customer-info/customer-info.component';
 import { SelectListsComponent } from './select-lists/select-lists.component';
 import { OrderEntryRoutingModule } from './order-entry-routing.module';
 @NgModule({
-  declarations: [OrderEntryComponent, TypeInComponent, CustomerInfoComponent, SelectListsComponent],
-  imports: [CommonModule, OrderEntryRoutingModule, FormsModule, ReactiveFormsModule],
+  declarations: [
+    OrderEntryComponent,
+    TypeInComponent,
+    CustomerInfoComponent,
+    SelectListsComponent,
+  ],
+  imports: [
+    CommonModule,
+    OrderEntryRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   bootstrap: [OrderEntryComponent],
 })
 export class OrderEntryModule {}

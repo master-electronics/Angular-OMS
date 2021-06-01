@@ -22,8 +22,12 @@
             (this.f.containerNumber.dirty || this.f.containerNumber.touched)
           "
         >
-          <div *ngIf="this.f.containerNumber.errors.required">Container is required.</div>
-          <div *ngIf="this.f.containerNumber.errors.pattern">Container Example: 50-01-01</div>
+          <div *ngIf="this.f.containerNumber.errors.required">
+            Container is required.
+          </div>
+          <div *ngIf="this.f.containerNumber.errors.pattern">
+            Container Example: 50-01-01
+          </div>
         </div>
       </div>
 

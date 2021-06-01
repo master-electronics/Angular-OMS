@@ -23,11 +23,16 @@
         <div
           class="text-red-500 text-sm absolute"
           *ngIf="
-            this.f.orderNumber.invalid && (this.f.orderNumber.dirty || this.f.orderNumber.touched)
+            this.f.orderNumber.invalid &&
+            (this.f.orderNumber.dirty || this.f.orderNumber.touched)
           "
         >
-          <div *ngIf="this.f.orderNumber.errors.required">Order is required.</div>
-          <div *ngIf="this.f.orderNumber.errors.pattern">Order Example: PHRS006002</div>
+          <div *ngIf="this.f.orderNumber.errors.required">
+            Order is required.
+          </div>
+          <div *ngIf="this.f.orderNumber.errors.pattern">
+            Order Example: PHRS006002
+          </div>
         </div>
       </div>
       <div class="mt-6 md:mt-10">

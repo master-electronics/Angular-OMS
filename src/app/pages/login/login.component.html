@@ -12,7 +12,9 @@
   "
 >
   <div class="max-w-lg px-6 lg:w-5/12 md:w-8/12">
-    <div class="flex flex-col w-full mb-6 bg-white border-0 rounded-lg shadow-lg">
+    <div
+      class="flex flex-col w-full mb-6 bg-white border-0 rounded-lg shadow-lg"
+    >
       <!-- title of login form -->
       <div class="px-6 py-6 mb-0 rounded-t">
         <div class="mb-3 text-center">
@@ -37,9 +39,14 @@
             <label for="username" class="float-label"> USERNAME </label>
             <div
               class="text-red-500 text-sm"
-              *ngIf="this.f.username.invalid && (this.f.username.dirty || this.f.username.touched)"
+              *ngIf="
+                this.f.username.invalid &&
+                (this.f.username.dirty || this.f.username.touched)
+              "
             >
-              <div *ngIf="this.f.username.errors.required">Username is required.</div>
+              <div *ngIf="this.f.username.errors.required">
+                Username is required.
+              </div>
             </div>
           </div>
           <div class="z-0 w-full relative mt-4">
@@ -55,9 +62,14 @@
             <label for="password" class="float-label"> PASSWORD </label>
             <div
               class="text-red-500 text-sm"
-              *ngIf="this.f.password.invalid && (this.f.password.dirty || this.f.password.touched)"
+              *ngIf="
+                this.f.password.invalid &&
+                (this.f.password.dirty || this.f.password.touched)
+              "
             >
-              <div *ngIf="this.f.password.errors.required">Password is required.</div>
+              <div *ngIf="this.f.password.errors.required">
+                Password is required.
+              </div>
             </div>
           </div>
           <!-- show password check box -->
@@ -67,7 +79,9 @@
                 type="checkbox"
                 class="w-5 h-5 ml-1 text-gray-800 form-checkbox"
                 (click)="toggleShowPassword()"
-              /><span class="ml-2 text-sm font-semibold text-gray-700">Show password</span></label
+              /><span class="ml-2 text-sm font-semibold text-gray-700"
+                >Show password</span
+              ></label
             >
           </div>
           <!-- submit button -->

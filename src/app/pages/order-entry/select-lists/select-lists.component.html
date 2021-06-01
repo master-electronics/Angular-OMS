@@ -1,7 +1,10 @@
 <form [formGroup]="listGroup" class="flex flex-wrap">
   <div class="w-full px-4 lg:mt-0 xl:w-1/4 lg:w-1/2">
     <label class="block mb-2 text-xs font-bold">Order Type</label>
-    <select class="block w-full border rounded appearance-none" [formControl]="orderType">
+    <select
+      class="block w-full border rounded appearance-none"
+      [formControl]="orderType"
+    >
       <option *ngFor="let node of orderTypeList" [ngValue]="node.value">
         {{ node.view }}
       </option>

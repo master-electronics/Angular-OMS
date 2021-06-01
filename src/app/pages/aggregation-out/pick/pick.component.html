@@ -26,8 +26,12 @@
             (this.f.containerNumber.dirty || this.f.containerNumber.touched)
           "
         >
-          <div *ngIf="this.f.containerNumber.errors.required">Container is required.</div>
-          <div *ngIf="this.f.containerNumber.errors.pattern">Container Example: 50-01-01</div>
+          <div *ngIf="this.f.containerNumber.errors.required">
+            Container is required.
+          </div>
+          <div *ngIf="this.f.containerNumber.errors.pattern">
+            Container Example: 50-01-01
+          </div>
         </div>
       </div>
       <div class="mt-6 md:mt-10">
@@ -51,7 +55,10 @@
         <th>Barcode</th>
       </thead>
       <tbody>
-        <tr *ngFor="let container of containerList" class="grid grid-cols-3 gap-3">
+        <tr
+          *ngFor="let container of containerList"
+          class="grid grid-cols-3 gap-3"
+        >
           <td>{{ container.InternalTrackingNumber }}</td>
           <td>
             {{
@@ -63,7 +70,10 @@
           </td>
           <td>{{ container.Container.Barcode }}</td>
         </tr>
-        <tr *ngFor="let container of selectedList" class="text-green-500 grid grid-cols-3 gap-3">
+        <tr
+          *ngFor="let container of selectedList"
+          class="text-green-500 grid grid-cols-3 gap-3"
+        >
           <td>{{ container.InternalTrackingNumber }}</td>
           <td>
             {{

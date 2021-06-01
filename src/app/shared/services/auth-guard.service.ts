@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  Router,
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from './authentication.service';
 @Injectable({
@@ -14,7 +19,10 @@ export class AuthGuard implements CanActivate {
     //
   }
 
-  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(
+    _route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): boolean {
     const userinfo = this.cookieService.get('user');
     if (userinfo) {
       if (JSON.parse(userinfo).username === this.authentication.username) {

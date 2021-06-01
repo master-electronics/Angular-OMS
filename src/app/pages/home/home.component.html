@@ -2,10 +2,21 @@
   <div class="flex flex-col md:mt-6 ...">
     <!-- New feature link  -->
     <div class="w-full md:w-1/2" *ngIf="!isMobile">
-      <h1 class="text-2xl font-semibold text-black uppercase dark:text-white md:text-3xl">
+      <h1
+        class="
+          text-2xl
+          font-semibold
+          text-black
+          uppercase
+          dark:text-white
+          md:text-3xl
+        "
+      >
         Web-based Information Management System
       </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-300">New featuer and update document.</p>
+      <p class="mt-2 text-gray-600 dark:text-gray-300">
+        New featuer and update document.
+      </p>
       <button
         class="
           px-3
@@ -27,36 +38,80 @@
     </div>
     <!-- Entery points for different model -->
     <div class="container mx-auto mt-8">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4">
+      <div
+        class="
+          grid grid-cols-1
+          gap-6
+          sm:grid-cols-2
+          md:grid-cols-3
+          2xl:grid-cols-4
+        "
+      >
         <div>
-          <img class="w-10" src="../../../assets/icon/warehouse.svg" alt="WMS" />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">WMS</h1>
+          <img
+            class="w-10"
+            src="../../../assets/icon/warehouse.svg"
+            alt="WMS"
+          />
+          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
+            WMS
+          </h1>
           <div class="flex flex-col">
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/agin"> Aggregation IN </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/agout">
+            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/agin">
+              Aggregation IN
+            </a>
+            <a
+              class="mt-2 text-gray-600 dark:text-gray-300"
+              routerLink="/agout"
+            >
               Aggregation OUT
             </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/qc"> Quality Control </a>
+            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/qc">
+              Quality Control
+            </a>
           </div>
         </div>
         <div>
-          <img class="w-10" src="../../../assets/icon/sales_department.svg" alt="sales" />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">Sales</h1>
+          <img
+            class="w-10"
+            src="../../../assets/icon/sales_department.svg"
+            alt="sales"
+          />
+          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
+            Sales
+          </h1>
           <div class="flex flex-col">
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/pickinquiry">
+            <a
+              class="mt-2 text-gray-600 dark:text-gray-300"
+              routerLink="/pickinquiry"
+            >
               Pick Inquiry
             </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/orderentry">
+            <a
+              class="mt-2 text-gray-600 dark:text-gray-300"
+              routerLink="/orderentry"
+            >
               Order Entry
             </a>
           </div>
         </div>
         <div>
-          <img class="w-10" src="../../../assets/icon/sales_department.svg" alt="sales" />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">Test</h1>
+          <img
+            class="w-10"
+            src="../../../assets/icon/sales_department.svg"
+            alt="sales"
+          />
+          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
+            Test
+          </h1>
           <div class="flex flex-col">
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/test"> Serverless Sql </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/orderentry">
+            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/test">
+              Serverless Sql
+            </a>
+            <a
+              class="mt-2 text-gray-600 dark:text-gray-300"
+              routerLink="/orderentry"
+            >
               Postgresql
             </a>
           </div>

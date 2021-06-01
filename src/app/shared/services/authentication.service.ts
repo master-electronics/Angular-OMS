@@ -11,7 +11,9 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthenticationService implements OnInit {
-  private rxjsUserSubject = new BehaviorSubject<string>(this.cookieService.get('user'));
+  private rxjsUserSubject = new BehaviorSubject<string>(
+    this.cookieService.get('user')
+  );
   public rxjsUser: Observable<string> = this.rxjsUserSubject.asObservable();
 
   constructor(

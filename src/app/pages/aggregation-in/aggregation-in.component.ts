@@ -1,5 +1,17 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -15,7 +27,9 @@ import { ApolloQueryResult } from '@apollo/client/core';
   selector: 'aggregation-in',
   templateUrl: './aggregation-in.component.html',
 })
-export class AggregationInComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AggregationInComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   title = 'Aggregation In';
   isLoading = false;
   messageType = 'error';
@@ -64,7 +78,10 @@ export class AggregationInComponent implements OnInit, OnDestroy, AfterViewInit 
     this.subscription.add(
       this.verfiyContainer
         .watch(
-          { Barcode: this.containerForm.get('containerNumber').value, DistributionCenter: 'PH' },
+          {
+            Barcode: this.containerForm.get('containerNumber').value,
+            DistributionCenter: 'PH',
+          },
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
@@ -88,7 +105,9 @@ export class AggregationInComponent implements OnInit, OnDestroy, AfterViewInit 
     );
   }
 
-  checkVaild(result: ApolloQueryResult<FetchContainerForAggregationInQuery>): string {
+  checkVaild(
+    result: ApolloQueryResult<FetchContainerForAggregationInQuery>
+  ): string {
     const container = result.data.findContainer[0];
     if (container === undefined) return 'Container not found!';
     // only accepte mobile container
@@ -103,7 +122,9 @@ export class AggregationInComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     // if pass all naveigate to next page
     const isRelocation = container.Row === 'AG';
-    const ITNList = container.INVENTORies.map((node) => node.InternalTrackingNumber);
+    const ITNList = container.INVENTORies.map(
+      (node) => node.InternalTrackingNumber
+    );
     this.router.navigate(['agin/location'], {
       queryParams: {
         isRelocation: isRelocation,

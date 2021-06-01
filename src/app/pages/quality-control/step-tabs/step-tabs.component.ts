@@ -13,6 +13,8 @@ export class StepTabsComponent implements OnInit {
   }
   ngOnInit(): void {
     //
-    this.qcService.activeTab.subscribe((response) => (this.activeTab = response));
+    this.qcService.activeTab.subscribe(
+      (response) => (this.activeTab = response)
+    );
   }
 }

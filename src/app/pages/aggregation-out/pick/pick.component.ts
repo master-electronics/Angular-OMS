@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -30,7 +37,10 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedList = [];
 
   containerForm = this.fb.group({
-    containerNumber: ['', [Validators.required, Validators.pattern(BinContainerRegex)]],
+    containerNumber: [
+      '',
+      [Validators.required, Validators.pattern(BinContainerRegex)],
+    ],
   });
   get f(): { [key: string]: AbstractControl } {
     return this.containerForm.controls;

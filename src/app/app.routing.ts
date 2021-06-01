@@ -27,12 +27,16 @@ const routes: Routes = [
       {
         path: 'testorderentry',
         loadChildren: () =>
-          import('./pages/order-entry/order-entry.module').then((m) => m.OrderEntryModule),
+          import('./pages/order-entry/order-entry.module').then(
+            (m) => m.OrderEntryModule
+          ),
       },
       {
         path: 'agin',
         loadChildren: () =>
-          import('./pages/aggregation-in/aggregation-in.module').then((m) => m.AggregationInModule),
+          import('./pages/aggregation-in/aggregation-in.module').then(
+            (m) => m.AggregationInModule
+          ),
       },
       {
         path: 'agout',

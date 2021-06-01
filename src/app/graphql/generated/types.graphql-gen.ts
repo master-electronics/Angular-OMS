@@ -1,7 +1,11 @@
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -59,7 +63,6 @@ export type ContainerUpdate = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
 };
-
 
 export type Equipment = {
   __typename?: 'Equipment';
@@ -124,7 +127,6 @@ export type Mutation = {
   updateOrderStatus: Response;
 };
 
-
 export type MutationAggregationInArgs = {
   qcContainer: Scalars['Int'];
   ITNList: Array<Scalars['String']>;
@@ -135,18 +137,15 @@ export type MutationAggregationInArgs = {
   locationList?: Maybe<Array<Scalars['String']>>;
 };
 
-
 export type MutationUpdateContainerLocationArgs = {
   _id: Scalars['Int'];
   Container: ContainerUpdate;
 };
 
-
 export type MutationUpdateInventoryArgs = {
   _id: Scalars['Int'];
   Inventory: InventoryUpdate;
 };
-
 
 export type MutationUpdateOrderStatusArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -212,18 +211,15 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
 
-
 export type QueryVerifyContainerArgs = {
   Barcode: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
-
 export type QueryFetchInventoryInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
-
 
 export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -232,13 +228,11 @@ export type QueryFindContainerArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
-
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
-
 
 export type QueryFindOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
@@ -249,18 +243,15 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
-
 export type QueryFetchPackInfoFromMerpArgs = {
   InternalTrackingNumber: Scalars['String'];
 };
-
 
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
-
 
 export type QueryFetchProductInfoFromMerpArgs = {
   PartNumber: Scalars['String'];

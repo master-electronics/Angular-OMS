@@ -51,7 +51,8 @@ export class PickupInquiryComponent implements OnInit {
         KPISHIPDATE: [
           {
             key: 'M1PICKRT.LocationCode$+M1PICKRT.OrderNumber$+M1PICKRT.NOSINumber$',
-            endKey: 'M1PICKRT.LocationCode$+M1PICKRT.OrderNumber$+M1PICKRT.NOSINumber$',
+            endKey:
+              'M1PICKRT.LocationCode$+M1PICKRT.OrderNumber$+M1PICKRT.NOSINumber$',
             recordCount: '1',
             keynumber: '0',
             fields: 'OrderNumber,TimeStamp',
@@ -118,10 +119,12 @@ export class PickupInquiryComponent implements OnInit {
     return num1 - num2;
   }
   timeFormater(params: any): string {
-    return `${params.value.slice(0, 4)}-${params.value.slice(4, 6)}-${params.value.slice(
-      6,
-      8
-    )} ${params.value.slice(8, 10)}:${Math.floor(parseInt(params.value.slice(11), 10) * 0.6)
+    return `${params.value.slice(0, 4)}-${params.value.slice(
+      4,
+      6
+    )}-${params.value.slice(6, 8)} ${params.value.slice(8, 10)}:${Math.floor(
+      parseInt(params.value.slice(11), 10) * 0.6
+    )
       .toString()
       .padStart(2, '0')}`;
   }
@@ -163,7 +166,9 @@ export class PickupInquiryComponent implements OnInit {
 
   autoSizeAll(skipHeader: boolean): void {
     const allColumnIds = [];
-    this.gridColumnApi.getAllColumns().forEach((column) => allColumnIds.push(column.colId));
+    this.gridColumnApi
+      .getAllColumns()
+      .forEach((column) => allColumnIds.push(column.colId));
     this.gridColumnApi.autoSizeColumns(allColumnIds, skipHeader);
   }
 

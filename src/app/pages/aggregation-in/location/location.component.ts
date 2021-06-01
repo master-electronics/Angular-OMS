@@ -1,10 +1,26 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { FetchInventoryInfoGQL, AggregationInGQL } from '../../../graphql/aggregation.graphql-gen';
+import {
+  FetchInventoryInfoGQL,
+  AggregationInGQL,
+} from '../../../graphql/aggregation.graphql-gen';
 import { BinLocationRegex, BinContainerRegex } from '../../../shared/dataRegex';
 
 @Component({
@@ -74,12 +90,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.binContainer = this.route.snapshot.queryParams['Bin'];
     (this.ITNList === undefined || this.qcContainer === undefined) &&
       this.router.navigate(['agin']);
-    this.isRelocation = this.route.snapshot.queryParams['isRelocation'] === 'true';
+    this.isRelocation =
+      this.route.snapshot.queryParams['isRelocation'] === 'true';
     if (this.ITNList[0].length !== 10) {
       this.ITNList = [this.ITNList];
     }
     this.isRelocation
-      ? ((this.title = `AGIN: ${this.binContainer}`), (this.buttonLabel = 'Relocate'))
+      ? ((this.title = `AGIN: ${this.binContainer}`),
+        (this.buttonLabel = 'Relocate'))
       : (this.title = `AGIN: ${this.ITNList}`);
     this.commonService.changeTitle(this.title);
 
@@ -128,7 +146,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(
           (result) => {
             if (result.data.aggregationIn.success) {
-              let resultMessage = `Placed in ${this.locationForm.get('location').value}.`;
+              let resultMessage = `Placed in ${
+                this.locationForm.get('location').value
+              }.`;
               let resultType = `info`;
               if (this.isLastITN) {
                 resultMessage = resultMessage.concat(
@@ -175,7 +195,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             result.error && (this.message = result.error.message);
             const data = result.data.fetchInventoryInfo;
             this.ITNInfo[0].value = data.OrderNumber;
-            this.ITNInfo[1].value = data.PriorityPinkPaper === '1' ? 'Yes' : 'No';
+            this.ITNInfo[1].value =
+              data.PriorityPinkPaper === '1' ? 'Yes' : 'No';
             this.ITNInfo[2].value = data.CustomerNumber;
             this.ITNInfo[3].value = `${data.Quantity}`;
             this.ITNInfo[4].value = `${data.ITNCount} of ${data.ITNTotal}`;
@@ -193,7 +214,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 .reverse()
                 .map((element) => {
                   if (element) {
-                    this.locationsSet.size < 3 && this.locationsSet.add(element);
+                    this.locationsSet.size < 3 &&
+                      this.locationsSet.add(element);
                   }
                 });
               if (this.locationsSet.size !== 0) {

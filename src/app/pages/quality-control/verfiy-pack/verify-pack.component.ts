@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -39,16 +46,21 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   // set autocomplete input box
   countryData = Countries;
   COOkeyword = 'name';
-  COOFilter(countryData: { _id: number; name: string }[], query: string) {
-    let result = [];
+  COOFilter(
+    countryData: { _id: number; name: string }[],
+    query: string
+  ): string[] {
+    const result = [];
     if (query.length < 3) {
       countryData.map((country) => {
-        if (query.toUpperCase() === country.name.substring(0, query.length)) result.push(country);
+        if (query.toUpperCase() === country.name.substring(0, query.length))
+          result.push(country);
       });
       return result;
     }
     countryData.map((country) => {
-      if (country.name.substring(4, 4 + query.length) === query.toUpperCase()) result.push(country);
+      if (country.name.substring(4, 4 + query.length) === query.toUpperCase())
+        result.push(country);
     });
     return result;
   }
@@ -69,7 +81,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   // form group
   verifyPack = this.fb.group({
     quantity: ['', [Validators.required]],
-    dateCode: ['', [Validators.required, Validators.pattern(this.dateCodeRegex)]],
+    dateCode: [
+      '',
+      [Validators.required, Validators.pattern(this.dateCodeRegex)],
+    ],
     countMethods: ['', [Validators.required]],
     countryOfOrigin: ['', [Validators.required]],
     ROHS: ['', [Validators.required]],
@@ -89,7 +104,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('quantity') quantityInput: ElementRef;
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.qcService.changeTab(2);
     this.ITN = this.route.snapshot.queryParams['ITN'];
     this.PRC = this.route.snapshot.queryParams['PRC'];
@@ -103,7 +118,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     let country = this.countryData.find(
       (element) => element.name.substring(0, 2) === this.CountryOfOrigin
     );
-    country ? 0 : (country = this.countryData.find((element) => element.name === 'UNKNOWN'));
+    country
+      ? 0
+      : (country = this.countryData.find(
+          (element) => element.name === 'UNKNOWN'
+        ));
     this.verifyPack.setValue({
       quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
@@ -115,7 +134,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.fetchProductInfo();
   }
 
-  async fetchProductInfo() {
+  async fetchProductInfo(): Promise<void> {
     this.subscription.add(
       this.fetchProductInfoFromMerp
         .watch({ PartNumber: this.PartNumber, ProductCode: this.PRC })
@@ -124,8 +143,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             console.log(res);
 
             if (res) {
-              this.MICPartNumber = res.data.fetchProductInfoFromMerp.MICPartNumber;
-              this.HazardMaterialLevel = res.data.fetchProductInfoFromMerp.HazardMaterialLevel;
+              this.MICPartNumber =
+                res.data.fetchProductInfoFromMerp.MICPartNumber;
+              this.HazardMaterialLevel =
+                res.data.fetchProductInfoFromMerp.HazardMaterialLevel;
               this.imgURL = `${this.imgURL}${this.MICPartNumber}.jpg`;
               this.productURL = `${this.productURL}${this.PartNumber}-${this.MICPartNumber}.html`;
               this.specSheetURL = `${this.specSheetURL}${this.PartNumber}-${this.MICPartNumber}/`;

@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
@@ -22,7 +29,9 @@ const expireTime = 180000; // 3min
   selector: 'aggregation-out',
   templateUrl: './aggregation-out.component.html',
 })
-export class AggregationOutComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AggregationOutComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   title = 'Aggregation Out';
   isLoading = false;
   messageType = 'error';
@@ -32,7 +41,10 @@ export class AggregationOutComponent implements OnInit, OnDestroy, AfterViewInit
   orderStatus: string;
 
   orderForm = this.fb.group({
-    orderNumber: ['', [Validators.required, Validators.pattern(OrderNumberRegex)]],
+    orderNumber: [
+      '',
+      [Validators.required, Validators.pattern(OrderNumberRegex)],
+    ],
   });
   get f(): { [key: string]: AbstractControl } {
     return this.orderForm.controls;
@@ -83,7 +95,9 @@ export class AggregationOutComponent implements OnInit, OnDestroy, AfterViewInit
               this.orderStatus = chosenOrder.Status.Name;
               this.orderForm.patchValue({
                 orderNumber:
-                  chosenOrder.DistributionCenter + chosenOrder.OrderNumber + chosenOrder.NOSINumber,
+                  chosenOrder.DistributionCenter +
+                  chosenOrder.OrderNumber +
+                  chosenOrder.NOSINumber,
               });
               return this.updateOrderStatus.mutate(
                 {
@@ -112,13 +126,21 @@ export class AggregationOutComponent implements OnInit, OnDestroy, AfterViewInit
     );
   }
 
-  chooseOneOrder(result: ApolloQueryResult<PickOrdersForAggregationOutQuery>): OrderInfoFragment {
+  chooseOneOrder(
+    result: ApolloQueryResult<PickOrdersForAggregationOutQuery>
+  ): OrderInfoFragment {
     if (result.data.agOutPicking[0]) {
-      if (Date.now() - Number(result.data.agOutPicking[0].LastUpdated) > expireTime * 10)
+      if (
+        Date.now() - Number(result.data.agOutPicking[0].LastUpdated) >
+        expireTime * 10
+      )
         return result.data.agOutPicking[0];
     }
     if (result.data.agOutPresent[0]) {
-      if (Date.now() - Number(result.data.agOutPresent[0].LastUpdated) > expireTime)
+      if (
+        Date.now() - Number(result.data.agOutPresent[0].LastUpdated) >
+        expireTime
+      )
         return result.data.agOutPresent[0];
     }
     if (result.data.agInDone[0]) {
@@ -158,7 +180,9 @@ export class AggregationOutComponent implements OnInit, OnDestroy, AfterViewInit
             }
             if (result.data.updateOrderStatus.success) {
               this.router.navigate(['/agout/pick'], {
-                queryParams: { orderNumber: this.orderForm.get('orderNumber').value },
+                queryParams: {
+                  orderNumber: this.orderForm.get('orderNumber').value,
+                },
               });
             } else {
               this.messageType = 'error';
