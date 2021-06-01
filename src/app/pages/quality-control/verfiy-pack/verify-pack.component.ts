@@ -163,7 +163,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.quantityInput.nativeElement.select();
   }
 
-  onSubmit() {
+  onSubmit(): void {
     //
   }
 
@@ -175,7 +175,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isModalHidden = !this.isModalHidden;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 }

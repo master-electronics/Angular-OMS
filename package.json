@@ -75,7 +75,7 @@
     "webpack-bundle-analyzer": "^4.4.0"
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --fix",
-    "*.{ts,css,md}": "prettier --write"
+    "*.{ts,js,html}": "eslint --cache --fix",
+    "*.{ts,js,css,md,html}": "prettier --write"
   }
 }
