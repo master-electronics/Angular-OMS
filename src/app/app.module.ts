@@ -11,6 +11,7 @@ import { PlatformModule } from '@angular/cdk/platform';
 import { AppRoutingModule } from './app.routing';
 import { SharedComponentModule } from './components/shared-component.module';
 import { SharedUtilityModule } from './shared/shared-utility.module';
+import { GoogleTagManagerModule } from 'angular-google-tag-manager';
 
 import { AppComponent } from './app.component';
 import { AthTokenInterceptor } from './shared/interceptors/ath-token.interceptor';
@@ -48,6 +49,11 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     SharedComponentModule,
     SharedUtilityModule,
+    GoogleTagManagerModule.forRoot({
+      id: environment.GTM_ID,
+      //gtm_auth: environment.GTM_AUTH,
+      //gtm_preview: environment.GTM_ENV,
+    }),
   ],
   providers: [
     {
