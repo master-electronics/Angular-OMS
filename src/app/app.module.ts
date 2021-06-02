@@ -50,9 +50,7 @@ import { environment } from '../environments/environment';
     SharedComponentModule,
     SharedUtilityModule,
     GoogleTagManagerModule.forRoot({
-      id: environment.GTM_ID,
-      //gtm_auth: environment.GTM_AUTH,
-      //gtm_preview: environment.GTM_ENV,
+      id: 'GTM-K9N5B2V',
     }),
   ],
   providers: [

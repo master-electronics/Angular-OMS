@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:3000',
+  apiUrl: 'http://localhost:3000',
   GTM_ID: 'GTM-K9N5B2V',
 };
 

@@ -19,10 +19,10 @@ export class AppComponent {
     private router: Router,
     private gtmService: GoogleTagManagerService
   ) {
-    router.events.subscribe((routerEvent: RouterEvent) => {
+    this.router.events.subscribe((routerEvent: RouterEvent) => {
       this.checkRouterEvent(routerEvent);
     });
-    router.events.forEach((item) => {
+    this.router.events.forEach((item) => {
       if (item instanceof NavigationEnd) {
         const gtmTag = {
           event: 'page',
