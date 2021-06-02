@@ -1,0 +1,6 @@
+nginx:
+    container_name: nginx
+    build: .
+    restart: always
+    ports:
+        - "4000:4000" # for testing purposes, (un)comment as required
