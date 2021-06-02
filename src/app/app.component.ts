@@ -7,15 +7,30 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
+import { GoogleTagManagerService } from 'angular-google-tag-manager';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
 export class AppComponent {
   isLoading = false;
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private gtmService: GoogleTagManagerService
+  ) {
     router.events.subscribe((routerEvent: RouterEvent) => {
       this.checkRouterEvent(routerEvent);
+    });
+    router.events.forEach((item) => {
+      if (item instanceof NavigationEnd) {
+        const gtmTag = {
+          event: 'page',
+          pageName: item.url,
+        };
+
+        this.gtmService.pushTag(gtmTag);
+      }
     });
   }
 
