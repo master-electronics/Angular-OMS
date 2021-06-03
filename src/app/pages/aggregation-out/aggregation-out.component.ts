@@ -71,7 +71,7 @@ export class AggregationOutComponent
   }
 
   ngAfterViewInit(): void {
-    setInterval(() => {
+    setTimeout(() => {
       this.orderInpt.nativeElement.select();
     }, 10);
   }

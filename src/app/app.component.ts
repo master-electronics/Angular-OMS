@@ -25,7 +25,7 @@ export class AppComponent {
     this.router.events.forEach((item) => {
       if (item instanceof NavigationEnd) {
         const gtmTag = {
-          event: 'page',
+          event: 'pageNav',
           pageName: item.url,
         };
 

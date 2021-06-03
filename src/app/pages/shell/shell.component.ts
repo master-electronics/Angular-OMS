@@ -15,8 +15,7 @@ export class ShellComponent implements AfterViewInit {
       key: 'alt + h',
       preventDefault: true,
       allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: (e) => {
-        console.log('clicked ', e.key);
+      command: () => {
         this.router.navigate(['/home']);
       },
     });

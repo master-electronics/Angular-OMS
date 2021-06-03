@@ -63,7 +63,7 @@ export class AggregationInComponent
     this.message = this.route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
-    setInterval(() => {
+    setTimeout(() => {
       this.containerInput.nativeElement.select();
     }, 10);
   }

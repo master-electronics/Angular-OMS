@@ -44,12 +44,12 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qcService.changeTab(1);
   }
   ngAfterViewInit(): void {
-    setInterval(() => {
+    setTimeout(() => {
       this.ITNInput.nativeElement.select();
     }, 10);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.message = '';
     if (this.ITNForm.invalid) {
       if (this.ITNForm.get('ITN').errors.required)
@@ -63,7 +63,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.verfiyITN();
   }
 
-  verfiyITN() {
+  verfiyITN(): void {
     this.isLoading = true;
     this.subscription.add(
       this.fetchPcakInfo
@@ -111,7 +111,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 }
