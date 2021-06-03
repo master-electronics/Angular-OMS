@@ -38,13 +38,15 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('ITN') ITNInput: ElementRef;
   @ViewChild('ITNError') ITNError: ElementRef;
-  ngOnInit() {
+  ngOnInit(): void {
     this.messageType = this.route.snapshot.queryParams['result'];
     this.message = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(1);
   }
-  ngAfterViewInit() {
-    this.ITNInput.nativeElement.select();
+  ngAfterViewInit(): void {
+    setInterval(() => {
+      this.ITNInput.nativeElement.select();
+    }, 10);
   }
 
   onSubmit() {

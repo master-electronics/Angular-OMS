@@ -24,7 +24,6 @@ export class HomeComponent implements AfterViewInit {
         label: 'Quick Access',
         description: 'Quality Control',
         command: (e) => {
-          console.log('clicked ', e.key);
           this.router.navigate(['/qc']);
         },
       },
@@ -33,7 +32,6 @@ export class HomeComponent implements AfterViewInit {
         label: 'Quick Access',
         description: 'Aggregation In',
         command: (e) => {
-          console.log('clicked ', e.key);
           this.router.navigate(['/agin']);
         },
       },
@@ -42,7 +40,6 @@ export class HomeComponent implements AfterViewInit {
         label: 'Quick Access',
         description: 'Aggregation Out',
         command: (e) => {
-          console.log('clicked ', e.key);
           this.router.navigate(['/agout']);
         },
       },

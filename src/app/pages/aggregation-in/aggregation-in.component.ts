@@ -22,11 +22,6 @@ import {
   FetchContainerForAggregationInQuery,
 } from '../../graphql/forAggregation.graphql-gen';
 import { ApolloQueryResult } from '@apollo/client/core';
-import {
-  ShortcutInput,
-  ShortcutEventOutput,
-  KeyboardShortcutsComponent,
-} from 'ng-keyboard-shortcuts';
 
 @Component({
   selector: 'aggregation-in',
@@ -68,7 +63,9 @@ export class AggregationInComponent
     this.message = this.route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
-    this.containerInput.nativeElement.select();
+    setInterval(() => {
+      this.containerInput.nativeElement.select();
+    }, 10);
   }
 
   onSubmit(): void {

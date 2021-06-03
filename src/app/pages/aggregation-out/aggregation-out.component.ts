@@ -71,7 +71,9 @@ export class AggregationOutComponent
   }
 
   ngAfterViewInit(): void {
-    this.orderInpt.nativeElement.select();
+    setInterval(() => {
+      this.orderInpt.nativeElement.select();
+    }, 10);
   }
 
   fechOrderInfo(): void {
