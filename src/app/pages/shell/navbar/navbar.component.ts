@@ -19,7 +19,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   dark = false;
   username: string;
   title: string;
-  titleSubscription: Subscription;
 
   toggleNavbar(): void {
     this.showMenu = !this.showMenu;
@@ -38,6 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
+  private subscription: Subscription = new Subscription();
   constructor(
     private authenticationService: AuthenticationService,
     private commonService: CommonService,
@@ -47,16 +47,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.titleSubscription = this.commonService.rxjsTitle.subscribe(
-      (resData) => (this.title = resData)
+    this.subscription.add(
+      this.commonService.rxjsTitle.subscribe(
+        (resData) => (this.title = resData)
+      )
     );
-    this.authenticationService.rxjsUser.subscribe((user) => {
-      if (user) {
-        this.username = JSON.parse(user).username;
-      } else {
-        this.username = null;
-      }
-    });
+    this.subscription.add(
+      this.authenticationService.rxjsUser.subscribe((user) => {
+        if (user) {
+          this.username = JSON.parse(user).username;
+        } else {
+          this.username = null;
+        }
+      })
+    );
     this.darkMode();
   }
 
@@ -78,6 +82,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.titleSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

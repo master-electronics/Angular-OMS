@@ -70,11 +70,11 @@ export class AggregationOutComponent
     this.fechOrderInfo();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.orderInpt.nativeElement.select();
   }
 
-  fechOrderInfo() {
+  fechOrderInfo(): void {
     this.isLoading = true;
     this.subscription.add(
       this.pickOrders
@@ -119,7 +119,7 @@ export class AggregationOutComponent
               this.messageType = 'error';
             }
           },
-          (error) => {
+          () => {
             this.isLoading = false;
           }
         )
@@ -156,7 +156,7 @@ export class AggregationOutComponent
     }
   }
 
-  updateValidOrder() {
+  updateValidOrder(): void {
     const orderNumber = this.orderForm.get('orderNumber').value;
     const LastUpdated = new Date().toISOString();
     this.isLoading = true;

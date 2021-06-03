@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 import { CommonService } from '../../shared/services/common.service';
 
@@ -6,11 +8,53 @@ import { CommonService } from '../../shared/services/common.service';
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   isMobile: boolean;
   title = 'Master Electronics';
-  constructor(private commonService: CommonService) {
+  shortcuts: ShortcutInput[] = [];
+  constructor(private commonService: CommonService, private router: Router) {
     this.isMobile = this.commonService.isMobile();
     this.commonService.changeTitle(this.title);
+  }
+
+  ngOnInit(): void {
+    this.shortcuts.push(
+      {
+        key: ['w q'],
+        label: 'Quick Access',
+        description: 'Quality Control',
+        command: (e) => {
+          console.log('clicked ', e.key);
+          this.router.navigate(['/qc']);
+        },
+      },
+      {
+        key: ['w i'],
+        label: 'Quick Access',
+        description: 'Aggregation In',
+        command: (e) => {
+          console.log('clicked ', e.key);
+          this.router.navigate(['/agin']);
+        },
+      },
+      {
+        key: ['w o'],
+        label: 'Quick Access',
+        description: 'Aggregation Out',
+        command: (e) => {
+          console.log('clicked ', e.key);
+          this.router.navigate(['/agout']);
+        },
+      },
+      {
+        key: ['t s'],
+        label: 'Quick Access',
+        description: 'Serverless Sql',
+        command: (e) => {
+          console.log('clicked ', e.key);
+          this.router.navigate(['/test']);
+        },
+      }
+    );
   }
 }

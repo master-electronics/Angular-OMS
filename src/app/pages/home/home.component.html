@@ -54,20 +54,26 @@
             alt="WMS"
           />
           <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
-            WMS
+            <span class="text-yellow-500 font-bold">W</span>
+            <span>MS</span>
           </h1>
           <div class="flex flex-col">
             <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/agin">
-              Aggregation IN
+              <span>Aggregation </span>
+              <span class="text-yellow-500 font-bold">I</span>
+              <span>n</span>
             </a>
             <a
               class="mt-2 text-gray-600 dark:text-gray-300"
               routerLink="/agout"
             >
-              Aggregation OUT
+              <span>Aggregation </span>
+              <span class="text-yellow-500 font-bold">O</span>
+              <span>ut</span>
             </a>
             <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/qc">
-              Quality Control
+              <span class="text-yellow-500 font-bold">Q</span>
+              <span>uality Control</span>
             </a>
           </div>
         </div>
@@ -102,7 +108,8 @@
             alt="sales"
           />
           <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
-            Test
+            <span class="text-yellow-500 font-bold">T</span>
+            <span>est</span>
           </h1>
           <div class="flex flex-col">
             <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/test">
@@ -120,3 +127,9 @@
     </div>
   </div>
 </div>
+<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+<ng-keyboard-shortcuts-help
+  [key]="'f1'"
+  [closeKey]="'escape'"
+  [title]="'Help'"
+></ng-keyboard-shortcuts-help>
