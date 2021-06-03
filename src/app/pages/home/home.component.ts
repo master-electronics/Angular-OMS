@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
@@ -8,7 +8,7 @@ import { CommonService } from '../../shared/services/common.service';
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements AfterViewInit {
   isMobile: boolean;
   title = 'Master Electronics';
   shortcuts: ShortcutInput[] = [];
@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
     this.commonService.changeTitle(this.title);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.shortcuts.push(
       {
         key: ['w q'],
@@ -53,6 +53,14 @@ export class HomeComponent implements OnInit {
         command: (e) => {
           console.log('clicked ', e.key);
           this.router.navigate(['/test']);
+        },
+      },
+      {
+        key: ['alt + h'],
+        label: 'Gobal',
+        description: 'Back Homepage',
+        command: (e) => {
+          //
         },
       }
     );
