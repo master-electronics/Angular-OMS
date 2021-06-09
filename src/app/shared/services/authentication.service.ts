@@ -30,6 +30,11 @@ export class AuthenticationService implements OnInit {
     return this.rxjsUserSubject.value;
   }
 
+  public get userName(): string {
+    const info = this.rxjsUserSubject.value;
+    return JSON.parse(info).username;
+  }
+
   public get username(): string {
     return JSON.parse(this.rxjsUserSubject.value).username;
   }

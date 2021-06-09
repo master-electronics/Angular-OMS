@@ -8,6 +8,7 @@ import {
   RouterEvent,
 } from '@angular/router';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import { AuthenticationService } from './shared/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ export class AppComponent {
   isLoading = false;
   constructor(
     private router: Router,
-    private gtmService: GoogleTagManagerService
+    private gtmService: GoogleTagManagerService,
+    private auth: AuthenticationService
   ) {
     this.router.events.subscribe((routerEvent: RouterEvent) => {
       this.checkRouterEvent(routerEvent);
@@ -26,7 +28,7 @@ export class AppComponent {
       if (item instanceof NavigationEnd) {
         const gtmTag = {
           event: 'pageNav',
-          pageName: item.url,
+          userID: this.auth.userName,
         };
 
         this.gtmService.pushTag(gtmTag);
