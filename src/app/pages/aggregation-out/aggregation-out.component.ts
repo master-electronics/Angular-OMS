@@ -20,6 +20,7 @@ import {
 } from '../../graphql/forAggregation.graphql-gen';
 import { CommonService } from '../../shared/services/common.service';
 import { OrderNumberRegex } from '../../shared/dataRegex';
+import { Title } from '@angular/platform-browser';
 
 const agOutPresent = 3;
 const agOutPicking = 4;
@@ -56,10 +57,12 @@ export class AggregationOutComponent
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private titleService: Title,
     private pickOrders: PickOrdersForAggregationOutGQL,
     private updateOrderStatus: UpdateOrderStatusGQL
   ) {
     this.commonService.changeTitle(this.title);
+    this.titleService.setTitle(this.title);
   }
 
   @ViewChild('orderNumber') orderInpt: ElementRef;

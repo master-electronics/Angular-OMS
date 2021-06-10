@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-error-page',
@@ -7,5 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ErrorPageComponent {
   error = this.route.snapshot.queryParams['err'] || 'Error';
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private title: Title) {
+    this.title.setTitle('Error');
+  }
 }

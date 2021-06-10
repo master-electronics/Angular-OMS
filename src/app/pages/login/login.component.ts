@@ -1,6 +1,13 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 
@@ -8,7 +15,7 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
   selector: 'app-login',
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnDestroy, OnInit {
   isShowPassword = 'password';
   isLoading = false;
   messageType = 'error';
@@ -28,11 +35,16 @@ export class LoginComponent implements OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private titleService: Title
   ) {
     if (this.authenticationService.userInfo) {
       this.router.navigate(['home']);
     }
+  }
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Login');
   }
 
   @ViewChild('usernameError') usernameError: ElementRef;
@@ -52,7 +64,7 @@ export class LoginComponent implements OnDestroy {
     }
   }
 
-  verifyUser() {
+  verifyUser(): void {
     this.isLoading = true;
     this.message = '';
     this.authenticationService

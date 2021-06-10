@@ -6,6 +6,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import {
   AbstractControl,
   FormControl,
@@ -52,9 +53,11 @@ export class AggregationInComponent
     private commonService: CommonService,
     private route: ActivatedRoute,
     private router: Router,
+    private titleService: Title,
     private verfiyContainer: FetchContainerForAggregationInGQL
   ) {
     this.commonService.changeTitle(this.title);
+    this.titleService.setTitle('Aggregation In');
   }
 
   @ViewChild('containerNumber') containerInput: ElementRef;

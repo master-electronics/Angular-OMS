@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -8,13 +8,14 @@ import {
   RouterEvent,
 } from '@angular/router';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import { filter, map } from 'rxjs/operators';
 import { AuthenticationService } from './shared/services/authentication.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   isLoading = false;
   constructor(
     private router: Router,
@@ -24,16 +25,24 @@ export class AppComponent {
     this.router.events.subscribe((routerEvent: RouterEvent) => {
       this.checkRouterEvent(routerEvent);
     });
-    this.router.events.forEach((item) => {
-      if (item instanceof NavigationEnd) {
-        const gtmTag = {
-          event: 'pageNav',
-          userID: this.auth.userName,
-        };
+  }
 
-        this.gtmService.pushTag(gtmTag);
-      }
-    });
+  ngOnInit(): void {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => {
+          const gtmTag = {
+            event: 'pageNav',
+            userID: this.auth.userName,
+          };
+          this.gtmService.pushTag(gtmTag);
+          return event;
+        })
+      )
+      .subscribe(() => {
+        //
+      });
   }
 
   checkRouterEvent(routerEvent: RouterEvent): void {

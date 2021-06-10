@@ -6,7 +6,7 @@ import { InMemoryCache } from '@apollo/client/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlatformModule } from '@angular/cdk/platform';
 import { AppRoutingModule } from './app.routing';
@@ -58,6 +58,7 @@ import { environment } from '../environments/environment';
     KeyboardShortcutsModule.forRoot(),
   ],
   providers: [
+    Title,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AthTokenInterceptor,
