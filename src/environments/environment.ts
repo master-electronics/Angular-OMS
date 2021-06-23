@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000',
+  // apiUrl: 'http://10.10.1.15:3000',
   GTM_ID: 'GTM-K9N5B2V',
 };
 

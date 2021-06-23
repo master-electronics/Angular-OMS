@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
   ): boolean {
     const userinfo = this.cookieService.get('user');
     if (userinfo) {
-      if (JSON.parse(userinfo).username === this.authentication.username) {
+      if (JSON.parse(userinfo).username === this.authentication.userName) {
         // logged in so return true
         return true;
       }

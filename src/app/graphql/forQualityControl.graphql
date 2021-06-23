@@ -22,11 +22,13 @@ mutation holdQCOrder(
   $InternalTrackingNumber: String!
   $User: String!
   $Status: String!
+  $Station: String!
 ) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
     User: $User
     Status: $Status
+    Station: $Station
   ) {
     success
     message

@@ -167,6 +167,7 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   User: Scalars['String'];
   Status: Scalars['String'];
+  Station: Scalars['String'];
 };
 
 export type MutationUpdateQcOrderArgs = {
@@ -347,6 +348,7 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
   User: Types.Scalars['String'];
   Status: Types.Scalars['String'];
+  Station: Types.Scalars['String'];
 }>;
 
 export type HoldQcOrderMutation = { __typename?: 'Mutation' } & {
@@ -430,11 +432,13 @@ export const HoldQcOrderDocument = gql`
     $InternalTrackingNumber: String!
     $User: String!
     $Status: String!
+    $Station: String!
   ) {
     holdQCOrder(
       InternalTrackingNumber: $InternalTrackingNumber
       User: $User
       Status: $Status
+      Station: $Station
     ) {
       success
       message

@@ -39,10 +39,6 @@ export class AuthenticationService implements OnInit {
     return username;
   }
 
-  public get username(): string {
-    return JSON.parse(this.rxjsUserSubject.value).username;
-  }
-
   login(username: string, password: string): Observable<unknown> {
     return this.http
       .post(`${environment.apiUrl}/AuthJWT/login`, {

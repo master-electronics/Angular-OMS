@@ -70,6 +70,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     return result;
   }
+
   // Count method input list
   countMethods = [
     { id: 1, content: 'Factory bag' },

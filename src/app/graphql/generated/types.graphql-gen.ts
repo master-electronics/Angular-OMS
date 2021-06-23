@@ -162,6 +162,7 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   User: Scalars['String'];
   Status: Scalars['String'];
+  Station: Scalars['String'];
 };
 
 export type MutationUpdateQcOrderArgs = {

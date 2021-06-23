@@ -12,6 +12,7 @@ import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
+import { CheckPrinterModalComponent } from './check-printer-modal.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     StepTabsComponent,
     VerifyPackComponent,
     HoldModalComponent,
+    CheckPrinterModalComponent,
   ],
   imports: [
     CommonModule,

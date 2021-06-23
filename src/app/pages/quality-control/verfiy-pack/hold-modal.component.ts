@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -16,12 +17,14 @@ import {
   HoldQcOrderGQL,
   HoldQcOrderMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { QualityControlService } from '../quality-control.server';
 
 @Component({
   selector: 'hold-modal',
   templateUrl: './hold-modal.component.html',
 })
-export class HoldModalComponent implements OnDestroy {
+export class HoldModalComponent implements OnDestroy, AfterViewInit {
   @Input() isModalHidden: boolean;
   @Input() ITN: string;
   @Output() isModalHiddenChange = new EventEmitter<boolean>();
@@ -33,9 +36,16 @@ export class HoldModalComponent implements OnDestroy {
   constructor(
     private holdQCOrder: HoldQcOrderGQL,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthenticationService,
+    private qcService: QualityControlService
   ) {
     //
+  }
+
+  @ViewChild('holdInput') holdInput: ElementRef;
+  ngAfterViewInit(): void {
+    this.holdInput.nativeElement.select();
   }
 
   holdOptions = [
@@ -54,8 +64,9 @@ export class HoldModalComponent implements OnDestroy {
     const Status = this.holdForm.get('holdReason').value;
     const qcHoldOrderInfo = {
       InternalTrackingNumber: this.ITN,
-      User: '',
+      User: this.authService.userName,
       Status: String(Status).padStart(2, '3'),
+      Station: this.qcService.stationInfo,
     };
     await this.writeInfoToMerp(qcHoldOrderInfo);
   }
