@@ -54,24 +54,18 @@
           dark:bg-gray-700
         "
       >
-        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>Quantity:</p>
           <p>{{ Quantity }}</p>
         </dt>
         <div class="z-0 w-full relative mt-2 col-span-2">
-          <input
-            type="number"
-            name="quantity"
-            placeholder=" "
-            formControlName="quantity"
-            class="float-input"
-            autocomplete="off"
-            #quantity
-          />
-          <label for="quantity" class="float-label"> Quantity </label>
-          <span class="text-sm text-red-600 hidden" id="quantityError"
-            >Quantity is required</span
-          >
+          <form-button
+            [styles]="holdStyles"
+            [disabled]="isLoading"
+            [isLoading]="isLoading"
+            [label]="'Hold'"
+            (click)="toggleModal()"
+          ></form-button>
         </div>
       </div>
 
@@ -92,7 +86,11 @@
             #dateCode
           />
           <label for="dateCode" class="float-label"> DateCode </label>
-          <span class="text-sm text-red-600 hidden" id="dateCodeError"></span>
+          <span
+            class="text-sm text-red-600 hidden"
+            id="dateCodeError"
+            #dateCodeError
+          ></span>
         </div>
       </div>
 
@@ -107,7 +105,7 @@
           dark:bg-gray-700
         "
       >
-        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>ROHS:</p>
           <p>{{ ROHS }}</p>
         </dt>
@@ -141,10 +139,10 @@
         </fieldset>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <!-- <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>HML:</p>
-          <p>{{ HazardMaterialLevel }}</p>
+          <p>{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
         </dt>
         <fieldset class="relative z-0 p-px w-full mt-2">
           <legend
@@ -174,19 +172,10 @@
             >Option has to be selected</span
           >
         </fieldset>
-      </div>
-      <div
-        class="
-          px-4
-          py-5
-          sm:grid sm:grid-cols-3
-          sm:gap-4
-          sm:px-6
-          bg-gray-100
-          dark:bg-gray-700
-        "
-      >
-        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
+      </div> -->
+
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>Country of Origin:</p>
           <p>{{ CountryOfOrigin }}</p>
         </dt>
@@ -218,10 +207,21 @@
         </div>
       </div>
 
-      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt
-          class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2"
-        ></dt>
+      <div
+        class="
+          px-4
+          py-5
+          sm:grid sm:grid-cols-3
+          sm:gap-4
+          sm:px-6
+          bg-gray-100
+          dark:bg-gray-700
+        "
+      >
+        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>HML:</p>
+          <p>{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
+        </dt>
         <div class="col-span-2">
           <div class="mt-6">
             <fieldset class="relative z-0 mb-5 p-px">
@@ -254,18 +254,10 @@
         </div>
       </div>
 
-      <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <form-button
-          [styles]="holdStyles"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          [label]="'Hold'"
-          (click)="toggleModal()"
-        ></form-button>
+      <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3">
         <form-button
           [styles]="backStyles"
           [disabled]="isLoading"
-          [isLoading]="isLoading"
           [label]="'Back'"
           (onClickEmt)="back()"
         ></form-button>
@@ -283,7 +275,16 @@
     </form>
   </section>
 </div>
+<!-- modal -->
 <hold-modal
   *ngIf="!isModalHidden"
   [(isModalHidden)]="isModalHidden"
+  [ITN]="ITN"
 ></hold-modal>
+<!-- shortcut -->
+<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+<ng-keyboard-shortcuts-help
+  [key]="'f1'"
+  [closeKey]="'escape'"
+  [title]="'Help'"
+></ng-keyboard-shortcuts-help>

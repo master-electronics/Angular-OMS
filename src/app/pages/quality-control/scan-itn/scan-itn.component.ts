@@ -39,7 +39,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('ITN') ITNInput: ElementRef;
   @ViewChild('ITNError') ITNError: ElementRef;
   ngOnInit(): void {
-    this.messageType = this.route.snapshot.queryParams['result'];
+    this.messageType = this.route.snapshot.queryParams['type'];
     this.message = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(1);
   }
@@ -60,17 +60,14 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.ITNError.nativeElement.classList.add('hidden');
-    this.verfiyITN();
+    this.verfiyITN(this.ITNForm.get('ITN').value.trim());
   }
 
-  verfiyITN(): void {
+  verfiyITN(ITN: string): void {
     this.isLoading = true;
     this.subscription.add(
       this.fetchPcakInfo
-        .watch(
-          { InternalTrackingNumber: this.ITNForm.get('ITN').value },
-          { fetchPolicy: 'no-cache' }
-        )
+        .watch({ InternalTrackingNumber: ITN }, { fetchPolicy: 'no-cache' })
         .valueChanges.subscribe(
           (res) => {
             this.isLoading = res.loading;
@@ -85,7 +82,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             ) {
               this.router.navigate(['qc/verifypack'], {
                 queryParams: {
-                  ITN: this.ITNForm.get('ITN').value,
+                  ITN: ITN,
                   PartNumber: res.data.fetchPackInfoFromMerp.PartNumber,
                   PRC: res.data.fetchPackInfoFromMerp.ProductCode,
                   Quantity: res.data.fetchPackInfoFromMerp.Quantity,

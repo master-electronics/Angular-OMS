@@ -12,6 +12,7 @@ import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 @NgModule({
   declarations: [
@@ -29,11 +30,10 @@ import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
     AutocompleteLibModule,
     SharedComponentModule,
     SharedUtilityModule,
+    KeyboardShortcutsModule,
   ],
   providers: [QualityControlService],
 
   bootstrap: [QualityControlComponent],
 })
 export class QualityControlModule {}
-
-export interface packInfo {}

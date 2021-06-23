@@ -130,6 +130,8 @@ export type Mutation = {
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
+  holdQCOrder: Response;
+  updateQCOrder: Response;
 };
 
 export type MutationAggregationInArgs = {
@@ -159,6 +161,21 @@ export type MutationUpdateOrderStatusArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   Order: OrderUpdate;
+};
+
+export type MutationHoldQcOrderArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  User: Scalars['String'];
+  Status: Scalars['String'];
+};
+
+export type MutationUpdateQcOrderArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  User: Scalars['String'];
+  DateCode: Scalars['String'];
+  CountryOfOrigin: Scalars['String'];
+  ROHS: Scalars['String'];
+  CountMethod: Scalars['String'];
 };
 
 export type Order = {
@@ -211,8 +228,8 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
-  fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
 
@@ -248,14 +265,14 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
-export type QueryFetchPackInfoFromMerpArgs = {
-  InternalTrackingNumber: Scalars['String'];
-};
-
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
+};
+
+export type QueryFetchPackInfoFromMerpArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 export type QueryFetchProductInfoFromMerpArgs = {
@@ -326,6 +343,35 @@ export type FetchProductInfoFromMerpQuery = { __typename?: 'Query' } & {
   >;
 };
 
+export type HoldQcOrderMutationVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+  User: Types.Scalars['String'];
+  Status: Types.Scalars['String'];
+}>;
+
+export type HoldQcOrderMutation = { __typename?: 'Mutation' } & {
+  holdQCOrder: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+};
+
+export type UpdateQcOrderMutationVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+  User: Types.Scalars['String'];
+  DateCode: Types.Scalars['String'];
+  CountryOfOrigin: Types.Scalars['String'];
+  ROHS: Types.Scalars['String'];
+  CountMethod: Types.Scalars['String'];
+}>;
+
+export type UpdateQcOrderMutation = { __typename?: 'Mutation' } & {
+  updateQCOrder: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+};
+
 export const FetchPackInfoByItNfromMerpDocument = gql`
   query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
     fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
@@ -374,6 +420,72 @@ export class FetchProductInfoFromMerpGQL extends Apollo.Query<
   FetchProductInfoFromMerpQueryVariables
 > {
   document = FetchProductInfoFromMerpDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const HoldQcOrderDocument = gql`
+  mutation holdQCOrder(
+    $InternalTrackingNumber: String!
+    $User: String!
+    $Status: String!
+  ) {
+    holdQCOrder(
+      InternalTrackingNumber: $InternalTrackingNumber
+      User: $User
+      Status: $Status
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HoldQcOrderGQL extends Apollo.Mutation<
+  HoldQcOrderMutation,
+  HoldQcOrderMutationVariables
+> {
+  document = HoldQcOrderDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateQcOrderDocument = gql`
+  mutation updateQCOrder(
+    $InternalTrackingNumber: String!
+    $User: String!
+    $DateCode: String!
+    $CountryOfOrigin: String!
+    $ROHS: String!
+    $CountMethod: String!
+  ) {
+    updateQCOrder(
+      InternalTrackingNumber: $InternalTrackingNumber
+      User: $User
+      DateCode: $DateCode
+      CountryOfOrigin: $CountryOfOrigin
+      ROHS: $ROHS
+      CountMethod: $CountMethod
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateQcOrderGQL extends Apollo.Mutation<
+  UpdateQcOrderMutation,
+  UpdateQcOrderMutationVariables
+> {
+  document = UpdateQcOrderDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

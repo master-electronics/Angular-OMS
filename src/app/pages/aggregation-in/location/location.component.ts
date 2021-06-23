@@ -121,7 +121,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  updateLocation() {
+  updateLocation(): void {
     if (this.binContainer === this.f.location.value) {
       this.message = 'Should scan a new location';
       this.messageType = 'warning';

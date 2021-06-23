@@ -4,17 +4,39 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   Output,
   ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import {
+  HoldQcOrderGQL,
+  HoldQcOrderMutationVariables,
+} from '../../../graphql/forQualityControl.graphql-gen';
 
 @Component({
   selector: 'hold-modal',
   templateUrl: './hold-modal.component.html',
 })
-export class HoldModalComponent {
+export class HoldModalComponent implements OnDestroy {
   @Input() isModalHidden: boolean;
+  @Input() ITN: string;
   @Output() isModalHiddenChange = new EventEmitter<boolean>();
+
+  holdForm = this.fb.group({
+    holdReason: [1, Validators.required],
+  });
+  private subscription = new Subscription();
+  constructor(
+    private holdQCOrder: HoldQcOrderGQL,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    //
+  }
 
   holdOptions = [
     { id: 1, content: 'Short Quantity' },
@@ -28,12 +50,50 @@ export class HoldModalComponent {
     { id: 9, content: 'Over Shipment' },
   ];
 
-  onSubmit() {
-    //
+  async onSubmit(): Promise<void> {
+    const Status = this.holdForm.get('holdReason').value;
+    const qcHoldOrderInfo = {
+      InternalTrackingNumber: this.ITN,
+      User: '',
+      Status: String(Status).padStart(2, '3'),
+    };
+    await this.writeInfoToMerp(qcHoldOrderInfo);
   }
 
-  onCancel() {
+  onCancel(): void {
     this.isModalHiddenChange.emit(true);
+  }
+
+  async writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): Promise<void> {
+    this.subscription.add(
+      this.holdQCOrder.mutate(holdInfo, { fetchPolicy: 'no-cache' }).subscribe(
+        (res) => {
+          let response: { type: string; message: string };
+          if (res.data.holdQCOrder.success) {
+            response = {
+              type: `warning`,
+              message: `${this.ITN} holding done`,
+            };
+          } else {
+            response = {
+              type: 'error',
+              message: `${this.ITN} holding failed. ${res.data.holdQCOrder.message}`,
+            };
+          }
+          this.router.navigate(['qc'], {
+            queryParams: response,
+          });
+        },
+        (error) => {
+          this.router.navigate(['qc'], {
+            queryParams: {
+              type: `error`,
+              message: `${this.ITN} holding failed.${error}`,
+            },
+          });
+        }
+      )
+    );
   }
 
   @ViewChild('modal') modal: ElementRef;
@@ -43,5 +103,15 @@ export class HoldModalComponent {
     if (!this.modal.nativeElement.contains(event.target)) {
       this.onCancel();
     }
+  }
+  @HostListener('document:keydown', ['$event'])
+  onKeyDownHandler(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.onCancel();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

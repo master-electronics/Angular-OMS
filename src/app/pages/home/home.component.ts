@@ -29,7 +29,7 @@ export class HomeComponent implements AfterViewInit {
         key: ['w q'],
         label: 'Quick Access',
         description: 'Quality Control',
-        command: (e) => {
+        command: () => {
           this.router.navigate(['/qc']);
         },
       },
@@ -37,7 +37,7 @@ export class HomeComponent implements AfterViewInit {
         key: ['w i'],
         label: 'Quick Access',
         description: 'Aggregation In',
-        command: (e) => {
+        command: () => {
           this.router.navigate(['/agin']);
         },
       },
@@ -45,7 +45,7 @@ export class HomeComponent implements AfterViewInit {
         key: ['w o'],
         label: 'Quick Access',
         description: 'Aggregation Out',
-        command: (e) => {
+        command: () => {
           this.router.navigate(['/agout']);
         },
       },
@@ -53,17 +53,8 @@ export class HomeComponent implements AfterViewInit {
         key: ['t s'],
         label: 'Quick Access',
         description: 'Serverless Sql',
-        command: (e) => {
-          console.log('clicked ', e.key);
+        command: () => {
           this.router.navigate(['/test']);
-        },
-      },
-      {
-        key: ['alt + h'],
-        label: 'Gobal',
-        description: 'Back Homepage',
-        command: (e) => {
-          //
         },
       }
     );

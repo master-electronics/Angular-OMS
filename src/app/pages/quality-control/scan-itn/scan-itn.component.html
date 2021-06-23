@@ -26,8 +26,14 @@
         ></form-button>
       </div>
       <div class="mt-6">
-        <message-bar [message]="message" [type]="'error'"></message-bar>
+        <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>
     </form>
   </div>
 </div>
+
+<ng-keyboard-shortcuts-help
+  [key]="'f1'"
+  [closeKey]="'escape'"
+  [title]="'Help'"
+></ng-keyboard-shortcuts-help>

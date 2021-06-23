@@ -4,9 +4,11 @@ export class QualityControlService {
   private activeTabSubject = new BehaviorSubject<number>(1);
   activeTab = this.activeTabSubject.asObservable();
 
-  constructor() {}
+  constructor() {
+    //
+  }
 
-  changeTab(tab: number) {
+  changeTab(tab: number): void {
     this.activeTabSubject.next(tab);
   }
 }

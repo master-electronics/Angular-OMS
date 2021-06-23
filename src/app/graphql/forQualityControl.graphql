@@ -17,3 +17,39 @@ query fetchProductInfoFromMerp($PartNumber: String!, $ProductCode: String!) {
     HazardMaterialLevel
   }
 }
+
+mutation holdQCOrder(
+  $InternalTrackingNumber: String!
+  $User: String!
+  $Status: String!
+) {
+  holdQCOrder(
+    InternalTrackingNumber: $InternalTrackingNumber
+    User: $User
+    Status: $Status
+  ) {
+    success
+    message
+  }
+}
+
+mutation updateQCOrder(
+  $InternalTrackingNumber: String!
+  $User: String!
+  $DateCode: String!
+  $CountryOfOrigin: String!
+  $ROHS: String!
+  $CountMethod: String!
+) {
+  updateQCOrder(
+    InternalTrackingNumber: $InternalTrackingNumber
+    User: $User
+    DateCode: $DateCode
+    CountryOfOrigin: $CountryOfOrigin
+    ROHS: $ROHS
+    CountMethod: $CountMethod
+  ) {
+    success
+    message
+  }
+}

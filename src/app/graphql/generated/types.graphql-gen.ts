@@ -125,6 +125,8 @@ export type Mutation = {
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
+  holdQCOrder: Response;
+  updateQCOrder: Response;
 };
 
 export type MutationAggregationInArgs = {
@@ -154,6 +156,21 @@ export type MutationUpdateOrderStatusArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   Order: OrderUpdate;
+};
+
+export type MutationHoldQcOrderArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  User: Scalars['String'];
+  Status: Scalars['String'];
+};
+
+export type MutationUpdateQcOrderArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  User: Scalars['String'];
+  DateCode: Scalars['String'];
+  CountryOfOrigin: Scalars['String'];
+  ROHS: Scalars['String'];
+  CountMethod: Scalars['String'];
 };
 
 export type Order = {
@@ -206,8 +223,8 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
-  fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
 };
 
@@ -243,14 +260,14 @@ export type QueryFindOrderArgs = {
   limit?: Maybe<Scalars['Int']>;
 };
 
-export type QueryFetchPackInfoFromMerpArgs = {
-  InternalTrackingNumber: Scalars['String'];
-};
-
 export type QueryFetchInventoryInfoFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
+};
+
+export type QueryFetchPackInfoFromMerpArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 export type QueryFetchProductInfoFromMerpArgs = {
