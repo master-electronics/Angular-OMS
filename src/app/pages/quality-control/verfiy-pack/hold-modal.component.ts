@@ -18,7 +18,7 @@ import {
   HoldQcOrderMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { QualityControlService } from '../quality-control.server';
+import { CommonService } from '../../../shared/services/common.service';
 
 @Component({
   selector: 'hold-modal',
@@ -38,7 +38,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthenticationService,
-    private qcService: QualityControlService
+    private commonService: CommonService
   ) {
     //
   }
@@ -66,7 +66,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
       InternalTrackingNumber: this.ITN,
       User: this.authService.userName,
       Status: String(Status).padStart(2, '3'),
-      Station: this.qcService.stationInfo,
+      Station: this.commonService.stationInfo,
     };
     await this.writeInfoToMerp(qcHoldOrderInfo);
   }

@@ -8,16 +8,6 @@ export class QualityControlService {
     this.activeTabSubject.next(tab);
   }
 
-  // Printer Station
-  private stationSubject = new BehaviorSubject<string>('');
-  public station = this.stationSubject.asObservable();
-  public changeStation(station: string): void {
-    this.stationSubject.next(station);
-  }
-  public get stationInfo(): string {
-    return this.stationSubject.value;
-  }
-
   constructor() {
     //
   }
