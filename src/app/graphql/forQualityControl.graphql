@@ -1,5 +1,9 @@
 query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
   fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
+    CustomerNumber
+    DistributionCenter
+    OrderNumber
+    OrderLineNumber
     ProductCode
     PartNumber
     Status
@@ -15,6 +19,27 @@ query fetchProductInfoFromMerp($PartNumber: String!, $ProductCode: String!) {
   fetchProductInfoFromMerp(PartNumber: $PartNumber, ProductCode: $ProductCode) {
     MICPartNumber
     HazardMaterialLevel
+  }
+}
+
+query qcGlobalMessage(
+  $CustomerNumber: String!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $OrderLineNumber: String!
+  $ProductCode: String!
+  $PartNumber: String!
+) {
+  fetchOrderLineMessage(
+    CustomerNumber: $CustomerNumber
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    OrderLineNumber: $OrderLineNumber
+  ) {
+    comments
+  }
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
   }
 }
 

@@ -76,6 +76,11 @@ export type Equipment = {
   Name: Scalars['String'];
 };
 
+export type GlobalMessage = {
+  __typename?: 'GlobalMessage';
+  comments?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
@@ -130,6 +135,7 @@ export type Mutation = {
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
+  /** For qc page */
   holdQCOrder: Response;
   updateQCOrder: Response;
 };
@@ -204,6 +210,11 @@ export type OrderUpdate = {
 
 export type PackInfoFromMerp = {
   __typename?: 'PackInfoFromMerp';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['String']>;
   ProductCode?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
@@ -229,9 +240,13 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
+  /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  /** for qc */
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
+  fetchOrderLineMessage?: Maybe<GlobalMessage>;
+  fetchPartMessage?: Maybe<GlobalMessage>;
 };
 
 export type QueryVerifyContainerArgs = {
@@ -281,6 +296,18 @@ export type QueryFetchProductInfoFromMerpArgs = {
   ProductCode: Scalars['String'];
 };
 
+export type QueryFetchOrderLineMessageArgs = {
+  CustomerNumber: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
+};
+
+export type QueryFetchPartMessageArgs = {
+  ProductCode: Scalars['String'];
+  PartNumber: Scalars['String'];
+};
+
 export type Response = {
   __typename?: 'Response';
   success: Scalars['Boolean'];
@@ -318,6 +345,10 @@ export type FetchPackInfoByItNfromMerpQuery = { __typename?: 'Query' } & {
   fetchPackInfoFromMerp?: Types.Maybe<
     { __typename?: 'PackInfoFromMerp' } & Pick<
       Types.PackInfoFromMerp,
+      | 'CustomerNumber'
+      | 'DistributionCenter'
+      | 'OrderNumber'
+      | 'OrderLineNumber'
       | 'ProductCode'
       | 'PartNumber'
       | 'Status'
@@ -341,6 +372,24 @@ export type FetchProductInfoFromMerpQuery = { __typename?: 'Query' } & {
       Types.ProdunctInfoFromMerp,
       'MICPartNumber' | 'HazardMaterialLevel'
     >
+  >;
+};
+
+export type QcGlobalMessageQueryVariables = Types.Exact<{
+  CustomerNumber: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  OrderLineNumber: Types.Scalars['String'];
+  ProductCode: Types.Scalars['String'];
+  PartNumber: Types.Scalars['String'];
+}>;
+
+export type QcGlobalMessageQuery = { __typename?: 'Query' } & {
+  fetchOrderLineMessage?: Types.Maybe<
+    { __typename?: 'GlobalMessage' } & Pick<Types.GlobalMessage, 'comments'>
+  >;
+  fetchPartMessage?: Types.Maybe<
+    { __typename?: 'GlobalMessage' } & Pick<Types.GlobalMessage, 'comments'>
   >;
 };
 
@@ -377,6 +426,10 @@ export type UpdateQcOrderMutation = { __typename?: 'Mutation' } & {
 export const FetchPackInfoByItNfromMerpDocument = gql`
   query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
     fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
+      CustomerNumber
+      DistributionCenter
+      OrderNumber
+      OrderLineNumber
       ProductCode
       PartNumber
       Status
@@ -422,6 +475,42 @@ export class FetchProductInfoFromMerpGQL extends Apollo.Query<
   FetchProductInfoFromMerpQueryVariables
 > {
   document = FetchProductInfoFromMerpDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const QcGlobalMessageDocument = gql`
+  query qcGlobalMessage(
+    $CustomerNumber: String!
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $OrderLineNumber: String!
+    $ProductCode: String!
+    $PartNumber: String!
+  ) {
+    fetchOrderLineMessage(
+      CustomerNumber: $CustomerNumber
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      OrderLineNumber: $OrderLineNumber
+    ) {
+      comments
+    }
+    fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+      comments
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class QcGlobalMessageGQL extends Apollo.Query<
+  QcGlobalMessageQuery,
+  QcGlobalMessageQueryVariables
+> {
+  document = QcGlobalMessageDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

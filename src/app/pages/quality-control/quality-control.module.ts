@@ -10,6 +10,7 @@ import { SharedComponentModule } from '../../components/shared-component.module'
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
+import { GlobalMessagesComponent } from './global-messages/global-messages.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
 import { CheckPrinterModalComponent } from './check-printer-modal.component';
@@ -20,6 +21,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     QualityControlComponent,
     ScanItnComponent,
     StepTabsComponent,
+    GlobalMessagesComponent,
     VerifyPackComponent,
     HoldModalComponent,
     CheckPrinterModalComponent,

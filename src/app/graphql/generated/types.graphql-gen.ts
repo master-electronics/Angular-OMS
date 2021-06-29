@@ -71,6 +71,11 @@ export type Equipment = {
   Name: Scalars['String'];
 };
 
+export type GlobalMessage = {
+  __typename?: 'GlobalMessage';
+  comments?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
@@ -125,6 +130,7 @@ export type Mutation = {
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
+  /** For qc page */
   holdQCOrder: Response;
   updateQCOrder: Response;
 };
@@ -199,6 +205,11 @@ export type OrderUpdate = {
 
 export type PackInfoFromMerp = {
   __typename?: 'PackInfoFromMerp';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['String']>;
   ProductCode?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
@@ -224,9 +235,13 @@ export type Query = {
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
+  /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
+  /** for qc */
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
+  fetchOrderLineMessage?: Maybe<GlobalMessage>;
+  fetchPartMessage?: Maybe<GlobalMessage>;
 };
 
 export type QueryVerifyContainerArgs = {
@@ -274,6 +289,18 @@ export type QueryFetchPackInfoFromMerpArgs = {
 export type QueryFetchProductInfoFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+};
+
+export type QueryFetchOrderLineMessageArgs = {
+  CustomerNumber: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
+};
+
+export type QueryFetchPartMessageArgs = {
+  ProductCode: Scalars['String'];
+  PartNumber: Scalars['String'];
 };
 
 export type Response = {

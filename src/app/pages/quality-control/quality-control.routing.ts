@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { QualityControlComponent } from './quality-control.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
+import { GlobalMessagesComponent } from './global-messages/global-messages.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,7 @@ const routes: Routes = [
     component: QualityControlComponent,
     children: [
       { path: 'scanitn', component: ScanItnComponent },
+      { path: 'globalmessages', component: GlobalMessagesComponent },
       { path: 'verifypack', component: VerifyPackComponent },
       { path: '', pathMatch: 'full', redirectTo: 'scanitn' },
     ],

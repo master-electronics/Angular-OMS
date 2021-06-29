@@ -112,14 +112,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    this.qcService.changeTab(2);
+    this.qcService.changeTab(3);
     this.ITN = this.route.snapshot.queryParams['ITN'];
-
     this.PRC = this.route.snapshot.queryParams['PRC'];
     this.PartNumber = this.route.snapshot.queryParams['PartNumber'];
     const ROHStext = this.route.snapshot.queryParams['ROHS'];
     this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknown';
-    const coo = this.route.snapshot.queryParams['CountryOfOrigin'];
+    const coo = this.route.snapshot.queryParams['coo'];
     this.CountryOfOrigin = coo ? coo : 'Unknown';
     this.Quantity = parseInt(this.route.snapshot.queryParams['Quantity']);
     this.DateCode = this.route.snapshot.queryParams['DateCode'];
@@ -227,7 +226,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   back(): void {
-    this.router.navigate(['qc/scanitn']);
+    this.router.navigate(['/qc']);
   }
 
   toggleModal(): void {

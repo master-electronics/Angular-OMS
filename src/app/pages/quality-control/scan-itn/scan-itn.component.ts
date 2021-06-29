@@ -80,16 +80,20 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.fetchPackInfoFromMerp.Quantity &&
               res.data.fetchPackInfoFromMerp.DemandQuantity === 0
             ) {
-              this.router.navigate(['qc/verifypack'], {
+              this.router.navigate(['/qc/globalmessages'], {
                 queryParams: {
                   ITN: ITN,
-                  PartNumber: res.data.fetchPackInfoFromMerp.PartNumber,
+                  CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
+                  DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
+                  OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
+                  OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
+                  PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
+                  ProductCode: res.data.fetchPackInfoFromMerp.ProductCode,
                   PRC: res.data.fetchPackInfoFromMerp.ProductCode,
                   Quantity: res.data.fetchPackInfoFromMerp.Quantity,
                   ROHS: res.data.fetchPackInfoFromMerp.ROHS,
                   DateCode: res.data.fetchPackInfoFromMerp.DateCode,
-                  CountryOfOrigin:
-                    res.data.fetchPackInfoFromMerp.CountryOfOrigin,
+                  coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
                 },
               });
             } else {
