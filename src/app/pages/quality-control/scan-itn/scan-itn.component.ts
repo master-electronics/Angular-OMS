@@ -42,6 +42,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.messageType = this.route.snapshot.queryParams['type'];
     this.message = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(1);
+    this.qcService.changeGlobalMessages(null);
   }
   ngAfterViewInit(): void {
     setTimeout(() => {

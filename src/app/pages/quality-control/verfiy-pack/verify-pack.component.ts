@@ -32,6 +32,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isImgExist = true;
   ITNRegex = '[a-zA-Z0-9]{10}';
   isLoading = false;
+  isNeedSupv = true;
   messageType = 'error';
   submitStyles = 'bg-indigo-800';
   backStyles = 'bg-gray-500';
@@ -87,12 +88,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // form group
   verifyPack = this.fb.group({
-    // quantity: ['', [Validators.required]],
     dateCode: ['', [Validators.pattern(dateCodeRegex)]],
     countMethods: ['', [Validators.required]],
     countryOfOrigin: ['', [Validators.required]],
     ROHS: ['', [Validators.required]],
-    // HML: ['', [Validators.required]],
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
   });
 
   @ViewChild('dateCodeError') dateCodeError: ElementRef;
@@ -113,9 +114,15 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.qcService.changeTab(3);
+    // set up supv signature section
+    this.qcService.globalMessages?.some((message) => {
+      return message.includes('SUPV SIGNATURE REQUIRED');
+    })
+      ? (this.isNeedSupv = true)
+      : (this.isNeedSupv = true);
     this.ITN = this.route.snapshot.queryParams['ITN'];
     this.PRC = this.route.snapshot.queryParams['PRC'];
-    this.PartNumber = this.route.snapshot.queryParams['PartNumber'];
+    this.PartNumber = this.route.snapshot.queryParams['PartNum'];
     const ROHStext = this.route.snapshot.queryParams['ROHS'];
     this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknown';
     const coo = this.route.snapshot.queryParams['coo'];
@@ -132,13 +139,23 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         ));
     await this.fetchProductInfo();
     this.verifyPack.setValue({
-      // quantity: this.Quantity || '',
       dateCode: this.DateCode || '',
       ROHS: this.ROHS === 'Yes' ? 1 : 0,
-      // HML: this.HazardMaterialLevel ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
+      username: '',
+      password: '',
     });
+    if (!this.isNeedSupv) {
+      this.verifyPack.setValue({
+        dateCode: this.DateCode || '',
+        ROHS: this.ROHS === 'Yes' ? 1 : 0,
+        countMethods: '',
+        countryOfOrigin: country,
+        username: 'test',
+        password: 'test',
+      });
+    }
   }
 
   async fetchProductInfo(): Promise<void> {
@@ -187,8 +204,30 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.countMethods[this.verifyPack.get('countMethods').value - 1]
           .content,
     };
-    console.log(orderInfo);
-    this.writeInfo(orderInfo);
+    if (this.isNeedSupv) {
+      this.isLoading = true;
+
+      this.authService
+        .userAuth(
+          this.verifyPack.get('username').value,
+          this.verifyPack.get('password').value
+        )
+        .subscribe(
+          (user: { userGroups: string[] }) => {
+            if (user.userGroups?.includes('whs_supr')) {
+              this.writeInfo(orderInfo);
+            } else {
+              this.message = 'This user is not supervisor.';
+            }
+            this.isLoading = false;
+          },
+          (error) => {
+            this.isLoading = false;
+            this.message = error.error;
+          }
+        );
+    }
+    return;
   }
 
   async writeInfo(orderInfo: UpdateQcOrderMutationVariables): Promise<void> {
@@ -249,7 +288,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       },
       {
-        key: ['alt + b'],
+        key: ['alt + c'],
         label: 'Quick Access',
         description: 'Back to Sacn ITN',
         preventDefault: true,

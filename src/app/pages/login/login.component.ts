@@ -9,7 +9,9 @@ import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from '../../shared/services/authentication.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +38,8 @@ export class LoginComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private authenticationService: AuthenticationService,
+    private cookieService: CookieService,
+    private commonService: CommonService,
     private titleService: Title
   ) {
     if (this.authenticationService.userInfo) {
@@ -68,9 +72,12 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.isLoading = true;
     this.message = '';
     this.authenticationService
-      .login(this.f.username.value, this.f.password.value)
+      .userAuth(this.f.username.value, this.f.password.value)
       .subscribe({
-        next: () => {
+        next: (user) => {
+          const userString = JSON.stringify(user);
+          this.cookieService.set('user', userString);
+          this.authenticationService.changeUser(userString);
           const returnUrl =
             this.route.snapshot.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(returnUrl);
@@ -83,7 +90,7 @@ export class LoginComponent implements OnDestroy, OnInit {
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 }

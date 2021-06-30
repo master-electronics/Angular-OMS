@@ -11,10 +11,14 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthenticationService implements OnInit {
+  // user name
   private rxjsUserSubject = new BehaviorSubject<string>(
     this.cookieService.get('user')
   );
   public rxjsUser: Observable<string> = this.rxjsUserSubject.asObservable();
+  public changeUser(user: string): void {
+    this.rxjsUserSubject.next(user);
+  }
 
   constructor(
     private router: Router,
@@ -39,17 +43,14 @@ export class AuthenticationService implements OnInit {
     return username;
   }
 
-  login(username: string, password: string): Observable<unknown> {
+  userAuth(username: string, password: string): Observable<unknown> {
     return this.http
       .post(`${environment.apiUrl}/AuthJWT/login`, {
         username,
         password,
       })
       .pipe(
-        map((user: { username: string }) => {
-          const userString = JSON.stringify(user);
-          this.cookieService.set('user', userString);
-          this.rxjsUserSubject.next(userString);
+        map((user) => {
           return user;
         })
       );

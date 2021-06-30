@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -60,8 +58,6 @@ export class GlobalMessagesComponent
       PartNumber: urlParams['PartNum'],
       ProductCode: urlParams['ProductCode'],
     };
-    console.log(params);
-
     this.getGlobalMessage(params);
   }
 
@@ -89,8 +85,13 @@ export class GlobalMessagesComponent
             if (
               this.orderComments.length === 0 &&
               this.partComments.length === 0
-            )
+            ) {
               this.onSubmit();
+            } else {
+              this.qcService.changeGlobalMessages(
+                this.orderComments.concat(this.partComments)
+              );
+            }
           },
           (error) => {
             this.isLoading = false;
