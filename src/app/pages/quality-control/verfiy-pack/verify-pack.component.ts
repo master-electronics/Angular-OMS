@@ -29,7 +29,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   imgURL = 'https://www.onlinecomponents.com/images/parts/largeimages/';
   productURL = 'https://www.onlinecomponents.com/en/grayhill/';
   specSheetURL = 'https://www.onlinecomponents.com/en/datasheet/';
+  shortcuts: ShortcutInput[] = [];
   isImgExist = true;
+  globalMessages: string[];
   ITNRegex = '[a-zA-Z0-9]{10}';
   isLoading = false;
   isNeedSupv = true;
@@ -39,7 +41,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   holdStyles = 'bg-yellow-500';
   buttonLabel = 'submit';
   message = '';
-  isModalHidden = true;
+  isHoldModalHidden = true;
+  isGlobalMessagesModalHidden = true;
   // input data
   ITN: string;
   PRC: string;
@@ -97,7 +100,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   @ViewChild('dateCodeError') dateCodeError: ElementRef;
+  @ViewChild('countMethodError') countMethodError: ElementRef;
   @ViewChild('dateCode') dateCodeInput: ElementRef;
+  @ViewChild('username') usernameInput: ElementRef;
+  @ViewChild('password') passwordInput: ElementRef;
 
   private subscription = new Subscription();
   constructor(
@@ -115,11 +121,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     this.qcService.changeTab(3);
     // set up supv signature section
+    this.globalMessages = this.qcService.globalMessages;
     this.qcService.globalMessages?.some((message) => {
       return message.includes('SUPV SIGNATURE REQUIRED');
     })
       ? (this.isNeedSupv = true)
-      : (this.isNeedSupv = true);
+      : (this.isNeedSupv = false);
     this.ITN = this.route.snapshot.queryParams['ITN'];
     this.PRC = this.route.snapshot.queryParams['PRC'];
     this.PartNumber = this.route.snapshot.queryParams['PartNum'];
@@ -138,6 +145,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           (element) => element.name === 'UNKNOWN'
         ));
     await this.fetchProductInfo();
+    // set init value of form
     this.verifyPack.setValue({
       dateCode: this.DateCode || '',
       ROHS: this.ROHS === 'Yes' ? 1 : 0,
@@ -186,13 +194,18 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     if (this.verifyPack.invalid) {
-      if (this.verifyPack.get('dateCode').errors)
+      if (this.verifyPack.get('dateCode').errors) {
         this.dateCodeError.nativeElement.textContent =
           'Incorrect dateCode format.';
-      this.dateCodeError.nativeElement.classList.remove('hidden');
+        this.dateCodeError.nativeElement.classList.remove('hidden');
+      }
+      if (this.verifyPack.get('countMethods').errors) {
+        this.countMethodError.nativeElement.classList.remove('hidden');
+      }
       return;
     }
     this.dateCodeError.nativeElement.classList.add('hidden');
+    this.countMethodError.nativeElement.classList.add('hidden');
     const coo = this.verifyPack.get('countryOfOrigin').value.name;
     const orderInfo = {
       InternalTrackingNumber: this.ITN,
@@ -204,28 +217,38 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.countMethods[this.verifyPack.get('countMethods').value - 1]
           .content,
     };
+    this.isLoading = true;
     if (this.isNeedSupv) {
-      this.isLoading = true;
-
-      this.authService
-        .userAuth(
-          this.verifyPack.get('username').value,
-          this.verifyPack.get('password').value
-        )
-        .subscribe(
-          (user: { userGroups: string[] }) => {
-            if (user.userGroups?.includes('whs_supr')) {
-              this.writeInfo(orderInfo);
-            } else {
-              this.message = 'This user is not supervisor.';
+      this.subscription.add(
+        this.authService
+          .userAuth(
+            this.verifyPack.get('username').value,
+            this.verifyPack.get('password').value
+          )
+          .subscribe(
+            (user: { userGroups: string[] }) => {
+              if (user.userGroups?.includes('whs_supr')) {
+                this.writeInfo(orderInfo);
+              } else {
+                this.message = 'This user is not supervisor.';
+                this.usernameInput.nativeElement.select();
+              }
+              this.isLoading = false;
+            },
+            (error) => {
+              this.isLoading = false;
+              this.message = error.error;
+              if (error.error.toLowerCase().includes('user')) {
+                this.usernameInput.nativeElement.select();
+              }
+              if (error.error.toLowerCase().includes('password')) {
+                this.passwordInput.nativeElement.select();
+              }
             }
-            this.isLoading = false;
-          },
-          (error) => {
-            this.isLoading = false;
-            this.message = error.error;
-          }
-        );
+          )
+      );
+    } else {
+      this.writeInfo(orderInfo);
     }
     return;
   }
@@ -248,11 +271,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
                 message: `${this.ITN} QC failed. ${res.data.updateQCOrder.message}`,
               };
             }
+            this.isLoading = false;
             this.router.navigate(['qc'], {
               queryParams: response,
             });
           },
           (error) => {
+            this.isLoading = false;
             this.router.navigate(['qc'], {
               queryParams: {
                 type: `error`,
@@ -268,33 +293,44 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/qc']);
   }
 
-  toggleModal(): void {
-    this.isModalHidden = !this.isModalHidden;
+  toggleHoldModal(): void {
+    this.isHoldModalHidden = !this.isHoldModalHidden;
+  }
+  toggleGlobalMessagesModal(): void {
+    this.isGlobalMessagesModalHidden = !this.isGlobalMessagesModalHidden;
   }
 
-  // keyboard setting
-  shortcuts: ShortcutInput[] = [];
   ngAfterViewInit(): void {
     this.dateCodeInput.nativeElement.select();
     this.shortcuts.push(
       {
-        key: ['alt + h'],
+        key: ['ctrl + h'],
         label: 'Quick Access',
         description: 'Hold Order',
         preventDefault: true,
         allowIn: [AllowIn.Textarea, AllowIn.Input],
         command: () => {
-          this.toggleModal();
+          this.toggleHoldModal();
         },
       },
       {
-        key: ['alt + c'],
+        key: ['ctrl + b'],
         label: 'Quick Access',
         description: 'Back to Sacn ITN',
         preventDefault: true,
         allowIn: [AllowIn.Textarea, AllowIn.Input],
         command: () => {
           this.back();
+        },
+      },
+      {
+        key: ['ctrl + g'],
+        label: 'Quick Access',
+        description: 'Back to Sacn ITN',
+        preventDefault: true,
+        allowIn: [AllowIn.Textarea, AllowIn.Input],
+        command: () => {
+          this.toggleGlobalMessagesModal();
         },
       }
     );

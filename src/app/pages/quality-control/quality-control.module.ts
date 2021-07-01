@@ -13,6 +13,7 @@ import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { GlobalMessagesComponent } from './global-messages/global-messages.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
+import { GlobalMessagesModalComponent } from './verfiy-pack/global-messages-modal.component';
 import { CheckPrinterModalComponent } from './check-printer-modal.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
@@ -24,6 +25,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     GlobalMessagesComponent,
     VerifyPackComponent,
     HoldModalComponent,
+    GlobalMessagesModalComponent,
     CheckPrinterModalComponent,
   ],
   imports: [

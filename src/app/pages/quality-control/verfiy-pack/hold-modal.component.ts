@@ -25,7 +25,7 @@ import { CommonService } from '../../../shared/services/common.service';
   templateUrl: './hold-modal.component.html',
 })
 export class HoldModalComponent implements OnDestroy, AfterViewInit {
-  @Input() isModalHidden: boolean;
+  @Input() isHoldModalHidden: boolean;
   @Input() ITN: string;
   @Output() isModalHiddenChange = new EventEmitter<boolean>();
 
@@ -83,12 +83,12 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
           if (res.data.holdQCOrder.success) {
             response = {
               type: `warning`,
-              message: `${this.ITN} holding done`,
+              message: `${this.ITN} is holding.`,
             };
           } else {
             response = {
               type: 'error',
-              message: `${this.ITN} holding failed. ${res.data.holdQCOrder.message}`,
+              message: `${this.ITN} fails holding. ${res.data.holdQCOrder.message}`,
             };
           }
           this.router.navigate(['qc'], {

@@ -6,6 +6,26 @@
       <p class="font-bold col-span-1">PRC: {{ PRC }}</p>
       <p class="font-bold col-span-3">PartNumber: {{ PartNumber }}</p>
     </div>
+    <button
+      *ngIf="globalMessages"
+      type="button"
+      (click)="toggleGlobalMessagesModal()"
+      class="
+        w-full
+        border
+        text-base
+        font-medium
+        rounded-r-md
+        text-black
+        bg-white
+        hover:bg-gray-100
+        px-4
+        py-2
+      "
+    >
+      Global Messages
+    </button>
+
     <div *ngIf="isImgExist" class="grid grid-cols-4 mt-2">
       <div class="col-span-2">
         <img
@@ -64,7 +84,7 @@
             [disabled]="isLoading"
             [isLoading]="isLoading"
             [label]="'Hold'"
-            (click)="toggleModal()"
+            (click)="toggleHoldModal()"
           ></form-button>
         </div>
       </div>
@@ -133,9 +153,6 @@
               {{ ROHS.name }}
             </label>
           </div>
-          <span class="hidden text-red-600 text-sm" id="error"
-            >Option has to be selected</span
-          >
         </fieldset>
       </div>
 
@@ -163,7 +180,6 @@
             <ng-template #COOTemplate let-item>
               <a [innerHTML]="item.name" class="ml-2"></a>
             </ng-template>
-
             <ng-template #notFoundTemplate let-notFound>
               <div [innerHTML]="notFound"></div>
             </ng-template>
@@ -211,7 +227,7 @@
                   {{ countMethod.content }}
                 </label>
               </div>
-              <span class="hidden text-red-600 text-sm" id="CountMethodError"
+              <span class="hidden text-red-600 text-sm" #countMethodError
                 >Option has to be selected</span
               >
             </fieldset>
@@ -244,6 +260,7 @@
               autocomplete="off"
               readonly
               onfocus="this.removeAttribute('readonly');"
+              #username
             />
             <label for="username" class="float-label"> USERNAME </label>
             <div
@@ -268,6 +285,7 @@
               class="float-input"
               readonly
               onfocus="this.removeAttribute('readonly');"
+              #password
             />
             <label for="password" class="float-label"> PASSWORD </label>
             <div
@@ -285,11 +303,12 @@
           </div>
         </div>
       </div>
+
       <!-- buttons -->
       <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3">
         <form-button
           [styles]="backStyles"
-          [label]="'Cancel'"
+          [label]="'Back'"
           (onClickEmt)="back()"
         ></form-button>
         <form-button
@@ -308,10 +327,14 @@
 </div>
 <!-- modal -->
 <hold-modal
-  *ngIf="!isModalHidden"
-  [(isModalHidden)]="isModalHidden"
+  *ngIf="!isHoldModalHidden"
+  [(isModalHidden)]="isHoldModalHidden"
   [ITN]="ITN"
 ></hold-modal>
+<global-messages-modal
+  *ngIf="!isGlobalMessagesModalHidden"
+  [(isModalHidden)]="isGlobalMessagesModalHidden"
+></global-messages-modal>
 <!-- shortcut -->
 <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 <ng-keyboard-shortcuts-help
