@@ -34,7 +34,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   globalMessages: string[];
   ITNRegex = '[a-zA-Z0-9]{10}';
   isLoading = false;
-  isNeedSupv = true;
+  // isNeedSupv = true;
   messageType = 'error';
   submitStyles = 'bg-indigo-800';
   backStyles = 'bg-gray-500';
@@ -120,13 +120,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.qcService.changeTab(3);
-    // set up supv signature section
+    // check global message
     this.globalMessages = this.qcService.globalMessages;
-    this.qcService.globalMessages?.some((message) => {
-      return message.includes('SUPV SIGNATURE REQUIRED');
-    })
-      ? (this.isNeedSupv = true)
-      : (this.isNeedSupv = false);
+    // this.qcService.globalMessages?.some((message) => {
+    //   return message.includes('SUPV SIGNATURE REQUIRED');
+    // })
+    //   ? (this.isNeedSupv = true)
+    //   : (this.isNeedSupv = false);
     this.ITN = this.route.snapshot.queryParams['ITN'];
     this.PRC = this.route.snapshot.queryParams['PRC'];
     this.PartNumber = this.route.snapshot.queryParams['PartNum'];
@@ -151,19 +151,19 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       ROHS: this.ROHS === 'Yes' ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
-      username: '',
-      password: '',
+      // username: '',
+      // password: '',
     });
-    if (!this.isNeedSupv) {
-      this.verifyPack.setValue({
-        dateCode: this.DateCode || '',
-        ROHS: this.ROHS === 'Yes' ? 1 : 0,
-        countMethods: '',
-        countryOfOrigin: country,
-        username: 'test',
-        password: 'test',
-      });
-    }
+    // if (!this.isNeedSupv) {
+    //   this.verifyPack.setValue({
+    //     dateCode: this.DateCode || '',
+    //     ROHS: this.ROHS === 'Yes' ? 1 : 0,
+    //     countMethods: '',
+    //     countryOfOrigin: country,
+    //     username: 'test',
+    //     password: 'test',
+    //   });
+    // }
   }
 
   async fetchProductInfo(): Promise<void> {
@@ -218,38 +218,39 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           .content,
     };
     this.isLoading = true;
-    if (this.isNeedSupv) {
-      this.subscription.add(
-        this.authService
-          .userAuth(
-            this.verifyPack.get('username').value,
-            this.verifyPack.get('password').value
-          )
-          .subscribe(
-            (user: { userGroups: string[] }) => {
-              if (user.userGroups?.includes('whs_supr')) {
-                this.writeInfo(orderInfo);
-              } else {
-                this.message = 'This user is not supervisor.';
-                this.usernameInput.nativeElement.select();
-              }
-              this.isLoading = false;
-            },
-            (error) => {
-              this.isLoading = false;
-              this.message = error.error;
-              if (error.error.toLowerCase().includes('user')) {
-                this.usernameInput.nativeElement.select();
-              }
-              if (error.error.toLowerCase().includes('password')) {
-                this.passwordInput.nativeElement.select();
-              }
-            }
-          )
-      );
-    } else {
-      this.writeInfo(orderInfo);
-    }
+    // if (this.isNeedSupv) {
+    //   this.subscription.add(
+    //     this.authService
+    //       .userAuth(
+    //         this.verifyPack.get('username').value,
+    //         this.verifyPack.get('password').value
+    //       )
+    //       .subscribe(
+    //         (user: { userGroups: string[] }) => {
+    //           if (user.userGroups?.includes('whs_supr')) {
+    //             this.writeInfo(orderInfo);
+    //           } else {
+    //             this.message = 'This user is not supervisor.';
+    //             this.usernameInput.nativeElement.select();
+    //           }
+    //           this.isLoading = false;
+    //         },
+    //         (error) => {
+    //           this.isLoading = false;
+    //           this.message = error.error;
+    //           if (error.error.toLowerCase().includes('user')) {
+    //             this.usernameInput.nativeElement.select();
+    //           }
+    //           if (error.error.toLowerCase().includes('password')) {
+    //             this.passwordInput.nativeElement.select();
+    //           }
+    //         }
+    //       )
+    //   );
+    // } else {
+    //   this.writeInfo(orderInfo);
+    // }
+    this.writeInfo(orderInfo);
     return;
   }
 
