@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve",
-    "build": "NODE_ENV=production ng build --configuration=d1",
-    "build:local": "NODE_ENV=production ng build --configuration=local",
+    "build:local": "NODE_ENV=production ng build --configuration=local | sudo docker-compose up --build -d",
+    "build:stagging": "NODE_ENV=production ng build --configuration=d1 | sudo docker-compose up --build -d",
+    "build:prod": "NODE_ENV=production ng build --configuration=p1 | sudo docker-compose up --build -d",
     "gql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config GQLmerp.yml",
     "gql:codegen": "graphql codegen",
     "gql:coverage": "graphql coverage",
