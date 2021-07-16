@@ -26,14 +26,16 @@
       Global Messages
     </button>
 
-    <div *ngIf="isImgExist" class="grid grid-cols-4 mt-2">
+    <div class="grid grid-cols-4 mt-2 h-40">
       <div class="col-span-2">
-        <img
-          [src]="imgURL"
-          class="h-40"
-          alt="ProductImage"
-          onError="this.src='assets/img/image-not-found.png'"
-        />
+        <div *ngIf="isImgExist">
+          <img
+            [src]="imgURL"
+            class="h-40"
+            alt="ProductImage"
+            onError="this.src='assets/img/image-not-found.png'"
+          />
+        </div>
       </div>
       <div class="grid grid-rows-2 items-center">
         <a
@@ -51,12 +53,13 @@
       </div>
     </div>
   </section>
+
   <!-- User input form -->
-  <section class="flex flex-col">
-    <div class="grid grid-cols-3 font-semibold text-lg">
+  <section class="flex flex-col mt-3">
+    <!-- <div class="grid grid-cols-3 font-semibold text-lg">
       <p>Pack Information</p>
       <p class="col-span-2">User Input</p>
-    </div>
+    </div> -->
     <form
       focusInvalidInput
       [formGroup]="verifyPack"
@@ -76,15 +79,10 @@
           <p>Quantity:</p>
           <p>{{ Quantity }}</p>
         </dt>
-        <div class="z-0 w-full relative mt-2 col-span-2">
-          <form-button
-            [styles]="holdStyles"
-            [disabled]="isLoading"
-            [isLoading]="isLoading"
-            [label]="'Hold'"
-            (click)="toggleHoldModal()"
-          ></form-button>
-        </div>
+        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
+          <p>HML:</p>
+          <p>{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
+        </dt>
       </div>
 
       <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -97,6 +95,7 @@
           <input
             type="text"
             name="dateCode"
+            [readonly]="!editable"
             placeholder=" "
             formControlName="dateCode"
             class="float-input"
@@ -137,6 +136,7 @@
                 type="radio"
                 name="ROHS"
                 formControlName="ROHS"
+                [readonly]="!editable"
                 [value]="ROHS.id"
                 class="
                   mr-2
@@ -168,6 +168,7 @@
               [customFilter]="COOFilter"
               [itemTemplate]="COOTemplate"
               [notFoundTemplate]="notFoundTemplate"
+              [disabled]="!editable"
               formControlName="countryOfOrigin"
               class="text-black"
             >
@@ -182,7 +183,21 @@
           <span class="text-sm text-red-600 hidden" id="cooError"></span>
         </div>
       </div>
+      <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3 mb-3">
+        <form-button
+          [styles]="holdStyles"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="'Hold'"
+          (click)="toggleHoldModal()"
+        ></form-button>
 
+        <form-button
+          [styles]="editStyles"
+          [label]="'edit'"
+          (click)="toggleEdit()"
+        ></form-button>
+      </div>
       <div
         class="
           px-4
@@ -192,10 +207,6 @@
           dark:bg-gray-700
         "
       >
-        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
-          <p>HML:</p>
-          <p>{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
-        </dt>
         <div class="col-span-2">
           <div class="mt-6">
             <fieldset class="relative z-0 mb-5 p-px">
@@ -209,6 +220,7 @@
                     name="countMethods"
                     value="{{ countMethod.id }}"
                     formControlName="countMethods"
+                    #countMethods
                     class="
                       mr-2
                       focus:ring-black

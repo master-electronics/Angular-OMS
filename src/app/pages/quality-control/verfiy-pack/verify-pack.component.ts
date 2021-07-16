@@ -30,15 +30,17 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   productURL = 'https://www.onlinecomponents.com/en/grayhill/';
   specSheetURL = 'https://www.onlinecomponents.com/en/datasheet/';
   shortcuts: ShortcutInput[] = [];
-  isImgExist = true;
+  isImgExist = false;
   globalMessages: string[];
   ITNRegex = '[a-zA-Z0-9]{10}';
   isLoading = false;
+  editable = false;
   // isNeedSupv = true;
   messageType = 'error';
-  submitStyles = 'bg-indigo-800';
-  backStyles = 'bg-gray-500';
+  editStyles = 'bg-purple-500';
   holdStyles = 'bg-yellow-500';
+  backStyles = 'bg-gray-500';
+  submitStyles = 'bg-indigo-800';
   buttonLabel = 'submit';
   message = '';
   isHoldModalHidden = true;
@@ -103,6 +105,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dateCodeError') dateCodeError: ElementRef;
   @ViewChild('countMethodError') countMethodError: ElementRef;
   @ViewChild('dateCode') dateCodeInput: ElementRef;
+  @ViewChild('countMethods') countMethodsInput: ElementRef;
   // @ViewChild('username') usernameInput: ElementRef;
   // @ViewChild('password') passwordInput: ElementRef;
 
@@ -165,6 +168,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //     password: 'test',
     //   });
     // }
+    this.verifyPack.controls['ROHS'].disable();
   }
 
   async fetchProductInfo(): Promise<void> {
@@ -176,7 +180,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         )
         .valueChanges.subscribe(
           (res) => {
-            if (res) {
+            if (res.data.fetchProductInfoFromMerp) {
               this.MICPartNumber =
                 res.data.fetchProductInfoFromMerp.MICPartNumber;
               this.HazardMaterialLevel =
@@ -184,6 +188,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
               this.imgURL = `${this.imgURL}${this.MICPartNumber}.jpg`;
               this.productURL = `${this.productURL}${this.PartNumber}-${this.MICPartNumber}.html`;
               this.specSheetURL = `${this.specSheetURL}${this.PartNumber}-${this.MICPartNumber}/`;
+              this.isImgExist = true;
             }
           },
           (error) => {
@@ -324,9 +329,14 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleGlobalMessagesModal(): void {
     this.isGlobalMessagesModalHidden = !this.isGlobalMessagesModalHidden;
   }
+  toggleEdit(): void {
+    this.editable = true;
+    this.verifyPack.controls['ROHS'].enable();
+    this.dateCodeInput.nativeElement.select();
+  }
 
   ngAfterViewInit(): void {
-    this.dateCodeInput.nativeElement.select();
+    this.countMethodsInput.nativeElement.focus();
     this.shortcuts.push(
       {
         key: ['ctrl + h'],
@@ -349,9 +359,19 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       },
       {
+        key: ['ctrl + e'],
+        label: 'Quick Access',
+        description: 'Toggle editable',
+        preventDefault: true,
+        allowIn: [AllowIn.Textarea, AllowIn.Input],
+        command: () => {
+          this.back();
+        },
+      },
+      {
         key: ['ctrl + g'],
         label: 'Quick Access',
-        description: 'Back to Sacn ITN',
+        description: 'Show Global Message',
         preventDefault: true,
         allowIn: [AllowIn.Textarea, AllowIn.Input],
         command: () => {
