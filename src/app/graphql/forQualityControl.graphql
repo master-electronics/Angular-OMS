@@ -4,11 +4,13 @@ query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
     DistributionCenter
     OrderNumber
     OrderLineNumber
+    NOSINumber
     ProductCode
     PartNumber
     Status
     Quantity
     DemandQuantity
+    ParentITN
     ROHS
     DateCode
     CountryOfOrigin
@@ -76,6 +78,25 @@ mutation updateQCOrder(
     ROHS: $ROHS
     CountMethod: $CountMethod
   ) {
+    success
+    message
+  }
+}
+
+query findContainer($Barcode: String!, $DistributionCenter: String!) {
+  findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    _id
+    Type {
+      _id
+    }
+  }
+}
+
+mutation insertRecordsAfterQC(
+  $Inventory: InventoryUpdate!
+  $Order: OrderUpdate!
+) {
+  insertRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
     success
     message
   }

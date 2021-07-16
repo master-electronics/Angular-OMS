@@ -9,7 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { QualityControlService } from '../quality-control.server';
+import { QualityControlService, urlParams } from '../quality-control.server';
 import { FetchPackInfoByItNfromMerpGQL } from '../../../graphql/forQualityControl.graphql-gen';
 import { ITNRegex } from '../../../shared/dataRegex';
 
@@ -81,21 +81,23 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.fetchPackInfoFromMerp.Quantity &&
               res.data.fetchPackInfoFromMerp.DemandQuantity === 0
             ) {
+              const queryParams: urlParams = {
+                ITN: ITN,
+                CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
+                DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
+                OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
+                OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
+                NOSI: res.data.fetchPackInfoFromMerp.NOSINumber,
+                PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
+                PRC: res.data.fetchPackInfoFromMerp.ProductCode,
+                Quantity: res.data.fetchPackInfoFromMerp.Quantity,
+                ParentITN: res.data.fetchPackInfoFromMerp.ParentITN,
+                ROHS: res.data.fetchPackInfoFromMerp.ROHS,
+                DateCode: res.data.fetchPackInfoFromMerp.DateCode,
+                coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
+              };
               this.router.navigate(['/qc/globalmessages'], {
-                queryParams: {
-                  ITN: ITN,
-                  CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
-                  DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
-                  OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
-                  OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
-                  PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
-                  ProductCode: res.data.fetchPackInfoFromMerp.ProductCode,
-                  PRC: res.data.fetchPackInfoFromMerp.ProductCode,
-                  Quantity: res.data.fetchPackInfoFromMerp.Quantity,
-                  ROHS: res.data.fetchPackInfoFromMerp.ROHS,
-                  DateCode: res.data.fetchPackInfoFromMerp.DateCode,
-                  coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
-                },
+                queryParams: queryParams,
               });
             } else {
               this.messageType = 'error';

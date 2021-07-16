@@ -10,7 +10,6 @@ import {
   AbstractControl,
   FormBuilder,
   FormControl,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -104,7 +103,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.fetchInfo();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.locationInput.nativeElement.focus();
   }
 
@@ -181,7 +180,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  fetchInfo() {
+  fetchInfo(): void {
     this.isLoading = true;
     this.subscription.add(
       this.fetchInventoryInfoGQL

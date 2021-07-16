@@ -56,13 +56,12 @@ export class GlobalMessagesComponent
       OrderNumber: urlParams['OrderNum'],
       OrderLineNumber: urlParams['OrderLine'],
       PartNumber: urlParams['PartNum'],
-      ProductCode: urlParams['ProductCode'],
+      ProductCode: urlParams['PRC'],
     };
     this.getGlobalMessage(params);
   }
 
   onSubmit(): void {
-    //
     this.router.navigate(['/qc/verifypack'], {
       queryParams: this.route.snapshot.queryParams,
     });

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { QualityControlService } from '../quality-control.server';
 
 @Component({
@@ -12,7 +12,6 @@ export class StepTabsComponent implements OnInit {
     //
   }
   ngOnInit(): void {
-    //
     this.qcService.activeTab.subscribe(
       (response) => (this.activeTab = response)
     );

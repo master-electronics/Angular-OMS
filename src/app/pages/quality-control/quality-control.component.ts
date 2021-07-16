@@ -49,8 +49,8 @@ export class QualityControlComponent implements OnInit, OnDestroy {
               }
             }
           },
-          () => {
-            this.modalMessage = `Can't find QC printer's configuration!`;
+          (error) => {
+            this.modalMessage = error.error;
             this.isModalHidden = false;
           }
         )

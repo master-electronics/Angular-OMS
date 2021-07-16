@@ -7,13 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
-import { QualityControlService } from '../quality-control.server';
+import { QualityControlService, urlParams } from '../quality-control.server';
 import {
   FetchProductInfoFromMerpGQL,
   UpdateQcOrderGQL,
@@ -44,10 +44,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;
   // input data
+  params: Params;
   ITN: string;
   PRC: string;
   PartNumber: string;
-  ROHS: string;
+  ROHS: boolean;
   Quantity: number;
   DateCode: string;
   CountryOfOrigin: string;
@@ -95,15 +96,15 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     countMethods: ['', [Validators.required]],
     countryOfOrigin: ['', [Validators.required]],
     ROHS: ['', [Validators.required]],
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]],
+    // username: ['', [Validators.required]],
+    // password: ['', [Validators.required]],
   });
 
   @ViewChild('dateCodeError') dateCodeError: ElementRef;
   @ViewChild('countMethodError') countMethodError: ElementRef;
   @ViewChild('dateCode') dateCodeInput: ElementRef;
-  @ViewChild('username') usernameInput: ElementRef;
-  @ViewChild('password') passwordInput: ElementRef;
+  // @ViewChild('username') usernameInput: ElementRef;
+  // @ViewChild('password') passwordInput: ElementRef;
 
   private subscription = new Subscription();
   constructor(
@@ -122,20 +123,20 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qcService.changeTab(3);
     // check global message
     this.globalMessages = this.qcService.globalMessages;
+    this.params = this.route.snapshot.queryParams;
     // this.qcService.globalMessages?.some((message) => {
     //   return message.includes('SUPV SIGNATURE REQUIRED');
     // })
     //   ? (this.isNeedSupv = true)
     //   : (this.isNeedSupv = false);
-    this.ITN = this.route.snapshot.queryParams['ITN'];
-    this.PRC = this.route.snapshot.queryParams['PRC'];
-    this.PartNumber = this.route.snapshot.queryParams['PartNum'];
-    const ROHStext = this.route.snapshot.queryParams['ROHS'];
-    this.ROHS = ROHStext ? (ROHStext === 'true' ? 'Yes' : 'No') : 'Unknown';
-    const coo = this.route.snapshot.queryParams['coo'];
+    this.ITN = this.params['ITN'];
+    this.PRC = this.params['PRC'];
+    this.PartNumber = this.params['PartNum'];
+    this.ROHS = this.params['ROHS'] === 'true' ? true : false;
+    const coo = this.params['coo'];
     this.CountryOfOrigin = coo ? coo : 'Unknown';
-    this.Quantity = parseInt(this.route.snapshot.queryParams['Quantity']);
-    this.DateCode = this.route.snapshot.queryParams['DateCode'];
+    this.Quantity = Number(this.params['Quantity']);
+    this.DateCode = this.params['DateCode'];
     let country = this.countryData.find(
       (element) => element.name.substring(0, 2) === this.CountryOfOrigin
     );
@@ -148,7 +149,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // set init value of form
     this.verifyPack.setValue({
       dateCode: this.DateCode || '',
-      ROHS: this.ROHS === 'Yes' ? 1 : 0,
+      ROHS: this.ROHS ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
       // username: '',
@@ -217,7 +218,29 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.countMethods[this.verifyPack.get('countMethods').value - 1]
           .content,
     };
+
+    const countryOO = this.verifyPack.get('countryOfOrigin').value;
+    let cooValue: string;
+    countryOO._id === 1
+      ? (cooValue = null)
+      : (cooValue = countryOO.name.substring(0, 2));
+    const nextPageParams: urlParams = {
+      ITN: this.ITN,
+      CustomerNum: this.params['CustomerNum'],
+      DC: this.params['DC'],
+      OrderNum: this.params['OrderNum'],
+      OrderLine: this.params['OrderLine'],
+      NOSI: this.params['NOSI'],
+      PRC: this.PRC,
+      PartNum: this.PartNumber,
+      Quantity: this.Quantity,
+      ParentITN: this.params['ParentITN'],
+      ROHS: this.verifyPack.get('ROHS').value,
+      coo: cooValue,
+      DateCode: this.verifyPack.get('dateCode').value,
+    };
     this.isLoading = true;
+    this.writeInfo(orderInfo, nextPageParams);
     // if (this.isNeedSupv) {
     //   this.subscription.add(
     //     this.authService
@@ -250,11 +273,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // } else {
     //   this.writeInfo(orderInfo);
     // }
-    this.writeInfo(orderInfo);
     return;
   }
 
-  async writeInfo(orderInfo: UpdateQcOrderMutationVariables): Promise<void> {
+  async writeInfo(
+    orderInfo: UpdateQcOrderMutationVariables,
+    urlParams: urlParams
+  ): Promise<void> {
     this.subscription.add(
       this.updateQCOrder
         .mutate(orderInfo, { fetchPolicy: 'no-cache' })
@@ -262,20 +287,19 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             let response: { type: string; message: string };
             if (res.data.updateQCOrder.success) {
-              response = {
-                type: `success`,
-                message: `${this.ITN} QC done`,
-              };
+              this.router.navigate(['qc/repack'], {
+                queryParams: urlParams,
+              });
             } else {
               response = {
                 type: 'error',
                 message: `${this.ITN} QC failed. ${res.data.updateQCOrder.message}`,
               };
+              this.router.navigate(['qc'], {
+                queryParams: response,
+              });
             }
             this.isLoading = false;
-            this.router.navigate(['qc'], {
-              queryParams: response,
-            });
           },
           (error) => {
             this.isLoading = false;

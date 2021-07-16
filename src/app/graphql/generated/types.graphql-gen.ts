@@ -122,6 +122,7 @@ export type InventoryUpdate = {
   CycleCountDate?: Maybe<Scalars['String']>;
   CycleCountUser?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
+  OrderID?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -133,6 +134,7 @@ export type Mutation = {
   /** For qc page */
   holdQCOrder: Response;
   updateQCOrder: Response;
+  insertRecordsAfterQC: Response;
 };
 
 export type MutationAggregationInArgs = {
@@ -161,6 +163,7 @@ export type MutationUpdateOrderStatusArgs = {
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   Order: OrderUpdate;
 };
 
@@ -178,6 +181,11 @@ export type MutationUpdateQcOrderArgs = {
   CountryOfOrigin: Scalars['String'];
   ROHS: Scalars['String'];
   CountMethod: Scalars['String'];
+};
+
+export type MutationInsertRecordsAfterQcArgs = {
+  Inventory: InventoryUpdate;
+  Order?: Maybe<OrderUpdate>;
 };
 
 export type Order = {
@@ -199,6 +207,9 @@ export type OrderStatus = {
 };
 
 export type OrderUpdate = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
 };
@@ -215,6 +226,7 @@ export type PackInfoFromMerp = {
   Status?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   DemandQuantity?: Maybe<Scalars['Float']>;
+  ParentITN?: Maybe<Scalars['String']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;

@@ -18,3 +18,19 @@ export class QualityControlService {
     return this.globalMessagesSubject.value;
   }
 }
+
+export interface urlParams {
+  ITN: string;
+  CustomerNum: string;
+  DC: string;
+  OrderNum: string;
+  OrderLine: string;
+  NOSI: string;
+  PRC: string;
+  PartNum: string;
+  Quantity: number;
+  ParentITN: string;
+  ROHS: boolean;
+  coo: string;
+  DateCode: string;
+}
