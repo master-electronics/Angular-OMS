@@ -84,7 +84,16 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       );
       // if return null or container type is not 15(tote) stop
       if (containerInfo.typeID !== ToteTypeID) {
-        this.containerError.nativeElement.textContent = 'Invaild tote barcode!';
+        this.containerError.nativeElement.textContent =
+          'This container is not a tote!';
+        this.containerError.nativeElement.classList.remove('hidden');
+        this.containerInput.nativeElement.select();
+        this.isLoading = false;
+        return;
+      }
+      if (containerInfo.Row === 'QC') {
+        this.containerError.nativeElement.textContent =
+          'The tote should not be reused.';
         this.containerError.nativeElement.classList.remove('hidden');
         this.containerInput.nativeElement.select();
         this.isLoading = false;
@@ -128,7 +137,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   async fetchContainerInfo(
     DC: string,
     containerNumber: string
-  ): Promise<{ _id: number; typeID: number }> {
+  ): Promise<{ _id: number; typeID: number; Row: string }> {
     return new Promise((resolve, reject) => {
       this.findContainer
         .watch(
@@ -140,6 +149,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             const containerInfo = {
               _id: response.data.findContainer[0]._id,
               typeID: response.data.findContainer[0].Type._id,
+              Row: response.data.findContainer[0].Row,
             };
             resolve(containerInfo);
           } else {

@@ -185,7 +185,7 @@ export type MutationUpdateQcOrderArgs = {
 
 export type MutationInsertRecordsAfterQcArgs = {
   Inventory: InventoryUpdate;
-  Order?: Maybe<OrderUpdate>;
+  Order: OrderUpdate;
 };
 
 export type Order = {

@@ -190,7 +190,7 @@ export type MutationUpdateQcOrderArgs = {
 
 export type MutationInsertRecordsAfterQcArgs = {
   Inventory: InventoryUpdate;
-  Order?: Maybe<OrderUpdate>;
+  Order: OrderUpdate;
 };
 
 export type Order = {
@@ -446,7 +446,7 @@ export type FindContainerQuery = { __typename?: 'Query' } & {
   findContainer?: Types.Maybe<
     Array<
       Types.Maybe<
-        { __typename?: 'Container' } & Pick<Types.Container, '_id'> & {
+        { __typename?: 'Container' } & Pick<Types.Container, '_id' | 'Row'> & {
             Type: { __typename?: 'ContainerType' } & Pick<
               Types.ContainerType,
               '_id'
@@ -639,6 +639,7 @@ export const FindContainerDocument = gql`
       Type {
         _id
       }
+      Row
     }
   }
 `;

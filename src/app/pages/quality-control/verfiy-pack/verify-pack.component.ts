@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
 
@@ -46,14 +46,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;
   // input data
-  params: Params;
-  ITN: string;
-  PRC: string;
-  PartNumber: string;
-  ROHS: boolean;
-  Quantity: number;
-  DateCode: string;
-  CountryOfOrigin: string;
+  urlParams: { [key: string]: any };
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
   // set autocomplete input box
@@ -127,22 +120,17 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qcService.changeTab(3);
     // check global message
     this.globalMessages = this.qcService.globalMessages;
-    this.params = this.route.snapshot.queryParams;
+    this.urlParams = { ...this.route.snapshot.queryParams };
     // this.qcService.globalMessages?.some((message) => {
     //   return message.includes('SUPV SIGNATURE REQUIRED');
     // })
     //   ? (this.isNeedSupv = true)
     //   : (this.isNeedSupv = false);
-    this.ITN = this.params['ITN'];
-    this.PRC = this.params['PRC'];
-    this.PartNumber = this.params['PartNum'];
-    this.ROHS = this.params['ROHS'] === 'true' ? true : false;
-    const coo = this.params['coo'];
-    this.CountryOfOrigin = coo ? coo : 'Unknown';
-    this.Quantity = Number(this.params['Quantity']);
-    this.DateCode = this.params['DateCode'];
+    this.urlParams.ROHS = this.urlParams.ROHS === 'true' ? true : false;
+    this.urlParams.coo = this.urlParams.coo ? this.urlParams.coo : 'Unknown';
+    this.urlParams.Quantity = Number(this.urlParams.Quantity);
     let country = this.countryData.find(
-      (element) => element.name.substring(0, 2) === this.CountryOfOrigin
+      (element) => element.name.substring(0, 2) === this.urlParams.coo
     );
     country
       ? 0
@@ -152,8 +140,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.fetchProductInfo();
     // set init value of form
     this.verifyPack.setValue({
-      dateCode: this.DateCode || '',
-      ROHS: this.ROHS ? 1 : 0,
+      dateCode: this.urlParams.DateCode || '',
+      ROHS: this.urlParams.ROHS ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
       // username: '',
@@ -161,8 +149,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     // if (!this.isNeedSupv) {
     //   this.verifyPack.setValue({
-    //     dateCode: this.DateCode || '',
-    //     ROHS: this.ROHS === 'Yes' ? 1 : 0,
+    //     dateCode: this.urlParams.DateCode|| '',
+    //     ROHS: this.urlParams.ROHS === 'Yes' ? 1 : 0,
     //     countMethods: '',
     //     countryOfOrigin: country,
     //     username: 'test',
@@ -177,7 +165,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.fetchProductInfoFromMerp
         .watch(
-          { PartNumber: this.PartNumber, ProductCode: this.PRC },
+          {
+            PartNumber: this.urlParams.PartNum,
+            ProductCode: this.urlParams.PRC,
+          },
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
@@ -188,8 +179,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
               this.HazardMaterialLevel =
                 res.data.fetchProductInfoFromMerp.HazardMaterialLevel;
               this.imgURL = `${this.imgURL}${this.MICPartNumber}.jpg`;
-              this.productURL = `${this.productURL}${this.PartNumber}-${this.MICPartNumber}.html`;
-              this.specSheetURL = `${this.specSheetURL}${this.PartNumber}-${this.MICPartNumber}/`;
+              this.productURL = `${this.productURL}${this.urlParams.PartNum}-${this.MICPartNumber}.html`;
+              this.specSheetURL = `${this.specSheetURL}${this.urlParams.PartNum}-${this.MICPartNumber}/`;
               this.isImgExist = true;
             }
           },
@@ -216,7 +207,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.countMethodError.nativeElement.classList.add('hidden');
     const coo = this.verifyPack.get('countryOfOrigin').value.name;
     const orderInfo = {
-      InternalTrackingNumber: this.ITN,
+      InternalTrackingNumber: this.urlParams.ITN,
       User: this.authService.userName,
       DateCode: this.verifyPack.get('dateCode').value,
       CountryOfOrigin: coo === 'UNKNOWN' ? '' : coo.slice(0, 2),
@@ -232,16 +223,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       ? (cooValue = null)
       : (cooValue = countryOO.name.substring(0, 2));
     const nextPageParams: urlParams = {
-      ITN: this.ITN,
-      CustomerNum: this.params['CustomerNum'],
-      DC: this.params['DC'],
-      OrderNum: this.params['OrderNum'],
-      OrderLine: this.params['OrderLine'],
-      NOSI: this.params['NOSI'],
-      PRC: this.PRC,
-      PartNum: this.PartNumber,
-      Quantity: this.Quantity,
-      ParentITN: this.params['ParentITN'],
+      ITN: this.urlParams.ITN,
+      CustomerNum: this.urlParams.CustomerNum,
+      DC: this.urlParams.DC,
+      OrderNum: this.urlParams.OrderNum,
+      OrderLine: this.urlParams.OrderLine,
+      NOSI: this.urlParams.NOSI,
+      PRC: this.urlParams.PRC,
+      PartNum: this.urlParams.PartNum,
+      Quantity: this.urlParams.Quantity,
+      ParentITN: this.urlParams.ParentITN,
       ROHS: this.verifyPack.get('ROHS').value,
       coo: cooValue,
       DateCode: this.verifyPack.get('dateCode').value,
@@ -300,7 +291,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
               response = {
                 type: 'error',
-                message: `${this.ITN} QC failed. ${res.data.updateQCOrder.message}`,
+                message: `${this.urlParams.ITN} QC failed. ${res.data.updateQCOrder.message}`,
               };
               this.router.navigate(['qc'], {
                 queryParams: response,
@@ -313,7 +304,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             this.router.navigate(['qc'], {
               queryParams: {
                 type: `error`,
-                message: `${this.ITN} QC failed.${error}`,
+                message: `${this.urlParams.ITN} QC failed.${error}`,
               },
             });
           }

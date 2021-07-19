@@ -10,9 +10,9 @@ export class SubmitButtonComponent {
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() isLoading = false;
-  @Output() onClickEmt: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onClickEmt = new EventEmitter<MouseEvent>();
 
-  onClickButton() {
+  onClickButton(): void {
     this.onClickEmt.emit();
   }
 }

@@ -86,6 +86,7 @@ mutation updateQCOrder(
 query findContainer($Barcode: String!, $DistributionCenter: String!) {
   findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
     _id
+    Row
     Type {
       _id
     }

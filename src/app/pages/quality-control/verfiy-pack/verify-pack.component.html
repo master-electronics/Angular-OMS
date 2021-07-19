@@ -1,33 +1,33 @@
 <div class="mx-auto md:max-w-2xl flex flex-col text-black dark:text-white">
   <!-- item picture and detail link -->
   <section>
-    <div class="grid grid-cols-6">
-      <p class="font-bold col-span-2">ITN: {{ ITN }}</p>
-      <p class="font-bold col-span-1">PRC: {{ PRC }}</p>
-      <p class="font-bold col-span-3">PartNumber: {{ PartNumber }}</p>
+    <div class="grid grid-cols-10">
+      <p class="font-bold col-span-3">ITN: {{ this.urlParams.ITN }}</p>
+      <p class="font-bold col-span-2">PRC: {{ this.urlParams.PRC }}</p>
+      <p class="font-bold col-span-3">
+        PartNumber: {{ this.urlParams.PartNum }}
+      </p>
+      <button
+        *ngIf="globalMessages"
+        type="button"
+        (click)="toggleGlobalMessagesModal()"
+        class="
+          w-full
+          border
+          text-base
+          font-medium
+          rounded-r-md
+          text-black
+          bg-white
+          hover:bg-gray-100
+        "
+      >
+        GMs
+      </button>
     </div>
-    <button
-      *ngIf="globalMessages"
-      type="button"
-      (click)="toggleGlobalMessagesModal()"
-      class="
-        w-full
-        border
-        text-base
-        font-medium
-        rounded-r-md
-        text-black
-        bg-white
-        hover:bg-gray-100
-        px-4
-        py-2
-      "
-    >
-      Global Messages
-    </button>
 
     <div class="grid grid-cols-5 mt-2 h-40">
-      <div class="col-span-2">
+      <div class="col-span-3">
         <div *ngIf="isImgExist">
           <img
             [src]="imgURL"
@@ -40,7 +40,7 @@
 
       <div class="grid items-center text-lg font-bold">
         <p>Quantity:</p>
-        <p class="text-indigo-600">{{ Quantity }}</p>
+        <p class="text-indigo-600">{{ this.urlParams.Quantity }}</p>
 
         <p>HML:</p>
         <p class="text-indigo-600">{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
@@ -68,8 +68,8 @@
       <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>DateCode:</p>
-          <p *ngIf="DateCode">{{ DateCode }}</p>
-          <p *ngIf="!DateCode">Unknown</p>
+          <p *ngIf="this.urlParams.dateCode">{{ this.urlParams.dateCode }}</p>
+          <p *ngIf="!this.urlParams.dateCode">Unknown</p>
         </dt>
         <div class="z-0 w-full relative mt-4 col-span-2">
           <input
@@ -101,7 +101,7 @@
       >
         <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>ROHS:</p>
-          <p>{{ ROHS }}</p>
+          <p>{{ this.urlParams.ROHS }}</p>
         </dt>
         <fieldset class="relative z-0 p-px w-full mt-2">
           <legend
@@ -133,7 +133,7 @@
       <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
           <p>Country of Origin:</p>
-          <p>{{ CountryOfOrigin }}</p>
+          <p>{{ this.urlParams.coo }}</p>
         </dt>
         <div class="col-span-2">
           <label for="countryOfOrigin" class="text-sm text-gray-500"
