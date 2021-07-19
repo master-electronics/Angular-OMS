@@ -170,6 +170,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //   });
     // }
     this.verifyPack.controls['ROHS'].disable();
+    this.verifyPack.controls['dateCode'].disable();
   }
 
   async fetchProductInfo(): Promise<void> {
@@ -333,6 +334,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleEdit(): void {
     this.editable = true;
     this.verifyPack.controls['ROHS'].enable();
+    this.verifyPack.controls['dateCode'].enable();
     this.dateCodeInput.nativeElement.select();
   }
 
