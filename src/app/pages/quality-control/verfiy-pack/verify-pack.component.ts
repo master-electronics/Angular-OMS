@@ -82,10 +82,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   countMethods = [
     { id: 1, content: 'Factory bag' },
     { id: 2, content: 'Factory box' },
-    { id: 3, content: 'B/C' },
+    { id: 3, content: 'Hand count' },
     { id: 4, content: 'Reel/TUB' },
-    { id: 5, content: 'Scale' },
-    { id: 6, content: 'Factory Reel' },
+    { id: 5, content: 'Drypack' },
+    { id: 6, content: 'Scale' },
+    { id: 7, content: 'Factory Reel' },
   ];
   booleanOptions = [
     { id: 1, name: 'Yes' },
