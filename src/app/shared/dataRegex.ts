@@ -1,5 +1,5 @@
-export const BinContainerRegex = /^[0-9]{2}-[0-9]{2}-[0-9]{2}$/;
-export const ITNRegex = /^[a-zA-Z0-9]{10} *$/;
-export const BinLocationRegex = /^[a-zA-Z0-9-]{11}$/;
-export const OrderNumberRegex = /^[a-zA-Z0-9]{10}$/;
-export const dateCodeRegex = /^[0-9]{2}[[0-4][0-9]$|5[0-4]|]$/;
+export const BinContainerRegex = /^\d{2}-\d{2}-\d{2}$/;
+export const ITNRegex = /^\w{10}$/;
+export const AggregationLocationRegex = /^10-AG-\d{2}-\d{2}-[A-Z]-\d{2}$/;
+export const OrderNumberRegex = /^\w{10}$/;
+export const dateCodeRegex = /^\d{2}[[0-4]\d$|5[0-4]|]$/;

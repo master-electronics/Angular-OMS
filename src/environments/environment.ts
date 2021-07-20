@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000',
   GTM_ID: 'GTM-KS8744D',
+  changelogurl: 'https://rarm18.gitbook.io/wms/changelog',
 };
 
 /*

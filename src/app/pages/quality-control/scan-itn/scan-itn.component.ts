@@ -21,7 +21,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   messageType = 'error';
   buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
+  buttonLabel = 'Next';
   message = '';
   private subscription = new Subscription();
   constructor(

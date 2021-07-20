@@ -20,7 +20,10 @@ import {
   FetchInventoryInfoGQL,
   AggregationInGQL,
 } from '../../../graphql/aggregation.graphql-gen';
-import { BinLocationRegex, BinContainerRegex } from '../../../shared/dataRegex';
+import {
+  AggregationLocationRegex,
+  BinContainerRegex,
+} from '../../../shared/dataRegex';
 
 @Component({
   selector: 'location',
@@ -53,8 +56,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     { key: 'Shipment', value: '' },
   ];
 
-  regex(input: FormControl) {
-    return BinLocationRegex.test(input.value) ||
+  regex(input: FormControl): { regex: { valid: boolean } } {
+    return AggregationLocationRegex.test(input.value) ||
       BinContainerRegex.test(input.value) ||
       input.value === ''
       ? null
@@ -135,7 +138,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             qcContainer: this.qcContainer,
             ITNList: this.ITNList,
             LocationList: this.locationList,
-            Barcode: this.locationForm.get('location').value,
+            Barcode: this.locationForm.get('location').value.replace(/-/g, ''),
             DistributionCenter: 'PH',
             newLocation: this.newLocation,
             isLastITN: this.isLastITN,

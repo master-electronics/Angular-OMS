@@ -41,7 +41,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   holdStyles = 'bg-yellow-500';
   backStyles = 'bg-gray-500';
   submitStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
   message = '';
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;

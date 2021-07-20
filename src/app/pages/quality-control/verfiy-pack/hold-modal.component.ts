@@ -83,12 +83,12 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
           if (res.data.holdQCOrder.success) {
             response = {
               type: `warning`,
-              message: `${this.ITN} is holding.`,
+              message: `${this.ITN} is on hold.`,
             };
           } else {
             response = {
               type: 'error',
-              message: `${this.ITN} fails holding. ${res.data.holdQCOrder.message}`,
+              message: `${this.ITN} hold failed. ${res.data.holdQCOrder.message}`,
             };
           }
           this.router.navigate(['qc'], {
@@ -99,7 +99,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
-              message: `${this.ITN} holding failed.${error}`,
+              message: `${this.ITN} hold failed.${error}`,
             },
           });
         }

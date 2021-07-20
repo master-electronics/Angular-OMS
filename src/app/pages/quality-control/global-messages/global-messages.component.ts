@@ -35,7 +35,6 @@ export class GlobalMessagesComponent
   partComments: string[];
   submitStyles = 'bg-indigo-800';
   backStyles = 'bg-gray-400';
-  buttonLabel = 'Continue';
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,

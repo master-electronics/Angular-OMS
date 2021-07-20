@@ -91,14 +91,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
         return;
       }
-      if (containerInfo.Row === 'QC') {
-        this.containerError.nativeElement.textContent =
-          'The tote should not be reused.';
-        this.containerError.nativeElement.classList.remove('hidden');
-        this.containerInput.nativeElement.select();
-        this.isLoading = false;
-        return;
-      }
       this.containerError.nativeElement.classList.add('hidden');
 
       const Inventory: InventoryUpdate = {

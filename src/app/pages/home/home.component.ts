@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
+import { environment } from '../../../environments/environment';
 import { CommonService } from '../../shared/services/common.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { CommonService } from '../../shared/services/common.service';
 })
 export class HomeComponent implements AfterViewInit {
   isMobile: boolean;
+  changelogurl = environment.changelogurl;
   title = 'Master Electronics';
   shortcuts: ShortcutInput[] = [];
   constructor(
