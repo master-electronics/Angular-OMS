@@ -7,8 +7,21 @@
         <h1>Locations:</h1>
         <div class="justify-center text-lg grid grid-cols-3">
           <div class="grid grid-flow-col col-span-2 grid-rows-3">
-            <ul *ngFor="let locationID of locations">
-              <span class="text-yellow-600">{{ locationID }}</span>
+            <ul
+              *ngFor="let locationID of locations"
+              class="text-yellow-600 text-2xl"
+            >
+              <span>{{ locationID.substring(0, 2) }}</span>
+              <span>-</span>
+              <span>{{ locationID.substring(2, 4) }}</span>
+              <span>-</span>
+              <span>{{ locationID.substring(4, 6) }}</span>
+              <span>-</span>
+              <span>{{ locationID.substring(6, 8) }}</span>
+              <span>-</span>
+              <span>{{ locationID.substring(8, 9) }}</span>
+              <span>-</span>
+              <span>{{ locationID.substring(9) }}</span>
             </ul>
           </div>
           <button

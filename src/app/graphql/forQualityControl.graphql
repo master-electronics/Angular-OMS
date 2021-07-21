@@ -91,6 +91,15 @@ query findContainer($Barcode: String!, $DistributionCenter: String!) {
       _id
     }
   }
+  fetchM1TOTEInfo(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    OrderNumber
+  }
+}
+
+query findInventoryByContainer($ContainerID: Int!, $limit: Int!) {
+  findInventoriesByContainer(ContainerID: $ContainerID, limit: $limit) {
+    _id
+  }
 }
 
 mutation insertRecordsAfterQC(

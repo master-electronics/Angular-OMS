@@ -12,7 +12,7 @@ export class ShellComponent implements AfterViewInit {
   @ViewChild('input') input: ElementRef;
   ngAfterViewInit(): void {
     this.shortcuts.push({
-      key: 'alt + ctrl + h',
+      key: 'F4',
       preventDefault: true,
       allowIn: [AllowIn.Textarea, AllowIn.Input],
       command: () => {

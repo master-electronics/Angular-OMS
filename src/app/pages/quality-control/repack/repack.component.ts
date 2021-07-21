@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
 import {
   FindContainerGQL,
+  FindInventoryByContainerGQL,
   InsertRecordsAfterQcGQL,
   InsertRecordsAfterQcMutationVariables,
   InventoryUpdate,
@@ -42,7 +43,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private qcService: QualityControlService,
     private insertRecords: InsertRecordsAfterQcGQL,
-    private findContainer: FindContainerGQL
+    private findContainer: FindContainerGQL,
+    private findInventory: FindInventoryByContainerGQL
   ) {}
 
   containerForm = this.fb.group({
@@ -91,8 +93,20 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
         return;
       }
-      this.containerError.nativeElement.classList.add('hidden');
+      // check if the tote in QC done secton
+      const isInventoryInContainer = await this.fetchInventoryInfo(
+        containerInfo._id
+      );
+      if (isInventoryInContainer) {
+        this.containerError.nativeElement.textContent =
+          'This tote is not empty.';
+        this.containerError.nativeElement.classList.remove('hidden');
+        this.containerInput.nativeElement.select();
+        this.isLoading = false;
+        return;
+      }
 
+      this.containerError.nativeElement.classList.add('hidden');
       const Inventory: InventoryUpdate = {
         ContainerID: containerInfo._id,
         InternalTrackingNumber: this.urlParams.ITN,
@@ -114,16 +128,35 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         Inventory,
         Order,
       };
-      console.log(InsertVariables);
-
-      await this.insertRecordsToSQL(InsertVariables);
-      this.isLoading = false;
+      this.insertRecordsToSQL(InsertVariables);
     } catch (error) {
       this.isLoading = false;
       this.messageType = 'error';
       this.message = error;
       this.containerInput.nativeElement.select();
     }
+  }
+
+  async fetchInventoryInfo(ContainerID: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.findInventory
+        .watch(
+          { ContainerID: ContainerID, limit: 1 },
+          { fetchPolicy: 'no-cache' }
+        )
+        .valueChanges.subscribe(
+          (response) => {
+            if (response.data.findInventoriesByContainer.length) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
   }
 
   async fetchContainerInfo(
@@ -137,16 +170,20 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe((response) => {
+          let containerInfo;
           if (response.data.findContainer.length) {
-            const containerInfo = {
+            containerInfo = {
               _id: response.data.findContainer[0]._id,
               typeID: response.data.findContainer[0].Type._id,
               Row: response.data.findContainer[0].Row,
             };
-            resolve(containerInfo);
           } else {
             reject('Barcode No Found');
           }
+          if (response.data.fetchM1TOTEInfo.OrderNumber) {
+            reject('This tote has items in it');
+          }
+          resolve(containerInfo);
         });
     });
   }
@@ -154,7 +191,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   async insertRecordsToSQL(
     InsertVariables: InsertRecordsAfterQcMutationVariables
   ): Promise<void> {
-    this.isLoading = true;
     this.subscription.add(
       this.insertRecords
         .mutate(InsertVariables, { fetchPolicy: 'no-cache' })

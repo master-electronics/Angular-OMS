@@ -358,7 +358,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         preventDefault: true,
         allowIn: [AllowIn.Textarea, AllowIn.Input],
         command: () => {
-          this.back();
+          this.toggleEdit();
         },
       },
       {

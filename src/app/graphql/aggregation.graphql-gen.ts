@@ -59,6 +59,10 @@ export type ContainerType = {
 };
 
 export type ContainerUpdate = {
+  _id?: Maybe<Scalars['Int']>;
+  Type?: Maybe<Scalars['Int']>;
+  Equipment?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['String']>;
   Warehouse?: Maybe<Scalars['String']>;
@@ -130,9 +134,15 @@ export type InventoryUpdate = {
   OrderID?: Maybe<Scalars['Int']>;
 };
 
+export type M1Tote = {
+  __typename?: 'M1TOTE';
+  OrderNumber?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
+  updateContainerList: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
@@ -150,6 +160,10 @@ export type MutationAggregationInArgs = {
   newLocation: Scalars['Boolean'];
   isLastITN: Scalars['Boolean'];
   locationList?: Maybe<Array<Scalars['String']>>;
+};
+
+export type MutationUpdateContainerListArgs = {
+  ContainerList: Array<Maybe<ContainerUpdate>>;
 };
 
 export type MutationUpdateContainerLocationArgs = {
@@ -259,6 +273,8 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchM1TOTEInfo?: Maybe<M1Tote>;
+  findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type QueryVerifyContainerArgs = {
@@ -318,6 +334,16 @@ export type QueryFetchOrderLineMessageArgs = {
 export type QueryFetchPartMessageArgs = {
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+};
+
+export type QueryFetchM1ToteInfoArgs = {
+  DistributionCenter: Scalars['String'];
+  Barcode: Scalars['String'];
+};
+
+export type QueryFindInventoriesByContainerArgs = {
+  ContainerID: Scalars['Int'];
+  limit?: Maybe<Scalars['Int']>;
 };
 
 export type Response = {

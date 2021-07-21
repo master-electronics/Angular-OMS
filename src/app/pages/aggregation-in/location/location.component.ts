@@ -102,7 +102,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         (this.buttonLabel = 'Relocate'))
       : (this.title = `AGIN: ${this.ITNList}`);
     this.commonService.changeTitle(this.title);
-
     this.fetchInfo();
   }
 
@@ -167,7 +166,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             if (result.data.aggregationIn.message === 'Expired tab') {
               this.router.navigate(['agin'], {
-                queryParams: { success: false, message: 'Expired tab' },
+                queryParams: { result: 'error', message: 'Expired tab' },
               });
             }
             this.isLoading = false;
@@ -207,6 +206,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ITNInfo[7].value = data.ShippingMethod;
             this.isLastITN = data.ITNCount === data.ITNTotal;
             this.locationList = data.Locations;
+            // if the order is single ITN order skip location step.
+            if (data.ITNTotal === 1) {
+              this.router.navigate(['agin'], {
+                queryParams: {
+                  result: 'success',
+                  message: `Single ITN Order ${data.OrderNumber} is complete`,
+                },
+              });
+            }
             // auto select new location when ITNCount is 1 or less.
             if (data.ITNCount < 2) {
               this.newLocation = true;

@@ -14,7 +14,7 @@ import { BinContainerRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchLocationForAggregationOutGQL,
-  UpdateOrderStatusGQL,
+  UpdateAfterAgOutGQL,
 } from '../../../graphql/forAggregation.graphql-gen';
 
 const agOutPicking = 4;
@@ -53,7 +53,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private fetchLocation: FetchLocationForAggregationOutGQL,
-    private updateOrder: UpdateOrderStatusGQL
+    private updateAfterAgOut: UpdateAfterAgOutGQL
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -102,11 +102,11 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  updateOrderStatus(): void {
+  updateAfterPick(): void {
     this.isLoading = true;
     const LastUpdated = new Date().toISOString();
     this.subscription.add(
-      this.updateOrder
+      this.updateAfterAgOut
         .mutate(
           {
             DistributionCenter: this.orderNumber.slice(0, 2),
@@ -117,6 +117,11 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               StatusID: agOutDone,
               LastUpdated: LastUpdated,
             },
+            ContainerList: [
+              {
+                //
+              },
+            ],
           },
           { fetchPolicy: 'no-cache' }
         )
@@ -165,7 +170,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.totalITNs === this.selectedList.length) {
       this.buttonLabel = `Aggregation Out`;
       this.buttonStyles = `bg-green-500`;
-      this.updateOrderStatus();
+      this.updateAfterPick();
     } else {
       this.containerInput.nativeElement.select();
     }

@@ -81,6 +81,32 @@ mutation updateOrderStatus(
   }
 }
 
+mutation updateAfterAgOut(
+  $_id: Int
+  $DistributionCenter: String
+  $OrderNumber: String
+  $NOSINumber: String
+  $StatusID: Int
+  $Order: OrderUpdate!
+  $ContainerList: [ContainerUpdate]!
+) {
+  updateOrderStatus(
+    _id: $_id
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    StatusID: $StatusID
+    Order: $Order
+  ) {
+    success
+    message
+  }
+  updateContainerList(ContainerList: $ContainerList) {
+    success
+    message
+  }
+}
+
 query fetchLocationForAggregationOut(
   $DistributionCenter: String
   $OrderNumber: String
