@@ -311,7 +311,7 @@
 <hold-modal
   *ngIf="!isHoldModalHidden"
   [(isModalHidden)]="isHoldModalHidden"
-  [ITN]="ITN"
+  [ITN]="this.urlParams.ITN"
 ></hold-modal>
 <global-messages-modal
   *ngIf="!isGlobalMessagesModalHidden"
