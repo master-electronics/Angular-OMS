@@ -85,6 +85,11 @@ export type GlobalMessage = {
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type ItnList = {
+  __typename?: 'ITNList';
+  ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
@@ -149,7 +154,9 @@ export type Mutation = {
   /** For qc page */
   holdQCOrder: Response;
   updateQCOrder: Response;
-  insertRecordsAfterQC: Response;
+  updateQCStatus: Response;
+  clearTote: Response;
+  insertSQLRecordsAfterQC: Response;
 };
 
 export type MutationAggregationInArgs = {
@@ -202,7 +209,19 @@ export type MutationUpdateQcOrderArgs = {
   CountMethod: Scalars['String'];
 };
 
-export type MutationInsertRecordsAfterQcArgs = {
+export type MutationUpdateQcStatusArgs = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  Status: Scalars['String'];
+  UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+export type MutationClearToteArgs = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+};
+
+export type MutationInsertSqlRecordsAfterQcArgs = {
   Inventory: InventoryUpdate;
   Order: OrderUpdate;
 };
@@ -265,6 +284,7 @@ export type Query = {
   fetchInventoryInfo?: Maybe<InventoryInfo>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
+  findInventoryList?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
@@ -274,6 +294,7 @@ export type Query = {
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
+  fetchITNsInOrder?: Maybe<ItnList>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -297,6 +318,12 @@ export type QueryFindContainerArgs = {
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+export type QueryFindInventoryListArgs = {
+  idList?: Maybe<Array<Scalars['Int']>>;
+  ITNList?: Maybe<Array<Scalars['String']>>;
   limit?: Maybe<Scalars['Int']>;
 };
 
@@ -339,6 +366,12 @@ export type QueryFetchPartMessageArgs = {
 export type QueryFetchM1ToteInfoArgs = {
   DistributionCenter: Scalars['String'];
   Barcode: Scalars['String'];
+};
+
+export type QueryFetchItNsInOrderArgs = {
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
 };
 
 export type QueryFindInventoriesByContainerArgs = {
@@ -476,17 +509,10 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   NOSINumber?: Types.Maybe<Types.Scalars['String']>;
   StatusID?: Types.Maybe<Types.Scalars['Int']>;
   Order: Types.OrderUpdate;
-  ContainerList:
-    | Array<Types.Maybe<Types.ContainerUpdate>>
-    | Types.Maybe<Types.ContainerUpdate>;
 }>;
 
 export type UpdateAfterAgOutMutation = { __typename?: 'Mutation' } & {
   updateOrderStatus: { __typename?: 'Response' } & Pick<
-    Types.Response,
-    'success' | 'message'
-  >;
-  updateContainerList: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -684,7 +710,6 @@ export const UpdateAfterAgOutDocument = gql`
     $NOSINumber: String
     $StatusID: Int
     $Order: OrderUpdate!
-    $ContainerList: [ContainerUpdate]!
   ) {
     updateOrderStatus(
       _id: $_id
@@ -694,10 +719,6 @@ export const UpdateAfterAgOutDocument = gql`
       StatusID: $StatusID
       Order: $Order
     ) {
-      success
-      message
-    }
-    updateContainerList(ContainerList: $ContainerList) {
       success
       message
     }

@@ -88,7 +88,6 @@ mutation updateAfterAgOut(
   $NOSINumber: String
   $StatusID: Int
   $Order: OrderUpdate!
-  $ContainerList: [ContainerUpdate]!
 ) {
   updateOrderStatus(
     _id: $_id
@@ -98,10 +97,6 @@ mutation updateAfterAgOut(
     StatusID: $StatusID
     Order: $Order
   ) {
-    success
-    message
-  }
-  updateContainerList(ContainerList: $ContainerList) {
     success
     message
   }

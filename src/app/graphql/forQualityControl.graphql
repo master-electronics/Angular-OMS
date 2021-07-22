@@ -102,11 +102,58 @@ query findInventoryByContainer($ContainerID: Int!, $limit: Int!) {
   }
 }
 
-mutation insertRecordsAfterQC(
+query fetchITNsINOrder(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  fetchITNsInOrder(
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  ) {
+    ITNList
+  }
+}
+
+query findInventoryList($ITNList: [String!]!) {
+  findInventoryList(ITNList: $ITNList) {
+    _id
+  }
+}
+
+mutation insertSQLRecordsAfterQC(
   $Inventory: InventoryUpdate!
   $Order: OrderUpdate!
 ) {
-  insertRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
+  insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
+    success
+    message
+  }
+}
+
+mutation updateRecordsAfterQCLastLine(
+  $Inventory: InventoryUpdate!
+  $Order: OrderUpdate!
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $Status: String!
+  $UserOrStatus: String
+) {
+  insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
+    success
+    message
+  }
+  updateQCStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  clearTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
     success
     message
   }

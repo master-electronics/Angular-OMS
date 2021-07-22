@@ -85,6 +85,11 @@ export type GlobalMessage = {
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type ItnList = {
+  __typename?: 'ITNList';
+  ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
@@ -149,7 +154,9 @@ export type Mutation = {
   /** For qc page */
   holdQCOrder: Response;
   updateQCOrder: Response;
-  insertRecordsAfterQC: Response;
+  updateQCStatus: Response;
+  clearTote: Response;
+  insertSQLRecordsAfterQC: Response;
 };
 
 export type MutationAggregationInArgs = {
@@ -202,7 +209,19 @@ export type MutationUpdateQcOrderArgs = {
   CountMethod: Scalars['String'];
 };
 
-export type MutationInsertRecordsAfterQcArgs = {
+export type MutationUpdateQcStatusArgs = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  Status: Scalars['String'];
+  UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+export type MutationClearToteArgs = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+};
+
+export type MutationInsertSqlRecordsAfterQcArgs = {
   Inventory: InventoryUpdate;
   Order: OrderUpdate;
 };
@@ -265,6 +284,7 @@ export type Query = {
   fetchInventoryInfo?: Maybe<InventoryInfo>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
+  findInventoryList?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
@@ -274,6 +294,7 @@ export type Query = {
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
+  fetchITNsInOrder?: Maybe<ItnList>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -297,6 +318,12 @@ export type QueryFindContainerArgs = {
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+};
+
+export type QueryFindInventoryListArgs = {
+  idList?: Maybe<Array<Scalars['Int']>>;
+  ITNList?: Maybe<Array<Scalars['String']>>;
   limit?: Maybe<Scalars['Int']>;
 };
 
@@ -339,6 +366,12 @@ export type QueryFetchPartMessageArgs = {
 export type QueryFetchM1ToteInfoArgs = {
   DistributionCenter: Scalars['String'];
   Barcode: Scalars['String'];
+};
+
+export type QueryFetchItNsInOrderArgs = {
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
 };
 
 export type QueryFindInventoriesByContainerArgs = {
@@ -499,13 +532,63 @@ export type FindInventoryByContainerQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export type InsertRecordsAfterQcMutationVariables = Types.Exact<{
+export type FetchItNsInOrderQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+export type FetchItNsInOrderQuery = { __typename?: 'Query' } & {
+  fetchITNsInOrder?: Types.Maybe<
+    { __typename?: 'ITNList' } & Pick<Types.ItnList, 'ITNList'>
+  >;
+};
+
+export type FindInventoryListQueryVariables = Types.Exact<{
+  ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+}>;
+
+export type FindInventoryListQuery = { __typename?: 'Query' } & {
+  findInventoryList?: Types.Maybe<
+    Array<
+      Types.Maybe<{ __typename?: 'Inventory' } & Pick<Types.Inventory, '_id'>>
+    >
+  >;
+};
+
+export type InsertSqlRecordsAfterQcMutationVariables = Types.Exact<{
   Inventory: Types.InventoryUpdate;
   Order: Types.OrderUpdate;
 }>;
 
-export type InsertRecordsAfterQcMutation = { __typename?: 'Mutation' } & {
-  insertRecordsAfterQC: { __typename?: 'Response' } & Pick<
+export type InsertSqlRecordsAfterQcMutation = { __typename?: 'Mutation' } & {
+  insertSQLRecordsAfterQC: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+};
+
+export type UpdateRecordsAfterQcLastLineMutationVariables = Types.Exact<{
+  Inventory: Types.InventoryUpdate;
+  Order: Types.OrderUpdate;
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  Status: Types.Scalars['String'];
+  UserOrStatus?: Types.Maybe<Types.Scalars['String']>;
+}>;
+
+export type UpdateRecordsAfterQcLastLineMutation = {
+  __typename?: 'Mutation';
+} & {
+  insertSQLRecordsAfterQC: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateQCStatus: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  clearTote: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -726,12 +809,62 @@ export class FindInventoryByContainerGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const InsertRecordsAfterQcDocument = gql`
-  mutation insertRecordsAfterQC(
+export const FetchItNsInOrderDocument = gql`
+  query fetchITNsINOrder(
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+  ) {
+    fetchITNsInOrder(
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    ) {
+      ITNList
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchItNsInOrderGQL extends Apollo.Query<
+  FetchItNsInOrderQuery,
+  FetchItNsInOrderQueryVariables
+> {
+  document = FetchItNsInOrderDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindInventoryListDocument = gql`
+  query findInventoryList($ITNList: [String!]!) {
+    findInventoryList(ITNList: $ITNList) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindInventoryListGQL extends Apollo.Query<
+  FindInventoryListQuery,
+  FindInventoryListQueryVariables
+> {
+  document = FindInventoryListDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const InsertSqlRecordsAfterQcDocument = gql`
+  mutation insertSQLRecordsAfterQC(
     $Inventory: InventoryUpdate!
     $Order: OrderUpdate!
   ) {
-    insertRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
+    insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
       success
       message
     }
@@ -741,11 +874,53 @@ export const InsertRecordsAfterQcDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class InsertRecordsAfterQcGQL extends Apollo.Mutation<
-  InsertRecordsAfterQcMutation,
-  InsertRecordsAfterQcMutationVariables
+export class InsertSqlRecordsAfterQcGQL extends Apollo.Mutation<
+  InsertSqlRecordsAfterQcMutation,
+  InsertSqlRecordsAfterQcMutationVariables
 > {
-  document = InsertRecordsAfterQcDocument;
+  document = InsertSqlRecordsAfterQcDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateRecordsAfterQcLastLineDocument = gql`
+  mutation updateRecordsAfterQCLastLine(
+    $Inventory: InventoryUpdate!
+    $Order: OrderUpdate!
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $Status: String!
+    $UserOrStatus: String
+  ) {
+    insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
+      success
+      message
+    }
+    updateQCStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $Status
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+    clearTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateRecordsAfterQcLastLineGQL extends Apollo.Mutation<
+  UpdateRecordsAfterQcLastLineMutation,
+  UpdateRecordsAfterQcLastLineMutationVariables
+> {
+  document = UpdateRecordsAfterQcLastLineDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

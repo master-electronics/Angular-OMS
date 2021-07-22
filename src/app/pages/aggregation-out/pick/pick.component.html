@@ -50,39 +50,47 @@
     <!-- ITN location info of selected order -->
     <table class="w-full">
       <thead class="grid grid-cols-3 gap-3 justify-items-start">
-        <th>ITN</th>
-        <th>Location</th>
+        <th class="col-span-2">Location</th>
         <th>Barcode</th>
       </thead>
       <tbody>
         <tr
           *ngFor="let container of containerList"
-          class="grid grid-cols-3 gap-3"
+          class="grid grid-cols-3 gap-3 text-2xl"
         >
-          <td>{{ container.InternalTrackingNumber }}</td>
-          <td>
-            {{
-              container.Container.Aisle +
-                container.Container.Section +
-                container.Container.Shelf +
-                container.Container.ShelfDetail
-            }}
+          <td class="col-span-2">
+            <span>{{ container.Container.Warehouse }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Row }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Aisle }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Section }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Shelf }}</span>
+            <span>-</span>
+            <span>{{ container.Container.ShelfDetail }}</span>
           </td>
           <td>{{ container.Container.Barcode }}</td>
         </tr>
         <tr
           *ngFor="let container of selectedList"
-          class="text-green-500 grid grid-cols-3 gap-3"
+          class="text-green-500 grid grid-cols-3 gap-3 text-2xl"
         >
-          <td>{{ container.InternalTrackingNumber }}</td>
-          <td>
-            {{
-              container.Container.Aisle +
-                container.Container.Section +
-                container.Container.Shelf +
-                container.Container.ShelfDetail
-            }}
+          <td class="col-span-2">
+            <span>{{ container.Container.Warehouse }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Row }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Aisle }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Section }}</span>
+            <span>-</span>
+            <span>{{ container.Container.Shelf }}</span>
+            <span>-</span>
+            <span>{{ container.Container.ShelfDetail }}</span>
           </td>
+
           <td>{{ container.Container.Barcode }}</td>
         </tr>
       </tbody>

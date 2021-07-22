@@ -38,7 +38,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   // isNeedSupv = true;
   messageType = 'error';
   editStyles = 'bg-purple-500';
-  holdStyles = 'bg-yellow-500';
+  holdStyles = 'bg-yellow-300';
   backStyles = 'bg-gray-500';
   submitStyles = 'bg-indigo-800';
   message = '';

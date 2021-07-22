@@ -5,6 +5,7 @@ generates:
   src/app/graphql/generated/types.graphql-gen.ts:
     plugins:
       - 'typescript'
+    config:
   src/app/graphql/generated/:
     preset: near-operation-file
     presetConfig:

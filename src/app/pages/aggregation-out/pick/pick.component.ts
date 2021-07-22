@@ -117,11 +117,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               StatusID: agOutDone,
               LastUpdated: LastUpdated,
             },
-            ContainerList: [
-              {
-                //
-              },
-            ],
           },
           { fetchPolicy: 'no-cache' }
         )
