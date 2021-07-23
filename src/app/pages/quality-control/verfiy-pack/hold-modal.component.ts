@@ -25,6 +25,7 @@ import { CommonService } from '../../../shared/services/common.service';
   templateUrl: './hold-modal.component.html',
 })
 export class HoldModalComponent implements OnDestroy, AfterViewInit {
+  isLoading = false;
   @Input() isHoldModalHidden: boolean;
   @Input() ITN: string;
   @Output() isModalHiddenChange = new EventEmitter<boolean>();
@@ -60,7 +61,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     { id: 9, content: 'Over Shipment' },
   ];
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     const Status = this.holdForm.get('holdReason').value;
     const qcHoldOrderInfo = {
       InternalTrackingNumber: this.ITN,
@@ -68,14 +69,15 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.stationInfo,
     };
-    await this.writeInfoToMerp(qcHoldOrderInfo);
+    this.isLoading = true;
+    this.writeInfoToMerp(qcHoldOrderInfo);
   }
 
   onCancel(): void {
     this.isModalHiddenChange.emit(true);
   }
 
-  async writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): Promise<void> {
+  writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): void {
     this.subscription.add(
       this.holdQCOrder.mutate(holdInfo, { fetchPolicy: 'no-cache' }).subscribe(
         (res) => {
@@ -94,6 +96,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
           this.router.navigate(['qc'], {
             queryParams: response,
           });
+          this.isLoading = false;
         },
         (error) => {
           this.router.navigate(['qc'], {
@@ -102,6 +105,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
               message: `${this.ITN} hold failed.${error}`,
             },
           });
+          this.isLoading = false;
         }
       )
     );

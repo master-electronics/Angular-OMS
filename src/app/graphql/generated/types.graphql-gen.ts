@@ -208,6 +208,7 @@ export type MutationUpdateQcStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
+  User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 

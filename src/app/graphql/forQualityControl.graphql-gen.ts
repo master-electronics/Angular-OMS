@@ -213,6 +213,7 @@ export type MutationUpdateQcStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
+  User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
@@ -575,6 +576,7 @@ export type UpdateRecordsAfterQcLastLineMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   Status: Types.Scalars['String'];
+  User: Types.Scalars['String'];
   UserOrStatus?: Types.Maybe<Types.Scalars['String']>;
 }>;
 
@@ -892,6 +894,7 @@ export const UpdateRecordsAfterQcLastLineDocument = gql`
     $OrderNumber: String!
     $NOSINumber: String!
     $Status: String!
+    $User: String!
     $UserOrStatus: String
   ) {
     insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
@@ -901,6 +904,7 @@ export const UpdateRecordsAfterQcLastLineDocument = gql`
     updateQCStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
+      User: $User
       Status: $Status
       UserOrStatus: $UserOrStatus
     ) {

@@ -262,7 +262,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               this.router.navigate(['agin'], {
                 queryParams: {
                   result: 'success',
-                  message: `Ag Out complete for Single ITN Order ${orderNumber}`,
+                  message: `Order complete ${orderNumber}`,
                 },
               });
             } else {

@@ -138,6 +138,7 @@ mutation updateRecordsAfterQCLastLine(
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
+  $User: String!
   $UserOrStatus: String
 ) {
   insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
@@ -147,6 +148,7 @@ mutation updateRecordsAfterQCLastLine(
   updateQCStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
+    User: $User
     Status: $Status
     UserOrStatus: $UserOrStatus
   ) {

@@ -23,6 +23,7 @@ import {
   UpdateRecordsAfterQcLastLineMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { BinContainerRegex } from '../../../shared/dataRegex';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 const ToteTypeID = 15;
 const QCDoneID = 1;
@@ -44,6 +45,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private auth: AuthenticationService,
     private route: ActivatedRoute,
     private qcService: QualityControlService,
     private insertRecords: InsertSqlRecordsAfterQcGQL,
@@ -154,6 +156,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           Order,
           NOSINumber: this.urlParams.NOSI,
           OrderNumber: this.urlParams.OrderNum,
+          User: this.auth.userName,
           Status: '60',
         };
         this.updateAfterLastLine(updateVariables);
