@@ -158,6 +158,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           OrderNumber: this.urlParams.OrderNum,
           User: this.auth.userName,
           Status: '60',
+          UserOrStatus: 'AGGREGATION-IN',
         };
         this.updateAfterLastLine(updateVariables);
       } else {
