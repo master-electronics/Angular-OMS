@@ -24,6 +24,9 @@ import {
   AggregationLocationRegex,
   BinContainerRegex,
 } from '../../../shared/dataRegex';
+import { UpdateOrderStatusGQL } from 'src/app/graphql/forAggregation.graphql-gen';
+
+const AggregationOutDoneID = 5;
 
 @Component({
   selector: 'location',
@@ -80,6 +83,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private commonService: CommonService,
     private fetchInventoryInfoGQL: FetchInventoryInfoGQL,
+    private updateOrderStatus: UpdateOrderStatusGQL,
     private aggregationInGQL: AggregationInGQL,
     private router: Router,
     private route: ActivatedRoute
@@ -195,7 +199,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
-          (result) => {
+          async (result) => {
             this.isLoading = result.loading;
             result.error && (this.message = result.error.message);
             const data = result.data.fetchInventoryInfo;
@@ -212,12 +216,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.locationList = data.Locations;
             // if the order is single ITN order skip location step.
             if (data.ITNTotal === 1) {
-              this.router.navigate(['agin'], {
-                queryParams: {
-                  result: 'success',
-                  message: `Single ITN Order ${data.OrderNumber} is complete`,
-                },
-              });
+              this.singleITNorder(data.orderId, data.OrderNumber);
+              return;
             }
             // auto select new location when ITNCount is 1 or less.
             if (data.ITNCount < 2) {
@@ -245,6 +245,38 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  singleITNorder(ID: number, orderNumber: string): void {
+    const lastUpdated = new Date().toISOString();
+    this.subscription.add(
+      this.updateOrderStatus
+        .mutate(
+          {
+            _id: ID,
+            Order: { StatusID: AggregationOutDoneID, LastUpdated: lastUpdated },
+          },
+          { fetchPolicy: 'no-cache' }
+        )
+        .subscribe(
+          (res) => {
+            if (res.data.updateOrderStatus.success) {
+              this.router.navigate(['agin'], {
+                queryParams: {
+                  result: 'success',
+                  message: `Ag Out complete for Single ITN Order ${orderNumber}`,
+                },
+              });
+            } else {
+              this.message = res.data.updateOrderStatus.message;
+              this.isLoading = false;
+            }
+          },
+          (error) => {
+            this.message = error;
+            this.isLoading = false;
+          }
+        )
+    );
+  }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }

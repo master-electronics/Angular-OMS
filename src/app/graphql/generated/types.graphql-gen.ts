@@ -382,6 +382,7 @@ export type Response = {
 
 export type InventoryInfo = {
   __typename?: 'inventoryInfo';
+  orderId: Scalars['Int'];
   OrderNumber: Scalars['String'];
   ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['String'];

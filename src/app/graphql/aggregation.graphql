@@ -16,6 +16,7 @@ query fetchInventoryInfo(
     InternalTrackingNumber: $InternalTrackingNumber
     DistributionCenter: $DistributionCenter
   ) {
+    orderId
     OrderNumber
     ShippingMethod
     PriorityPinkPaper

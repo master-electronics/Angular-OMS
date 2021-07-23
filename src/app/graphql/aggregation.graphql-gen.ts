@@ -387,6 +387,7 @@ export type Response = {
 
 export type InventoryInfo = {
   __typename?: 'inventoryInfo';
+  orderId: Scalars['Int'];
   OrderNumber: Scalars['String'];
   ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['String'];
@@ -429,6 +430,7 @@ export type FetchInventoryInfoQuery = { __typename?: 'Query' } & {
   fetchInventoryInfo?: Types.Maybe<
     { __typename?: 'inventoryInfo' } & Pick<
       Types.InventoryInfo,
+      | 'orderId'
       | 'OrderNumber'
       | 'ShippingMethod'
       | 'PriorityPinkPaper'
@@ -499,6 +501,7 @@ export const FetchInventoryInfoDocument = gql`
       InternalTrackingNumber: $InternalTrackingNumber
       DistributionCenter: $DistributionCenter
     ) {
+      orderId
       OrderNumber
       ShippingMethod
       PriorityPinkPaper

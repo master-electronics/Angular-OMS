@@ -111,11 +111,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const queryList = [];
       const totleLines = queryOne[1].length;
-      let qcLinesFinished;
+      let qcLinesFinished = 0;
       queryList.push(this.fetchInventoryInfo(queryOne[0]._id));
       if (totleLines > 1) {
         queryList.push(this.countInventoryAfterQC(queryOne[1]));
-        qcLinesFinished = 0;
       }
       const queryTwo: any = await Promise.all(queryList);
       // check if the tote has other item in it base on sql data.
