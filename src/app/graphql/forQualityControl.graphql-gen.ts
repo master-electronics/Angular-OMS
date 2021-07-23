@@ -153,8 +153,9 @@ export type Mutation = {
   updateOrderStatus: Response;
   /** For qc page */
   holdQCOrder: Response;
-  updateQCOrder: Response;
-  updateQCStatus: Response;
+  changeQCLineInfo: Response;
+  updateMerpOrderStatus: Response;
+  updateWMSLog: Response;
   clearTote: Response;
   insertSQLRecordsAfterQC: Response;
 };
@@ -200,7 +201,7 @@ export type MutationHoldQcOrderArgs = {
   Station: Scalars['String'];
 };
 
-export type MutationUpdateQcOrderArgs = {
+export type MutationChangeQcLineInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   User: Scalars['String'];
   DateCode: Scalars['String'];
@@ -209,12 +210,19 @@ export type MutationUpdateQcOrderArgs = {
   CountMethod: Scalars['String'];
 };
 
-export type MutationUpdateQcStatusArgs = {
+export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
   User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateWmsLogArgs = {
+  FileKey: Scalars['String'];
+  LocationCode: Scalars['String'];
+  ActionType: Scalars['String'];
+  Action: Scalars['String'];
 };
 
 export type MutationClearToteArgs = {
@@ -482,7 +490,7 @@ export type HoldQcOrderMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export type UpdateQcOrderMutationVariables = Types.Exact<{
+export type ChangeInfoAfterVerifyMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
   User: Types.Scalars['String'];
   DateCode: Types.Scalars['String'];
@@ -491,8 +499,8 @@ export type UpdateQcOrderMutationVariables = Types.Exact<{
   CountMethod: Types.Scalars['String'];
 }>;
 
-export type UpdateQcOrderMutation = { __typename?: 'Mutation' } & {
-  updateQCOrder: { __typename?: 'Response' } & Pick<
+export type ChangeInfoAfterVerifyMutation = { __typename?: 'Mutation' } & {
+  changeQCLineInfo: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -587,7 +595,7 @@ export type UpdateRecordsAfterQcLastLineMutation = {
     Types.Response,
     'success' | 'message'
   >;
-  updateQCStatus: { __typename?: 'Response' } & Pick<
+  updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -724,8 +732,8 @@ export class HoldQcOrderGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
-export const UpdateQcOrderDocument = gql`
-  mutation updateQCOrder(
+export const ChangeInfoAfterVerifyDocument = gql`
+  mutation changeInfoAfterVerify(
     $InternalTrackingNumber: String!
     $User: String!
     $DateCode: String!
@@ -733,7 +741,7 @@ export const UpdateQcOrderDocument = gql`
     $ROHS: String!
     $CountMethod: String!
   ) {
-    updateQCOrder(
+    changeQCLineInfo(
       InternalTrackingNumber: $InternalTrackingNumber
       User: $User
       DateCode: $DateCode
@@ -750,11 +758,11 @@ export const UpdateQcOrderDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateQcOrderGQL extends Apollo.Mutation<
-  UpdateQcOrderMutation,
-  UpdateQcOrderMutationVariables
+export class ChangeInfoAfterVerifyGQL extends Apollo.Mutation<
+  ChangeInfoAfterVerifyMutation,
+  ChangeInfoAfterVerifyMutationVariables
 > {
-  document = UpdateQcOrderDocument;
+  document = ChangeInfoAfterVerifyDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -901,7 +909,7 @@ export const UpdateRecordsAfterQcLastLineDocument = gql`
       success
       message
     }
-    updateQCStatus(
+    updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
       User: $User

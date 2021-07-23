@@ -15,9 +15,9 @@ import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
 import { QualityControlService, urlParams } from '../quality-control.server';
 import {
+  ChangeInfoAfterVerifyGQL,
+  ChangeInfoAfterVerifyMutationVariables,
   FetchProductInfoFromMerpGQL,
-  UpdateQcOrderGQL,
-  UpdateQcOrderMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
@@ -109,8 +109,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private qcService: QualityControlService,
     private authService: AuthenticationService,
-    private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
-    private updateQCOrder: UpdateQcOrderGQL
+    private changeLineAfterVerify: ChangeInfoAfterVerifyGQL,
+    private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL
   ) {
     //
   }
@@ -274,23 +274,23 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async writeInfo(
-    orderInfo: UpdateQcOrderMutationVariables,
+    orderInfo: ChangeInfoAfterVerifyMutationVariables,
     urlParams: urlParams
   ): Promise<void> {
     this.subscription.add(
-      this.updateQCOrder
+      this.changeLineAfterVerify
         .mutate(orderInfo, { fetchPolicy: 'no-cache' })
         .subscribe(
           (res) => {
             let response: { type: string; message: string };
-            if (res.data.updateQCOrder.success) {
+            if (res.data.changeQCLineInfo.success) {
               this.router.navigate(['qc/repack'], {
                 queryParams: urlParams,
               });
             } else {
               response = {
                 type: 'error',
-                message: `${this.urlParams.ITN} QC failed. ${res.data.updateQCOrder.message}`,
+                message: `${this.urlParams.ITN} QC failed. ${res.data.changeQCLineInfo.message}`,
               };
               this.router.navigate(['qc'], {
                 queryParams: response,

@@ -62,7 +62,7 @@ mutation holdQCOrder(
   }
 }
 
-mutation updateQCOrder(
+mutation changeInfoAfterVerify(
   $InternalTrackingNumber: String!
   $User: String!
   $DateCode: String!
@@ -70,7 +70,7 @@ mutation updateQCOrder(
   $ROHS: String!
   $CountMethod: String!
 ) {
-  updateQCOrder(
+  changeQCLineInfo(
     InternalTrackingNumber: $InternalTrackingNumber
     User: $User
     DateCode: $DateCode
@@ -145,7 +145,7 @@ mutation updateRecordsAfterQCLastLine(
     success
     message
   }
-  updateQCStatus(
+  updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
     User: $User

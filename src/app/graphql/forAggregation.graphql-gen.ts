@@ -153,8 +153,9 @@ export type Mutation = {
   updateOrderStatus: Response;
   /** For qc page */
   holdQCOrder: Response;
-  updateQCOrder: Response;
-  updateQCStatus: Response;
+  changeQCLineInfo: Response;
+  updateMerpOrderStatus: Response;
+  updateWMSLog: Response;
   clearTote: Response;
   insertSQLRecordsAfterQC: Response;
 };
@@ -200,7 +201,7 @@ export type MutationHoldQcOrderArgs = {
   Station: Scalars['String'];
 };
 
-export type MutationUpdateQcOrderArgs = {
+export type MutationChangeQcLineInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
   User: Scalars['String'];
   DateCode: Scalars['String'];
@@ -209,12 +210,19 @@ export type MutationUpdateQcOrderArgs = {
   CountMethod: Scalars['String'];
 };
 
-export type MutationUpdateQcStatusArgs = {
+export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
   User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateWmsLogArgs = {
+  FileKey: Scalars['String'];
+  LocationCode: Scalars['String'];
+  ActionType: Scalars['String'];
+  Action: Scalars['String'];
 };
 
 export type MutationClearToteArgs = {

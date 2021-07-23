@@ -98,10 +98,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.urlParams.OrderNum,
         this.urlParams.NOSI
       );
-      const queryOne: any = await Promise.all([
-        containerInfoQuery,
-        ITNListQuery,
-      ]);
+      const queryOne = await Promise.all([containerInfoQuery, ITNListQuery]);
       // if return null or container type is not 15(tote) stop
       if (queryOne[0].typeID !== ToteTypeID) {
         this.containerError.nativeElement.textContent =
@@ -118,7 +115,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       if (totleLines > 1) {
         queryList.push(this.countInventoryAfterQC(queryOne[1]));
       }
-      const queryTwo: any = await Promise.all(queryList);
+      const queryTwo = await Promise.all(queryList);
       // check if the tote has other item in it base on sql data.
       if (queryTwo[0]) {
         this.containerError.nativeElement.textContent =
@@ -309,7 +306,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             let error: string;
             if (
               res.data.insertSQLRecordsAfterQC.success &&
-              res.data.updateQCStatus.success &&
+              res.data.updateMerpOrderStatus.success &&
               res.data.clearTote.success
             ) {
               this.router.navigate(['/qc'], {
@@ -319,7 +316,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
               });
             } else {
-              error = res.data.insertSQLRecordsAfterQC.message;
+              error =
+                res.data.insertSQLRecordsAfterQC.message +
+                res.data.updateMerpOrderStatus.message +
+                res.data.clearTote.message;
             }
             this.isLoading = false;
             this.messageType = 'error';
