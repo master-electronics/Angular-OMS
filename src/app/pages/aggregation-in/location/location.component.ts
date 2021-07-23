@@ -129,6 +129,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.locationInput.nativeElement.select();
       return;
     }
+    const BarcodeInput = this.locationForm.get('location').value;
     this.isLoading = true;
     this.subscription.add(
       this.aggregationInGQL
@@ -137,7 +138,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             qcContainer: this.qcContainer,
             ITNList: this.ITNList,
             LocationList: this.locationList,
-            Barcode: this.locationForm.get('location').value.replace(/-/g, ''),
+            Barcode:
+              BarcodeInput.length === 8
+                ? BarcodeInput
+                : BarcodeInput.replace(/-/g, ''),
             DistributionCenter: 'PH',
             newLocation: this.newLocation,
             isLastITN: this.isLastITN,
