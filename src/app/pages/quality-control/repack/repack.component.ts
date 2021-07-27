@@ -24,6 +24,7 @@ import {
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { BinContainerRegex } from '../../../shared/dataRegex';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const ToteTypeID = 15;
 const QCDoneID = 1;
@@ -69,10 +70,22 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.urlParams = { ...this.route.snapshot.queryParams };
     this.qcService.changeTab(4);
   }
+  shortcuts: ShortcutInput[] = [];
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.containerInput.nativeElement.select();
     }, 10);
+
+    this.shortcuts.push({
+      key: ['ctrl + s'],
+      label: 'Quick Access',
+      description: 'Next Step',
+      preventDefault: true,
+      allowIn: [AllowIn.Textarea, AllowIn.Input],
+      command: () => {
+        this.onSubmit();
+      },
+    });
   }
 
   async onSubmit(): Promise<void> {
@@ -307,7 +320,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (
               res.data.insertSQLRecordsAfterQC.success &&
               res.data.updateMerpOrderStatus.success &&
-              res.data.clearTote.success
+              res.data.clearMerpTote.success
             ) {
               this.router.navigate(['/qc'], {
                 queryParams: {
@@ -319,7 +332,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               error =
                 res.data.insertSQLRecordsAfterQC.message +
                 res.data.updateMerpOrderStatus.message +
-                res.data.clearTote.message;
+                res.data.clearMerpTote.message;
             }
             this.isLoading = false;
             this.messageType = 'error';

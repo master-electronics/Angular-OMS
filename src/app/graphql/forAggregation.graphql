@@ -62,11 +62,38 @@ query fetchOrderStatus(
 
 mutation updateOrderStatus(
   $_id: Int
+  $Order: OrderUpdate!
   $DistributionCenter: String
   $OrderNumber: String
   $NOSINumber: String
   $StatusID: Int
+) {
+  updateOrderStatus(
+    _id: $_id
+    Order: $Order
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    StatusID: $StatusID
+  ) {
+    success
+    message
+  }
+}
+
+mutation updateOrderStatusAfterAgOut(
+  $_id: Int
   $Order: OrderUpdate!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $StatusID: Int!
+  $User: String!
+  $MerpStatus: String!
+  $UserOrStatus: String!
+  $FileKeyList: [String!]!
+  $ActionType: String!
+  $Action: String!
 ) {
   updateOrderStatus(
     _id: $_id
@@ -79,23 +106,21 @@ mutation updateOrderStatus(
     success
     message
   }
-}
-
-mutation updateAfterAgOut(
-  $_id: Int
-  $DistributionCenter: String
-  $OrderNumber: String
-  $NOSINumber: String
-  $StatusID: Int
-  $Order: OrderUpdate!
-) {
-  updateOrderStatus(
-    _id: $_id
-    DistributionCenter: $DistributionCenter
+  updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
-    StatusID: $StatusID
-    Order: $Order
+    Status: $MerpStatus
+    User: $User
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
   ) {
     success
     message
@@ -112,6 +137,7 @@ query fetchLocationForAggregationOut(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
   ) {
+    _id
     INVENTORies {
       Container {
         Barcode

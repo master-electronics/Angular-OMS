@@ -14,11 +14,13 @@ import { BinContainerRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchLocationForAggregationOutGQL,
-  UpdateAfterAgOutGQL,
+  UpdateOrderStatusAfterAgOutGQL,
 } from '../../../graphql/forAggregation.graphql-gen';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
-const agOutPicking = 4;
-const agOutDone = 5;
+const StatusIDAgOutPicking = 4;
+const StatusIDAgOutDone = 5;
+const StatusForMerpStatusAfterAgOut = '65';
 
 @Component({
   selector: 'aggregationout-pick',
@@ -26,14 +28,17 @@ const agOutDone = 5;
 })
 export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   title: string;
-  orderNumber: string;
+  urlParams: { [key: string]: string };
+  DistributionCenter: string;
+  NOSINumber: string;
   isLoading = false;
   messageType = 'error';
   buttonStyles = 'bg-indigo-800';
   buttonLabel = 'submit';
   message = '';
   totalITNs = 1;
-  containerList;
+  orderID: number;
+  containerList = [];
   selectedList = [];
 
   containerForm = this.fb.group({
@@ -50,16 +55,17 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
+    private auth: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
     private fetchLocation: FetchLocationForAggregationOutGQL,
-    private updateAfterAgOut: UpdateAfterAgOutGQL
+    private updateOrderStatusAfterAgOut: UpdateOrderStatusAfterAgOutGQL
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
-    this.orderNumber = this.route.snapshot.queryParams['orderNumber'];
-    this.title = `Pick: ${this.orderNumber}`;
+    this.urlParams = { ...this.route.snapshot.queryParams };
+    this.title = `Pick: ${this.urlParams.orderNumber}`;
     this.commonService.changeTitle(this.title);
     this.fetchContainersLocation();
   }
@@ -74,9 +80,9 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fetchLocation
         .watch(
           {
-            DistributionCenter: this.orderNumber.slice(0, 2),
-            OrderNumber: this.orderNumber.slice(2, 8),
-            NOSINumber: this.orderNumber.slice(8),
+            DistributionCenter: this.urlParams.orderNumber,
+            OrderNumber: this.urlParams.orderNumber,
+            NOSINumber: this.urlParams.NOSINumber,
           },
           { fetchPolicy: 'no-cache' }
         )
@@ -86,6 +92,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
             result.error && (this.message = result.error.message);
             this.containerList = result.data.findOrder[0].INVENTORies;
             this.totalITNs = this.containerList.length;
+            this.orderID = result.data.findOrder[0]._id;
           },
           (error) => {
             this.message = error;
@@ -105,28 +112,48 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   updateAfterPick(): void {
     this.isLoading = true;
     const LastUpdated = new Date().toISOString();
+    const fileKey = `${this.urlParams.DistributionCenter}${this.urlParams.orderNumber}${this.urlParams.NOSINumber}`;
+    const fileKeyList = [];
+    this.selectedList.forEach((container, index) => {
+      fileKeyList.push(
+        `${fileKey}${String(index + 1).padStart(2, '0')}packing        ${
+          container.InternalTrackingNumber
+        }`
+      );
+    });
     this.subscription.add(
-      this.updateAfterAgOut
+      this.updateOrderStatusAfterAgOut
         .mutate(
           {
-            DistributionCenter: this.orderNumber.slice(0, 2),
-            OrderNumber: this.orderNumber.slice(2, 8),
-            NOSINumber: this.orderNumber.slice(8),
-            StatusID: agOutPicking,
+            _id: this.orderID,
             Order: {
-              StatusID: agOutDone,
+              StatusID: StatusIDAgOutDone,
               LastUpdated: LastUpdated,
             },
+            DistributionCenter: this.urlParams.DistributionCenter,
+            OrderNumber: this.urlParams.orderNumber,
+            NOSINumber: this.urlParams.NOSINumber,
+            StatusID: StatusIDAgOutPicking,
+            User: this.auth.userName,
+            UserOrStatus: 'Packing',
+            MerpStatus: StatusForMerpStatusAfterAgOut,
+            FileKeyList: fileKeyList,
+            ActionType: 'A',
+            Action: 'line_aggregation_out',
           },
           { fetchPolicy: 'no-cache' }
         )
         .subscribe(
           (result) => {
-            if (result.data.updateOrderStatus.success) {
+            if (
+              result.data.updateOrderStatus.success &&
+              result.data.updateMerpWMSLog.success &&
+              result.data.updateOrderStatus.success
+            ) {
               this.router.navigate(['/agout'], {
                 queryParams: {
                   result: 'success',
-                  message: `Aggregation Out: ${this.orderNumber}`,
+                  message: `Aggregation Out: ${this.urlParams.orderNumber}`,
                 },
               });
             }
@@ -134,7 +161,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               this.router.navigate(['/agout'], {
                 queryParams: {
                   result: 'error',
-                  message: `Invalid Order: ${this.orderNumber}`,
+                  message: `Invalid Order: ${this.urlParams.orderNumber}`,
                 },
               });
             }

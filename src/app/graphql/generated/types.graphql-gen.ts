@@ -150,8 +150,8 @@ export type Mutation = {
   holdQCOrder: Response;
   changeQCLineInfo: Response;
   updateMerpOrderStatus: Response;
-  updateWMSLog: Response;
-  clearTote: Response;
+  updateMerpWMSLog: Response;
+  clearMerpTote: Response;
   insertSQLRecordsAfterQC: Response;
 };
 
@@ -213,14 +213,14 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
-export type MutationUpdateWmsLogArgs = {
-  FileKey: Scalars['String'];
+export type MutationUpdateMerpWmsLogArgs = {
+  FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
   ActionType: Scalars['String'];
   Action: Scalars['String'];
 };
 
-export type MutationClearToteArgs = {
+export type MutationClearMerpToteArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
@@ -393,6 +393,8 @@ export type InventoryInfo = {
   __typename?: 'inventoryInfo';
   orderId: Scalars['Int'];
   OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
   ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['String'];
   CustomerNumber: Scalars['String'];

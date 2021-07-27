@@ -45,7 +45,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;
   // input data
-  urlParams: { [key: string]: any };
+  urlParams;
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
   // set autocomplete input box
@@ -369,6 +369,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         allowIn: [AllowIn.Textarea, AllowIn.Input],
         command: () => {
           this.toggleGlobalMessagesModal();
+        },
+      },
+      {
+        key: ['ctrl + s'],
+        label: 'Quick Access',
+        description: 'Next Step',
+        preventDefault: true,
+        allowIn: [AllowIn.Textarea, AllowIn.Input],
+        command: () => {
+          this.onSubmit();
         },
       }
     );

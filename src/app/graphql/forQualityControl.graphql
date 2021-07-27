@@ -155,7 +155,7 @@ mutation updateRecordsAfterQCLastLine(
     success
     message
   }
-  clearTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+  clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
     success
     message
   }

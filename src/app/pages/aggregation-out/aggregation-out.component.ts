@@ -26,6 +26,8 @@ const agOutPresent = 3;
 const agOutPicking = 4;
 const expireTime = 180000; // 3min
 
+const DistributionCenter = 'PH';
+
 @Component({
   selector: 'aggregation-out',
   templateUrl: './aggregation-out.component.html',
@@ -99,10 +101,7 @@ export class AggregationOutComponent
             if (chosenOrder) {
               this.orderStatus = chosenOrder.Status.Name;
               this.orderForm.patchValue({
-                orderNumber:
-                  chosenOrder.DistributionCenter +
-                  chosenOrder.OrderNumber +
-                  chosenOrder.NOSINumber,
+                orderNumber: `${chosenOrder.OrderNumber}-${chosenOrder.NOSINumber}`,
               });
               return this.updateOrderStatus.mutate(
                 {
@@ -162,16 +161,17 @@ export class AggregationOutComponent
   }
 
   updateValidOrder(): void {
-    const orderNumber = this.orderForm.get('orderNumber').value;
+    const orderNumber = this.orderForm.get('orderNumber').value.slice(0, 6);
+    const NOSINumber = this.orderForm.get('orderNumber').value.slice(7);
     const LastUpdated = new Date().toISOString();
     this.isLoading = true;
     this.subscription.add(
       this.updateOrderStatus
         .mutate(
           {
-            DistributionCenter: orderNumber.slice(0, 2),
-            OrderNumber: orderNumber.slice(2, 8),
-            NOSINumber: orderNumber.slice(8),
+            DistributionCenter: DistributionCenter,
+            OrderNumber: orderNumber,
+            NOSINumber: NOSINumber,
             Order: { StatusID: agOutPicking, LastUpdated: LastUpdated },
           },
           { fetchPolicy: 'no-cache' }
@@ -186,7 +186,9 @@ export class AggregationOutComponent
             if (result.data.updateOrderStatus.success) {
               this.router.navigate(['/agout/pick'], {
                 queryParams: {
-                  orderNumber: this.orderForm.get('orderNumber').value,
+                  orderNumber,
+                  NOSINumber,
+                  DistributionCenter,
                 },
               });
             } else {

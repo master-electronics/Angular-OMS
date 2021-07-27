@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
 import { FetchPackInfoByItNfromMerpGQL } from '../../../graphql/forQualityControl.graphql-gen';
 import { ITNRegex } from '../../../shared/dataRegex';
+import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
   selector: 'scan-itn',
@@ -19,9 +20,10 @@ import { ITNRegex } from '../../../shared/dataRegex';
 })
 export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
+  shortcuts: ShortcutInput[] = [];
   messageType = 'error';
   buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'Next';
+  buttonLabel = 'submit';
   message = '';
   private subscription = new Subscription();
   constructor(
@@ -48,6 +50,17 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.ITNInput.nativeElement.select();
     }, 10);
+
+    this.shortcuts.push({
+      key: ['ctrl + s'],
+      label: 'Quick Access',
+      description: 'Next Step',
+      preventDefault: true,
+      allowIn: [AllowIn.Textarea, AllowIn.Input],
+      command: () => {
+        this.onSubmit();
+      },
+    });
   }
 
   onSubmit(): void {

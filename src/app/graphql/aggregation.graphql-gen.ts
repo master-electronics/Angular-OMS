@@ -155,8 +155,8 @@ export type Mutation = {
   holdQCOrder: Response;
   changeQCLineInfo: Response;
   updateMerpOrderStatus: Response;
-  updateWMSLog: Response;
-  clearTote: Response;
+  updateMerpWMSLog: Response;
+  clearMerpTote: Response;
   insertSQLRecordsAfterQC: Response;
 };
 
@@ -218,14 +218,14 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
-export type MutationUpdateWmsLogArgs = {
-  FileKey: Scalars['String'];
+export type MutationUpdateMerpWmsLogArgs = {
+  FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
   ActionType: Scalars['String'];
   Action: Scalars['String'];
 };
 
-export type MutationClearToteArgs = {
+export type MutationClearMerpToteArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
@@ -398,6 +398,8 @@ export type InventoryInfo = {
   __typename?: 'inventoryInfo';
   orderId: Scalars['Int'];
   OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
   ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['String'];
   CustomerNumber: Scalars['String'];
@@ -441,6 +443,8 @@ export type FetchInventoryInfoQuery = { __typename?: 'Query' } & {
       Types.InventoryInfo,
       | 'orderId'
       | 'OrderNumber'
+      | 'NOSINumber'
+      | 'OrderLineNumber'
       | 'ShippingMethod'
       | 'PriorityPinkPaper'
       | 'CustomerNumber'
@@ -454,7 +458,7 @@ export type FetchInventoryInfoQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export type AggregationInMutationVariables = Types.Exact<{
+export type UpdateAggregationLocationMutationVariables = Types.Exact<{
   qcContainer: Types.Scalars['Int'];
   ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   Barcode: Types.Scalars['String'];
@@ -466,8 +470,37 @@ export type AggregationInMutationVariables = Types.Exact<{
   >;
 }>;
 
-export type AggregationInMutation = { __typename?: 'Mutation' } & {
+export type UpdateAggregationLocationMutation = { __typename?: 'Mutation' } & {
   aggregationIn: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+};
+
+export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
+}>;
+
+export type UpdateMerpWmsLogMutation = { __typename?: 'Mutation' } & {
+  updateMerpWMSLog: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+};
+
+export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  Status: Types.Scalars['String'];
+  User: Types.Scalars['String'];
+  UserOrStatus: Types.Scalars['String'];
+}>;
+
+export type UpdateMerpOrderStatusMutation = { __typename?: 'Mutation' } & {
+  updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -512,6 +545,8 @@ export const FetchInventoryInfoDocument = gql`
     ) {
       orderId
       OrderNumber
+      NOSINumber
+      OrderLineNumber
       ShippingMethod
       PriorityPinkPaper
       CustomerNumber
@@ -538,8 +573,8 @@ export class FetchInventoryInfoGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const AggregationInDocument = gql`
-  mutation aggregationIn(
+export const UpdateAggregationLocationDocument = gql`
+  mutation updateAggregationLocation(
     $qcContainer: Int!
     $ITNList: [String!]!
     $Barcode: String!
@@ -566,11 +601,77 @@ export const AggregationInDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class AggregationInGQL extends Apollo.Mutation<
-  AggregationInMutation,
-  AggregationInMutationVariables
+export class UpdateAggregationLocationGQL extends Apollo.Mutation<
+  UpdateAggregationLocationMutation,
+  UpdateAggregationLocationMutationVariables
 > {
-  document = AggregationInDocument;
+  document = UpdateAggregationLocationDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateMerpWmsLogDocument = gql`
+  mutation updateMerpWMSLog(
+    $DistributionCenter: String!
+    $FileKeyList: [String!]!
+    $ActionType: String!
+    $Action: String!
+  ) {
+    updateMerpWMSLog(
+      FileKeyList: $FileKeyList
+      LocationCode: $DistributionCenter
+      ActionType: $ActionType
+      Action: $Action
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateMerpWmsLogGQL extends Apollo.Mutation<
+  UpdateMerpWmsLogMutation,
+  UpdateMerpWmsLogMutationVariables
+> {
+  document = UpdateMerpWmsLogDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateMerpOrderStatusDocument = gql`
+  mutation updateMerpOrderStatus(
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $Status: String!
+    $User: String!
+    $UserOrStatus: String!
+  ) {
+    updateMerpOrderStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $Status
+      User: $User
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<
+  UpdateMerpOrderStatusMutation,
+  UpdateMerpOrderStatusMutationVariables
+> {
+  document = UpdateMerpOrderStatusDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

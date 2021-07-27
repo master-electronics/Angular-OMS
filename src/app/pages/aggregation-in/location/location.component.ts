@@ -18,15 +18,21 @@ import { Subscription } from 'rxjs';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchInventoryInfoGQL,
-  AggregationInGQL,
+  UpdateAggregationLocationGQL,
+  UpdateMerpOrderStatusGQL,
+  UpdateMerpWmsLogGQL,
 } from '../../../graphql/aggregation.graphql-gen';
 import {
   AggregationLocationRegex,
   BinContainerRegex,
 } from '../../../shared/dataRegex';
-import { UpdateOrderStatusGQL } from 'src/app/graphql/forAggregation.graphql-gen';
+import { UpdateOrderStatusAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
-const AggregationOutDoneID = 5;
+const StatusIDForAggregationOutDone = 5;
+const DistributionCenter = 'PH';
+const StatusForMerpStatusAfterAgIn = '63';
+const StatusForMerpStatusAfterAgOut = '65';
 
 @Component({
   selector: 'location',
@@ -40,6 +46,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   isRelocation: boolean;
   isLastITN: boolean;
   ITNList;
+  NOSINumber: string;
+  orderLineNumber: string;
   qcContainer: number;
   locationList: string[];
   locationsSet: Set<string> = new Set();
@@ -83,8 +91,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private commonService: CommonService,
     private fetchInventoryInfoGQL: FetchInventoryInfoGQL,
-    private updateOrderStatus: UpdateOrderStatusGQL,
-    private aggregationInGQL: AggregationInGQL,
+    private auth: AuthenticationService,
+    private updateOrderStatusAfterAgout: UpdateOrderStatusAfterAgOutGQL,
+    private updateAggregationLocation: UpdateAggregationLocationGQL,
+    private updateMerpOrderStatus: UpdateMerpOrderStatusGQL,
+    private updateMerpWMSLog: UpdateMerpWmsLogGQL,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -119,14 +130,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.locationInput.nativeElement.select();
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.message = '';
-    if (this.locationForm.valid) {
-      this.updateLocation();
+    if (!this.locationForm.valid) {
+      return;
     }
-  }
-
-  updateLocation(): void {
     if (this.binContainer === this.f.location.value) {
       this.message = 'Should scan a new location';
       this.messageType = 'warning';
@@ -135,59 +143,135 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     const BarcodeInput = this.locationForm.get('location').value;
     this.isLoading = true;
-    this.subscription.add(
-      this.aggregationInGQL
+    const queryAfterSubmit = [];
+    queryAfterSubmit.push(this.updateSQLAfterAgIn(BarcodeInput));
+    if (this.isRelocation) {
+      queryAfterSubmit.push(this.writeEvenLogAfterAginLine());
+      if (this.isLastITN) {
+        queryAfterSubmit.push(this.updateOrderStatusAfterLastLine());
+      }
+    }
+    try {
+      const queryRes = await Promise.all(queryAfterSubmit);
+      if (queryRes[0].success) {
+        if (queryRes[1]) {
+          if (queryRes[2]) {
+            this.routeNav(
+              queryRes[2].success ? `success` : `error`,
+              queryRes[2].message
+                ? `Place in ${BarcodeInput}.\nOrder ${this.ITNInfo[0].value} is complete.`
+                : queryRes[2].message
+            );
+          }
+          this.routeNav(
+            queryRes[1].success ? `info` : `error`,
+            queryRes[1].message
+              ? `Place in ${BarcodeInput}.`
+              : queryRes[1].message
+          );
+        }
+      }
+      this.routeNav(
+        queryRes[0].success ? `info` : `error`,
+        queryRes[0].message ? `Place in ${BarcodeInput}.` : queryRes[0].message
+      );
+    } catch (error) {
+      this.message = error;
+      this.isLoading = false;
+      this.locationInput.nativeElement.select();
+    }
+    return;
+  }
+
+  routeNav(result: string, message: string): void {
+    this.router.navigate(['agin'], {
+      queryParams: {
+        result: result,
+        message: message,
+      },
+    });
+  }
+
+  async updateSQLAfterAgIn(
+    BarcodeInput: string
+  ): Promise<{ success: boolean; message?: string }> {
+    return new Promise((resolve, reject) => {
+      this.updateAggregationLocation
         .mutate(
           {
             qcContainer: this.qcContainer,
             ITNList: this.ITNList,
-            LocationList: this.locationList,
             Barcode:
               BarcodeInput.length === 8
                 ? BarcodeInput
                 : BarcodeInput.replace(/-/g, ''),
-            DistributionCenter: 'PH',
+            DistributionCenter: DistributionCenter,
             newLocation: this.newLocation,
             isLastITN: this.isLastITN,
+            LocationList: this.locationList,
           },
           { fetchPolicy: 'no-cache' }
         )
         .subscribe(
-          (result) => {
-            if (result.data.aggregationIn.success) {
-              let resultMessage = `Placed in ${
-                this.locationForm.get('location').value
-              }.`;
-              let resultType = `info`;
-              if (this.isLastITN) {
-                resultMessage = resultMessage.concat(
-                  `\nOrder ${this.ITNInfo[0].value} is complete.`
-                );
-                resultType = 'success';
-              }
-              this.router.navigate(['agin'], {
-                queryParams: {
-                  result: resultType,
-                  message: resultMessage,
-                },
-              });
-            }
-            if (result.data.aggregationIn.message === 'Expired tab') {
-              this.router.navigate(['agin'], {
-                queryParams: { result: 'error', message: 'Expired tab' },
-              });
-            }
-            this.isLoading = false;
-            this.message = result.data.aggregationIn.message;
-            this.locationInput.nativeElement.select();
+          (res) => {
+            resolve(res.data.aggregationIn);
           },
           (error) => {
-            this.locationInput.nativeElement.select();
-            this.isLoading = false;
-            this.message = error;
+            reject(error);
           }
+        );
+    });
+  }
+
+  writeEvenLogAfterAginLine(): Promise<{ success: boolean; message?: string }> {
+    const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}ag             ${this.ITNList[0]}`;
+    return new Promise((resolve, reject) => {
+      this.updateMerpWMSLog
+        .mutate(
+          {
+            FileKeyList: [fileKey],
+            DistributionCenter: DistributionCenter,
+            ActionType: 'A',
+            Action: 'line_aggregation_in',
+          },
+          { fetchPolicy: 'no-cache' }
         )
-    );
+        .subscribe(
+          (res) => {
+            resolve(res.data.updateMerpWMSLog);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
+  }
+
+  updateOrderStatusAfterLastLine(): Promise<{
+    success: boolean;
+    message?: string;
+  }> {
+    return new Promise((resolve, reject) => {
+      this.updateMerpOrderStatus
+        .mutate(
+          {
+            User: this.auth.userName,
+            OrderNumber: this.ITNInfo[0].value,
+            NOSINumber: this.NOSINumber,
+            Status: StatusForMerpStatusAfterAgIn,
+            UserOrStatus: 'AGGREGATION-OUT',
+          },
+          { fetchPolicy: 'no-cache' }
+        )
+        .subscribe(
+          (res) => {
+            resolve(res.data.updateMerpOrderStatus);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+    });
   }
 
   fetchInfo(): void {
@@ -195,7 +279,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.fetchInventoryInfoGQL
         .watch(
-          { InternalTrackingNumber: this.ITNList[0], DistributionCenter: 'PH' },
+          {
+            InternalTrackingNumber: this.ITNList[0],
+            DistributionCenter: DistributionCenter,
+          },
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
@@ -203,6 +290,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.isLoading = result.loading;
             result.error && (this.message = result.error.message);
             const data = result.data.fetchInventoryInfo;
+            this.orderLineNumber = data.OrderLineNumber;
+            this.NOSINumber = data.NOSINumber;
             this.ITNInfo[0].value = data.OrderNumber;
             this.ITNInfo[1].value =
               data.PriorityPinkPaper === '1' ? 'Yes' : 'No';
@@ -247,12 +336,26 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   singleITNorder(ID: number, orderNumber: string): void {
     const lastUpdated = new Date().toISOString();
+    const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}packing        ${this.ITNList[0]}`;
     this.subscription.add(
-      this.updateOrderStatus
+      this.updateOrderStatusAfterAgout
         .mutate(
           {
             _id: ID,
-            Order: { StatusID: AggregationOutDoneID, LastUpdated: lastUpdated },
+            Order: {
+              StatusID: StatusIDForAggregationOutDone,
+              LastUpdated: lastUpdated,
+            },
+            DistributionCenter: DistributionCenter,
+            OrderNumber: this.ITNInfo[0].value,
+            NOSINumber: this.NOSINumber,
+            StatusID: StatusIDForAggregationOutDone,
+            User: this.auth.userName,
+            UserOrStatus: 'Packing',
+            MerpStatus: StatusForMerpStatusAfterAgOut,
+            FileKeyList: [fileKey],
+            ActionType: 'A',
+            Action: 'line_aggregation_out',
           },
           { fetchPolicy: 'no-cache' }
         )

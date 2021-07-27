@@ -104,9 +104,9 @@ export class GlobalMessagesComponent
   shortcuts: ShortcutInput[] = [];
   ngAfterViewInit(): void {
     this.shortcuts.push({
-      key: ['alt + c'],
+      key: ['ctrl + s'],
       label: 'Quick Access',
-      description: 'Back to Sacn ITN',
+      description: 'Next Step',
       preventDefault: true,
       command: () => {
         this.onSubmit();

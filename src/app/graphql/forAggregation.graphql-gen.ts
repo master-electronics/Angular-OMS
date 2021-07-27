@@ -155,8 +155,8 @@ export type Mutation = {
   holdQCOrder: Response;
   changeQCLineInfo: Response;
   updateMerpOrderStatus: Response;
-  updateWMSLog: Response;
-  clearTote: Response;
+  updateMerpWMSLog: Response;
+  clearMerpTote: Response;
   insertSQLRecordsAfterQC: Response;
 };
 
@@ -218,14 +218,14 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
-export type MutationUpdateWmsLogArgs = {
-  FileKey: Scalars['String'];
+export type MutationUpdateMerpWmsLogArgs = {
+  FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
   ActionType: Scalars['String'];
   Action: Scalars['String'];
 };
 
-export type MutationClearToteArgs = {
+export type MutationClearMerpToteArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
 };
@@ -398,6 +398,8 @@ export type InventoryInfo = {
   __typename?: 'inventoryInfo';
   orderId: Scalars['Int'];
   OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
   ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['String'];
   CustomerNumber: Scalars['String'];
@@ -498,11 +500,11 @@ export type FetchOrderStatusQuery = { __typename?: 'Query' } & {
 
 export type UpdateOrderStatusMutationVariables = Types.Exact<{
   _id?: Types.Maybe<Types.Scalars['Int']>;
+  Order: Types.OrderUpdate;
   DistributionCenter?: Types.Maybe<Types.Scalars['String']>;
   OrderNumber?: Types.Maybe<Types.Scalars['String']>;
   NOSINumber?: Types.Maybe<Types.Scalars['String']>;
   StatusID?: Types.Maybe<Types.Scalars['Int']>;
-  Order: Types.OrderUpdate;
 }>;
 
 export type UpdateOrderStatusMutation = { __typename?: 'Mutation' } & {
@@ -512,17 +514,33 @@ export type UpdateOrderStatusMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export type UpdateAfterAgOutMutationVariables = Types.Exact<{
+export type UpdateOrderStatusAfterAgOutMutationVariables = Types.Exact<{
   _id?: Types.Maybe<Types.Scalars['Int']>;
-  DistributionCenter?: Types.Maybe<Types.Scalars['String']>;
-  OrderNumber?: Types.Maybe<Types.Scalars['String']>;
-  NOSINumber?: Types.Maybe<Types.Scalars['String']>;
-  StatusID?: Types.Maybe<Types.Scalars['Int']>;
   Order: Types.OrderUpdate;
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  StatusID: Types.Scalars['Int'];
+  User: Types.Scalars['String'];
+  MerpStatus: Types.Scalars['String'];
+  UserOrStatus: Types.Scalars['String'];
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
 }>;
 
-export type UpdateAfterAgOutMutation = { __typename?: 'Mutation' } & {
+export type UpdateOrderStatusAfterAgOutMutation = {
+  __typename?: 'Mutation';
+} & {
   updateOrderStatus: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateMerpWMSLog: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -538,30 +556,30 @@ export type FetchLocationForAggregationOutQuery = { __typename?: 'Query' } & {
   findOrder?: Types.Maybe<
     Array<
       Types.Maybe<
-        { __typename?: 'Order' } & {
-          INVENTORies?: Types.Maybe<
-            Array<
-              Types.Maybe<
-                { __typename?: 'Inventory' } & Pick<
-                  Types.Inventory,
-                  'InternalTrackingNumber'
-                > & {
-                    Container: { __typename?: 'Container' } & Pick<
-                      Types.Container,
-                      | 'Barcode'
-                      | 'DistributionCenter'
-                      | 'Warehouse'
-                      | 'Row'
-                      | 'Aisle'
-                      | 'Section'
-                      | 'Shelf'
-                      | 'ShelfDetail'
-                    >;
-                  }
+        { __typename?: 'Order' } & Pick<Types.Order, '_id'> & {
+            INVENTORies?: Types.Maybe<
+              Array<
+                Types.Maybe<
+                  { __typename?: 'Inventory' } & Pick<
+                    Types.Inventory,
+                    'InternalTrackingNumber'
+                  > & {
+                      Container: { __typename?: 'Container' } & Pick<
+                        Types.Container,
+                        | 'Barcode'
+                        | 'DistributionCenter'
+                        | 'Warehouse'
+                        | 'Row'
+                        | 'Aisle'
+                        | 'Section'
+                        | 'Shelf'
+                        | 'ShelfDetail'
+                      >;
+                    }
+                >
               >
-            >
-          >;
-        }
+            >;
+          }
       >
     >
   >;
@@ -679,19 +697,19 @@ export class FetchOrderStatusGQL extends Apollo.Query<
 export const UpdateOrderStatusDocument = gql`
   mutation updateOrderStatus(
     $_id: Int
+    $Order: OrderUpdate!
     $DistributionCenter: String
     $OrderNumber: String
     $NOSINumber: String
     $StatusID: Int
-    $Order: OrderUpdate!
   ) {
     updateOrderStatus(
       _id: $_id
+      Order: $Order
       DistributionCenter: $DistributionCenter
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
       StatusID: $StatusID
-      Order: $Order
     ) {
       success
       message
@@ -712,14 +730,20 @@ export class UpdateOrderStatusGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
-export const UpdateAfterAgOutDocument = gql`
-  mutation updateAfterAgOut(
+export const UpdateOrderStatusAfterAgOutDocument = gql`
+  mutation updateOrderStatusAfterAgOut(
     $_id: Int
-    $DistributionCenter: String
-    $OrderNumber: String
-    $NOSINumber: String
-    $StatusID: Int
     $Order: OrderUpdate!
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $StatusID: Int!
+    $User: String!
+    $MerpStatus: String!
+    $UserOrStatus: String!
+    $FileKeyList: [String!]!
+    $ActionType: String!
+    $Action: String!
   ) {
     updateOrderStatus(
       _id: $_id
@@ -732,17 +756,36 @@ export const UpdateAfterAgOutDocument = gql`
       success
       message
     }
+    updateMerpOrderStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $MerpStatus
+      User: $User
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+    updateMerpWMSLog(
+      FileKeyList: $FileKeyList
+      LocationCode: $DistributionCenter
+      ActionType: $ActionType
+      Action: $Action
+    ) {
+      success
+      message
+    }
   }
 `;
 
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateAfterAgOutGQL extends Apollo.Mutation<
-  UpdateAfterAgOutMutation,
-  UpdateAfterAgOutMutationVariables
+export class UpdateOrderStatusAfterAgOutGQL extends Apollo.Mutation<
+  UpdateOrderStatusAfterAgOutMutation,
+  UpdateOrderStatusAfterAgOutMutationVariables
 > {
-  document = UpdateAfterAgOutDocument;
+  document = UpdateOrderStatusAfterAgOutDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -759,6 +802,7 @@ export const FetchLocationForAggregationOutDocument = gql`
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
     ) {
+      _id
       INVENTORies {
         Container {
           Barcode
