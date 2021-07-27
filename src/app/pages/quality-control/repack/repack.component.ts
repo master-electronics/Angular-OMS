@@ -53,8 +53,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateAfterQcLastLine: UpdateRecordsAfterQcLastLineGQL,
     private findContainer: FindContainerGQL,
     private findInventory: FindInventoryByContainerGQL,
-    private fetchITNs: FetchItNsInOrderGQL,
-    private findInventoryList: FindInventoryListGQL
+    private fetchITNsFromMerp: FetchItNsInOrderGQL,
+    private findInventoryListFromSQL: FindInventoryListGQL
   ) {}
 
   containerForm = this.fb.group({
@@ -122,11 +122,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       const queryList = [];
-      const totleLines = queryOne[1].length;
-      let qcLinesFinished = 0;
+      let isLastLine = true;
       queryList.push(this.fetchInventoryInfo(queryOne[0]._id));
-      if (totleLines > 1) {
-        queryList.push(this.countInventoryAfterQC(queryOne[1]));
+      if (queryOne[1].length > 1) {
+        queryList.push(this.fetchInventoryAfterQC(queryOne[1]));
       }
       const queryTwo = await Promise.all(queryList);
       // check if the tote has other item in it base on sql data.
@@ -138,10 +137,19 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
         return;
       }
-      if (totleLines > 1) {
-        qcLinesFinished = queryTwo[1];
+      if (queryOne[1].length > 1) {
+        const difference = queryOne[1].filter(
+          (itn) => !queryTwo[1].includes(itn)
+        );
+        if (
+          difference.length === 1 &&
+          difference.includes(this.urlParams.ITN)
+        ) {
+          isLastLine = true;
+        }
+        isLastLine = false;
       }
-      const isLastLine = totleLines - qcLinesFinished === 1;
+
       this.containerError.nativeElement.classList.add('hidden');
       const Inventory: InventoryUpdate = {
         ContainerID: queryOne[0]._id,
@@ -192,7 +200,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     NOSINumber: string
   ): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      this.fetchITNs
+      this.fetchITNsFromMerp
         .watch(
           { DistributionCenter, OrderNumber, NOSINumber },
           { fetchPolicy: 'no-cache' }
@@ -208,13 +216,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  countInventoryAfterQC(ITNList: string[]): Promise<number> {
+  fetchInventoryAfterQC(ITNList: string[]): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      this.findInventoryList
+      this.findInventoryListFromSQL
         .watch({ ITNList }, { fetchPolicy: 'no-cache' })
         .valueChanges.subscribe(
           (response) => {
-            resolve(response.data.findInventoryList.length);
+            resolve(
+              response.data.findInventoryList.map(
+                (element) => element.InternalTrackingNumber
+              )
+            );
           },
           (error) => {
             reject(error);

@@ -118,7 +118,7 @@ query fetchITNsINOrder(
 
 query findInventoryList($ITNList: [String!]!) {
   findInventoryList(ITNList: $ITNList) {
-    _id
+    InternalTrackingNumber
   }
 }
 

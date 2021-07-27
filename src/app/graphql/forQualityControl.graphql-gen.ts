@@ -563,7 +563,12 @@ export type FindInventoryListQueryVariables = Types.Exact<{
 export type FindInventoryListQuery = { __typename?: 'Query' } & {
   findInventoryList?: Types.Maybe<
     Array<
-      Types.Maybe<{ __typename?: 'Inventory' } & Pick<Types.Inventory, '_id'>>
+      Types.Maybe<
+        { __typename?: 'Inventory' } & Pick<
+          Types.Inventory,
+          'InternalTrackingNumber'
+        >
+      >
     >
   >;
 };
@@ -854,7 +859,7 @@ export class FetchItNsInOrderGQL extends Apollo.Query<
 export const FindInventoryListDocument = gql`
   query findInventoryList($ITNList: [String!]!) {
     findInventoryList(ITNList: $ITNList) {
-      _id
+      InternalTrackingNumber
     }
   }
 `;

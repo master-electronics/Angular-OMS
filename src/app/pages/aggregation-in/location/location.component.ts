@@ -145,7 +145,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const queryAfterSubmit = [];
     queryAfterSubmit.push(this.updateSQLAfterAgIn(BarcodeInput));
-    if (this.isRelocation) {
+    if (!this.isRelocation) {
       queryAfterSubmit.push(this.writeEvenLogAfterAginLine());
       if (this.isLastITN) {
         queryAfterSubmit.push(this.updateOrderStatusAfterLastLine());
