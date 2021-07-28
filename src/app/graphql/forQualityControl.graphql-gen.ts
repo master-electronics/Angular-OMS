@@ -147,7 +147,6 @@ export type M1Tote = {
 export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
-  updateContainerList: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
@@ -168,10 +167,6 @@ export type MutationAggregationInArgs = {
   newLocation: Scalars['Boolean'];
   isLastITN: Scalars['Boolean'];
   locationList?: Maybe<Array<Scalars['String']>>;
-};
-
-export type MutationUpdateContainerListArgs = {
-  ContainerList: Array<Maybe<ContainerUpdate>>;
 };
 
 export type MutationUpdateContainerLocationArgs = {
@@ -196,14 +191,12 @@ export type MutationUpdateOrderStatusArgs = {
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   Status: Scalars['String'];
   Station: Scalars['String'];
 };
 
 export type MutationChangeQcLineInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   DateCode: Scalars['String'];
   CountryOfOrigin: Scalars['String'];
   ROHS: Scalars['String'];
@@ -214,7 +207,6 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
-  User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
@@ -480,7 +472,6 @@ export type QcGlobalMessageQuery = { __typename?: 'Query' } & {
 
 export type HoldQcOrderMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
-  User: Types.Scalars['String'];
   Status: Types.Scalars['String'];
   Station: Types.Scalars['String'];
 }>;
@@ -494,7 +485,6 @@ export type HoldQcOrderMutation = { __typename?: 'Mutation' } & {
 
 export type ChangeInfoAfterVerifyMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
-  User: Types.Scalars['String'];
   DateCode: Types.Scalars['String'];
   CountryOfOrigin: Types.Scalars['String'];
   ROHS: Types.Scalars['String'];
@@ -591,7 +581,6 @@ export type UpdateRecordsAfterQcLastLineMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   Status: Types.Scalars['String'];
-  User: Types.Scalars['String'];
   UserOrStatus?: Types.Maybe<Types.Scalars['String']>;
 }>;
 
@@ -710,13 +699,11 @@ export class QcGlobalMessageGQL extends Apollo.Query<
 export const HoldQcOrderDocument = gql`
   mutation holdQCOrder(
     $InternalTrackingNumber: String!
-    $User: String!
     $Status: String!
     $Station: String!
   ) {
     holdQCOrder(
       InternalTrackingNumber: $InternalTrackingNumber
-      User: $User
       Status: $Status
       Station: $Station
     ) {
@@ -742,7 +729,6 @@ export class HoldQcOrderGQL extends Apollo.Mutation<
 export const ChangeInfoAfterVerifyDocument = gql`
   mutation changeInfoAfterVerify(
     $InternalTrackingNumber: String!
-    $User: String!
     $DateCode: String!
     $CountryOfOrigin: String!
     $ROHS: String!
@@ -750,7 +736,6 @@ export const ChangeInfoAfterVerifyDocument = gql`
   ) {
     changeQCLineInfo(
       InternalTrackingNumber: $InternalTrackingNumber
-      User: $User
       DateCode: $DateCode
       CountryOfOrigin: $CountryOfOrigin
       ROHS: $ROHS
@@ -909,7 +894,6 @@ export const UpdateRecordsAfterQcLastLineDocument = gql`
     $OrderNumber: String!
     $NOSINumber: String!
     $Status: String!
-    $User: String!
     $UserOrStatus: String
   ) {
     insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
@@ -919,7 +903,6 @@ export const UpdateRecordsAfterQcLastLineDocument = gql`
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
-      User: $User
       Status: $Status
       UserOrStatus: $UserOrStatus
     ) {

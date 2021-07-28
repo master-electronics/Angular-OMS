@@ -19,7 +19,6 @@ import {
   ChangeInfoAfterVerifyMutationVariables,
   FetchProductInfoFromMerpGQL,
 } from '../../../graphql/forQualityControl.graphql-gen';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
   selector: 'verify-pack',
@@ -108,7 +107,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private qcService: QualityControlService,
-    private authService: AuthenticationService,
     private changeLineAfterVerify: ChangeInfoAfterVerifyGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL
   ) {
@@ -207,7 +205,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     const coo = this.verifyPack.get('countryOfOrigin').value.name;
     const orderInfo = {
       InternalTrackingNumber: this.urlParams.ITN,
-      User: this.authService.userName,
       DateCode: this.verifyPack.get('dateCode').value,
       CountryOfOrigin: coo === 'UNKNOWN' ? '' : coo.slice(0, 2),
       ROHS: this.verifyPack.get('ROHS').value === 1 ? 'Y' : 'N',

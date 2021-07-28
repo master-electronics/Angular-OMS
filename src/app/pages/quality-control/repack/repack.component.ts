@@ -23,8 +23,9 @@ import {
   UpdateRecordsAfterQcLastLineMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { BinContainerRegex } from '../../../shared/dataRegex';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
+import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 const ToteTypeID = 15;
 const QCDoneID = 1;
@@ -46,15 +47,16 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private auth: AuthenticationService,
     private route: ActivatedRoute,
+    private authService: AuthenticationService,
     private qcService: QualityControlService,
     private insertRecords: InsertSqlRecordsAfterQcGQL,
     private updateAfterQcLastLine: UpdateRecordsAfterQcLastLineGQL,
     private findContainer: FindContainerGQL,
     private findInventory: FindInventoryByContainerGQL,
     private fetchITNsFromMerp: FetchItNsInOrderGQL,
-    private findInventoryListFromSQL: FindInventoryListGQL
+    private findInventoryListFromSQL: FindInventoryListGQL,
+    private gtmService: GoogleTagManagerService
   ) {}
 
   containerForm = this.fb.group({
@@ -174,7 +176,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           Order,
           NOSINumber: this.urlParams.NOSI,
           OrderNumber: this.urlParams.OrderNum,
-          User: this.auth.userName,
           Status: '60',
           UserOrStatus: 'AGGREGATION-IN',
         };
@@ -296,6 +297,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             let error: string;
             if (res.data.insertSQLRecordsAfterQC.success) {
+              this.gtmService.pushTag({
+                event: 'QualityControlDone',
+                userID: this.authService.userName,
+              });
               this.router.navigate(['/qc'], {
                 queryParams: {
                   type: 'info',

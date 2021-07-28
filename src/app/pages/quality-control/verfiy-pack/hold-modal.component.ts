@@ -17,7 +17,6 @@ import {
   HoldQcOrderGQL,
   HoldQcOrderMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
 
 @Component({
@@ -38,7 +37,6 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     private holdQCOrder: HoldQcOrderGQL,
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthenticationService,
     private commonService: CommonService
   ) {
     //
@@ -65,7 +63,6 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     const Status = this.holdForm.get('holdReason').value;
     const qcHoldOrderInfo = {
       InternalTrackingNumber: this.ITN,
-      User: this.authService.userName,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.stationInfo,
     };

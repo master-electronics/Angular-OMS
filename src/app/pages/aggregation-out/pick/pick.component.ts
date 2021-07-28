@@ -16,7 +16,6 @@ import {
   FetchLocationForAggregationOutGQL,
   UpdateOrderStatusAfterAgOutGQL,
 } from '../../../graphql/forAggregation.graphql-gen';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 const StatusIDAgOutPicking = 4;
 const StatusIDAgOutDone = 5;
@@ -55,7 +54,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
-    private auth: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
     private fetchLocation: FetchLocationForAggregationOutGQL,
@@ -134,7 +132,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
             OrderNumber: this.urlParams.orderNumber,
             NOSINumber: this.urlParams.NOSINumber,
             StatusID: StatusIDAgOutPicking,
-            User: this.auth.userName,
             UserOrStatus: 'Packing',
             MerpStatus: StatusForMerpStatusAfterAgOut,
             FileKeyList: fileKeyList,

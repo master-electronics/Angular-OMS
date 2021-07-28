@@ -47,13 +47,11 @@ query qcGlobalMessage(
 
 mutation holdQCOrder(
   $InternalTrackingNumber: String!
-  $User: String!
   $Status: String!
   $Station: String!
 ) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
-    User: $User
     Status: $Status
     Station: $Station
   ) {
@@ -64,7 +62,6 @@ mutation holdQCOrder(
 
 mutation changeInfoAfterVerify(
   $InternalTrackingNumber: String!
-  $User: String!
   $DateCode: String!
   $CountryOfOrigin: String!
   $ROHS: String!
@@ -72,7 +69,6 @@ mutation changeInfoAfterVerify(
 ) {
   changeQCLineInfo(
     InternalTrackingNumber: $InternalTrackingNumber
-    User: $User
     DateCode: $DateCode
     CountryOfOrigin: $CountryOfOrigin
     ROHS: $ROHS
@@ -138,7 +134,6 @@ mutation updateRecordsAfterQCLastLine(
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
-  $User: String!
   $UserOrStatus: String
 ) {
   insertSQLRecordsAfterQC(Inventory: $Inventory, Order: $Order) {
@@ -148,7 +143,6 @@ mutation updateRecordsAfterQCLastLine(
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
-    User: $User
     Status: $Status
     UserOrStatus: $UserOrStatus
   ) {

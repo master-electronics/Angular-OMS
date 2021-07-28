@@ -17,6 +17,13 @@ export class QualityControlService {
   public get globalMessages(): string[] {
     return this.globalMessagesSubject.value;
   }
+
+  // task start time
+  private taskStartdate = new BehaviorSubject<Date>(null);
+  public taskStartdateObs = this.activeTabSubject.asObservable();
+  public changetaskStartdate(date: Date): void {
+    this.taskStartdate.next(date);
+  }
 }
 
 export interface urlParams {

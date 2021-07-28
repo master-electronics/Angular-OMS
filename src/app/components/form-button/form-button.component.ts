@@ -10,6 +10,7 @@ export class SubmitButtonComponent {
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() isLoading = false;
+  @Input() isHighLight = false;
   @Output() onClickEmt = new EventEmitter<MouseEvent>();
 
   onClickButton(): void {

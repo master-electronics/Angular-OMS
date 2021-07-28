@@ -76,14 +76,12 @@ mutation updateMerpOrderStatus(
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
-  $User: String!
   $UserOrStatus: String!
 ) {
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
     Status: $Status
-    User: $User
     UserOrStatus: $UserOrStatus
   ) {
     success

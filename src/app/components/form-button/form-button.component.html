@@ -37,7 +37,10 @@
         fill="currentColor"
       />
     </svg>
-    <span class="text-yellow-500">{{ label.substring(0, 1) }}</span>
+    <span class="text-yellow-500" *ngIf="isHighLight">{{
+      label.substring(0, 1)
+    }}</span>
+    <span *ngIf="!isHighLight">{{ label.substring(0, 1) }}</span>
     <span>{{ label.substring(1) }}</span>
   </div>
 </button>

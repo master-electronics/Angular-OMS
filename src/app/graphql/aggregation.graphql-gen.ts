@@ -147,7 +147,6 @@ export type M1Tote = {
 export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
-  updateContainerList: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
@@ -168,10 +167,6 @@ export type MutationAggregationInArgs = {
   newLocation: Scalars['Boolean'];
   isLastITN: Scalars['Boolean'];
   locationList?: Maybe<Array<Scalars['String']>>;
-};
-
-export type MutationUpdateContainerListArgs = {
-  ContainerList: Array<Maybe<ContainerUpdate>>;
 };
 
 export type MutationUpdateContainerLocationArgs = {
@@ -196,14 +191,12 @@ export type MutationUpdateOrderStatusArgs = {
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   Status: Scalars['String'];
   Station: Scalars['String'];
 };
 
 export type MutationChangeQcLineInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   DateCode: Scalars['String'];
   CountryOfOrigin: Scalars['String'];
   ROHS: Scalars['String'];
@@ -214,7 +207,6 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
-  User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
@@ -495,7 +487,6 @@ export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   Status: Types.Scalars['String'];
-  User: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
 }>;
 
@@ -648,14 +639,12 @@ export const UpdateMerpOrderStatusDocument = gql`
     $OrderNumber: String!
     $NOSINumber: String!
     $Status: String!
-    $User: String!
     $UserOrStatus: String!
   ) {
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
       Status: $Status
-      User: $User
       UserOrStatus: $UserOrStatus
     ) {
       success

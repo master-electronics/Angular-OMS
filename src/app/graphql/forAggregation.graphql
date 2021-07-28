@@ -88,7 +88,6 @@ mutation updateOrderStatusAfterAgOut(
   $OrderNumber: String!
   $NOSINumber: String!
   $StatusID: Int!
-  $User: String!
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
@@ -110,7 +109,6 @@ mutation updateOrderStatusAfterAgOut(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
     Status: $MerpStatus
-    User: $User
     UserOrStatus: $UserOrStatus
   ) {
     success

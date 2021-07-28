@@ -169,12 +169,14 @@
           [isLoading]="isLoading"
           [label]="'Hold'"
           (click)="toggleHoldModal()"
+          isHighLight="true"
         ></form-button>
 
         <form-button
           [styles]="editStyles"
           [label]="'edit'"
           (click)="toggleEdit()"
+          isHighLight="true"
         ></form-button>
       </div>
       <div
@@ -291,6 +293,7 @@
         <form-button
           [styles]="backStyles"
           [label]="'Back'"
+          isHighLight="true"
           (onClickEmt)="back()"
         ></form-button>
         <form-button

@@ -27,7 +27,6 @@ import {
   BinContainerRegex,
 } from '../../../shared/dataRegex';
 import { UpdateOrderStatusAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 const StatusIDForAggregationOutDone = 5;
 const DistributionCenter = 'PH';
@@ -91,7 +90,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private commonService: CommonService,
     private fetchInventoryInfoGQL: FetchInventoryInfoGQL,
-    private auth: AuthenticationService,
     private updateOrderStatusAfterAgout: UpdateOrderStatusAfterAgOutGQL,
     private updateAggregationLocation: UpdateAggregationLocationGQL,
     private updateMerpOrderStatus: UpdateMerpOrderStatusGQL,
@@ -255,7 +253,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.updateMerpOrderStatus
         .mutate(
           {
-            User: this.auth.userName,
             OrderNumber: this.ITNInfo[0].value,
             NOSINumber: this.NOSINumber,
             Status: StatusForMerpStatusAfterAgIn,
@@ -350,7 +347,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             OrderNumber: this.ITNInfo[0].value,
             NOSINumber: this.NOSINumber,
             StatusID: StatusIDForAggregationOutDone,
-            User: this.auth.userName,
             UserOrStatus: 'Packing',
             MerpStatus: StatusForMerpStatusAfterAgOut,
             FileKeyList: [fileKey],

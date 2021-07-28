@@ -147,7 +147,6 @@ export type M1Tote = {
 export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
-  updateContainerList: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
   updateOrderStatus: Response;
@@ -168,10 +167,6 @@ export type MutationAggregationInArgs = {
   newLocation: Scalars['Boolean'];
   isLastITN: Scalars['Boolean'];
   locationList?: Maybe<Array<Scalars['String']>>;
-};
-
-export type MutationUpdateContainerListArgs = {
-  ContainerList: Array<Maybe<ContainerUpdate>>;
 };
 
 export type MutationUpdateContainerLocationArgs = {
@@ -196,14 +191,12 @@ export type MutationUpdateOrderStatusArgs = {
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   Status: Scalars['String'];
   Station: Scalars['String'];
 };
 
 export type MutationChangeQcLineInfoArgs = {
   InternalTrackingNumber: Scalars['String'];
-  User: Scalars['String'];
   DateCode: Scalars['String'];
   CountryOfOrigin: Scalars['String'];
   ROHS: Scalars['String'];
@@ -214,7 +207,6 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   Status: Scalars['String'];
-  User: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
 };
 
@@ -521,7 +513,6 @@ export type UpdateOrderStatusAfterAgOutMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
-  User: Types.Scalars['String'];
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
@@ -738,7 +729,6 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
     $OrderNumber: String!
     $NOSINumber: String!
     $StatusID: Int!
-    $User: String!
     $MerpStatus: String!
     $UserOrStatus: String!
     $FileKeyList: [String!]!
@@ -760,7 +750,6 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
       Status: $MerpStatus
-      User: $User
       UserOrStatus: $UserOrStatus
     ) {
       success
