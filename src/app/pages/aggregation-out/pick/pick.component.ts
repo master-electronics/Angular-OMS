@@ -78,7 +78,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fetchLocation
         .watch(
           {
-            DistributionCenter: this.urlParams.orderNumber,
+            DistributionCenter: this.urlParams.DC,
             OrderNumber: this.urlParams.orderNumber,
             NOSINumber: this.urlParams.NOSINumber,
           },
@@ -131,7 +131,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
             DistributionCenter: this.urlParams.DistributionCenter,
             OrderNumber: this.urlParams.orderNumber,
             NOSINumber: this.urlParams.NOSINumber,
-            StatusID: StatusIDAgOutPicking,
             UserOrStatus: 'Packing',
             MerpStatus: StatusForMerpStatusAfterAgOut,
             FileKeyList: fileKeyList,

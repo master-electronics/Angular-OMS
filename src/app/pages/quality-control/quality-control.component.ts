@@ -9,6 +9,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { APIService } from 'src/app/shared/services/API.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { QualityControlService } from './quality-control.server';
 
 @Component({
   selector: 'quality-control',
@@ -24,6 +25,7 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   constructor(
     private commonService: CommonService,
     private titleService: Title,
+    private qcService: QualityControlService,
     private apiService: APIService
   ) {
     this.commonService.changeTitle(this.title);
@@ -32,6 +34,7 @@ export class QualityControlComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const station = this.commonService.stationInfo;
+    if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
     if (station === '') {
       this.subscription.add(
         this.apiService.onCheckQCPrinter().subscribe(

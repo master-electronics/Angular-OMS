@@ -512,7 +512,6 @@ export type UpdateOrderStatusAfterAgOutMutationVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
-  StatusID: Types.Scalars['Int'];
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
@@ -728,7 +727,6 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
     $DistributionCenter: String!
     $OrderNumber: String!
     $NOSINumber: String!
-    $StatusID: Int!
     $MerpStatus: String!
     $UserOrStatus: String!
     $FileKeyList: [String!]!
@@ -740,7 +738,6 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
       DistributionCenter: $DistributionCenter
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
-      StatusID: $StatusID
       Order: $Order
     ) {
       success

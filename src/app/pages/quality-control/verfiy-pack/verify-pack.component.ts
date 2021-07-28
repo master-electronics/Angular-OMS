@@ -86,10 +86,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // form group
   verifyPack = this.fb.group({
-    dateCode: ['', [Validators.pattern(dateCodeRegex)]],
+    dateCode: [
+      { value: '', disabled: true },
+      [Validators.pattern(dateCodeRegex)],
+    ],
+    ROHS: [{ value: '', disabled: true }, [Validators.required]],
+    countryOfOrigin: [{ value: '', disabled: true }, [Validators.required]],
     countMethods: ['', [Validators.required]],
-    countryOfOrigin: ['', [Validators.required]],
-    ROHS: ['', [Validators.required]],
     // username: ['', [Validators.required]],
     // password: ['', [Validators.required]],
   });
@@ -154,8 +157,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //     password: 'test',
     //   });
     // }
-    this.verifyPack.controls['ROHS'].disable();
-    this.verifyPack.controls['dateCode'].disable();
   }
 
   async fetchProductInfo(): Promise<void> {

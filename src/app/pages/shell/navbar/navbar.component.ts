@@ -61,7 +61,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
       })
     );
-    this.darkMode();
   }
 
   toggleDark(): void {

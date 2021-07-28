@@ -19,10 +19,12 @@ export class QualityControlService {
   }
 
   // task start time
-  private taskStartdate = new BehaviorSubject<Date>(null);
-  public taskStartdateObs = this.activeTabSubject.asObservable();
-  public changetaskStartdate(date: Date): void {
-    this.taskStartdate.next(date);
+  private qcStartTime = new BehaviorSubject<number>(null);
+  public resetQCStartTime(date: number): void {
+    this.qcStartTime.next(date);
+  }
+  public get qcStart(): number {
+    return this.qcStartTime.value;
   }
 }
 

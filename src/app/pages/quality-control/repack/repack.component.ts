@@ -296,10 +296,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             let error: string;
             if (res.data.insertSQLRecordsAfterQC.success) {
-              this.gtmService.pushTag({
-                event: 'QualityControlDone',
-                userID: this.authService.userName,
-              });
+              this.sendGTM();
               this.router.navigate(['/qc'], {
                 queryParams: {
                   type: 'info',
@@ -338,10 +335,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.updateMerpOrderStatus.success &&
               res.data.clearMerpTote.success
             ) {
+              this.sendGTM();
               this.router.navigate(['/qc'], {
                 queryParams: {
                   type: 'success',
-                  message: `QC complete for ${this.urlParams.ITN}\nQC Complete for Order ${this.urlParams.OrderNum}`,
+                  message: `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`,
                 },
               });
             } else {
@@ -363,6 +361,16 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         )
     );
+  }
+
+  sendGTM(): void {
+    const taskTime = Date.now() - this.qcService.qcStart;
+    this.qcService.resetQCStartTime(Date.now());
+    this.gtmService.pushTag({
+      event: 'QualityControlDone',
+      userID: this.authService.userName,
+      taskTime: taskTime,
+    });
   }
 
   ngOnDestroy(): void {

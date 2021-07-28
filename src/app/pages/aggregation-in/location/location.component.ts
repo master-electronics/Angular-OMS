@@ -145,34 +145,25 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     queryAfterSubmit.push(this.updateSQLAfterAgIn(BarcodeInput));
     if (!this.isRelocation) {
       queryAfterSubmit.push(this.writeEvenLogAfterAginLine());
-      if (this.isLastITN) {
-        queryAfterSubmit.push(this.updateOrderStatusAfterLastLine());
-      }
+    }
+    if (this.isLastITN) {
+      queryAfterSubmit.push(this.updateOrderStatusAfterLastLine());
     }
     try {
       const queryRes = await Promise.all(queryAfterSubmit);
+      let type = 'error';
+      let message = queryRes[0].message;
       if (queryRes[0].success) {
-        if (queryRes[1]) {
-          if (queryRes[2]) {
-            this.routeNav(
-              queryRes[2].success ? `success` : `error`,
-              queryRes[2].message
-                ? `Place in ${BarcodeInput}.\nOrder ${this.ITNInfo[0].value} is complete.`
-                : queryRes[2].message
-            );
-          }
-          this.routeNav(
-            queryRes[1].success ? `info` : `error`,
-            queryRes[1].message
-              ? `Place in ${BarcodeInput}.`
-              : queryRes[1].message
+        type = 'info';
+        message = `Place in ${BarcodeInput}.`;
+        if (this.isLastITN) {
+          type = 'success';
+          message = message.concat(
+            `\nOrder ${this.ITNInfo[0].value}-${this.NOSINumber} complete AG In.`
           );
         }
       }
-      this.routeNav(
-        queryRes[0].success ? `info` : `error`,
-        queryRes[0].message ? `Place in ${BarcodeInput}.` : queryRes[0].message
-      );
+      this.routeNav(type, message);
     } catch (error) {
       this.message = error;
       this.isLoading = false;
@@ -346,7 +337,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             DistributionCenter: DistributionCenter,
             OrderNumber: this.ITNInfo[0].value,
             NOSINumber: this.NOSINumber,
-            StatusID: StatusIDForAggregationOutDone,
             UserOrStatus: 'Packing',
             MerpStatus: StatusForMerpStatusAfterAgOut,
             FileKeyList: [fileKey],
@@ -361,7 +351,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               this.router.navigate(['agin'], {
                 queryParams: {
                   result: 'success',
-                  message: `Order complete ${orderNumber}`,
+                  message: `Order complete ${orderNumber}-${this.NOSINumber}`,
                 },
               });
             } else {

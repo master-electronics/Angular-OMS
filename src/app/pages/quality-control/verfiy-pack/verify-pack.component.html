@@ -147,7 +147,6 @@
               [customFilter]="COOFilter"
               [itemTemplate]="COOTemplate"
               [notFoundTemplate]="notFoundTemplate"
-              [disabled]="!editable"
               formControlName="countryOfOrigin"
               class="text-black"
             >
@@ -173,6 +172,8 @@
         ></form-button>
 
         <form-button
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
           [styles]="editStyles"
           [label]="'edit'"
           (click)="toggleEdit()"
