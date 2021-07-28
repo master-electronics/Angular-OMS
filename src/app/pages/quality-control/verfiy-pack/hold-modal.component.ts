@@ -50,12 +50,12 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
   holdOptions = [
     { id: 1, content: 'Short Quantity' },
     { id: 2, content: 'Damaged' },
-    { id: 3, content: 'Bad D/C' },
+    { id: 3, content: 'Repackaging' },
     { id: 4, content: 'Wrong Parts' },
-    { id: 5, content: 'Waiting C of C' },
+    { id: 5, content: 'Verify Quantity' },
     { id: 6, content: 'Mixed Parts' },
-    { id: 7, content: 'Hardware' },
-    { id: 8, content: 'Non-Conforming' },
+    { id: 7, content: 'Part Number Verification' },
+    { id: 8, content: 'Kit Set' },
     { id: 9, content: 'Over Shipment' },
   ];
 
