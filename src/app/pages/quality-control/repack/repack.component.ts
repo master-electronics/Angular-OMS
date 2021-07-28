@@ -144,12 +144,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (itn) => !queryTwo[1].includes(itn)
         );
         if (
-          difference.length === 1 &&
-          difference.includes(this.urlParams.ITN)
-        ) {
+          difference.length === 0 ||
+          (difference.length === 1 && difference[0] === this.urlParams.ITN)
+        )
           isLastLine = true;
-        }
-        isLastLine = false;
+        else isLastLine = false;
       }
 
       this.containerError.nativeElement.classList.add('hidden');
