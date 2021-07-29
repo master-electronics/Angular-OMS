@@ -32,7 +32,7 @@ query fetchInventoryInfo(
   }
 }
 
-mutation updateAggregationLocation(
+mutation relocateAggregationLocation(
   $qcContainer: Int!
   $ITNList: [String!]!
   $Barcode: String!
@@ -55,12 +55,30 @@ mutation updateAggregationLocation(
   }
 }
 
-mutation updateMerpWMSLog(
+mutation putOnAggregationShelf(
+  $qcContainer: Int!
+  $ITNList: [String!]!
+  $Barcode: String!
   $DistributionCenter: String!
+  $newLocation: Boolean!
+  $isLastITN: Boolean!
+  $LocationList: [String!]
   $FileKeyList: [String!]!
   $ActionType: String!
   $Action: String!
 ) {
+  aggregationIn(
+    qcContainer: $qcContainer
+    ITNList: $ITNList
+    Barcode: $Barcode
+    DistributionCenter: $DistributionCenter
+    newLocation: $newLocation
+    isLastITN: $isLastITN
+    locationList: $LocationList
+  ) {
+    success
+    message
+  }
   updateMerpWMSLog(
     FileKeyList: $FileKeyList
     LocationCode: $DistributionCenter
@@ -72,12 +90,43 @@ mutation updateMerpWMSLog(
   }
 }
 
-mutation updateMerpOrderStatus(
+mutation updateLastLineOfOrder(
+  $qcContainer: Int!
+  $ITNList: [String!]!
+  $Barcode: String!
+  $DistributionCenter: String!
+  $newLocation: Boolean!
+  $isLastITN: Boolean!
+  $LocationList: [String!]
+  $FileKeyList: [String!]!
+  $ActionType: String!
+  $Action: String!
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
   $UserOrStatus: String!
 ) {
+  aggregationIn(
+    qcContainer: $qcContainer
+    ITNList: $ITNList
+    Barcode: $Barcode
+    DistributionCenter: $DistributionCenter
+    newLocation: $newLocation
+    isLastITN: $isLastITN
+    locationList: $LocationList
+  ) {
+    success
+    message
+  }
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber

@@ -18,9 +18,12 @@ import { Subscription } from 'rxjs';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchInventoryInfoGQL,
-  UpdateAggregationLocationGQL,
-  UpdateMerpOrderStatusGQL,
-  UpdateMerpWmsLogGQL,
+  RelocateAggregationLocationGQL,
+  RelocateAggregationLocationMutation,
+  PutOnAggregationShelfGQL,
+  PutOnAggregationShelfMutation,
+  UpdateLastLineOfOrderGQL,
+  UpdateLastLineOfOrderMutation,
 } from '../../../graphql/aggregation.graphql-gen';
 import {
   AggregationLocationRegex,
@@ -91,9 +94,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private commonService: CommonService,
     private fetchInventoryInfoGQL: FetchInventoryInfoGQL,
     private updateOrderStatusAfterAgout: UpdateOrderStatusAfterAgOutGQL,
-    private updateAggregationLocation: UpdateAggregationLocationGQL,
-    private updateMerpOrderStatus: UpdateMerpOrderStatusGQL,
-    private updateMerpWMSLog: UpdateMerpWmsLogGQL,
+    private RelocateAggregationLocation: RelocateAggregationLocationGQL,
+    private PutOnAggregationShelf: PutOnAggregationShelfGQL,
+    private UpdateLastLineOfOrder: UpdateLastLineOfOrderGQL,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -139,31 +142,42 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.locationInput.nativeElement.select();
       return;
     }
-    const BarcodeInput = this.locationForm.get('location').value;
+    const barcodeInput = this.locationForm.get('location').value;
+    const barcode =
+      barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
     this.isLoading = true;
-    const queryAfterSubmit = [];
-    queryAfterSubmit.push(this.updateSQLAfterAgIn(BarcodeInput));
-    if (!this.isRelocation) {
-      queryAfterSubmit.push(this.writeEvenLogAfterAginLine());
-    }
-    if (this.isLastITN) {
-      queryAfterSubmit.push(this.updateOrderStatusAfterLastLine());
-    }
+    let queryRes;
+    const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}ag             ${this.ITNList[0]}`;
     try {
-      const queryRes = await Promise.all(queryAfterSubmit);
-      let type = 'error';
-      let message = queryRes[0].message;
-      if (queryRes[0].success) {
-        type = 'info';
-        message = `Place in ${BarcodeInput}.`;
+      let result = 'info';
+      let message = `Place in ${barcodeInput}.`;
+      // Seclet correspond query
+      if (this.isRelocation)
+        queryRes = await this.relocateAggregationLocation(barcode);
+      else {
         if (this.isLastITN) {
-          type = 'success';
+          result = 'success';
           message = message.concat(
             `\nOrder ${this.ITNInfo[0].value}-${this.NOSINumber} complete AG In.`
           );
+          queryRes = await this.updateLastLineOfOrder(barcode, fileKey);
+        } else {
+          queryRes = await this.putOnAggregationShelf(barcode, fileKey);
         }
       }
-      this.routeNav(type, message);
+      // Check if all query success
+      Object.keys(queryRes).forEach((key) => {
+        if (!queryRes[key].success) {
+          throw queryRes[key].message;
+        }
+      });
+      // Jump back to first page with result information
+      this.router.navigate(['agin'], {
+        queryParams: {
+          result,
+          message,
+        },
+      });
     } catch (error) {
       this.message = error;
       this.isLoading = false;
@@ -172,93 +186,93 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     return;
   }
 
-  routeNav(result: string, message: string): void {
-    this.router.navigate(['agin'], {
-      queryParams: {
-        result: result,
-        message: message,
-      },
+  relocateAggregationLocation(
+    barcode: string
+  ): Promise<RelocateAggregationLocationMutation> {
+    return new Promise((resolve, reject) => {
+      this.RelocateAggregationLocation.mutate(
+        {
+          qcContainer: this.qcContainer,
+          ITNList: this.ITNList,
+          Barcode: barcode,
+          DistributionCenter: DistributionCenter,
+          newLocation: this.newLocation,
+          isLastITN: this.isLastITN,
+          LocationList: this.locationList,
+        },
+        { fetchPolicy: 'no-cache' }
+      ).subscribe(
+        (res) => {
+          resolve(res.data);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
     });
   }
 
-  async updateSQLAfterAgIn(
-    BarcodeInput: string
-  ): Promise<{ success: boolean; message?: string }> {
+  putOnAggregationShelf(
+    barcode: string,
+    fileKey: string
+  ): Promise<PutOnAggregationShelfMutation> {
     return new Promise((resolve, reject) => {
-      this.updateAggregationLocation
-        .mutate(
-          {
-            qcContainer: this.qcContainer,
-            ITNList: this.ITNList,
-            Barcode:
-              BarcodeInput.length === 8
-                ? BarcodeInput
-                : BarcodeInput.replace(/-/g, ''),
-            DistributionCenter: DistributionCenter,
-            newLocation: this.newLocation,
-            isLastITN: this.isLastITN,
-            LocationList: this.locationList,
-          },
-          { fetchPolicy: 'no-cache' }
-        )
-        .subscribe(
-          (res) => {
-            resolve(res.data.aggregationIn);
-          },
-          (error) => {
-            reject(error);
-          }
-        );
+      this.PutOnAggregationShelf.mutate(
+        {
+          qcContainer: this.qcContainer,
+          ITNList: this.ITNList,
+          Barcode: barcode,
+          DistributionCenter: DistributionCenter,
+          newLocation: this.newLocation,
+          isLastITN: this.isLastITN,
+          LocationList: this.locationList,
+          FileKeyList: [fileKey],
+          ActionType: 'A',
+          Action: 'line_aggregation_in',
+        },
+        { fetchPolicy: 'no-cache' }
+      ).subscribe(
+        (res) => {
+          resolve(res.data);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
     });
   }
 
-  writeEvenLogAfterAginLine(): Promise<{ success: boolean; message?: string }> {
-    const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}ag             ${this.ITNList[0]}`;
+  updateLastLineOfOrder(
+    barcode: string,
+    fileKey: string
+  ): Promise<UpdateLastLineOfOrderMutation> {
     return new Promise((resolve, reject) => {
-      this.updateMerpWMSLog
-        .mutate(
-          {
-            FileKeyList: [fileKey],
-            DistributionCenter: DistributionCenter,
-            ActionType: 'A',
-            Action: 'line_aggregation_in',
-          },
-          { fetchPolicy: 'no-cache' }
-        )
-        .subscribe(
-          (res) => {
-            resolve(res.data.updateMerpWMSLog);
-          },
-          (error) => {
-            reject(error);
-          }
-        );
-    });
-  }
-
-  updateOrderStatusAfterLastLine(): Promise<{
-    success: boolean;
-    message?: string;
-  }> {
-    return new Promise((resolve, reject) => {
-      this.updateMerpOrderStatus
-        .mutate(
-          {
-            OrderNumber: this.ITNInfo[0].value,
-            NOSINumber: this.NOSINumber,
-            Status: StatusForMerpStatusAfterAgIn,
-            UserOrStatus: 'AGGREGATION-OUT',
-          },
-          { fetchPolicy: 'no-cache' }
-        )
-        .subscribe(
-          (res) => {
-            resolve(res.data.updateMerpOrderStatus);
-          },
-          (error) => {
-            reject(error);
-          }
-        );
+      this.UpdateLastLineOfOrder.mutate(
+        {
+          qcContainer: this.qcContainer,
+          ITNList: this.ITNList,
+          Barcode: barcode,
+          DistributionCenter: DistributionCenter,
+          newLocation: this.newLocation,
+          isLastITN: this.isLastITN,
+          LocationList: this.locationList,
+          FileKeyList: [fileKey],
+          ActionType: 'A',
+          Action: 'line_aggregation_in',
+          OrderNumber: this.ITNInfo[0].value,
+          NOSINumber: this.NOSINumber,
+          Status: StatusForMerpStatusAfterAgIn,
+          UserOrStatus: 'AGGREGATION-OUT',
+        },
+        { fetchPolicy: 'no-cache' }
+      ).subscribe(
+        (res) => {
+          resolve(res.data);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
     });
   }
 

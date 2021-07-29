@@ -450,7 +450,7 @@ export type FetchInventoryInfoQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export type UpdateAggregationLocationMutationVariables = Types.Exact<{
+export type RelocateAggregationLocationMutationVariables = Types.Exact<{
   qcContainer: Types.Scalars['Int'];
   ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   Barcode: Types.Scalars['String'];
@@ -462,35 +462,69 @@ export type UpdateAggregationLocationMutationVariables = Types.Exact<{
   >;
 }>;
 
-export type UpdateAggregationLocationMutation = { __typename?: 'Mutation' } & {
+export type RelocateAggregationLocationMutation = {
+  __typename?: 'Mutation';
+} & {
   aggregationIn: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
 };
 
-export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
+export type PutOnAggregationShelfMutationVariables = Types.Exact<{
+  qcContainer: Types.Scalars['Int'];
+  ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  Barcode: Types.Scalars['String'];
   DistributionCenter: Types.Scalars['String'];
+  newLocation: Types.Scalars['Boolean'];
+  isLastITN: Types.Scalars['Boolean'];
+  LocationList?: Types.Maybe<
+    Array<Types.Scalars['String']> | Types.Scalars['String']
+  >;
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
 }>;
 
-export type UpdateMerpWmsLogMutation = { __typename?: 'Mutation' } & {
+export type PutOnAggregationShelfMutation = { __typename?: 'Mutation' } & {
+  aggregationIn: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
   updateMerpWMSLog: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
 };
 
-export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
+export type UpdateLastLineOfOrderMutationVariables = Types.Exact<{
+  qcContainer: Types.Scalars['Int'];
+  ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  Barcode: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+  newLocation: Types.Scalars['Boolean'];
+  isLastITN: Types.Scalars['Boolean'];
+  LocationList?: Types.Maybe<
+    Array<Types.Scalars['String']> | Types.Scalars['String']
+  >;
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   Status: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
 }>;
 
-export type UpdateMerpOrderStatusMutation = { __typename?: 'Mutation' } & {
+export type UpdateLastLineOfOrderMutation = { __typename?: 'Mutation' } & {
+  aggregationIn: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateMerpWMSLog: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
   updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
@@ -564,8 +598,8 @@ export class FetchInventoryInfoGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const UpdateAggregationLocationDocument = gql`
-  mutation updateAggregationLocation(
+export const RelocateAggregationLocationDocument = gql`
+  mutation relocateAggregationLocation(
     $qcContainer: Int!
     $ITNList: [String!]!
     $Barcode: String!
@@ -592,23 +626,41 @@ export const UpdateAggregationLocationDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateAggregationLocationGQL extends Apollo.Mutation<
-  UpdateAggregationLocationMutation,
-  UpdateAggregationLocationMutationVariables
+export class RelocateAggregationLocationGQL extends Apollo.Mutation<
+  RelocateAggregationLocationMutation,
+  RelocateAggregationLocationMutationVariables
 > {
-  document = UpdateAggregationLocationDocument;
+  document = RelocateAggregationLocationDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const UpdateMerpWmsLogDocument = gql`
-  mutation updateMerpWMSLog(
+export const PutOnAggregationShelfDocument = gql`
+  mutation putOnAggregationShelf(
+    $qcContainer: Int!
+    $ITNList: [String!]!
+    $Barcode: String!
     $DistributionCenter: String!
+    $newLocation: Boolean!
+    $isLastITN: Boolean!
+    $LocationList: [String!]
     $FileKeyList: [String!]!
     $ActionType: String!
     $Action: String!
   ) {
+    aggregationIn(
+      qcContainer: $qcContainer
+      ITNList: $ITNList
+      Barcode: $Barcode
+      DistributionCenter: $DistributionCenter
+      newLocation: $newLocation
+      isLastITN: $isLastITN
+      locationList: $LocationList
+    ) {
+      success
+      message
+    }
     updateMerpWMSLog(
       FileKeyList: $FileKeyList
       LocationCode: $DistributionCenter
@@ -624,23 +676,54 @@ export const UpdateMerpWmsLogDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateMerpWmsLogGQL extends Apollo.Mutation<
-  UpdateMerpWmsLogMutation,
-  UpdateMerpWmsLogMutationVariables
+export class PutOnAggregationShelfGQL extends Apollo.Mutation<
+  PutOnAggregationShelfMutation,
+  PutOnAggregationShelfMutationVariables
 > {
-  document = UpdateMerpWmsLogDocument;
+  document = PutOnAggregationShelfDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const UpdateMerpOrderStatusDocument = gql`
-  mutation updateMerpOrderStatus(
+export const UpdateLastLineOfOrderDocument = gql`
+  mutation updateLastLineOfOrder(
+    $qcContainer: Int!
+    $ITNList: [String!]!
+    $Barcode: String!
+    $DistributionCenter: String!
+    $newLocation: Boolean!
+    $isLastITN: Boolean!
+    $LocationList: [String!]
+    $FileKeyList: [String!]!
+    $ActionType: String!
+    $Action: String!
     $OrderNumber: String!
     $NOSINumber: String!
     $Status: String!
     $UserOrStatus: String!
   ) {
+    aggregationIn(
+      qcContainer: $qcContainer
+      ITNList: $ITNList
+      Barcode: $Barcode
+      DistributionCenter: $DistributionCenter
+      newLocation: $newLocation
+      isLastITN: $isLastITN
+      locationList: $LocationList
+    ) {
+      success
+      message
+    }
+    updateMerpWMSLog(
+      FileKeyList: $FileKeyList
+      LocationCode: $DistributionCenter
+      ActionType: $ActionType
+      Action: $Action
+    ) {
+      success
+      message
+    }
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
@@ -656,11 +739,11 @@ export const UpdateMerpOrderStatusDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<
-  UpdateMerpOrderStatusMutation,
-  UpdateMerpOrderStatusMutationVariables
+export class UpdateLastLineOfOrderGQL extends Apollo.Mutation<
+  UpdateLastLineOfOrderMutation,
+  UpdateLastLineOfOrderMutationVariables
 > {
-  document = UpdateMerpOrderStatusDocument;
+  document = UpdateLastLineOfOrderDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
