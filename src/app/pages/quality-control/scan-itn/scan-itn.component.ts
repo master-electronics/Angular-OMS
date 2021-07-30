@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
 import { FetchPackInfoByItNfromMerpGQL } from '../../../graphql/forQualityControl.graphql-gen';
-import { ITNRegex } from '../../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
@@ -35,7 +35,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ITNForm = this.fb.group({
-    ITN: ['', [Validators.required, Validators.pattern(ITNRegex)]],
+    ITN: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
 
   @ViewChild('ITN') ITNInput: ElementRef;

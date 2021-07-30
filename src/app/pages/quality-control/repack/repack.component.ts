@@ -22,7 +22,7 @@ import {
   FindInventoryListGQL,
   UpdateRecordsAfterQcLastLineMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
-import { BinContainerRegex } from '../../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -62,7 +62,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   containerForm = this.fb.group({
     container: [
       '',
-      [Validators.required, Validators.pattern(BinContainerRegex)],
+      [Validators.required, Validators.pattern(ToteBarcodeRegex)],
     ],
   });
 

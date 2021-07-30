@@ -10,7 +10,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { BinContainerRegex } from '../../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchLocationForAggregationOutGQL,
@@ -43,7 +43,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   containerForm = this.fb.group({
     containerNumber: [
       '',
-      [Validators.required, Validators.pattern(BinContainerRegex)],
+      [Validators.required, Validators.pattern(ToteBarcodeRegex)],
     ],
   });
   get f(): { [key: string]: AbstractControl } {

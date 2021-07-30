@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
-import { BinContainerRegex } from '../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../shared/dataRegex';
 import {
   FetchContainerForAggregationInGQL,
   FetchContainerForAggregationInQuery,
@@ -41,7 +41,7 @@ export class AggregationInComponent
   containerForm = new FormGroup({
     containerNumber: new FormControl('', [
       Validators.required,
-      Validators.pattern(BinContainerRegex),
+      Validators.pattern(ToteBarcodeRegex),
     ]),
   });
   get f(): { [key: string]: AbstractControl } {

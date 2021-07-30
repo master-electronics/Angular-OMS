@@ -31,7 +31,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   shortcuts: ShortcutInput[] = [];
   isImgExist = false;
   globalMessages: string[];
-  ITNRegex = '[a-zA-Z0-9]{10}';
   isLoading = false;
   editable = false;
   // isNeedSupv = true;

@@ -52,6 +52,14 @@ export class HomeComponent implements AfterViewInit {
         },
       },
       {
+        key: ['w s'],
+        label: 'Quick Access',
+        description: 'Search Barcode',
+        command: () => {
+          this.router.navigate(['/searchbarcode']);
+        },
+      },
+      {
         key: ['t s'],
         label: 'Quick Access',
         description: 'Serverless Sql',

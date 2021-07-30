@@ -26,8 +26,8 @@ import {
   UpdateLastLineOfOrderMutation,
 } from '../../../graphql/aggregation.graphql-gen';
 import {
-  AggregationLocationRegex,
-  BinContainerRegex,
+  AggregationShelfBarcodeRegex,
+  ToteBarcodeRegex,
 } from '../../../shared/dataRegex';
 import { UpdateOrderStatusAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
 
@@ -70,8 +70,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   regex(input: FormControl): { regex: { valid: boolean } } {
-    return AggregationLocationRegex.test(input.value) ||
-      BinContainerRegex.test(input.value) ||
+    return AggregationShelfBarcodeRegex.test(input.value) ||
+      ToteBarcodeRegex.test(input.value) ||
       input.value === ''
       ? null
       : {

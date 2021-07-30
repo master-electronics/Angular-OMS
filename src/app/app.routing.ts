@@ -6,7 +6,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ShellComponent } from './pages/shell/shell.component';
-import { environment } from '../environments/environment';
 import { HomeComponent } from './pages/home/home.component';
 import { TestComponent } from './pages/test/test.component';
 
@@ -50,6 +49,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/quality-control/quality-control.module').then(
             (m) => m.QualityControlModule
+          ),
+      },
+      {
+        path: 'searchbarcode',
+        loadChildren: () =>
+          import('./pages/search-barcode/search-barcode.module').then(
+            (m) => m.SearchBarcodeModule
           ),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },

@@ -19,12 +19,13 @@ import {
   UpdateOrderStatusGQL,
 } from '../../graphql/forAggregation.graphql-gen';
 import { CommonService } from '../../shared/services/common.service';
-import { OrderNumberRegex } from '../../shared/dataRegex';
+import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { Title } from '@angular/platform-browser';
 
 const agOutPresent = 3;
 const agOutPicking = 4;
-const expireTime = 180000; // 3min
+const expireTimeForAccptTask = 180000; // 3min
+const expireTimeForPick = 900000; // 15min
 
 const DistributionCenter = 'PH';
 
@@ -46,7 +47,7 @@ export class AggregationOutComponent
   orderForm = this.fb.group({
     orderNumber: [
       '',
-      [Validators.required, Validators.pattern(OrderNumberRegex)],
+      [Validators.required, Validators.pattern(OrderBarcodeRegex)],
     ],
   });
   get f(): { [key: string]: AbstractControl } {
@@ -136,14 +137,14 @@ export class AggregationOutComponent
     if (result.data.agOutPicking[0]) {
       if (
         Date.now() - Number(result.data.agOutPicking[0].LastUpdated) >
-        expireTime * 10
+        expireTimeForPick
       )
         return result.data.agOutPicking[0];
     }
     if (result.data.agOutPresent[0]) {
       if (
         Date.now() - Number(result.data.agOutPresent[0].LastUpdated) >
-        expireTime
+        expireTimeForAccptTask
       )
         return result.data.agOutPresent[0];
     }
