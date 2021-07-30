@@ -1,7 +1,12 @@
 <div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <!-- Order input form -->
   <div class="flex flex-col md:mt-6 ...">
-    <!-- Order input form -->
-    <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
+    <form
+      *ngIf="isScanning"
+      focusInvalidInput
+      [formGroup]="barcodeForm"
+      (ngSubmit)="onSubmit()"
+    >
       <div class="z-0 w-full relative mt-4">
         <input
           oninput="this.value = this.value.toUpperCase()"
@@ -39,5 +44,16 @@
         <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>
     </form>
+  </div>
+  <!-- Barcode Information -->
+  <div *ngIf="!isScanning">
+    <p>Barcode: {{ this.barcodeForm.get('barcode').value }}</p>
+    <p>Location: {{ this.barcodeInfo.location }}</p>
+    <ul *ngFor="let order of barcodeInfo.OrderList">
+      <li>Order: {{ order.orderBarcode }}</li>
+      <ul *ngFor="let ITN of order.ITNList">
+        <li class="ml-2">ITN: {{ ITN.ITN }}</li>
+      </ul>
+    </ul>
   </div>
 </div>

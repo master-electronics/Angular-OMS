@@ -1,0 +1,20 @@
+query fetchToteInfoByBarcode($DistributionCenter: String!, $Barcode: String!) {
+  findContainer(DistributionCenter: $DistributionCenter, Barcode: $Barcode) {
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    INVENTORies {
+      InternalTrackingNumber
+      Order {
+        OrderNumber
+        NOSINumber
+        Status {
+          Name
+        }
+      }
+    }
+  }
+}
