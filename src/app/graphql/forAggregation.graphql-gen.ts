@@ -287,6 +287,8 @@ export type Query = {
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findInventoryList?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
+  /** Search by list of id or DC + list of Barcode */
+  findContainerList?: Maybe<Array<Maybe<Container>>>;
   /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   /** for qc */
@@ -313,6 +315,12 @@ export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
+  Warehouse?: Maybe<Scalars['String']>;
+  Row?: Maybe<Scalars['String']>;
+  Aisle?: Maybe<Scalars['String']>;
+  Section?: Maybe<Scalars['String']>;
+  Shelf?: Maybe<Scalars['String']>;
+  ShelfDetail?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
 
@@ -335,6 +343,13 @@ export type QueryFindOrderArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+};
+
+export type QueryFindContainerListArgs = {
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Limit?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFetchInventoryInfoFromMerpArgs = {

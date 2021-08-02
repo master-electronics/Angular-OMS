@@ -14,34 +14,23 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { ApolloQueryResult } from '@apollo/client/core';
-import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
-import { ITNBarcodeRegex, OrderBarcodeRegex } from '../../shared/dataRegex';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
+  ITNBarcodeRegex,
+  OrderBarcodeRegex,
 } from '../../shared/dataRegex';
-import { FetchToteInfoByBarcodeGQL } from '../../graphql/forSearchBarcode.graphql-gen';
+import {
+  FetchMobileContainerInfoByBarcodeGQL,
+  FetchMobileContainerInfoByBarcodeQuery,
+  FindMobileContainerListInFixLocationGQL,
+} from '../../graphql/forSearchBarcode.graphql-gen';
+import { map, mergeMap } from 'rxjs/operators';
 
 const DistributionCenter = 'PH';
-
-interface BarcodeInfo {
-  location: string;
-  OrderList: [
-    {
-      orderBarcode: string;
-      ITNList: [
-        {
-          ITN: string;
-          containerBarcode: string;
-        }
-      ];
-    }
-  ];
-}
 
 @Component({
   selector: 'search-barcode',
@@ -51,12 +40,10 @@ export class SearchBarcodeComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   title = 'Search Barcode';
-  isLoading = false;
-  isScanning = true;
   message = '';
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
-  barcodeInfo: BarcodeInfo;
+  searchType: string;
+  containerInfo$: Observable<FetchMobileContainerInfoByBarcodeQuery>;
 
   private subscription: Subscription = new Subscription();
   constructor(
@@ -64,7 +51,8 @@ export class SearchBarcodeComponent
     private fb: FormBuilder,
     private router: Router,
     private titleService: Title,
-    private fetchToteInfoByBarcode: FetchToteInfoByBarcodeGQL
+    private fetchMobileContainerInfoByBarcode: FetchMobileContainerInfoByBarcodeGQL,
+    private findMobileContainerListInFixLocation: FindMobileContainerListInFixLocationGQL
   ) {
     this.commonService.changeTitle(this.title);
     this.titleService.setTitle(this.title);
@@ -106,81 +94,64 @@ export class SearchBarcodeComponent
     this.message = '';
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
-      this.isLoading = true;
       if (ToteBarcodeRegex.test(barcode)) {
-        this.fetchMobileContainerInfo(barcode);
+        this.searchType = 'mobile';
+        this.containerInfo$ = this.forMobileContainer(barcode);
+        return;
+      }
+      if (AggregationShelfBarcodeRegex.test(barcode)) {
+        this.searchType = 'fix';
+        this.containerInfo$ = this.forFixContainer(barcode);
         return;
       }
     }
   }
 
-  fetchMobileContainerInfo(barcode: string): void {
-    this.subscription.add(
-      this.fetchToteInfoByBarcode
-        .watch(
-          { DistributionCenter: DistributionCenter, Barcode: barcode },
-          { fetchPolicy: 'no-cache' }
+  forFixContainer(
+    barcode: string
+  ): Observable<FetchMobileContainerInfoByBarcodeQuery> {
+    const barcodeSplit = barcode.split('-');
+    return this.findMobileContainerListInFixLocation
+      .watch(
+        {
+          DistributionCenter: DistributionCenter,
+          Warehouse: barcodeSplit[0],
+          Row: barcodeSplit[1],
+          Aisle: barcodeSplit[2],
+          Section: barcodeSplit[3],
+          Shelf: barcodeSplit[4],
+          ShelfDetail: barcodeSplit[5],
+        },
+        { fetchPolicy: 'no-cache' }
+      )
+      .valueChanges.pipe(
+        mergeMap((res) =>
+          this.forMobileContainer(
+            res.data.findContainer
+              .map((ele) => ele.Barcode)
+              .filter((ele) => ToteBarcodeRegex.test(ele))
+          )
         )
-        .valueChanges.subscribe((res) => {
-          this.isLoading = res.loading;
-          this.message = res.error ? res.error.message : '';
-          const resInfo = res.data.findContainer;
-          if (resInfo) {
-            const locationBarcode = `${resInfo[0].Warehouse}-${resInfo[0].Row}-${resInfo[0].Aisle}-${resInfo[0].Section}-${resInfo[0].Shelf}-${resInfo[0].ShelfDetail}`;
-            if (resInfo[0].INVENTORies.length === 0) {
-              this.barcodeInfo = { location: locationBarcode, OrderList: null };
-              return;
-            }
-            const firstOrderbarcode = `${resInfo[0].INVENTORies[0].Order.OrderNumber}-${resInfo[0].INVENTORies[0].Order.NOSINumber}`;
-            const orderList = [firstOrderbarcode];
-            this.barcodeInfo = {
-              location: locationBarcode,
-              OrderList: [
-                {
-                  orderBarcode: firstOrderbarcode,
-                  ITNList: [
-                    {
-                      ITN: resInfo[0].INVENTORies[0].InternalTrackingNumber,
-                      containerBarcode: barcode,
-                    },
-                  ],
-                },
-              ],
-            };
-            resInfo[0].INVENTORies.forEach((element, index) => {
-              if (index === 0) return;
-              const orderBarcode = `${element.Order.OrderNumber}-${element.Order.NOSINumber}`;
-              if (!orderList.includes(orderBarcode)) {
-                this.barcodeInfo.OrderList.push({
-                  orderBarcode: orderBarcode,
-                  ITNList: [
-                    {
-                      ITN: element.InternalTrackingNumber,
-                      containerBarcode: barcode,
-                    },
-                  ],
-                });
-                orderList.push(orderBarcode);
-              } else {
-                this.barcodeInfo.OrderList[orderList.length - 1].ITNList.push({
-                  ITN: element.InternalTrackingNumber,
-                  containerBarcode: barcode,
-                });
-              }
-            });
-          }
-          console.log(this.barcodeInfo);
+      );
+  }
 
-          this.isScanning = false;
-        })
-    );
+  forMobileContainer(barcodeList: string[]): Observable<any> {
+    return this.fetchMobileContainerInfoByBarcode
+      .watch(
+        { DistributionCenter: DistributionCenter, BarcodeList: barcodeList },
+        { fetchPolicy: 'no-cache' }
+      )
+      .valueChanges.pipe(map((res) => res.data.findContainerList));
   }
-  fetchShelfInfo(): void {
-    this.subscription.add();
+
+  back(): void {
+    this.containerInfo$ = null;
   }
+
   fetchITNInfo(): void {
     this.subscription.add();
   }
+
   fetchOrderInfo(): void {
     this.subscription.add();
   }

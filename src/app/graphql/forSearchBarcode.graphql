@@ -1,11 +1,18 @@
-query fetchToteInfoByBarcode($DistributionCenter: String!, $Barcode: String!) {
-  findContainer(DistributionCenter: $DistributionCenter, Barcode: $Barcode) {
+query fetchMobileContainerInfoByBarcode(
+  $DistributionCenter: String!
+  $BarcodeList: [String]!
+) {
+  findContainerList(
+    DistributionCenter: $DistributionCenter
+    BarcodeList: $BarcodeList
+  ) {
     Warehouse
     Row
     Aisle
     Section
     Shelf
     ShelfDetail
+    Barcode
     INVENTORies {
       InternalTrackingNumber
       Order {
@@ -16,5 +23,27 @@ query fetchToteInfoByBarcode($DistributionCenter: String!, $Barcode: String!) {
         }
       }
     }
+  }
+}
+
+query findMobileContainerListInFixLocation(
+  $DistributionCenter: String!
+  $Warehouse: String!
+  $Row: String!
+  $Aisle: String!
+  $Section: String!
+  $Shelf: String!
+  $ShelfDetail: String!
+) {
+  findContainer(
+    DistributionCenter: $DistributionCenter
+    Warehouse: $Warehouse
+    Row: $Row
+    Aisle: $Aisle
+    Section: $Section
+    Shelf: $Shelf
+    ShelfDetail: $ShelfDetail
+  ) {
+    Barcode
   }
 }

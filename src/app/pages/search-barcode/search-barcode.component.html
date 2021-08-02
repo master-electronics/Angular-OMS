@@ -2,7 +2,7 @@
   <!-- Order input form -->
   <div class="flex flex-col md:mt-6 ...">
     <form
-      *ngIf="isScanning"
+      *ngIf="!containerInfo$"
       focusInvalidInput
       [formGroup]="barcodeForm"
       (ngSubmit)="onSubmit()"
@@ -32,28 +32,41 @@
         </div>
       </div>
       <div class="mt-6 md:mt-10">
-        <form-button
-          [styles]="buttonStyles"
-          [type]="'submit'"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          label="Submit"
-        ></form-button>
+        <form-button [type]="'submit'" label="Submit"></form-button>
       </div>
       <div class="mt-2 md:mt-6">
         <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>
     </form>
   </div>
-  <!-- Barcode Information -->
-  <div *ngIf="!isScanning">
-    <p>Barcode: {{ this.barcodeForm.get('barcode').value }}</p>
-    <p>Location: {{ this.barcodeInfo.location }}</p>
-    <ul *ngFor="let order of barcodeInfo.OrderList">
-      <li>Order: {{ order.orderBarcode }}</li>
-      <ul *ngFor="let ITN of order.ITNList">
-        <li class="ml-2">ITN: {{ ITN.ITN }}</li>
+  <!-- Container Information -->
+  <div *ngIf="containerInfo$">
+    <p class="mb-3 text-xl font-bold">
+      Barcode: {{ this.barcodeForm.get('barcode').value }}
+    </p>
+    <form-button
+      styles="bg-gray-500"
+      label="back"
+      (onClickEmt)="back()"
+    ></form-button>
+    <div class="divide-y">
+      <ul class="mt-2" *ngFor="let container of containerInfo$ | async">
+        <li>Container: {{ container.Barcode }}</li>
+        <li>
+          Location:
+          {{ container.Warehouse }}-{{ container.Row }}-{{ container.Aisle }}-{{
+            container.Section
+          }}-{{ container.Shelf }}-{{ container.ShelfDetail }}
+        </li>
+        <ul *ngFor="let ITN of container.INVENTORies">
+          <li class="ml-3">
+            Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} ({{
+              ITN.Order.Status.Name
+            }}))
+          </li>
+          <li class="ml-3">ITN: {{ ITN.InternalTrackingNumber }}</li>
+        </ul>
       </ul>
-    </ul>
+    </div>
   </div>
 </div>

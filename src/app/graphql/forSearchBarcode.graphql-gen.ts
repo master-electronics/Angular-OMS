@@ -287,6 +287,8 @@ export type Query = {
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findInventoryList?: Maybe<Array<Maybe<Inventory>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
+  /** Search by list of id or DC + list of Barcode */
+  findContainerList?: Maybe<Array<Maybe<Container>>>;
   /** for ag in */
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   /** for qc */
@@ -313,6 +315,12 @@ export type QueryFindContainerArgs = {
   _id?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
+  Warehouse?: Maybe<Scalars['String']>;
+  Row?: Maybe<Scalars['String']>;
+  Aisle?: Maybe<Scalars['String']>;
+  Section?: Maybe<Scalars['String']>;
+  Shelf?: Maybe<Scalars['String']>;
+  ShelfDetail?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
 };
 
@@ -335,6 +343,13 @@ export type QueryFindOrderArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+};
+
+export type QueryFindContainerListArgs = {
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Limit?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFetchInventoryInfoFromMerpArgs = {
@@ -412,18 +427,28 @@ export type VerifyContainerResponse = {
   qcContainer?: Maybe<Scalars['Int']>;
 };
 
-export type FetchToteInfoByBarcodeQueryVariables = Types.Exact<{
+export type FetchMobileContainerInfoByBarcodeQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
-  Barcode: Types.Scalars['String'];
+  BarcodeList:
+    | Array<Types.Maybe<Types.Scalars['String']>>
+    | Types.Maybe<Types.Scalars['String']>;
 }>;
 
-export type FetchToteInfoByBarcodeQuery = { __typename?: 'Query' } & {
-  findContainer?: Types.Maybe<
+export type FetchMobileContainerInfoByBarcodeQuery = {
+  __typename?: 'Query';
+} & {
+  findContainerList?: Types.Maybe<
     Array<
       Types.Maybe<
         { __typename?: 'Container' } & Pick<
           Types.Container,
-          'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'
+          | 'Warehouse'
+          | 'Row'
+          | 'Aisle'
+          | 'Section'
+          | 'Shelf'
+          | 'ShelfDetail'
+          | 'Barcode'
         > & {
             INVENTORies?: Types.Maybe<
               Array<
@@ -453,18 +478,44 @@ export type FetchToteInfoByBarcodeQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export const FetchToteInfoByBarcodeDocument = gql`
-  query fetchToteInfoByBarcode(
+export type FindMobileContainerListInFixLocationQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  Warehouse: Types.Scalars['String'];
+  Row: Types.Scalars['String'];
+  Aisle: Types.Scalars['String'];
+  Section: Types.Scalars['String'];
+  Shelf: Types.Scalars['String'];
+  ShelfDetail: Types.Scalars['String'];
+}>;
+
+export type FindMobileContainerListInFixLocationQuery = {
+  __typename?: 'Query';
+} & {
+  findContainer?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Container' } & Pick<Types.Container, 'Barcode'>
+      >
+    >
+  >;
+};
+
+export const FetchMobileContainerInfoByBarcodeDocument = gql`
+  query fetchMobileContainerInfoByBarcode(
     $DistributionCenter: String!
-    $Barcode: String!
+    $BarcodeList: [String]!
   ) {
-    findContainer(DistributionCenter: $DistributionCenter, Barcode: $Barcode) {
+    findContainerList(
+      DistributionCenter: $DistributionCenter
+      BarcodeList: $BarcodeList
+    ) {
       Warehouse
       Row
       Aisle
       Section
       Shelf
       ShelfDetail
+      Barcode
       INVENTORies {
         InternalTrackingNumber
         Order {
@@ -482,11 +533,48 @@ export const FetchToteInfoByBarcodeDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class FetchToteInfoByBarcodeGQL extends Apollo.Query<
-  FetchToteInfoByBarcodeQuery,
-  FetchToteInfoByBarcodeQueryVariables
+export class FetchMobileContainerInfoByBarcodeGQL extends Apollo.Query<
+  FetchMobileContainerInfoByBarcodeQuery,
+  FetchMobileContainerInfoByBarcodeQueryVariables
 > {
-  document = FetchToteInfoByBarcodeDocument;
+  document = FetchMobileContainerInfoByBarcodeDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindMobileContainerListInFixLocationDocument = gql`
+  query findMobileContainerListInFixLocation(
+    $DistributionCenter: String!
+    $Warehouse: String!
+    $Row: String!
+    $Aisle: String!
+    $Section: String!
+    $Shelf: String!
+    $ShelfDetail: String!
+  ) {
+    findContainer(
+      DistributionCenter: $DistributionCenter
+      Warehouse: $Warehouse
+      Row: $Row
+      Aisle: $Aisle
+      Section: $Section
+      Shelf: $Shelf
+      ShelfDetail: $ShelfDetail
+    ) {
+      Barcode
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindMobileContainerListInFixLocationGQL extends Apollo.Query<
+  FindMobileContainerListInFixLocationQuery,
+  FindMobileContainerListInFixLocationQueryVariables
+> {
+  document = FindMobileContainerListInFixLocationDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
