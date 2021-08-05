@@ -133,11 +133,14 @@ export class SearchBarcodeComponent
       if (OrderBarcodeRegex.test(barcode)) {
         const barcodeSplit = barcode.split('-');
         this.OrderInfo$ = this.searchOrder
-          .watch({
-            DistributionCenter: DistributionCenter,
-            OrderNumber: barcodeSplit[0],
-            NOSINumber: barcodeSplit[1],
-          })
+          .watch(
+            {
+              DistributionCenter: DistributionCenter,
+              OrderNumber: barcodeSplit[0],
+              NOSINumber: barcodeSplit[1],
+            },
+            { fetchPolicy: 'no-cache' }
+          )
           .valueChanges.pipe(map((res) => res.data.findOrder));
       }
       this.barcode.nativeElement.select();
