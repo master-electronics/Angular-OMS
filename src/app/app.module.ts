@@ -24,7 +24,6 @@ import { ShellComponent } from './pages/shell/shell.component';
 import { NavbarComponent } from './pages/shell/navbar/navbar.component';
 import { FooterComponent } from './pages/shell/footer/footer.component';
 import { HomeComponent } from './pages/home/home.component';
-import { TestComponent } from './pages/test/test.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 import { environment } from '../environments/environment';
@@ -39,7 +38,6 @@ import { environment } from '../environments/environment';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
-    TestComponent,
   ],
   imports: [
     CommonModule,

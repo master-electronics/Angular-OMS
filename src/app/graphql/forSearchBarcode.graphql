@@ -47,3 +47,55 @@ query findMobileContainerListInFixLocation(
     Barcode
   }
 }
+
+query SearchBarcodeForITN($InternalTrackingNumber: String!) {
+  findInventory(InternalTrackingNumber: $InternalTrackingNumber) {
+    InternalTrackingNumber
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+      Status {
+        Name
+      }
+    }
+  }
+}
+
+query SearchBarcodeForOrderNumber(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  findOrder(
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  ) {
+    OrderNumber
+    NOSINumber
+    Status {
+      Name
+    }
+    INVENTORies {
+      InternalTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+    }
+  }
+}

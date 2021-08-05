@@ -500,6 +500,90 @@ export type FindMobileContainerListInFixLocationQuery = {
   >;
 };
 
+export type SearchBarcodeForItnQueryVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+}>;
+
+export type SearchBarcodeForItnQuery = { __typename?: 'Query' } & {
+  findInventory?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Inventory' } & Pick<
+          Types.Inventory,
+          'InternalTrackingNumber'
+        > & {
+            Container: { __typename?: 'Container' } & Pick<
+              Types.Container,
+              | 'Barcode'
+              | 'Warehouse'
+              | 'Row'
+              | 'Aisle'
+              | 'Section'
+              | 'Shelf'
+              | 'ShelfDetail'
+            >;
+            Order?: Types.Maybe<
+              { __typename?: 'Order' } & Pick<
+                Types.Order,
+                'OrderNumber' | 'NOSINumber'
+              > & {
+                  Status: { __typename?: 'OrderStatus' } & Pick<
+                    Types.OrderStatus,
+                    'Name'
+                  >;
+                }
+            >;
+          }
+      >
+    >
+  >;
+};
+
+export type SearchBarcodeForOrderNumberQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+export type SearchBarcodeForOrderNumberQuery = { __typename?: 'Query' } & {
+  findOrder?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Order' } & Pick<
+          Types.Order,
+          'OrderNumber' | 'NOSINumber'
+        > & {
+            Status: { __typename?: 'OrderStatus' } & Pick<
+              Types.OrderStatus,
+              'Name'
+            >;
+            INVENTORies?: Types.Maybe<
+              Array<
+                Types.Maybe<
+                  { __typename?: 'Inventory' } & Pick<
+                    Types.Inventory,
+                    'InternalTrackingNumber'
+                  > & {
+                      Container: { __typename?: 'Container' } & Pick<
+                        Types.Container,
+                        | 'Barcode'
+                        | 'Warehouse'
+                        | 'Row'
+                        | 'Aisle'
+                        | 'Section'
+                        | 'Shelf'
+                        | 'ShelfDetail'
+                      >;
+                    }
+                >
+              >
+            >;
+          }
+      >
+    >
+  >;
+};
+
 export const FetchMobileContainerInfoByBarcodeDocument = gql`
   query fetchMobileContainerInfoByBarcode(
     $DistributionCenter: String!
@@ -575,6 +659,88 @@ export class FindMobileContainerListInFixLocationGQL extends Apollo.Query<
   FindMobileContainerListInFixLocationQueryVariables
 > {
   document = FindMobileContainerListInFixLocationDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SearchBarcodeForItnDocument = gql`
+  query SearchBarcodeForITN($InternalTrackingNumber: String!) {
+    findInventory(InternalTrackingNumber: $InternalTrackingNumber) {
+      InternalTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Order {
+        OrderNumber
+        NOSINumber
+        Status {
+          Name
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SearchBarcodeForItnGQL extends Apollo.Query<
+  SearchBarcodeForItnQuery,
+  SearchBarcodeForItnQueryVariables
+> {
+  document = SearchBarcodeForItnDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SearchBarcodeForOrderNumberDocument = gql`
+  query SearchBarcodeForOrderNumber(
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+  ) {
+    findOrder(
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    ) {
+      OrderNumber
+      NOSINumber
+      Status {
+        Name
+      }
+      INVENTORies {
+        InternalTrackingNumber
+        Container {
+          Barcode
+          Warehouse
+          Row
+          Aisle
+          Section
+          Shelf
+          ShelfDetail
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SearchBarcodeForOrderNumberGQL extends Apollo.Query<
+  SearchBarcodeForOrderNumberQuery,
+  SearchBarcodeForOrderNumberQueryVariables
+> {
+  document = SearchBarcodeForOrderNumberDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

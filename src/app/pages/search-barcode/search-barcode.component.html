@@ -1,12 +1,7 @@
 <div class="container px-4 mx-auto mb-10 md:max-w-md">
   <!-- Order input form -->
   <div class="flex flex-col md:mt-6 ...">
-    <form
-      *ngIf="!containerInfo$"
-      focusInvalidInput
-      [formGroup]="barcodeForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
       <div class="z-0 w-full relative mt-4">
         <input
           oninput="this.value = this.value.toUpperCase()"
@@ -31,7 +26,7 @@
           <div *ngIf="this.f.barcode.errors.regex">Invaild Barcode!</div>
         </div>
       </div>
-      <div class="mt-6 md:mt-10">
+      <div class="mt-3 mb-3 md:mt-10">
         <form-button [type]="'submit'" label="Submit"></form-button>
       </div>
       <div class="mt-2 md:mt-6">
@@ -40,17 +35,9 @@
     </form>
   </div>
   <!-- Container Information -->
-  <div *ngIf="containerInfo$">
-    <p class="mb-3 text-xl font-bold">
-      Barcode: {{ this.barcodeForm.get('barcode').value }}
-    </p>
-    <form-button
-      styles="bg-gray-500"
-      label="back"
-      (onClickEmt)="back()"
-    ></form-button>
+  <div *ngIf="containerInfo$ | async as obs; else containerloading">
     <div class="divide-y">
-      <ul class="mt-2" *ngFor="let container of containerInfo$ | async">
+      <ul *ngFor="let container of obs">
         <li>Container: {{ container.Barcode }}</li>
         <li>
           Location:
@@ -69,4 +56,65 @@
       </ul>
     </div>
   </div>
+  <ng-template #containerloading>
+    <div *ngIf="containerInfo$">Loading...</div>
+  </ng-template>
+  <!-- ITN information  -->
+  <div *ngIf="ITNInfo$ | async as obs; else ITNloading">
+    <div class="divide-y">
+      <ul *ngFor="let ITN of obs">
+        <li>ITN: {{ this.barcodeForm.get('barcode').value }}</li>
+        <li>
+          Location:
+          {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
+            ITN.Container.Aisle
+          }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
+            ITN.Container.ShelfDetail
+          }}
+        </li>
+        <li>Container: {{ ITN.Container.Barcode }}</li>
+        <li>
+          Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }}({{
+            ITN.Order.Status.Name
+          }})
+        </li>
+      </ul>
+    </div>
+  </div>
+  <ng-template #ITNloading>
+    <div *ngIf="ITNInfo$">Loading...</div>
+  </ng-template>
+  <!-- Order Infromation -->
+  <div *ngIf="OrderInfo$ | async as obs; else Orderloading">
+    <ul *ngFor="let order of obs">
+      <li>
+        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }} ({{
+          order.Status.Name
+        }})
+      </li>
+      <div class="divide-y">
+        <ul class="ml-2" *ngFor="let ITN of order.INVENTORies">
+          <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+          <li>
+            Location: {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
+              ITN.Container.Aisle
+            }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
+              ITN.Container.ShelfDetail
+            }}
+          </li>
+          <li>Container: {{ ITN.Container.Barcode }}</li>
+        </ul>
+      </div>
+    </ul>
+  </div>
+  <ng-template #Orderloading>
+    <div *ngIf="OrderInfo$">Loading...</div>
+  </ng-template>
 </div>
+
+<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+<ng-keyboard-shortcuts-help
+  [key]="'f1'"
+  [closeKey]="'escape'"
+  [title]="'Help'"
+></ng-keyboard-shortcuts-help>

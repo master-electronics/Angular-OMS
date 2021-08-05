@@ -7,7 +7,6 @@ import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { HomeComponent } from './pages/home/home.component';
-import { TestComponent } from './pages/test/test.component';
 
 const routes: Routes = [
   {
@@ -18,10 +17,6 @@ const routes: Routes = [
       {
         path: 'home',
         component: HomeComponent,
-      },
-      {
-        path: 'test',
-        component: TestComponent,
       },
       {
         path: 'testorderentry',

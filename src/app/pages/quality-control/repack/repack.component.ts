@@ -81,7 +81,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shortcuts.push({
       key: ['ctrl + s'],
       label: 'Quick Access',
-      description: 'Next Step',
+      description: 'Submit',
       preventDefault: true,
       allowIn: [AllowIn.Textarea, AllowIn.Input],
       command: () => {

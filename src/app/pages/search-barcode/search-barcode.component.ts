@@ -12,7 +12,6 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
 
@@ -27,8 +26,11 @@ import {
   FetchMobileContainerInfoByBarcodeGQL,
   FetchMobileContainerInfoByBarcodeQuery,
   FindMobileContainerListInFixLocationGQL,
+  SearchBarcodeForItnGQL,
+  SearchBarcodeForOrderNumberGQL,
 } from '../../graphql/forSearchBarcode.graphql-gen';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 
 const DistributionCenter = 'PH';
 
@@ -44,15 +46,18 @@ export class SearchBarcodeComponent
   messageType = 'error';
   searchType: string;
   containerInfo$: Observable<FetchMobileContainerInfoByBarcodeQuery>;
+  ITNInfo$: Observable<any>;
+  OrderInfo$: Observable<any>;
 
   private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private fb: FormBuilder,
-    private router: Router,
     private titleService: Title,
     private fetchMobileContainerInfoByBarcode: FetchMobileContainerInfoByBarcodeGQL,
-    private findMobileContainerListInFixLocation: FindMobileContainerListInFixLocationGQL
+    private findMobileContainerListInFixLocation: FindMobileContainerListInFixLocationGQL,
+    private searchITN: SearchBarcodeForItnGQL,
+    private searchOrder: SearchBarcodeForOrderNumberGQL
   ) {
     this.commonService.changeTitle(this.title);
     this.titleService.setTitle(this.title);
@@ -79,31 +84,63 @@ export class SearchBarcodeComponent
         };
   }
 
-  ngOnInit(): void {
-    //
-  }
-
+  shortcuts: ShortcutInput[] = [];
   @ViewChild('barcode') barcode: ElementRef;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.barcode.nativeElement.select();
     }, 10);
+
+    this.shortcuts.push({
+      key: ['ctrl + s'],
+      label: 'Quick Access',
+      description: 'Submit',
+      preventDefault: true,
+      allowIn: [AllowIn.Textarea, AllowIn.Input],
+      command: () => {
+        this.onSubmit();
+      },
+    });
+  }
+
+  ngOnInit(): void {
+    //
   }
 
   onSubmit(): void {
     this.message = '';
+    this.ITNInfo$ = null;
+    this.containerInfo$ = null;
+    this.OrderInfo$ = null;
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
       if (ToteBarcodeRegex.test(barcode)) {
-        this.searchType = 'mobile';
         this.containerInfo$ = this.forMobileContainer(barcode);
-        return;
       }
       if (AggregationShelfBarcodeRegex.test(barcode)) {
-        this.searchType = 'fix';
         this.containerInfo$ = this.forFixContainer(barcode);
-        return;
       }
+      if (ITNBarcodeRegex.test(barcode)) {
+        this.ITNInfo$ = this.searchITN
+          .watch(
+            {
+              InternalTrackingNumber: barcode,
+            },
+            { fetchPolicy: 'no-cache' }
+          )
+          .valueChanges.pipe(map((res) => res.data.findInventory));
+      }
+      if (OrderBarcodeRegex.test(barcode)) {
+        const barcodeSplit = barcode.split('-');
+        this.OrderInfo$ = this.searchOrder
+          .watch({
+            DistributionCenter: DistributionCenter,
+            OrderNumber: barcodeSplit[0],
+            NOSINumber: barcodeSplit[1],
+          })
+          .valueChanges.pipe(map((res) => res.data.findOrder));
+      }
+      this.barcode.nativeElement.select();
     }
   }
 
@@ -125,7 +162,7 @@ export class SearchBarcodeComponent
         { fetchPolicy: 'no-cache' }
       )
       .valueChanges.pipe(
-        mergeMap((res) =>
+        switchMap((res) =>
           this.forMobileContainer(
             res.data.findContainer
               .map((ele) => ele.Barcode)
@@ -146,14 +183,6 @@ export class SearchBarcodeComponent
 
   back(): void {
     this.containerInfo$ = null;
-  }
-
-  fetchITNInfo(): void {
-    this.subscription.add();
-  }
-
-  fetchOrderInfo(): void {
-    this.subscription.add();
   }
 
   ngOnDestroy(): void {

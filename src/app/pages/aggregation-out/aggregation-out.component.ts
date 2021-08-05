@@ -10,13 +10,14 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import {
   PickOrdersForAggregationOutGQL,
   PickOrdersForAggregationOutQuery,
   OrderInfoFragment,
   UpdateOrderStatusGQL,
+  FetchOrderStatusGQL,
 } from '../../graphql/forAggregation.graphql-gen';
 import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
@@ -62,7 +63,8 @@ export class AggregationOutComponent
     private router: Router,
     private titleService: Title,
     private pickOrders: PickOrdersForAggregationOutGQL,
-    private updateOrderStatus: UpdateOrderStatusGQL
+    private updateOrderStatus: UpdateOrderStatusGQL,
+    private fetchOrderStatus: FetchOrderStatusGQL
   ) {
     this.commonService.changeTitle(this.title);
     this.titleService.setTitle(this.title);
@@ -167,15 +169,36 @@ export class AggregationOutComponent
     const LastUpdated = new Date().toISOString();
     this.isLoading = true;
     this.subscription.add(
-      this.updateOrderStatus
-        .mutate(
+      this.fetchOrderStatus
+        .watch(
           {
             DistributionCenter: DistributionCenter,
             OrderNumber: orderNumber,
             NOSINumber: NOSINumber,
-            Order: { StatusID: agOutPicking, LastUpdated: LastUpdated },
           },
           { fetchPolicy: 'no-cache' }
+        )
+        .valueChanges.pipe(
+          switchMap((res) => {
+            if (res.data.findOrder.length > 0) {
+              if (
+                res.data.findOrder[0].StatusID > 1 &&
+                res.data.findOrder[0].StatusID < 6
+              ) {
+                return this.updateOrderStatus.mutate(
+                  {
+                    DistributionCenter: DistributionCenter,
+                    OrderNumber: orderNumber,
+                    NOSINumber: NOSINumber,
+                    Order: { StatusID: agOutPicking, LastUpdated: LastUpdated },
+                  },
+                  { fetchPolicy: 'no-cache' }
+                );
+              }
+              throw 'This order is not finish Ag in yet.';
+            }
+            throw 'Can not find this order number.';
+          })
         )
         .subscribe(
           (result) => {
@@ -199,6 +222,7 @@ export class AggregationOutComponent
             }
           },
           (error) => {
+            this.messageType = 'error';
             this.message = error;
             this.isLoading = false;
             this.orderInpt.nativeElement.select();
