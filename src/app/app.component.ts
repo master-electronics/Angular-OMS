@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -7,6 +7,7 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
+
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { filter, map } from 'rxjs/operators';
 import { AuthenticationService } from './shared/services/authentication.service';
@@ -17,6 +18,7 @@ import { AuthenticationService } from './shared/services/authentication.service'
 })
 export class AppComponent implements OnInit {
   isLoading = false;
+
   constructor(
     private router: Router,
     private gtmService: GoogleTagManagerService,

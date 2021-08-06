@@ -28,6 +28,7 @@
     "aws-amplify": "^3.4.3",
     "core-js": "^3.15.2",
     "graphql": "^15.5.1",
+    "idle-timer-manager": "^0.0.5",
     "ng-keyboard-shortcuts": "^10.1.17",
     "ngx-cookie-service": "^11.0.2",
     "rxjs": "~6.6.3",

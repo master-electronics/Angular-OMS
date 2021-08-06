@@ -43,7 +43,7 @@ export class AuthenticationService implements OnInit {
     return username;
   }
 
-  userAuth(username: string, password: string): Observable<unknown> {
+  userAuth(username: string, password: string): Observable<any> {
     return this.http
       .post(`${environment.apiUrl}/AuthJWT/login`, {
         username,
