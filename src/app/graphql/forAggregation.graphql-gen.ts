@@ -73,6 +73,13 @@ export type ContainerUpdate = {
   ShelfDetail?: Maybe<Scalars['String']>;
 };
 
+export type CreationRes = {
+  __typename?: 'CreationRes';
+  success: Scalars['Boolean'];
+  message?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   _id: Scalars['Int'];
@@ -94,9 +101,11 @@ export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
   Container: Container;
+  Status: OrderStatus;
   Order?: Maybe<Order>;
   ALLOCATIONs?: Maybe<Array<Maybe<Allocation>>>;
   InternalTrackingNumber: Scalars['String'];
+  StatusID: Scalars['Int'];
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
   Quantity: Scalars['Float'];
@@ -120,6 +129,25 @@ export type InventoryInfoFromMerp = {
   ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type InventoryInsert = {
+  ContainerID: Scalars['Int'];
+  StatusID: Scalars['Int'];
+  OrderID: Scalars['Int'];
+  InternalTrackingNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  PartNumber: Scalars['String'];
+  Quantity: Scalars['Float'];
+  ROHS: Scalars['Boolean'];
+  Cost?: Maybe<Scalars['Float']>;
+  DateCode?: Maybe<Scalars['String']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ExpirationDate?: Maybe<Scalars['String']>;
+  HoldCode?: Maybe<Scalars['String']>;
+  CycleCountDate?: Maybe<Scalars['String']>;
+  CycleCountUser?: Maybe<Scalars['String']>;
+};
+
 export type InventoryUpdate = {
   ContainerID?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
@@ -137,6 +165,7 @@ export type InventoryUpdate = {
   CycleCountUser?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID?: Maybe<Scalars['Int']>;
+  StatusID?: Maybe<Scalars['Int']>;
 };
 
 export type M1Tote = {
@@ -149,7 +178,11 @@ export type Mutation = {
   aggregationIn: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
-  updateOrderStatus: Response;
+  insertInventory: CreationRes;
+  deleteInventory: Response;
+  updateOrder: Response;
+  insertOrder: CreationRes;
+  deleteOrder: Response;
   /** For qc page */
   holdQCOrder: Response;
   changeQCLineInfo: Response;
@@ -175,11 +208,21 @@ export type MutationUpdateContainerLocationArgs = {
 };
 
 export type MutationUpdateInventoryArgs = {
-  _id: Scalars['Int'];
+  _id?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
   Inventory: InventoryUpdate;
 };
 
-export type MutationUpdateOrderStatusArgs = {
+export type MutationInsertInventoryArgs = {
+  Inventory: InventoryInsert;
+};
+
+export type MutationDeleteInventoryArgs = {
+  _id?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
@@ -187,6 +230,17 @@ export type MutationUpdateOrderStatusArgs = {
   StatusID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
   Order: OrderUpdate;
+};
+
+export type MutationInsertOrderArgs = {
+  Order: OrderInsert;
+};
+
+export type MutationDeleteOrderArgs = {
+  _id?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
 };
 
 export type MutationHoldQcOrderArgs = {
@@ -237,6 +291,18 @@ export type Order = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   LastUpdated?: Maybe<Scalars['String']>;
+};
+
+export type OrderBarcode = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+};
+
+export type OrderInsert = {
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  StatusID: Scalars['Int'];
 };
 
 export type OrderStatus = {
@@ -505,7 +571,7 @@ export type FetchOrderStatusQuery = { __typename?: 'Query' } & {
   >;
 };
 
-export type UpdateOrderStatusMutationVariables = Types.Exact<{
+export type UpdateOrderMutationVariables = Types.Exact<{
   _id?: Types.Maybe<Types.Scalars['Int']>;
   Order: Types.OrderUpdate;
   DistributionCenter?: Types.Maybe<Types.Scalars['String']>;
@@ -514,14 +580,14 @@ export type UpdateOrderStatusMutationVariables = Types.Exact<{
   StatusID?: Types.Maybe<Types.Scalars['Int']>;
 }>;
 
-export type UpdateOrderStatusMutation = { __typename?: 'Mutation' } & {
-  updateOrderStatus: { __typename?: 'Response' } & Pick<
+export type UpdateOrderMutation = { __typename?: 'Mutation' } & {
+  updateOrder: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
 };
 
-export type UpdateOrderStatusAfterAgOutMutationVariables = Types.Exact<{
+export type UpdateOrderAfterAgOutMutationVariables = Types.Exact<{
   _id?: Types.Maybe<Types.Scalars['Int']>;
   Order: Types.OrderUpdate;
   DistributionCenter: Types.Scalars['String'];
@@ -534,10 +600,8 @@ export type UpdateOrderStatusAfterAgOutMutationVariables = Types.Exact<{
   Action: Types.Scalars['String'];
 }>;
 
-export type UpdateOrderStatusAfterAgOutMutation = {
-  __typename?: 'Mutation';
-} & {
-  updateOrderStatus: { __typename?: 'Response' } & Pick<
+export type UpdateOrderAfterAgOutMutation = { __typename?: 'Mutation' } & {
+  updateOrder: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -699,8 +763,8 @@ export class FetchOrderStatusGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const UpdateOrderStatusDocument = gql`
-  mutation updateOrderStatus(
+export const UpdateOrderDocument = gql`
+  mutation updateOrder(
     $_id: Int
     $Order: OrderUpdate!
     $DistributionCenter: String
@@ -708,7 +772,7 @@ export const UpdateOrderStatusDocument = gql`
     $NOSINumber: String
     $StatusID: Int
   ) {
-    updateOrderStatus(
+    updateOrder(
       _id: $_id
       Order: $Order
       DistributionCenter: $DistributionCenter
@@ -725,18 +789,18 @@ export const UpdateOrderStatusDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateOrderStatusGQL extends Apollo.Mutation<
-  UpdateOrderStatusMutation,
-  UpdateOrderStatusMutationVariables
+export class UpdateOrderGQL extends Apollo.Mutation<
+  UpdateOrderMutation,
+  UpdateOrderMutationVariables
 > {
-  document = UpdateOrderStatusDocument;
+  document = UpdateOrderDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const UpdateOrderStatusAfterAgOutDocument = gql`
-  mutation updateOrderStatusAfterAgOut(
+export const UpdateOrderAfterAgOutDocument = gql`
+  mutation updateOrderAfterAgOut(
     $_id: Int
     $Order: OrderUpdate!
     $DistributionCenter: String!
@@ -748,7 +812,7 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
     $ActionType: String!
     $Action: String!
   ) {
-    updateOrderStatus(
+    updateOrder(
       _id: $_id
       DistributionCenter: $DistributionCenter
       OrderNumber: $OrderNumber
@@ -782,11 +846,11 @@ export const UpdateOrderStatusAfterAgOutDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateOrderStatusAfterAgOutGQL extends Apollo.Mutation<
-  UpdateOrderStatusAfterAgOutMutation,
-  UpdateOrderStatusAfterAgOutMutationVariables
+export class UpdateOrderAfterAgOutGQL extends Apollo.Mutation<
+  UpdateOrderAfterAgOutMutation,
+  UpdateOrderAfterAgOutMutationVariables
 > {
-  document = UpdateOrderStatusAfterAgOutDocument;
+  document = UpdateOrderAfterAgOutDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

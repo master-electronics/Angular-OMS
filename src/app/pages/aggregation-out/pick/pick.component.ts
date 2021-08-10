@@ -14,10 +14,9 @@ import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchLocationForAggregationOutGQL,
-  UpdateOrderStatusAfterAgOutGQL,
+  UpdateOrderAfterAgOutGQL,
 } from '../../../graphql/forAggregation.graphql-gen';
 
-const StatusIDAgOutPicking = 4;
 const StatusIDAgOutDone = 5;
 const StatusForMerpStatusAfterAgOut = '65';
 
@@ -57,7 +56,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private fetchLocation: FetchLocationForAggregationOutGQL,
-    private updateOrderStatusAfterAgOut: UpdateOrderStatusAfterAgOutGQL
+    private updateOrderAfterAgOut: UpdateOrderAfterAgOutGQL
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -120,7 +119,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       );
     });
     this.subscription.add(
-      this.updateOrderStatusAfterAgOut
+      this.updateOrderAfterAgOut
         .mutate(
           {
             _id: this.orderID,
@@ -142,9 +141,9 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(
           (result) => {
             if (
-              result.data.updateOrderStatus.success &&
+              result.data.updateOrder.success &&
               result.data.updateMerpWMSLog.success &&
-              result.data.updateOrderStatus.success
+              result.data.updateOrder.success
             ) {
               this.router.navigate(['/agout'], {
                 queryParams: {
@@ -153,7 +152,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
                 },
               });
             }
-            if (result.data.updateOrderStatus.message === `Invalid Order!`) {
+            if (result.data.updateOrder.message === `Invalid Order!`) {
               this.router.navigate(['/agout'], {
                 queryParams: {
                   result: 'error',
@@ -162,7 +161,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               });
             }
             this.isLoading = false;
-            this.message = result.data.updateOrderStatus.message;
+            this.message = result.data.updateOrder.message;
           },
           (err) => {
             this.isLoading = false;

@@ -10,13 +10,13 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import {
   PickOrdersForAggregationOutGQL,
   PickOrdersForAggregationOutQuery,
   OrderInfoFragment,
-  UpdateOrderStatusGQL,
+  UpdateOrderGQL,
   FetchOrderStatusGQL,
 } from '../../graphql/forAggregation.graphql-gen';
 import { CommonService } from '../../shared/services/common.service';
@@ -63,7 +63,7 @@ export class AggregationOutComponent
     private router: Router,
     private titleService: Title,
     private pickOrders: PickOrdersForAggregationOutGQL,
-    private updateOrderStatus: UpdateOrderStatusGQL,
+    private updateOrder: UpdateOrderGQL,
     private fetchOrderStatus: FetchOrderStatusGQL
   ) {
     this.commonService.changeTitle(this.title);
@@ -106,7 +106,7 @@ export class AggregationOutComponent
               this.orderForm.patchValue({
                 orderNumber: `${chosenOrder.OrderNumber}-${chosenOrder.NOSINumber}`,
               });
-              return this.updateOrderStatus.mutate(
+              return this.updateOrder.mutate(
                 {
                   _id: chosenOrder._id,
                   StatusID: chosenOrder.StatusID,
@@ -185,7 +185,7 @@ export class AggregationOutComponent
                 res.data.findOrder[0].StatusID > 1 &&
                 res.data.findOrder[0].StatusID < 6
               ) {
-                return this.updateOrderStatus.mutate(
+                return this.updateOrder.mutate(
                   {
                     DistributionCenter: DistributionCenter,
                     OrderNumber: orderNumber,
@@ -207,7 +207,7 @@ export class AggregationOutComponent
               this.message = result.errors[0].message;
               this.messageType = 'error';
             }
-            if (result.data.updateOrderStatus.success) {
+            if (result.data.updateOrder.success) {
               this.router.navigate(['/agout/pick'], {
                 queryParams: {
                   orderNumber,
@@ -217,7 +217,7 @@ export class AggregationOutComponent
               });
             } else {
               this.messageType = 'error';
-              this.message = result.data.updateOrderStatus.message;
+              this.message = result.data.updateOrder.message;
               this.orderInpt.nativeElement.select();
             }
           },

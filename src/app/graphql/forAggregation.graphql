@@ -60,7 +60,7 @@ query fetchOrderStatus(
   }
 }
 
-mutation updateOrderStatus(
+mutation updateOrder(
   $_id: Int
   $Order: OrderUpdate!
   $DistributionCenter: String
@@ -68,7 +68,7 @@ mutation updateOrderStatus(
   $NOSINumber: String
   $StatusID: Int
 ) {
-  updateOrderStatus(
+  updateOrder(
     _id: $_id
     Order: $Order
     DistributionCenter: $DistributionCenter
@@ -81,7 +81,7 @@ mutation updateOrderStatus(
   }
 }
 
-mutation updateOrderStatusAfterAgOut(
+mutation updateOrderAfterAgOut(
   $_id: Int
   $Order: OrderUpdate!
   $DistributionCenter: String!
@@ -93,7 +93,7 @@ mutation updateOrderStatusAfterAgOut(
   $ActionType: String!
   $Action: String!
 ) {
-  updateOrderStatus(
+  updateOrder(
     _id: $_id
     DistributionCenter: $DistributionCenter
     OrderNumber: $OrderNumber

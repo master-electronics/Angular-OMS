@@ -29,7 +29,7 @@ import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
 } from '../../../shared/dataRegex';
-import { UpdateOrderStatusAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
+import { UpdateOrderAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
 
 const StatusIDForAggregationOutDone = 5;
 const DistributionCenter = 'PH';
@@ -93,7 +93,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private commonService: CommonService,
     private fetchInventoryInfoGQL: FetchInventoryInfoGQL,
-    private updateOrderStatusAfterAgout: UpdateOrderStatusAfterAgOutGQL,
+    private updateOrderStatusAfterAgout: UpdateOrderAfterAgOutGQL,
     private RelocateAggregationLocation: RelocateAggregationLocationGQL,
     private PutOnAggregationShelf: PutOnAggregationShelfGQL,
     private UpdateLastLineOfOrder: UpdateLastLineOfOrderGQL,
@@ -361,7 +361,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .subscribe(
           (res) => {
-            if (res.data.updateOrderStatus.success) {
+            if (res.data.updateOrder.success) {
               this.router.navigate(['agin'], {
                 queryParams: {
                   result: 'success',
@@ -369,7 +369,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 },
               });
             } else {
-              this.message = res.data.updateOrderStatus.message;
+              this.message = res.data.updateOrder.message;
               this.isLoading = false;
             }
           },

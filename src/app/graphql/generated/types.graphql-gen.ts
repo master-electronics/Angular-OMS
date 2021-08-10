@@ -68,6 +68,13 @@ export type ContainerUpdate = {
   ShelfDetail?: Maybe<Scalars['String']>;
 };
 
+export type CreationRes = {
+  __typename?: 'CreationRes';
+  success: Scalars['Boolean'];
+  message?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   _id: Scalars['Int'];
@@ -89,9 +96,11 @@ export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
   Container: Container;
+  Status: OrderStatus;
   Order?: Maybe<Order>;
   ALLOCATIONs?: Maybe<Array<Maybe<Allocation>>>;
   InternalTrackingNumber: Scalars['String'];
+  StatusID: Scalars['Int'];
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
   Quantity: Scalars['Float'];
@@ -115,6 +124,25 @@ export type InventoryInfoFromMerp = {
   ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type InventoryInsert = {
+  ContainerID: Scalars['Int'];
+  StatusID: Scalars['Int'];
+  OrderID: Scalars['Int'];
+  InternalTrackingNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  PartNumber: Scalars['String'];
+  Quantity: Scalars['Float'];
+  ROHS: Scalars['Boolean'];
+  Cost?: Maybe<Scalars['Float']>;
+  DateCode?: Maybe<Scalars['String']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ExpirationDate?: Maybe<Scalars['String']>;
+  HoldCode?: Maybe<Scalars['String']>;
+  CycleCountDate?: Maybe<Scalars['String']>;
+  CycleCountUser?: Maybe<Scalars['String']>;
+};
+
 export type InventoryUpdate = {
   ContainerID?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
@@ -132,6 +160,7 @@ export type InventoryUpdate = {
   CycleCountUser?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID?: Maybe<Scalars['Int']>;
+  StatusID?: Maybe<Scalars['Int']>;
 };
 
 export type M1Tote = {
@@ -144,7 +173,11 @@ export type Mutation = {
   aggregationIn: Response;
   updateContainerLocation: Response;
   updateInventory: Response;
-  updateOrderStatus: Response;
+  insertInventory: CreationRes;
+  deleteInventory: Response;
+  updateOrder: Response;
+  insertOrder: CreationRes;
+  deleteOrder: Response;
   /** For qc page */
   holdQCOrder: Response;
   changeQCLineInfo: Response;
@@ -170,11 +203,21 @@ export type MutationUpdateContainerLocationArgs = {
 };
 
 export type MutationUpdateInventoryArgs = {
-  _id: Scalars['Int'];
+  _id?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
   Inventory: InventoryUpdate;
 };
 
-export type MutationUpdateOrderStatusArgs = {
+export type MutationInsertInventoryArgs = {
+  Inventory: InventoryInsert;
+};
+
+export type MutationDeleteInventoryArgs = {
+  _id?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateOrderArgs = {
   _id?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
@@ -182,6 +225,17 @@ export type MutationUpdateOrderStatusArgs = {
   StatusID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
   Order: OrderUpdate;
+};
+
+export type MutationInsertOrderArgs = {
+  Order: OrderInsert;
+};
+
+export type MutationDeleteOrderArgs = {
+  _id?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
 };
 
 export type MutationHoldQcOrderArgs = {
@@ -232,6 +286,18 @@ export type Order = {
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   LastUpdated?: Maybe<Scalars['String']>;
+};
+
+export type OrderBarcode = {
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+};
+
+export type OrderInsert = {
+  DistributionCenter: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  StatusID: Scalars['Int'];
 };
 
 export type OrderStatus = {
