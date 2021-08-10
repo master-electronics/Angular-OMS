@@ -162,6 +162,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         DateCode: this.urlParams.DateCode,
         CountryOfOrigin: this.urlParams.coo,
         ParentITN: this.urlParams.ParentITN,
+        StatusID: QCDoneID,
       };
       const Order: OrderUpdate = {
         DistributionCenter: this.urlParams.DC,
