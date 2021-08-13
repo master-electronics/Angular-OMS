@@ -136,7 +136,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       : (country = this.countryData.find(
           (element) => element.name === 'UNKNOWN'
         ));
-    await this.fetchProductInfo();
+    this.fetchProductInfo();
     // set init value of form
     this.verifyPack.setValue({
       dateCode: this.urlParams.DateCode || '',
@@ -158,23 +158,25 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // }
   }
 
-  async fetchProductInfo(): Promise<void> {
+  fetchProductInfo(): void {
     this.subscription.add(
       this.fetchProductInfoFromMerp
         .watch(
           {
-            PartNumber: this.urlParams.PartNum,
-            ProductCode: this.urlParams.PRC,
+            ProductList: [
+              this.urlParams.PRC.padEnd(3) + this.urlParams.PartNum,
+            ],
           },
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
           (res) => {
-            if (res.data.fetchProductInfoFromMerp) {
+            if (res.data.fetchProductInfoFromMerp.length) {
               this.MICPartNumber =
-                res.data.fetchProductInfoFromMerp.MICPartNumber;
-              this.HazardMaterialLevel =
-                res.data.fetchProductInfoFromMerp.HazardMaterialLevel;
+                res.data.fetchProductInfoFromMerp[0].MICPartNumber.trim();
+              const tmp =
+                res.data.fetchProductInfoFromMerp[0].HazardMaterialLevel.trim();
+              this.HazardMaterialLevel = tmp === 'N' || !tmp ? false : true;
               this.imgURL = `${this.imgURL}${this.MICPartNumber}.jpg`;
               this.productURL = `${this.productURL}${this.urlParams.PartNum}-${this.MICPartNumber}.html`;
               this.specSheetURL = `${this.specSheetURL}${this.urlParams.PartNum}-${this.MICPartNumber}/`;

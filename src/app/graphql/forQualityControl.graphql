@@ -17,10 +17,10 @@ query fetchPackInfoByITNfromMerp($InternalTrackingNumber: String!) {
   }
 }
 
-query fetchProductInfoFromMerp($PartNumber: String!, $ProductCode: String!) {
-  fetchProductInfoFromMerp(PartNumber: $PartNumber, ProductCode: $ProductCode) {
-    MICPartNumber
+query fetchProductInfoFromMerp($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
     HazardMaterialLevel
+    MICPartNumber
   }
 }
 

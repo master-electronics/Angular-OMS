@@ -55,43 +55,43 @@
       </thead>
       <tbody>
         <tr
-          *ngFor="let container of containerList"
+          *ngFor="let item of itemList"
           class="grid grid-cols-3 gap-3 text-2xl"
         >
           <td class="col-span-2">
-            <span>{{ container.Container.Warehouse }}</span>
+            <span>{{ item.Container.Warehouse }}</span>
             <span>-</span>
-            <span>{{ container.Container.Row }}</span>
+            <span>{{ item.Container.Row }}</span>
             <span>-</span>
-            <span>{{ container.Container.Aisle }}</span>
+            <span>{{ item.Container.Aisle }}</span>
             <span>-</span>
-            <span>{{ container.Container.Section }}</span>
+            <span>{{ item.Container.Section }}</span>
             <span>-</span>
-            <span>{{ container.Container.Shelf }}</span>
+            <span>{{ item.Container.Shelf }}</span>
             <span>-</span>
-            <span>{{ container.Container.ShelfDetail }}</span>
+            <span>{{ item.Container.ShelfDetail }}</span>
           </td>
-          <td>{{ container.Container.Barcode }}</td>
+          <td>{{ item.Container.Barcode }}</td>
         </tr>
         <tr
-          *ngFor="let container of selectedList"
+          *ngFor="let item of selectedList"
           class="text-green-500 grid grid-cols-3 gap-3 text-2xl"
         >
           <td class="col-span-2">
-            <span>{{ container.Container.Warehouse }}</span>
+            <span>{{ item.Container.Warehouse }}</span>
             <span>-</span>
-            <span>{{ container.Container.Row }}</span>
+            <span>{{ item.Container.Row }}</span>
             <span>-</span>
-            <span>{{ container.Container.Aisle }}</span>
+            <span>{{ item.Container.Aisle }}</span>
             <span>-</span>
-            <span>{{ container.Container.Section }}</span>
+            <span>{{ item.Container.Section }}</span>
             <span>-</span>
-            <span>{{ container.Container.Shelf }}</span>
+            <span>{{ item.Container.Shelf }}</span>
             <span>-</span>
-            <span>{{ container.Container.ShelfDetail }}</span>
+            <span>{{ item.Container.ShelfDetail }}</span>
           </td>
 
-          <td>{{ container.Container.Barcode }}</td>
+          <td>{{ item.Container.Barcode }}</td>
         </tr>
       </tbody>
     </table>

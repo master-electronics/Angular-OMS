@@ -337,9 +337,16 @@ export type PackInfoFromMerp = {
   ROHS?: Maybe<Scalars['Boolean']>;
 };
 
+export type ProductKey = {
+  __typename?: 'ProductKey';
+  ProductCode: Scalars['String'];
+  PartNumber: Scalars['String'];
+};
+
 export type ProdunctInfoFromMerp = {
   __typename?: 'ProdunctInfoFromMerp';
-  HazardMaterialLevel?: Maybe<Scalars['Boolean']>;
+  ExternalKey?: Maybe<Scalars['String']>;
+  HazardMaterialLevel?: Maybe<Scalars['String']>;
   MICPartNumber?: Maybe<Scalars['String']>;
 };
 
@@ -359,7 +366,7 @@ export type Query = {
   fetchInventoryInfoFromMerp?: Maybe<InventoryInfoFromMerp>;
   /** for qc */
   fetchPackInfoFromMerp?: Maybe<PackInfoFromMerp>;
-  fetchProductInfoFromMerp?: Maybe<ProdunctInfoFromMerp>;
+  fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
@@ -429,8 +436,7 @@ export type QueryFetchPackInfoFromMerpArgs = {
 };
 
 export type QueryFetchProductInfoFromMerpArgs = {
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
+  ProductList: Array<Maybe<Scalars['String']>>;
 };
 
 export type QueryFetchOrderLineMessageArgs = {
@@ -520,15 +526,20 @@ export type FetchPackInfoByItNfromMerpQuery = { __typename?: 'Query' } & {
 };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
-  PartNumber: Types.Scalars['String'];
-  ProductCode: Types.Scalars['String'];
+  ProductList:
+    | Array<Types.Maybe<Types.Scalars['String']>>
+    | Types.Maybe<Types.Scalars['String']>;
 }>;
 
 export type FetchProductInfoFromMerpQuery = { __typename?: 'Query' } & {
   fetchProductInfoFromMerp?: Types.Maybe<
-    { __typename?: 'ProdunctInfoFromMerp' } & Pick<
-      Types.ProdunctInfoFromMerp,
-      'MICPartNumber' | 'HazardMaterialLevel'
+    Array<
+      Types.Maybe<
+        { __typename?: 'ProdunctInfoFromMerp' } & Pick<
+          Types.ProdunctInfoFromMerp,
+          'HazardMaterialLevel' | 'MICPartNumber'
+        >
+      >
     >
   >;
 };
@@ -717,13 +728,10 @@ export class FetchPackInfoByItNfromMerpGQL extends Apollo.Query<
   }
 }
 export const FetchProductInfoFromMerpDocument = gql`
-  query fetchProductInfoFromMerp($PartNumber: String!, $ProductCode: String!) {
-    fetchProductInfoFromMerp(
-      PartNumber: $PartNumber
-      ProductCode: $ProductCode
-    ) {
-      MICPartNumber
+  query fetchProductInfoFromMerp($ProductList: [String]!) {
+    fetchProductInfoFromMerp(ProductList: $ProductList) {
       HazardMaterialLevel
+      MICPartNumber
     }
   }
 `;

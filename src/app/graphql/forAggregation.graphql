@@ -146,6 +146,14 @@ query fetchLocationForAggregationOut(
         ShelfDetail
       }
       InternalTrackingNumber
+      ProductCode
+      PartNumber
     }
+  }
+}
+
+query fetchHazardMaterialLevel($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    HazardMaterialLevel
   }
 }
