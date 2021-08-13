@@ -113,15 +113,17 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     const LastUpdated = new Date().toISOString();
     const fileKey = `${this.urlParams.DistributionCenter}${this.urlParams.orderNumber}${this.urlParams.NOSINumber}`;
     const fileKeyList = [];
-    const productList = [];
+    const productSet = new Set<string>();
     this.selectedList.forEach((node, index) => {
       fileKeyList.push(
         `${fileKey}${String(index + 1).padStart(2, '0')}packing        ${
           node.InternalTrackingNumber
         }`
       );
-      productList.push(`${node.ProductCode.padEnd(3)}${node.PartNumber}`);
+      productSet.add(`${node.ProductCode.padEnd(3)}${node.PartNumber}`);
     });
+    const productList = [...productSet];
+
     return forkJoin({
       updateOrder: this.updateOrderAfterAgOut.mutate(
         {

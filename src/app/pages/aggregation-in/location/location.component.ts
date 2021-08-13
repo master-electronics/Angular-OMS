@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import {
@@ -29,7 +29,11 @@ import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
 } from '../../../shared/dataRegex';
-import { UpdateOrderAfterAgOutGQL } from 'src/app/graphql/forAggregation.graphql-gen';
+import {
+  FetchHazardMaterialLevelGQL,
+  UpdateOrderAfterAgOutGQL,
+} from 'src/app/graphql/forAggregation.graphql-gen';
+import { take } from 'rxjs/operators';
 
 const StatusIDForAggregationOutDone = 5;
 const DistributionCenter = 'PH';
@@ -97,6 +101,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private RelocateAggregationLocation: RelocateAggregationLocationGQL,
     private PutOnAggregationShelf: PutOnAggregationShelfGQL,
     private UpdateLastLineOfOrder: UpdateLastLineOfOrderGQL,
+    private fetchHazardMaterialLevel: FetchHazardMaterialLevelGQL,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -339,9 +344,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   singleITNorder(ID: number, orderNumber: string): void {
     const lastUpdated = new Date().toISOString();
     const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}packing        ${this.ITNList[0]}`;
+    const productList = [
+      `${this.ITNInfo[5].value.padEnd(3)}${this.ITNInfo[6].value}`,
+    ];
     this.subscription.add(
-      this.updateOrderStatusAfterAgout
-        .mutate(
+      forkJoin({
+        updateOrder: this.updateOrderStatusAfterAgout.mutate(
           {
             _id: ID,
             Order: {
@@ -358,26 +366,41 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             Action: 'line_aggregation_out',
           },
           { fetchPolicy: 'no-cache' }
-        )
-        .subscribe(
-          (res) => {
-            if (res.data.updateOrder.success) {
-              this.router.navigate(['agin'], {
-                queryParams: {
-                  result: 'success',
-                  message: `Order complete ${orderNumber}-${this.NOSINumber}`,
-                },
-              });
-            } else {
-              this.message = res.data.updateOrder.message;
-              this.isLoading = false;
+        ),
+        checkHazmzd: this.fetchHazardMaterialLevel
+          .watch({ ProductList: productList }, { fetchPolicy: 'no-cache' })
+          .valueChanges.pipe(take(1)),
+      }).subscribe(
+        (res) => {
+          if (res.updateOrder.data.updateOrder.success) {
+            let result = 'success';
+            let message = `Order complete ${orderNumber}-${this.NOSINumber}`;
+            if (
+              res.checkHazmzd.data.fetchProductInfoFromMerp.some(
+                (node) =>
+                  node.HazardMaterialLevel !== 'N' &&
+                  node.HazardMaterialLevel !== ' '
+              )
+            ) {
+              result = 'warning';
+              message = message + `\nThis order contains hazardous materials`;
             }
-          },
-          (error) => {
-            this.message = error;
+            this.router.navigate(['agin'], {
+              queryParams: {
+                result,
+                message,
+              },
+            });
+          } else {
+            this.message = res.updateOrder.data.updateOrder.message;
             this.isLoading = false;
           }
-        )
+        },
+        (error) => {
+          this.message = error;
+          this.isLoading = false;
+        }
+      )
     );
   }
   ngOnDestroy(): void {
