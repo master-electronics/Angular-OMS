@@ -312,7 +312,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.locationList = data.Locations;
             // if the order is single ITN order skip location step.
             if (data.ITNTotal === 1) {
-              this.singleITNorder(data.orderId, data.OrderNumber);
+              this.singleITNorder(data.orderId);
               return;
             }
             // auto select new location when ITNCount is 1 or less.
@@ -341,7 +341,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  singleITNorder(ID: number, orderNumber: string): void {
+  singleITNorder(ID: number): void {
+    this.isLoading = true;
     const lastUpdated = new Date().toISOString();
     const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}packing        ${this.ITNList[0]}`;
     const productList = [
@@ -372,14 +373,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           .valueChanges.pipe(take(1)),
       }).subscribe(
         (res) => {
+          this.isLoading = false;
           if (res.updateOrder.data.updateOrder.success) {
             let result = 'success';
-            let message = `Order complete ${orderNumber}-${this.NOSINumber}`;
+            let message = `Order complete ${this.ITNInfo[0].value}-${this.NOSINumber}`;
             if (
               res.checkHazmzd.data.fetchProductInfoFromMerp.some(
                 (node) =>
-                  node.HazardMaterialLevel !== 'N' &&
-                  node.HazardMaterialLevel !== ' '
+                  /^[\w]+$/.test(node.HazardMaterialLevel.trim()) &&
+                  node.HazardMaterialLevel.trim() !== 'N'
               )
             ) {
               result = 'warning';
