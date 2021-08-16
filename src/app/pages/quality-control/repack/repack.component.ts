@@ -279,9 +279,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           } else {
             reject('Barcode No Found');
           }
-          if (response.data.fetchM1TOTEInfo.OrderNumber) {
-            reject('This tote has items in it');
-          }
+          // Use M1TOTE table to chcek if it contain ITEM in it.
+          // if (response.data.fetchM1TOTEInfo.OrderNumber) {
+          //   reject('This tote has items in it');
+          // }
           resolve(containerInfo);
         });
     });

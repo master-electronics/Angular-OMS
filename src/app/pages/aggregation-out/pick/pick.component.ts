@@ -167,7 +167,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               res.checkHazmzd.data.fetchProductInfoFromMerp.some(
                 (node) =>
                   /^[\w]+$/.test(node.HazardMaterialLevel.trim()) &&
-                  node.HazardMaterialLevel !== 'N'
+                  node.HazardMaterialLevel.trim() !== 'N'
               )
             ) {
               result = 'warning';
