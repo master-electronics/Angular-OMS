@@ -65,7 +65,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     this.urlParams = { ...this.route.snapshot.queryParams };
-    this.title = `Pick: ${this.urlParams.orderNumber}`;
+    this.title = `Pick: ${this.urlParams.orderNumber}-${this.urlParams.NOSINumber}`;
     this.commonService.changeTitle(this.title);
     this.fetchItemsInfo();
   }
@@ -189,7 +189,10 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           }
           this.isLoading = false;
-          this.message = res.updateOrder.data.updateOrder.message;
+          this.message =
+            res.updateOrder.data.updateOrder.message +
+            res.updateOrder.data.updateMerpOrderStatus.message +
+            res.updateOrder.data.updateMerpWMSLog.message;
         },
         (err) => {
           this.isLoading = false;
