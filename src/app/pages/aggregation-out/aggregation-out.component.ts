@@ -94,7 +94,6 @@ export class AggregationOutComponent
         )
         .valueChanges.pipe(
           switchMap((result) => {
-            const currentTime = new Date().toISOString();
             this.isLoading = result.loading;
             if (result.error) {
               this.message = result.error.message;
@@ -110,7 +109,7 @@ export class AggregationOutComponent
                 {
                   _id: chosenOrder._id,
                   StatusID: chosenOrder.StatusID,
-                  Order: { StatusID: agOutPresent, LastUpdated: currentTime },
+                  Order: { StatusID: agOutPresent },
                 },
                 { fetchPolicy: 'no-cache' }
               );
@@ -166,7 +165,6 @@ export class AggregationOutComponent
   updateValidOrder(): void {
     const orderNumber = this.orderForm.get('orderNumber').value.slice(0, 6);
     const NOSINumber = this.orderForm.get('orderNumber').value.slice(7);
-    const LastUpdated = new Date().toISOString();
     this.isLoading = true;
     this.subscription.add(
       this.fetchOrderStatus
@@ -191,7 +189,7 @@ export class AggregationOutComponent
                     DistributionCenter: DistributionCenter,
                     OrderNumber: orderNumber,
                     NOSINumber: NOSINumber,
-                    Order: { StatusID: agOutPicking, LastUpdated: LastUpdated },
+                    Order: { StatusID: agOutPicking },
                   },
                   { fetchPolicy: 'no-cache' }
                 );

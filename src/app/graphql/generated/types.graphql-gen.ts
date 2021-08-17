@@ -158,7 +158,6 @@ export type InventoryUpdate = {
   HoldCode?: Maybe<Scalars['String']>;
   CycleCountDate?: Maybe<Scalars['String']>;
   CycleCountUser?: Maybe<Scalars['String']>;
-  LastUpdated?: Maybe<Scalars['String']>;
   OrderID?: Maybe<Scalars['Int']>;
   StatusID?: Maybe<Scalars['Int']>;
 };
@@ -311,7 +310,6 @@ export type OrderUpdate = {
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
-  LastUpdated?: Maybe<Scalars['String']>;
 };
 
 export type PackInfoFromMerp = {

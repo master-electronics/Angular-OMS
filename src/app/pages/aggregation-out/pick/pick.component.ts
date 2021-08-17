@@ -110,7 +110,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateSQLAndCheckHazmzd(): Observable<any> {
-    const LastUpdated = new Date().toISOString();
     const fileKey = `${this.urlParams.DistributionCenter}${this.urlParams.orderNumber}${this.urlParams.NOSINumber}`;
     const fileKeyList = [];
     const productSet = new Set<string>();
@@ -133,7 +132,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           _id: this.orderID,
           Order: {
             StatusID: StatusIDAgOutDone,
-            LastUpdated: LastUpdated,
           },
           DistributionCenter: this.urlParams.DistributionCenter,
           OrderNumber: this.urlParams.orderNumber,

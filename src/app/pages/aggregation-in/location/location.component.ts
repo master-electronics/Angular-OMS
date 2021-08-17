@@ -346,7 +346,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   singleITNorder(ID: number): void {
     this.isLoading = true;
-    const lastUpdated = new Date().toISOString();
     const fileKey = `${DistributionCenter}${this.ITNInfo[0].value}${this.NOSINumber}${this.orderLineNumber}packing        ${this.ITNList[0]}`;
     const productList = [
       `${this.ITNInfo[5].value.padEnd(3)}${this.ITNInfo[6].value}`,
@@ -358,7 +357,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             _id: ID,
             Order: {
               StatusID: StatusIDForAggregationOutDone,
-              LastUpdated: lastUpdated,
             },
             DistributionCenter: DistributionCenter,
             OrderNumber: this.ITNInfo[0].value,
