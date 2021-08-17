@@ -177,7 +177,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
   updateContainerLocation: Response;
-  updateInventory: Response;
+  updateInventoryList: Response;
   insertInventory: CreationRes;
   deleteInventory: Response;
   updateOrder: Response;
@@ -207,9 +207,9 @@ export type MutationUpdateContainerLocationArgs = {
   Container: ContainerUpdate;
 };
 
-export type MutationUpdateInventoryArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+export type MutationUpdateInventoryListArgs = {
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
   Inventory: InventoryUpdate;
 };
 

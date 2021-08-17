@@ -181,9 +181,10 @@ export class AggregationOutComponent
         .valueChanges.pipe(
           switchMap((res) => {
             if (res.data.findOrder.length > 0) {
+              // only allow order is ag complete, AG out present and AG out picking
               if (
                 res.data.findOrder[0].StatusID > 1 &&
-                res.data.findOrder[0].StatusID < 6
+                res.data.findOrder[0].StatusID < 5
               ) {
                 return this.updateOrder.mutate(
                   {

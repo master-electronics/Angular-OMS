@@ -177,7 +177,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
   updateContainerLocation: Response;
-  updateInventory: Response;
+  updateInventoryList: Response;
   insertInventory: CreationRes;
   deleteInventory: Response;
   updateOrder: Response;
@@ -207,9 +207,9 @@ export type MutationUpdateContainerLocationArgs = {
   Container: ContainerUpdate;
 };
 
-export type MutationUpdateInventoryArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+export type MutationUpdateInventoryListArgs = {
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
   Inventory: InventoryUpdate;
 };
 
@@ -571,6 +571,7 @@ export type PutOnAggregationShelfMutationVariables = Types.Exact<{
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
+  Inventory: Types.InventoryUpdate;
 }>;
 
 export type PutOnAggregationShelfMutation = { __typename?: 'Mutation' } & {
@@ -579,6 +580,10 @@ export type PutOnAggregationShelfMutation = { __typename?: 'Mutation' } & {
     'success' | 'message'
   >;
   updateMerpWMSLog: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateInventoryList: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -601,6 +606,7 @@ export type UpdateLastLineOfOrderMutationVariables = Types.Exact<{
   NOSINumber: Types.Scalars['String'];
   Status: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
+  Inventory: Types.InventoryUpdate;
 }>;
 
 export type UpdateLastLineOfOrderMutation = { __typename?: 'Mutation' } & {
@@ -613,6 +619,10 @@ export type UpdateLastLineOfOrderMutation = { __typename?: 'Mutation' } & {
     'success' | 'message'
   >;
   updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateInventoryList: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -735,6 +745,7 @@ export const PutOnAggregationShelfDocument = gql`
     $FileKeyList: [String!]!
     $ActionType: String!
     $Action: String!
+    $Inventory: InventoryUpdate!
   ) {
     aggregationIn(
       qcContainer: $qcContainer
@@ -754,6 +765,10 @@ export const PutOnAggregationShelfDocument = gql`
       ActionType: $ActionType
       Action: $Action
     ) {
+      success
+      message
+    }
+    updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
       success
       message
     }
@@ -789,6 +804,7 @@ export const UpdateLastLineOfOrderDocument = gql`
     $NOSINumber: String!
     $Status: String!
     $UserOrStatus: String!
+    $Inventory: InventoryUpdate!
   ) {
     aggregationIn(
       qcContainer: $qcContainer
@@ -817,6 +833,10 @@ export const UpdateLastLineOfOrderDocument = gql`
       Status: $Status
       UserOrStatus: $UserOrStatus
     ) {
+      success
+      message
+    }
+    updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
       success
       message
     }

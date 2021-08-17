@@ -177,7 +177,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   aggregationIn: Response;
   updateContainerLocation: Response;
-  updateInventory: Response;
+  updateInventoryList: Response;
   insertInventory: CreationRes;
   deleteInventory: Response;
   updateOrder: Response;
@@ -207,9 +207,9 @@ export type MutationUpdateContainerLocationArgs = {
   Container: ContainerUpdate;
 };
 
-export type MutationUpdateInventoryArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+export type MutationUpdateInventoryListArgs = {
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  ITNList?: Maybe<Array<Maybe<Scalars['String']>>>;
   Inventory: InventoryUpdate;
 };
 
@@ -604,10 +604,16 @@ export type UpdateOrderAfterAgOutMutationVariables = Types.Exact<{
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
+  ITNList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  Inventory: Types.InventoryUpdate;
 }>;
 
 export type UpdateOrderAfterAgOutMutation = { __typename?: 'Mutation' } & {
   updateOrder: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
+  >;
+  updateInventoryList: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
   >;
@@ -836,6 +842,8 @@ export const UpdateOrderAfterAgOutDocument = gql`
     $FileKeyList: [String!]!
     $ActionType: String!
     $Action: String!
+    $ITNList: [String!]!
+    $Inventory: InventoryUpdate!
   ) {
     updateOrder(
       _id: $_id
@@ -844,6 +852,10 @@ export const UpdateOrderAfterAgOutDocument = gql`
       NOSINumber: $NOSINumber
       Order: $Order
     ) {
+      success
+      message
+    }
+    updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
       success
       message
     }

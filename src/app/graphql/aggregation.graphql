@@ -66,6 +66,7 @@ mutation putOnAggregationShelf(
   $FileKeyList: [String!]!
   $ActionType: String!
   $Action: String!
+  $Inventory: InventoryUpdate!
 ) {
   aggregationIn(
     qcContainer: $qcContainer
@@ -88,6 +89,10 @@ mutation putOnAggregationShelf(
     success
     message
   }
+  updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
+    success
+    message
+  }
 }
 
 mutation updateLastLineOfOrder(
@@ -105,6 +110,7 @@ mutation updateLastLineOfOrder(
   $NOSINumber: String!
   $Status: String!
   $UserOrStatus: String!
+  $Inventory: InventoryUpdate!
 ) {
   aggregationIn(
     qcContainer: $qcContainer
@@ -133,6 +139,10 @@ mutation updateLastLineOfOrder(
     Status: $Status
     UserOrStatus: $UserOrStatus
   ) {
+    success
+    message
+  }
+  updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
     success
     message
   }

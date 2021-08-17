@@ -36,6 +36,7 @@ import {
 import { take } from 'rxjs/operators';
 
 const StatusIDForAggregationOutDone = 5;
+const StatusIDForAggregationInDone = 2;
 const DistributionCenter = 'PH';
 const StatusForMerpStatusAfterAgIn = '63';
 const StatusForMerpStatusAfterAgOut = '65';
@@ -234,6 +235,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           FileKeyList: [fileKey],
           ActionType: 'A',
           Action: 'line_aggregation_in',
+          Inventory: { StatusID: StatusIDForAggregationInDone },
         },
         { fetchPolicy: 'no-cache' }
       ).subscribe(
@@ -268,6 +270,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           NOSINumber: this.NOSINumber,
           Status: StatusForMerpStatusAfterAgIn,
           UserOrStatus: 'AGGREGATION-OUT',
+          Inventory: { StatusID: StatusIDForAggregationInDone },
         },
         { fetchPolicy: 'no-cache' }
       ).subscribe(
@@ -365,6 +368,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             FileKeyList: [fileKey],
             ActionType: 'A',
             Action: 'line_aggregation_out',
+            ITNList: this.ITNList,
+            Inventory: { StatusID: StatusIDForAggregationOutDone },
           },
           { fetchPolicy: 'no-cache' }
         ),
@@ -374,7 +379,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       }).subscribe(
         (res) => {
           this.isLoading = false;
-          if (res.updateOrder.data.updateOrder.success) {
+          if (
+            res.updateOrder.data.updateOrder.success &&
+            res.updateOrder.data.updateInventoryList.success
+          ) {
             let result = 'success';
             let message = `Order complete ${this.ITNInfo[0].value}-${this.NOSINumber}`;
             if (
@@ -394,7 +402,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             });
           } else {
-            this.message = res.updateOrder.data.updateOrder.message;
+            this.message = res.updateOrder.data.updateOrder.message.concat(
+              res.updateOrder.data.updateInventoryList.message
+            );
             this.isLoading = false;
           }
         },

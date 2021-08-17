@@ -114,6 +114,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     const fileKey = `${this.urlParams.DistributionCenter}${this.urlParams.orderNumber}${this.urlParams.NOSINumber}`;
     const fileKeyList = [];
     const productSet = new Set<string>();
+    const ITNSet = new Set<string>();
     this.selectedList.forEach((node, index) => {
       fileKeyList.push(
         `${fileKey}${String(index + 1).padStart(2, '0')}packing        ${
@@ -121,8 +122,10 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         }`
       );
       productSet.add(`${node.ProductCode.padEnd(3)}${node.PartNumber}`);
+      ITNSet.add(node.InternalTrackingNumber);
     });
     const productList = [...productSet];
+    const ITNList = [...ITNSet];
 
     return forkJoin({
       updateOrder: this.updateOrderAfterAgOut.mutate(
@@ -140,6 +143,8 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           FileKeyList: fileKeyList,
           ActionType: 'A',
           Action: 'line_aggregation_out',
+          Inventory: { StatusID: StatusIDAgOutDone },
+          ITNList: ITNList,
         },
         { fetchPolicy: 'no-cache' }
       ),
@@ -154,13 +159,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.updateSQLAndCheckHazmzd().subscribe(
         (res) => {
-          console.log(res);
-
-          if (
-            res.updateOrder.data.updateOrder.success &&
-            res.updateOrder.data.updateMerpWMSLog.success &&
-            res.updateOrder.data.updateMerpOrderStatus.success
-          ) {
+          if (res.updateOrder.data.updateOrder.success) {
             let result = 'success';
             let message = `Aggregation Out: ${this.urlParams.orderNumber}-${this.urlParams.NOSINumber}`;
             if (

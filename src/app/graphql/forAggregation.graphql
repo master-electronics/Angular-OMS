@@ -92,6 +92,8 @@ mutation updateOrderAfterAgOut(
   $FileKeyList: [String!]!
   $ActionType: String!
   $Action: String!
+  $ITNList: [String!]!
+  $Inventory: InventoryUpdate!
 ) {
   updateOrder(
     _id: $_id
@@ -103,6 +105,12 @@ mutation updateOrderAfterAgOut(
     success
     message
   }
+
+  updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
+    success
+    message
+  }
+
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
@@ -112,6 +120,7 @@ mutation updateOrderAfterAgOut(
     success
     message
   }
+
   updateMerpWMSLog(
     FileKeyList: $FileKeyList
     LocationCode: $DistributionCenter

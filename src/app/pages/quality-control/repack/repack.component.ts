@@ -332,11 +332,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(
           (res) => {
             let error: string;
-            if (
-              res.data.insertSQLRecordsAfterQC.success &&
-              res.data.updateMerpOrderStatus.success &&
-              res.data.clearMerpTote.success
-            ) {
+            if (res.data.insertSQLRecordsAfterQC.success) {
               this.sendGTM();
               this.router.navigate(['/qc'], {
                 queryParams: {
