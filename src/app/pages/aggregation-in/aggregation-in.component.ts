@@ -54,7 +54,7 @@ export class AggregationInComponent
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
-    private verfiyContainer: FetchContainerForAggregationInGQL
+    private fetchContainer: FetchContainerForAggregationInGQL
   ) {
     this.commonService.changeTitle(this.title);
     this.titleService.setTitle('Aggregation In');
@@ -81,7 +81,7 @@ export class AggregationInComponent
   verifyContainer(): void {
     this.isLoading = true;
     this.subscription.add(
-      this.verfiyContainer
+      this.fetchContainer
         .watch(
           {
             Barcode: this.containerForm.get('containerNumber').value,
@@ -124,6 +124,10 @@ export class AggregationInComponent
     // if the container already in Aggregation area, will allow multiple items in it.
     if (container.INVENTORies.length > 1 && container.Row !== 'AG') {
       return 'More than 1 items in this Container.';
+    }
+    // only accepte ITN status from qc done to AG out complete.
+    if (container.INVENTORies[0].StatusID > 4) {
+      return 'This Order is not in Ag.';
     }
     // if pass all naveigate to next page
     const isRelocation = container.Row === 'AG';

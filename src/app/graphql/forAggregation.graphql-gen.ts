@@ -227,7 +227,6 @@ export type MutationUpdateOrderArgs = {
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
-  LastUpdated?: Maybe<Scalars['String']>;
   Order: OrderUpdate;
 };
 
@@ -516,7 +515,7 @@ export type FetchContainerForAggregationInQuery = { __typename?: 'Query' } & {
                 Types.Maybe<
                   { __typename?: 'Inventory' } & Pick<
                     Types.Inventory,
-                    'InternalTrackingNumber'
+                    'InternalTrackingNumber' | 'StatusID'
                   >
                 >
               >
@@ -709,6 +708,7 @@ export const FetchContainerForAggregationInDocument = gql`
       }
       INVENTORies {
         InternalTrackingNumber
+        StatusID
       }
     }
   }

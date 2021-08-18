@@ -222,7 +222,6 @@ export type MutationUpdateOrderArgs = {
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
-  LastUpdated?: Maybe<Scalars['String']>;
   Order: OrderUpdate;
 };
 
