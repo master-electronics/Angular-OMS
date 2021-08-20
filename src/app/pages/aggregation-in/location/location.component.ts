@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, Subscription, throwError } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import {
@@ -190,7 +190,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           },
         });
       } else {
-        throw res.data.aggregationIn.message;
+        this.message = res.data.aggregationIn.message;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
       }
       this.isLoading = false;
     });
@@ -226,7 +228,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           },
         });
       } else {
-        throw `${res.data.aggregationIn.message} ${res.data.updateInventoryList.message}`;
+        this.message = `${res.data.aggregationIn.message} ${res.data.updateInventoryList.message}`;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
       }
       this.isLoading = false;
     });
@@ -266,7 +270,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           },
         });
       } else {
-        throw res.data.aggregationIn.message;
+        this.message = res.data.aggregationIn.message;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
       }
       this.isLoading = false;
     });
