@@ -1,33 +1,47 @@
 <div class="container px-4 mx-auto mb-10 md:max-w-md">
   <!-- Order input form -->
-  <div class="flex flex-col md:mt-6 ...">
+  <div class="flex flex-col md:mt-2 ...">
     <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
-      <div class="z-0 w-full relative mt-4">
-        <input
-          oninput="this.value = this.value.toUpperCase()"
-          type="text"
-          name="barcode"
-          placeholder=" "
-          formControlName="barcode"
-          class="float-input"
-          autocomplete="off"
-          maxlength="30"
-          #barcode
-        />
-        <label for="barcode" class="float-label">Barcode</label>
-        <div
-          class="text-red-500 text-sm absolute"
-          *ngIf="
-            this.f.barcode.invalid &&
-            (this.f.barcode.dirty || this.f.barcode.touched)
-          "
-        >
-          <div *ngIf="this.f.barcode.errors.required">Barcode is required.</div>
-          <div *ngIf="this.f.barcode.errors.regex">Invaild Barcode!</div>
+      <div class="grid grid-cols-2">
+        <div class="z-0 w-full relative mt-2">
+          <input
+            oninput="this.value = this.value.toUpperCase()"
+            type="text"
+            name="barcode"
+            placeholder=" "
+            formControlName="barcode"
+            class="float-input"
+            autocomplete="off"
+            maxlength="30"
+            #barcode
+          />
+          <label for="barcode" class="float-label">Barcode</label>
+          <div
+            class="text-red-500 text-sm absolute"
+            *ngIf="
+              this.f.barcode.invalid &&
+              (this.f.barcode.dirty || this.f.barcode.touched)
+            "
+          >
+            <div *ngIf="this.f.barcode.errors.required">
+              Barcode is required.
+            </div>
+            <div *ngIf="this.f.barcode.errors.regex">Invaild Barcode!</div>
+          </div>
         </div>
-      </div>
-      <div class="mt-3 mb-3 md:mt-10">
-        <form-button [type]="'submit'" label="Submit"></form-button>
+        <button class="w-5 mt-2" type="submit" label="Search">
+          <svg
+            class="w-5"
+            viewBox="0 0 129 129"
+            enable-background="new 0 0 129 129"
+          >
+            <g>
+              <path
+                d="M51.6,96.7c11,0,21-3.9,28.8-10.5l35,35c0.8,0.8,1.8,1.2,2.9,1.2s2.1-0.4,2.9-1.2c1.6-1.6,1.6-4.2,0-5.8l-35-35   c6.5-7.8,10.5-17.9,10.5-28.8c0-24.9-20.2-45.1-45.1-45.1C26.8,6.5,6.5,26.8,6.5,51.6C6.5,76.5,26.8,96.7,51.6,96.7z M51.6,14.7   c20.4,0,36.9,16.6,36.9,36.9C88.5,72,72,88.5,51.6,88.5c-20.4,0-36.9-16.6-36.9-36.9C14.7,31.3,31.3,14.7,51.6,14.7z"
+              />
+            </g>
+          </svg>
+        </button>
       </div>
       <div class="mt-2 md:mt-6">
         <message-bar [message]="message" [type]="messageType"></message-bar>

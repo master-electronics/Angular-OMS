@@ -87,6 +87,10 @@ query SearchBarcodeForOrderNumber(
     }
     INVENTORies {
       InternalTrackingNumber
+      Status {
+        Name
+      }
+      Quantity
       Container {
         Barcode
         Warehouse

@@ -1,13 +1,3 @@
-query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
-  verifyContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
-    success
-    isRelocation
-    message
-    ITNList
-    qcContainer
-  }
-}
-
 query fetchInventoryInfo(
   $InternalTrackingNumber: String!
   $DistributionCenter: String!

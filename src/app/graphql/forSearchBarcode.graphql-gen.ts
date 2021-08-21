@@ -349,8 +349,6 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Retrun ITN and current container id for next step */
-  verifyContainer: VerifyContainerResponse;
   /** Return all information that could be show in aggregation-in page */
   fetchInventoryInfo?: Maybe<InventoryInfo>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
@@ -369,11 +367,6 @@ export type Query = {
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
-};
-
-export type QueryVerifyContainerArgs = {
-  Barcode: Scalars['String'];
-  DistributionCenter: Scalars['String'];
 };
 
 export type QueryFetchInventoryInfoArgs = {
@@ -485,15 +478,6 @@ export type InventoryInfo = {
   ITNCount: Scalars['Int'];
   ITNTotal: Scalars['Int'];
   Locations?: Maybe<Array<Scalars['String']>>;
-};
-
-export type VerifyContainerResponse = {
-  __typename?: 'verifyContainerResponse';
-  success: Scalars['Boolean'];
-  isRelocation?: Maybe<Scalars['Boolean']>;
-  message?: Maybe<Scalars['String']>;
-  ITNList?: Maybe<Array<Scalars['String']>>;
-  qcContainer?: Maybe<Scalars['Int']>;
 };
 
 export type FetchMobileContainerInfoByBarcodeQueryVariables = Types.Exact<{
@@ -631,8 +615,12 @@ export type SearchBarcodeForOrderNumberQuery = { __typename?: 'Query' } & {
                 Types.Maybe<
                   { __typename?: 'Inventory' } & Pick<
                     Types.Inventory,
-                    'InternalTrackingNumber'
+                    'InternalTrackingNumber' | 'Quantity'
                   > & {
+                      Status: { __typename?: 'OrderStatus' } & Pick<
+                        Types.OrderStatus,
+                        'Name'
+                      >;
                       Container: { __typename?: 'Container' } & Pick<
                         Types.Container,
                         | 'Barcode'
@@ -788,6 +776,10 @@ export const SearchBarcodeForOrderNumberDocument = gql`
       }
       INVENTORies {
         InternalTrackingNumber
+        Status {
+          Name
+        }
+        Quantity
         Container {
           Barcode
           Warehouse

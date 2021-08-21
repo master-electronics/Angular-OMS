@@ -60,11 +60,11 @@ export class HomeComponent implements AfterViewInit {
         },
       },
       {
-        key: ['t s'],
+        key: ['w v'],
         label: 'Quick Access',
-        description: 'Serverless Sql',
+        description: 'Order View',
         command: () => {
-          this.router.navigate(['/test']);
+          this.router.navigate(['/orderview']);
         },
       }
     );

@@ -349,8 +349,6 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Retrun ITN and current container id for next step */
-  verifyContainer: VerifyContainerResponse;
   /** Return all information that could be show in aggregation-in page */
   fetchInventoryInfo?: Maybe<InventoryInfo>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
@@ -369,11 +367,6 @@ export type Query = {
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
-};
-
-export type QueryVerifyContainerArgs = {
-  Barcode: Scalars['String'];
-  DistributionCenter: Scalars['String'];
 };
 
 export type QueryFetchInventoryInfoArgs = {
@@ -485,27 +478,6 @@ export type InventoryInfo = {
   ITNCount: Scalars['Int'];
   ITNTotal: Scalars['Int'];
   Locations?: Maybe<Array<Scalars['String']>>;
-};
-
-export type VerifyContainerResponse = {
-  __typename?: 'verifyContainerResponse';
-  success: Scalars['Boolean'];
-  isRelocation?: Maybe<Scalars['Boolean']>;
-  message?: Maybe<Scalars['String']>;
-  ITNList?: Maybe<Array<Scalars['String']>>;
-  qcContainer?: Maybe<Scalars['Int']>;
-};
-
-export type VerifyContainerQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DistributionCenter: Types.Scalars['String'];
-}>;
-
-export type VerifyContainerQuery = { __typename?: 'Query' } & {
-  verifyContainer: { __typename?: 'verifyContainerResponse' } & Pick<
-    Types.VerifyContainerResponse,
-    'success' | 'isRelocation' | 'message' | 'ITNList' | 'qcContainer'
-  >;
 };
 
 export type FetchInventoryInfoQueryVariables = Types.Exact<{
@@ -625,34 +597,6 @@ export type UpdateLastLineOfOrderMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export const VerifyContainerDocument = gql`
-  query verifyContainer($Barcode: String!, $DistributionCenter: String!) {
-    verifyContainer(
-      Barcode: $Barcode
-      DistributionCenter: $DistributionCenter
-    ) {
-      success
-      isRelocation
-      message
-      ITNList
-      qcContainer
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class VerifyContainerGQL extends Apollo.Query<
-  VerifyContainerQuery,
-  VerifyContainerQueryVariables
-> {
-  document = VerifyContainerDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
 export const FetchInventoryInfoDocument = gql`
   query fetchInventoryInfo(
     $InternalTrackingNumber: String!

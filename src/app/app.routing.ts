@@ -53,6 +53,13 @@ const routes: Routes = [
             (m) => m.SearchBarcodeModule
           ),
       },
+      {
+        path: 'orderview',
+        loadChildren: () =>
+          import('./pages/order-view/order-view.module').then(
+            (m) => m.OrderViewModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
