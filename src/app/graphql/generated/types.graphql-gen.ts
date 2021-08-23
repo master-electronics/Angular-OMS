@@ -340,6 +340,7 @@ export type ProdunctInfoFromMerp = {
   ExternalKey?: Maybe<Scalars['String']>;
   HazardMaterialLevel?: Maybe<Scalars['String']>;
   MICPartNumber?: Maybe<Scalars['String']>;
+  UnitOfMeasure?: Maybe<Scalars['String']>;
 };
 
 export type Query = {

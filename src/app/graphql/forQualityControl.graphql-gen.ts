@@ -345,6 +345,7 @@ export type ProdunctInfoFromMerp = {
   ExternalKey?: Maybe<Scalars['String']>;
   HazardMaterialLevel?: Maybe<Scalars['String']>;
   MICPartNumber?: Maybe<Scalars['String']>;
+  UnitOfMeasure?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -518,7 +519,7 @@ export type FetchProductInfoFromMerpQuery = { __typename?: 'Query' } & {
       Types.Maybe<
         { __typename?: 'ProdunctInfoFromMerp' } & Pick<
           Types.ProdunctInfoFromMerp,
-          'HazardMaterialLevel' | 'MICPartNumber'
+          'HazardMaterialLevel' | 'MICPartNumber' | 'UnitOfMeasure'
         >
       >
     >
@@ -713,6 +714,7 @@ export const FetchProductInfoFromMerpDocument = gql`
     fetchProductInfoFromMerp(ProductList: $ProductList) {
       HazardMaterialLevel
       MICPartNumber
+      UnitOfMeasure
     }
   }
 `;

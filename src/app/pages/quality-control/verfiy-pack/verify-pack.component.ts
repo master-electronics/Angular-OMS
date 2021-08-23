@@ -44,6 +44,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isGlobalMessagesModalHidden = true;
   // input data
   urlParams;
+  UnitOfMeasure = 'loading';
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
   // set autocomplete input box
@@ -172,6 +173,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         .valueChanges.subscribe(
           (res) => {
             if (res.data.fetchProductInfoFromMerp.length) {
+              this.UnitOfMeasure =
+                res.data.fetchProductInfoFromMerp[0].UnitOfMeasure.trim();
               this.MICPartNumber =
                 res.data.fetchProductInfoFromMerp[0].MICPartNumber.trim();
               const tmp =

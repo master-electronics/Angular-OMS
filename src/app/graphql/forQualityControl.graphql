@@ -21,6 +21,7 @@ query fetchProductInfoFromMerp($ProductList: [String]!) {
   fetchProductInfoFromMerp(ProductList: $ProductList) {
     HazardMaterialLevel
     MICPartNumber
+    UnitOfMeasure
   }
 }
 
