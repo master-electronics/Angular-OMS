@@ -5,8 +5,8 @@
       <h1 *ngIf="!locations">First Container</h1>
       <div *ngIf="locations">
         <h1>Locations:</h1>
-        <div class="justify-center text-lg grid grid-cols-3">
-          <div class="grid grid-flow-col col-span-2 grid-rows-3">
+        <div class="justify-center text-lg grid">
+          <div class="grid grid-flow-col grid-rows-3">
             <ul
               *ngFor="let locationID of locations"
               class="text-yellow-600 text-xl"
@@ -21,28 +21,12 @@
               <span>-</span>
               <span>{{ locationID.substring(8, 9) }}</span>
               <span>-</span>
-              <span>{{ locationID.substring(9) }}</span>
+              <span>{{ locationID.substring(9, 11) }}</span>
+              <span class="text-blue-500"
+                >({{ locationID.substring(11) }})</span
+              >
             </ul>
           </div>
-          <button
-            *ngIf="!newLocation"
-            class="
-              py-2
-              flex
-              items-center
-              justify-center
-              h-16
-              px-2
-              bg-blue-600
-              rounded
-              font-semibold
-              text-sm text-blue-100
-              hover:bg-blue-700
-            "
-            (click)="toggleNewLocation()"
-          >
-            New location
-          </button>
         </div>
       </div>
     </div>
@@ -78,18 +62,38 @@
             Location is required.
           </div>
           <div *ngIf="this.f.location.errors.regex">
-            Location Example: 10-AG-01-01-A-00 or 50-01-01
+            Example: 10-AG-01-01-A-00 or 50-01-01
           </div>
         </div>
       </div>
-      <div class="mt-6 md:mt-10">
+      <div class="grid grid-cols-3 mt-6 md:mt-10">
         <form-button
+          class="col-span-2"
           [styles]="buttonStyles"
           [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
           [label]="buttonLabel"
         ></form-button>
+        <button
+          *ngIf="!newLocation"
+          class="
+            ml-3
+            py-2
+            flex
+            items-center
+            justify-center
+            px-2
+            bg-blue-600
+            rounded
+            font-semibold
+            text-sm text-blue-100
+            hover:bg-blue-700
+          "
+          (click)="toggleNewLocation()"
+        >
+          New
+        </button>
       </div>
       <div class="mt-2 md:mt-6">
         <message-bar

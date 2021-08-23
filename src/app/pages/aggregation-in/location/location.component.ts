@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription, throwError } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import {
@@ -192,10 +192,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this.message = res.data.aggregationIn.message;
         this.locationInput.nativeElement.select();
-        this.isLoading = false;
       }
       this.isLoading = false;
-    });
+    }),
+      (error) => {
+        this.message = error;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
+      };
   }
 
   putOnAggregationShelf(barcode: string, fileKey: string): void {
@@ -228,12 +232,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           },
         });
       } else {
-        this.message = `${res.data.aggregationIn.message} ${res.data.updateInventoryList.message}`;
+        this.message = `${res.data.aggregationIn.message}`;
         this.locationInput.nativeElement.select();
-        this.isLoading = false;
       }
       this.isLoading = false;
-    });
+    }),
+      (error) => {
+        this.message = error;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
+      };
   }
 
   updateLastLineOfOrder(barcode: string, fileKey: string): void {
@@ -272,10 +280,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this.message = res.data.aggregationIn.message;
         this.locationInput.nativeElement.select();
-        this.isLoading = false;
       }
       this.isLoading = false;
-    });
+    }),
+      (error) => {
+        this.message = error;
+        this.locationInput.nativeElement.select();
+        this.isLoading = false;
+      };
   }
 
   fetchInfo(): void {
@@ -321,6 +333,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 .reverse()
                 .map((element) => {
                   if (element) {
+                    // use && to check if the first part is ture.
                     this.locationsSet.size < 3 &&
                       this.locationsSet.add(element);
                   }
