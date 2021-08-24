@@ -50,7 +50,7 @@
   </div>
   <!-- Container Information -->
   <div *ngIf="containerInfo$ | async as obs; else containerloading">
-    <div class="divide-y">
+    <div class="mb-2">
       <ul *ngFor="let container of obs">
         <li>Container: {{ container.Barcode }}</li>
         <li>
@@ -59,14 +59,18 @@
             container.Section
           }}-{{ container.Shelf }}-{{ container.ShelfDetail }}
         </li>
-        <ul *ngFor="let ITN of container.INVENTORies">
-          <li class="ml-3">
-            Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} ({{
-              ITN.Order.Status.Name
-            }}))
-          </li>
-          <li class="ml-3">ITN: {{ ITN.InternalTrackingNumber }}</li>
-        </ul>
+        <div class="divide-y">
+          <ul *ngFor="let ITN of container.INVENTORies">
+            <li class="ml-3">
+              ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
+            </li>
+            <li class="ml-3">
+              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} ({{
+                ITN.Order.Status.Name
+              }}))
+            </li>
+          </ul>
+        </div>
       </ul>
     </div>
   </div>
@@ -77,7 +81,11 @@
   <div *ngIf="ITNInfo$ | async as obs; else ITNloading">
     <div class="divide-y">
       <ul *ngFor="let ITN of obs">
-        <li>ITN: {{ this.barcodeForm.get('barcode').value }}</li>
+        <li>
+          ITN: {{ this.barcodeForm.get('barcode').value }}({{
+            ITN.Status.Name
+          }})
+        </li>
         <li>
           Location:
           {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
@@ -108,7 +116,7 @@
       </li>
       <div class="divide-y">
         <ul class="ml-2" *ngFor="let ITN of order.INVENTORies">
-          <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+          <li>ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})</li>
           <li>
             Location: {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
               ITN.Container.Aisle

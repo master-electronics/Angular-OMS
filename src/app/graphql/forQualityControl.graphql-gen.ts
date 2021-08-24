@@ -386,18 +386,21 @@ export type QueryFindContainerArgs = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindInventoryListArgs = {
   idList?: Maybe<Array<Scalars['Int']>>;
   ITNList?: Maybe<Array<Scalars['String']>>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindOrderArgs = {
@@ -407,6 +410,7 @@ export type QueryFindOrderArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindContainerListArgs = {
@@ -414,6 +418,7 @@ export type QueryFindContainerListArgs = {
   BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFetchInventoryInfoFromMerpArgs = {

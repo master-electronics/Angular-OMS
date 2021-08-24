@@ -386,18 +386,21 @@ export type QueryFindContainerArgs = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindInventoryArgs = {
   _id?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindInventoryListArgs = {
   idList?: Maybe<Array<Scalars['Int']>>;
   ITNList?: Maybe<Array<Scalars['String']>>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindOrderArgs = {
@@ -407,6 +410,7 @@ export type QueryFindOrderArgs = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFindContainerListArgs = {
@@ -414,6 +418,7 @@ export type QueryFindContainerListArgs = {
   BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export type QueryFetchInventoryInfoFromMerpArgs = {
@@ -511,6 +516,10 @@ export type FetchMobileContainerInfoByBarcodeQuery = {
                     Types.Inventory,
                     'InternalTrackingNumber'
                   > & {
+                      Status: { __typename?: 'OrderStatus' } & Pick<
+                        Types.OrderStatus,
+                        'Name'
+                      >;
                       Order?: Types.Maybe<
                         { __typename?: 'Order' } & Pick<
                           Types.Order,
@@ -566,6 +575,10 @@ export type SearchBarcodeForItnQuery = { __typename?: 'Query' } & {
           Types.Inventory,
           'InternalTrackingNumber'
         > & {
+            Status: { __typename?: 'OrderStatus' } & Pick<
+              Types.OrderStatus,
+              'Name'
+            >;
             Container: { __typename?: 'Container' } & Pick<
               Types.Container,
               | 'Barcode'
@@ -660,6 +673,9 @@ export const FetchMobileContainerInfoByBarcodeDocument = gql`
       Barcode
       INVENTORies {
         InternalTrackingNumber
+        Status {
+          Name
+        }
         Order {
           OrderNumber
           NOSINumber
@@ -726,6 +742,9 @@ export const SearchBarcodeForItnDocument = gql`
   query SearchBarcodeForITN($InternalTrackingNumber: String!) {
     findInventory(InternalTrackingNumber: $InternalTrackingNumber) {
       InternalTrackingNumber
+      Status {
+        Name
+      }
       Container {
         Barcode
         Warehouse

@@ -15,6 +15,9 @@ query fetchMobileContainerInfoByBarcode(
     Barcode
     INVENTORies {
       InternalTrackingNumber
+      Status {
+        Name
+      }
       Order {
         OrderNumber
         NOSINumber
@@ -51,6 +54,9 @@ query findMobileContainerListInFixLocation(
 query SearchBarcodeForITN($InternalTrackingNumber: String!) {
   findInventory(InternalTrackingNumber: $InternalTrackingNumber) {
     InternalTrackingNumber
+    Status {
+      Name
+    }
     Container {
       Barcode
       Warehouse
