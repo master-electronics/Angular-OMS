@@ -9,7 +9,7 @@ import {
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
-import { Subscription } from 'rxjs';
+import { empty, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import {
@@ -94,7 +94,6 @@ export class AggregationOutComponent
         )
         .valueChanges.pipe(
           switchMap((result) => {
-            this.isLoading = result.loading;
             if (result.error) {
               this.message = result.error.message;
               this.messageType = 'error';
@@ -115,17 +114,21 @@ export class AggregationOutComponent
               );
             }
             this.orderStatus = `No available order`;
-            return null;
+            this.isLoading = false;
+            return empty();
           })
         )
         .subscribe(
           (result) => {
-            if (result.errors) {
-              this.message = result.errors[0].message;
+            if (!result.data.updateOrder.success) {
+              this.message = result.data.updateOrder.message;
               this.messageType = 'error';
             }
+            this.isLoading = false;
           },
-          () => {
+          (error) => {
+            this.message = error;
+            this.messageType = 'error';
             this.isLoading = false;
           }
         )
@@ -202,9 +205,6 @@ export class AggregationOutComponent
         .subscribe(
           (result) => {
             this.isLoading = false;
-            if (result.errors) {
-              throw result.errors[0].message;
-            }
             if (result.data.updateOrder.success) {
               this.router.navigate(['/agout/pick'], {
                 queryParams: {
