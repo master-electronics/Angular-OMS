@@ -157,6 +157,7 @@ export class AggregationOutComponent
 
   onSubmit(): void {
     this.message = '';
+    this.isLoading = true;
     if (this.orderForm.valid) {
       this.updateValidOrder();
     }
@@ -165,7 +166,6 @@ export class AggregationOutComponent
   updateValidOrder(): void {
     const orderNumber = this.orderForm.get('orderNumber').value.slice(0, 6);
     const NOSINumber = this.orderForm.get('orderNumber').value.slice(7);
-    this.isLoading = true;
     this.subscription.add(
       this.fetchOrderStatus
         .watch(
@@ -203,8 +203,7 @@ export class AggregationOutComponent
           (result) => {
             this.isLoading = false;
             if (result.errors) {
-              this.message = result.errors[0].message;
-              this.messageType = 'error';
+              throw result.errors[0].message;
             }
             if (result.data.updateOrder.success) {
               this.router.navigate(['/agout/pick'], {
@@ -219,6 +218,7 @@ export class AggregationOutComponent
               this.message = result.data.updateOrder.message;
               this.orderInpt.nativeElement.select();
             }
+            this.isLoading = false;
           },
           (error) => {
             this.messageType = 'error';
