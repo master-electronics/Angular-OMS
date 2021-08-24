@@ -33,7 +33,7 @@ export class ShellComponent implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.timer = new IdleTimeoutManager({
-      timeout: 20, //expired after 15 min
+      timeout: 900, //expired after 15 min
       onExpired: () => {
         this.auth.logout();
       },

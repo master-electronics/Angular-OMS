@@ -2,20 +2,26 @@
   <!-- Order input form -->
   <div class="flex flex-col md:mt-2 md:max-w-md">
     <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-2">
-        <div class="z-0 w-full relative mt-2">
+      <div class="mt-2">
+        <div class="relative">
           <input
             oninput="this.value = this.value.toUpperCase()"
-            type="text"
-            name="barcode"
-            placeholder=" "
             formControlName="barcode"
-            class="float-input"
-            autocomplete="off"
-            maxlength="30"
+            type="search"
+            class="
+              w-full
+              pl-10
+              pr-4
+              py-2
+              rounded-lg
+              shadow
+              focus:outline-none focus:shadow-outline
+              text-gray-600
+              font-medium
+            "
+            placeholder="Search..."
             #barcode
           />
-          <label for="barcode" class="float-label">Barcode</label>
           <div
             class="text-red-500 text-sm absolute"
             *ngIf="
@@ -28,28 +34,36 @@
             </div>
             <div *ngIf="this.f.barcode.errors.regex">Invaild Barcode!</div>
           </div>
-        </div>
-        <button class="w-5 mt-2" type="submit" label="Search">
-          <svg
-            class="w-5"
-            viewBox="0 0 129 129"
-            enable-background="new 0 0 129 129"
+          <button
+            type="submit"
+            class="absolute top-0 left-0 inline-flex items-center p-2"
           >
-            <g>
-              <path
-                d="M51.6,96.7c11,0,21-3.9,28.8-10.5l35,35c0.8,0.8,1.8,1.2,2.9,1.2s2.1-0.4,2.9-1.2c1.6-1.6,1.6-4.2,0-5.8l-35-35   c6.5-7.8,10.5-17.9,10.5-28.8c0-24.9-20.2-45.1-45.1-45.1C26.8,6.5,6.5,26.8,6.5,51.6C6.5,76.5,26.8,96.7,51.6,96.7z M51.6,14.7   c20.4,0,36.9,16.6,36.9,36.9C88.5,72,72,88.5,51.6,88.5c-20.4,0-36.9-16.6-36.9-36.9C14.7,31.3,31.3,14.7,51.6,14.7z"
-              />
-            </g>
-          </svg>
-        </button>
+            <svg
+              class="w-6 h-6 text-gray-400"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+              <circle cx="10" cy="10" r="7" />
+              <line x1="21" y1="21" x2="15" y2="15" />
+            </svg>
+          </button>
+        </div>
       </div>
+
       <div class="mt-2 md:mt-6">
         <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>
     </form>
   </div>
   <!-- Container Information -->
-  <div *ngIf="containerInfo$ | async as obs; else containerloading">
+  <div
+    *ngIf="containerInfo$ | async as obs; else containerloading"
+    class="mt-2"
+  >
     <div class="mb-2">
       <ul *ngFor="let container of obs">
         <li>Container: {{ container.Barcode }}</li>
