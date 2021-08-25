@@ -66,6 +66,7 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           if (data$.LABSTA[0].StationID) {
             this.commonService.changeStation(data$.LABSTA[0].StationID.trim());
+            this.currentStation = this.commonService.stationInfo;
           } else {
             this.modalMessage = `Station number not found in configuration!`;
             this.isModalHidden = false;
@@ -103,13 +104,12 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .valueChanges.subscribe(
           (res) => {
+            this.messageType = 'success';
+            this.message = 'Print success.';
             if (!res.data.printITNLabel.success) {
               this.messageType = 'error';
               this.message = res.data.printITNLabel.message;
-              return;
             }
-            this.messageType = 'success';
-            this.message = 'Print success.';
             this.isLoading = false;
           },
           (error) => {
