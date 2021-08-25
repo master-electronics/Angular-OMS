@@ -367,6 +367,7 @@ export type Query = {
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
+  printITNLabel: Response;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -456,6 +457,11 @@ export type QueryFetchItNsInOrderArgs = {
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
+};
+
+export type QueryPrintItnLabelArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  Station: Scalars['String'];
 };
 
 export type QueryFindInventoriesByContainerArgs = {

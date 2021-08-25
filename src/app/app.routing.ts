@@ -60,6 +60,13 @@ const routes: Routes = [
             (m) => m.OrderViewModule
           ),
       },
+      {
+        path: 'printITN',
+        loadChildren: () =>
+          import('./pages/print-itn/print-itn.module').then(
+            (m) => m.PrintITNModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

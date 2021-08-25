@@ -6,7 +6,7 @@ import { SubmitButtonComponent } from './form-button/form-button.component';
 import { MessageBarComponent } from './message-bar/message-bar.component';
 import { FullscreenButtonComponent } from './fullscreen-button/fullscreen-button.component';
 import { LoaderComponent } from './loader/loader.component';
-// import { FloatingInputComponent } from './floating-input/floating-input.component';
+import { CheckPrinterModalComponent } from './check-printer/check-printer-modal.component';
 
 @NgModule({
   declarations: [
@@ -14,12 +14,14 @@ import { LoaderComponent } from './loader/loader.component';
     MessageBarComponent,
     FullscreenButtonComponent,
     LoaderComponent,
+    CheckPrinterModalComponent,
   ],
   exports: [
     SubmitButtonComponent,
     MessageBarComponent,
     FullscreenButtonComponent,
     LoaderComponent,
+    CheckPrinterModalComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })

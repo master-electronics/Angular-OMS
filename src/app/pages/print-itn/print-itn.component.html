@@ -1,0 +1,46 @@
+<div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <div class="flex flex-col mt-4 md:mt-10 ...">
+    <form focusInvalidInput [formGroup]="ITNForm" (ngSubmit)="onSubmit()">
+      <div class="z-0 w-full relative mt-4">
+        <input
+          type="text"
+          name="ITNInput"
+          id="ITNInput"
+          placeholder=" "
+          formControlName="ITN"
+          class="float-input"
+          autocomplete="off"
+          maxlength="15"
+          #ITNInput
+          required
+        />
+        <label for="containerNumber" class="float-label"> ITN </label>
+        <div
+          class="text-red-500 text-sm absolute"
+          *ngIf="this.f.ITN.invalid && (this.f.ITN.dirty || this.f.ITN.touched)"
+        >
+          <div *ngIf="this.f.ITN.errors.required">ITN is required.</div>
+          <div *ngIf="this.f.ITN.errors.pattern">Example: PH01576081</div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <form-button
+          [styles]="buttonStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          label="Submit"
+        ></form-button>
+      </div>
+      <div class="mt-6">
+        <message-bar [message]="message" [type]="messageType"></message-bar>
+      </div>
+    </form>
+  </div>
+</div>
+<check-printer-modal
+  *ngIf="!isModalHidden"
+  [(isModalHidden)]="isModalHidden"
+  [modalMessage]="modalMessage"
+></check-printer-modal>

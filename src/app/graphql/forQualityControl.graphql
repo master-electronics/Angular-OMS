@@ -46,6 +46,16 @@ query qcGlobalMessage(
   }
 }
 
+query printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
+  printITNLabel(
+    InternalTrackingNumber: $InternalTrackingNumber
+    Station: $Station
+  ) {
+    success
+    message
+  }
+}
+
 mutation holdQCOrder(
   $InternalTrackingNumber: String!
   $Status: String!

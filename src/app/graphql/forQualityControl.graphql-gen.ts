@@ -367,6 +367,7 @@ export type Query = {
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
+  printITNLabel: Response;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -458,6 +459,11 @@ export type QueryFetchItNsInOrderArgs = {
   NOSINumber: Scalars['String'];
 };
 
+export type QueryPrintItnLabelArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  Station: Scalars['String'];
+};
+
 export type QueryFindInventoriesByContainerArgs = {
   ContainerID: Scalars['Int'];
   limit?: Maybe<Scalars['Int']>;
@@ -546,6 +552,18 @@ export type QcGlobalMessageQuery = { __typename?: 'Query' } & {
   >;
   fetchPartMessage?: Types.Maybe<
     { __typename?: 'GlobalMessage' } & Pick<Types.GlobalMessage, 'comments'>
+  >;
+};
+
+export type PrintItnLabelQueryVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+  Station: Types.Scalars['String'];
+}>;
+
+export type PrintItnLabelQuery = { __typename?: 'Query' } & {
+  printITNLabel: { __typename?: 'Response' } & Pick<
+    Types.Response,
+    'success' | 'message'
   >;
 };
 
@@ -768,6 +786,31 @@ export class QcGlobalMessageGQL extends Apollo.Query<
   QcGlobalMessageQueryVariables
 > {
   document = QcGlobalMessageDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const PrintItnLabelDocument = gql`
+  query printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
+    printITNLabel(
+      InternalTrackingNumber: $InternalTrackingNumber
+      Station: $Station
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PrintItnLabelGQL extends Apollo.Query<
+  PrintItnLabelQuery,
+  PrintItnLabelQueryVariables
+> {
+  document = PrintItnLabelDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

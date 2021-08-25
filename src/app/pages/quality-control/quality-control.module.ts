@@ -14,7 +14,6 @@ import { GlobalMessagesComponent } from './global-messages/global-messages.compo
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
 import { GlobalMessagesModalComponent } from './verfiy-pack/global-messages-modal.component';
-import { CheckPrinterModalComponent } from './check-printer-modal.component';
 import { RepackComponent } from './repack/repack.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
@@ -27,7 +26,6 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     VerifyPackComponent,
     HoldModalComponent,
     GlobalMessagesModalComponent,
-    CheckPrinterModalComponent,
     RepackComponent,
   ],
   imports: [
