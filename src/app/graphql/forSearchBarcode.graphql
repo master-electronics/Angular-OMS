@@ -96,6 +96,8 @@ query SearchBarcodeForOrderNumber(
       Status {
         Name
       }
+      ProductCode
+      PartNumber
       Quantity
       Container {
         Barcode
@@ -107,5 +109,18 @@ query SearchBarcodeForOrderNumber(
         ShelfDetail
       }
     }
+  }
+}
+
+query fetchOrderView($filter: orderViewFilter) {
+  fetchOrderViewFromMerp(filter: $filter) {
+    OrderNumber
+    NOSINumber
+    Status
+    Priority
+    ShippingMethod
+    Unpicked
+    Aggregated
+    InProcess
   }
 }

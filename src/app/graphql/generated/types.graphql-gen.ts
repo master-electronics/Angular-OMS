@@ -363,6 +363,8 @@ export type Query = {
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
   printITNLabel: Response;
+  /** for order view */
+  fetchOrderViewFromMerp?: Maybe<Array<Maybe<OrderView>>>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -459,6 +461,10 @@ export type QueryPrintItnLabelArgs = {
   Station: Scalars['String'];
 };
 
+export type QueryFetchOrderViewFromMerpArgs = {
+  filter?: Maybe<OrderViewFilter>;
+};
+
 export type QueryFindInventoriesByContainerArgs = {
   ContainerID: Scalars['Int'];
   limit?: Maybe<Scalars['Int']>;
@@ -485,4 +491,25 @@ export type InventoryInfo = {
   ITNCount: Scalars['Int'];
   ITNTotal: Scalars['Int'];
   Locations?: Maybe<Array<Scalars['String']>>;
+};
+
+export type OrderView = {
+  __typename?: 'orderView';
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  Status: Scalars['String'];
+  Priority: Scalars['String'];
+  ShippingMethod: Scalars['String'];
+  Unpicked: Scalars['Int'];
+  Aggregated: Scalars['Int'];
+  InProcess: Scalars['Int'];
+};
+
+export type OrderViewFilter = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  priority?: Maybe<Scalars['String']>;
+  shippingMethod?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };

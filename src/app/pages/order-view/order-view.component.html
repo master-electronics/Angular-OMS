@@ -1,49 +1,90 @@
 <div class="container px-4 mx-auto mb-10">
-  <!-- Order input form -->
-  <div class="flex flex-col md:mt-2 max-w-md">
-    <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-2">
-        <div class="z-0 w-full relative mt-2">
+  <div class="flex flex-col">
+    <!-- filter form -->
+    <form focusInvalidInput [formGroup]="filterForm" (ngSubmit)="search(true)">
+      <div class="grid grid-cols-10 text-sm gap-3">
+        <!-- Order barcode input -->
+        <div class="z-0 w-full relative col-span-2 mt-2">
           <input
             oninput="this.value = this.value.toUpperCase()"
             type="text"
-            name="barcode"
+            name="orderBarcode"
             placeholder=" "
-            formControlName="barcode"
+            formControlName="orderBarcode"
             class="float-input"
             autocomplete="off"
             maxlength="30"
-            #barcode
+            #orderBarcode
           />
-          <label for="barcode" class="float-label">Order Barcode</label>
+          <label for="orderBarcode" class="float-label">Order Barcode</label>
           <div
             class="text-red-500 text-sm absolute"
             *ngIf="
-              this.f.barcode.invalid &&
-              (this.f.barcode.dirty || this.f.barcode.touched)
+              this.f.orderBarcode.invalid &&
+              (this.f.orderBarcode.dirty || this.f.orderBarcode.touched)
             "
           >
-            <div *ngIf="this.f.barcode.errors.required">
-              Order barcode is required.
-            </div>
-            <div *ngIf="this.f.barcode.errors.regex">Invaild order!</div>
+            <div *ngIf="this.f.orderBarcode.errors.regex">Invaild order!</div>
           </div>
         </div>
-        <button class="w-5 mt-2" type="submit" label="Search">
-          <svg
-            class="w-5"
-            viewBox="0 0 129 129"
-            enable-background="new 0 0 129 129"
+        <!-- Priority -->
+        <div class="grid grid-flow-row col-span-1">
+          <label for="Priority" class=""> Priority</label>
+          <select
+            class="rounded-md text-sm"
+            id="Priority"
+            formControlName="Priority"
           >
-            <g>
-              <path
-                d="M51.6,96.7c11,0,21-3.9,28.8-10.5l35,35c0.8,0.8,1.8,1.2,2.9,1.2s2.1-0.4,2.9-1.2c1.6-1.6,1.6-4.2,0-5.8l-35-35   c6.5-7.8,10.5-17.9,10.5-28.8c0-24.9-20.2-45.1-45.1-45.1C26.8,6.5,6.5,26.8,6.5,51.6C6.5,76.5,26.8,96.7,51.6,96.7z M51.6,14.7   c20.4,0,36.9,16.6,36.9,36.9C88.5,72,72,88.5,51.6,88.5c-20.4,0-36.9-16.6-36.9-36.9C14.7,31.3,31.3,14.7,51.6,14.7z"
-              />
-            </g>
-          </svg>
-        </button>
+            <option *ngFor="let priority of priorityList" [value]="priority">
+              {{ priority }}
+            </option>
+          </select>
+        </div>
+        <!-- ShipMethod -->
+        <div class="grid grid-flow-row col-span-3">
+          <label for="ShippingMethod" class=""> ShipMethod</label>
+          <select
+            class="rounded-md text-sm"
+            id="ShippingMethod"
+            formControlName="ShippingMethod"
+          >
+            <option
+              *ngFor="let shipMethod of shipMethodList"
+              [value]="shipMethod"
+            >
+              {{ shipMethod }}
+            </option>
+          </select>
+        </div>
+        <!-- Status -->
+        <div class="grid grid-flow-row col-span-2">
+          <label for="Status" class="">Status</label>
+          <select
+            class="rounded-md text-sm"
+            id="Status"
+            formControlName="Status"
+          >
+            <option *ngFor="let status of statusList" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+        <form-button
+          class="mt-4"
+          [styles]="'bg-green-500'"
+          [type]="'submit'"
+          [label]="'Search'"
+          isHighLight="true"
+        ></form-button>
+        <form-button
+          class="mt-4"
+          [styles]="'bg-gray-500'"
+          [label]="'Reset'"
+          (click)="reset()"
+          isHighLight="true"
+        ></form-button>
       </div>
-      <div class="mt-2 md:mt-6">
+      <div class="mt-2">
         <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>
     </form>
@@ -51,44 +92,46 @@
   <!-- Order Infromation -->
   <div
     *ngIf="OrderInfo$ | async as obs; else Orderloading"
-    class="
-      min-w-full
-      shadow
-      overflow-hidden
-      border-b border-gray-200
-      sm:rounded-lg
-    "
+    class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg mt-4"
   >
-    <ul *ngFor="let order of obs">
-      <li>
-        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }} ({{
-          order.Status.Name
-        }})
-      </li>
-      <table class="table-auto min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th class="text-left tracking-wider">ITN</th>
-            <th class="text-left tracking-wider">Status</th>
-            <th class="text-left tracking-wider">Quantity</th>
-            <th class="text-left tracking-wider">Container</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let ITN of order.INVENTORies">
-            <td class="py-2">
-              {{ ITN.InternalTrackingNumber }}
-            </td>
-            <td class="py-2">{{ ITN.Status.Name }}</td>
-            <td class="py-2">{{ ITN.Quantity }}</td>
-            <td class="py-2">{{ ITN.Container.Barcode }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </ul>
+    <table class="table-auto min-w-full divide-y divide-gray-200">
+      <thead class="text-sm">
+        <tr>
+          <th class="text-left tracking-wider">Order</th>
+          <th class="text-left tracking-wider">Status</th>
+          <th class="text-left tracking-wider">Priority</th>
+          <th class="text-left tracking-wider">ShipMethod</th>
+          <th class="text-left tracking-wider">Unpicked</th>
+          <th class="text-left tracking-wider">Aggregated</th>
+          <th class="text-left tracking-wider">In Process</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 text-sm">
+        <tr *ngFor="let order of obs" ng-click="goToITNView(order)">
+          <td class="py-2">
+            <a
+              [routerLink]="['itnview']"
+              [queryParams]="{
+                orderNumber: order.OrderNumber,
+                NOSINumber: order.NOSINumber
+              }"
+              >{{ order.OrderNumber }}-{{ order.NOSINumber }}</a
+            >
+          </td>
+          <td class="py-2">{{ order.Status }}</td>
+          <td class="py-2">{{ order.Priority }}</td>
+          <td class="py-2">
+            {{ order.ShippingMethod }}
+          </td>
+          <td class="py-2">{{ order.Unpicked }}</td>
+          <td class="py-2">{{ order.Aggregated }}</td>
+          <td class="py-2">{{ order.InProcess }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   <ng-template #Orderloading>
-    <div *ngIf="OrderInfo$">Loading...</div>
+    <div class="text-black" *ngIf="OrderInfo$">Loading...</div>
   </ng-template>
 </div>
 

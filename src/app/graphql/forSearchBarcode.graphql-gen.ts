@@ -368,6 +368,8 @@ export type Query = {
   fetchM1TOTEInfo?: Maybe<M1Tote>;
   fetchITNsInOrder?: Maybe<ItnList>;
   printITNLabel: Response;
+  /** for order view */
+  fetchOrderViewFromMerp?: Maybe<Array<Maybe<OrderView>>>;
   findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
@@ -464,6 +466,10 @@ export type QueryPrintItnLabelArgs = {
   Station: Scalars['String'];
 };
 
+export type QueryFetchOrderViewFromMerpArgs = {
+  filter?: Maybe<OrderViewFilter>;
+};
+
 export type QueryFindInventoriesByContainerArgs = {
   ContainerID: Scalars['Int'];
   limit?: Maybe<Scalars['Int']>;
@@ -490,6 +496,27 @@ export type InventoryInfo = {
   ITNCount: Scalars['Int'];
   ITNTotal: Scalars['Int'];
   Locations?: Maybe<Array<Scalars['String']>>;
+};
+
+export type OrderView = {
+  __typename?: 'orderView';
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  Status: Scalars['String'];
+  Priority: Scalars['String'];
+  ShippingMethod: Scalars['String'];
+  Unpicked: Scalars['Int'];
+  Aggregated: Scalars['Int'];
+  InProcess: Scalars['Int'];
+};
+
+export type OrderViewFilter = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  priority?: Maybe<Scalars['String']>;
+  shippingMethod?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
 };
 
 export type FetchMobileContainerInfoByBarcodeQueryVariables = Types.Exact<{
@@ -635,7 +662,10 @@ export type SearchBarcodeForOrderNumberQuery = { __typename?: 'Query' } & {
                 Types.Maybe<
                   { __typename?: 'Inventory' } & Pick<
                     Types.Inventory,
-                    'InternalTrackingNumber' | 'Quantity'
+                    | 'InternalTrackingNumber'
+                    | 'ProductCode'
+                    | 'PartNumber'
+                    | 'Quantity'
                   > & {
                       Status: { __typename?: 'OrderStatus' } & Pick<
                         Types.OrderStatus,
@@ -656,6 +686,30 @@ export type SearchBarcodeForOrderNumberQuery = { __typename?: 'Query' } & {
               >
             >;
           }
+      >
+    >
+  >;
+};
+
+export type FetchOrderViewQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.OrderViewFilter>;
+}>;
+
+export type FetchOrderViewQuery = { __typename?: 'Query' } & {
+  fetchOrderViewFromMerp?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'orderView' } & Pick<
+          Types.OrderView,
+          | 'OrderNumber'
+          | 'NOSINumber'
+          | 'Status'
+          | 'Priority'
+          | 'ShippingMethod'
+          | 'Unpicked'
+          | 'Aggregated'
+          | 'InProcess'
+        >
       >
     >
   >;
@@ -805,6 +859,8 @@ export const SearchBarcodeForOrderNumberDocument = gql`
         Status {
           Name
         }
+        ProductCode
+        PartNumber
         Quantity
         Container {
           Barcode
@@ -828,6 +884,34 @@ export class SearchBarcodeForOrderNumberGQL extends Apollo.Query<
   SearchBarcodeForOrderNumberQueryVariables
 > {
   document = SearchBarcodeForOrderNumberDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchOrderViewDocument = gql`
+  query fetchOrderView($filter: orderViewFilter) {
+    fetchOrderViewFromMerp(filter: $filter) {
+      OrderNumber
+      NOSINumber
+      Status
+      Priority
+      ShippingMethod
+      Unpicked
+      Aggregated
+      InProcess
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchOrderViewGQL extends Apollo.Query<
+  FetchOrderViewQuery,
+  FetchOrderViewQueryVariables
+> {
+  document = FetchOrderViewDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
