@@ -269,7 +269,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         res.data.aggregationIn.success &&
         res.data.updateInventoryList.success
       ) {
-        const result = 'success';
+        const result = 'info';
         const message = `Place in ${barcode}.\nOrder ${this.ITNInfo[0].value}-${this.NOSINumber} complete AG In.`;
         this.router.navigate(['agin'], {
           queryParams: {
@@ -302,7 +302,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.subscribe(
-          async (result) => {
+          (result) => {
             this.isLoading = result.loading;
             result.error && (this.message = result.error.message);
             const data = result.data.fetchInventoryInfo;

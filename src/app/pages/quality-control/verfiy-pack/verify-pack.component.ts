@@ -223,21 +223,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     countryOO._id === 1
       ? (cooValue = null)
       : (cooValue = countryOO.name.substring(0, 2));
-    const nextPageParams: urlParams = {
-      ITN: this.urlParams.ITN,
-      CustomerNum: this.urlParams.CustomerNum,
-      DC: this.urlParams.DC,
-      OrderNum: this.urlParams.OrderNum,
-      OrderLine: this.urlParams.OrderLine,
-      NOSI: this.urlParams.NOSI,
-      PRC: this.urlParams.PRC,
-      PartNum: this.urlParams.PartNum,
-      Quantity: this.urlParams.Quantity,
-      ParentITN: this.urlParams.ParentITN,
-      ROHS: this.verifyPack.get('ROHS').value,
-      coo: cooValue,
-      DateCode: this.verifyPack.get('dateCode').value,
-    };
+    const nextPageParams = this.urlParams;
+    nextPageParams.ROHS = this.verifyPack.get('ROHS').value;
+    nextPageParams.coo = cooValue;
+    nextPageParams.DateCode = this.verifyPack.get('dateCode').value;
     this.isLoading = true;
     this.writeInfo(orderInfo, nextPageParams);
     // if (this.isNeedSupv) {

@@ -107,7 +107,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             filter: filter,
           },
-          { fetchPolicy: isreload ? 'no-cache' : 'cache-first' }
+          { fetchPolicy: isreload ? 'network-only' : 'cache-first' }
         )
         .valueChanges.pipe(
           map((res) => {

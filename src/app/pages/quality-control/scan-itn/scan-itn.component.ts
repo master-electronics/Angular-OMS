@@ -10,9 +10,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
-import { FetchPackInfoByItNfromMerpGQL } from '../../../graphql/forQualityControl.graphql-gen';
+import { VerifyItnqcGQL } from '../../../graphql/forQualityControl.graphql-gen';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'scan-itn',
@@ -31,7 +32,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private qcService: QualityControlService,
-    private fetchPcakInfo: FetchPackInfoByItNfromMerpGQL
+    private verifyITNQC: VerifyItnqcGQL
   ) {}
 
   ITNForm = this.fb.group({
@@ -80,43 +81,45 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   verfiyITN(ITN: string): void {
     this.isLoading = true;
     this.subscription.add(
-      this.fetchPcakInfo
+      this.verifyITNQC
         .watch({ InternalTrackingNumber: ITN }, { fetchPolicy: 'no-cache' })
-        .valueChanges.subscribe(
+        .valueChanges.pipe(
+          map((res) => {
+            const statusID = res.data.findInventory[0].StatusID;
+            if (
+              res.data.fetchPackInfoFromMerp.Status !== 'pl' ||
+              !res.data.fetchPackInfoFromMerp.Quantity ||
+              res.data.fetchPackInfoFromMerp.DemandQuantity !== 0
+            ) {
+              throw 'Invalid ITN.';
+            }
+            if ((statusID > 1 && statusID < 9) || statusID > 12) {
+              throw 'Invalid ITN status.';
+            }
+            return res;
+          })
+        )
+        .subscribe(
           (res) => {
             this.isLoading = res.loading;
-            if (res.error) {
-              this.message = res.error.message;
-              this.messageType = 'error';
-            }
-            if (
-              res.data.fetchPackInfoFromMerp.Status === 'pl' &&
-              res.data.fetchPackInfoFromMerp.Quantity &&
-              res.data.fetchPackInfoFromMerp.DemandQuantity === 0
-            ) {
-              const queryParams: urlParams = {
-                ITN: ITN,
-                CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
-                DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
-                OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
-                OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
-                NOSI: res.data.fetchPackInfoFromMerp.NOSINumber,
-                PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
-                PRC: res.data.fetchPackInfoFromMerp.ProductCode,
-                Quantity: res.data.fetchPackInfoFromMerp.Quantity,
-                ParentITN: res.data.fetchPackInfoFromMerp.ParentITN,
-                ROHS: res.data.fetchPackInfoFromMerp.ROHS,
-                DateCode: res.data.fetchPackInfoFromMerp.DateCode,
-                coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
-              };
-              this.router.navigate(['/qc/globalmessages'], {
-                queryParams: queryParams,
-              });
-            } else {
-              this.messageType = 'error';
-              this.message = 'Inavild ITN';
-              this.ITNInput.nativeElement.select();
-            }
+            const queryParams: urlParams = {
+              ITN: ITN,
+              CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
+              DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
+              OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
+              OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
+              NOSI: res.data.fetchPackInfoFromMerp.NOSINumber,
+              PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
+              PRC: res.data.fetchPackInfoFromMerp.ProductCode,
+              Quantity: res.data.fetchPackInfoFromMerp.Quantity,
+              ParentITN: res.data.fetchPackInfoFromMerp.ParentITN,
+              ROHS: res.data.fetchPackInfoFromMerp.ROHS,
+              DateCode: res.data.fetchPackInfoFromMerp.DateCode,
+              coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
+            };
+            this.router.navigate(['/qc/globalmessages'], {
+              queryParams: queryParams,
+            });
           },
           (error) => {
             this.isLoading = false;

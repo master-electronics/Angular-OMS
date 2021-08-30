@@ -8,27 +8,25 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
 import {
-  FindContainerGQL,
-  FindInventoryByContainerGQL,
-  UpdateRecordsAfterQcLastLineGQL,
-  InsertSqlRecordsAfterQcGQL,
-  InsertSqlRecordsAfterQcMutationVariables,
+  VerifyQcRepackGQL,
   InventoryUpdate,
   OrderUpdate,
-  FetchItNsInOrderGQL,
-  FindInventoryListGQL,
-  UpdateRecordsAfterQcLastLineMutationVariables,
+  UpdateInventoryAfterQcGQL,
+  UpdateContainerAfterQcGQL,
+  UpdateAfterQcLastLineGQL,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { switchMap } from 'rxjs/operators';
 
 const ToteTypeID = 15;
 const QCDoneID = 1;
+const DistributionCenter = 'PH';
 
 @Component({
   selector: 'repack',
@@ -40,7 +38,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonStyles = 'bg-green-500';
   buttonLabel = 'submit';
   message = '';
-  urlParams: { [key: string]: string };
+  urlParams: { [key: string]: any };
   Inventory: InventoryUpdate;
   Order: OrderUpdate;
   private subscription = new Subscription();
@@ -50,12 +48,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthenticationService,
     private qcService: QualityControlService,
-    private insertRecords: InsertSqlRecordsAfterQcGQL,
-    private updateAfterQcLastLine: UpdateRecordsAfterQcLastLineGQL,
-    private findContainer: FindContainerGQL,
-    private findInventory: FindInventoryByContainerGQL,
-    private fetchITNsFromMerp: FetchItNsInOrderGQL,
-    private findInventoryListFromSQL: FindInventoryListGQL,
+    private verifyQCRepack: VerifyQcRepackGQL,
+    private updateInventoryAfterQC: UpdateInventoryAfterQcGQL,
+    private updateContainerAfterQC: UpdateContainerAfterQcGQL,
+    private updateAfterQCLastLine: UpdateAfterQcLastLineGQL,
     private gtmService: GoogleTagManagerService
   ) {}
 
@@ -90,7 +86,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     this.message = '';
     if (this.containerForm.invalid) {
       if (this.containerForm.get('container').errors.required)
@@ -102,254 +98,154 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.containerError.nativeElement.classList.remove('hidden');
       return;
     }
-    try {
-      this.isLoading = true;
-      const containerInfoQuery = this.fetchContainerInfo(
-        this.urlParams.DC,
-        this.containerForm.get('container').value.trim()
-      );
-      const ITNListQuery = this.fetchITNsInOrder(
-        this.urlParams.DC,
-        this.urlParams.OrderNum,
-        this.urlParams.NOSI
-      );
-      const queryOne = await Promise.all([containerInfoQuery, ITNListQuery]);
-      // if return null or container type is not 15(tote) stop
-      if (queryOne[0].typeID !== ToteTypeID) {
-        this.containerError.nativeElement.textContent =
-          'This container is not a tote!';
-        this.containerError.nativeElement.classList.remove('hidden');
-        this.containerInput.nativeElement.select();
-        this.isLoading = false;
-        return;
-      }
-      const queryList = [];
-      let isLastLine = true;
-      queryList.push(this.fetchInventoryInfo(queryOne[0]._id));
-      if (queryOne[1].length > 1) {
-        queryList.push(this.fetchInventoryAfterQC(queryOne[1]));
-      }
-      const queryTwo = await Promise.all(queryList);
-      // check if the tote has other item in it base on sql data.
-      if (queryTwo[0]) {
-        this.containerError.nativeElement.textContent =
-          'This tote is not empty.';
-        this.containerError.nativeElement.classList.remove('hidden');
-        this.containerInput.nativeElement.select();
-        this.isLoading = false;
-        return;
-      }
-      if (queryOne[1].length > 1) {
-        const difference = queryOne[1].filter(
-          (itn) => !queryTwo[1].includes(itn)
-        );
-        if (
-          difference.length === 0 ||
-          (difference.length === 1 && difference[0] === this.urlParams.ITN)
-        )
-          isLastLine = true;
-        else isLastLine = false;
-      }
-
-      this.containerError.nativeElement.classList.add('hidden');
-      const Inventory: InventoryUpdate = {
-        ContainerID: queryOne[0]._id,
-        InternalTrackingNumber: this.urlParams.ITN,
-        ProductCode: this.urlParams.PRC,
-        PartNumber: this.urlParams.PartNum,
-        Quantity: Number(this.urlParams.Quantity),
-        ROHS: this.urlParams.ROHS === '1' ? true : false,
-        DateCode: this.urlParams.DateCode,
-        CountryOfOrigin: this.urlParams.coo,
-        ParentITN: this.urlParams.ParentITN,
-        StatusID: QCDoneID,
-      };
-      const Order: OrderUpdate = {
-        DistributionCenter: this.urlParams.DC,
-        OrderNumber: this.urlParams.OrderNum,
-        NOSINumber: this.urlParams.NOSI,
-        StatusID: QCDoneID,
-      };
-      if (isLastLine) {
-        const updateVariables: UpdateRecordsAfterQcLastLineMutationVariables = {
-          Inventory,
-          Order,
-          NOSINumber: this.urlParams.NOSI,
-          OrderNumber: this.urlParams.OrderNum,
-          Status: '60',
-          UserOrStatus: 'AGGREGATION-IN',
-        };
-        this.updateAfterLastLine(updateVariables);
-      } else {
-        const InsertVariables: InsertSqlRecordsAfterQcMutationVariables = {
-          Inventory,
-          Order,
-        };
-        this.insertRecordsAfterQC(InsertVariables);
-      }
-    } catch (error) {
-      this.isLoading = false;
-      this.messageType = 'error';
-      this.message = error;
-      this.containerInput.nativeElement.select();
-    }
-  }
-
-  fetchITNsInOrder(
-    DistributionCenter: string,
-    OrderNumber: string,
-    NOSINumber: string
-  ): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      this.fetchITNsFromMerp
+    this.isLoading = true;
+    this.containerError.nativeElement.classList.add('hidden');
+    this.subscription.add(
+      this.verifyQCRepack
         .watch(
-          { DistributionCenter, OrderNumber, NOSINumber },
+          {
+            DistributionCenter: DistributionCenter,
+            Barcode: this.containerForm.value.container,
+            OrderNumber: this.urlParams.OrderNum,
+            NOSINumber: this.urlParams.NOSI,
+          },
           { fetchPolicy: 'no-cache' }
         )
-        .valueChanges.subscribe(
-          (response) => {
-            resolve(response.data.fetchITNsInOrder.ITNList);
-          },
-          (error) => {
-            reject(error);
-          }
-        );
-    });
-  }
-
-  fetchInventoryAfterQC(ITNList: string[]): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      this.findInventoryListFromSQL
-        .watch({ ITNList }, { fetchPolicy: 'no-cache' })
-        .valueChanges.subscribe(
-          (response) => {
-            resolve(
-              response.data.findInventoryList.map(
-                (element) => element.InternalTrackingNumber
-              )
-            );
-          },
-          (error) => {
-            reject(error);
-          }
-        );
-    });
-  }
-
-  fetchInventoryInfo(ContainerID: number): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.findInventory
-        .watch(
-          { ContainerID: ContainerID, limit: 1 },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.subscribe(
-          (response) => {
-            if (response.data.findInventoriesByContainer.length) {
-              resolve(true);
-            } else {
-              resolve(false);
+        .valueChanges.pipe(
+          switchMap((res) => {
+            const container = res.data.findContainer;
+            const order = res.data.findOrder;
+            if (container[0].TypeID !== ToteTypeID) {
+              throw 'This container is not a tote!';
             }
-          },
-          (error) => {
-            reject(error);
-          }
-        );
-    });
-  }
 
-  fetchContainerInfo(
-    DC: string,
-    containerNumber: string
-  ): Promise<{ _id: number; typeID: number; Row: string }> {
-    return new Promise((resolve, reject) => {
-      this.findContainer
-        .watch(
-          { DistributionCenter: DC, Barcode: containerNumber },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.subscribe((response) => {
-          let containerInfo;
-          if (response.data.findContainer.length) {
-            containerInfo = {
-              _id: response.data.findContainer[0]._id,
-              typeID: response.data.findContainer[0].Type._id,
-              Row: response.data.findContainer[0].Row,
+            // Search all inventries by containerID, if has ITN record != current ITN, return error
+            container[0].INVENTORies.forEach((itn) => {
+              if (itn.InternalTrackingNumber !== this.urlParams.ITN) {
+                throw 'This tote is not empty.';
+              }
+            });
+
+            // Search all inventries by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
+            let inProcess = 0;
+            let isRedo: boolean;
+            let sourceContainer: number;
+            order[0].INVENTORies.forEach((inventory) => {
+              if (inventory.InternalTrackingNumber !== this.urlParams.ITN) {
+                inventory.StatusID !== QCDoneID && ++inProcess;
+              } else {
+                sourceContainer = inventory.ContainerID;
+                isRedo = inventory.StatusID === QCDoneID;
+              }
+            });
+
+            // Setup graphql queries
+            const Inventory: InventoryUpdate = {
+              ContainerID: container[0]._id,
+              Quantity: Number(this.urlParams.Quantity),
+              ROHS: this.urlParams.ROHS === '1' ? true : false,
+              DateCode: this.urlParams.DateCode,
+              CountryOfOrigin: this.urlParams.coo,
+              StatusID: QCDoneID,
             };
-          } else {
-            reject('Barcode No Found');
-          }
-          // Use M1TOTE table to chcek if it contain ITEM in it.
-          // if (response.data.fetchM1TOTEInfo.OrderNumber) {
-          //   reject('This tote has items in it');
-          // }
-          resolve(containerInfo);
-        });
-    });
-  }
+            const updateInventory = this.updateInventoryAfterQC.mutate({
+              Inventory: Inventory,
+              ITNList: [this.urlParams.ITN],
+            });
 
-  insertRecordsAfterQC(
-    InsertVariables: InsertSqlRecordsAfterQcMutationVariables
-  ): void {
-    this.subscription.add(
-      this.insertRecords
-        .mutate(InsertVariables, { fetchPolicy: 'no-cache' })
-        .subscribe(
-          (res) => {
-            let error: string;
-            if (res.data.insertSQLRecordsAfterQC.success) {
-              this.sendGTM();
-              this.router.navigate(['/qc'], {
-                queryParams: {
-                  type: 'info',
-                  message: `QC complete for ${this.urlParams.ITN}`,
+            const updateTargetContainer = this.updateContainerAfterQC.mutate(
+              {
+                _id: container[0]._id,
+                Container: {
+                  Warehouse: '01',
+                  Row: 'QC',
+                  Aisle: null,
+                  Section: null,
+                  Shelf: null,
+                  ShelfDetail: null,
                 },
-              });
-            } else {
-              error = res.data.insertSQLRecordsAfterQC.message;
-            }
-            this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
-            this.containerInput.nativeElement.select();
-          },
-          (error) => {
-            this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
-            this.containerInput.nativeElement.select();
-          }
+              },
+              { fetchPolicy: 'no-cache' }
+            );
+
+            const updateSourceContainer = this.updateContainerAfterQC.mutate(
+              {
+                _id: sourceContainer,
+                Container: {
+                  Warehouse: null,
+                  Row: null,
+                  Aisle: null,
+                  Section: null,
+                  Shelf: null,
+                  ShelfDetail: null,
+                },
+              },
+              { fetchPolicy: 'no-cache' }
+            );
+
+            const OrderUpdate: OrderUpdate = {
+              StatusID: QCDoneID,
+            };
+            const updateOrderAndMerpLog = this.updateAfterQCLastLine.mutate(
+              {
+                orderID: order[0]._id,
+                Order: OrderUpdate,
+                OrderNumber: this.urlParams.OrderNum,
+                NOSINumber: this.urlParams.NOSI,
+                Status: '60',
+                UserOrStatus: 'AGGREGATION-IN',
+              },
+              { fetchPolicy: 'no-cache' }
+            );
+
+            // Send different query combination
+            const updateQueries = {
+              updateInventory,
+              updateTargetContainer,
+              updateOrderAndMerpLog,
+              updateSourceContainer,
+            };
+            if (inProcess) delete updateQueries.updateOrderAndMerpLog;
+            if (!isRedo) delete updateQueries.updateSourceContainer;
+            return forkJoin(updateQueries);
+          })
         )
-    );
-  }
-
-  updateAfterLastLine(
-    updateVariables: UpdateRecordsAfterQcLastLineMutationVariables
-  ): void {
-    this.subscription.add(
-      this.updateAfterQcLastLine
-        .mutate(updateVariables, { fetchPolicy: 'no-cache' })
         .subscribe(
-          (res) => {
-            let error: string;
-            if (res.data.insertSQLRecordsAfterQC.success) {
+          (res: any) => {
+            try {
+              let type = 'info';
+              let message = `QC complete for ${this.urlParams.ITN}`;
+              if (
+                res.updateInventory.data.updateInventoryList.success &&
+                res.updateTargetContainer.data.updateContainerLocation.success
+              ) {
+                if (res.updateOrderAndMerpLog) {
+                  if (res.updateOrderAndMerpLog.data.updateOrder.success) {
+                    type = 'success';
+                    message = `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`;
+                  } else {
+                    throw res.updateOrderAndMerpLog.data.updateOrder.message;
+                  }
+                }
+              } else {
+                throw (
+                  res.updateInventory.data.updateInventoryList.message +
+                  res.updateTargetContainer.data.updateContainerLocation.message
+                );
+              }
               this.sendGTM();
               this.router.navigate(['/qc'], {
                 queryParams: {
-                  type: 'success',
-                  message: `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`,
+                  type,
+                  message,
                 },
               });
-            } else {
-              error =
-                res.data.insertSQLRecordsAfterQC.message +
-                res.data.updateMerpOrderStatus.message +
-                res.data.clearMerpTote.message;
+            } catch (error) {
+              this.isLoading = false;
+              this.messageType = 'error';
+              this.message = error;
+              this.containerInput.nativeElement.select();
             }
-            this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
-            this.containerInput.nativeElement.select();
           },
           (error) => {
             this.isLoading = false;

@@ -37,7 +37,9 @@ export type Container = {
   __typename?: 'Container';
   _id: Scalars['Int'];
   Type: ContainerType;
+  TypeID: Scalars['Int'];
   Equipment?: Maybe<Equipment>;
+  EquipmentID?: Maybe<Scalars['Int']>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   Barcode: Scalars['String'];
   DistributionCenter: Scalars['String'];
@@ -101,11 +103,12 @@ export type Inventory = {
   __typename?: 'Inventory';
   _id: Scalars['Int'];
   Container: Container;
+  ContainerID: Scalars['Int'];
   Status: OrderStatus;
+  StatusID: Scalars['Int'];
   Order?: Maybe<Order>;
   ALLOCATIONs?: Maybe<Array<Maybe<Allocation>>>;
   InternalTrackingNumber: Scalars['String'];
-  StatusID: Scalars['Int'];
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
   Quantity: Scalars['Float'];
@@ -283,8 +286,8 @@ export type Order = {
   __typename?: 'Order';
   _id: Scalars['Int'];
   Status: OrderStatus;
-  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   StatusID: Scalars['Int'];
+  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   DistributionCenter: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
@@ -366,11 +369,9 @@ export type Query = {
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
-  fetchITNsInOrder?: Maybe<ItnList>;
   printITNLabel: Response;
   /** for order view */
   fetchOrderViewFromMerp?: Maybe<Array<Maybe<OrderView>>>;
-  findInventoriesByContainer?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type QueryFetchInventoryInfoArgs = {
@@ -455,12 +456,6 @@ export type QueryFetchM1ToteInfoArgs = {
   Barcode: Scalars['String'];
 };
 
-export type QueryFetchItNsInOrderArgs = {
-  DistributionCenter: Scalars['String'];
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-};
-
 export type QueryPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
@@ -468,11 +463,6 @@ export type QueryPrintItnLabelArgs = {
 
 export type QueryFetchOrderViewFromMerpArgs = {
   filter?: Maybe<OrderViewFilter>;
-};
-
-export type QueryFindInventoriesByContainerArgs = {
-  ContainerID: Scalars['Int'];
-  limit?: Maybe<Scalars['Int']>;
 };
 
 export type Response = {
@@ -514,9 +504,9 @@ export type OrderViewFilter = {
   DistributionCenter?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
-  priority?: Maybe<Scalars['String']>;
-  shippingMethod?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['String']>;
+  ShippingMethod?: Maybe<Scalars['String']>;
+  Status?: Maybe<Scalars['String']>;
 };
 
 export type FetchContainerForAggregationInQueryVariables = Types.Exact<{
