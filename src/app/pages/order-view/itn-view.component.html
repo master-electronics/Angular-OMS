@@ -57,11 +57,6 @@
     "
   >
     <ul *ngFor="let order of obs">
-      <li>
-        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }} ({{
-          order.Status.Name
-        }})
-      </li>
       <table class="table-auto min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
@@ -75,22 +70,22 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let ITN of order.INVENTORies">
+          <tr *ngFor="let detail of order.ORDERLINEDETAILs">
             <td class="py-2">
-              {{ ITN.InternalTrackingNumber }}
+              {{ detail.InternalTrackingNumber }}
             </td>
-            <td class="py-2">{{ ITN.Status.Name }}</td>
-            <td class="py-2">{{ ITN.Container.Barcode }}</td>
+            <td class="py-2">{{ detail.Status.Name }}</td>
+            <td class="py-2">{{ detail.Container.Barcode }}</td>
             <td class="py-2">
-              {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-                ITN.Container.Aisle
-              }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-                ITN.Container.ShelfDetail
+              {{ detail.Container.Warehouse }}-{{ detail.Container.Row }}-{{
+                detail.Container.Aisle
+              }}-{{ detail.Container.Section }}-{{ detail.Container.Shelf }}-{{
+                detail.Container.ShelfDetail
               }}
             </td>
-            <td class="py-2">{{ ITN.ProductCode }}</td>
-            <td class="py-2">{{ ITN.PartNumber }}</td>
-            <td class="py-2">{{ ITN.Quantity }}</td>
+            <td class="py-2">{{ detail.OrderLine.ProductCode }}</td>
+            <td class="py-2">{{ detail.OrderLine.PartNumber }}</td>
+            <td class="py-2">{{ detail.Quantity }}</td>
           </tr>
         </tbody>
       </table>

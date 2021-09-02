@@ -61,94 +61,42 @@
             <span class="text-yellow-500 font-bold">W</span>
             <span>MS</span>
           </h1>
-          <div class="flex flex-col">
+          <div class="flex flex-col" *ngFor="let element of WMSList">
             <a
               class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/searchbarcode"
+              routerLink="{{ element.link }}"
             >
-              <span class="text-yellow-500 font-bold">S</span>
-              <span>earch Barcode</span>
-            </a>
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/printITN"
-            >
-              <span class="text-yellow-500 font-bold">P</span>
-              <span>rint ITN</span>
-            </a>
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/orderview"
-            >
-              <span>Order </span>
-              <span class="text-yellow-500 font-bold">V</span>
-              <span>iew</span>
-            </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/agin">
-              <span>Aggregation </span>
-              <span class="text-yellow-500 font-bold">I</span>
-              <span>n</span>
-            </a>
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/agout"
-            >
-              <span>Aggregation </span>
-              <span class="text-yellow-500 font-bold">O</span>
-              <span>ut</span>
-            </a>
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/qc">
-              <span class="text-yellow-500 font-bold">Q</span>
-              <span>uality Control</span>
-            </a>
-          </div>
-        </div>
-        <!-- <div>
-          <img
-            class="w-10"
-            src="../../../assets/icon/sales_department.svg"
-            alt="sales"
-          />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
-            Sales
-          </h1>
-          <div class="flex flex-col">
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/pickinquiry"
-            >
-              Pick Inquiry
-            </a>
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/orderentry"
-            >
-              Order Entry
+              <span>{{ element.front }}</span>
+              <span class="text-yellow-500 font-bold">{{
+                element.highlight
+              }}</span>
+              <span>{{ element.end }}</span>
             </a>
           </div>
         </div>
         <div>
           <img
             class="w-10"
-            src="../../../assets/icon/sales_department.svg"
-            alt="sales"
+            src="../../../assets/icon/utility_tools.svg"
+            alt="Utility Tools"
           />
           <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
-            <span class="text-yellow-500 font-bold">T</span>
-            <span>est</span>
+            <span class="text-yellow-500 font-bold">U</span>
+            <span>tility Tools</span>
           </h1>
-          <div class="flex flex-col">
-            <a class="mt-2 text-gray-600 dark:text-gray-300" routerLink="/test">
-              Serverless Sql
-            </a>
+          <div class="flex flex-col" *ngFor="let element of toolList">
             <a
               class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="/orderentry"
+              routerLink="{{ element.link }}"
             >
-              Postgresql
+              <span>{{ element.front }}</span>
+              <span class="text-yellow-500 font-bold">{{
+                element.highlight
+              }}</span>
+              <span>{{ element.end }}</span>
             </a>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>

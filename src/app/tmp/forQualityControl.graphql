@@ -1,5 +1,5 @@
-query verifyITNQC($InternalTrackingNumber: String!) {
-  fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
+query searchOrderLineDetailByITNForQC($InternalTrackingNumber: String!) {
+  find(InternalTrackingNumber: $InternalTrackingNumber) {
     CustomerNumber
     DistributionCenter
     OrderNumber

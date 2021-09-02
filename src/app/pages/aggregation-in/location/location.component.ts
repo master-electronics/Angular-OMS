@@ -32,8 +32,8 @@ import {
 } from 'src/app/graphql/forAggregation.graphql-gen';
 import { take } from 'rxjs/operators';
 
-const StatusIDForAggregationOutDone = 5;
-const StatusIDForAggregationInDone = 2;
+const AGOutDone = 5;
+const AGInDone = 2;
 const DistributionCenter = 'PH';
 const StatusForMerpStatusAfterAgIn = '63';
 const StatusForMerpStatusAfterAgOut = '65';
@@ -215,7 +215,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         FileKeyList: [fileKey],
         ActionType: 'A',
         Action: 'line_aggregation_in',
-        Inventory: { StatusID: StatusIDForAggregationInDone },
+        Inventory: { StatusID: AGInDone },
       },
       { fetchPolicy: 'no-cache' }
     ).subscribe((res) => {
@@ -261,7 +261,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         NOSINumber: this.NOSINumber,
         Status: StatusForMerpStatusAfterAgIn,
         UserOrStatus: 'AGGREGATION-OUT',
-        Inventory: { StatusID: StatusIDForAggregationInDone },
+        Inventory: { StatusID: AGInDone },
       },
       { fetchPolicy: 'no-cache' }
     ).subscribe((res) => {
@@ -363,7 +363,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             _id: ID,
             Order: {
-              StatusID: StatusIDForAggregationOutDone,
+              StatusID: AGOutDone,
             },
             DistributionCenter: DistributionCenter,
             OrderNumber: this.ITNInfo[0].value,
@@ -374,7 +374,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             ActionType: 'A',
             Action: 'line_aggregation_out',
             ITNList: this.ITNList,
-            Inventory: { StatusID: StatusIDForAggregationOutDone },
+            Inventory: { StatusID: AGOutDone },
           },
           { fetchPolicy: 'no-cache' }
         ),

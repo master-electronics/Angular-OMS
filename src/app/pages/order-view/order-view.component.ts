@@ -12,7 +12,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
-import { FetchOrderViewGQL } from '../../graphql/forSearchBarcode.graphql-gen';
+import { FetchOrderViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 
@@ -114,7 +114,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
             const prioritySet = new Set();
             const shipMethodSet = new Set();
             const statusSet = new Set();
-            res.data.fetchOrderViewFromMerp.forEach((element) => {
+            res.data.fetchOrderView.forEach((element) => {
               prioritySet.add(element.Priority.trim());
               shipMethodSet.add(element.ShippingMethod.trim());
               statusSet.add(element.Status.trim());
@@ -122,7 +122,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
             this.priorityList = ['', ...prioritySet];
             this.shipMethodList = ['', ...shipMethodSet];
             this.statusList = ['', ...statusSet];
-            return res.data.fetchOrderViewFromMerp;
+            return res.data.fetchOrderView;
           })
         );
     }

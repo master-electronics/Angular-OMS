@@ -11,6 +11,17 @@ import { CommonService } from '../../shared/services/common.service';
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements AfterViewInit {
+  WMSList = [
+    { link: '/agin', front: 'Aggregation ', highlight: 'I', end: 'n' },
+    { link: '/agout', front: 'Aggregation ', highlight: 'O', end: 'ut' },
+    { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
+  ];
+  toolList = [
+    { link: '/orderview', front: '', highlight: 'O', end: 'rder View' },
+    { link: '/printITN', front: '', highlight: 'P', end: 'rint ITN' },
+    { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
+    { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },
+  ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;
   title = 'Master Electronics';

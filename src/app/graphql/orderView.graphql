@@ -1,0 +1,37 @@
+query fetchOrderView($filter: orderViewFilter) {
+  fetchOrderView(filter: $filter) {
+    OrderNumber
+    NOSINumber
+    Status
+    Priority
+    ShippingMethod
+    Unpicked
+    Aggregated
+    InProcess
+  }
+}
+
+query fetchOrderDetailforitnView($Order: searchOrder!) {
+  findOrder(Order: $Order) {
+    ORDERLINEDETAILs {
+      InternalTrackingNumber
+      Status {
+        Name
+      }
+      OrderLine {
+        ProductCode
+        PartNumber
+      }
+      Quantity
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+    }
+  }
+}

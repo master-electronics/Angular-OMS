@@ -18,26 +18,18 @@ import { Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/dataRegex';
-import {
-  VerifyContainerForAggregationInGQL,
-  VerifyContainerForAggregationInQuery,
-} from '../../graphql/forAggregation.graphql-gen';
-import { ApolloQueryResult } from '@apollo/client/core';
-
-const AGDoneID = 5;
+import { VerifyContainerForAggregationInGQL } from '../../graphql/forAggregation.graphql-gen';
 
 @Component({
-  selector: 'aggregation-in',
-  templateUrl: './aggregation-in.component.html',
+  selector: 'app-destination',
+  templateUrl: './destination.component.html',
 })
-export class AggregationInComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
-  title = 'Aggregation In';
+export class DestinationComponent implements OnInit, OnDestroy, AfterViewInit {
+  title = 'Relocate';
   isLoading = false;
   messageType = 'error';
   buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
+  buttonLabel = 'Relocate';
   message = '';
 
   containerForm = new FormGroup({
@@ -55,11 +47,9 @@ export class AggregationInComponent
     private commonService: CommonService,
     private route: ActivatedRoute,
     private router: Router,
-    private titleService: Title,
     private verifyContainerForAGIn: VerifyContainerForAggregationInGQL
   ) {
     this.commonService.changeTitle(this.title);
-    this.titleService.setTitle('Aggregation In');
   }
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -93,15 +83,7 @@ export class AggregationInComponent
         )
         .valueChanges.subscribe(
           (res) => {
-            this.isLoading = res.loading;
-            if (res.error) {
-              this.message = res.error.message;
-              this.messageType = 'error';
-            }
-            // if has error, return error message
-            this.message = this.checkVaild(res);
-            this.message && (this.messageType = 'error');
-            this.containerInput.nativeElement.select();
+            //
           },
           (error) => {
             this.isLoading = false;
@@ -110,41 +92,6 @@ export class AggregationInComponent
           }
         )
     );
-  }
-
-  checkVaild(
-    result: ApolloQueryResult<VerifyContainerForAggregationInQuery>
-  ): string {
-    const container = result.data.findContainer[0];
-    if (container === undefined) return 'Container not found!';
-    // only accepte mobile container
-    if (!container.Type.IsMobile) return 'This container is not mobile!';
-    if (container.INVENTORies.length === 0) return 'No item in this Container!';
-    // if the container already in Aggregation area, will allow multiple items in it.
-    if (
-      container.INVENTORies.length > 1 &&
-      container.INVENTORies[0].StatusID === 1
-    ) {
-      return 'More than 1 items in this Container.';
-    }
-    // only accepte ITN status from qc done to AG out complete.
-    if (container.INVENTORies[0].StatusID >= AGDoneID) {
-      return 'This Order is not in Ag.';
-    }
-    // if pass all naveigate to next page
-    const isRelocation = container.Row === 'AG';
-    const ITNList = container.INVENTORies.map(
-      (node) => node.InternalTrackingNumber
-    );
-    this.router.navigate(['agin/location'], {
-      queryParams: {
-        isRelocation: isRelocation,
-        qcContainer: container._id,
-        Bin: this.containerForm.get('containerNumber').value,
-        ITNList: ITNList,
-      },
-    });
-    return null;
   }
 
   ngOnDestroy(): void {

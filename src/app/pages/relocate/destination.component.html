@@ -1,0 +1,49 @@
+<div class="container px-4 mx-auto mb-10 md:max-w-md">
+  <div class="flex flex-col mt-4 md:mt-10 ...">
+    <div>From:</div>
+    <form focusInvalidInput [formGroup]="containerForm" (ngSubmit)="onSubmit()">
+      <div class="z-0 w-full relative mt-4">
+        <input
+          type="text"
+          name="containerNumber"
+          id="containerNumber"
+          placeholder=" "
+          formControlName="containerNumber"
+          class="float-input"
+          autocomplete="off"
+          maxlength="15"
+          #containerNumber
+          required
+        />
+        <label for="containerNumber" class="float-label"> To Container# </label>
+        <div
+          class="text-red-500 text-sm absolute"
+          *ngIf="
+            this.f.containerNumber.invalid &&
+            (this.f.containerNumber.dirty || this.f.containerNumber.touched)
+          "
+        >
+          <div *ngIf="this.f.containerNumber.errors.required">
+            Container# is required.
+          </div>
+          <div *ngIf="this.f.containerNumber.errors.pattern">
+            Example: 10-AG-01-01-A-00 or 50-01-01
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <form-button
+          [styles]="buttonStyles"
+          [type]="'submit'"
+          [disabled]="isLoading"
+          [isLoading]="isLoading"
+          [label]="buttonLabel"
+        ></form-button>
+      </div>
+      <div class="mt-6">
+        <message-bar [message]="message" [type]="messageType"></message-bar>
+      </div>
+    </form>
+  </div>
+</div>

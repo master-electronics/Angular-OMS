@@ -1,4 +1,4 @@
-query fetchContainerForAggregationIn(
+query verifyContainerForAggregationIn(
   $Barcode: String!
   $DistributionCenter: String!
 ) {

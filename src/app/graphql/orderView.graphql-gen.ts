@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
@@ -469,3 +474,140 @@ export type SearchOrderLineDetail = {
   ROHS?: Maybe<Scalars['Boolean']>;
   OrderID?: Maybe<Scalars['Int']>;
 };
+
+export type FetchOrderViewQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.OrderViewFilter>;
+}>;
+
+export type FetchOrderViewQuery = { __typename?: 'Query' } & {
+  fetchOrderView?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'orderView' } & Pick<
+          Types.OrderView,
+          | 'OrderNumber'
+          | 'NOSINumber'
+          | 'Status'
+          | 'Priority'
+          | 'ShippingMethod'
+          | 'Unpicked'
+          | 'Aggregated'
+          | 'InProcess'
+        >
+      >
+    >
+  >;
+};
+
+export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
+  Order: Types.SearchOrder;
+}>;
+
+export type FetchOrderDetailforitnViewQuery = { __typename?: 'Query' } & {
+  findOrder?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Order' } & {
+          ORDERLINEDETAILs?: Types.Maybe<
+            Array<
+              Types.Maybe<
+                { __typename?: 'OrderLineDetail' } & Pick<
+                  Types.OrderLineDetail,
+                  'InternalTrackingNumber' | 'Quantity'
+                > & {
+                    Status: { __typename?: 'OrderStatus' } & Pick<
+                      Types.OrderStatus,
+                      'Name'
+                    >;
+                    OrderLine: { __typename?: 'OrderLine' } & Pick<
+                      Types.OrderLine,
+                      'ProductCode' | 'PartNumber'
+                    >;
+                    Container: { __typename?: 'Container' } & Pick<
+                      Types.Container,
+                      | 'Barcode'
+                      | 'Warehouse'
+                      | 'Row'
+                      | 'Aisle'
+                      | 'Section'
+                      | 'Shelf'
+                      | 'ShelfDetail'
+                    >;
+                  }
+              >
+            >
+          >;
+        }
+      >
+    >
+  >;
+};
+
+export const FetchOrderViewDocument = gql`
+  query fetchOrderView($filter: orderViewFilter) {
+    fetchOrderView(filter: $filter) {
+      OrderNumber
+      NOSINumber
+      Status
+      Priority
+      ShippingMethod
+      Unpicked
+      Aggregated
+      InProcess
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchOrderViewGQL extends Apollo.Query<
+  FetchOrderViewQuery,
+  FetchOrderViewQueryVariables
+> {
+  document = FetchOrderViewDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchOrderDetailforitnViewDocument = gql`
+  query fetchOrderDetailforitnView($Order: searchOrder!) {
+    findOrder(Order: $Order) {
+      ORDERLINEDETAILs {
+        InternalTrackingNumber
+        Status {
+          Name
+        }
+        OrderLine {
+          ProductCode
+          PartNumber
+        }
+        Quantity
+        Container {
+          Barcode
+          Warehouse
+          Row
+          Aisle
+          Section
+          Shelf
+          ShelfDetail
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchOrderDetailforitnViewGQL extends Apollo.Query<
+  FetchOrderDetailforitnViewQuery,
+  FetchOrderDetailforitnViewQueryVariables
+> {
+  document = FetchOrderDetailforitnViewDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

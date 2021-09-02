@@ -18,41 +18,41 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent,
       },
-      {
-        path: 'testorderentry',
-        loadChildren: () =>
-          import('./pages/order-entry/order-entry.module').then(
-            (m) => m.OrderEntryModule
-          ),
-      },
-      {
-        path: 'agin',
-        loadChildren: () =>
-          import('./pages/aggregation-in/aggregation-in.module').then(
-            (m) => m.AggregationInModule
-          ),
-      },
-      {
-        path: 'agout',
-        loadChildren: () =>
-          import('./pages/aggregation-out/aggregation-out.module').then(
-            (m) => m.AggregationOutModule
-          ),
-      },
-      {
-        path: 'qc',
-        loadChildren: () =>
-          import('./pages/quality-control/quality-control.module').then(
-            (m) => m.QualityControlModule
-          ),
-      },
-      {
-        path: 'searchbarcode',
-        loadChildren: () =>
-          import('./pages/search-barcode/search-barcode.module').then(
-            (m) => m.SearchBarcodeModule
-          ),
-      },
+      // {
+      //   path: 'testorderentry',
+      //   loadChildren: () =>
+      //     import('./pages/order-entry/order-entry.module').then(
+      //       (m) => m.OrderEntryModule
+      //     ),
+      // },
+      // {
+      //   path: 'agin',
+      //   loadChildren: () =>
+      //     import('./pages/aggregation-in/aggregation-in.module').then(
+      //       (m) => m.AggregationInModule
+      //     ),
+      // },
+      // {
+      //   path: 'agout',
+      //   loadChildren: () =>
+      //     import('./pages/aggregation-out/aggregation-out.module').then(
+      //       (m) => m.AggregationOutModule
+      //     ),
+      // },
+      // {
+      //   path: 'qc',
+      //   loadChildren: () =>
+      //     import('./pages/quality-control/quality-control.module').then(
+      //       (m) => m.QualityControlModule
+      //     ),
+      // },
+      // {
+      //   path: 'searchbarcode',
+      //   loadChildren: () =>
+      //     import('./pages/search-barcode/search-barcode.module').then(
+      //       (m) => m.SearchBarcodeModule
+      //     ),
+      // },
       {
         path: 'orderview',
         loadChildren: () =>
@@ -60,13 +60,20 @@ const routes: Routes = [
             (m) => m.OrderViewModule
           ),
       },
-      {
-        path: 'printITN',
-        loadChildren: () =>
-          import('./pages/print-itn/print-itn.module').then(
-            (m) => m.PrintITNModule
-          ),
-      },
+      // {
+      //   path: 'printITN',
+      //   loadChildren: () =>
+      //     import('./pages/print-itn/print-itn.module').then(
+      //       (m) => m.PrintITNModule
+      //     ),
+      // },
+      // {
+      //   path: 'relocate',
+      //   loadChildren: () =>
+      //     import('./pages/relocate/relocate.module').then(
+      //       (m) => m.RelocateModule
+      //     ),
+      // },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

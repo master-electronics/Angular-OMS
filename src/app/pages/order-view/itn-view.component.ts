@@ -17,7 +17,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
-import { SearchBarcodeForOrderNumberGQL } from '../../graphql/forSearchBarcode.graphql-gen';
+import { FetchOrderDetailforitnViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,7 +42,7 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
-    private searchOrder: SearchBarcodeForOrderNumberGQL
+    private fetchOrderDetail: FetchOrderDetailforitnViewGQL
   ) {
     this.commonService.changeTitle(this.title);
     this.titleService.setTitle(this.title);
@@ -89,12 +89,14 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.barcodeForm.setValue({
       barcode: `${urlParams.orderNumber}-${urlParams.NOSINumber}`,
     });
-    this.OrderInfo$ = this.searchOrder
+    this.OrderInfo$ = this.fetchOrderDetail
       .watch(
         {
-          DistributionCenter: DistributionCenter,
-          OrderNumber: urlParams.orderNumber,
-          NOSINumber: urlParams.NOSINumber,
+          Order: {
+            DistributionCenter: DistributionCenter,
+            OrderNumber: urlParams.orderNumber,
+            NOSINumber: urlParams.NOSINumber,
+          },
         },
         { fetchPolicy: 'no-cache' }
       )
@@ -107,12 +109,14 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
       const barcodeSplit = barcode.split('-');
-      this.OrderInfo$ = this.searchOrder
+      this.OrderInfo$ = this.fetchOrderDetail
         .watch(
           {
-            DistributionCenter: DistributionCenter,
-            OrderNumber: barcodeSplit[0],
-            NOSINumber: barcodeSplit[1],
+            Order: {
+              DistributionCenter: DistributionCenter,
+              OrderNumber: barcodeSplit[0],
+              NOSINumber: barcodeSplit[1],
+            },
           },
           { fetchPolicy: 'no-cache' }
         )
