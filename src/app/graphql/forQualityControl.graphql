@@ -1,5 +1,5 @@
-query searchOrderDetailByITNForQC($InternalTrackingNumber: String!) {
-  findOrderLineDetail(InternalTrackingNumber: $InternalTrackingNumber) {
+query verifyITNforQc($InternalTrackingNumber: String!) {
+  fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
     CustomerNumber
     DistributionCenter
     OrderNumber
@@ -15,12 +15,10 @@ query searchOrderDetailByITNForQC($InternalTrackingNumber: String!) {
     DateCode
     CountryOfOrigin
   }
-  findOrderLineDetail(InternalTrackingNumber: $InternalTrackingNumber) {
+  findOrderLineDetail(
+    OrderLineDetail: { InternalTrackingNumber: $InternalTrackingNumber }
+  ) {
     StatusID
-    Quantity
-    DateCode
-    CountryOfOrigin
-    ROHS
   }
 }
 
@@ -63,6 +61,25 @@ query printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
   }
 }
 
+query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
+  findContainer(Container: $Container) {
+    _id
+    Row
+    ContainerTypeID
+    ORDERLINEDETAILs {
+      InternalTrackingNumber
+    }
+  }
+  findOrder(Order: $Order) {
+    _id
+    ORDERLINEDETAILs {
+      InternalTrackingNumber
+      StatusID
+      ContainerID
+    }
+  }
+}
+
 mutation holdQCOrder(
   $InternalTrackingNumber: String!
   $Status: String!
@@ -97,62 +114,34 @@ mutation changeInfoAfterVerify(
   }
 }
 
-query verifyQCRepack(
-  $Barcode: String!
-  $DistributionCenter: String!
-  $OrderNumber: String!
-  $NOSINumber: String!
+mutation updateOrderLineDetailAfterQC(
+  $OrderLineDetail: updateOrderLineDetail!
+  $InternalTrackingNumber: String!
 ) {
-  findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
-    _id
-    Row
-    TypeID
-    INVENTORies {
-      InternalTrackingNumber
-    }
-  }
-  findOrder(
-    DistributionCenter: $DistributionCenter
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
+  updateOrderLineDetail(
+    OrderLineDetail: $OrderLineDetail
+    InternalTrackingNumber: $InternalTrackingNumber
   ) {
     _id
-    INVENTORies {
-      InternalTrackingNumber
-      StatusID
-      ContainerID
-    }
   }
 }
 
-mutation updateInventoryAfterQC(
-  $Inventory: InventoryUpdate!
-  $ITNList: [String]!
-) {
-  updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
-    success
-    message
-  }
-}
-
-mutation updateContainerAfterQC($_id: Int!, $Container: ContainerUpdate!) {
-  updateContainerLocation(_id: $_id, Container: $Container) {
-    success
-    message
+mutation updateContainerAfterQC($_id: Int!, $Container: updateContainer!) {
+  updateContainer(_id: $_id, Container: $Container) {
+    _id
   }
 }
 
 mutation updateAfterQCLastLine(
   $orderID: Int!
-  $Order: OrderUpdate!
+  $Order: updateOrder!
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
   $UserOrStatus: String
 ) {
   updateOrder(_id: $orderID, Order: $Order) {
-    success
-    message
+    _id
   }
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber

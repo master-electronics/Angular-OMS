@@ -91,6 +91,10 @@ export type Mutation = {
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
+  updateContainer?: Maybe<Container>;
+  updateOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  updateOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
+  updateOrder?: Maybe<Order>;
 };
 
 export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
@@ -159,6 +163,32 @@ export type MutationDeleteOrderLineArgs = {
 };
 
 export type MutationDeleteOrderArgs = {
+  _id?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateContainerArgs = {
+  Container: UpdateContainer;
+  _id?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
+};
+
+export type MutationUpdateOrderLineDetailArgs = {
+  OrderLineDetail: UpdateOrderLineDetail;
+  _id?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  OrderLineID?: Maybe<Scalars['Int']>;
+  OrderID?: Maybe<Scalars['Int']>;
+};
+
+export type MutationUpdateOrderLineArgs = {
+  OrderLine: UpdateOrderLine;
+};
+
+export type MutationUpdateOrderArgs = {
+  Order: UpdateOrder;
   _id?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
@@ -390,13 +420,8 @@ export type InsertOrderLineDetail = {
   DateCode?: Maybe<Scalars['String']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
-  ROHS: Scalars['Boolean'];
+  ROHS?: Maybe<Scalars['Boolean']>;
   OrderID: Scalars['Int'];
-};
-
-export type IsSuccess = {
-  __typename?: 'isSuccess';
-  success: Scalars['Boolean'];
 };
 
 export type OrderView = {
@@ -458,6 +483,53 @@ export type SearchOrderLine = {
 
 export type SearchOrderLineDetail = {
   _id?: Maybe<Scalars['Int']>;
+  OrderLineID?: Maybe<Scalars['Int']>;
+  StatusID?: Maybe<Scalars['Int']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  ContainerID?: Maybe<Scalars['Int']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  DateCode?: Maybe<Scalars['String']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  OrderID?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateContainer = {
+  ContainerTypeID?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['String']>;
+  EquipmentID?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Warehouse?: Maybe<Scalars['String']>;
+  Row?: Maybe<Scalars['String']>;
+  Aisle?: Maybe<Scalars['String']>;
+  Section?: Maybe<Scalars['String']>;
+  Shelf?: Maybe<Scalars['String']>;
+  ShelfDetail?: Maybe<Scalars['String']>;
+};
+
+export type UpdateOrder = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  CustomerNumber?: Maybe<Scalars['String']>;
+  BranchID?: Maybe<Scalars['String']>;
+  OrderStatusCode?: Maybe<Scalars['String']>;
+  ShipmentMethodID?: Maybe<Scalars['String']>;
+  OrderType?: Maybe<Scalars['String']>;
+  isSelected?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateOrderLine = {
+  OrderID?: Maybe<Scalars['Int']>;
+  OrderLineNumber?: Maybe<Scalars['Int']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateOrderLineDetail = {
   OrderLineID?: Maybe<Scalars['Int']>;
   StatusID?: Maybe<Scalars['Int']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;

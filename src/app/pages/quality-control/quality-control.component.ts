@@ -28,22 +28,24 @@ export class QualityControlComponent implements OnInit {
     const station = this.commonService.stationInfo;
     if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
     if (station === '') {
-      try {
-        const data$: any = await this.apiService.onCheckQCPrinter().toPromise();
-        if (data$.Status.StatusCode !== '200') {
-          this.isModalHidden = false;
-        } else {
-          if (data$.LABSTA[0].StationID) {
-            this.commonService.changeStation(data$.LABSTA[0].StationID.trim());
-          } else {
-            this.modalMessage = `Station number not found in configuration!`;
+      this.apiService.checkQCPrinter$.subscribe(
+        (res: any) => {
+          if (res.Status.StatusCode !== '200') {
             this.isModalHidden = false;
+          } else {
+            if (res.LABSTA[0].StationID) {
+              this.commonService.changeStation(res.LABSTA[0].StationID.trim());
+            } else {
+              this.modalMessage = `Station number not found in configuration!`;
+              this.isModalHidden = false;
+            }
           }
+        },
+        (error) => {
+          this.modalMessage = error.error;
+          this.isModalHidden = false;
         }
-      } catch (error) {
-        this.modalMessage = error.error;
-        this.isModalHidden = false;
-      }
+      );
     }
   }
   toggleModal(): void {

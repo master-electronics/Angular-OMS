@@ -10,7 +10,7 @@ export class QualityControlService {
 
   // global messages
   private globalMessagesSubject = new BehaviorSubject<string[]>(null);
-  public globalMessagesObs = this.activeTabSubject.asObservable();
+  public globalMessagesObs$ = this.activeTabSubject.asObservable();
   public changeGlobalMessages(messages: string[]): void {
     this.globalMessagesSubject.next(messages);
   }

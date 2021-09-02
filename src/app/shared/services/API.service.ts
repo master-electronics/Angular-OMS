@@ -9,9 +9,9 @@ import { environment } from '../../../environments/environment';
 })
 export class APIService {
   constructor(private httprequest: HttpClient) {}
-  onCheckQCPrinter(): Observable<unknown> {
-    return this.httprequest.get(`${environment.apiUrl}/pvx/checkqcprinter`);
-  }
+  checkQCPrinter$ = this.httprequest.get(
+    `${environment.apiUrl}/pvx/checkqcprinter`
+  );
   onGetLogin(body: unknown): Observable<unknown> {
     return this.httprequest.post(`${environment.apiUrl}/AuthJWT/login`, body);
   }

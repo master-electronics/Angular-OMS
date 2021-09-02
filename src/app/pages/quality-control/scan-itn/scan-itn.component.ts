@@ -10,7 +10,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
-import { VerifyItnqcGQL } from '../../../graphql/forQualityControl.graphql-gen';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { map } from 'rxjs/operators';
@@ -85,17 +84,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         .watch({ InternalTrackingNumber: ITN }, { fetchPolicy: 'no-cache' })
         .valueChanges.pipe(
           map((res) => {
-            const statusID = res.data.findInventory[0].StatusID;
-            if (
-              res.data.fetchPackInfoFromMerp.Status !== 'pl' ||
-              !res.data.fetchPackInfoFromMerp.Quantity ||
-              res.data.fetchPackInfoFromMerp.DemandQuantity !== 0
-            ) {
-              throw 'Invalid ITN.';
-            }
-            if ((statusID > 1 && statusID < 9) || statusID > 12) {
-              throw 'Invalid ITN status.';
-            }
             return res;
           })
         )
