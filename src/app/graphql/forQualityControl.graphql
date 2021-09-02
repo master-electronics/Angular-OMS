@@ -1,0 +1,170 @@
+query searchOrderDetailByITNForQC($InternalTrackingNumber: String!) {
+  findOrderLineDetail(InternalTrackingNumber: $InternalTrackingNumber) {
+    CustomerNumber
+    DistributionCenter
+    OrderNumber
+    OrderLineNumber
+    NOSINumber
+    ProductCode
+    PartNumber
+    Status
+    Quantity
+    DemandQuantity
+    ParentITN
+    ROHS
+    DateCode
+    CountryOfOrigin
+  }
+  findOrderLineDetail(InternalTrackingNumber: $InternalTrackingNumber) {
+    StatusID
+    Quantity
+    DateCode
+    CountryOfOrigin
+    ROHS
+  }
+}
+
+query fetchProductInfoFromMerp($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    HazardMaterialLevel
+    MICPartNumber
+    UnitOfMeasure
+  }
+}
+
+query qcGlobalMessage(
+  $CustomerNumber: String!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $OrderLineNumber: String!
+  $ProductCode: String!
+  $PartNumber: String!
+) {
+  fetchOrderLineMessage(
+    CustomerNumber: $CustomerNumber
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    OrderLineNumber: $OrderLineNumber
+  ) {
+    comments
+  }
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
+  }
+}
+
+query printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
+  printITNLabel(
+    InternalTrackingNumber: $InternalTrackingNumber
+    Station: $Station
+  ) {
+    success
+    message
+  }
+}
+
+mutation holdQCOrder(
+  $InternalTrackingNumber: String!
+  $Status: String!
+  $Station: String!
+) {
+  holdQCOrder(
+    InternalTrackingNumber: $InternalTrackingNumber
+    Status: $Status
+    Station: $Station
+  ) {
+    success
+    message
+  }
+}
+
+mutation changeInfoAfterVerify(
+  $InternalTrackingNumber: String!
+  $DateCode: String!
+  $CountryOfOrigin: String!
+  $ROHS: String!
+  $CountMethod: String!
+) {
+  changeQCLineInfo(
+    InternalTrackingNumber: $InternalTrackingNumber
+    DateCode: $DateCode
+    CountryOfOrigin: $CountryOfOrigin
+    ROHS: $ROHS
+    CountMethod: $CountMethod
+  ) {
+    success
+    message
+  }
+}
+
+query verifyQCRepack(
+  $Barcode: String!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  findContainer(Barcode: $Barcode, DistributionCenter: $DistributionCenter) {
+    _id
+    Row
+    TypeID
+    INVENTORies {
+      InternalTrackingNumber
+    }
+  }
+  findOrder(
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  ) {
+    _id
+    INVENTORies {
+      InternalTrackingNumber
+      StatusID
+      ContainerID
+    }
+  }
+}
+
+mutation updateInventoryAfterQC(
+  $Inventory: InventoryUpdate!
+  $ITNList: [String]!
+) {
+  updateInventoryList(ITNList: $ITNList, Inventory: $Inventory) {
+    success
+    message
+  }
+}
+
+mutation updateContainerAfterQC($_id: Int!, $Container: ContainerUpdate!) {
+  updateContainerLocation(_id: $_id, Container: $Container) {
+    success
+    message
+  }
+}
+
+mutation updateAfterQCLastLine(
+  $orderID: Int!
+  $Order: OrderUpdate!
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $Status: String!
+  $UserOrStatus: String
+) {
+  updateOrder(_id: $orderID, Order: $Order) {
+    success
+    message
+  }
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+    success
+    message
+  }
+}
