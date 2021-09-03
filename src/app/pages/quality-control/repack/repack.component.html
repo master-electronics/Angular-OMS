@@ -18,10 +18,10 @@
       <div class="mt-6">
         <form-button
           [styles]="buttonStyles"
-          [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          [label]="buttonLabel"
+          (click)="onSubmit()"
+          label="Repack"
         ></form-button>
       </div>
       <div class="mt-6">

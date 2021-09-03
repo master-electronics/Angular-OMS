@@ -14,10 +14,7 @@ import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { map } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
-
-const pickComplete = 10;
-const warehouseHold = 30;
-const qcComplete = 60;
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'scan-itn',
@@ -27,8 +24,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   shortcuts: ShortcutInput[] = [];
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
   message = '';
   private subscription = new Subscription();
   constructor(
@@ -99,9 +94,11 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid ITN';
             }
             if (
-              ![qcComplete, warehouseHold, pickComplete].includes(
-                res.data.findOrderLineDetail[0].StatusID
-              )
+              ![
+                environment.qcComplete_ID,
+                environment.warehouseHold_ID,
+                environment.droppedQC_ID,
+              ].includes(res.data.findOrderLineDetail[0].StatusID)
             ) {
               throw 'Invalid order line status.';
             }

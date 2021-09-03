@@ -6,6 +6,7 @@ export const environment = {
   DistributionCenter: 'PH',
   //WMS Status table
   pickComplete_ID: 10,
+  droppedQC_ID: 20,
   warehouseHold_ID: 30,
   qcComplete_ID: 60,
   agOutComplete_ID: 65,

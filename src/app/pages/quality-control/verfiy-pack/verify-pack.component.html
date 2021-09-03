@@ -168,19 +168,19 @@
       </div>
       <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3 mb-3">
         <form-button
-          [styles]="holdStyles"
+          label="Hold"
+          styles="bg-yellow-300"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          [label]="'Hold'"
           (click)="toggleHoldModal()"
           isHighLight="true"
         ></form-button>
 
         <form-button
+          label="edit"
+          styles="bg-purple-500"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          [styles]="editStyles"
-          [label]="'edit'"
           (click)="toggleEdit()"
           isHighLight="true"
         ></form-button>
@@ -230,17 +230,17 @@
       <!-- buttons -->
       <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3">
         <form-button
-          [styles]="backStyles"
-          [label]="'Back'"
+          styles="bg-gray-500"
+          label="Back"
           isHighLight="true"
           (onClickEmt)="back()"
         ></form-button>
         <form-button
-          [styles]="submitStyles"
-          [type]="'submit'"
+          type="submit"
           [disabled]="isLoading"
           [isLoading]="isLoading"
           label="Submit"
+          (click)="onSubmit()"
         ></form-button>
       </div>
       <div class="mt-3">

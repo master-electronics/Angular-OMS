@@ -15,11 +15,9 @@
         </li>
       </ul>
       <form-button
-        [styles]="submitStyles"
-        [type]="'submit'"
         [disabled]="isLoading"
         [isLoading]="isLoading"
-        label="Submit"
+        (click)="onSubmit()"
       ></form-button>
       <div class="mt-6">
         <message-bar [message]="message" [type]="messageType"></message-bar>

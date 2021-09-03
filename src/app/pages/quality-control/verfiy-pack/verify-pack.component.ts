@@ -34,10 +34,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   editable = false;
   messageType = 'error';
-  editStyles = 'bg-purple-500';
-  holdStyles = 'bg-yellow-300';
-  backStyles = 'bg-gray-500';
-  submitStyles = 'bg-indigo-800';
   message = '';
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;
@@ -219,7 +215,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //check if change then update info to merp and wms
     const updateQuery = { updateMerp, updateWms };
     if (
-      preROHS === this.urlParams.ROHS &&
+      Number(preROHS) === this.urlParams.ROHS &&
       preCOO === this.urlParams.coo &&
       preDateCode === this.urlParams.DateCode
     ) {
@@ -235,7 +231,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = 'error';
             message = `QCCOMPELETE api:${res.updateMerp.data.changeQCLineInfo.message}\n`;
           }
-          if (!res.updateWms.data.updateOrderLineDetail[0]) {
+          if (res.updateWms && !res.updateWms.data.updateOrderLineDetail[0]) {
             type = 'error';
             message += `Fail to update SQL`;
           }

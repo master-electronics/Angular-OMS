@@ -33,8 +33,6 @@ export class GlobalMessagesComponent
   message = '';
   orderComments: string[];
   partComments: string[];
-  submitStyles = 'bg-indigo-800';
-  backStyles = 'bg-gray-400';
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,

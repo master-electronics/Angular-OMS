@@ -36,8 +36,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonLabel = 'submit';
   message = '';
   urlParams: { [key: string]: any };
-  // Inventory: InventoryUpdate;
-  // Order: OrderUpdate;
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -149,7 +147,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Setup graphql queries
             const updateDetail = this.updateOrderLineDetail.mutate({
               InternalTrackingNumber: this.urlParams.ITN,
-              OrderLineDetail: { StatusID: environment.qcComplete_ID },
+              OrderLineDetail: {
+                StatusID: environment.qcComplete_ID,
+                ContainerID: returnContainer._id,
+              },
             });
 
             const updateTargetContainer = this.updateContainer.mutate(
@@ -196,8 +197,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             const updateQueries = {
               updateDetail,
               updateTargetContainer,
-              updateMerpLog,
               updateSourceContainer,
+              updateMerpLog,
             };
             if (inProcess) delete updateQueries.updateMerpLog;
             if (!isRedo) delete updateQueries.updateSourceContainer;
@@ -213,7 +214,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!res.updateTargetContainer.data.updateContainer[0]) {
               error += `${this.urlParams.ITN} Fail to update Target Container SQL`;
             }
-            if (!res.updateSourceContainer.data.updateContainer[0]) {
+            if (
+              res.updateSourceContainer &&
+              !res.updateSourceContainer.data.updateContainer[0]
+            ) {
               error += `${this.urlParams.ITN} Fail to update source Container SQL`;
             }
             if (error) throw error;
@@ -227,6 +231,18 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (res.updateMerpLog) {
               type = 'success';
               message = `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`;
+              if (
+                !res.updateMerpLog.data.updateMerpOrderStatus.success ||
+                !res.updateMerpLog.data.clearMerpTote.success
+              ) {
+                type = 'warning';
+                message = [
+                  res.updateMerpLog.data.updateMerpOrderStatus.message,
+                  res.updateMerpLog.data.clearMerpTote.message,
+                ]
+                  .filter(Boolean)
+                  .join(`\n`);
+              }
             }
             this.sendGTM();
             this.router.navigate(['/qc'], {
