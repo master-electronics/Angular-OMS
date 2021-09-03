@@ -12,21 +12,18 @@ import { forkJoin, Subscription } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
-  InventoryUpdate,
-  OrderUpdate,
-  UpdateInventoryAfterQcGQL,
-  UpdateContainerAfterQcGQL,
-  UpdateAfterQcLastLineGQL,
+  UpdateMerpForLastLineAfterQcRepackGQL,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { switchMap } from 'rxjs/operators';
-
-const ToteTypeID = 15;
-const QCDoneID = 1;
-const DistributionCenter = 'PH';
+import { map, switchMap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
+import {
+  Update_ContainerGQL,
+  Update_OrderLineDetailGQL,
+} from '../../../graphql/wms.graphql-gen';
 
 @Component({
   selector: 'repack',
@@ -39,8 +36,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonLabel = 'submit';
   message = '';
   urlParams: { [key: string]: any };
-  Inventory: InventoryUpdate;
-  Order: OrderUpdate;
+  // Inventory: InventoryUpdate;
+  // Order: OrderUpdate;
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -49,9 +46,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthenticationService,
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
-    private updateInventoryAfterQC: UpdateInventoryAfterQcGQL,
-    private updateContainerAfterQC: UpdateContainerAfterQcGQL,
-    private updateAfterQCLastLine: UpdateAfterQcLastLineGQL,
+    private updateOrderLineDetail: Update_OrderLineDetailGQL,
+    private updateContainer: Update_ContainerGQL,
+    private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private gtmService: GoogleTagManagerService
   ) {}
 
@@ -104,58 +101,60 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.verifyQCRepack
         .watch(
           {
-            DistributionCenter: DistributionCenter,
-            Barcode: this.containerForm.value.container,
-            OrderNumber: this.urlParams.OrderNum,
-            NOSINumber: this.urlParams.NOSI,
+            Container: {
+              DistributionCenter: environment.DistributionCenter,
+              Barcode: this.containerForm.value.container,
+            },
+            Order: {
+              DistributionCenter: environment.DistributionCenter,
+              OrderNumber: this.urlParams.OrderNum,
+              NOSINumber: this.urlParams.NOSI,
+            },
           },
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.pipe(
           switchMap((res) => {
-            const container = res.data.findContainer;
-            const order = res.data.findOrder;
-            if (container[0].TypeID !== ToteTypeID) {
+            const returnContainer = res.data.findContainer[0];
+            const returnOrder = res.data.findOrder[0];
+            if (returnContainer.ContainerTypeID !== environment.toteType_ID) {
               throw 'This container is not a tote!';
             }
+            if (!returnOrder.ORDERLINEDETAILs.length) {
+              throw 'Invaild urlParams';
+            }
 
-            // Search all inventries by containerID, if has ITN record != current ITN, return error
-            container[0].INVENTORies.forEach((itn) => {
-              if (itn.InternalTrackingNumber !== this.urlParams.ITN) {
-                throw 'This tote is not empty.';
-              }
-            });
+            // Search all ITN by containerID, if has ITN record != current ITN, return error
+            if (returnContainer.ORDERLINEDETAILs.length) {
+              returnContainer.ORDERLINEDETAILs.forEach((itn) => {
+                if (itn.InternalTrackingNumber !== this.urlParams.ITN) {
+                  throw 'This tote is not empty.';
+                }
+              });
+            }
 
-            // Search all inventries by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
+            // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
             let inProcess = 0;
             let isRedo: boolean;
             let sourceContainer: number;
-            order[0].INVENTORies.forEach((inventory) => {
-              if (inventory.InternalTrackingNumber !== this.urlParams.ITN) {
-                inventory.StatusID !== QCDoneID && ++inProcess;
+            returnOrder.ORDERLINEDETAILs.forEach((line) => {
+              if (line.InternalTrackingNumber !== this.urlParams.ITN) {
+                line.StatusID !== environment.qcComplete_ID && ++inProcess;
               } else {
-                sourceContainer = inventory.ContainerID;
-                isRedo = inventory.StatusID === QCDoneID;
+                sourceContainer = line.ContainerID;
+                isRedo = line.StatusID === environment.qcComplete_ID;
               }
             });
 
             // Setup graphql queries
-            const Inventory: InventoryUpdate = {
-              ContainerID: container[0]._id,
-              Quantity: Number(this.urlParams.Quantity),
-              ROHS: this.urlParams.ROHS === '1' ? true : false,
-              DateCode: this.urlParams.DateCode,
-              CountryOfOrigin: this.urlParams.coo,
-              StatusID: QCDoneID,
-            };
-            const updateInventory = this.updateInventoryAfterQC.mutate({
-              Inventory: Inventory,
-              ITNList: [this.urlParams.ITN],
+            const updateDetail = this.updateOrderLineDetail.mutate({
+              InternalTrackingNumber: this.urlParams.ITN,
+              OrderLineDetail: { StatusID: environment.qcComplete_ID },
             });
 
-            const updateTargetContainer = this.updateContainerAfterQC.mutate(
+            const updateTargetContainer = this.updateContainer.mutate(
               {
-                _id: container[0]._id,
+                _id: returnContainer._id,
                 Container: {
                   Warehouse: '01',
                   Row: 'QC',
@@ -168,7 +167,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               { fetchPolicy: 'no-cache' }
             );
 
-            const updateSourceContainer = this.updateContainerAfterQC.mutate(
+            const updateSourceContainer = this.updateContainer.mutate(
               {
                 _id: sourceContainer,
                 Container: {
@@ -183,13 +182,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               { fetchPolicy: 'no-cache' }
             );
 
-            const OrderUpdate: OrderUpdate = {
-              StatusID: QCDoneID,
-            };
-            const updateOrderAndMerpLog = this.updateAfterQCLastLine.mutate(
+            const updateMerpLog = this.updateMerpLastLine.mutate(
               {
-                orderID: order[0]._id,
-                Order: OrderUpdate,
                 OrderNumber: this.urlParams.OrderNum,
                 NOSINumber: this.urlParams.NOSI,
                 Status: '60',
@@ -200,52 +194,47 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Send different query combination
             const updateQueries = {
-              updateInventory,
+              updateDetail,
               updateTargetContainer,
-              updateOrderAndMerpLog,
+              updateMerpLog,
               updateSourceContainer,
             };
-            if (inProcess) delete updateQueries.updateOrderAndMerpLog;
+            if (inProcess) delete updateQueries.updateMerpLog;
             if (!isRedo) delete updateQueries.updateSourceContainer;
             return forkJoin(updateQueries);
           })
         )
+        .pipe(
+          map((res: any) => {
+            let error: string;
+            if (!res.updateDetail.data.updateOrderLineDetail[0]) {
+              error = `${this.urlParams.ITN} Fail to update OrderLineDetail SQL`;
+            }
+            if (!res.updateTargetContainer.data.updateContainer[0]) {
+              error += `${this.urlParams.ITN} Fail to update Target Container SQL`;
+            }
+            if (!res.updateSourceContainer.data.updateContainer[0]) {
+              error += `${this.urlParams.ITN} Fail to update source Container SQL`;
+            }
+            if (error) throw error;
+            return res;
+          })
+        )
         .subscribe(
           (res: any) => {
-            try {
-              let type = 'info';
-              let message = `QC complete for ${this.urlParams.ITN}`;
-              if (
-                res.updateInventory.data.updateInventoryList.success &&
-                res.updateTargetContainer.data.updateContainerLocation.success
-              ) {
-                if (res.updateOrderAndMerpLog) {
-                  if (res.updateOrderAndMerpLog.data.updateOrder.success) {
-                    type = 'success';
-                    message = `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`;
-                  } else {
-                    throw res.updateOrderAndMerpLog.data.updateOrder.message;
-                  }
-                }
-              } else {
-                throw (
-                  res.updateInventory.data.updateInventoryList.message +
-                  res.updateTargetContainer.data.updateContainerLocation.message
-                );
-              }
-              this.sendGTM();
-              this.router.navigate(['/qc'], {
-                queryParams: {
-                  type,
-                  message,
-                },
-              });
-            } catch (error) {
-              this.isLoading = false;
-              this.messageType = 'error';
-              this.message = error;
-              this.containerInput.nativeElement.select();
+            let type = 'info';
+            let message = `QC complete for ${this.urlParams.ITN}`;
+            if (res.updateMerpLog) {
+              type = 'success';
+              message = `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`;
             }
+            this.sendGTM();
+            this.router.navigate(['/qc'], {
+              queryParams: {
+                type,
+                message,
+              },
+            });
           },
           (error) => {
             this.isLoading = false;

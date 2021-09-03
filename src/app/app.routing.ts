@@ -39,13 +39,13 @@ const routes: Routes = [
       //       (m) => m.AggregationOutModule
       //     ),
       // },
-      // {
-      //   path: 'qc',
-      //   loadChildren: () =>
-      //     import('./pages/quality-control/quality-control.module').then(
-      //       (m) => m.QualityControlModule
-      //     ),
-      // },
+      {
+        path: 'qc',
+        loadChildren: () =>
+          import('./pages/quality-control/quality-control.module').then(
+            (m) => m.QualityControlModule
+          ),
+      },
       // {
       //   path: 'searchbarcode',
       //   loadChildren: () =>

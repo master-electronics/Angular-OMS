@@ -73,11 +73,6 @@ export class GlobalMessagesComponent
         .watch(params, { fetchPolicy: 'no-cache' })
         .valueChanges.subscribe(
           (res) => {
-            this.isLoading = res.loading;
-            if (res.error) {
-              this.message = res.error.message;
-              this.messageType = 'error';
-            }
             this.orderComments = res.data.fetchOrderLineMessage.comments;
             this.partComments = res.data.fetchPartMessage.comments;
             if (
@@ -90,6 +85,7 @@ export class GlobalMessagesComponent
                 this.orderComments.concat(this.partComments)
               );
             }
+            this.isLoading = res.loading;
           },
           (error) => {
             this.isLoading = false;

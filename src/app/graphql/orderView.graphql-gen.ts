@@ -86,6 +86,7 @@ export type Mutation = {
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
   /** For qc page */
   holdQCOrder: Response;
+  printITNLabel: Response;
   changeQCLineInfo: Response;
   updateMerpOrderStatus: Response;
   updateMerpWMSLog: Response;
@@ -96,10 +97,10 @@ export type Mutation = {
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
-  updateContainer?: Maybe<Container>;
-  updateOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  updateOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
-  updateOrder?: Maybe<Order>;
+  updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
@@ -113,6 +114,11 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Status: Scalars['String'];
+  Station: Scalars['String'];
+};
+
+export type MutationPrintItnLabelArgs = {
+  InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
 };
 
@@ -302,7 +308,6 @@ export type Query = {
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchM1TOTEInfo?: Maybe<M1Tote>;
-  printITNLabel: Response;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
@@ -340,11 +345,6 @@ export type QueryFetchPartMessageArgs = {
 export type QueryFetchM1ToteInfoArgs = {
   DistributionCenter: Scalars['String'];
   Barcode: Scalars['String'];
-};
-
-export type QueryPrintItnLabelArgs = {
-  InternalTrackingNumber: Scalars['String'];
-  Station: Scalars['String'];
 };
 
 export type QueryFetchOrderViewArgs = {

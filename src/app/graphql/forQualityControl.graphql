@@ -1,24 +1,22 @@
-query verifyITNforQc($InternalTrackingNumber: String!) {
-  fetchPackInfoFromMerp(InternalTrackingNumber: $InternalTrackingNumber) {
-    CustomerNumber
-    DistributionCenter
-    OrderNumber
-    OrderLineNumber
-    NOSINumber
-    ProductCode
-    PartNumber
-    Status
-    Quantity
-    DemandQuantity
+query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
+  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+    StatusID
     ParentITN
+    Quantity
     ROHS
     DateCode
     CountryOfOrigin
-  }
-  findOrderLineDetail(
-    OrderLineDetail: { InternalTrackingNumber: $InternalTrackingNumber }
-  ) {
-    StatusID
+    OrderLine {
+      OrderLineNumber
+      ProductCode
+      PartNumber
+    }
+    Order {
+      DistributionCenter
+      OrderNumber
+      NOSINumber
+      CustomerNumber
+    }
   }
 }
 
@@ -51,7 +49,7 @@ query qcGlobalMessage(
   }
 }
 
-query printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
+mutation printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
   printITNLabel(
     InternalTrackingNumber: $InternalTrackingNumber
     Station: $Station
@@ -84,6 +82,7 @@ mutation holdQCOrder(
   $InternalTrackingNumber: String!
   $Status: String!
   $Station: String!
+  $StatusID: Int!
 ) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
@@ -93,9 +92,14 @@ mutation holdQCOrder(
     success
     message
   }
+
+  updateOrderLineDetail(
+    InternalTrackingNumber: $InternalTrackingNumber
+    OrderLineDetail: { StatusID: $StatusID }
+  )
 }
 
-mutation changeInfoAfterVerify(
+mutation updateMerpAfterQcVerify(
   $InternalTrackingNumber: String!
   $DateCode: String!
   $CountryOfOrigin: String!
@@ -114,35 +118,12 @@ mutation changeInfoAfterVerify(
   }
 }
 
-mutation updateOrderLineDetailAfterQC(
-  $OrderLineDetail: updateOrderLineDetail!
-  $InternalTrackingNumber: String!
-) {
-  updateOrderLineDetail(
-    OrderLineDetail: $OrderLineDetail
-    InternalTrackingNumber: $InternalTrackingNumber
-  ) {
-    _id
-  }
-}
-
-mutation updateContainerAfterQC($_id: Int!, $Container: updateContainer!) {
-  updateContainer(_id: $_id, Container: $Container) {
-    _id
-  }
-}
-
-mutation updateAfterQCLastLine(
-  $orderID: Int!
-  $Order: updateOrder!
+mutation updateMerpForLastLineAfterQCRepack(
   $OrderNumber: String!
   $NOSINumber: String!
   $Status: String!
   $UserOrStatus: String
 ) {
-  updateOrder(_id: $orderID, Order: $Order) {
-    _id
-  }
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber

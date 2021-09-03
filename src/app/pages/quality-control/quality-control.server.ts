@@ -33,13 +33,13 @@ export interface urlParams {
   CustomerNum: string;
   DC: string;
   OrderNum: string;
-  OrderLine: string;
+  OrderLine: number;
   NOSI: string;
   PRC: string;
   PartNum: string;
   Quantity: number;
   ParentITN: string;
-  ROHS: boolean;
+  ROHS: number;
   coo: string;
   DateCode: string;
 }

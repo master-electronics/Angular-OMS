@@ -19,6 +19,8 @@ import {
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { CommonService } from '../../../shared/services/common.service';
 
+const warehouseHold = 30;
+
 @Component({
   selector: 'hold-modal',
   templateUrl: './hold-modal.component.html',
@@ -65,6 +67,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
       InternalTrackingNumber: this.ITN,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.stationInfo,
+      StatusID: warehouseHold,
     };
     this.isLoading = true;
     this.writeInfoToMerp(qcHoldOrderInfo);
@@ -78,28 +81,31 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     this.subscription.add(
       this.holdQCOrder.mutate(holdInfo, { fetchPolicy: 'no-cache' }).subscribe(
         (res) => {
-          let response: { type: string; message: string };
-          if (res.data.holdQCOrder.success) {
-            response = {
-              type: `warning`,
-              message: `${this.ITN} is on hold.`,
-            };
-          } else {
-            response = {
-              type: 'error',
-              message: `${this.ITN} hold failed. ${res.data.holdQCOrder.message}`,
-            };
+          let type: string;
+          let message: string;
+          this.isLoading = false;
+          if (!res.data.holdQCOrder.success) {
+            type = 'error';
+            message = `HOLDORDER api: ${res.data.holdQCOrder.message}\n`;
+          }
+          if (!res.data.updateOrderLineDetail[0]) {
+            type = 'error';
+            message += `Fail to update SQL`;
+          }
+          message = `${this.ITN} hold failed\n`.concat(message);
+          if (!type) {
+            type = `warning`;
+            message = `${this.ITN} is on hold.`;
           }
           this.router.navigate(['qc'], {
-            queryParams: response,
+            queryParams: { type, message },
           });
-          this.isLoading = false;
         },
         (error) => {
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
-              message: `${this.ITN} hold failed.${error}`,
+              message: `${this.ITN} hold failed.\n${error}`,
             },
           });
           this.isLoading = false;

@@ -8,17 +8,17 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
-import { QualityControlService, urlParams } from '../quality-control.server';
+import { QualityControlService } from '../quality-control.server';
 import {
-  ChangeInfoAfterVerifyGQL,
-  ChangeInfoAfterVerifyMutationVariables,
   FetchProductInfoFromMerpGQL,
+  UpdateMerpAfterQcVerifyGQL,
 } from '../../../graphql/forQualityControl.graphql-gen';
+import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'verify-pack',
@@ -33,7 +33,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   globalMessages: string[];
   isLoading = false;
   editable = false;
-  // isNeedSupv = true;
   messageType = 'error';
   editStyles = 'bg-purple-500';
   holdStyles = 'bg-yellow-300';
@@ -42,12 +41,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   isHoldModalHidden = true;
   isGlobalMessagesModalHidden = true;
-  // input data
   urlParams;
   UnitOfMeasure = 'loading';
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
-  // set autocomplete input box
   countryData = Countries;
   COOkeyword = 'name';
   COOFilter(
@@ -93,16 +90,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     ROHS: [{ value: '', disabled: true }, [Validators.required]],
     countryOfOrigin: [{ value: '', disabled: true }, [Validators.required]],
     countMethods: ['', [Validators.required]],
-    // username: ['', [Validators.required]],
-    // password: ['', [Validators.required]],
   });
 
   @ViewChild('dateCodeError') dateCodeError: ElementRef;
   @ViewChild('countMethodError') countMethodError: ElementRef;
   @ViewChild('dateCode') dateCodeInput: ElementRef;
   @ViewChild('countMethods') countMethodsInput: ElementRef;
-  // @ViewChild('username') usernameInput: ElementRef;
-  // @ViewChild('password') passwordInput: ElementRef;
 
   private subscription = new Subscription();
   constructor(
@@ -110,23 +103,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private qcService: QualityControlService,
-    private changeLineAfterVerify: ChangeInfoAfterVerifyGQL,
+    private updateMerp: UpdateMerpAfterQcVerifyGQL,
+    private updateWms: Update_OrderLineDetailGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL
-  ) {
-    //
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.qcService.changeTab(3);
     // check global message
     this.globalMessages = this.qcService.globalMessages;
     this.urlParams = { ...this.route.snapshot.queryParams };
-    // this.qcService.globalMessages?.some((message) => {
-    //   return message.includes('SUPV SIGNATURE REQUIRED');
-    // })
-    //   ? (this.isNeedSupv = true)
-    //   : (this.isNeedSupv = false);
-    this.urlParams.ROHS = this.urlParams.ROHS === 'true' ? true : false;
     this.urlParams.coo = this.urlParams.coo ? this.urlParams.coo : 'Unknown';
     this.urlParams.Quantity = Number(this.urlParams.Quantity);
     let country = this.countryData.find(
@@ -141,22 +127,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // set init value of form
     this.verifyPack.setValue({
       dateCode: this.urlParams.DateCode || '',
-      ROHS: this.urlParams.ROHS ? 1 : 0,
+      ROHS: this.urlParams.ROHS === '1' ? 1 : 0,
       countMethods: '',
       countryOfOrigin: country,
-      // username: '',
-      // password: '',
     });
-    // if (!this.isNeedSupv) {
-    //   this.verifyPack.setValue({
-    //     dateCode: this.urlParams.DateCode|| '',
-    //     ROHS: this.urlParams.ROHS === 'Yes' ? 1 : 0,
-    //     countMethods: '',
-    //     countryOfOrigin: country,
-    //     username: 'test',
-    //     password: 'test',
-    //   });
-    // }
   }
 
   fetchProductInfo(): void {
@@ -207,6 +181,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.dateCodeError.nativeElement.classList.add('hidden');
     this.countMethodError.nativeElement.classList.add('hidden');
+
+    // set up update query
     const coo = this.verifyPack.get('countryOfOrigin').value.name;
     const orderInfo = {
       InternalTrackingNumber: this.urlParams.ITN,
@@ -223,82 +199,68 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     countryOO._id === 1
       ? (cooValue = null)
       : (cooValue = countryOO.name.substring(0, 2));
-    const nextPageParams = this.urlParams;
-    nextPageParams.ROHS = this.verifyPack.get('ROHS').value;
-    nextPageParams.coo = cooValue;
-    nextPageParams.DateCode = this.verifyPack.get('dateCode').value;
-    this.isLoading = true;
-    this.writeInfo(orderInfo, nextPageParams);
-    // if (this.isNeedSupv) {
-    //   this.subscription.add(
-    //     this.authService
-    //       .userAuth(
-    //         this.verifyPack.get('username').value,
-    //         this.verifyPack.get('password').value
-    //       )
-    //       .subscribe(
-    //         (user: { userGroups: string[] }) => {
-    //           if (user.userGroups?.includes('whs_supr')) {
-    //             this.writeInfo(orderInfo);
-    //           } else {
-    //             this.message = 'This user is not supervisor.';
-    //             this.usernameInput.nativeElement.select();
-    //           }
-    //           this.isLoading = false;
-    //         },
-    //         (error) => {
-    //           this.isLoading = false;
-    //           this.message = error.error;
-    //           if (error.error.toLowerCase().includes('user')) {
-    //             this.usernameInput.nativeElement.select();
-    //           }
-    //           if (error.error.toLowerCase().includes('password')) {
-    //             this.passwordInput.nativeElement.select();
-    //           }
-    //         }
-    //       )
-    //   );
-    // } else {
-    //   this.writeInfo(orderInfo);
-    // }
-    return;
-  }
+    const preROHS = this.urlParams.ROHS;
+    const preCOO = this.urlParams.coo;
+    const preDateCode = this.urlParams.DateCode;
+    this.urlParams.ROHS = this.verifyPack.get('ROHS').value;
+    this.urlParams.coo = cooValue;
+    this.urlParams.DateCode = this.verifyPack.get('dateCode').value;
 
-  async writeInfo(
-    orderInfo: ChangeInfoAfterVerifyMutationVariables,
-    urlParams: urlParams
-  ): Promise<void> {
+    const updateMerp = this.updateMerp.mutate(orderInfo);
+    const updateWms = this.updateWms.mutate({
+      InternalTrackingNumber: this.urlParams.ITN,
+      OrderLineDetail: {
+        ROHS: this.urlParams.ROHS ? true : false,
+        CountryOfOrigin: this.urlParams.coo,
+        DateCode: this.urlParams.DateCode,
+      },
+    });
+
+    //check if change then update info to merp and wms
+    const updateQuery = { updateMerp, updateWms };
+    if (
+      preROHS === this.urlParams.ROHS &&
+      preCOO === this.urlParams.coo &&
+      preDateCode === this.urlParams.DateCode
+    ) {
+      delete updateQuery.updateWms;
+    }
+    this.isLoading = true;
     this.subscription.add(
-      this.changeLineAfterVerify
-        .mutate(orderInfo, { fetchPolicy: 'no-cache' })
-        .subscribe(
-          (res) => {
-            let response: { type: string; message: string };
-            if (res.data.changeQCLineInfo.success) {
-              this.router.navigate(['qc/repack'], {
-                queryParams: urlParams,
-              });
-            } else {
-              response = {
-                type: 'error',
-                message: `${this.urlParams.ITN} QC failed. ${res.data.changeQCLineInfo.message}`,
-              };
-              this.router.navigate(['qc'], {
-                queryParams: response,
-              });
-            }
-            this.isLoading = false;
-          },
-          (error) => {
-            this.isLoading = false;
-            this.router.navigate(['qc'], {
-              queryParams: {
-                type: `error`,
-                message: `${this.urlParams.ITN} QC failed.${error}`,
-              },
-            });
+      forkJoin(updateQuery).subscribe(
+        (res: any) => {
+          let type: string;
+          let message: string;
+          if (!res.updateMerp.data.changeQCLineInfo.success) {
+            type = 'error';
+            message = `QCCOMPELETE api:${res.updateMerp.data.changeQCLineInfo.message}\n`;
           }
-        )
+          if (!res.updateWms.data.updateOrderLineDetail[0]) {
+            type = 'error';
+            message += `Fail to update SQL`;
+          }
+          this.isLoading = false;
+          if (!type) {
+            this.router.navigate(['qc/repack'], {
+              queryParams: this.urlParams,
+            });
+            return;
+          }
+          message = `${this.urlParams.ITN} verify failed\n`.concat(message);
+          this.router.navigate(['qc'], {
+            queryParams: { type, message },
+          });
+        },
+        (error) => {
+          this.isLoading = false;
+          this.router.navigate(['qc'], {
+            queryParams: {
+              type: `error`,
+              message: `${this.urlParams.ITN} update failed\n${error}`,
+            },
+          });
+        }
+      )
     );
   }
 
@@ -316,6 +278,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editable = true;
     this.verifyPack.controls['ROHS'].enable();
     this.verifyPack.controls['dateCode'].enable();
+    this.verifyPack.controls['countryOfOrigin'].enable();
     this.dateCodeInput.nativeElement.select();
   }
 

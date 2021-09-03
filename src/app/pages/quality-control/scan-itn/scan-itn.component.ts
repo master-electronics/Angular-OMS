@@ -13,6 +13,11 @@ import { QualityControlService, urlParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { map } from 'rxjs/operators';
+import { VerifyItNforQcGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
+
+const pickComplete = 10;
+const warehouseHold = 30;
+const qcComplete = 60;
 
 @Component({
   selector: 'scan-itn',
@@ -31,7 +36,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private qcService: QualityControlService,
-    private verifyITNQC: VerifyItnqcGQL
+    private verifyITNQC: VerifyItNforQcGQL
   ) {}
 
   ITNForm = this.fb.group({
@@ -81,33 +86,50 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.subscription.add(
       this.verifyITNQC
-        .watch({ InternalTrackingNumber: ITN }, { fetchPolicy: 'no-cache' })
+        .watch(
+          { OrderLineDetail: { InternalTrackingNumber: ITN } },
+          { fetchPolicy: 'no-cache' }
+        )
         .valueChanges.pipe(
           map((res) => {
+            if (!res.data.findOrderLineDetail.length) {
+              throw 'Can not find this ITN';
+            }
+            if (res.data.findOrderLineDetail.length > 1) {
+              throw 'Invalid ITN';
+            }
+            if (
+              ![qcComplete, warehouseHold, pickComplete].includes(
+                res.data.findOrderLineDetail[0].StatusID
+              )
+            ) {
+              throw 'Invalid order line status.';
+            }
             return res;
           })
         )
         .subscribe(
           (res) => {
-            this.isLoading = res.loading;
+            const detail = res.data.findOrderLineDetail[0];
             const queryParams: urlParams = {
               ITN: ITN,
-              CustomerNum: res.data.fetchPackInfoFromMerp.CustomerNumber,
-              DC: res.data.fetchPackInfoFromMerp.DistributionCenter,
-              OrderNum: res.data.fetchPackInfoFromMerp.OrderNumber,
-              OrderLine: res.data.fetchPackInfoFromMerp.OrderLineNumber,
-              NOSI: res.data.fetchPackInfoFromMerp.NOSINumber,
-              PartNum: res.data.fetchPackInfoFromMerp.PartNumber,
-              PRC: res.data.fetchPackInfoFromMerp.ProductCode,
-              Quantity: res.data.fetchPackInfoFromMerp.Quantity,
-              ParentITN: res.data.fetchPackInfoFromMerp.ParentITN,
-              ROHS: res.data.fetchPackInfoFromMerp.ROHS,
-              DateCode: res.data.fetchPackInfoFromMerp.DateCode,
-              coo: res.data.fetchPackInfoFromMerp.CountryOfOrigin,
+              CustomerNum: detail.Order.CustomerNumber,
+              DC: detail.Order.DistributionCenter,
+              OrderNum: detail.Order.OrderNumber,
+              NOSI: detail.Order.NOSINumber,
+              OrderLine: detail.OrderLine.OrderLineNumber,
+              PartNum: detail.OrderLine.PartNumber,
+              PRC: detail.OrderLine.ProductCode,
+              Quantity: detail.Quantity,
+              ParentITN: detail.ParentITN,
+              ROHS: detail.ROHS ? 1 : 0,
+              DateCode: detail.DateCode,
+              coo: detail.CountryOfOrigin,
             };
             this.router.navigate(['/qc/globalmessages'], {
               queryParams: queryParams,
             });
+            this.isLoading = false;
           },
           (error) => {
             this.isLoading = false;

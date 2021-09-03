@@ -1,0 +1,21 @@
+mutation update_OrderLineDetail(
+  $_id: Int
+  $InternalTrackingNumber: String
+  $OrderLineID: Int
+  $OrderLineDetail: updateOrderLineDetail!
+) {
+  updateOrderLineDetail(
+    _id: $_id
+    InternalTrackingNumber: $InternalTrackingNumber
+    OrderLineID: $OrderLineID
+    OrderLineDetail: $OrderLineDetail
+  )
+}
+
+mutation update_Container(
+  $_id: Int
+  $Barcode: String
+  $Container: updateContainer!
+) {
+  updateContainer(_id: $_id, Barcode: $Barcode, Container: $Container)
+}
