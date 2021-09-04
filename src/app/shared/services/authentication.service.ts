@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,14 +10,25 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthenticationService implements OnInit {
+export class AuthenticationService {
   // user name
-  private rxjsUserSubject = new BehaviorSubject<string>(
-    this.cookieService.get('user')
-  );
-  public rxjsUser: Observable<string> = this.rxjsUserSubject.asObservable();
+  private user = new BehaviorSubject<string>(this.cookieService.get('user'));
+  public user$: Observable<string> = this.user.asObservable();
   public changeUser(user: string): void {
-    this.rxjsUserSubject.next(user);
+    this.user.next(user);
+  }
+
+  public get userInfo(): string {
+    return this.user.value;
+  }
+
+  public get userName(): string {
+    let username;
+    const info = this.user.value;
+    if (info) {
+      username = JSON.parse(info).username;
+    }
+    return username;
   }
 
   constructor(
@@ -25,24 +36,6 @@ export class AuthenticationService implements OnInit {
     private http: HttpClient,
     private cookieService: CookieService
   ) {}
-
-  ngOnInit(): void {
-    //
-  }
-
-  public get userInfo(): string {
-    return this.rxjsUserSubject.value;
-  }
-
-  public get userName(): string {
-    let username;
-    const info = this.rxjsUserSubject.value;
-    if (info) {
-      username = JSON.parse(info).username;
-    }
-    return username;
-  }
-
   userAuth(username: string, password: string): Observable<any> {
     return this.http
       .post(`${environment.apiUrl}/AuthJWT/login`, {
@@ -59,7 +52,7 @@ export class AuthenticationService implements OnInit {
   logout(): void {
     // remove user from cookie
     this.cookieService.delete('user');
-    this.rxjsUserSubject.next('');
+    this.user.next('');
     this.router.navigate(['/login']);
   }
 }

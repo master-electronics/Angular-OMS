@@ -18,6 +18,7 @@ import {
   HoldQcOrderMutationVariables,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { CommonService } from '../../../shared/services/common.service';
+import { Title } from '@angular/platform-browser';
 
 const warehouseHold = 30;
 
@@ -39,9 +40,10 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     private holdQCOrder: HoldQcOrderGQL,
     private fb: FormBuilder,
     private router: Router,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private titleService: Title
   ) {
-    //
+    titleService.setTitle('qc/qchold');
   }
 
   @ViewChild('holdInput') holdInput: ElementRef;
@@ -66,7 +68,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     const qcHoldOrderInfo = {
       InternalTrackingNumber: this.ITN,
       Status: String(Status).padStart(2, '3'),
-      Station: this.commonService.stationInfo,
+      Station: this.commonService.printerInfo,
       StatusID: warehouseHold,
     };
     this.isLoading = true;

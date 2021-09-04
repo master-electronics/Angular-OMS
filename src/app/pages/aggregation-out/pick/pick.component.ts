@@ -147,8 +147,8 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         { fetchPolicy: 'no-cache' }
       ),
       checkHazmzd: this.fetchHazardMaterialLevel
-        .watch({ ProductList: productList }, { fetchPolicy: 'no-cache' })
-        .valueChanges.pipe(take(1)),
+        .fetch({ ProductList: productList }, { fetchPolicy: 'no-cache' })
+        .pipe(take(1)),
     });
   }
 

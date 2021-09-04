@@ -12,24 +12,20 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
 
-import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderDetailforitnViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { ActivatedRoute, Router } from '@angular/router';
-
-const DistributionCenter = 'PH';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'itn-view',
   templateUrl: './itn-view.component.html',
 })
 export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
-  title = 'Order View';
   message = '';
   messageType = 'error';
   searchType: string;
@@ -37,16 +33,11 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private commonService: CommonService,
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private titleService: Title,
     private fetchOrderDetail: FetchOrderDetailforitnViewGQL
-  ) {
-    this.commonService.changeTitle(this.title);
-    this.titleService.setTitle(this.title);
-  }
+  ) {}
 
   barcodeForm = this.fb.group({
     barcode: ['', [Validators.required, this.regex]],
@@ -89,18 +80,7 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.barcodeForm.setValue({
       barcode: `${urlParams.orderNumber}-${urlParams.NOSINumber}`,
     });
-    this.OrderInfo$ = this.fetchOrderDetail
-      .watch(
-        {
-          Order: {
-            DistributionCenter: DistributionCenter,
-            OrderNumber: urlParams.orderNumber,
-            NOSINumber: urlParams.NOSINumber,
-          },
-        },
-        { fetchPolicy: 'no-cache' }
-      )
-      .valueChanges.pipe(map((res) => res.data.findOrder));
+    this.onSubmit();
   }
 
   onSubmit(): void {
@@ -113,7 +93,7 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
         .watch(
           {
             Order: {
-              DistributionCenter: DistributionCenter,
+              DistributionCenter: environment.DistributionCenter,
               OrderNumber: barcodeSplit[0],
               NOSINumber: barcodeSplit[1],
             },

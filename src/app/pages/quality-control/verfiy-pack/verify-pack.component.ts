@@ -19,6 +19,7 @@ import {
   UpdateMerpAfterQcVerifyGQL,
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'verify-pack',
@@ -98,11 +99,14 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private titleService: Title,
     private qcService: QualityControlService,
     private updateMerp: UpdateMerpAfterQcVerifyGQL,
     private updateWms: Update_OrderLineDetailGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL
-  ) {}
+  ) {
+    titleService.setTitle('qc/verifypack');
+  }
 
   async ngOnInit(): Promise<void> {
     this.qcService.changeTab(3);

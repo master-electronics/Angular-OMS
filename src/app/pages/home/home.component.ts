@@ -32,7 +32,7 @@ export class HomeComponent implements AfterViewInit {
     private titleService: Title
   ) {
     this.isMobile = this.commonService.isMobile();
-    this.commonService.changeTitle(this.title);
+    this.commonService.changeNavbar(this.title);
     this.titleService.setTitle('Home');
   }
 

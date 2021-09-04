@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
 import { QcGlobalMessageGQL } from '../../../graphql/forQualityControl.graphql-gen';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
+import { Title } from '@angular/platform-browser';
 
 interface globalMessageParams {
   PartNumber: string;
@@ -38,9 +39,12 @@ export class GlobalMessagesComponent
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private titleService: Title,
     private qcService: QualityControlService,
     private qcGlobalMessage: QcGlobalMessageGQL
-  ) {}
+  ) {
+    titleService.setTitle('qc/globalmessages');
+  }
 
   gmForm = this.fb.group({});
 

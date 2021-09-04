@@ -18,13 +18,9 @@ import { Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/dataRegex';
-import {
-  VerifyContainerForAggregationInGQL,
-  VerifyContainerForAggregationInQuery,
-} from '../../graphql/forAggregation.graphql-gen';
-import { ApolloQueryResult } from '@apollo/client/core';
-
-const AGDoneID = 5;
+import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
+import { tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'aggregation-in',
@@ -36,8 +32,6 @@ export class AggregationInComponent
   title = 'Aggregation In';
   isLoading = false;
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
   message = '';
 
   containerForm = new FormGroup({
@@ -56,10 +50,10 @@ export class AggregationInComponent
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
-    private verifyContainerForAGIn: VerifyContainerForAggregationInGQL
+    private verifyContainer: VerifyContainerForAggregationInGQL
   ) {
-    this.commonService.changeTitle(this.title);
-    this.titleService.setTitle('Aggregation In');
+    this.commonService.changeNavbar(this.title);
+    this.titleService.setTitle('agin');
   }
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -75,33 +69,82 @@ export class AggregationInComponent
 
   onSubmit(): void {
     this.message = '';
-    if (this.containerForm.valid) {
-      this.verifyContainer();
+    if (!this.containerForm.valid) {
+      this.containerInput.nativeElement.select();
+      return;
     }
-  }
-
-  verifyContainer(): void {
     this.isLoading = true;
     this.subscription.add(
-      this.verifyContainerForAGIn
+      this.verifyContainer
         .watch(
           {
-            Barcode: this.containerForm.get('containerNumber').value,
-            DistributionCenter: 'PH',
+            Container: {
+              DistributionCenter: environment.DistributionCenter,
+              Barcode: this.containerForm.value.containerNumber,
+            },
           },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'network-only' }
         )
-        .valueChanges.subscribe(
-          (res) => {
-            this.isLoading = res.loading;
-            if (res.error) {
-              this.message = res.error.message;
-              this.messageType = 'error';
+        .valueChanges.pipe(
+          tap((res) => {
+            const container = res.data.findContainer[0];
+            if (container === undefined) throw 'Container not found!';
+            // only accepte mobile container
+            if (!container.ContainerType.IsMobile)
+              throw 'This container is not mobile!';
+            if (container.ORDERLINEDETAILs.length === 0)
+              throw 'No item in this tote!';
+            // verify all line have the same orderID and statusID in the tote
+            if (
+              !container.ORDERLINEDETAILs.every(
+                (line, i, arr) =>
+                  line.OrderID === arr[0].OrderID &&
+                  line.StatusID === arr[0].StatusID
+              )
+            ) {
+              throw 'More than 1 order in this tote.';
             }
-            // if has error, return error message
-            this.message = this.checkVaild(res);
-            this.message && (this.messageType = 'error');
-            this.containerInput.nativeElement.select();
+            // only allow status is agIn complete and qc complete
+            if (
+              ![
+                environment.qcComplete_ID,
+                environment.agInComplete_ID,
+                environment.agOutComplete_ID,
+              ].includes(container.ORDERLINEDETAILs[0].StatusID)
+            ) {
+              throw "OrderLine's status is invalid.";
+            }
+            // if the container already in Aggregation area, will allow multiple items in it.
+            if (
+              container.ORDERLINEDETAILs.length > 1 &&
+              container.ORDERLINEDETAILs[0].StatusID !==
+                environment.agInComplete_ID
+            ) {
+              throw 'More than 1 order line in this tote.';
+            }
+          })
+        )
+        .subscribe(
+          (res) => {
+            this.isLoading = false;
+            const container = res.data.findContainer[0];
+            // if pass all naveigate to next page
+            const isRelocation =
+              container.ORDERLINEDETAILs[0].StatusID ===
+              environment.agInComplete_ID;
+            const toteID = container._id;
+            const Barcode = container.Barcode;
+            const OrderID = container.ORDERLINEDETAILs[0].OrderID;
+            const orderLineDetailID = container.ORDERLINEDETAILs[0]._id;
+            this.router.navigate(['agin/location'], {
+              queryParams: {
+                isRelocation,
+                OrderID,
+                Barcode,
+                orderLineDetailID,
+                toteID,
+              },
+            });
           },
           (error) => {
             this.isLoading = false;
@@ -110,41 +153,6 @@ export class AggregationInComponent
           }
         )
     );
-  }
-
-  checkVaild(
-    result: ApolloQueryResult<VerifyContainerForAggregationInQuery>
-  ): string {
-    const container = result.data.findContainer[0];
-    if (container === undefined) return 'Container not found!';
-    // only accepte mobile container
-    if (!container.Type.IsMobile) return 'This container is not mobile!';
-    if (container.INVENTORies.length === 0) return 'No item in this Container!';
-    // if the container already in Aggregation area, will allow multiple items in it.
-    if (
-      container.INVENTORies.length > 1 &&
-      container.INVENTORies[0].StatusID === 1
-    ) {
-      return 'More than 1 items in this Container.';
-    }
-    // only accepte ITN status from qc done to AG out complete.
-    if (container.INVENTORies[0].StatusID >= AGDoneID) {
-      return 'This Order is not in Ag.';
-    }
-    // if pass all naveigate to next page
-    const isRelocation = container.Row === 'AG';
-    const ITNList = container.INVENTORies.map(
-      (node) => node.InternalTrackingNumber
-    );
-    this.router.navigate(['agin/location'], {
-      queryParams: {
-        isRelocation: isRelocation,
-        qcContainer: container._id,
-        Bin: this.containerForm.get('containerNumber').value,
-        ITNList: ITNList,
-      },
-    });
-    return null;
   }
 
   ngOnDestroy(): void {

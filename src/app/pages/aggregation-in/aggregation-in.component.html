@@ -33,11 +33,9 @@
 
       <div class="mt-8">
         <form-button
-          [styles]="buttonStyles"
-          [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          [label]="buttonLabel"
+          (click)="onSubmit()"
         ></form-button>
       </div>
       <div class="mt-6">

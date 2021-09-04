@@ -9,7 +9,9 @@ export const environment = {
   droppedQC_ID: 20,
   warehouseHold_ID: 30,
   qcComplete_ID: 60,
+  agInComplete_ID: 63,
   agOutComplete_ID: 65,
   //WMS ContainerType table
   toteType_ID: 3,
+  //Order Status in merp
 };

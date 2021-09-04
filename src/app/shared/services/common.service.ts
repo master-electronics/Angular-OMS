@@ -6,21 +6,21 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CommonService {
-  // title
-  private rxjsTitleSubject = new BehaviorSubject<string>('Master Electronics');
-  public rxjsTitle: Observable<string> = this.rxjsTitleSubject.asObservable();
-  public changeTitle(title: string): void {
-    this.rxjsTitleSubject.next(title);
+  // Navbar
+  private navbar = new BehaviorSubject<string>('Master Electronics');
+  public navbar$: Observable<string> = this.navbar.asObservable();
+  public changeNavbar(title: string): void {
+    this.navbar.next(title);
   }
 
   // Printer Station
-  private stationSubject = new BehaviorSubject<string>('');
-  public station = this.stationSubject.asObservable();
+  private printerStation = new BehaviorSubject<string>('');
+  public printerStation$ = this.printerStation.asObservable();
   public changeStation(station: string): void {
-    this.stationSubject.next(station);
+    this.printerStation.next(station);
   }
-  public get stationInfo(): string {
-    return this.stationSubject.value;
+  public get printerInfo(): string {
+    return this.printerStation.value;
   }
 
   constructor(public platform: Platform) {

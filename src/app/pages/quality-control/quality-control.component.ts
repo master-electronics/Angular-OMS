@@ -1,5 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { Subscription } from 'rxjs';
 import { APIService } from 'src/app/shared/services/API.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { QualityControlService } from './quality-control.server';
@@ -8,24 +14,23 @@ import { QualityControlService } from './quality-control.server';
   selector: 'quality-control',
   templateUrl: './quality-control.component.html',
 })
-export class QualityControlComponent implements OnInit {
+export class QualityControlComponent implements OnInit, OnDestroy {
   @ViewChild('stepPage') stepPage: ElementRef;
   isModalHidden = true;
   modalMessage: string;
   title = 'Quality Control';
 
+  private subscription = new Subscription();
   constructor(
     private commonService: CommonService,
-    private titleService: Title,
     private qcService: QualityControlService,
     private apiService: APIService
   ) {
-    this.commonService.changeTitle(this.title);
-    this.titleService.setTitle('Quality Control');
+    commonService.changeNavbar('Quality Control');
   }
 
   async ngOnInit(): Promise<void> {
-    const station = this.commonService.stationInfo;
+    const station = this.commonService.printerInfo;
     if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
     if (station === '') {
       this.apiService.checkQCPrinter$.subscribe(
@@ -50,5 +55,9 @@ export class QualityControlComponent implements OnInit {
   }
   toggleModal(): void {
     this.isModalHidden = !this.isModalHidden;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

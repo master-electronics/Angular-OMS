@@ -12,9 +12,10 @@ import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
 import { environment } from 'src/environments/environment';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'scan-itn',
@@ -30,9 +31,12 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private titleService: Title,
     private qcService: QualityControlService,
     private verifyITNQC: VerifyItNforQcGQL
-  ) {}
+  ) {
+    titleService.setTitle('qc/scanitn');
+  }
 
   ITNForm = this.fb.group({
     ITN: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
@@ -86,7 +90,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
           { fetchPolicy: 'no-cache' }
         )
         .valueChanges.pipe(
-          map((res) => {
+          tap((res) => {
             if (!res.data.findOrderLineDetail.length) {
               throw 'Can not find this ITN';
             }

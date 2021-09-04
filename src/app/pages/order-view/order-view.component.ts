@@ -15,8 +15,7 @@ import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
-
-const DistributionCenter = 'PH';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'order-view',
@@ -39,7 +38,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
     private titleService: Title,
     private fetchOrderView: FetchOrderViewGQL
   ) {
-    this.commonService.changeTitle(this.title);
+    this.commonService.changeNavbar(this.title);
     this.titleService.setTitle(this.title);
   }
 
@@ -91,7 +90,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.filterForm.valid) {
       let filter = this.filterForm.value;
       if (filter.orderBarcode) {
-        filter.DistributionCenter = DistributionCenter;
+        filter.DistributionCenter = environment.DistributionCenter;
         [filter.OrderNumber, filter.NOSINumber] =
           filter.orderBarcode.split('-');
         delete filter.orderBarcode;

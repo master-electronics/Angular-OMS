@@ -18,12 +18,13 @@ import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Update_ContainerGQL,
   Update_OrderLineDetailGQL,
 } from '../../../graphql/wms.graphql-gen';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'repack',
@@ -41,6 +42,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private titleService: Title,
     private authService: AuthenticationService,
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
@@ -48,7 +50,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateContainer: Update_ContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private gtmService: GoogleTagManagerService
-  ) {}
+  ) {
+    titleService.setTitle('qc/repack');
+  }
 
   containerForm = this.fb.group({
     container: [
@@ -203,10 +207,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (inProcess) delete updateQueries.updateMerpLog;
             if (!isRedo) delete updateQueries.updateSourceContainer;
             return forkJoin(updateQueries);
-          })
-        )
-        .pipe(
-          map((res: any) => {
+          }),
+          tap((res: any) => {
             let error: string;
             if (!res.updateDetail.data.updateOrderLineDetail[0]) {
               error = `${this.urlParams.ITN} Fail to update OrderLineDetail SQL`;
@@ -221,7 +223,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               error += `${this.urlParams.ITN} Fail to update source Container SQL`;
             }
             if (error) throw error;
-            return res;
           })
         )
         .subscribe(

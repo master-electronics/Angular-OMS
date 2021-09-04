@@ -1,6 +1,5 @@
 import {
   Component,
-  OnDestroy,
   OnInit,
   ElementRef,
   HostListener,
@@ -9,18 +8,19 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit {
   showMenu = false;
   showUser = false;
   dark = false;
-  username: string;
-  title: string;
+  user$: Observable<string>;
+  title$: Observable<string>;
   isFullscreen = false;
   elem;
 
@@ -77,7 +77,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private authenticationService: AuthenticationService,
     private commonService: CommonService,
@@ -88,18 +87,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.commonService.rxjsTitle.subscribe(
-        (resData) => (this.title = resData)
-      )
-    );
-    this.subscription.add(
-      this.authenticationService.rxjsUser.subscribe((user) => {
-        if (user) {
-          this.username = JSON.parse(user).username;
-        } else {
-          this.username = null;
-        }
+    this.title$ = this.commonService.navbar$;
+    this.user$ = this.authenticationService.user$.pipe(
+      map((res) => {
+        return JSON.parse(res).username;
       })
     );
   }
@@ -107,9 +98,5 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authenticationService.logout();
     this.toggleUser();
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }
