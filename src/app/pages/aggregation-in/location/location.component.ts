@@ -13,20 +13,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
 } from '../../../shared/dataRegex';
-import { map, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
 import {
   FetchHazardMaterialLevelGQL,
   FetchLocationAndOrderDetailForAgInGQL,
   UpdateAfterAgOutGQL,
+  UpdateMerpOrderStatusGQL,
+  UpdateMerpWmsLogGQL,
+  UpdateSqlAfterAgInGQL,
+  VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 
 @Component({
@@ -36,18 +40,19 @@ import {
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   // varable for query
   urlParams;
+  initInfo$: Observable<any>;
+  updateLocation$: Observable<any>;
   OrderNumber: string;
   NOSINumber: string;
-  FileKeyList = [];
-  ProductList = [];
+  FileKeyListforAgIn = [];
   isLastLine = false;
-  locationsSet: Set<string> = new Set();
+  isSingleLine = false;
   // control html element
   isLoading = false;
   isRelocation = false;
   newLocation = false;
   buttonLabel = 'place to the shelf';
-  location$: Observable<string[]>;
+  locationList = [];
   ITNInfo = [];
   message = '';
   messageType = 'error';
@@ -80,7 +85,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
     private updateAfterAgOut: UpdateAfterAgOutGQL,
-    private fetchHazard: FetchHazardMaterialLevelGQL
+    private fetchHazard: FetchHazardMaterialLevelGQL,
+    private verifyContainer: VerifyContainerForAggregationInGQL,
+    private updateSql: UpdateSqlAfterAgInGQL,
+    private updateMerpLog: UpdateMerpWmsLogGQL,
+    private updateMerpOrder: UpdateMerpOrderStatusGQL
   ) {}
 
   @ViewChild('location') locationInput: ElementRef;
@@ -89,17 +98,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.titleService.setTitle('agin/location');
     this.commonService.changeNavbar(`AGIN: ${this.urlParams.Barcode}`);
     this.isRelocation = this.urlParams.isRelocation === 'true';
-    this.isRelocation && (this.buttonLabel = 'Relocate');
     // fetch location and orderlinedetail
     this.isLoading = true;
-    this.location$ = this.fetchLocation
+    const FileKeyListforAgOut = [];
+    const ProductList = [];
+    this.initInfo$ = this.fetchLocation
       .fetch(
         { OrderLineDetail: { OrderID: Number(this.urlParams.OrderID) } },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
-        map((res) => {
-          let location = [];
+        filter((res) => {
+          const locationsSet: Set<string> = new Set();
           let totalLines = 0;
           let countLines = 0;
           res.data.findOrderLineDetail.forEach((line) => {
@@ -107,10 +117,22 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             // set for other queries
             this.OrderNumber = line.Order.OrderNumber;
             this.NOSINumber = line.Order.NOSINumber;
-            this.FileKeyList.push(
+            FileKeyListforAgOut.push(
               `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.InternalTrackingNumber}`
             );
-            // set for locations
+            // store top 3 locations in Aggregation area.
+            if (line.Container.Row === 'AG') {
+              locationsSet.add(
+                line.Container.Warehouse.concat(
+                  line.Container.Row,
+                  line.Container.Aisle,
+                  line.Container.Section,
+                  line.Container.Shelf,
+                  line.Container.ShelfDetail,
+                  line.Container.Barcode
+                )
+              );
+            }
             if (line._id === Number(this.urlParams.orderLineDetailID)) {
               this.ITNInfo = [
                 ['Order#', line.Order.OrderNumber],
@@ -125,8 +147,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 ['PartNumber', line.OrderLine.PartNumber],
                 ['Shipment', line.Order.ShipmentMethod.ShippingMethod],
               ];
+              // set fikekey for ag in
+              this.FileKeyListforAgIn.push(
+                `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.InternalTrackingNumber}`
+              );
               // set for single line AG out.
-              this.ProductList.push(
+              ProductList.push(
                 `${line.OrderLine.ProductCode.padEnd(3)}${
                   line.OrderLine.PartNumber
                 }`
@@ -135,18 +161,90 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               ++countLines;
               return;
             }
-            line.StatusID === environment.agInComplete_ID && ++countLines;
+            line.StatusID >= environment.agInComplete_ID && ++countLines;
           });
           this.ITNInfo[4][1] = `${countLines} of ${totalLines}`;
-          if (this.isRelocation) {
-            location = [];
+          if (locationsSet.size === 0) {
+            this.newLocation = true;
+            this.buttonLabel = 'New Location';
           }
+          if (this.isRelocation) {
+            this.newLocation = true;
+            this.buttonLabel = 'Relocate';
+            this.ITNInfo = [];
+          }
+          this.isLastLine = countLines === totalLines;
+          this.locationList = [...locationsSet];
           if (totalLines === 1) {
-            this.singleITNorder(Number(this.urlParams.OrderID));
-            return null;
+            this.isSingleLine = true;
+            return true;
           }
           this.isLoading = false;
-          return location;
+          return false;
+        }),
+        // if the order is singleLine order Auto ag out, else complete Observable
+        // swith to ag out update observeable
+        switchMap(() => {
+          return forkJoin({
+            updateOrder: this.updateAfterAgOut.mutate(
+              {
+                OrderID: Number(this.urlParams.OrderID),
+                OrderLineDetail: { StatusID: environment.agOutComplete_ID },
+                DistributionCenter: environment.DistributionCenter,
+                OrderNumber: this.OrderNumber,
+                NOSINumber: this.NOSINumber,
+                UserOrStatus: 'Packing',
+                MerpStatus: String(environment.agOutComplete_ID),
+                FileKeyList: FileKeyListforAgOut,
+                ActionType: 'A',
+                Action: 'line_aggregation_out',
+              },
+              { fetchPolicy: 'network-only' }
+            ),
+            checkHazmzd: this.fetchHazard.fetch(
+              { ProductList: ProductList },
+              { fetchPolicy: 'network-only' }
+            ),
+          });
+        }),
+        // Emite errors
+        tap((res) => {
+          let error = '';
+          if (!res.updateOrder.data.updateOrderLineDetail[0]) {
+            error += 'Update SQL OrderLineDetail failed.\n';
+          }
+          if (!res.updateOrder.data.updateMerpOrderStatus.success) {
+            error += res.updateOrder.data.updateMerpOrderStatus.message;
+          }
+          if (error) throw error;
+        }),
+        // Back to first page after ag out success
+        map((res) => {
+          let result = 'success';
+          let message = `Order complete ${this.OrderNumber}-${this.NOSINumber}`;
+          if (
+            res.checkHazmzd.data.fetchProductInfoFromMerp.some(
+              (node) =>
+                /^[\w]+$/.test(node.HazardMaterialLevel.trim()) &&
+                node.HazardMaterialLevel.trim() !== 'N'
+            )
+          ) {
+            result = 'warning';
+            message = message + `\nThis order contains hazardous materials`;
+          }
+          this.router.navigate(['agin'], {
+            queryParams: {
+              result,
+              message,
+            },
+          });
+          this.isLoading = false;
+        }),
+        catchError((error) => {
+          this.message = error;
+          this.isLoading = false;
+          this.locationInput.nativeElement.select();
+          return of();
         })
       );
   }
@@ -166,265 +264,159 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.locationForm.valid) {
       return;
     }
-    if (this.urlParams.Barcode === this.f.location.value) {
-      this.message = 'Should scan a new location';
+    const barcodeInput = this.f.location.value;
+    const barcode =
+      barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
+    if (this.urlParams.Barcode === barcode) {
+      this.message = 'Should scan a new Container';
       this.messageType = 'warning';
       this.locationInput.nativeElement.select();
       return;
     }
-    const barcodeInput = this.f.location.value;
-    const barcode =
-      barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
+    if (!this.newLocation && barcode.length > 8) {
+      const inList = !this.locationList.every((location) => {
+        location.substring(0, 11) !== barcode;
+      });
+      if (!inList) {
+        this.message = 'This container is a new location';
+        this.messageType = 'error';
+        this.locationInput.nativeElement.select();
+        return;
+      }
+    }
     this.isLoading = true;
-  }
-
-  // relocateAggregationLocation(barcode: string): void {
-  //   this.RelocateAggregationLocation.mutate(
-  //     {
-  //       qcContainer: this.qcContainer,
-  //       ITNList: this.ITNList,
-  //       Barcode: barcode,
-  //       DistributionCenter: DistributionCenter,
-  //       newLocation: this.newLocation,
-  //       isLastITN: this.isLastITN,
-  //       LocationList: this.locationList,
-  //     },
-  //     { fetchPolicy: 'no-cache' }
-  //   ).subscribe((res) => {
-  //     if (res.data.aggregationIn.success) {
-  //       const result = 'info';
-  //       const message = `Place in ${barcode}.`;
-  //       this.router.navigate(['agin'], {
-  //         queryParams: {
-  //           result,
-  //           message,
-  //         },
-  //       });
-  //     } else {
-  //       this.message = res.data.aggregationIn.message;
-  //       this.locationInput.nativeElement.select();
-  //     }
-  //     this.isLoading = false;
-  //   }),
-  //     (error) => {
-  //       this.message = error;
-  //       this.locationInput.nativeElement.select();
-  //       this.isLoading = false;
-  //     };
-  // }
-
-  // putOnAggregationShelf(barcode: string, fileKey: string): void {
-  //   this.PutOnAggregationShelf.mutate(
-  //     {
-  //       qcContainer: this.qcContainer,
-  //       ITNList: this.ITNList,
-  //       Barcode: barcode,
-  //       DistributionCenter: DistributionCenter,
-  //       newLocation: this.newLocation,
-  //       isLastITN: this.isLastITN,
-  //       LocationList: this.locationList,
-  //       FileKeyList: [fileKey],
-  //       ActionType: 'A',
-  //       Action: 'line_aggregation_in',
-  //       Inventory: { StatusID: AGInDone },
-  //     },
-  //     { fetchPolicy: 'no-cache' }
-  //   ).subscribe((res) => {
-  //     if (
-  //       res.data.aggregationIn.success &&
-  //       res.data.updateInventoryList.success
-  //     ) {
-  //       const result = 'info';
-  //       const message = `Place in ${barcode}.`;
-  //       this.router.navigate(['agin'], {
-  //         queryParams: {
-  //           result,
-  //           message,
-  //         },
-  //       });
-  //     } else {
-  //       this.message = `${res.data.aggregationIn.message}`;
-  //       this.locationInput.nativeElement.select();
-  //     }
-  //     this.isLoading = false;
-  //   }),
-  //     (error) => {
-  //       this.message = error;
-  //       this.locationInput.nativeElement.select();
-  //       this.isLoading = false;
-  //     };
-  // }
-
-  // updateLastLineOfOrder(barcode: string, fileKey: string): void {
-  //   this.UpdateLastLineOfOrder.mutate(
-  //     {
-  //       qcContainer: this.qcContainer,
-  //       ITNList: this.ITNList,
-  //       Barcode: barcode,
-  //       DistributionCenter: DistributionCenter,
-  //       newLocation: this.newLocation,
-  //       isLastITN: this.isLastITN,
-  //       LocationList: this.locationList,
-  //       FileKeyList: [fileKey],
-  //       ActionType: 'A',
-  //       Action: 'line_aggregation_in',
-  //       OrderNumber: this.ITNInfo[0].value,
-  //       NOSINumber: this.NOSINumber,
-  //       Status: StatusForMerpStatusAfterAgIn,
-  //       UserOrStatus: 'AGGREGATION-OUT',
-  //       Inventory: { StatusID: AGInDone },
-  //     },
-  //     { fetchPolicy: 'no-cache' }
-  //   ).subscribe((res) => {
-  //     if (
-  //       res.data.aggregationIn.success &&
-  //       res.data.updateInventoryList.success
-  //     ) {
-  //       const result = 'info';
-  //       const message = `Place in ${barcode}.\nOrder ${this.ITNInfo[0].value}-${this.NOSINumber} complete AG In.`;
-  //       this.router.navigate(['agin'], {
-  //         queryParams: {
-  //           result,
-  //           message,
-  //         },
-  //       });
-  //     } else {
-  //       this.message = res.data.aggregationIn.message;
-  //       this.locationInput.nativeElement.select();
-  //     }
-  //     this.isLoading = false;
-  //   }),
-  //     (error) => {
-  //       this.message = error;
-  //       this.locationInput.nativeElement.select();
-  //       this.isLoading = false;
-  //     };
-  // }
-
-  // fetchInfo(): void {
-  //   this.isLoading = true;
-  //   this.subscription.add(
-  //     this.fetchInventoryInfoGQL
-  //       .watch(
-  //         {
-  //           InternalTrackingNumber: this.ITNList[0],
-  //           DistributionCenter: DistributionCenter,
-  //         },
-  //         { fetchPolicy: 'no-cache' }
-  //       )
-  //       .valueChanges.subscribe(
-  //         (result) => {
-  //           this.isLoading = result.loading;
-  //           result.error && (this.message = result.error.message);
-  //           const data = result.data.fetchInventoryInfo;
-  //           this.orderLineNumber = data.OrderLineNumber;
-  //           this.NOSINumber = data.NOSINumber;
-  //           this.ITNInfo[0].value = data.OrderNumber;
-  //           this.ITNInfo[1].value =
-  //             data.PriorityPinkPaper === '1' ? 'Yes' : 'No';
-  //           this.ITNInfo[2].value = data.CustomerNumber;
-  //           this.ITNInfo[3].value = `${data.Quantity}`;
-  //           this.ITNInfo[4].value = `${data.ITNCount} of ${data.ITNTotal}`;
-  //           this.ITNInfo[5].value = data.ProductCode;
-  //           this.ITNInfo[6].value = data.PartNumber;
-  //           this.ITNInfo[7].value = data.ShippingMethod;
-  //           this.isLastITN = data.ITNCount === data.ITNTotal;
-  //           this.locationList = data.Locations;
-  //           // if the order is single ITN order skip location step.
-  //           if (data.ITNTotal === 1) {
-  //             this.singleITNorder(data.orderId);
-  //             return;
-  //           }
-  //           // auto select new location when ITNCount is 1 or less.
-  //           if (data.ITNCount < 2) {
-  //             this.newLocation = true;
-  //             if (!this.isRelocation) this.buttonLabel = `New Location`;
-  //           } else {
-  //             data.Locations.slice(0)
-  //               .reverse()
-  //               .map((element) => {
-  //                 if (element) {
-  //                   // use && to check if the first part is ture.
-  //                   this.locationsSet.size < 3 &&
-  //                     this.locationsSet.add(element);
-  //                 }
-  //               });
-  //             if (this.locationsSet.size !== 0) {
-  //               this.locations = [...this.locationsSet];
-  //             }
-  //           }
-  //         },
-  //         (error) => {
-  //           this.message = error;
-  //           this.isLoading = false;
-  //         }
-  //       )
-  //   );
-  // }
-
-  singleITNorder(OrderID: number): void {
-    this.isLoading = true;
-    this.subscription.add(
-      forkJoin({
-        updateOrder: this.updateAfterAgOut.mutate(
-          {
-            OrderID,
-            OrderLineDetail: { StatusID: environment.agOutComplete_ID },
-            DistributionCenter: environment.DistributionCenter,
-            OrderNumber: this.OrderNumber,
-            NOSINumber: this.NOSINumber,
-            UserOrStatus: 'Packing',
-            MerpStatus: String(environment.agOutComplete_ID),
-            FileKeyList: this.FileKeyList,
-            ActionType: 'A',
-            Action: 'line_aggregation_out',
-          },
-          { fetchPolicy: 'network-only' }
-        ),
-        checkHazmzd: this.fetchHazard.fetch(
-          { ProductList: this.ProductList },
-          { fetchPolicy: 'network-only' }
-        ),
-      })
-        .pipe(
-          tap((res) => {
-            //
-            if (!res.updateOrder.data.updateOrderLineDetail[0]) {
-              throw 'Update SQL OrderLineDetail failed.';
-            }
-            if (!res.updateOrder.data.updateMerpOrderStatus.success) {
-              throw res.updateOrder.data.updateMerpOrderStatus.message;
-            }
-          })
-        )
-        .subscribe(
-          (res) => {
-            let result = 'success';
-            let message = `Order complete ${this.OrderNumber}-${this.NOSINumber}`;
-            if (
-              res.checkHazmzd.data.fetchProductInfoFromMerp.some(
-                (node) =>
-                  /^[\w]+$/.test(node.HazardMaterialLevel.trim()) &&
-                  node.HazardMaterialLevel.trim() !== 'N'
-              )
-            ) {
-              result = 'warning';
-              message = message + `\nThis order contains hazardous materials`;
-            }
-            this.router.navigate(['agin'], {
-              queryParams: {
-                result,
-                message,
-              },
-            });
-            this.isLoading = false;
-          },
-          (error) => {
-            this.message = error;
-            this.isLoading = false;
+    // fetch container data for verification
+    this.updateLocation$ = this.verifyContainer
+      .fetch(
+        { Container: { Barcode: barcode } },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        // Emite Errors
+        tap((res) => {
+          const container = res.data.findContainer[0];
+          if (!container) {
+            throw 'Can not find this container';
           }
-        )
-    );
+          if (
+            ![environment.toteType_ID, environment.shelfType_ID].includes(
+              container.ContainerTypeID
+            )
+          ) {
+            throw 'This container should be tote or shelf';
+          }
+          if (container.Row !== 'AG') {
+            throw 'This container is not in Aggregation area';
+          }
+          // if target container is tote, check all items in target container have the some order number with source tote.
+          if (container.ContainerTypeID === environment.toteType_ID) {
+            container.ORDERLINEDETAILs.forEach((line) => {
+              // check if the item in container
+              if (line.OrderID !== Number(this.urlParams.OrderID)) {
+                throw 'This container has other order in it.';
+              }
+            });
+          }
+        }),
+
+        // switch to update Observable
+        switchMap((res) => {
+          const container = res.data.findContainer[0];
+          const updatequery = {};
+          // if target container is shelf, update source container's location with new location, else release tote to dc.
+          let sourceTote = {
+            Warehouse: null,
+            Row: null,
+            Aisle: null,
+            Section: null,
+            Shelf: null,
+            ShelfDetail: null,
+          };
+          const OrderLineDetail = {
+            StatusID: environment.agInComplete_ID,
+            ContainerID: container._id,
+          };
+          if (barcode.length > 8) {
+            sourceTote = {
+              Warehouse: container.Warehouse,
+              Row: container.Row,
+              Aisle: container.Aisle,
+              Section: container.Section,
+              Shelf: container.Shelf,
+              ShelfDetail: container.ShelfDetail,
+            };
+            delete OrderLineDetail.ContainerID;
+          }
+          // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
+          // set query for updateSql
+          updatequery['updateSql'] = this.updateSql.mutate({
+            ContainerID: Number(this.urlParams.toteID),
+            Container: sourceTote,
+            OrderLineDetail: OrderLineDetail,
+          });
+          // set query for merp update.
+          if (!this.isRelocation) {
+            updatequery['updateMerpLog'] = this.updateMerpLog.mutate(
+              {
+                DistributionCenter: environment.DistributionCenter,
+                FileKeyList: this.FileKeyListforAgIn,
+                ActionType: 'A',
+                Action: 'line_aggregation_in',
+              },
+              { fetchPolicy: 'network-only' }
+            );
+            if (this.isLastLine) {
+              updatequery['updateMerpOrder'] = this.updateMerpOrder.mutate(
+                {
+                  OrderNumber: this.OrderNumber,
+                  NOSINumber: this.NOSINumber,
+                  Status: String(environment.agInComplete_ID),
+                  UserOrStatus: 'AGGREGATION-OUT',
+                },
+                { fetchPolicy: 'network-only' }
+              );
+            }
+          }
+          return forkJoin(updatequery);
+        }),
+        // Emit Errors
+        tap((res: any) => {
+          let error: string;
+          if (!res.updateSql.data.updateOrderLineDetail[0]) {
+            error += `\nFail to update SQL OrderLineDetail.`;
+          }
+          if (!res.updateSql.data.updateContainer[0]) {
+            error += `\nFail to update SQL Container.`;
+          }
+          if (
+            res.updateMerpOrder &&
+            !res.updateMerpOrder.data.updateMerpOrderStatus.success
+          ) {
+            error += res.updateMerpOrder.data.updateMerpOrderStatus.message;
+          }
+          if (error)
+            throw `${this.OrderNumber}-${this.NOSINumber}`.concat(error);
+        }),
+        // Navgate to first after update success
+        map(() => {
+          let message = `Place in ${barcode}.`;
+          if (this.isLastLine) {
+            message += `\nOrder ${this.OrderNumber}-${this.NOSINumber} complete AG In.`;
+          }
+          this.router.navigate(['agin'], {
+            queryParams: {
+              result: 'info',
+              message,
+            },
+          });
+        }),
+        catchError((error) => {
+          this.message = error;
+          this.isLoading = false;
+          this.locationInput.nativeElement.select();
+          return of();
+        })
+      );
   }
 
   ngOnDestroy(): void {

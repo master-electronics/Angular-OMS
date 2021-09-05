@@ -106,11 +106,10 @@ export class AggregationInComponent
             }
             // only allow status is agIn complete and qc complete
             if (
-              ![
-                environment.qcComplete_ID,
-                environment.agInComplete_ID,
-                environment.agOutComplete_ID,
-              ].includes(container.ORDERLINEDETAILs[0].StatusID)
+              container.ORDERLINEDETAILs[0].StatusID <
+                environment.qcComplete_ID ||
+              container.ORDERLINEDETAILs[0].StatusID >
+                environment.agOutComplete_ID
             ) {
               throw "OrderLine's status is invalid.";
             }

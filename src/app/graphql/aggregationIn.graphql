@@ -2,6 +2,13 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
   findContainer(Container: $Container) {
     _id
     Barcode
+    ContainerTypeID
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
     ContainerType {
       IsMobile
     }
@@ -34,6 +41,15 @@ query fetchLocationAndOrderDetailForAgIn(
         PriorityPinkPaper
         ShippingMethod
       }
+    }
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
     }
   }
 }
@@ -76,5 +92,51 @@ mutation updateAfterAgOut(
 query fetchHazardMaterialLevel($ProductList: [String]!) {
   fetchProductInfoFromMerp(ProductList: $ProductList) {
     HazardMaterialLevel
+  }
+}
+
+mutation updateSQLAfterAgIn(
+  $ContainerID: Int!
+  $Container: updateContainer!
+  $OrderLineDetail: updateOrderLineDetail!
+) {
+  updateOrderLineDetail(
+    ContainerID: $ContainerID
+    OrderLineDetail: $OrderLineDetail
+  )
+  updateContainer(_id: $ContainerID, Container: $Container)
+}
+
+mutation updateMerpWMSLog(
+  $DistributionCenter: String!
+  $FileKeyList: [String!]!
+  $ActionType: String!
+  $Action: String!
+) {
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
+
+mutation updateMerpOrderStatus(
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $Status: String!
+  $UserOrStatus: String!
+) {
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
   }
 }

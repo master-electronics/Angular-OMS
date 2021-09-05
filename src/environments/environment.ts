@@ -16,6 +16,7 @@ export const environment = {
   agInComplete_ID: 63,
   agOutComplete_ID: 65,
   //WMS ContainerType table
+  shelfType_ID: 2,
   toteType_ID: 3,
 };
 

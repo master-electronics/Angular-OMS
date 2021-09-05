@@ -209,20 +209,20 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             return forkJoin(updateQueries);
           }),
           tap((res: any) => {
-            let error: string;
+            let error = '';
             if (!res.updateDetail.data.updateOrderLineDetail[0]) {
-              error = `${this.urlParams.ITN} Fail to update OrderLineDetail SQL`;
+              error += `\nFail to update OrderLineDetail SQL`;
             }
             if (!res.updateTargetContainer.data.updateContainer[0]) {
-              error += `${this.urlParams.ITN} Fail to update Target Container SQL`;
+              error += `\nFail to update Target Container SQL`;
             }
             if (
               res.updateSourceContainer &&
               !res.updateSourceContainer.data.updateContainer[0]
             ) {
-              error += `${this.urlParams.ITN} Fail to update source Container SQL`;
+              error += `\nFail to update source Container SQL`;
             }
-            if (error) throw error;
+            if (error) throw `${this.urlParams.ITN}`.concat(error);
           })
         )
         .subscribe(

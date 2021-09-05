@@ -1,28 +1,34 @@
+<div>{{ initInfo$ | async }}</div>
 <div class="container px-4 mx-auto mb-10 md:max-w-md">
   <div class="flex flex-col md:mt-6 ...">
     <!-- Top location info table -->
     <div class="font-bold text-black dark:text-white">
-      <h1>Locations:</h1>
-      <div class="justify-center text-lg grid">
-        <div class="grid grid-flow-col grid-rows-3" *ngIf="location$ | async">
+      <div class="justify-center text-lg grid" *ngIf="!isSingleLine">
+        <div class="grid grid-flow-col grid-rows-4" *ngIf="locationList">
+          <h1 *ngIf="locationList.length">Locations:</h1>
+          <h1 *ngIf="!locationList.length">First Tote</h1>
           <ul
-            *ngFor="let locationID of locations$ | async"
+            *ngFor="let location of locationList | slice: 0:3"
             class="text-yellow-600 text-xl"
           >
-            <span>{{ locationID.substring(0, 2) }}</span>
+            <span>{{ location.substring(0, 2) }}</span>
             <span>-</span>
-            <span>{{ locationID.substring(2, 4) }}</span>
+            <span>{{ location.substring(2, 4) }}</span>
             <span>-</span>
-            <span>{{ locationID.substring(4, 6) }}</span>
+            <span>{{ location.substring(4, 6) }}</span>
             <span>-</span>
-            <span>{{ locationID.substring(6, 8) }}</span>
+            <span>{{ location.substring(6, 8) }}</span>
             <span>-</span>
-            <span>{{ locationID.substring(8, 9) }}</span>
+            <span>{{ location.substring(8, 9) }}</span>
             <span>-</span>
-            <span>{{ locationID.substring(9, 11) }}</span>
-            <span class="text-blue-500">({{ locationID.substring(11) }})</span>
+            <span>{{ location.substring(9, 11) }}</span>
+            <span class="text-blue-500">({{ location.substring(11) }})</span>
           </ul>
         </div>
+      </div>
+      <div *ngIf="isSingleLine" class="text-green-500">
+        <h1>Single Line Order</h1>
+        <h1>Auto Aggregation Out</h1>
       </div>
       <!-- Location input form -->
       <form
@@ -59,9 +65,11 @@
             </div>
           </div>
         </div>
+        <div>{{ updateLocation$ | async }}</div>
         <div class="grid grid-cols-3 mt-6 md:mt-10">
           <form-button
             class="col-span-2"
+            type="submit"
             [disabled]="isLoading"
             [isLoading]="isLoading"
             [label]="buttonLabel"
