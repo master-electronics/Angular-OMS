@@ -18,13 +18,6 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent,
       },
-      // {
-      //   path: 'testorderentry',
-      //   loadChildren: () =>
-      //     import('./pages/order-entry/order-entry.module').then(
-      //       (m) => m.OrderEntryModule
-      //     ),
-      // },
       {
         path: 'agin',
         loadChildren: () =>
@@ -32,13 +25,13 @@ const routes: Routes = [
             (m) => m.AggregationInModule
           ),
       },
-      // {
-      //   path: 'agout',
-      //   loadChildren: () =>
-      //     import('./pages/aggregation-out/aggregation-out.module').then(
-      //       (m) => m.AggregationOutModule
-      //     ),
-      // },
+      {
+        path: 'agout',
+        loadChildren: () =>
+          import('./pages/aggregation-out/aggregation-out.module').then(
+            (m) => m.AggregationOutModule
+          ),
+      },
       {
         path: 'qc',
         loadChildren: () =>

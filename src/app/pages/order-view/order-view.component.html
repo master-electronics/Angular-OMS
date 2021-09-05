@@ -36,7 +36,7 @@
             formControlName="Priority"
           >
             <option *ngFor="let priority of priorityList" [value]="priority">
-              {{ priority === '' ? '' : priority === 'true' ? 'Yes' : 'No' }}
+              {{ priority === '' ? '' : priority ? 'Yes' : 'No' }}
             </option>
           </select>
         </div>
@@ -119,7 +119,7 @@
             >
           </td>
           <td class="py-2">{{ order.Status }}</td>
-          <td class="py-2">{{ order.Priority === 'true' ? 'Yes' : 'No' }}</td>
+          <td class="py-2">{{ order.Priority ? 'Yes' : 'No' }}</td>
           <td class="py-2">
             {{ order.ShippingMethod }}
           </td>

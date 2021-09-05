@@ -65,6 +65,7 @@ export type GlobalMessage = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
   /** For qc page */
   holdQCOrder: Response;
@@ -80,6 +81,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -168,6 +170,13 @@ export type MutationUpdateContainerArgs = {
   Barcode?: Maybe<Scalars['String']>;
 };
 
+export type MutationUpdateContainerListArgs = {
+  Container: UpdateContainer;
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type MutationUpdateOrderLineDetailArgs = {
   OrderLineDetail: UpdateOrderLineDetail;
   _id?: Maybe<Scalars['Int']>;
@@ -206,6 +215,13 @@ export type Order = {
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+};
+
+export type OrderForAgOut = {
+  __typename?: 'OrderForAgOut';
+  OrderID: Scalars['Int'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
 };
 
 export type OrderLine = {
@@ -371,14 +387,17 @@ export type InsertOrderLineDetail = {
 
 export type OrderView = {
   __typename?: 'orderView';
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  Status: Scalars['String'];
-  Priority: Scalars['String'];
-  ShippingMethod: Scalars['String'];
-  Unpicked: Scalars['Int'];
-  Aggregated: Scalars['Int'];
-  InProcess: Scalars['Int'];
+  OrderID?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
+  Status?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['String']>;
+  ShippingMethod?: Maybe<Scalars['String']>;
+  Unpicked?: Maybe<Scalars['Int']>;
+  Aggregated?: Maybe<Scalars['Int']>;
+  InProcess?: Maybe<Scalars['Int']>;
 };
 
 export type OrderViewFilter = {

@@ -58,6 +58,8 @@ mutation updateAfterAgOut(
   $OrderID: Int!
   $OrderLineDetail: updateOrderLineDetail!
   $DistributionCenter: String!
+  $Container: updateContainer!
+  $BarcodeList: [String]!
   $OrderNumber: String!
   $NOSINumber: String!
   $MerpStatus: String!
@@ -67,6 +69,14 @@ mutation updateAfterAgOut(
   $Action: String!
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+
+  updateContainerList(
+    DistributionCenter: $DistributionCenter
+    BarcodeList: $BarcodeList
+    Container: $Container
+  )
+
+  updateOrder(_id: $OrderID, Order: { isSelected: false })
 
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
@@ -138,5 +148,50 @@ mutation updateMerpOrderStatus(
   ) {
     success
     message
+  }
+}
+
+mutation pickOrderForAgOut {
+  pickOrderForAgOut {
+    OrderID
+    OrderNumber
+    NOSINumber
+  }
+}
+
+query verifyOrderForAgOut(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  fetchOrderView(
+    filter: {
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    }
+  ) {
+    OrderID
+    StatusID
+  }
+}
+
+query fetchContainerForAgoutPick($OrderID: Int) {
+  findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+    InternalTrackingNumber
+    OrderLine {
+      OrderLineNumber
+      ProductCode
+      PartNumber
+    }
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
   }
 }

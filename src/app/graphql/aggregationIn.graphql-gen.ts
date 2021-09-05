@@ -65,6 +65,7 @@ export type GlobalMessage = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
   /** For qc page */
   holdQCOrder: Response;
@@ -80,6 +81,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -168,6 +170,13 @@ export type MutationUpdateContainerArgs = {
   Barcode?: Maybe<Scalars['String']>;
 };
 
+export type MutationUpdateContainerListArgs = {
+  Container: UpdateContainer;
+  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type MutationUpdateOrderLineDetailArgs = {
   OrderLineDetail: UpdateOrderLineDetail;
   _id?: Maybe<Scalars['Int']>;
@@ -206,6 +215,13 @@ export type Order = {
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+};
+
+export type OrderForAgOut = {
+  __typename?: 'OrderForAgOut';
+  OrderID: Scalars['Int'];
+  OrderNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
 };
 
 export type OrderLine = {
@@ -371,14 +387,17 @@ export type InsertOrderLineDetail = {
 
 export type OrderView = {
   __typename?: 'orderView';
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  Status: Scalars['String'];
-  Priority: Scalars['String'];
-  ShippingMethod: Scalars['String'];
-  Unpicked: Scalars['Int'];
-  Aggregated: Scalars['Int'];
-  InProcess: Scalars['Int'];
+  OrderID?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
+  Status?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['String']>;
+  ShippingMethod?: Maybe<Scalars['String']>;
+  Unpicked?: Maybe<Scalars['Int']>;
+  Aggregated?: Maybe<Scalars['Int']>;
+  InProcess?: Maybe<Scalars['Int']>;
 };
 
 export type OrderViewFilter = {
@@ -576,6 +595,10 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   OrderID: Types.Scalars['Int'];
   OrderLineDetail: Types.UpdateOrderLineDetail;
   DistributionCenter: Types.Scalars['String'];
+  Container: Types.UpdateContainer;
+  BarcodeList:
+    | Array<Types.Maybe<Types.Scalars['String']>>
+    | Types.Maybe<Types.Scalars['String']>;
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   MerpStatus: Types.Scalars['String'];
@@ -587,7 +610,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 
 export type UpdateAfterAgOutMutation = { __typename?: 'Mutation' } & Pick<
   Types.Mutation,
-  'updateOrderLineDetail'
+  'updateOrderLineDetail' | 'updateContainerList' | 'updateOrder'
 > & {
     updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
       Types.Response,
@@ -654,6 +677,70 @@ export type UpdateMerpOrderStatusMutation = { __typename?: 'Mutation' } & {
   updateMerpOrderStatus: { __typename?: 'Response' } & Pick<
     Types.Response,
     'success' | 'message'
+  >;
+};
+
+export type PickOrderForAgOutMutationVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type PickOrderForAgOutMutation = { __typename?: 'Mutation' } & {
+  pickOrderForAgOut?: Types.Maybe<
+    { __typename?: 'OrderForAgOut' } & Pick<
+      Types.OrderForAgOut,
+      'OrderID' | 'OrderNumber' | 'NOSINumber'
+    >
+  >;
+};
+
+export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+export type VerifyOrderForAgOutQuery = { __typename?: 'Query' } & {
+  fetchOrderView?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'orderView' } & Pick<
+          Types.OrderView,
+          'OrderID' | 'StatusID'
+        >
+      >
+    >
+  >;
+};
+
+export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
+  OrderID?: Types.Maybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query' } & {
+  findOrderLineDetail?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'OrderLineDetail' } & Pick<
+          Types.OrderLineDetail,
+          'InternalTrackingNumber'
+        > & {
+            OrderLine: { __typename?: 'OrderLine' } & Pick<
+              Types.OrderLine,
+              'OrderLineNumber' | 'ProductCode' | 'PartNumber'
+            >;
+            Container: { __typename?: 'Container' } & Pick<
+              Types.Container,
+              | 'Barcode'
+              | 'Warehouse'
+              | 'Row'
+              | 'Aisle'
+              | 'Section'
+              | 'Shelf'
+              | 'ShelfDetail'
+            >;
+          }
+      >
+    >
   >;
 };
 
@@ -748,6 +835,8 @@ export const UpdateAfterAgOutDocument = gql`
     $OrderID: Int!
     $OrderLineDetail: updateOrderLineDetail!
     $DistributionCenter: String!
+    $Container: updateContainer!
+    $BarcodeList: [String]!
     $OrderNumber: String!
     $NOSINumber: String!
     $MerpStatus: String!
@@ -757,6 +846,12 @@ export const UpdateAfterAgOutDocument = gql`
     $Action: String!
   ) {
     updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+    updateContainerList(
+      DistributionCenter: $DistributionCenter
+      BarcodeList: $BarcodeList
+      Container: $Container
+    )
+    updateOrder(_id: $OrderID, Order: { isSelected: false })
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
@@ -898,6 +993,96 @@ export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<
   UpdateMerpOrderStatusMutationVariables
 > {
   document = UpdateMerpOrderStatusDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const PickOrderForAgOutDocument = gql`
+  mutation pickOrderForAgOut {
+    pickOrderForAgOut {
+      OrderID
+      OrderNumber
+      NOSINumber
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PickOrderForAgOutGQL extends Apollo.Mutation<
+  PickOrderForAgOutMutation,
+  PickOrderForAgOutMutationVariables
+> {
+  document = PickOrderForAgOutDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const VerifyOrderForAgOutDocument = gql`
+  query verifyOrderForAgOut(
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+  ) {
+    fetchOrderView(
+      filter: {
+        DistributionCenter: $DistributionCenter
+        OrderNumber: $OrderNumber
+        NOSINumber: $NOSINumber
+      }
+    ) {
+      OrderID
+      StatusID
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyOrderForAgOutGQL extends Apollo.Query<
+  VerifyOrderForAgOutQuery,
+  VerifyOrderForAgOutQueryVariables
+> {
+  document = VerifyOrderForAgOutDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchContainerForAgoutPickDocument = gql`
+  query fetchContainerForAgoutPick($OrderID: Int) {
+    findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+      InternalTrackingNumber
+      OrderLine {
+        OrderLineNumber
+        ProductCode
+        PartNumber
+      }
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchContainerForAgoutPickGQL extends Apollo.Query<
+  FetchContainerForAgoutPickQuery,
+  FetchContainerForAgoutPickQueryVariables
+> {
+  document = FetchContainerForAgoutPickDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

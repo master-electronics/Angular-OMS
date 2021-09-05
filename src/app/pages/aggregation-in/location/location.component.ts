@@ -191,6 +191,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 OrderID: Number(this.urlParams.OrderID),
                 OrderLineDetail: { StatusID: environment.agOutComplete_ID },
                 DistributionCenter: environment.DistributionCenter,
+                Container: {
+                  Warehouse: null,
+                  Row: null,
+                  Aisle: null,
+                  Section: null,
+                  Shelf: null,
+                  ShelfDetail: null,
+                },
+                BarcodeList: [this.urlParams.Barcode],
                 OrderNumber: this.OrderNumber,
                 NOSINumber: this.NOSINumber,
                 UserOrStatus: 'Packing',
@@ -212,6 +221,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           let error = '';
           if (!res.updateOrder.data.updateOrderLineDetail[0]) {
             error += 'Update SQL OrderLineDetail failed.\n';
+          }
+          if (!res.updateOrder.data.updateContainerList[0]) {
+            error += 'Update SQL Container failed.\n';
+          }
+          if (!res.updateOrder.data.updateOrder[0]) {
+            error += 'Update SQL Order failed.\n';
           }
           if (!res.updateOrder.data.updateMerpOrderStatus.success) {
             error += res.updateOrder.data.updateMerpOrderStatus.message;

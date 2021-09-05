@@ -12,15 +12,14 @@ import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
+import { take, tap } from 'rxjs/operators';
 import {
-  FetchLocationForAggregationOutGQL,
-  UpdateOrderAfterAgOutGQL,
+  FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
-} from '../../../graphql/forAggregation.graphql-gen';
-import { take } from 'rxjs/operators';
-
-const StatusIDAgOutDone = 5;
-const StatusForMerpStatusAfterAgOut = '65';
+  UpdateAfterAgOutGQL,
+} from 'src/app/graphql/aggregationIn.graphql-gen';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'aggregationout-pick',
@@ -31,13 +30,13 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   urlParams: { [key: string]: string };
   DistributionCenter: string;
   NOSINumber: string;
+  // html control
+  buttonLabel = `Pick`;
+  buttonStyles = `bg-indigo-500`;
   isLoading = false;
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
   message = '';
-  totalITNs = 1;
-  orderID: number;
+  totalITNs = 0;
   itemList = [];
   selectedList = [];
 
@@ -57,42 +56,40 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     private commonService: CommonService,
     private router: Router,
     private route: ActivatedRoute,
-    private fetchLocation: FetchLocationForAggregationOutGQL,
-    private updateOrderAfterAgOut: UpdateOrderAfterAgOutGQL,
-    private fetchHazardMaterialLevel: FetchHazardMaterialLevelGQL
+    private titleService: Title,
+    private fetchLocation: FetchContainerForAgoutPickGQL,
+    private fetchHazard: FetchHazardMaterialLevelGQL,
+    private updateAfterQC: UpdateAfterAgOutGQL
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     this.urlParams = { ...this.route.snapshot.queryParams };
-    this.title = `Pick: ${this.urlParams.orderNumber}-${this.urlParams.NOSINumber}`;
-    this.commonService.changeTitle(this.title);
-    this.fetchItemsInfo();
+    this.title = `Pick: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
+    this.commonService.changeNavbar(this.title);
+    this.titleService.setTitle('agout/pick');
+    this.fetchLocationInfo();
   }
 
   ngAfterViewInit(): void {
     this.containerInput.nativeElement.select();
   }
 
-  fetchItemsInfo(): void {
+  fetchLocationInfo(): void {
     this.isLoading = true;
     this.subscription.add(
       this.fetchLocation
-        .watch(
+        .fetch(
           {
-            DistributionCenter: this.urlParams.DC,
-            OrderNumber: this.urlParams.orderNumber,
-            NOSINumber: this.urlParams.NOSINumber,
+            OrderID: Number(this.urlParams.OrderID),
           },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'network-only' }
         )
-        .valueChanges.subscribe(
-          (result) => {
-            this.isLoading = result.loading;
-            result.error && (this.message = result.error.message);
-            this.itemList = result.data.findOrder[0].INVENTORies;
+        .subscribe(
+          (res) => {
+            this.itemList = res.data.findOrderLineDetail;
             this.totalITNs = this.itemList.length;
-            this.orderID = result.data.findOrder[0]._id;
+            this.isLoading = res.loading;
           },
           (error) => {
             this.message = error;
@@ -104,62 +101,92 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     this.message = '';
-    if (this.containerForm.valid) {
-      this.selectContainer();
+    if (!this.containerForm.valid) {
+      this.containerInput.nativeElement.select();
+      return;
     }
+    this.selectContainer();
   }
 
   updateSQLAndCheckHazmzd(): Observable<any> {
-    const fileKey = `${this.urlParams.DistributionCenter}${this.urlParams.orderNumber}${this.urlParams.NOSINumber}`;
-    const fileKeyList = [];
+    const fileKey = `${environment.DistributionCenter}${this.urlParams.OrderNumber}${this.urlParams.NOSINumber}`;
+    const FileKeyList = [];
     const productSet = new Set<string>();
-    const ITNSet = new Set<string>();
-    this.selectedList.forEach((node, index) => {
-      fileKeyList.push(
-        `${fileKey}${String(index + 1).padStart(2, '0')}packing        ${
-          node.InternalTrackingNumber
-        }`
+    const BarcodeList = [];
+    this.selectedList.forEach((node) => {
+      FileKeyList.push(
+        `${fileKey}${String(node.OrderLine.OrderLineNumber).padStart(
+          2,
+          '0'
+        )}packing        ${node.InternalTrackingNumber}`
       );
-      productSet.add(`${node.ProductCode.padEnd(3)}${node.PartNumber}`);
-      ITNSet.add(node.InternalTrackingNumber);
+      BarcodeList.push(node.Container.Barcode);
+      productSet.add(
+        `${node.OrderLine.ProductCode.padEnd(3)}${node.OrderLine.PartNumber}`
+      );
     });
     const productList = [...productSet];
-    const ITNList = [...ITNSet];
 
     return forkJoin({
-      updateOrder: this.updateOrderAfterAgOut.mutate(
+      updateOrder: this.updateAfterQC.mutate(
         {
-          _id: this.orderID,
-          Order: {
-            StatusID: StatusIDAgOutDone,
+          OrderID: Number(this.urlParams.OrderID),
+          OrderLineDetail: {
+            StatusID: environment.agOutComplete_ID,
           },
-          DistributionCenter: this.urlParams.DistributionCenter,
-          OrderNumber: this.urlParams.orderNumber,
+          Container: {
+            Warehouse: null,
+            Row: null,
+            Aisle: null,
+            Section: null,
+            Shelf: null,
+            ShelfDetail: null,
+          },
+          BarcodeList,
+          DistributionCenter: environment.DistributionCenter,
+          OrderNumber: this.urlParams.OrderNumber,
           NOSINumber: this.urlParams.NOSINumber,
           UserOrStatus: 'Packing',
-          MerpStatus: StatusForMerpStatusAfterAgOut,
-          FileKeyList: fileKeyList,
+          MerpStatus: String(environment.agOutComplete_ID),
+          FileKeyList,
           ActionType: 'A',
           Action: 'line_aggregation_out',
-          Inventory: { StatusID: StatusIDAgOutDone },
-          ITNList: ITNList,
         },
-        { fetchPolicy: 'no-cache' }
+        { fetchPolicy: 'network-only' }
       ),
-      checkHazmzd: this.fetchHazardMaterialLevel
-        .fetch({ ProductList: productList }, { fetchPolicy: 'no-cache' })
-        .pipe(take(1)),
+      checkHazmzd: this.fetchHazard.fetch(
+        { ProductList: productList },
+        { fetchPolicy: 'network-only' }
+      ),
     });
   }
 
   updateAfterPick(): void {
     this.isLoading = true;
     this.subscription.add(
-      this.updateSQLAndCheckHazmzd().subscribe(
-        (res) => {
-          if (res.updateOrder.data.updateOrder.success) {
+      this.updateSQLAndCheckHazmzd()
+        .pipe(
+          tap((res) => {
+            let error = '';
+            if (!res.updateOrder.data.updateOrderLineDetail[0]) {
+              error += 'Update SQL OrderLineDetail failed.\n';
+            }
+            if (!res.updateOrder.data.updateContainerList[0]) {
+              error += 'Update SQL Container failed.\n';
+            }
+            if (!res.updateOrder.data.updateOrder[0]) {
+              error += 'Update SQL Order failed.\n';
+            }
+            if (!res.updateOrder.data.updateMerpOrderStatus.success) {
+              error += res.updateOrder.data.updateMerpOrderStatus.message;
+            }
+            if (error) throw error;
+          })
+        )
+        .subscribe(
+          (res) => {
             let result = 'success';
-            let message = `Aggregation Out: ${this.urlParams.orderNumber}-${this.urlParams.NOSINumber}`;
+            let message = `Order complete: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
             if (
               res.checkHazmzd.data.fetchProductInfoFromMerp.some(
                 (node) =>
@@ -176,28 +203,14 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
                 message,
               },
             });
+            this.isLoading = false;
+          },
+          (err) => {
+            this.isLoading = false;
+            this.message = err;
           }
-          if (res.updateOrder.data.updateOrder.message === `Invalid Order!`) {
-            this.router.navigate(['/agout'], {
-              queryParams: {
-                result: 'error',
-                message: `Invalid Order: ${this.urlParams.orderNumber}-${this.urlParams.NOSINUmber}`,
-              },
-            });
-          }
-          this.isLoading = false;
-          this.message =
-            res.updateOrder.data.updateOrder.message +
-            res.updateOrder.data.updateMerpOrderStatus.message +
-            res.updateOrder.data.updateMerpWMSLog.message;
-        },
-        (err) => {
-          this.isLoading = false;
-          this.message = err;
-        }
-      )
+        )
     );
-    this.containerInput.nativeElement.select();
   }
 
   selectContainer(): void {

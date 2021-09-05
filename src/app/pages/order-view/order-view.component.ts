@@ -114,7 +114,7 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
             const shipMethodSet = new Set();
             const statusSet = new Set();
             res.data.fetchOrderView.forEach((element) => {
-              prioritySet.add(element.Priority.trim());
+              prioritySet.add(element.Priority);
               shipMethodSet.add(element.ShippingMethod.trim());
               statusSet.add(element.Status.trim());
             });
