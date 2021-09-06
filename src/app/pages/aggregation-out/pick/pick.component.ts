@@ -8,11 +8,11 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
-import { take, tap } from 'rxjs/operators';
+import { catchError, map, take, tap } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
@@ -166,6 +166,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.updateSQLAndCheckHazmzd()
         .pipe(
+          // throw errors
           tap((res) => {
             let error = '';
             if (!res.updateOrder.data.updateOrderLineDetail[0]) {
@@ -181,10 +182,10 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               error += res.updateOrder.data.updateMerpOrderStatus.message;
             }
             if (error) throw error;
-          })
-        )
-        .subscribe(
-          (res) => {
+          }),
+
+          // navgate to first page if success
+          map((res) => {
             let result = 'success';
             let message = `Order complete: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
             if (
@@ -204,12 +205,16 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             });
             this.isLoading = false;
-          },
-          (err) => {
+          }),
+
+          catchError((error) => {
+            this.message = error;
             this.isLoading = false;
-            this.message = err;
-          }
+            this.containerInput.nativeElement.select();
+            return of();
+          })
         )
+        .subscribe()
     );
   }
 

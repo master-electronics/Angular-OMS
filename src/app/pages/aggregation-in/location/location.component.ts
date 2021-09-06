@@ -108,6 +108,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
+        // if the order is singleLine order Auto ag out, else complete Observable
         filter((res) => {
           const locationsSet: Set<string> = new Set();
           let totalLines = 0;
@@ -182,7 +183,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLoading = false;
           return false;
         }),
-        // if the order is singleLine order Auto ag out, else complete Observable
+
         // swith to ag out update observeable
         switchMap(() => {
           return forkJoin({
@@ -216,6 +217,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             ),
           });
         }),
+
         // Emite errors
         tap((res) => {
           let error = '';
@@ -233,6 +235,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           if (error) throw error;
         }),
+
         // Back to first page after ag out success
         map((res) => {
           let result = 'success';
@@ -255,6 +258,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           });
           this.isLoading = false;
         }),
+
         catchError((error) => {
           this.message = error;
           this.isLoading = false;
@@ -289,8 +293,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     if (!this.newLocation && barcode.length > 8) {
-      const inList = !this.locationList.every((location) => {
-        location.substring(0, 11) !== barcode;
+      const inList = this.locationList.some((location) => {
+        return location.substring(0, 11) === barcode;
       });
       if (!inList) {
         this.message = 'This container is a new location';
@@ -394,6 +398,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           return forkJoin(updatequery);
         }),
+
         // Emit Errors
         tap((res: any) => {
           let error: string;
@@ -412,6 +417,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           if (error)
             throw `${this.OrderNumber}-${this.NOSINumber}`.concat(error);
         }),
+
         // Navgate to first after update success
         map(() => {
           let message = `Place in ${barcode}.`;
@@ -425,6 +431,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             },
           });
         }),
+
         catchError((error) => {
           this.message = error;
           this.isLoading = false;

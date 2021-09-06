@@ -108,7 +108,7 @@ export class AggregationInComponent
             if (
               container.ORDERLINEDETAILs[0].StatusID <
                 environment.qcComplete_ID ||
-              container.ORDERLINEDETAILs[0].StatusID >
+              container.ORDERLINEDETAILs[0].StatusID >=
                 environment.agOutComplete_ID
             ) {
               throw "OrderLine's status is invalid.";
