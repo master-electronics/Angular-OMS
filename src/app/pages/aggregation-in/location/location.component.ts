@@ -187,30 +187,27 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // swith to ag out update observeable
         switchMap(() => {
           return forkJoin({
-            updateOrder: this.updateAfterAgOut.mutate(
-              {
-                OrderID: Number(this.urlParams.OrderID),
-                OrderLineDetail: { StatusID: environment.agOutComplete_ID },
-                DistributionCenter: environment.DistributionCenter,
-                Container: {
-                  Warehouse: null,
-                  Row: null,
-                  Aisle: null,
-                  Section: null,
-                  Shelf: null,
-                  ShelfDetail: null,
-                },
-                BarcodeList: [this.urlParams.Barcode],
-                OrderNumber: this.OrderNumber,
-                NOSINumber: this.NOSINumber,
-                UserOrStatus: 'Packing',
-                MerpStatus: String(environment.agOutComplete_ID),
-                FileKeyList: FileKeyListforAgOut,
-                ActionType: 'A',
-                Action: 'line_aggregation_out',
+            updateOrder: this.updateAfterAgOut.mutate({
+              OrderID: Number(this.urlParams.OrderID),
+              OrderLineDetail: { StatusID: environment.agOutComplete_ID },
+              DistributionCenter: environment.DistributionCenter,
+              Container: {
+                Warehouse: null,
+                Row: null,
+                Aisle: null,
+                Section: null,
+                Shelf: null,
+                ShelfDetail: null,
               },
-              { fetchPolicy: 'network-only' }
-            ),
+              BarcodeList: [this.urlParams.Barcode],
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+              UserOrStatus: 'Packing',
+              MerpStatus: String(environment.agOutComplete_ID),
+              FileKeyList: FileKeyListforAgOut,
+              ActionType: 'A',
+              Action: 'line_aggregation_out',
+            }),
             checkHazmzd: this.fetchHazard.fetch(
               { ProductList: ProductList },
               { fetchPolicy: 'network-only' }
@@ -375,25 +372,19 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           });
           // set query for merp update.
           if (!this.isRelocation) {
-            updatequery['updateMerpLog'] = this.updateMerpLog.mutate(
-              {
-                DistributionCenter: environment.DistributionCenter,
-                FileKeyList: this.FileKeyListforAgIn,
-                ActionType: 'A',
-                Action: 'line_aggregation_in',
-              },
-              { fetchPolicy: 'network-only' }
-            );
+            updatequery['updateMerpLog'] = this.updateMerpLog.mutate({
+              DistributionCenter: environment.DistributionCenter,
+              FileKeyList: this.FileKeyListforAgIn,
+              ActionType: 'A',
+              Action: 'line_aggregation_in',
+            });
             if (this.isLastLine) {
-              updatequery['updateMerpOrder'] = this.updateMerpOrder.mutate(
-                {
-                  OrderNumber: this.OrderNumber,
-                  NOSINumber: this.NOSINumber,
-                  Status: String(environment.agInComplete_ID),
-                  UserOrStatus: 'AGGREGATION-OUT',
-                },
-                { fetchPolicy: 'network-only' }
-              );
+              updatequery['updateMerpOrder'] = this.updateMerpOrder.mutate({
+                OrderNumber: this.OrderNumber,
+                NOSINumber: this.NOSINumber,
+                Status: String(environment.agInComplete_ID),
+                UserOrStatus: 'AGGREGATION-OUT',
+              });
             }
           }
           return forkJoin(updatequery);

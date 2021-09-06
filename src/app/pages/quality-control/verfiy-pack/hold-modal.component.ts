@@ -19,8 +19,8 @@ import {
 } from '../../../graphql/forQualityControl.graphql-gen';
 import { CommonService } from '../../../shared/services/common.service';
 import { Title } from '@angular/platform-browser';
-
-const warehouseHold = 30;
+import { environment } from 'src/environments/environment';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'hold-modal',
@@ -42,13 +42,13 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
     private router: Router,
     private commonService: CommonService,
     private titleService: Title
-  ) {
-    titleService.setTitle('qc/qchold');
-  }
+  ) {}
 
   @ViewChild('holdInput') holdInput: ElementRef;
   ngAfterViewInit(): void {
-    this.holdInput.nativeElement.select();
+    setTimeout(() => {
+      this.holdInput.nativeElement.select();
+    }, 50);
   }
 
   holdOptions = [
@@ -69,7 +69,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
       InternalTrackingNumber: this.ITN,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
-      StatusID: warehouseHold,
+      StatusID: environment.warehouseHold_ID,
     };
     this.isLoading = true;
     this.writeInfoToMerp(qcHoldOrderInfo);
@@ -81,10 +81,10 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
 
   writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): void {
     this.subscription.add(
-      this.holdQCOrder.mutate(holdInfo, { fetchPolicy: 'no-cache' }).subscribe(
+      this.holdQCOrder.mutate(holdInfo).subscribe(
         (res) => {
-          let type: string;
-          let message: string;
+          let type = '';
+          let message = '';
           this.isLoading = false;
           if (!res.data.holdQCOrder.success) {
             type = 'error';
@@ -92,7 +92,7 @@ export class HoldModalComponent implements OnDestroy, AfterViewInit {
           }
           if (!res.data.updateOrderLineDetail[0]) {
             type = 'error';
-            message += `Fail to update SQL`;
+            message = message.concat(`Fail to update SQL`);
           }
           message = `${this.ITN} hold failed\n`.concat(message);
           if (!type) {

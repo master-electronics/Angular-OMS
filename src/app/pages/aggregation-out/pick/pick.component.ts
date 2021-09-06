@@ -128,32 +128,29 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     const productList = [...productSet];
 
     return forkJoin({
-      updateOrder: this.updateAfterQC.mutate(
-        {
-          OrderID: Number(this.urlParams.OrderID),
-          OrderLineDetail: {
-            StatusID: environment.agOutComplete_ID,
-          },
-          Container: {
-            Warehouse: null,
-            Row: null,
-            Aisle: null,
-            Section: null,
-            Shelf: null,
-            ShelfDetail: null,
-          },
-          BarcodeList,
-          DistributionCenter: environment.DistributionCenter,
-          OrderNumber: this.urlParams.OrderNumber,
-          NOSINumber: this.urlParams.NOSINumber,
-          UserOrStatus: 'Packing',
-          MerpStatus: String(environment.agOutComplete_ID),
-          FileKeyList,
-          ActionType: 'A',
-          Action: 'line_aggregation_out',
+      updateOrder: this.updateAfterQC.mutate({
+        OrderID: Number(this.urlParams.OrderID),
+        OrderLineDetail: {
+          StatusID: environment.agOutComplete_ID,
         },
-        { fetchPolicy: 'network-only' }
-      ),
+        Container: {
+          Warehouse: null,
+          Row: null,
+          Aisle: null,
+          Section: null,
+          Shelf: null,
+          ShelfDetail: null,
+        },
+        BarcodeList,
+        DistributionCenter: environment.DistributionCenter,
+        OrderNumber: this.urlParams.OrderNumber,
+        NOSINumber: this.urlParams.NOSINumber,
+        UserOrStatus: 'Packing',
+        MerpStatus: String(environment.agOutComplete_ID),
+        FileKeyList,
+        ActionType: 'A',
+        Action: 'line_aggregation_out',
+      }),
       checkHazmzd: this.fetchHazard.fetch(
         { ProductList: productList },
         { fetchPolicy: 'network-only' }

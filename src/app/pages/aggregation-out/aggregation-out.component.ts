@@ -60,26 +60,24 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     this.messageType = this.route.snapshot.queryParams['result'];
     this.message = this.route.snapshot.queryParams['message'];
     this.isLoading = true;
-    this.pickOrder$ = this.pickOrder
-      .mutate(null, { fetchPolicy: 'network-only' })
-      .pipe(
-        tap((res) => {
-          const order = res.data.pickOrderForAgOut;
-          let orderBarcode = `No available order`;
-          if (order) {
-            orderBarcode = `${order.OrderNumber}-${order.NOSINumber}`;
-          }
-          this.f.orderNumber.setValue(orderBarcode);
-          this.orderInpt.nativeElement.select();
-          this.isLoading = false;
-        }),
-        catchError((error) => {
-          this.message = error;
-          this.orderInpt.nativeElement.select();
-          this.isLoading = false;
-          return of([]);
-        })
-      );
+    this.pickOrder$ = this.pickOrder.mutate(null).pipe(
+      tap((res) => {
+        const order = res.data.pickOrderForAgOut;
+        let orderBarcode = `No available order`;
+        if (order) {
+          orderBarcode = `${order.OrderNumber}-${order.NOSINumber}`;
+        }
+        this.f.orderNumber.setValue(orderBarcode);
+        this.orderInpt.nativeElement.select();
+        this.isLoading = false;
+      }),
+      catchError((error) => {
+        this.message = error;
+        this.orderInpt.nativeElement.select();
+        this.isLoading = false;
+        return of([]);
+      })
+    );
   }
 
   ngAfterViewInit(): void {

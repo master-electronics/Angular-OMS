@@ -199,9 +199,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     countryOO._id === 1
       ? (cooValue = null)
       : (cooValue = countryOO.name.substring(0, 2));
-    const preROHS = this.urlParams.ROHS;
-    const preCOO = this.urlParams.coo;
-    const preDateCode = this.urlParams.DateCode;
     this.urlParams.ROHS = this.verifyPack.get('ROHS').value;
     this.urlParams.coo = cooValue;
     this.urlParams.DateCode = this.verifyPack.get('dateCode').value;
@@ -218,11 +215,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //check if change then update info to merp and wms
     const updateQuery = { updateMerp, updateWms };
-    if (
-      Number(preROHS) === this.urlParams.ROHS &&
-      preCOO === this.urlParams.coo &&
-      preDateCode === this.urlParams.DateCode
-    ) {
+    if (!this.editable) {
       delete updateQuery.updateWms;
     }
     this.isLoading = true;
