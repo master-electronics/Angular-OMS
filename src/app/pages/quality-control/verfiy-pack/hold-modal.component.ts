@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 import {
   HoldQcOrderGQL,
   HoldQcOrderMutationVariables,
-} from '../../../graphql/forQualityControl.graphql-gen';
+} from '../../../graphql/qualityControl.graphql-gen';
 import { CommonService } from '../../../shared/services/common.service';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';

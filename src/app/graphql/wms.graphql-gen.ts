@@ -512,6 +512,7 @@ export type Update_OrderLineDetailMutationVariables = Types.Exact<{
   InternalTrackingNumber?: Types.Maybe<Types.Scalars['String']>;
   OrderLineID?: Types.Maybe<Types.Scalars['Int']>;
   OrderID?: Types.Maybe<Types.Scalars['Int']>;
+  ContainerID?: Types.Maybe<Types.Scalars['Int']>;
   OrderLineDetail: Types.UpdateOrderLineDetail;
 }>;
 
@@ -537,6 +538,7 @@ export const Update_OrderLineDetailDocument = gql`
     $InternalTrackingNumber: String
     $OrderLineID: Int
     $OrderID: Int
+    $ContainerID: Int
     $OrderLineDetail: updateOrderLineDetail!
   ) {
     updateOrderLineDetail(
@@ -544,6 +546,7 @@ export const Update_OrderLineDetailDocument = gql`
       InternalTrackingNumber: $InternalTrackingNumber
       OrderLineID: $OrderLineID
       OrderID: $OrderID
+      ContainerID: $ContainerID
       OrderLineDetail: $OrderLineDetail
     )
   }

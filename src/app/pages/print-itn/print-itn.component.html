@@ -26,11 +26,9 @@
 
       <div class="mt-8">
         <form-button
-          [styles]="buttonStyles"
-          [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          label="Submit"
+          (click)="onSubmit()"
         ></form-button>
       </div>
       <div class="mt-6">
@@ -40,7 +38,7 @@
   </div>
 </div>
 <check-printer-modal
-  *ngIf="!isModalHidden"
+  *ngIf="(station$ | async) && !isModalHidden"
   [(isModalHidden)]="isModalHidden"
   [modalMessage]="modalMessage"
 ></check-printer-modal>

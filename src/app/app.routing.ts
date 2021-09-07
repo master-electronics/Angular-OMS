@@ -53,20 +53,20 @@ const routes: Routes = [
             (m) => m.OrderViewModule
           ),
       },
-      // {
-      //   path: 'printITN',
-      //   loadChildren: () =>
-      //     import('./pages/print-itn/print-itn.module').then(
-      //       (m) => m.PrintITNModule
-      //     ),
-      // },
-      // {
-      //   path: 'relocate',
-      //   loadChildren: () =>
-      //     import('./pages/relocate/relocate.module').then(
-      //       (m) => m.RelocateModule
-      //     ),
-      // },
+      {
+        path: 'printitn',
+        loadChildren: () =>
+          import('./pages/print-itn/print-itn.module').then(
+            (m) => m.PrintITNModule
+          ),
+      },
+      {
+        path: 'relocate',
+        loadChildren: () =>
+          import('./pages/relocate/relocate.module').then(
+            (m) => m.RelocateModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

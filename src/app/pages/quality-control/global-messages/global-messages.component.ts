@@ -9,7 +9,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
-import { QcGlobalMessageGQL } from '../../../graphql/forQualityControl.graphql-gen';
+import { QcGlobalMessageGQL } from '../../../graphql/qualityControl.graphql-gen';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { Title } from '@angular/platform-browser';
 

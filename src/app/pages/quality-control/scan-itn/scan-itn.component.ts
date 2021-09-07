@@ -13,7 +13,7 @@ import { QualityControlService, urlParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { tap } from 'rxjs/operators';
-import { VerifyItNforQcGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
+import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
 

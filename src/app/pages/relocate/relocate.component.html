@@ -14,7 +14,7 @@
           #containerNumber
           required
         />
-        <label for="containerNumber" class="float-label"> From Tote# </label>
+        <label for="containerNumber" class="float-label"> From: </label>
         <div
           class="text-red-500 text-sm absolute"
           *ngIf="
@@ -23,7 +23,7 @@
           "
         >
           <div *ngIf="this.f.containerNumber.errors.required">
-            Tote# is required.
+            Container# is required.
           </div>
           <div *ngIf="this.f.containerNumber.errors.pattern">
             Example: 50-01-01
@@ -33,13 +33,12 @@
 
       <div class="mt-8">
         <form-button
-          [styles]="buttonStyles"
-          [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
-          [label]="buttonLabel"
+          (click)="onSubmit()"
         ></form-button>
       </div>
+      <div>{{ tote$ | async }}</div>
       <div class="mt-6">
         <message-bar [message]="message" [type]="messageType"></message-bar>
       </div>

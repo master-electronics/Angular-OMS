@@ -13,7 +13,7 @@ import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
-} from '../../../graphql/forQualityControl.graphql-gen';
+} from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';

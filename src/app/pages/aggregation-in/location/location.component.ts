@@ -324,8 +324,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           if (container.Row !== 'AG') {
             throw 'This container is not in Aggregation area';
           }
-          // if target container is tote, check all items in target container have the some order number with source tote.
-          if (container.ContainerTypeID === environment.toteType_ID) {
+          // if target container is mobile, check all items in target container have the some order number with source tote.
+          if (container.ContainerType.IsMobile) {
             container.ORDERLINEDETAILs.forEach((line) => {
               // check if the item in container
               if (line.OrderID !== Number(this.urlParams.OrderID)) {
@@ -352,7 +352,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             StatusID: environment.agInComplete_ID,
             ContainerID: container._id,
           };
-          if (barcode.length > 8) {
+          if (!container.ContainerType.IsMobile) {
             sourceTote = {
               Warehouse: container.Warehouse,
               Row: container.Row,

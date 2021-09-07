@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { of, Subscription } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { FetchPrinterStationGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
+import { FetchPrinterStationGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { QualityControlService } from './quality-control.server';
 

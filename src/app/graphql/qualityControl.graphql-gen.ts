@@ -578,6 +578,15 @@ export type QcGlobalMessageQuery = { __typename?: 'Query' } & {
   >;
 };
 
+export type FetchPrinterStationQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchPrinterStationQuery = { __typename?: 'Query' } & Pick<
+  Types.Query,
+  'fetchPrinterStation'
+>;
+
 export type PrintItnLabelMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
   Station: Types.Scalars['String'];
@@ -689,15 +698,6 @@ export type UpdateMerpForLastLineAfterQcRepackMutation = {
   >;
 };
 
-export type FetchPrinterStationQueryVariables = Types.Exact<{
-  [key: string]: never;
-}>;
-
-export type FetchPrinterStationQuery = { __typename?: 'Query' } & Pick<
-  Types.Query,
-  'fetchPrinterStation'
->;
-
 export const VerifyItNforQcDocument = gql`
   query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
     findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
@@ -789,6 +789,25 @@ export class QcGlobalMessageGQL extends Apollo.Query<
   QcGlobalMessageQueryVariables
 > {
   document = QcGlobalMessageDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPrinterStationDocument = gql`
+  query fetchPrinterStation {
+    fetchPrinterStation
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPrinterStationGQL extends Apollo.Query<
+  FetchPrinterStationQuery,
+  FetchPrinterStationQueryVariables
+> {
+  document = FetchPrinterStationDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -953,25 +972,6 @@ export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<
   UpdateMerpForLastLineAfterQcRepackMutationVariables
 > {
   document = UpdateMerpForLastLineAfterQcRepackDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const FetchPrinterStationDocument = gql`
-  query fetchPrinterStation {
-    fetchPrinterStation
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FetchPrinterStationGQL extends Apollo.Query<
-  FetchPrinterStationQuery,
-  FetchPrinterStationQueryVariables
-> {
-  document = FetchPrinterStationDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

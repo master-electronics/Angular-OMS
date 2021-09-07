@@ -17,7 +17,7 @@ import { QualityControlService } from '../quality-control.server';
 import {
   FetchProductInfoFromMerpGQL,
   UpdateMerpAfterQcVerifyGQL,
-} from '../../../graphql/forQualityControl.graphql-gen';
+} from '../../../graphql/qualityControl.graphql-gen';
 import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 import { Title } from '@angular/platform-browser';
 

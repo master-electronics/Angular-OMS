@@ -49,6 +49,10 @@ query qcGlobalMessage(
   }
 }
 
+query fetchPrinterStation {
+  fetchPrinterStation
+}
+
 mutation printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
   printITNLabel(
     InternalTrackingNumber: $InternalTrackingNumber
@@ -137,8 +141,4 @@ mutation updateMerpForLastLineAfterQCRepack(
     success
     message
   }
-}
-
-query fetchPrinterStation {
-  fetchPrinterStation
 }

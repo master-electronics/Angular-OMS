@@ -93,7 +93,7 @@ export class AggregationInComponent
             if (!container.ContainerType.IsMobile)
               throw 'This container is not mobile!';
             if (container.ORDERLINEDETAILs.length === 0)
-              throw 'No item in this tote!';
+              throw 'No item in this container!';
             // verify all line have the same orderID and statusID in the tote
             if (
               !container.ORDERLINEDETAILs.every(
@@ -102,7 +102,7 @@ export class AggregationInComponent
                   line.StatusID === arr[0].StatusID
               )
             ) {
-              throw 'More than 1 order in this tote.';
+              throw 'Have different order or status in the Container.';
             }
             // only allow status is agIn complete and qc complete
             if (
@@ -113,13 +113,13 @@ export class AggregationInComponent
             ) {
               throw "OrderLine's status is invalid.";
             }
-            // if the container already in Aggregation area, will allow multiple items in it.
+            // if the container before Aggregation in, will allow multiple items in it.
             if (
               container.ORDERLINEDETAILs.length > 1 &&
-              container.ORDERLINEDETAILs[0].StatusID !==
+              container.ORDERLINEDETAILs[0].StatusID <
                 environment.agInComplete_ID
             ) {
-              throw 'More than 1 order line in this tote.';
+              throw 'More than one ITN in this container.';
             }
           })
         )

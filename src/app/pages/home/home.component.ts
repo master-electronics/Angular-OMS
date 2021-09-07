@@ -18,7 +18,7 @@ export class HomeComponent implements AfterViewInit {
   ];
   toolList = [
     { link: '/orderview', front: '', highlight: 'O', end: 'rder View' },
-    { link: '/printITN', front: '', highlight: 'P', end: 'rint ITN' },
+    { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
     { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
     { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },
   ];
@@ -76,6 +76,22 @@ export class HomeComponent implements AfterViewInit {
         description: 'Order View',
         command: () => {
           this.router.navigate(['/orderview']);
+        },
+      },
+      {
+        key: ['u p'],
+        label: 'Quick Access',
+        description: 'Print ITN',
+        command: () => {
+          this.router.navigate(['/printitn']);
+        },
+      },
+      {
+        key: ['u r'],
+        label: 'Quick Access',
+        description: 'Relocate',
+        command: () => {
+          this.router.navigate(['/relocate']);
         },
       }
     );

@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   AfterViewInit,
   ViewChild,
   ElementRef,
@@ -14,24 +13,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { of } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/dataRegex';
-import { VerifyContainerForAggregationInGQL } from '../../graphql/forAggregation.graphql-gen';
-import { map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { VerifyContainerForAggregationInGQL } from 'src/app/graphql/aggregationIn.graphql-gen';
 
 @Component({
   selector: 'app-relocate',
   templateUrl: './relocate.component.html',
 })
-export class RelocateComponent implements OnInit, OnDestroy, AfterViewInit {
+export class RelocateComponent implements OnInit, AfterViewInit {
   title = 'Relocate';
   isLoading = false;
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
-  buttonLabel = 'submit';
   message = '';
+  tote$;
 
   containerForm = new FormGroup({
     containerNumber: new FormControl('', [
@@ -43,15 +42,14 @@ export class RelocateComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.containerForm.controls;
   }
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
-    private verifyContainerForAGIn: VerifyContainerForAggregationInGQL
+    private verifyTote: VerifyContainerForAggregationInGQL
   ) {
-    this.commonService.changeTitle(this.title);
+    this.commonService.changeNavbar(this.title);
     this.titleService.setTitle(this.title);
   }
 
@@ -68,41 +66,64 @@ export class RelocateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     this.message = '';
-    if (this.containerForm.valid) {
-      this.verifyContainer();
+    if (!this.containerForm.valid) {
+      this.containerInput.nativeElement.select();
+      return;
     }
-  }
-
-  verifyContainer(): void {
     this.isLoading = true;
-    this.subscription.add(
-      this.verifyContainerForAGIn
-        .watch(
-          {
+    this.tote$ = this.verifyTote
+      .fetch(
+        {
+          Container: {
             Barcode: this.containerForm.get('containerNumber').value,
             DistributionCenter: 'PH',
           },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.pipe(
-          map((res) => {
-            //
-          })
-        )
-        .subscribe(
-          (res) => {
-            //
-          },
-          (error) => {
-            this.isLoading = false;
-            this.message = error;
-            this.messageType = 'error';
-          }
-        )
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          const container = res.data.findContainer[0];
+          if (!container) throw `Can't find the Container.`;
+          if (!container.ContainerType.IsMobile)
+            throw 'This container is not mobile!';
+          if (
+            !container.ORDERLINEDETAILs.every(
+              (line, i, arr) =>
+                line.OrderID === arr[0].OrderID &&
+                line.StatusID === arr[0].StatusID
+            )
+          )
+            throw 'Have different order or status in the Container.';
+          // if the container before Aggregation in, will allow multiple items in it.
+          if (
+            container.ORDERLINEDETAILs.length > 1 &&
+            container.ORDERLINEDETAILs[0].StatusID < environment.agInComplete_ID
+          )
+            throw 'More than one ITN in this Container.';
+        }),
+        map((res) => {
+          const container = res.data.findContainer[0];
+          const toteID = container._id;
+          const Barcode = container.Barcode;
+          const OrderID = container.ORDERLINEDETAILs[0].OrderID;
+          const StatusID = container.ORDERLINEDETAILs[0].StatusID;
+          this.router.navigate(['relocate/destination'], {
+            queryParams: {
+              OrderID,
+              toteID,
+              Barcode,
+              StatusID,
+            },
+          });
+          this.isLoading = false;
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          this.message = error;
+          this.messageType = 'error';
+          return of();
+        })
+      );
   }
 }

@@ -13,12 +13,15 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ITNBarcodeRegex } from '../../shared/dataRegex';
-import { PrintItnLabelGQL } from '../../graphql/forQualityControl.graphql-gen';
-import { APIService } from 'src/app/shared/services/API.service';
+import {
+  FetchPrinterStationGQL,
+  PrintItnLabelGQL,
+} from '../../graphql/qualityControl.graphql-gen';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'print-itn',
@@ -28,9 +31,9 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'Print ITN';
   isModalHidden = true;
   modalMessage: string;
+  station$;
   isLoading = false;
   messageType = 'error';
-  buttonStyles = 'bg-indigo-800';
   message = '';
   currentStation: string;
 
@@ -49,34 +52,27 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
     private commonService: CommonService,
     private titleService: Title,
     private printItnLabel: PrintItnLabelGQL,
-    private apiService: APIService
+    private fetchPrinterStation: FetchPrinterStationGQL
   ) {
-    this.commonService.changeTitle(this.title);
-    this.titleService.setTitle('Aggregation In');
+    this.commonService.changeNavbar(this.title);
+    this.titleService.setTitle('printITN');
   }
 
   @ViewChild('ITNInput') ITNInput: ElementRef;
   async ngOnInit(): Promise<void> {
-    this.currentStation = this.commonService.stationInfo;
-    if (this.currentStation === '') {
-      try {
-        const data$: any = await this.apiService.onCheckQCPrinter().toPromise();
-        if (data$.Status.StatusCode !== '200') {
-          this.isModalHidden = false;
-        } else {
-          if (data$.LABSTA[0].StationID) {
-            this.commonService.changeStation(data$.LABSTA[0].StationID.trim());
-            this.currentStation = this.commonService.stationInfo;
-          } else {
-            this.modalMessage = `Station number not found in configuration!`;
-            this.isModalHidden = false;
-          }
-        }
-      } catch (error) {
+    this.currentStation = this.commonService.printerInfo;
+    if (this.currentStation) return;
+    this.station$ = this.fetchPrinterStation.fetch().pipe(
+      map((res) => {
+        this.currentStation = res.data.fetchPrinterStation;
+        this.commonService.changeStation(this.currentStation);
+      }),
+      catchError((error) => {
         this.modalMessage = error.error;
         this.isModalHidden = false;
-      }
-    }
+        return of();
+      })
+    );
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -95,14 +91,11 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     this.subscription.add(
       this.printItnLabel
-        .watch(
-          {
-            InternalTrackingNumber: this.ITNForm.get('ITN').value,
-            Station: this.currentStation,
-          },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.subscribe(
+        .mutate({
+          InternalTrackingNumber: this.ITNForm.get('ITN').value,
+          Station: this.currentStation,
+        })
+        .subscribe(
           (res) => {
             this.messageType = 'success';
             this.message = 'Print success.';

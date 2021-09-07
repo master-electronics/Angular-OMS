@@ -3,6 +3,7 @@ mutation update_OrderLineDetail(
   $InternalTrackingNumber: String
   $OrderLineID: Int
   $OrderID: Int
+  $ContainerID: Int
   $OrderLineDetail: updateOrderLineDetail!
 ) {
   updateOrderLineDetail(
@@ -10,6 +11,7 @@ mutation update_OrderLineDetail(
     InternalTrackingNumber: $InternalTrackingNumber
     OrderLineID: $OrderLineID
     OrderID: $OrderID
+    ContainerID: $ContainerID
     OrderLineDetail: $OrderLineDetail
   )
 }
