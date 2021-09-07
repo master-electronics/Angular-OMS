@@ -20,7 +20,6 @@ export type Scalars = {
   Float: number;
 };
 
-/** Define WMS Tables */
 export type Container = {
   __typename?: 'Container';
   /**
@@ -39,7 +38,6 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
-  /** related table */
   ContainerType: ContainerType;
   Equipment?: Maybe<Equipment>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -67,7 +65,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  /** For qc page */
   holdQCOrder: Response;
   printITNLabel: Response;
   changeQCLineInfo: Response;
@@ -211,7 +208,6 @@ export type Order = {
   ShipmentMethodID?: Maybe<Scalars['String']>;
   OrderType?: Maybe<Scalars['String']>;
   isSelected: Scalars['Boolean'];
-  /** related table */
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -233,7 +229,6 @@ export type OrderLine = {
   PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
   LastUpdated?: Maybe<Scalars['String']>;
-  /** related table */
   Order: Order;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
 };
@@ -252,7 +247,6 @@ export type OrderLineDetail = {
   ROHS: Scalars['Boolean'];
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
-  /** related table */
   OrderLine: OrderLine;
   Status: OrderStatus;
   Container: Container;
@@ -275,7 +269,6 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  /** for qc */
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
@@ -617,7 +610,7 @@ export type VerifyQcRepackQuery = { __typename?: 'Query' } & {
                 Types.Maybe<
                   { __typename?: 'OrderLineDetail' } & Pick<
                     Types.OrderLineDetail,
-                    'InternalTrackingNumber'
+                    'InternalTrackingNumber' | 'StatusID' | 'OrderID'
                   >
                 >
               >
@@ -676,6 +669,21 @@ export type UpdateMerpAfterQcVerifyMutation = { __typename?: 'Mutation' } & {
     Types.Response,
     'success' | 'message'
   >;
+};
+
+export type UpdateSourceAndTargetContainerAfterQcRepackMutationVariables =
+  Types.Exact<{
+    sourceID: Types.Scalars['Int'];
+    sourceContainer: Types.UpdateContainer;
+    targetID: Types.Scalars['Int'];
+    targetContainer: Types.UpdateContainer;
+  }>;
+
+export type UpdateSourceAndTargetContainerAfterQcRepackMutation = {
+  __typename?: 'Mutation';
+} & {
+  source: Types.Mutation['updateContainer'];
+  target: Types.Mutation['updateContainer'];
 };
 
 export type UpdateMerpForLastLineAfterQcRepackMutationVariables = Types.Exact<{
@@ -846,6 +854,8 @@ export const VerifyQcRepackDocument = gql`
       ContainerTypeID
       ORDERLINEDETAILs {
         InternalTrackingNumber
+        StatusID
+        OrderID
       }
     }
     findOrder(Order: $Order) {
@@ -936,6 +946,31 @@ export class UpdateMerpAfterQcVerifyGQL extends Apollo.Mutation<
   UpdateMerpAfterQcVerifyMutationVariables
 > {
   document = UpdateMerpAfterQcVerifyDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateSourceAndTargetContainerAfterQcRepackDocument = gql`
+  mutation updateSourceAndTargetContainerAfterQCRepack(
+    $sourceID: Int!
+    $sourceContainer: updateContainer!
+    $targetID: Int!
+    $targetContainer: updateContainer!
+  ) {
+    source: updateContainer(_id: $sourceID, Container: $sourceContainer)
+    target: updateContainer(_id: $targetID, Container: $targetContainer)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateSourceAndTargetContainerAfterQcRepackGQL extends Apollo.Mutation<
+  UpdateSourceAndTargetContainerAfterQcRepackMutation,
+  UpdateSourceAndTargetContainerAfterQcRepackMutationVariables
+> {
+  document = UpdateSourceAndTargetContainerAfterQcRepackDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

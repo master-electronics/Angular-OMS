@@ -177,12 +177,12 @@ export class DestinationComponent implements OnInit, AfterViewInit {
 
         tap((res: any) => {
           let error = '';
-          if (!res.updateContainer.data.updateContainer[0]) {
+          if (!res.updateContainer.data.updateContainer.length) {
             error += `\nFail to update container table in SQL`;
           }
           if (
             res.updateOrderLineDetai &&
-            !res.updateOrderLineDetail.data.updateOrderLineDetail[0]
+            !res.updateOrderLineDetail.data.updateOrderLineDetail.length
           ) {
             error += `\nFail to update OrderLineDetail table in SQL`;
           }

@@ -218,13 +218,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // Emite errors
         tap((res) => {
           let error = '';
-          if (!res.updateOrder.data.updateOrderLineDetail[0]) {
+          if (!res.updateOrder.data.updateOrderLineDetail.length) {
             error += 'Update SQL OrderLineDetail failed.\n';
           }
-          if (!res.updateOrder.data.updateContainerList[0]) {
+          if (!res.updateOrder.data.updateContainerList.length) {
             error += 'Update SQL Container failed.\n';
           }
-          if (!res.updateOrder.data.updateOrder[0]) {
+          if (!res.updateOrder.data.updateOrder.length) {
             error += 'Update SQL Order failed.\n';
           }
           if (!res.updateOrder.data.updateMerpOrderStatus.success) {
@@ -393,10 +393,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // Emit Errors
         tap((res: any) => {
           let error: string;
-          if (!res.updateSql.data.updateOrderLineDetail[0]) {
+          if (!res.updateSql.data.updateOrderLineDetail.length) {
             error += `\nFail to update SQL OrderLineDetail.`;
           }
-          if (!res.updateSql.data.updateContainer[0]) {
+          if (!res.updateSql.data.updateContainer.length) {
             error += `\nFail to update SQL Container.`;
           }
           if (
@@ -411,14 +411,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Navgate to first after update success
         map(() => {
-          let message = `Place in ${barcode}.`;
-          if (this.isLastLine) {
-            message += `\nOrder ${this.OrderNumber}-${this.NOSINumber} complete AG In.`;
-          }
           this.router.navigate(['agin'], {
             queryParams: {
               result: 'info',
-              message,
+              message: `Place in ${barcode}.`,
             },
           });
         }),

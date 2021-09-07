@@ -85,6 +85,7 @@ export class AggregationInComponent
           },
           { fetchPolicy: 'network-only' }
         )
+
         .valueChanges.pipe(
           tap((res) => {
             const container = res.data.findContainer;
@@ -101,28 +102,26 @@ export class AggregationInComponent
                   line.OrderID === arr[0].OrderID &&
                   line.StatusID === arr[0].StatusID
               )
-            ) {
-              throw 'Have different order or status in the Container.';
-            }
+            )
+              throw 'Have different order or status in the container.';
             // only allow status is agIn complete and qc complete
             if (
               container[0].ORDERLINEDETAILs[0].StatusID <
                 environment.qcComplete_ID ||
               container[0].ORDERLINEDETAILs[0].StatusID >=
                 environment.agOutComplete_ID
-            ) {
+            )
               throw "OrderLine's status is invalid.";
-            }
-            // if the container before Aggregation in, will allow multiple items in it.
+            // if the order status before Aggregation in complete, not allow multiple items in it.
             if (
               container[0].ORDERLINEDETAILs.length > 1 &&
               container[0].ORDERLINEDETAILs[0].StatusID <
                 environment.agInComplete_ID
-            ) {
+            )
               throw 'More than one ITN in this container.';
-            }
           })
         )
+
         .subscribe(
           (res) => {
             this.isLoading = false;

@@ -15,7 +15,6 @@ export type Scalars = {
   Float: number;
 };
 
-/** Define WMS Tables */
 export type Container = {
   __typename?: 'Container';
   /**
@@ -34,7 +33,6 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
-  /** related table */
   ContainerType: ContainerType;
   Equipment?: Maybe<Equipment>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -62,7 +60,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  /** For qc page */
   holdQCOrder: Response;
   printITNLabel: Response;
   changeQCLineInfo: Response;
@@ -206,7 +203,6 @@ export type Order = {
   ShipmentMethodID?: Maybe<Scalars['String']>;
   OrderType?: Maybe<Scalars['String']>;
   isSelected: Scalars['Boolean'];
-  /** related table */
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -228,7 +224,6 @@ export type OrderLine = {
   PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
   LastUpdated?: Maybe<Scalars['String']>;
-  /** related table */
   Order: Order;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
 };
@@ -247,7 +242,6 @@ export type OrderLineDetail = {
   ROHS: Scalars['Boolean'];
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
-  /** related table */
   OrderLine: OrderLine;
   Status: OrderStatus;
   Container: Container;
@@ -270,7 +264,6 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  /** for qc */
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;

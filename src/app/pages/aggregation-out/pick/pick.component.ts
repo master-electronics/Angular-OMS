@@ -166,13 +166,13 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           // throw errors
           tap((res) => {
             let error = '';
-            if (!res.updateOrder.data.updateOrderLineDetail[0]) {
+            if (!res.updateOrder.data.updateOrderLineDetail.length) {
               error += 'Update SQL OrderLineDetail failed.\n';
             }
-            if (!res.updateOrder.data.updateContainerList[0]) {
+            if (!res.updateOrder.data.updateContainerList.length) {
               error += 'Update SQL Container failed.\n';
             }
-            if (!res.updateOrder.data.updateOrder[0]) {
+            if (!res.updateOrder.data.updateOrder.length) {
               error += 'Update SQL Order failed.\n';
             }
             if (!res.updateOrder.data.updateMerpOrderStatus.success) {
@@ -232,6 +232,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       this.buttonStyles = `bg-green-500`;
       this.updateAfterPick();
     } else {
+      this.f.containerNumber.setValue('');
       this.containerInput.nativeElement.select();
     }
   }

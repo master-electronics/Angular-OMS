@@ -15,6 +15,7 @@ import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
+  UpdateSourceAndTargetContainerAfterQcRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -22,10 +23,7 @@ import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import {
-  Update_ContainerGQL,
-  Update_OrderLineDetailGQL,
-} from '../../../graphql/wms.graphql-gen';
+import { Update_OrderLineDetailGQL } from '../../../graphql/wms.graphql-gen';
 
 @Component({
   selector: 'repack',
@@ -37,7 +35,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonStyles = 'bg-green-500';
   buttonLabel = 'submit';
   message = '';
+  inProcess = 0;
   urlParams: { [key: string]: any };
+  isNeed;
 
   private subscription = new Subscription();
   constructor(
@@ -49,7 +49,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateOrderLineDetail: Update_OrderLineDetailGQL,
-    private updateContainer: Update_ContainerGQL,
+    private updateContainer: UpdateSourceAndTargetContainerAfterQcRepackGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private gtmService: GoogleTagManagerService
   ) {
@@ -120,33 +120,37 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         )
 
         .valueChanges.pipe(
-          switchMap((res) => {
-            const returnContainer = res.data.findContainer[0];
+          tap((res) => {
+            const targetContainer = res.data.findContainer[0];
             const returnOrder = res.data.findOrder[0];
-            if (returnContainer.ContainerTypeID !== environment.toteType_ID) {
+            if (!targetContainer) throw 'This barcode is not exist.';
+            if (!returnOrder) throw 'This order is not exist.';
+            if (targetContainer.ContainerTypeID !== environment.toteType_ID)
               throw 'This container is not a tote!';
-            }
-            if (!returnOrder.ORDERLINEDETAILs.length) {
-              throw 'Invaild urlParams';
-            }
-            // Search all ITN by containerID, if has ITN record != current ITN, return error
-            if (returnContainer.ORDERLINEDETAILs.length) {
-              returnContainer.ORDERLINEDETAILs.forEach((itn) => {
-                if (itn.InternalTrackingNumber !== this.urlParams.ITN) {
+            if (!returnOrder.ORDERLINEDETAILs.length)
+              throw 'This Order is not exist in OrderLineDetail.';
+            // Search all ITN by containerID, if has ITN record != current ITN, and the status is before ag out, pop error.
+            if (targetContainer.ORDERLINEDETAILs.length) {
+              targetContainer.ORDERLINEDETAILs.forEach((itn) => {
+                if (
+                  itn.InternalTrackingNumber !== this.urlParams.ITN &&
+                  itn.StatusID < environment.agOutComplete_ID
+                )
                   throw 'This tote is not empty.';
-                }
               });
             }
+          }),
+          switchMap((res) => {
+            const targetContainer = res.data.findContainer[0];
+            const returnOrder = res.data.findOrder[0];
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
             let inProcess = 0;
-            let isRedo: boolean;
             let sourceContainer: number;
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
               if (line.InternalTrackingNumber !== this.urlParams.ITN) {
                 line.StatusID !== environment.qcComplete_ID && ++inProcess;
               } else {
                 sourceContainer = line.ContainerID;
-                isRedo = line.StatusID === environment.qcComplete_ID;
               }
             });
 
@@ -155,82 +159,97 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               InternalTrackingNumber: this.urlParams.ITN,
               OrderLineDetail: {
                 StatusID: environment.qcComplete_ID,
-                ContainerID: returnContainer._id,
+                ContainerID: targetContainer._id,
               },
             });
 
-            const updateTargetContainer = this.updateContainer.mutate(
-              {
-                _id: returnContainer._id,
-                Container: {
-                  Warehouse: '01',
-                  Row: 'QC',
-                  Aisle: null,
-                  Section: null,
-                  Shelf: null,
-                  ShelfDetail: null,
-                },
+            const updateContainer = this.updateContainer.mutate({
+              targetID: targetContainer._id,
+              targetContainer: {
+                Warehouse: '01',
+                Row: 'QC',
+                Aisle: null,
+                Section: null,
+                Shelf: null,
+                ShelfDetail: null,
               },
-              { fetchPolicy: 'no-cache' }
-            );
+              sourceID: sourceContainer,
+              sourceContainer: {
+                Warehouse: null,
+                Row: null,
+                Aisle: null,
+                Section: null,
+                Shelf: null,
+                ShelfDetail: null,
+              },
+            });
 
-            const updateSourceContainer = this.updateContainer.mutate(
-              {
-                _id: sourceContainer,
-                Container: {
-                  Warehouse: null,
-                  Row: null,
-                  Aisle: null,
-                  Section: null,
-                  Shelf: null,
-                  ShelfDetail: null,
-                },
-              },
-              { fetchPolicy: 'no-cache' }
-            );
-
-            const updateMerpLog = this.updateMerpLastLine.mutate(
-              {
-                OrderNumber: this.urlParams.OrderNum,
-                NOSINumber: this.urlParams.NOSI,
-                Status: '60',
-                UserOrStatus: 'AGGREGATION-IN',
-              },
-              { fetchPolicy: 'no-cache' }
-            );
+            const updateMerpLog = this.updateMerpLastLine.mutate({
+              OrderNumber: this.urlParams.OrderNum,
+              NOSINumber: this.urlParams.NOSI,
+              Status: '60',
+              UserOrStatus: 'AGGREGATION-IN',
+            });
 
             // Send different query combination
             const updateQueries = {
               updateDetail,
-              updateTargetContainer,
-              updateSourceContainer,
+              updateContainer,
               updateMerpLog,
             };
+            if (targetContainer._id === sourceContainer)
+              delete updateQueries.updateContainer;
             if (inProcess) delete updateQueries.updateMerpLog;
-            if (!isRedo) delete updateQueries.updateSourceContainer;
+            // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            if (targetContainer.ORDERLINEDETAILs.length) {
+              const needCleanup = targetContainer.ORDERLINEDETAILs.some(
+                (itn) => {
+                  return (
+                    itn.InternalTrackingNumber !== this.urlParams.ITN &&
+                    itn.StatusID >= environment.agOutComplete_ID
+                  );
+                }
+              );
+              if (needCleanup)
+                updateQueries['cleanContainerFromPrevOrder'] =
+                  this.updateOrderLineDetail.mutate({
+                    ContainerID: targetContainer._id,
+                    OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
+                    OrderLineDetail: { ContainerID: environment.DC_PH_ID },
+                  });
+            }
             return forkJoin(updateQueries);
           }),
 
           tap((res: any) => {
             let error = '';
-            if (!res.updateDetail.data.updateOrderLineDetail[0]) {
+            if (!res.updateDetail.data.updateOrderLineDetail.length) {
               error += `\nFail to update OrderLineDetail SQL`;
             }
-            if (!res.updateTargetContainer.data.updateContainer[0]) {
-              error += `\nFail to update Target Container SQL`;
-            }
             if (
-              res.updateSourceContainer &&
-              !res.updateSourceContainer.data.updateContainer[0]
+              res.updateContainer &&
+              !res.updateContainer.data.source.length
             ) {
               error += `\nFail to update source Container SQL`;
+            }
+            if (
+              res.updateContainer &&
+              !res.updateContainer.data.target.length
+            ) {
+              error += `\nFail to update target Container SQL`;
+            }
+            if (
+              res.cleanContainerFromPrevOrder &&
+              !res.cleanContainerFromPrevOrder.data.updateOrderLineDetail.length
+            ) {
+              error += `\nFail to clean container in previous OrderLineDetail`;
             }
             if (error) throw `${this.urlParams.ITN}`.concat(error);
           })
         )
 
         .subscribe(
-          (res: any) => {
+          (res) => {
             let type = 'info';
             let message = `QC complete for ${this.urlParams.ITN}`;
             if (res.updateMerpLog) {

@@ -70,6 +70,8 @@ query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
     ContainerTypeID
     ORDERLINEDETAILs {
       InternalTrackingNumber
+      StatusID
+      OrderID
     }
   }
   findOrder(Order: $Order) {
@@ -120,6 +122,16 @@ mutation updateMerpAfterQcVerify(
     success
     message
   }
+}
+
+mutation updateSourceAndTargetContainerAfterQCRepack(
+  $sourceID: Int!
+  $sourceContainer: updateContainer!
+  $targetID: Int!
+  $targetContainer: updateContainer!
+) {
+  source: updateContainer(_id: $sourceID, Container: $sourceContainer)
+  target: updateContainer(_id: $targetID, Container: $targetContainer)
 }
 
 mutation updateMerpForLastLineAfterQCRepack(
