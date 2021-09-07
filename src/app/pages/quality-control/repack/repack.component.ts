@@ -9,6 +9,8 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+
 import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
@@ -24,7 +26,6 @@ import {
   Update_ContainerGQL,
   Update_OrderLineDetailGQL,
 } from '../../../graphql/wms.graphql-gen';
-import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'repack',
@@ -37,6 +38,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonLabel = 'submit';
   message = '';
   urlParams: { [key: string]: any };
+
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -61,18 +63,18 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     ],
   });
 
-  @ViewChild('container') containerInput: ElementRef;
-  @ViewChild('containerError') containerError: ElementRef;
   ngOnInit(): void {
     this.urlParams = { ...this.route.snapshot.queryParams };
     this.qcService.changeTab(4);
   }
+
+  @ViewChild('container') containerInput: ElementRef;
+  @ViewChild('containerError') containerError: ElementRef;
   shortcuts: ShortcutInput[] = [];
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.containerInput.nativeElement.select();
     }, 10);
-
     this.shortcuts.push({
       key: ['ctrl + s'],
       label: 'Quick Access',
@@ -97,6 +99,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.containerError.nativeElement.classList.remove('hidden');
       return;
     }
+
     this.isLoading = true;
     this.containerError.nativeElement.classList.add('hidden');
     this.subscription.add(
@@ -115,6 +118,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           { fetchPolicy: 'no-cache' }
         )
+
         .valueChanges.pipe(
           switchMap((res) => {
             const returnContainer = res.data.findContainer[0];
@@ -125,7 +129,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!returnOrder.ORDERLINEDETAILs.length) {
               throw 'Invaild urlParams';
             }
-
             // Search all ITN by containerID, if has ITN record != current ITN, return error
             if (returnContainer.ORDERLINEDETAILs.length) {
               returnContainer.ORDERLINEDETAILs.forEach((itn) => {
@@ -134,7 +137,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               });
             }
-
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
             let inProcess = 0;
             let isRedo: boolean;
@@ -208,6 +210,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!isRedo) delete updateQueries.updateSourceContainer;
             return forkJoin(updateQueries);
           }),
+
           tap((res: any) => {
             let error = '';
             if (!res.updateDetail.data.updateOrderLineDetail[0]) {
@@ -225,6 +228,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (error) throw `${this.urlParams.ITN}`.concat(error);
           })
         )
+
         .subscribe(
           (res: any) => {
             let type = 'info';

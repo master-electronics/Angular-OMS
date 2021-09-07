@@ -87,16 +87,16 @@ export class AggregationInComponent
         )
         .valueChanges.pipe(
           tap((res) => {
-            const container = res.data.findContainer[0];
-            if (container === undefined) throw 'Container not found!';
+            const container = res.data.findContainer;
+            if (!container.length) throw 'Container not found!';
             // only accepte mobile container
-            if (!container.ContainerType.IsMobile)
+            if (!container[0].ContainerType.IsMobile)
               throw 'This container is not mobile!';
-            if (container.ORDERLINEDETAILs.length === 0)
+            if (container[0].ORDERLINEDETAILs.length === 0)
               throw 'No item in this container!';
             // verify all line have the same orderID and statusID in the tote
             if (
-              !container.ORDERLINEDETAILs.every(
+              !container[0].ORDERLINEDETAILs.every(
                 (line, i, arr) =>
                   line.OrderID === arr[0].OrderID &&
                   line.StatusID === arr[0].StatusID
@@ -106,17 +106,17 @@ export class AggregationInComponent
             }
             // only allow status is agIn complete and qc complete
             if (
-              container.ORDERLINEDETAILs[0].StatusID <
+              container[0].ORDERLINEDETAILs[0].StatusID <
                 environment.qcComplete_ID ||
-              container.ORDERLINEDETAILs[0].StatusID >=
+              container[0].ORDERLINEDETAILs[0].StatusID >=
                 environment.agOutComplete_ID
             ) {
               throw "OrderLine's status is invalid.";
             }
             // if the container before Aggregation in, will allow multiple items in it.
             if (
-              container.ORDERLINEDETAILs.length > 1 &&
-              container.ORDERLINEDETAILs[0].StatusID <
+              container[0].ORDERLINEDETAILs.length > 1 &&
+              container[0].ORDERLINEDETAILs[0].StatusID <
                 environment.agInComplete_ID
             ) {
               throw 'More than one ITN in this container.';

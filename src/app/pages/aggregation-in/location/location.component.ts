@@ -310,23 +310,23 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         // Emite Errors
         tap((res) => {
-          const container = res.data.findContainer[0];
-          if (!container) {
+          const container = res.data.findContainer;
+          if (!container.length) {
             throw 'Can not find this container';
           }
           if (
             ![environment.toteType_ID, environment.shelfType_ID].includes(
-              container.ContainerTypeID
+              container[0].ContainerTypeID
             )
           ) {
             throw 'This container should be tote or shelf';
           }
-          if (container.Row !== 'AG') {
+          if (container[0].Row !== 'AG') {
             throw 'This container is not in Aggregation area';
           }
           // if target container is mobile, check all items in target container have the some order number with source tote.
-          if (container.ContainerType.IsMobile) {
-            container.ORDERLINEDETAILs.forEach((line) => {
+          if (container[0].ContainerType.IsMobile) {
+            container[0].ORDERLINEDETAILs.forEach((line) => {
               // check if the item in container
               if (line.OrderID !== Number(this.urlParams.OrderID)) {
                 throw 'This container has other order in it.';

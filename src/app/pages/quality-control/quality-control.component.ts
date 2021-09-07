@@ -15,7 +15,7 @@ import { QualityControlService } from './quality-control.server';
   selector: 'quality-control',
   templateUrl: './quality-control.component.html',
 })
-export class QualityControlComponent implements OnInit, OnDestroy {
+export class QualityControlComponent implements OnInit {
   @ViewChild('stepPage') stepPage: ElementRef;
   isModalHidden = true;
   modalMessage: string;
@@ -31,7 +31,7 @@ export class QualityControlComponent implements OnInit, OnDestroy {
     commonService.changeNavbar('Quality Control');
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     const station = this.commonService.printerInfo;
     if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
     if (station) return;
@@ -46,11 +46,8 @@ export class QualityControlComponent implements OnInit, OnDestroy {
       })
     );
   }
+
   toggleModal(): void {
     this.isModalHidden = !this.isModalHidden;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

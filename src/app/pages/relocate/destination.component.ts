@@ -37,6 +37,7 @@ export class DestinationComponent implements OnInit, AfterViewInit {
   urlParams;
   updateContainer$;
 
+  // build form
   regex(input: FormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
       ToteBarcodeRegex.test(input.value) ||
@@ -89,6 +90,8 @@ export class DestinationComponent implements OnInit, AfterViewInit {
       this.containerInput.nativeElement.select();
       return;
     }
+    // async pipe abservable
+
     this.isLoading = true;
     this.updateContainer$ = this.verifyContainer
       .fetch({
@@ -97,6 +100,7 @@ export class DestinationComponent implements OnInit, AfterViewInit {
           Barcode: barcode,
         },
       })
+
       .pipe(
         // check if destination is valid.
         tap((res) => {
@@ -112,7 +116,6 @@ export class DestinationComponent implements OnInit, AfterViewInit {
             )
           )
             throw 'Have Different order or status in the Container.';
-
           // if the container before Aggregation in, will allow multiple items in it.
           if (
             container.ORDERLINEDETAILs.length > 1 &&
@@ -132,6 +135,7 @@ export class DestinationComponent implements OnInit, AfterViewInit {
             });
           }
         }),
+
         switchMap((res) => {
           const container = res.data.findContainer[0];
           const updatequery = {};
@@ -147,6 +151,8 @@ export class DestinationComponent implements OnInit, AfterViewInit {
           const OrderLineDetail = {
             ContainerID: container._id,
           };
+
+          // build query object base on container type
           if (container.ContainerType.IsMobile) {
             sourceTote = {
               Warehouse: null,
@@ -168,6 +174,7 @@ export class DestinationComponent implements OnInit, AfterViewInit {
           });
           return forkJoin(updatequery);
         }),
+
         tap((res: any) => {
           let error = '';
           if (!res.updateContainer.data.updateContainer[0]) {

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
@@ -109,7 +109,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
       .pipe(
         tap((res) => {
           const order = res.data.fetchOrderView;
-          if (!order) {
+          if (!order.length) {
             throw `Can not find this order!`;
           }
           if (

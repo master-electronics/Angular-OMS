@@ -236,7 +236,7 @@
           (onClickEmt)="back()"
         ></form-button>
         <form-button
-          type="submit"
+          [type]="'submit'"
           [disabled]="isLoading"
           [isLoading]="isLoading"
           label="Submit"

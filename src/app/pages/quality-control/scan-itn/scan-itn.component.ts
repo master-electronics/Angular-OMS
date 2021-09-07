@@ -38,23 +38,23 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     titleService.setTitle('qc/scanitn');
   }
 
+  @ViewChild('ITN') ITNInput: ElementRef;
+  @ViewChild('ITNError') ITNError: ElementRef;
   ITNForm = this.fb.group({
     ITN: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
 
-  @ViewChild('ITN') ITNInput: ElementRef;
-  @ViewChild('ITNError') ITNError: ElementRef;
   ngOnInit(): void {
     this.messageType = this.route.snapshot.queryParams['type'];
     this.message = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(1);
     this.qcService.changeGlobalMessages(null);
   }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.ITNInput.nativeElement.select();
     }, 10);
-
     this.shortcuts.push({
       key: ['ctrl + s'],
       label: 'Quick Access',

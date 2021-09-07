@@ -12,20 +12,6 @@
       "trace": true,
       "sourceMaps": true,
       "webRoot": "${workspaceFolder}"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch my Lambda",
-      "program": "/usr/bin/amplify",
-      "args": [
-        "mock",
-        "function",
-        // replace this with the name of your function
-        // the folder in amplify/backend/function/
-        "agwmsDemoTest"
-      ],
-      "console": "integratedTerminal"
     }
   ]
 }

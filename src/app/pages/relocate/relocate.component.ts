@@ -70,6 +70,8 @@ export class RelocateComponent implements OnInit, AfterViewInit {
       this.containerInput.nativeElement.select();
       return;
     }
+
+    // build obaservable
     this.isLoading = true;
     this.tote$ = this.verifyTote
       .fetch(
@@ -81,13 +83,18 @@ export class RelocateComponent implements OnInit, AfterViewInit {
         },
         { fetchPolicy: 'network-only' }
       )
+
       .pipe(
         tap((res) => {
           const container = res.data.findContainer[0];
           if (!container) throw `Can't find the Container.`;
           if (!container.ContainerType.IsMobile)
             throw 'This container is not mobile!';
+          if (!container.ORDERLINEDETAILs.length) {
+            throw 'This container is empty';
+          }
           if (
+            container.ORDERLINEDETAILs.length &&
             !container.ORDERLINEDETAILs.every(
               (line, i, arr) =>
                 line.OrderID === arr[0].OrderID &&
@@ -102,6 +109,7 @@ export class RelocateComponent implements OnInit, AfterViewInit {
           )
             throw 'More than one ITN in this Container.';
         }),
+
         map((res) => {
           const container = res.data.findContainer[0];
           const toteID = container._id;
@@ -118,6 +126,7 @@ export class RelocateComponent implements OnInit, AfterViewInit {
           });
           this.isLoading = false;
         }),
+
         catchError((error) => {
           this.isLoading = false;
           this.message = error;

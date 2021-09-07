@@ -34,6 +34,7 @@ export class GlobalMessagesComponent
   message = '';
   orderComments: string[];
   partComments: string[];
+
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -112,14 +113,14 @@ export class GlobalMessagesComponent
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
   @HostListener('document:keydown', ['$event'])
   onKeyDownHandler(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       this.onSubmit();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
