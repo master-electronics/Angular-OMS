@@ -39,13 +39,13 @@ const routes: Routes = [
             (m) => m.QualityControlModule
           ),
       },
-      // {
-      //   path: 'searchbarcode',
-      //   loadChildren: () =>
-      //     import('./pages/search-barcode/search-barcode.module').then(
-      //       (m) => m.SearchBarcodeModule
-      //     ),
-      // },
+      {
+        path: 'searchbarcode',
+        loadChildren: () =>
+          import('./pages/search-barcode/search-barcode.module').then(
+            (m) => m.SearchBarcodeModule
+          ),
+      },
       {
         path: 'orderview',
         loadChildren: () =>

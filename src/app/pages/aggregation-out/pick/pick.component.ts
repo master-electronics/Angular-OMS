@@ -134,8 +134,8 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           StatusID: environment.agOutComplete_ID,
         },
         Container: {
-          Warehouse: null,
-          Row: null,
+          Warehouse: '10',
+          Row: 'AG',
           Aisle: null,
           Section: null,
           Shelf: null,

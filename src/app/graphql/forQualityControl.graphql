@@ -138,3 +138,7 @@ mutation updateMerpForLastLineAfterQCRepack(
     message
   }
 }
+
+query fetchPrinterStation {
+  fetchPrinterStation
+}

@@ -1,0 +1,96 @@
+query findContainerForSearchBarcode($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    Barcode
+    ORDERLINEDETAILs {
+      InternalTrackingNumber
+      Status {
+        Name
+      }
+      OrderLine {
+        ProductCode
+        PartNumber
+        OrderLineNumber
+      }
+      Order {
+        OrderNumber
+        NOSINumber
+        ShipmentMethod {
+          PriorityPinkPaper
+        }
+      }
+    }
+  }
+}
+
+query findITNforSearchBarcode($InternalTrackingNumber: String!) {
+  findOrderLineDetail(
+    OrderLineDetail: { InternalTrackingNumber: $InternalTrackingNumber }
+  ) {
+    InternalTrackingNumber
+    Status {
+      Name
+    }
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+    OrderLine {
+      ProductCode
+      PartNumber
+      OrderLineNumber
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+      ShipmentMethod {
+        PriorityPinkPaper
+      }
+    }
+  }
+}
+
+query findOrderForSearchBarcode(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  findOrder(
+    Order: {
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    }
+  ) {
+    OrderNumber
+    NOSINumber
+    ShipmentMethod {
+      PriorityPinkPaper
+    }
+    ORDERLINEs {
+      ProductCode
+      PartNumber
+      OrderLineNumber
+      ORDERLINEDETAILs {
+        InternalTrackingNumber
+        Status {
+          Name
+        }
+        Quantity
+        Container {
+          Barcode
+          Warehouse
+          Row
+          Aisle
+          Section
+          Shelf
+          ShelfDetail
+        }
+      }
+    }
+  }
+}

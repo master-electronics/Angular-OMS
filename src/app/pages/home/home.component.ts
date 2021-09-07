@@ -63,7 +63,7 @@ export class HomeComponent implements AfterViewInit {
         },
       },
       {
-        key: ['w s'],
+        key: ['u s'],
         label: 'Quick Access',
         description: 'Search Barcode',
         command: () => {
@@ -71,7 +71,7 @@ export class HomeComponent implements AfterViewInit {
         },
       },
       {
-        key: ['w v'],
+        key: ['u v'],
         label: 'Quick Access',
         description: 'Order View',
         command: () => {

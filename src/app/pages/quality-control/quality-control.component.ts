@@ -5,8 +5,9 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { APIService } from 'src/app/shared/services/API.service';
+import { of, Subscription } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { FetchPrinterStationGQL } from 'src/app/graphql/forQualityControl.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { QualityControlService } from './quality-control.server';
 
@@ -18,13 +19,14 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   @ViewChild('stepPage') stepPage: ElementRef;
   isModalHidden = true;
   modalMessage: string;
+  printerStation$;
   title = 'Quality Control';
 
   private subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private qcService: QualityControlService,
-    private apiService: APIService
+    private fetchPrinterStation: FetchPrinterStationGQL
   ) {
     commonService.changeNavbar('Quality Control');
   }
@@ -32,26 +34,17 @@ export class QualityControlComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     const station = this.commonService.printerInfo;
     if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
-    if (station === '') {
-      this.apiService.checkQCPrinter$.subscribe(
-        (res: any) => {
-          if (res.Status.StatusCode !== '200') {
-            this.isModalHidden = false;
-          } else {
-            if (res.LABSTA[0].StationID) {
-              this.commonService.changeStation(res.LABSTA[0].StationID.trim());
-            } else {
-              this.modalMessage = `Station number not found in configuration!`;
-              this.isModalHidden = false;
-            }
-          }
-        },
-        (error) => {
-          this.modalMessage = error.error;
-          this.isModalHidden = false;
-        }
-      );
-    }
+    if (station) return;
+    this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
+      map((res) => {
+        this.commonService.changeStation(res.data.fetchPrinterStation);
+      }),
+      catchError((error) => {
+        this.modalMessage = error.error;
+        this.isModalHidden = false;
+        return of();
+      })
+    );
   }
   toggleModal(): void {
     this.isModalHidden = !this.isModalHidden;

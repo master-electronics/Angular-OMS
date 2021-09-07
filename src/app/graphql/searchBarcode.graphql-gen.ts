@@ -507,79 +507,297 @@ export type UpdateOrderLineDetail = {
   OrderID?: Maybe<Scalars['Int']>;
 };
 
-export type Update_OrderLineDetailMutationVariables = Types.Exact<{
-  _id?: Types.Maybe<Types.Scalars['Int']>;
-  InternalTrackingNumber?: Types.Maybe<Types.Scalars['String']>;
-  OrderLineID?: Types.Maybe<Types.Scalars['Int']>;
-  OrderID?: Types.Maybe<Types.Scalars['Int']>;
-  OrderLineDetail: Types.UpdateOrderLineDetail;
+export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
 }>;
 
-export type Update_OrderLineDetailMutation = { __typename?: 'Mutation' } & Pick<
-  Types.Mutation,
-  'updateOrderLineDetail'
->;
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query' } & {
+  findContainer?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Container' } & Pick<Types.Container, 'Barcode'> & {
+            ORDERLINEDETAILs?: Types.Maybe<
+              Array<
+                Types.Maybe<
+                  { __typename?: 'OrderLineDetail' } & Pick<
+                    Types.OrderLineDetail,
+                    'InternalTrackingNumber'
+                  > & {
+                      Status: { __typename?: 'OrderStatus' } & Pick<
+                        Types.OrderStatus,
+                        'Name'
+                      >;
+                      OrderLine: { __typename?: 'OrderLine' } & Pick<
+                        Types.OrderLine,
+                        'ProductCode' | 'PartNumber' | 'OrderLineNumber'
+                      >;
+                      Order: { __typename?: 'Order' } & Pick<
+                        Types.Order,
+                        'OrderNumber' | 'NOSINumber'
+                      > & {
+                          ShipmentMethod?: Types.Maybe<
+                            { __typename?: 'ShipmentMethod' } & Pick<
+                              Types.ShipmentMethod,
+                              'PriorityPinkPaper'
+                            >
+                          >;
+                        };
+                    }
+                >
+              >
+            >;
+          }
+      >
+    >
+  >;
+};
 
-export type Update_ContainerMutationVariables = Types.Exact<{
-  _id?: Types.Maybe<Types.Scalars['Int']>;
-  Barcode?: Types.Maybe<Types.Scalars['String']>;
-  Container: Types.UpdateContainer;
+export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
 }>;
 
-export type Update_ContainerMutation = { __typename?: 'Mutation' } & Pick<
-  Types.Mutation,
-  'updateContainer'
->;
+export type FindItNforSearchBarcodeQuery = { __typename?: 'Query' } & {
+  findOrderLineDetail?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'OrderLineDetail' } & Pick<
+          Types.OrderLineDetail,
+          'InternalTrackingNumber'
+        > & {
+            Status: { __typename?: 'OrderStatus' } & Pick<
+              Types.OrderStatus,
+              'Name'
+            >;
+            Container: { __typename?: 'Container' } & Pick<
+              Types.Container,
+              | 'Barcode'
+              | 'Warehouse'
+              | 'Row'
+              | 'Aisle'
+              | 'Section'
+              | 'Shelf'
+              | 'ShelfDetail'
+            >;
+            OrderLine: { __typename?: 'OrderLine' } & Pick<
+              Types.OrderLine,
+              'ProductCode' | 'PartNumber' | 'OrderLineNumber'
+            >;
+            Order: { __typename?: 'Order' } & Pick<
+              Types.Order,
+              'OrderNumber' | 'NOSINumber'
+            > & {
+                ShipmentMethod?: Types.Maybe<
+                  { __typename?: 'ShipmentMethod' } & Pick<
+                    Types.ShipmentMethod,
+                    'PriorityPinkPaper'
+                  >
+                >;
+              };
+          }
+      >
+    >
+  >;
+};
 
-export const Update_OrderLineDetailDocument = gql`
-  mutation update_OrderLineDetail(
-    $_id: Int
-    $InternalTrackingNumber: String
-    $OrderLineID: Int
-    $OrderID: Int
-    $OrderLineDetail: updateOrderLineDetail!
-  ) {
-    updateOrderLineDetail(
-      _id: $_id
-      InternalTrackingNumber: $InternalTrackingNumber
-      OrderLineID: $OrderLineID
-      OrderID: $OrderID
-      OrderLineDetail: $OrderLineDetail
-    )
+export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query' } & {
+  findOrder?: Types.Maybe<
+    Array<
+      Types.Maybe<
+        { __typename?: 'Order' } & Pick<
+          Types.Order,
+          'OrderNumber' | 'NOSINumber'
+        > & {
+            ShipmentMethod?: Types.Maybe<
+              { __typename?: 'ShipmentMethod' } & Pick<
+                Types.ShipmentMethod,
+                'PriorityPinkPaper'
+              >
+            >;
+            ORDERLINEs?: Types.Maybe<
+              Array<
+                Types.Maybe<
+                  { __typename?: 'OrderLine' } & Pick<
+                    Types.OrderLine,
+                    'ProductCode' | 'PartNumber' | 'OrderLineNumber'
+                  > & {
+                      ORDERLINEDETAILs?: Types.Maybe<
+                        Array<
+                          Types.Maybe<
+                            { __typename?: 'OrderLineDetail' } & Pick<
+                              Types.OrderLineDetail,
+                              'InternalTrackingNumber' | 'Quantity'
+                            > & {
+                                Status: { __typename?: 'OrderStatus' } & Pick<
+                                  Types.OrderStatus,
+                                  'Name'
+                                >;
+                                Container: { __typename?: 'Container' } & Pick<
+                                  Types.Container,
+                                  | 'Barcode'
+                                  | 'Warehouse'
+                                  | 'Row'
+                                  | 'Aisle'
+                                  | 'Section'
+                                  | 'Shelf'
+                                  | 'ShelfDetail'
+                                >;
+                              }
+                          >
+                        >
+                      >;
+                    }
+                >
+              >
+            >;
+          }
+      >
+    >
+  >;
+};
+
+export const FindContainerForSearchBarcodeDocument = gql`
+  query findContainerForSearchBarcode($Container: searchContainer!) {
+    findContainer(Container: $Container) {
+      Barcode
+      ORDERLINEDETAILs {
+        InternalTrackingNumber
+        Status {
+          Name
+        }
+        OrderLine {
+          ProductCode
+          PartNumber
+          OrderLineNumber
+        }
+        Order {
+          OrderNumber
+          NOSINumber
+          ShipmentMethod {
+            PriorityPinkPaper
+          }
+        }
+      }
+    }
   }
 `;
 
 @Injectable({
   providedIn: 'root',
 })
-export class Update_OrderLineDetailGQL extends Apollo.Mutation<
-  Update_OrderLineDetailMutation,
-  Update_OrderLineDetailMutationVariables
+export class FindContainerForSearchBarcodeGQL extends Apollo.Query<
+  FindContainerForSearchBarcodeQuery,
+  FindContainerForSearchBarcodeQueryVariables
 > {
-  document = Update_OrderLineDetailDocument;
+  document = FindContainerForSearchBarcodeDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const Update_ContainerDocument = gql`
-  mutation update_Container(
-    $_id: Int
-    $Barcode: String
-    $Container: updateContainer!
-  ) {
-    updateContainer(_id: $_id, Barcode: $Barcode, Container: $Container)
+export const FindItNforSearchBarcodeDocument = gql`
+  query findITNforSearchBarcode($InternalTrackingNumber: String!) {
+    findOrderLineDetail(
+      OrderLineDetail: { InternalTrackingNumber: $InternalTrackingNumber }
+    ) {
+      InternalTrackingNumber
+      Status {
+        Name
+      }
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      OrderLine {
+        ProductCode
+        PartNumber
+        OrderLineNumber
+      }
+      Order {
+        OrderNumber
+        NOSINumber
+        ShipmentMethod {
+          PriorityPinkPaper
+        }
+      }
+    }
   }
 `;
 
 @Injectable({
   providedIn: 'root',
 })
-export class Update_ContainerGQL extends Apollo.Mutation<
-  Update_ContainerMutation,
-  Update_ContainerMutationVariables
+export class FindItNforSearchBarcodeGQL extends Apollo.Query<
+  FindItNforSearchBarcodeQuery,
+  FindItNforSearchBarcodeQueryVariables
 > {
-  document = Update_ContainerDocument;
+  document = FindItNforSearchBarcodeDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindOrderForSearchBarcodeDocument = gql`
+  query findOrderForSearchBarcode(
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+  ) {
+    findOrder(
+      Order: {
+        DistributionCenter: $DistributionCenter
+        OrderNumber: $OrderNumber
+        NOSINumber: $NOSINumber
+      }
+    ) {
+      OrderNumber
+      NOSINumber
+      ShipmentMethod {
+        PriorityPinkPaper
+      }
+      ORDERLINEs {
+        ProductCode
+        PartNumber
+        OrderLineNumber
+        ORDERLINEDETAILs {
+          InternalTrackingNumber
+          Status {
+            Name
+          }
+          Quantity
+          Container {
+            Barcode
+            Warehouse
+            Row
+            Aisle
+            Section
+            Shelf
+            ShelfDetail
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindOrderForSearchBarcodeGQL extends Apollo.Query<
+  FindOrderForSearchBarcodeQuery,
+  FindOrderForSearchBarcodeQueryVariables
+> {
+  document = FindOrderForSearchBarcodeDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

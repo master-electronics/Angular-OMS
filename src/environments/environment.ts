@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
+  apiUrl: 'http://localhost:4000',
+  graphql: 'http://localhost:3000/graphql',
   GTM_ID: 'GTM-KS8744D',
   changelogurl: 'https://rarm18.gitbook.io/wms/changelog',
   DistributionCenter: 'PH',

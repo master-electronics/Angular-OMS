@@ -279,6 +279,7 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchPrinterStation: Scalars['String'];
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
@@ -393,7 +394,7 @@ export type OrderView = {
   NOSINumber?: Maybe<Scalars['String']>;
   StatusID?: Maybe<Scalars['Int']>;
   Status?: Maybe<Scalars['String']>;
-  Priority?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
   ShippingMethod?: Maybe<Scalars['String']>;
   Unpicked?: Maybe<Scalars['Int']>;
   Aggregated?: Maybe<Scalars['Int']>;
@@ -688,6 +689,15 @@ export type UpdateMerpForLastLineAfterQcRepackMutation = {
   >;
 };
 
+export type FetchPrinterStationQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchPrinterStationQuery = { __typename?: 'Query' } & Pick<
+  Types.Query,
+  'fetchPrinterStation'
+>;
+
 export const VerifyItNforQcDocument = gql`
   query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
     findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
@@ -943,6 +953,25 @@ export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<
   UpdateMerpForLastLineAfterQcRepackMutationVariables
 > {
   document = UpdateMerpForLastLineAfterQcRepackDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPrinterStationDocument = gql`
+  query fetchPrinterStation {
+    fetchPrinterStation
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPrinterStationGQL extends Apollo.Query<
+  FetchPrinterStationQuery,
+  FetchPrinterStationQueryVariables
+> {
+  document = FetchPrinterStationDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

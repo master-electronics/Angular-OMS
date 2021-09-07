@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import {
@@ -23,14 +23,13 @@ import {
   OrderBarcodeRegex,
 } from '../../shared/dataRegex';
 import {
-  FetchMobileContainerInfoByBarcodeGQL,
-  FetchMobileContainerInfoByBarcodeQuery,
-  FindMobileContainerListInFixLocationGQL,
-  SearchBarcodeForItnGQL,
-  SearchBarcodeForOrderNumberGQL,
-} from '../../graphql/forSearchBarcode.graphql-gen';
+  FindContainerForSearchBarcodeGQL,
+  FindItNforSearchBarcodeGQL,
+  FindOrderForSearchBarcodeGQL,
+} from '../../graphql/searchBarcode.graphql-gen';
 import { map, switchMap } from 'rxjs/operators';
-import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
+import { SearchContainer } from 'src/app/graphql/generated/types.graphql-gen';
+import { environment } from 'src/environments/environment';
 
 const DistributionCenter = 'PH';
 
@@ -38,28 +37,27 @@ const DistributionCenter = 'PH';
   selector: 'search-barcode',
   templateUrl: './search-barcode.component.html',
 })
-export class SearchBarcodeComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class SearchBarcodeComponent implements AfterViewInit {
   title = 'Search Barcode';
   message = '';
   messageType = 'error';
-  searchType: string;
-  containerInfo$: Observable<FetchMobileContainerInfoByBarcodeQuery>;
-  ITNInfo$: Observable<any>;
-  OrderInfo$: Observable<any>;
+  container$;
+  ITN$;
+  order$;
+  isLoading = false;
+  isContainer = false;
+  isITN = false;
+  isOrder = false;
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private fb: FormBuilder,
     private titleService: Title,
-    private fetchMobileContainerInfoByBarcode: FetchMobileContainerInfoByBarcodeGQL,
-    private findMobileContainerListInFixLocation: FindMobileContainerListInFixLocationGQL,
-    private searchITN: SearchBarcodeForItnGQL,
-    private searchOrder: SearchBarcodeForOrderNumberGQL
+    private searchContainer: FindContainerForSearchBarcodeGQL,
+    private searchITN: FindItNforSearchBarcodeGQL,
+    private searchOrder: FindOrderForSearchBarcodeGQL
   ) {
-    this.commonService.changeTitle(this.title);
+    this.commonService.changeNavbar(this.title);
     this.titleService.setTitle(this.title);
   }
 
@@ -84,111 +82,69 @@ export class SearchBarcodeComponent
         };
   }
 
-  shortcuts: ShortcutInput[] = [];
   @ViewChild('barcode') barcode: ElementRef;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.barcode.nativeElement.select();
     }, 10);
-
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Submit',
-      preventDefault: true,
-      allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: () => {
-        this.onSubmit();
-      },
-    });
-  }
-
-  ngOnInit(): void {
-    //
   }
 
   onSubmit(): void {
     this.message = '';
-    this.ITNInfo$ = null;
-    this.containerInfo$ = null;
-    this.OrderInfo$ = null;
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
       if (ToteBarcodeRegex.test(barcode)) {
-        this.containerInfo$ = this.forMobileContainer(barcode);
+        this.isContainer = true;
+        const containerInfo = { Barcode: barcode };
+        this.container$ = this.searchContainer
+          .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
+          .valueChanges.pipe(map((res) => res.data.findContainer));
       }
       if (AggregationShelfBarcodeRegex.test(barcode)) {
-        this.containerInfo$ = this.forFixContainer(barcode);
+        this.isContainer = true;
+        const containerInfo = {
+          DistributionCenter: environment.DistributionCenter,
+          Warehouse: barcode.substring(0, 2),
+          Row: barcode.substring(3, 5),
+          Aisle: barcode.substring(6, 8),
+          Section: barcode.substring(9, 11),
+          Shelf: barcode.substring(12, 13),
+          ShelfDetail: barcode.substring(14),
+        };
+        this.container$ = this.searchContainer
+          .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
+          .valueChanges.pipe(
+            map((res) =>
+              res.data.findContainer.filter((res) => res.Barcode.length === 8)
+            )
+          );
       }
       if (ITNBarcodeRegex.test(barcode)) {
-        this.ITNInfo$ = this.searchITN
+        this.isITN = true;
+        this.ITN$ = this.searchITN
           .watch(
             {
               InternalTrackingNumber: barcode,
             },
-            { fetchPolicy: 'no-cache' }
+            { fetchPolicy: 'network-only' }
           )
-          .valueChanges.pipe(map((res) => res.data.findInventory));
+          .valueChanges.pipe(map((res) => res.data.findOrderLineDetail));
       }
       if (OrderBarcodeRegex.test(barcode)) {
+        this.isOrder = true;
         const barcodeSplit = barcode.split('-');
-        this.OrderInfo$ = this.searchOrder
+        this.order$ = this.searchOrder
           .watch(
             {
               DistributionCenter: DistributionCenter,
               OrderNumber: barcodeSplit[0],
               NOSINumber: barcodeSplit[1],
             },
-            { fetchPolicy: 'no-cache' }
+            { fetchPolicy: 'network-only' }
           )
           .valueChanges.pipe(map((res) => res.data.findOrder));
       }
       this.barcode.nativeElement.select();
     }
-  }
-
-  forFixContainer(
-    barcode: string
-  ): Observable<FetchMobileContainerInfoByBarcodeQuery> {
-    const barcodeSplit = barcode.split('-');
-    return this.findMobileContainerListInFixLocation
-      .watch(
-        {
-          DistributionCenter: DistributionCenter,
-          Warehouse: barcodeSplit[0],
-          Row: barcodeSplit[1],
-          Aisle: barcodeSplit[2],
-          Section: barcodeSplit[3],
-          Shelf: barcodeSplit[4],
-          ShelfDetail: barcodeSplit[5],
-        },
-        { fetchPolicy: 'no-cache' }
-      )
-      .valueChanges.pipe(
-        switchMap((res) =>
-          this.forMobileContainer(
-            res.data.findContainer
-              .map((ele) => ele.Barcode)
-              .filter((ele) => ToteBarcodeRegex.test(ele))
-          )
-        )
-      );
-  }
-
-  forMobileContainer(barcodeList: string[]): Observable<any> {
-    return this.fetchMobileContainerInfoByBarcode
-      .watch(
-        { DistributionCenter: DistributionCenter, BarcodeList: barcodeList },
-        { fetchPolicy: 'no-cache' }
-      )
-      .valueChanges.pipe(map((res) => res.data.findContainerList));
-  }
-
-  back(): void {
-    this.containerInfo$ = null;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

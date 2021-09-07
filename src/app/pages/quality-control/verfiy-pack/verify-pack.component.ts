@@ -136,15 +136,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   fetchProductInfo(): void {
     this.subscription.add(
       this.fetchProductInfoFromMerp
-        .watch(
-          {
-            ProductList: [
-              this.urlParams.PRC.padEnd(3) + this.urlParams.PartNum,
-            ],
-          },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.subscribe(
+        .fetch({
+          ProductList: [this.urlParams.PRC.padEnd(3) + this.urlParams.PartNum],
+        })
+        .subscribe(
           (res) => {
             if (res.data.fetchProductInfoFromMerp.length) {
               this.UnitOfMeasure =

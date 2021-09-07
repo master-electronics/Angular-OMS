@@ -192,8 +192,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               OrderLineDetail: { StatusID: environment.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
               Container: {
-                Warehouse: null,
-                Row: null,
+                Warehouse: '10',
+                Row: 'AG',
                 Aisle: null,
                 Section: null,
                 Shelf: null,

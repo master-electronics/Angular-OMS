@@ -51,8 +51,7 @@ export class AuthenticationService {
 
   logout(): void {
     // remove user from cookie
-    this.cookieService.delete('user');
-    this.user.next('');
     this.router.navigate(['/login']);
+    this.cookieService.delete('user');
   }
 }

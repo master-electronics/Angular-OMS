@@ -5,7 +5,7 @@
   </div>
 </div>
 <check-printer-modal
-  *ngIf="!isModalHidden"
+  *ngIf="(printerStation$ | async) && !isModalHidden"
   [(isModalHidden)]="isModalHidden"
   [modalMessage]="modalMessage"
 ></check-printer-modal>

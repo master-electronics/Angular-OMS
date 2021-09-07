@@ -1,6 +1,6 @@
 <div class="container px-4 mx-auto mb-10">
   <!-- Order input form -->
-  <div class="flex flex-col md:mt-2 md:max-w-md">
+  <div class="flex flex-col md:mt-2 md:max-w-md h-auto">
     <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
       <div class="mt-2">
         <div class="relative">
@@ -59,47 +59,43 @@
       </div>
     </form>
   </div>
+
   <!-- Container Information -->
-  <div
-    *ngIf="containerInfo$ | async as obs; else containerloading"
-    class="mt-2"
-  >
-    <div class="mb-2">
-      <ul *ngFor="let container of obs">
+  <div *ngIf="isContainer" class="mt-2">
+    <div class="mb-2 divide-y">
+      <ul *ngFor="let container of container$ | async as list">
         <li>Container: {{ container.Barcode }}</li>
-        <li>
+        <li *ngIf="list.length < 2">
           Location:
           {{ container.Warehouse }}-{{ container.Row }}-{{ container.Aisle }}-{{
             container.Section
           }}-{{ container.Shelf }}-{{ container.ShelfDetail }}
         </li>
         <div class="divide-y">
-          <ul *ngFor="let ITN of container.INVENTORies">
+          <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
             <li class="ml-3">
               ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
             </li>
             <li class="ml-3">
-              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} ({{
-                ITN.Order.Status.Name
-              }}))
+              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
+                ITN.OrderLine.OrderLineNumber
+              }}
+
+              <span>{{
+                ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+              }}</span>
             </li>
           </ul>
         </div>
       </ul>
     </div>
   </div>
-  <ng-template #containerloading>
-    <div *ngIf="containerInfo$">Loading...</div>
-  </ng-template>
+
   <!-- ITN information  -->
-  <div *ngIf="ITNInfo$ | async as obs; else ITNloading">
+  <div *ngIf="isITN">
     <div class="divide-y">
-      <ul *ngFor="let ITN of obs">
-        <li>
-          ITN: {{ this.barcodeForm.get('barcode').value }}({{
-            ITN.Status.Name
-          }})
-        </li>
+      <ul *ngFor="let ITN of ITN$ | async">
+        <li>ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})</li>
         <li>
           Location:
           {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
@@ -110,47 +106,42 @@
         </li>
         <li>Container: {{ ITN.Container.Barcode }}</li>
         <li>
-          Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }}({{
-            ITN.Order.Status.Name
-          }})
+          Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
+            ITN.OrderLine.OrderLineNumber
+          }}
+
+          <span>{{
+            ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+          }}</span>
         </li>
       </ul>
     </div>
   </div>
-  <ng-template #ITNloading>
-    <div *ngIf="ITNInfo$">Loading...</div>
-  </ng-template>
+
   <!-- Order Infromation -->
-  <div *ngIf="OrderInfo$ | async as obs; else Orderloading">
-    <ul *ngFor="let order of obs">
+  <div *ngIf="isOrder">
+    <h1>Here</h1>
+    <ul *ngFor="let order of order$ | async">
       <li>
-        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }} ({{
-          order.Status.Name
-        }})
+        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
+        <span>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</span>
       </li>
       <div class="divide-y">
-        <ul class="ml-2" *ngFor="let ITN of order.INVENTORies">
-          <li>ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})</li>
-          <li>
-            Location: {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-              ITN.Container.Aisle
-            }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-              ITN.Container.ShelfDetail
-            }}
-          </li>
-          <li>Container: {{ ITN.Container.Barcode }}</li>
+        <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
+          <li>Line: {{ line.OrderLineNumber }}</li>
+          <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
+            <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+            <li>
+              Location: {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
+                ITN.Container.Aisle
+              }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
+                ITN.Container.ShelfDetail
+              }}
+            </li>
+            <li>Container: {{ ITN.Container.Barcode }}</li>
+          </ul>
         </ul>
       </div>
     </ul>
   </div>
-  <ng-template #Orderloading>
-    <div *ngIf="OrderInfo$">Loading...</div>
-  </ng-template>
 </div>
-
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>
