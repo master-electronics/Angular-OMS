@@ -51,8 +51,8 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.titleService.setTitle('Login');
   }
 
-  @ViewChild('usernameError') usernameError: ElementRef;
-  @ViewChild('passwordError') passwordError: ElementRef;
+  @ViewChild('username') username: ElementRef;
+  @ViewChild('password') password: ElementRef;
   // convenience getter for easy access to form fields
 
   toggleShowPassword(): void {

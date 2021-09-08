@@ -24,16 +24,25 @@
       </div>
       <!-- login form -->
       <div class="flex-auto px-4 py-6 pt-0 lg:px-10">
-        <form focusInvalidInput [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <form
+          focusInvalidInput
+          [formGroup]="loginForm"
+          autocomplete="off"
+          (ngSubmit)="onSubmit()"
+        >
           <!-- two input box -->
           <div class="z-0 w-full relative mt-4">
             <input
               type="text"
               id="username"
               name="username"
+              autocomplete="off"
               placeholder=" "
               formControlName="username"
               class="float-input"
+              readonly
+              onfocus="username.removeAttribute('readonly');"
+              onfocusout="username.setAttribute('readonly','readonly')"
               #username
             />
             <label for="username" class="float-label"> USERNAME </label>
@@ -54,9 +63,13 @@
               [type]="isShowPassword"
               id="password"
               name="password"
+              autocomplete="off"
               placeholder=" "
               formControlName="password"
               class="float-input"
+              readonly
+              onfocus="password.removeAttribute('readonly');"
+              onfocusout="password.setAttribute('readonly','readonly')"
               #password
             />
             <label for="password" class="float-label"> PASSWORD </label>
