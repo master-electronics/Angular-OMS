@@ -35,14 +35,10 @@
             <input
               type="text"
               id="username"
-              name="username"
               autocomplete="off"
               placeholder=" "
               formControlName="username"
               class="float-input"
-              readonly
-              onfocus="username.removeAttribute('readonly');"
-              onfocusout="username.setAttribute('readonly','readonly')"
               #username
             />
             <label for="username" class="float-label"> USERNAME </label>
@@ -62,14 +58,10 @@
             <input
               [type]="isShowPassword"
               id="password"
-              name="password"
               autocomplete="off"
               placeholder=" "
               formControlName="password"
               class="float-input"
-              readonly
-              onfocus="password.removeAttribute('readonly');"
-              onfocusout="password.setAttribute('readonly','readonly')"
               #password
             />
             <label for="password" class="float-label"> PASSWORD </label>
@@ -98,17 +90,17 @@
             >
           </div>
           <!-- submit button -->
+          <div class="hidden">{{ login$ | async }}</div>
           <div class="mt-2 md:mt-6">
             <form-button
-              [styles]="buttonStyles"
               [type]="'submit'"
               [disabled]="isLoading"
               [isLoading]="isLoading"
-              [label]="buttonLabel"
+              [label]="'Sign In'"
             ></form-button>
           </div>
           <div class="mt-2 md:mt-6">
-            <message-bar [message]="message" [type]="messageType"></message-bar>
+            <message-bar [message]="message" [type]="'error'"></message-bar>
           </div>
         </form>
       </div>

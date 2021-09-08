@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'zen-observable';
 
 @Component({
   selector: 'app-login',
@@ -20,9 +22,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 export class LoginComponent implements OnDestroy, OnInit {
   isShowPassword = 'password';
   isLoading = false;
-  messageType = 'error';
-  buttonLabel = 'Sign In';
-  buttonStyles = 'bg-indigo-800';
+  login$;
   message = '';
   loginForm = this.fb.group({
     username: ['', Validators.required],
@@ -64,30 +64,29 @@ export class LoginComponent implements OnDestroy, OnInit {
   onSubmit(): void {
     this.message = '';
     if (this.loginForm.valid) {
-      this.subscription.add(this.verifyUser());
+      this.isLoading = true;
+      this.login$ = this.authenticationService
+        .userAuth(this.f.username.value, this.f.password.value)
+        .pipe(
+          map((res) => {
+            const userString = JSON.stringify(res);
+            this.cookieService.set('user', userString);
+            this.authenticationService.changeUser(userString);
+            const returnUrl =
+              this.route.snapshot.queryParams['returnUrl'] || '/home';
+            this.router.navigateByUrl(returnUrl);
+          }),
+          catchError((error) => {
+            this.message = error.error;
+            this.isLoading = false;
+            return of();
+          })
+        );
     }
   }
 
   verifyUser(): void {
-    this.isLoading = true;
     this.message = '';
-    this.authenticationService
-      .userAuth(this.f.username.value, this.f.password.value)
-      .subscribe({
-        next: (user) => {
-          const userString = JSON.stringify(user);
-          this.cookieService.set('user', userString);
-          this.authenticationService.changeUser(userString);
-          const returnUrl =
-            this.route.snapshot.queryParams['returnUrl'] || '/home';
-          this.router.navigateByUrl(returnUrl);
-        },
-        error: (err) => {
-          this.message = err.error;
-          this.messageType = 'error';
-          this.isLoading = false;
-        },
-      });
   }
 
   ngOnDestroy(): void {
