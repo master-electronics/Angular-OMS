@@ -24,6 +24,7 @@ export class LoginComponent implements OnDestroy, OnInit {
   isLoading = false;
   login$;
   message = '';
+  elem;
   loginForm = this.fb.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
@@ -40,8 +41,10 @@ export class LoginComponent implements OnDestroy, OnInit {
     private authenticationService: AuthenticationService,
     private cookieService: CookieService,
     private commonService: CommonService,
-    private titleService: Title
+    private titleService: Title,
+    private elementRef: ElementRef
   ) {
+    this.elem = document.documentElement;
     if (this.authenticationService.userInfo) {
       this.router.navigate(['home']);
     }
@@ -61,6 +64,21 @@ export class LoginComponent implements OnDestroy, OnInit {
       : (this.isShowPassword = 'password');
   }
 
+  openFullscreen(): void {
+    if (this.elem.requestFullscreen) {
+      this.elem.requestFullscreen();
+    } else if (this.elem.mozRequestFullScreen) {
+      /* Firefox */
+      this.elem.mozRequestFullScreen();
+    } else if (this.elem.webkitRequestFullscreen) {
+      /* Chrome, Safari and Opera */
+      this.elem.webkitRequestFullscreen();
+    } else if (this.elem.msRequestFullscreen) {
+      /* IE/Edge */
+      this.elem.msRequestFullscreen();
+    }
+  }
+
   onSubmit(): void {
     this.message = '';
     if (this.loginForm.valid) {
@@ -75,6 +93,9 @@ export class LoginComponent implements OnDestroy, OnInit {
             const returnUrl =
               this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(returnUrl);
+            if (this.commonService.isMobile()) {
+              this.openFullscreen();
+            }
           }),
           catchError((error) => {
             this.message = error.error;

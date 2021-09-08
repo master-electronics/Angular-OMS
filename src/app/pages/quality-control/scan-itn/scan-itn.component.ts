@@ -85,11 +85,11 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.subscription.add(
       this.verifyITNQC
-        .watch(
+        .fetch(
           { OrderLineDetail: { InternalTrackingNumber: ITN } },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'network-only' }
         )
-        .valueChanges.pipe(
+        .pipe(
           tap((res) => {
             if (!res.data.findOrderLineDetail.length) {
               throw 'Can not find this ITN';

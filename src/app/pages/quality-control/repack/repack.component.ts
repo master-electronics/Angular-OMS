@@ -15,7 +15,6 @@ import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
-  UpdateSourceAndTargetContainerAfterQcRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -23,7 +22,10 @@ import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { Update_OrderLineDetailGQL } from '../../../graphql/wms.graphql-gen';
+import {
+  Update_ContainerGQL,
+  Update_OrderLineDetailGQL,
+} from '../../../graphql/wms.graphql-gen';
 
 @Component({
   selector: 'repack',
@@ -49,11 +51,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateOrderLineDetail: Update_OrderLineDetailGQL,
-    private updateContainer: UpdateSourceAndTargetContainerAfterQcRepackGQL,
+    private updateContainer: Update_ContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private gtmService: GoogleTagManagerService
   ) {
-    titleService.setTitle('qc/repack');
+    this.titleService.setTitle('qc/repack');
   }
 
   containerForm = this.fb.group({
@@ -116,7 +118,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               NOSINumber: this.urlParams.NOSI,
             },
           },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'network-only' }
         )
 
         .valueChanges.pipe(
@@ -163,9 +165,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               },
             });
 
-            const updateContainer = this.updateContainer.mutate({
-              targetID: targetContainer._id,
-              targetContainer: {
+            const updateTargetConatiner = this.updateContainer.mutate({
+              _id: targetContainer._id,
+              Container: {
                 Warehouse: '01',
                 Row: 'QC',
                 Aisle: null,
@@ -173,8 +175,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 Shelf: null,
                 ShelfDetail: null,
               },
-              sourceID: sourceContainer,
-              sourceContainer: {
+            });
+            const updateSourceConatiner = this.updateContainer.mutate({
+              _id: sourceContainer,
+              Container: {
                 Warehouse: null,
                 Row: null,
                 Aisle: null,
@@ -194,11 +198,18 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Send different query combination
             const updateQueries = {
               updateDetail,
-              updateContainer,
+              updateTargetConatiner,
+              updateSourceConatiner,
               updateMerpLog,
             };
-            if (targetContainer._id === sourceContainer)
-              delete updateQueries.updateContainer;
+            environment.qcComplete_ID;
+            if (sourceContainer === environment.DC_PH_ID) {
+              delete updateQueries.updateSourceConatiner;
+            }
+            if (targetContainer._id === sourceContainer) {
+              delete updateQueries.updateTargetConatiner;
+              delete updateQueries.updateSourceConatiner;
+            }
             if (inProcess) delete updateQueries.updateMerpLog;
             // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
             if (targetContainer.ORDERLINEDETAILs.length) {
@@ -219,37 +230,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                   });
             }
             return forkJoin(updateQueries);
-          }),
-
-          tap((res: any) => {
-            let error = '';
-            if (!res.updateDetail.data.updateOrderLineDetail.length) {
-              error += `\nFail to update OrderLineDetail SQL`;
-            }
-            if (
-              res.updateContainer &&
-              !res.updateContainer.data.source.length
-            ) {
-              error += `\nFail to update source Container SQL`;
-            }
-            if (
-              res.updateContainer &&
-              !res.updateContainer.data.target.length
-            ) {
-              error += `\nFail to update target Container SQL`;
-            }
-            if (
-              res.cleanContainerFromPrevOrder &&
-              !res.cleanContainerFromPrevOrder.data.updateOrderLineDetail.length
-            ) {
-              error += `\nFail to clean container in previous OrderLineDetail`;
-            }
-            if (error) throw `${this.urlParams.ITN}`.concat(error);
           })
         )
 
         .subscribe(
-          (res) => {
+          (res: any) => {
             let type = 'info';
             let message = `QC complete for ${this.urlParams.ITN}`;
             if (res.updateMerpLog) {

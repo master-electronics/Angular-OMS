@@ -124,16 +124,6 @@ mutation updateMerpAfterQcVerify(
   }
 }
 
-mutation updateSourceAndTargetContainerAfterQCRepack(
-  $sourceID: Int!
-  $sourceContainer: updateContainer!
-  $targetID: Int!
-  $targetContainer: updateContainer!
-) {
-  source: updateContainer(_id: $sourceID, Container: $sourceContainer)
-  target: updateContainer(_id: $targetID, Container: $targetContainer)
-}
-
 mutation updateMerpForLastLineAfterQCRepack(
   $OrderNumber: String!
   $NOSINumber: String!

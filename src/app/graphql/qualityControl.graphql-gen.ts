@@ -671,21 +671,6 @@ export type UpdateMerpAfterQcVerifyMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export type UpdateSourceAndTargetContainerAfterQcRepackMutationVariables =
-  Types.Exact<{
-    sourceID: Types.Scalars['Int'];
-    sourceContainer: Types.UpdateContainer;
-    targetID: Types.Scalars['Int'];
-    targetContainer: Types.UpdateContainer;
-  }>;
-
-export type UpdateSourceAndTargetContainerAfterQcRepackMutation = {
-  __typename?: 'Mutation';
-} & {
-  source: Types.Mutation['updateContainer'];
-  target: Types.Mutation['updateContainer'];
-};
-
 export type UpdateMerpForLastLineAfterQcRepackMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
@@ -946,31 +931,6 @@ export class UpdateMerpAfterQcVerifyGQL extends Apollo.Mutation<
   UpdateMerpAfterQcVerifyMutationVariables
 > {
   document = UpdateMerpAfterQcVerifyDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const UpdateSourceAndTargetContainerAfterQcRepackDocument = gql`
-  mutation updateSourceAndTargetContainerAfterQCRepack(
-    $sourceID: Int!
-    $sourceContainer: updateContainer!
-    $targetID: Int!
-    $targetContainer: updateContainer!
-  ) {
-    source: updateContainer(_id: $sourceID, Container: $sourceContainer)
-    target: updateContainer(_id: $targetID, Container: $targetContainer)
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class UpdateSourceAndTargetContainerAfterQcRepackGQL extends Apollo.Mutation<
-  UpdateSourceAndTargetContainerAfterQcRepackMutation,
-  UpdateSourceAndTargetContainerAfterQcRepackMutationVariables
-> {
-  document = UpdateSourceAndTargetContainerAfterQcRepackDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

@@ -37,6 +37,10 @@
       <p class="font-bold col-span-10">
         PartNumber: {{ this.urlParams.PartNum }}
       </p>
+      <button class="col-span-2 bg-gray-300 rounded-r-sm" (click)="print()">
+        Print ITN
+      </button>
+      <p *ngIf="printITN$ | async"></p>
     </div>
 
     <div class="grid grid-cols-8 mt-2 h-40">
@@ -51,7 +55,7 @@
         </div>
       </div>
 
-      <div class="grid items-center text-lg font-bold col-span-4">
+      <div class="grid items-center text-lg font-bold col-span-3">
         <p>Quantity:</p>
         <p class="text-indigo-600 text-2xl">
           {{ this.urlParams.Quantity }}({{ this.UnitOfMeasure }})
@@ -59,6 +63,8 @@
         <p>HML:</p>
         <p class="text-indigo-600">{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
       </div>
+
+      <div *ngIf="isLoading">loading</div>
     </div>
   </section>
 

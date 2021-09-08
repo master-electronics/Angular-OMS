@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
@@ -16,10 +16,13 @@ import Countries from '../../../shared/countries';
 import { QualityControlService } from '../quality-control.server';
 import {
   FetchProductInfoFromMerpGQL,
+  PrintItnLabelGQL,
   UpdateMerpAfterQcVerifyGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 import { Title } from '@angular/platform-browser';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { catchError, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'verify-pack',
@@ -99,13 +102,15 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private commonService: CommonService,
     private titleService: Title,
     private qcService: QualityControlService,
     private updateMerp: UpdateMerpAfterQcVerifyGQL,
     private updateWms: Update_OrderLineDetailGQL,
-    private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL
+    private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
+    private printITN: PrintItnLabelGQL
   ) {
-    titleService.setTitle('qc/verifypack');
+    this.titleService.setTitle('qc/verifypack');
   }
 
   async ngOnInit(): Promise<void> {
@@ -163,6 +168,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.message = '';
     if (this.verifyPack.invalid) {
       if (this.verifyPack.get('dateCode').errors) {
         this.dateCodeError.nativeElement.textContent =
@@ -324,6 +330,33 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       }
     );
+  }
+  printITN$;
+  print(): void {
+    this.message = '';
+    this.isLoading = true;
+    this.printITN$ = this.printITN
+      .mutate({
+        InternalTrackingNumber: this.urlParams.ITN,
+        Station: this.commonService.printerInfo,
+      })
+      .pipe(
+        tap((res) => {
+          if (!res.data.printITNLabel.success) {
+            throw `Print failed: ` + res.data.printITNLabel.message;
+          } else {
+            this.isLoading = false;
+            this.message = 'Print success.';
+            this.messageType = 'success';
+          }
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          this.message = error;
+          this.messageType = 'error';
+          return of();
+        })
+      );
   }
 
   ngOnDestroy(): void {
