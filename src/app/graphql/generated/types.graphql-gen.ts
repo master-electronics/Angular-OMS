@@ -242,6 +242,7 @@ export type OrderLineDetail = {
   ROHS: Scalars['Boolean'];
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
+  BinLocation?: Maybe<Scalars['String']>;
   OrderLine: OrderLine;
   Status: OrderStatus;
   Container: Container;
@@ -372,6 +373,7 @@ export type InsertOrderLineDetail = {
   ParentITN?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   OrderID: Scalars['Int'];
+  BinLocation?: Maybe<Scalars['String']>;
 };
 
 export type OrderView = {
@@ -446,6 +448,7 @@ export type SearchOrderLineDetail = {
   ParentITN?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   OrderID?: Maybe<Scalars['Int']>;
+  BinLocation?: Maybe<Scalars['String']>;
 };
 
 export type UpdateContainer = {
@@ -493,4 +496,5 @@ export type UpdateOrderLineDetail = {
   ParentITN?: Maybe<Scalars['String']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   OrderID?: Maybe<Scalars['Int']>;
+  BinLocation?: Maybe<Scalars['String']>;
 };
