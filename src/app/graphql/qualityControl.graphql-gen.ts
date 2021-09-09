@@ -723,7 +723,7 @@ export class VerifyItNforQcGQL extends Apollo.Query<
   VerifyItNforQcQueryVariables
 > {
   document = VerifyItNforQcDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -746,7 +746,7 @@ export class FetchProductInfoFromMerpGQL extends Apollo.Query<
   FetchProductInfoFromMerpQueryVariables
 > {
   document = FetchProductInfoFromMerpDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -782,7 +782,7 @@ export class QcGlobalMessageGQL extends Apollo.Query<
   QcGlobalMessageQueryVariables
 > {
   document = QcGlobalMessageDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -801,7 +801,7 @@ export class FetchPrinterStationGQL extends Apollo.Query<
   FetchPrinterStationQueryVariables
 > {
   document = FetchPrinterStationDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -826,7 +826,7 @@ export class PrintItnLabelGQL extends Apollo.Mutation<
   PrintItnLabelMutationVariables
 > {
   document = PrintItnLabelDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -862,7 +862,7 @@ export class VerifyQcRepackGQL extends Apollo.Query<
   VerifyQcRepackQueryVariables
 > {
   document = VerifyQcRepackDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -897,7 +897,7 @@ export class HoldQcOrderGQL extends Apollo.Mutation<
   HoldQcOrderMutationVariables
 > {
   document = HoldQcOrderDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -931,7 +931,7 @@ export class UpdateMerpAfterQcVerifyGQL extends Apollo.Mutation<
   UpdateMerpAfterQcVerifyMutationVariables
 > {
   document = UpdateMerpAfterQcVerifyDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -967,7 +967,7 @@ export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<
   UpdateMerpForLastLineAfterQcRepackMutationVariables
 > {
   document = UpdateMerpForLastLineAfterQcRepackDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }

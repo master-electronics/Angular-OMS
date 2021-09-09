@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -13,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import {
@@ -27,8 +19,7 @@ import {
   FindItNforSearchBarcodeGQL,
   FindOrderForSearchBarcodeGQL,
 } from '../../graphql/searchBarcode.graphql-gen';
-import { map, switchMap } from 'rxjs/operators';
-import { SearchContainer } from 'src/app/graphql/generated/types.graphql-gen';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 const DistributionCenter = 'PH';

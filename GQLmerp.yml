@@ -15,3 +15,5 @@ generates:
       - 'typescript'
       - 'typescript-operations'
       - 'typescript-apollo-angular'
+    config:
+      namedClient: 'wmsNodejs'

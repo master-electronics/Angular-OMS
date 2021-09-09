@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import {
+  APOLLO_NAMED_OPTIONS,
+  APOLLO_OPTIONS,
+  NamedOptions,
+} from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 
@@ -68,13 +72,15 @@ import { environment } from '../environments/environment';
       multi: true,
     },
     {
-      provide: APOLLO_OPTIONS,
-      useFactory: (httpLink: HttpLink) => {
+      provide: APOLLO_NAMED_OPTIONS,
+      useFactory: (httpLink: HttpLink): NamedOptions => {
         return {
-          cache: new InMemoryCache(),
-          link: httpLink.create({
-            uri: environment.graphql,
-          }),
+          wmsNodejs: {
+            cache: new InMemoryCache(),
+            link: httpLink.create({
+              uri: environment.graphql,
+            }),
+          },
         };
       },
       deps: [HttpLink],

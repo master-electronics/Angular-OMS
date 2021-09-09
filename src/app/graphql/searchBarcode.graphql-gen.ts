@@ -688,7 +688,7 @@ export class FindContainerForSearchBarcodeGQL extends Apollo.Query<
   FindContainerForSearchBarcodeQueryVariables
 > {
   document = FindContainerForSearchBarcodeDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -735,7 +735,7 @@ export class FindItNforSearchBarcodeGQL extends Apollo.Query<
   FindItNforSearchBarcodeQueryVariables
 > {
   document = FindItNforSearchBarcodeDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -791,7 +791,7 @@ export class FindOrderForSearchBarcodeGQL extends Apollo.Query<
   FindOrderForSearchBarcodeQueryVariables
 > {
   document = FindOrderForSearchBarcodeDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }

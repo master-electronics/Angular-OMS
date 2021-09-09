@@ -591,7 +591,7 @@ export class FetchOrderViewGQL extends Apollo.Query<
   FetchOrderViewQueryVariables
 > {
   document = FetchOrderViewDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -631,7 +631,7 @@ export class FetchOrderDetailforitnViewGQL extends Apollo.Query<
   FetchOrderDetailforitnViewQueryVariables
 > {
   document = FetchOrderDetailforitnViewDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }

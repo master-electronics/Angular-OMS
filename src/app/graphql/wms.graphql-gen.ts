@@ -553,7 +553,7 @@ export class Update_OrderLineDetailGQL extends Apollo.Mutation<
   Update_OrderLineDetailMutationVariables
 > {
   document = Update_OrderLineDetailDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -576,7 +576,7 @@ export class Update_ContainerGQL extends Apollo.Mutation<
   Update_ContainerMutationVariables
 > {
   document = Update_ContainerDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }

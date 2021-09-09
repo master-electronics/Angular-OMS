@@ -770,7 +770,7 @@ export class VerifyContainerForAggregationInGQL extends Apollo.Query<
   VerifyContainerForAggregationInQueryVariables
 > {
   document = VerifyContainerForAggregationInDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -819,7 +819,7 @@ export class FetchLocationAndOrderDetailForAgInGQL extends Apollo.Query<
   FetchLocationAndOrderDetailForAgInQueryVariables
 > {
   document = FetchLocationAndOrderDetailForAgInDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -875,7 +875,7 @@ export class UpdateAfterAgOutGQL extends Apollo.Mutation<
   UpdateAfterAgOutMutationVariables
 > {
   document = UpdateAfterAgOutDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -896,7 +896,7 @@ export class FetchHazardMaterialLevelGQL extends Apollo.Query<
   FetchHazardMaterialLevelQueryVariables
 > {
   document = FetchHazardMaterialLevelDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -923,7 +923,7 @@ export class UpdateSqlAfterAgInGQL extends Apollo.Mutation<
   UpdateSqlAfterAgInMutationVariables
 > {
   document = UpdateSqlAfterAgInDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -955,7 +955,7 @@ export class UpdateMerpWmsLogGQL extends Apollo.Mutation<
   UpdateMerpWmsLogMutationVariables
 > {
   document = UpdateMerpWmsLogDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -987,7 +987,7 @@ export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<
   UpdateMerpOrderStatusMutationVariables
 > {
   document = UpdateMerpOrderStatusDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -1010,7 +1010,7 @@ export class PickOrderForAgOutGQL extends Apollo.Mutation<
   PickOrderForAgOutMutationVariables
 > {
   document = PickOrderForAgOutDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -1042,7 +1042,7 @@ export class VerifyOrderForAgOutGQL extends Apollo.Query<
   VerifyOrderForAgOutQueryVariables
 > {
   document = VerifyOrderForAgOutDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
@@ -1077,7 +1077,7 @@ export class FetchContainerForAgoutPickGQL extends Apollo.Query<
   FetchContainerForAgoutPickQueryVariables
 > {
   document = FetchContainerForAgoutPickDocument;
-
+  client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
