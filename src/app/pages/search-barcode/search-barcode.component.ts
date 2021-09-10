@@ -32,13 +32,11 @@ export class SearchBarcodeComponent implements AfterViewInit {
   title = 'Search Barcode';
   message = '';
   messageType = 'error';
-  container$;
-  ITN$;
-  order$;
   isLoading = false;
   isContainer = false;
   isITN = false;
   isOrder = false;
+  search$;
 
   constructor(
     private commonService: CommonService,
@@ -82,14 +80,20 @@ export class SearchBarcodeComponent implements AfterViewInit {
 
   onSubmit(): void {
     this.message = '';
+    this.isLoading = true;
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
       if (ToteBarcodeRegex.test(barcode)) {
         this.isContainer = true;
         const containerInfo = { Barcode: barcode };
-        this.container$ = this.searchContainer
+        this.search$ = this.searchContainer
           .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
-          .valueChanges.pipe(map((res) => res.data.findContainer));
+          .valueChanges.pipe(
+            map((res) => {
+              this.isLoading = false;
+              return res.data.findContainer;
+            })
+          );
       }
       if (AggregationShelfBarcodeRegex.test(barcode)) {
         this.isContainer = true;
@@ -102,29 +106,37 @@ export class SearchBarcodeComponent implements AfterViewInit {
           Shelf: barcode.substring(12, 13),
           ShelfDetail: barcode.substring(14),
         };
-        this.container$ = this.searchContainer
+        this.search$ = this.searchContainer
           .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
           .valueChanges.pipe(
-            map((res) =>
-              res.data.findContainer.filter((res) => res.Barcode.length === 8)
-            )
+            map((res) => {
+              this.isLoading = false;
+              return res.data.findContainer.filter(
+                (res) => res.Barcode.length === 8
+              );
+            })
           );
       }
       if (ITNBarcodeRegex.test(barcode)) {
         this.isITN = true;
-        this.ITN$ = this.searchITN
+        this.search$ = this.searchITN
           .watch(
             {
               InternalTrackingNumber: barcode,
             },
             { fetchPolicy: 'network-only' }
           )
-          .valueChanges.pipe(map((res) => res.data.findOrderLineDetail));
+          .valueChanges.pipe(
+            map((res) => {
+              this.isLoading = false;
+              res.data.findOrderLineDetail;
+            })
+          );
       }
       if (OrderBarcodeRegex.test(barcode)) {
         this.isOrder = true;
         const barcodeSplit = barcode.split('-');
-        this.order$ = this.searchOrder
+        this.search$ = this.searchOrder
           .watch(
             {
               DistributionCenter: DistributionCenter,
@@ -133,7 +145,12 @@ export class SearchBarcodeComponent implements AfterViewInit {
             },
             { fetchPolicy: 'network-only' }
           )
-          .valueChanges.pipe(map((res) => res.data.findOrder));
+          .valueChanges.pipe(
+            map((res) => {
+              this.isLoading = false;
+              return res.data.findOrder;
+            })
+          );
       }
       this.barcode.nativeElement.select();
     }

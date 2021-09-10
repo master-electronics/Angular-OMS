@@ -61,87 +61,90 @@
   </div>
 
   <!-- Container Information -->
-  <div *ngIf="isContainer" class="mt-2">
-    <div class="mb-2 divide-y">
-      <ul *ngFor="let container of container$ | async as list">
-        <li>Container: {{ container.Barcode }}</li>
-        <li *ngIf="list.length < 2">
-          Location:
-          {{ container.Warehouse }}-{{ container.Row }}-{{ container.Aisle }}-{{
-            container.Section
-          }}-{{ container.Shelf }}-{{ container.ShelfDetail }}
+  <div *ngIf="search$ | async as list">
+    <div *ngIf="isContainer" class="mt-2">
+      <div class="mb-2 divide-y">
+        <ul *ngFor="let container of list">
+          <li>Container: {{ container.Barcode }}</li>
+          <li *ngIf="list.length < 2">
+            Location:
+            {{ container.Warehouse }}-{{ container.Row }}-{{
+              container.Aisle
+            }}-{{ container.Section }}-{{ container.Shelf }}-{{
+              container.ShelfDetail
+            }}
+          </li>
+          <div class="divide-y">
+            <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
+              <li class="ml-3">
+                ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
+              </li>
+              <li class="ml-3">
+                Order: {{ ITN.Order.OrderNumber }}-{{
+                  ITN.Order.NOSINumber
+                }}
+                #{{ ITN.OrderLine.OrderLineNumber }}
+                <span>{{
+                  ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+                }}</span>
+              </li>
+            </ul>
+          </div>
+        </ul>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading">Loading</div>
+    <!-- ITN information  -->
+    <div *ngIf="isITN">
+      <div class="divide-y">
+        <ul *ngFor="let ITN of list">
+          <li>ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})</li>
+          <li>
+            Location:
+            {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
+              ITN.Container.Aisle
+            }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
+              ITN.Container.ShelfDetail
+            }}
+          </li>
+          <li>Container: {{ ITN.Container.Barcode }}</li>
+          <li>
+            Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
+              ITN.OrderLine.OrderLineNumber
+            }}
+            <span>{{
+              ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+            }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Order Infromation -->
+    <div *ngIf="isOrder">
+      <ul *ngFor="let order of list">
+        <li>
+          Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
+          <span>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</span>
         </li>
         <div class="divide-y">
-          <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
-            <li class="ml-3">
-              ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
-            </li>
-            <li class="ml-3">
-              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
-                ITN.OrderLine.OrderLineNumber
-              }}
-
-              <span>{{
-                ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
-              }}</span>
-            </li>
+          <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
+            <li>Line: {{ line.OrderLineNumber }}</li>
+            <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
+              <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+              <li>
+                Location: {{ ITN.Container.Warehouse }}-{{
+                  ITN.Container.Row
+                }}-{{ ITN.Container.Aisle }}-{{ ITN.Container.Section }}-{{
+                  ITN.Container.Shelf
+                }}-{{ ITN.Container.ShelfDetail }}
+              </li>
+              <li>Container: {{ ITN.Container.Barcode }}</li>
+            </ul>
           </ul>
         </div>
       </ul>
     </div>
-  </div>
-
-  <!-- ITN information  -->
-  <div *ngIf="isITN">
-    <div class="divide-y">
-      <ul *ngFor="let ITN of ITN$ | async">
-        <li>ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})</li>
-        <li>
-          Location:
-          {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-            ITN.Container.Aisle
-          }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-            ITN.Container.ShelfDetail
-          }}
-        </li>
-        <li>Container: {{ ITN.Container.Barcode }}</li>
-        <li>
-          Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
-            ITN.OrderLine.OrderLineNumber
-          }}
-
-          <span>{{
-            ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
-          }}</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Order Infromation -->
-  <div *ngIf="isOrder">
-    <h1>Here</h1>
-    <ul *ngFor="let order of order$ | async">
-      <li>
-        Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
-        <span>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</span>
-      </li>
-      <div class="divide-y">
-        <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
-          <li>Line: {{ line.OrderLineNumber }}</li>
-          <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
-            <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
-            <li>
-              Location: {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-                ITN.Container.Aisle
-              }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-                ITN.Container.ShelfDetail
-              }}
-            </li>
-            <li>Container: {{ ITN.Container.Barcode }}</li>
-          </ul>
-        </ul>
-      </div>
-    </ul>
   </div>
 </div>

@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
-import {
-  APOLLO_NAMED_OPTIONS,
-  APOLLO_OPTIONS,
-  NamedOptions,
-} from 'apollo-angular';
-import { HttpLink } from 'apollo-angular/http';
+import { APOLLO_NAMED_OPTIONS, NamedOptions } from 'apollo-angular';
+import { HttpBatchLink, HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 
+import { errorLink } from './ApolloLink';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -73,13 +70,13 @@ import { environment } from '../environments/environment';
     },
     {
       provide: APOLLO_NAMED_OPTIONS,
-      useFactory: (httpLink: HttpLink): NamedOptions => {
+      useFactory: (httpLink: HttpBatchLink): NamedOptions => {
+        const http = httpLink.create({ uri: environment.graphql });
+        const link = errorLink.concat(http);
         return {
           wmsNodejs: {
+            link,
             cache: new InMemoryCache(),
-            link: httpLink.create({
-              uri: environment.graphql,
-            }),
           },
         };
       },
