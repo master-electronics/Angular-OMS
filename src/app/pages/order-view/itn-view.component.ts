@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   AfterViewInit,
   ViewChild,
   ElementRef,
@@ -12,7 +11,7 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderDetailforitnViewGQL } from '../../graphql/orderView.graphql-gen';
@@ -25,13 +24,12 @@ import { environment } from 'src/environments/environment';
   selector: 'itn-view',
   templateUrl: './itn-view.component.html',
 })
-export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ITNViewComponent implements OnInit, AfterViewInit {
   message = '';
   messageType = 'error';
   searchType: string;
   OrderInfo$: Observable<any>;
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -102,13 +100,9 @@ export class ITNViewComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .valueChanges.pipe(map((res) => res.data.findOrder));
     }
-    this.barcode.nativeElement.select();
   }
 
   back(): void {
     this.router.navigate(['/orderview']);
-  }
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }
