@@ -1,6 +1,8 @@
-nginx:
-  container_name: nginx
+web:
+  image: nginx
   build: .
   restart: always
   ports:
     - '80:80' # for testing purposes, (un)comment as required
+  environment:
+    - NGINX_PORT=80
