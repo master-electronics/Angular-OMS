@@ -5,7 +5,6 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from './authentication.service';
 @Injectable({
   providedIn: 'root',
@@ -13,8 +12,7 @@ import { AuthenticationService } from './authentication.service';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
-    private authentication: AuthenticationService,
-    private cookieService: CookieService
+    private authentication: AuthenticationService
   ) {
     //
   }
@@ -23,7 +21,7 @@ export class AuthGuard implements CanActivate {
     _route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    const userinfo = this.cookieService.get('user');
+    const userinfo = sessionStorage.getItem('userToken');
     if (userinfo) {
       if (JSON.parse(userinfo).username === this.authentication.userName) {
         // logged in so return true

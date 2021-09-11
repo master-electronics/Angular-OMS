@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
@@ -12,7 +10,9 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthenticationService {
   // user name
-  private user = new BehaviorSubject<string>(this.cookieService.get('user'));
+  private user = new BehaviorSubject<string>(
+    sessionStorage.getItem('userToken')
+  );
   public user$: Observable<string> = this.user.asObservable();
   public changeUser(user: string): void {
     this.user.next(user);
@@ -31,27 +31,18 @@ export class AuthenticationService {
     return username;
   }
 
-  constructor(
-    private router: Router,
-    private http: HttpClient,
-    private cookieService: CookieService
-  ) {}
+  constructor(private router: Router, private http: HttpClient) {}
   userAuth(username: string, password: string): Observable<any> {
-    return this.http
-      .post(`${environment.apiUrl}/AuthJWT/login`, {
-        username,
-        password,
-      })
-      .pipe(
-        map((user) => {
-          return user;
-        })
-      );
+    return this.http.post(`${environment.apiUrl}/AuthJWT/login`, {
+      username,
+      password,
+    });
   }
 
   logout(): void {
-    // remove user from cookie
-    this.cookieService.delete('user');
+    // remove user from session
+    sessionStorage.setItem('userToken', '');
+    this.user.next(null);
     this.router.navigate(['/login']);
   }
 }

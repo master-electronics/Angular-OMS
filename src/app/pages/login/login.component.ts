@@ -9,7 +9,6 @@ import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map } from 'rxjs/operators';
@@ -39,10 +38,8 @@ export class LoginComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private authenticationService: AuthenticationService,
-    private cookieService: CookieService,
     private commonService: CommonService,
-    private titleService: Title,
-    private elementRef: ElementRef
+    private titleService: Title
   ) {
     this.elem = document.documentElement;
     if (this.authenticationService.userInfo) {
@@ -87,9 +84,9 @@ export class LoginComponent implements OnDestroy, OnInit {
         .userAuth(this.f.username.value, this.f.password.value)
         .pipe(
           map((res) => {
-            const userString = JSON.stringify(res);
-            this.cookieService.set('user', userString);
-            this.authenticationService.changeUser(userString);
+            const userToken = JSON.stringify(res);
+            sessionStorage.setItem('userToken', userToken);
+            this.authenticationService.changeUser(userToken);
             const returnUrl =
               this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(returnUrl);

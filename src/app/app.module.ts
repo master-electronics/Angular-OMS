@@ -3,9 +3,9 @@ import { APOLLO_NAMED_OPTIONS, NamedOptions } from 'apollo-angular';
 import { HttpBatchLink, HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 
-import { errorLink } from './ApolloLink';
+import { errorLink, middleware } from './ApolloLink';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,8 +16,6 @@ import { SharedUtilityModule } from './shared/shared-utility.module';
 import { GoogleTagManagerModule } from 'angular-google-tag-manager';
 
 import { AppComponent } from './app.component';
-import { AthTokenInterceptor } from './shared/interceptors/ath-token.interceptor';
-import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
 import { LoginComponent } from './pages/login/login.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -58,21 +56,23 @@ import { environment } from '../environments/environment';
   ],
   providers: [
     Title,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AthTokenInterceptor,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AthTokenInterceptor,
+    //   multi: true,
+    // },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: ErrorInterceptor,
+    //   multi: true,
+    // },
+
     {
       provide: APOLLO_NAMED_OPTIONS,
       useFactory: (httpLink: HttpBatchLink): NamedOptions => {
         const http = httpLink.create({ uri: environment.graphql });
-        const link = errorLink.concat(http);
+        const middle = middleware.concat(http);
+        const link = errorLink.concat(middle);
         return {
           wmsNodejs: {
             link,

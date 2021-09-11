@@ -9,7 +9,8 @@ import {
 import { IdleTimeoutManager } from 'idle-timer-manager';
 import { Router } from '@angular/router';
 import { ShortcutInput, AllowIn } from 'ng-keyboard-shortcuts';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+
+import { AuthenticationService } from '../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-shell',
@@ -35,6 +36,7 @@ export class ShellComponent implements AfterViewInit, OnDestroy, OnInit {
     this.timer = new IdleTimeoutManager({
       timeout: 900, //expired after 15 min
       onExpired: () => {
+        this.timer.clear();
         this.auth.logout();
       },
     });
