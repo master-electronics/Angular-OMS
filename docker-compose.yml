@@ -1,5 +1,5 @@
 web:
-  image: nginx
+  container_name: nginx
   build: .
   restart: always
   ports:
