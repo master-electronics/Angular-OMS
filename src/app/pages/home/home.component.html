@@ -1,71 +1,25 @@
-<div class="container px-4 mx-auto mb-10 sm:mx-w-md md:max-w-6xl">
-  <div class="flex flex-col md:mt-6 ...">
-    <!-- New feature link  -->
-    <div class="w-full md:w-1/2" *ngIf="!isMobile">
-      <h1
-        class="
-          text-2xl
-          font-semibold
-          text-black
-          uppercase
-          dark:text-white
-          md:text-3xl
-        "
-      >
+<div nz-row nzJustify="center">
+  <!-- New feature link  -->
+  <div nz-col nzXs="24" nzSm="22" nzMd="20" nzLg="20" nzXl="18" nzXXl="16">
+    <div *ngIf="!isMobile">
+      <h1 class="text-4xl font-bold" nz-row>
         Web-based Information Management System
       </h1>
-      <p class="mt-2 mb-3 text-gray-600 dark:text-gray-300">
-        New feature documentation.
-      </p>
-      <div>
-        <a
-          [href]="changelogurl"
-          target="_blank"
-          class="
-            button
-            px-3
-            py-2
-            mt-4
-            text-sm
-            font-medium
-            text-white
-            uppercase
-            bg-indigo-600
-            rounded
-            hover:bg-indigo-500
-            focus:outline-none focus:bg-indigo-700
-          "
-        >
-          What's new!
-        </a>
-      </div>
+      <p nz-row class="text-xl">New feature documentation.</p>
+      <button nz-button nzType="primary" class="text-lg font-sans">
+        <a [href]="changelogurl" target="_blank"> What's New</a>
+      </button>
     </div>
     <!-- Entery points for different model -->
-    <div class="container mx-auto mt-8">
-      <div
-        class="
-          grid grid-cols-1
-          gap-6
-          sm:grid-cols-2
-          md:grid-cols-3
-          2xl:grid-cols-4
-        "
-      >
-        <div>
-          <img
-            class="w-10"
-            src="../../../assets/icon/warehouse.svg"
-            alt="WMS"
-          />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
+    <div nz-row nzGutter="32" class="md:mt-6">
+      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8" nzXXl="6">
+        <nz-card [nzCover]="WMS" nzBorderless>
+          <h1 class="text-xl font-semibold">
             <span class="text-yellow-500 font-bold">W</span>
             <span>MS</span>
           </h1>
-          <div class="flex flex-col" *ngFor="let element of WMSList">
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="{{ element.link }}"
-            >
+          <div class="grid gap-4 text-base" *ngFor="let element of WMSList">
+            <a class="mt-3" routerLink="{{ element.link }}">
               <span>{{ element.front }}</span>
               <span class="text-yellow-500 font-bold">{{
                 element.highlight
@@ -73,22 +27,17 @@
               <span>{{ element.end }}</span>
             </a>
           </div>
-        </div>
-        <div>
-          <img
-            class="w-10"
-            src="../../../assets/icon/utility_tools.svg"
-            alt="Utility Tools"
-          />
-          <h1 class="mt-4 text-xl font-semibold text-black dark:text-white">
+        </nz-card>
+      </div>
+
+      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8" nzXXl="6">
+        <nz-card [nzCover]="tools" nzBorderless>
+          <h1 class="text-xl font-semibold">
             <span class="text-yellow-500 font-bold">U</span>
             <span>tility Tools</span>
           </h1>
-          <div class="flex flex-col" *ngFor="let element of toolList">
-            <a
-              class="mt-2 text-gray-600 dark:text-gray-300"
-              routerLink="{{ element.link }}"
-            >
+          <div class="grid gap-4 text-base" *ngFor="let element of toolList">
+            <a class="mt-3" routerLink="{{ element.link }}">
               <span>{{ element.front }}</span>
               <span class="text-yellow-500 font-bold">{{
                 element.highlight
@@ -96,8 +45,25 @@
               <span>{{ element.end }}</span>
             </a>
           </div>
-        </div>
+        </nz-card>
       </div>
     </div>
   </div>
 </div>
+<ng-template #WMS>
+  <img
+    *ngIf="!isMobile"
+    style="width: 100px"
+    alt="wms"
+    src="../../../assets/icon/warehouse.svg"
+  />
+</ng-template>
+
+<ng-template #tools>
+  <img
+    *ngIf="!isMobile"
+    style="width: 100px"
+    alt="tools"
+    src="../../../assets/icon/utility_tools.svg"
+  />
+</ng-template>

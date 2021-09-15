@@ -35,6 +35,7 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
 import { IconsProviderModule } from './icons-provider.module';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
@@ -78,6 +79,7 @@ import { environment } from '../environments/environment';
     NzMenuModule,
     NzAlertModule,
     NzFormModule,
+    NzCardModule,
   ],
 
   providers: [
