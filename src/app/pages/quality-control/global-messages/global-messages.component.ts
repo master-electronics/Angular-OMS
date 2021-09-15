@@ -1,17 +1,10 @@
-import {
-  AfterViewInit,
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
 import { QcGlobalMessageGQL } from '../../../graphql/qualityControl.graphql-gen';
-import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { Title } from '@angular/platform-browser';
+import { catchError, map } from 'rxjs/operators';
 
 interface globalMessageParams {
   PartNumber: string;
@@ -26,31 +19,24 @@ interface globalMessageParams {
   selector: 'global-messages',
   templateUrl: './global-messages.component.html',
 })
-export class GlobalMessagesComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class GlobalMessagesComponent implements OnInit {
   isLoading = false;
-  messageType = 'error';
-  message = '';
-  orderComments: string[];
-  partComments: string[];
+  alertType = 'error';
+  alertMessage = '';
+  globalMessage$ = new Observable();
 
-  private subscription = new Subscription();
   constructor(
-    private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
     private qcService: QualityControlService,
     private qcGlobalMessage: QcGlobalMessageGQL
   ) {
-    titleService.setTitle('qc/globalmessages');
+    this.titleService.setTitle('qc/globalmessages');
   }
 
-  gmForm = this.fb.group({});
-
   ngOnInit(): void {
-    this.qcService.changeTab(2);
+    this.qcService.changeTab(['finish', 'process', 'wait', 'wait']);
     const urlParams = this.route.snapshot.queryParams;
     const params: globalMessageParams = {
       CustomerNumber: urlParams['CustomerNum'],
@@ -69,48 +55,33 @@ export class GlobalMessagesComponent
     });
   }
 
+  orderComments = [];
+  partComments = [];
   getGlobalMessage(params: globalMessageParams): void {
     this.isLoading = true;
-    this.subscription.add(
-      this.qcGlobalMessage
-        .watch(params, { fetchPolicy: 'no-cache' })
-        .valueChanges.subscribe(
-          (res) => {
-            this.orderComments = res.data.fetchOrderLineMessage.comments;
-            this.partComments = res.data.fetchPartMessage.comments;
-            if (
-              this.orderComments.length === 0 &&
-              this.partComments.length === 0
-            ) {
-              this.onSubmit();
-            } else {
-              this.qcService.changeGlobalMessages(
-                this.orderComments.concat(this.partComments)
-              );
-            }
-            this.isLoading = res.loading;
-          },
-          (error) => {
-            this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
+    this.globalMessage$ = this.qcGlobalMessage
+      .watch(params, { fetchPolicy: 'no-cache' })
+      .valueChanges.pipe(
+        map((res) => {
+          this.orderComments = res.data.fetchOrderLineMessage.comments;
+          this.partComments = res.data.fetchPartMessage.comments;
+          if (
+            this.orderComments.length === 0 &&
+            this.partComments.length === 0
+          ) {
+            this.onSubmit();
+          } else {
+            this.qcService.changeGlobalMessages(res.data);
           }
-        )
-    );
-  }
-
-  // keyboard setting
-  shortcuts: ShortcutInput[] = [];
-  ngAfterViewInit(): void {
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Next Step',
-      preventDefault: true,
-      command: () => {
-        this.onSubmit();
-      },
-    });
+          this.isLoading = res.loading;
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          this.alertType = 'error';
+          this.alertMessage = error;
+          return throwError(error);
+        })
+      );
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -120,7 +91,5 @@ export class GlobalMessagesComponent
     }
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

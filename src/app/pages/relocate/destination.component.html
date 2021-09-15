@@ -4,18 +4,17 @@
     <form focusInvalidInput [formGroup]="containerForm" (ngSubmit)="onSubmit()">
       <div class="z-0 w-full relative mt-4">
         <input
+          nz-input
           type="text"
           name="containerNumber"
           id="containerNumber"
-          placeholder=" "
+          placeholder="To"
           formControlName="containerNumber"
-          class="float-input"
           autocomplete="off"
           maxlength="25"
           #containerNumber
           required
         />
-        <label for="containerNumber" class="float-label"> To Container# </label>
         <div
           class="text-red-500 text-sm absolute"
           *ngIf="

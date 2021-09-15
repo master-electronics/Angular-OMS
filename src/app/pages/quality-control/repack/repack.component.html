@@ -1,40 +1,79 @@
-<div class="container px-4 mx-auto mb-10 md:max-w-md">
-  <div class="flex flex-col mt-4 md:mt-10 ...">
-    <form focusInvalidInput [formGroup]="containerForm" (ngSubmit)="onSubmit()">
-      <div class="z-0 w-full relative mt-4">
-        <input
-          type="text"
-          name="container"
-          placeholder=" "
-          formControlName="container"
-          class="float-input"
-          autocomplete="off"
-          #container
-        />
-        <label for="container" class="float-label"> Tote Barcode </label>
-        <span class="text-sm text-red-600 hidden" #containerError></span>
-      </div>
+<div class="flex flex-col">
+  <nz-descriptions
+    nzBordered
+    [nzColumn]="{ xxl: 3, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"
+  >
+    <nz-descriptions-item nzTitle="ITN">{{
+      this.urlParams['ITN']
+    }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="PRC">{{
+      this.urlParams['PRC']
+    }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="PartNumber">{{
+      this.urlParams['PartNum']
+    }}</nz-descriptions-item>
+  </nz-descriptions>
 
-      <div class="mt-6">
-        <form-button
-          [type]="'submit'"
-          [styles]="buttonStyles"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          (click)="onSubmit()"
-          label="Repack"
-        ></form-button>
+  <nz-divider nzText="Pick a empty container."></nz-divider>
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="containerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row>
+          <nz-form-label nzRequired> Container </nz-form-label>
+          <nz-form-control
+            nz-col
+            nzHasFeedback
+            nzErrorTip="The input is not valid Container!"
+          >
+            <input
+              nz-input
+              placeholder="Barcode#"
+              nzSize="large"
+              type="text"
+              id="container"
+              formControlName="container"
+              autocomplete="off"
+              #container
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item nz-row nzJustify="center">
+          <button
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            Pack
+          </button>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
       </div>
-      <div class="mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
-
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>

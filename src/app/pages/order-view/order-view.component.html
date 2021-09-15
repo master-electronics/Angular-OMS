@@ -6,17 +6,16 @@
         <!-- Order barcode input -->
         <div class="z-0 w-full relative col-span-2 mt-2">
           <input
+            nz-input
             oninput="this.value = this.value.toUpperCase()"
             type="text"
             name="orderBarcode"
             placeholder=" "
             formControlName="orderBarcode"
-            class="float-input"
             autocomplete="off"
             maxlength="30"
             #orderBarcode
           />
-          <label for="orderBarcode" class="float-label">Order Barcode</label>
           <div
             class="text-red-500 text-sm absolute"
             *ngIf="
@@ -24,7 +23,7 @@
               (this.f.orderBarcode.dirty || this.f.orderBarcode.touched)
             "
           >
-            <div *ngIf="this.f.orderBarcode.errors.regex">Invaild order!</div>
+            <div *ngIf="this.f.orderBarcode.errors.regex">Invalid order!</div>
           </div>
         </div>
         <!-- Priority -->
@@ -74,14 +73,12 @@
           [styles]="'bg-green-500'"
           [type]="'submit'"
           [label]="'Search'"
-          isHighLight="true"
         ></form-button>
         <form-button
           class="mt-4"
           [styles]="'bg-gray-500'"
           [label]="'Reset'"
           (click)="reset()"
-          isHighLight="true"
         ></form-button>
       </div>
       <div class="mt-2">
@@ -134,10 +131,3 @@
     <div class="text-black" *ngIf="OrderInfo$">Loading...</div>
   </ng-template>
 </div>
-
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>

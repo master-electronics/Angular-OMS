@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 
 import { QualityControlService } from './quality-control.server';
 import { QualityControlComponent } from './quality-control.component';
@@ -12,10 +11,21 @@ import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { GlobalMessagesComponent } from './global-messages/global-messages.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
-import { HoldModalComponent } from './verfiy-pack/hold-modal.component';
-import { GlobalMessagesModalComponent } from './verfiy-pack/global-messages-modal.component';
 import { RepackComponent } from './repack/repack.component';
-import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+// NG ZORRO
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzImageModule } from 'ng-zorro-antd/image';
 
 @NgModule({
   declarations: [
@@ -24,8 +34,6 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     StepTabsComponent,
     GlobalMessagesComponent,
     VerifyPackComponent,
-    HoldModalComponent,
-    GlobalMessagesModalComponent,
     RepackComponent,
   ],
   imports: [
@@ -33,10 +41,22 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     QualityControlRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    AutocompleteLibModule,
     SharedComponentModule,
     SharedUtilityModule,
-    KeyboardShortcutsModule,
+    // NG ZORRO
+    NzInputModule,
+    NzSpinModule,
+    NzButtonModule,
+    NzFormModule,
+    NzAlertModule,
+    NzDescriptionsModule,
+    NzSkeletonModule,
+    NzStepsModule,
+    NzSpaceModule,
+    NzImageModule,
+    NzDividerModule,
+    NzSelectModule,
+    NzDrawerModule,
   ],
   providers: [QualityControlService],
 

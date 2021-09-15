@@ -16,8 +16,8 @@ import { Router } from '@angular/router';
   templateUrl: './check-printer-modal.component.html',
 })
 export class CheckPrinterModalComponent implements AfterViewInit {
-  @Input() modalMessage: string;
-  @Input() isModalHidden: boolean;
+  @Input() modalMessage: string = '';
+  @Input() isModalHidden: boolean = true;
   @Output() isModalHiddenChange = new EventEmitter<boolean>();
 
   holdForm = this.fb.group({
@@ -33,7 +33,7 @@ export class CheckPrinterModalComponent implements AfterViewInit {
     this.router.navigate(['/home']);
   }
 
-  @ViewChild('OKButton') OKButton: ElementRef;
+  @ViewChild('OKButton') OKButton!: ElementRef;
   ngAfterViewInit(): void {
     this.OKButton.nativeElement.focus();
   }

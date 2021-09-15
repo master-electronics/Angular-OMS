@@ -6,14 +6,12 @@ import { QualityControlService } from '../quality-control.server';
   templateUrl: './step-tabs.component.html',
 })
 export class StepTabsComponent implements OnInit {
-  activeTab: number;
+  tabStatus = ['process', 'wait', 'wait', 'wait'];
 
   constructor(private qcService: QualityControlService) {
     //
   }
   ngOnInit(): void {
-    this.qcService.activeTab.subscribe(
-      (response) => (this.activeTab = response)
-    );
+    this.qcService.tabStatus$.subscribe((res) => (this.tabStatus = res));
   }
 }

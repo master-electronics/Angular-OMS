@@ -7,6 +7,7 @@ import { RelocateComponent } from './relocate.component';
 import { DestinationComponent } from './destination.component';
 import { RelocateRoutingModule } from './relocate.routing';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 @NgModule({
   declarations: [RelocateComponent, DestinationComponent],
@@ -17,6 +18,7 @@ import { SharedUtilityModule } from '../../shared/shared-utility.module';
     SharedComponentModule,
     SharedUtilityModule,
     RelocateRoutingModule,
+    NzInputModule,
   ],
   bootstrap: [RelocateComponent],
 })

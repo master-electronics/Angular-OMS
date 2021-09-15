@@ -17,16 +17,17 @@ import { map } from 'rxjs/operators';
 })
 export class NavbarComponent implements OnInit {
   showMenu = false;
-  showUser = false;
-  dark = false;
   user$: Observable<string>;
   title$: Observable<string>;
   isFullscreen = false;
   elem;
 
-  toggleNavbar(): void {
-    this.showMenu = !this.showMenu;
-    this.showMenu ? (this.showUser = false) : 0;
+  closeNavBar(): void {
+    this.showMenu = false;
+  }
+
+  openNavBar(): void {
+    this.showMenu = true;
   }
 
   @HostListener('document:fullscreenchange', []) chagne(): void {
@@ -65,17 +66,6 @@ export class NavbarComponent implements OnInit {
       this.document.msExitFullscreen();
     }
   }
-  toggleUser(): void {
-    this.showUser = !this.showUser;
-    this.showUser && (this.showMenu = false);
-  }
-
-  @HostListener('document:mousedown', ['$event'])
-  onGlobalClick(event: MouseEvent): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.showUser = false;
-    }
-  }
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -90,13 +80,15 @@ export class NavbarComponent implements OnInit {
     this.title$ = this.commonService.navbar$;
     this.user$ = this.authenticationService.user$.pipe(
       map((res) => {
-        return JSON.parse(res).username;
+        if (res) {
+          return JSON.parse(res).username;
+        }
+        return '';
       })
     );
   }
 
   logout(): void {
     this.authenticationService.logout();
-    this.toggleUser();
   }
 }

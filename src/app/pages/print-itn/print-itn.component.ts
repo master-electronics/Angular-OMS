@@ -59,7 +59,7 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   @ViewChild('ITNInput') ITNInput: ElementRef;
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.currentStation = this.commonService.printerInfo;
     if (this.currentStation) return;
     this.station$ = this.fetchPrinterStation.fetch().pipe(

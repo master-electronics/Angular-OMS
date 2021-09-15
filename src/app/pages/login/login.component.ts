@@ -8,18 +8,17 @@ import {
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map } from 'rxjs/operators';
-import { of } from 'zen-observable';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnDestroy, OnInit {
-  isShowPassword = 'password';
+  passwordVisible = false;
   isLoading = false;
   login$;
   message = '';
@@ -55,12 +54,6 @@ export class LoginComponent implements OnDestroy, OnInit {
   @ViewChild('password') password: ElementRef;
   // convenience getter for easy access to form fields
 
-  toggleShowPassword(): void {
-    this.isShowPassword === 'password'
-      ? (this.isShowPassword = 'text')
-      : (this.isShowPassword = 'password');
-  }
-
   openFullscreen(): void {
     if (this.elem.requestFullscreen) {
       this.elem.requestFullscreen();
@@ -95,9 +88,12 @@ export class LoginComponent implements OnDestroy, OnInit {
             }
           }),
           catchError((error) => {
-            this.message = error.error;
+            this.message = error.statusText;
+            if (typeof error.error === 'string') {
+              this.message = error.error;
+            }
             this.isLoading = false;
-            return of();
+            return throwError(error);
           })
         );
     }

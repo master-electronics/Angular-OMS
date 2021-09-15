@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 })
 export class APIService {
   constructor(private httprequest: HttpClient) {}
-  onGetLogin(body: unknown): Observable<unknown> {
+  onGetLogin(body: any): Observable<any> {
     return this.httprequest.post(`${environment.apiUrl}/AuthJWT/login`, body);
   }
 }

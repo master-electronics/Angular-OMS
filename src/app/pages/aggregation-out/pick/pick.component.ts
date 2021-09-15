@@ -34,8 +34,8 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   buttonLabel = `Pick`;
   buttonStyles = `bg-indigo-500`;
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   totalITNs = 0;
   itemList = [];
   selectedList = [];
@@ -92,7 +92,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
             this.isLoading = res.loading;
           },
           (error) => {
-            this.message = error;
+            this.alertMessage = error;
             this.isLoading = false;
           }
         )
@@ -100,7 +100,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (!this.containerForm.valid) {
       this.containerInput.nativeElement.select();
       return;
@@ -205,7 +205,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           }),
 
           catchError((error) => {
-            this.message = error;
+            this.alertMessage = error;
             this.isLoading = false;
             this.containerInput.nativeElement.select();
             return of();
@@ -225,7 +225,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       return node.Container.Barcode !== this.f.containerNumber.value;
     });
     if (count === 0) {
-      this.message = `Container is not in the list.`;
+      this.alertMessage = `Container is not in the list.`;
     }
     if (this.totalITNs === this.selectedList.length) {
       this.buttonLabel = `Aggregation Out`;

@@ -16,7 +16,6 @@ import { Observable } from 'rxjs';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderDetailforitnViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
-import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
@@ -54,23 +53,11 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         };
   }
 
-  shortcuts: ShortcutInput[] = [];
   @ViewChild('barcode') barcode: ElementRef;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.barcode.nativeElement.select();
     }, 10);
-
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Submit',
-      preventDefault: true,
-      allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: () => {
-        this.onSubmit();
-      },
-    });
   }
 
   ngOnInit(): void {

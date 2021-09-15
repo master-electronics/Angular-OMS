@@ -14,7 +14,6 @@ import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
-import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -63,21 +62,10 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   @ViewChild('orderBarcode') orderBarcode: ElementRef;
-  shortcuts: ShortcutInput[] = [];
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.orderBarcode.nativeElement.select();
     }, 10);
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Submit',
-      preventDefault: true,
-      allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: () => {
-        this.search(true);
-      },
-    });
   }
 
   ngOnInit(): void {

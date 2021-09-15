@@ -11,7 +11,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService, urlParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
-import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { environment } from 'src/environments/environment';
@@ -23,9 +22,8 @@ import { Title } from '@angular/platform-browser';
 })
 export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
-  shortcuts: ShortcutInput[] = [];
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -35,19 +33,18 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private qcService: QualityControlService,
     private verifyITNQC: VerifyItNforQcGQL
   ) {
-    titleService.setTitle('qc/scanitn');
+    this.titleService.setTitle('qc/scanitn');
   }
 
-  @ViewChild('ITN') ITNInput: ElementRef;
-  @ViewChild('ITNError') ITNError: ElementRef;
+  @ViewChild('ITN') ITNInput!: ElementRef;
   ITNForm = this.fb.group({
     ITN: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
 
   ngOnInit(): void {
-    this.messageType = this.route.snapshot.queryParams['type'];
-    this.message = this.route.snapshot.queryParams['message'];
-    this.qcService.changeTab(1);
+    this.alertType = this.route.snapshot.queryParams['type'];
+    this.alertMessage = this.route.snapshot.queryParams['message'];
+    this.qcService.changeTab(['process', 'wait', 'wait', 'wait']);
     this.qcService.changeGlobalMessages(null);
   }
 
@@ -55,30 +52,14 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.ITNInput.nativeElement.select();
     }, 10);
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Next Step',
-      preventDefault: true,
-      allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: () => {
-        this.onSubmit();
-      },
-    });
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (this.ITNForm.invalid) {
-      if (this.ITNForm.get('ITN').errors.required)
-        this.ITNError.nativeElement.textContent = 'ITN is required.';
-      if (this.ITNForm.get('ITN').errors.pattern)
-        this.ITNError.nativeElement.textContent = 'Incorrect ITN format.';
-      this.ITNError.nativeElement.classList.remove('hidden');
       return;
     }
-    this.ITNError.nativeElement.classList.add('hidden');
-    this.verfiyITN(this.ITNForm.get('ITN').value.trim());
+    this.verfiyITN(this.ITNForm.get('ITN')!.value.trim());
   }
 
   verfiyITN(ITN: string): void {
@@ -91,7 +72,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         )
         .pipe(
           tap((res) => {
-            if (!res.data.findOrderLineDetail.length) {
+            if (!res.data.findOrderLineDetail?.length) {
               throw 'Can not find this ITN';
             }
             if (res.data.findOrderLineDetail.length > 1) {
@@ -102,7 +83,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 environment.qcComplete_ID,
                 environment.warehouseHold_ID,
                 environment.droppedQC_ID,
-              ].includes(res.data.findOrderLineDetail[0].StatusID)
+              ].includes(res.data.findOrderLineDetail[0]!.StatusID)
             ) {
               throw 'Invalid order line status.';
             }
@@ -111,21 +92,21 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         )
         .subscribe(
           (res) => {
-            const detail = res.data.findOrderLineDetail[0];
+            const detail = res.data.findOrderLineDetail![0]!;
             const queryParams: urlParams = {
               ITN: ITN,
-              CustomerNum: detail.Order.CustomerNumber,
-              DC: detail.Order.DistributionCenter,
-              OrderNum: detail.Order.OrderNumber,
-              NOSI: detail.Order.NOSINumber,
+              CustomerNum: detail.Order.CustomerNumber.trim() || '',
+              DC: detail.Order.DistributionCenter.trim(),
+              OrderNum: detail.Order.OrderNumber.trim(),
+              NOSI: detail.Order.NOSINumber.trim(),
               OrderLine: detail.OrderLine.OrderLineNumber,
-              PartNum: detail.OrderLine.PartNumber,
-              PRC: detail.OrderLine.ProductCode,
+              PartNum: detail.OrderLine.PartNumber.trim(),
+              PRC: detail.OrderLine.ProductCode.trim(),
               Quantity: detail.Quantity,
-              ParentITN: detail.ParentITN,
+              ParentITN: detail.ParentITN.trim() || '',
               ROHS: detail.ROHS ? 1 : 0,
-              DateCode: detail.DateCode,
-              coo: detail.CountryOfOrigin,
+              DateCode: detail.DateCode.trim() || '',
+              coo: detail.CountryOfOrigin.trim() || '',
             };
             this.router.navigate(['/qc/globalmessages'], {
               queryParams: queryParams,
@@ -134,8 +115,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           (error) => {
             this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
+            this.alertType = 'error';
+            this.alertMessage = error;
             this.ITNInput.nativeElement.select();
           }
         )

@@ -1,295 +1,154 @@
-<nav class="bg-gray-100 border-b-2 border-indigo-500 dark:bg-gray-900">
-  <div class="px-4 mx-auto">
-    <div class="flex items-center justify-between h-10">
-      <div class="flex items-center">
+<nav class="bg-gray-100 border-b-2 border-indigo-500">
+  <div class="px-2 mx-auto">
+    <div class="grid grid-flow-col justify-between h-10">
+      <div class="grid grid-flow-col items-center justify-center">
         <a routerLink="/home">
-          <svg
-            id="Capa_1"
-            class="w-5 mr-3"
-            viewBox="0 0 247.789 247.789"
-            style="enable-background: new 0 0 247.789 247.789"
-            xml:space="preserve"
-          >
-            <path
-              d="M223.779,122.895c-3.313,0-6,2.687-6,6v106.895h-64.384v-67.102c0-3.313-2.687-6-6-6h-47c-3.313,0-6,2.687-6,6v53.207
-	c0,3.313,2.687,6,6,6s6-2.687,6-6v-47.207h35v61.102H30.01V88.929l93.884-75.239l96.132,77.04c2.586,2.073,6.362,1.655,8.434-0.93
-	c2.072-2.586,1.656-6.361-0.93-8.434L127.646,1.318c-2.192-1.758-5.312-1.758-7.504,0L20.258,81.366
-	c-1.421,1.139-2.248,2.86-2.248,4.682v155.741c0,3.313,2.686,6,6,6h199.769c3.314,0,6-2.687,6-6V128.895
-	C229.779,125.581,227.093,122.895,223.779,122.895z"
-            />
-          </svg>
+          <i nz-icon nzType="home" nzTheme="outline" class="text-2xl"></i>
         </a>
-        <p class="text-gray-800 md:text-lg dark:text-gray-100">
-          {{ title$ | async }}
-        </p>
-        <div class="hidden md:block">
-          <div class="flex items-baseline md:ml-10">
-            <a
-              class="
-                block
-                py-2
-                text-base
-                font-medium
-                text-gray-800
-                dark:text-gray-100
-                hover:text-gray-500
-                dark:hover:text-white
-                rounded-md
-              "
-              routerLink="/orderview"
-            >
-              Order View
-            </a>
-            <a
-              class="
-                block
-                px-3
-                text-base
-                font-medium
-                text-gray-800
-                dark:text-gray-100
-                hover:text-gray-500
-                dark:hover:text-white
-                rounded-md
-              "
-              routerLink="/qc"
-            >
-              Quality Control
-            </a>
-          </div>
+        <div class="ml-2">
+          <span class="text-gray-800 md:text-lg">
+            {{ title$ | async }}
+          </span>
         </div>
       </div>
-      <div class="block">
-        <div class="flex items-center ml-4 md:ml-6">
-          <div class="relative ml-3 group mt-2">
-            <div class="inline-block text-left">
-              <button
-                #userButton
-                class="h-full focus:outline-none rounded-md"
-                (click)="toggleUser()"
-                (window.mousedown)="onGlobalClick($event)"
-              >
-                <svg class="w-5" viewBox="0 0 64 64">
-                  <g id="User">
-                    <path
-                      d="M41.2452,33.0349a16,16,0,1,0-18.49,0A26.0412,26.0412,0,0,0,4,58a2,2,0,0,0,2,2H58a2,2,0,0,0,2-2A26.0412,26.0412,0,0,0,41.2452,33.0349ZM20,20A12,12,0,1,1,32,32,12.0137,12.0137,0,0,1,20,20ZM8.09,56A22.0293,22.0293,0,0,1,30,36h4A22.0293,22.0293,0,0,1,55.91,56Z"
-                    />
-                  </g>
-                </svg>
-              </button>
-              <div
-                class="
-                  absolute
-                  right-0
-                  w-40
-                  h-50
-                  -mt-18
-                  bg-white
-                  shadow-lg
-                  rounded-md
-                  dark:bg-gray-900
-                "
-                *ngIf="this.showUser"
-                #userMenu
-              >
-                <div class="py-1">
-                  <a
-                    class="
-                      block
-                      px-4
-                      py-2
-                      text-gray-700 text-md
-                      hover:bg-gray-100 hover:text-gray-900
-                      dark:text-gray-100
-                      dark:hover:text-white
-                      dark:hover:bg-gray-600
-                    "
-                  >
-                    <span class="flex flex-col text-xl font-bold">{{
-                      user$ | async
-                    }}</span>
-                  </a>
-                  <a
-                    class="
-                      block
-                      px-4
-                      py-2
-                      text-gray-700 text-md
-                      hover:bg-gray-100 hover:text-gray-900
-                      dark:text-gray-100
-                      dark:hover:text-white
-                      dark:hover:bg-gray-600
-                    "
-                  >
-                    <div class="flex flex-row">
-                      <svg
-                        class="w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="{2}"
-                          d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"
-                        />
-                      </svg>
-                      <span class="flex flex-col pl-2">Account</span>
-                    </div>
-                  </a>
-                  <button
-                    class="
-                      block
-                      w-full
-                      px-4
-                      py-2
-                      text-gray-700 text-md
-                      hover:bg-gray-100 hover:text-gray-900
-                      dark:text-gray-100
-                      dark:hover:text-white
-                      dark:hover:bg-gray-600
-                    "
-                    (click)="logout()"
-                  >
-                    <div class="flex flex-row">
-                      <svg
-                        class="w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                        />
-                      </svg>
-                      <span class="flex flex-col pl-2">Logout</span>
-                    </div>
-                  </button>
+      <div></div>
+      <div class="grid grid-flow-col items-center md:ml-6">
+        <div class="md:hidden">
+          <button
+            class="
+              inline-flex
+              items-center
+              justify-center
+              rounded-md
+              focus:outline-none
+              mr-4
+            "
+            (click)="toggleFullscreen()"
+          >
+            <i
+              *ngIf="!isFullscreen"
+              nz-icon
+              nzType="fullscreen"
+              nzTheme="outline"
+              class="text-2xl"
+            ></i>
+            <i
+              *ngIf="isFullscreen"
+              nz-icon
+              nzType="fullscreen-exit"
+              nzTheme="outline"
+              class="text-2xl"
+            ></i>
+          </button>
+        </div>
+        <button
+          class="
+            inline-flex
+            items-center
+            justify-center
+            rounded-md
+            focus:outline-none
+          "
+          nz-dropdown
+          [nzDropdownMenu]="userMenu"
+          nzPlacement="bottomLeft"
+          #userButton
+        >
+          <i nz-icon nzType="user" nzTheme="outline" class="text-2xl"></i>
+        </button>
+        <nz-dropdown-menu #userMenu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item>
+              <span class="text-lg font-bold">
+                {{ user$ | async }}
+              </span>
+            </li>
+            <li nz-menu-item>
+              <button (click)="logout()">
+                <div class="flex flex-row">
+                  <i
+                    nz-icon
+                    nzType="logout"
+                    nzTheme="outline"
+                    class="text-xl"
+                  ></i>
+                  <span class="ml-2">Logout</span>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex -mr-2 md:hidden">
+              </button>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
         <button
-          aria-label="fullscreen"
           class="
+            ml-4
             inline-flex
             items-center
             justify-center
             rounded-md
             focus:outline-none
           "
-          (click)="toggleFullscreen()"
+          (click)="openNavBar()"
         >
-          <svg
-            class="w-5"
-            enable-background="new 0 0 32 32"
-            viewBox="0 0 32 32"
-            xml:space="preserve"
-          >
-            <g id="Fullscreen_1_">
-              <path
-                d="M31,18c-0.509,0-1,0.438-1,1v11H2V2h11c0.531,0,1-0.469,1-1c0-0.531-0.5-1-1-1H2C0.895,0,0,0.895,0,2v28   c0,1.105,0.895,2,2,2h28c1.105,0,2-0.895,2-2V18.985C32,18.431,31.594,18,31,18z"
-                fill="#121313"
-              />
-              <path
-                d="M31,0H21c-0.552,0-1,0.448-1,1c0,0.552,0.448,1,1,1h7.596L8.282,22.313c-0.388,0.388-0.388,1.017,0,1.405   c0.388,0.388,1.017,0.388,1.404,0L30,3.404V11c0,0.552,0.448,1,1,1s1-0.448,1-1V1v0C32,0.462,31.538,0,31,0z"
-                fill="#121313"
-              />
-            </g>
-            <g />
-            <g />
-            <g />
-            <g />
-            <g />
-            <g />
-          </svg>
-        </button>
-        <button
-          aria-label="quickAccess"
-          class="
-            inline-flex
-            items-center
-            justify-center
-            p-2
-            text-gray-800
-            dark:text-gray-100
-            hover:text-gray-300
-            rounded-md
-            focus:outline-none
-          "
-          (click)="toggleNavbar()"
-        >
-          <svg
-            width="25"
-            height="25"
-            fill="currentColor"
-            viewBox="0 0 1792 1792"
-          >
-            <path
-              d="M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z"
-            ></path>
-          </svg>
+          <i
+            *ngIf="!showMenu"
+            nz-icon
+            nzType="menu-fold"
+            nzTheme="outline"
+            class="text-2xl"
+          ></i>
         </button>
       </div>
     </div>
   </div>
-  <div class="md:hidden" [ngClass]="showMenu ? '' : 'hidden'">
-    <div
-      class="
-        relative
-        z-50
-        px-2
-        pt-2
-        pb-3
-        bg-gray-100
-        dark:bg-gray-800
-        space-y-1
-        sm:px-3
-      "
-    >
-      <a
-        class="
-          block
-          px-3
-          py-2
-          text-base
-          font-medium
-          text-gray-800
-          dark:text-gray-100
-          hover:text-gray-500
-          dark:hover:text-white
-          rounded-md
-        "
-        routerLink="/home"
-        (click)="toggleNavbar()"
-      >
-        Home
-      </a>
-      <a
-        class="
-          block
-          px-3
-          py-2
-          text-base
-          font-medium
-          text-gray-800
-          dark:text-gray-100
-          hover:text-gray-500
-          dark:hover:text-white
-          rounded-md
-        "
-        routerLink="/searchbarcode"
-        (click)="toggleNavbar()"
-      >
-        Search Barcode
-      </a>
-    </div>
-  </div>
+
+  <nz-drawer
+    [nzClosable]="false"
+    [nzVisible]="showMenu"
+    nzPlacement="right"
+    nzTitle="Quick Access"
+    (nzOnClose)="closeNavBar()"
+  >
+    <ng-container *nzDrawerContent>
+      <ul nz-menu nzMode="inline">
+        <li nz-menu-item>
+          <a (click)="closeNavBar()" routerLink="/home"> Home </a>
+        </li>
+        <li nz-submenu nzTitle="WMS" nzOpen>
+          <ul>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/agin"> Aggregation In </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/agout">
+                Aggregation Out
+              </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/qc">Quality Control</a>
+            </li>
+          </ul>
+        </li>
+        <li nz-submenu nzTitle="Utility Tools" nzOpen>
+          <ul>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/orderview">
+                Order View
+              </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/printitn"> Print ITN </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/relocate"> Relocate </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/searchbarcode">
+                Search Barcode
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </ng-container>
+  </nz-drawer>
 </nav>

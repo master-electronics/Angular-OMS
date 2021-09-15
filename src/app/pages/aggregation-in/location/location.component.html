@@ -1,16 +1,19 @@
 <div>{{ initInfo$ | async }}</div>
-<div class="container px-4 mx-auto mb-10 md:max-w-md">
-  <div class="flex flex-col md:mt-6 ...">
-    <!-- Top location info table -->
-    <div class="font-bold text-black dark:text-white">
-      <div class="justify-center text-lg grid" *ngIf="!isSingleLine">
-        <div class="grid grid-flow-col grid-rows-4" *ngIf="locationList">
-          <h1 *ngIf="locationList.length">Locations:</h1>
-          <h1 *ngIf="!locationList.length">First Tote</h1>
-          <ul
-            *ngFor="let location of locationList | slice: 0:3"
-            class="text-yellow-600 text-xl"
-          >
+<div class="container mx-auto px-2 md:mt-4">
+  <div nz-row nzJustify="center">
+    <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+      <!-- Location Info -->
+      <nz-skeleton
+        *ngIf="!locationList.length"
+        [nzActive]="true"
+        [nzParagraph]="{ rows: 2 }"
+      ></nz-skeleton>
+      <div nz-row *ngIf="locationList.length">
+        <div nz-col nzSpan="24" *ngIf="locationList.length">Locations:</div>
+        <h1 *ngIf="!locationList.length">First Tote</h1>
+
+        <ul class="text-yellow-600 text-lg font-bold">
+          <li *ngFor="let location of locationList | slice: 0:3">
             <span>{{ location.substring(0, 2) }}</span>
             <span>-</span>
             <span>{{ location.substring(2, 4) }}</span>
@@ -23,88 +26,92 @@
             <span>-</span>
             <span>{{ location.substring(9, 11) }}</span>
             <span class="text-blue-500">({{ location.substring(11) }})</span>
-          </ul>
-        </div>
+          </li>
+          <li *ngIf="!locationList[1]" nz-col nzSpan="24">---</li>
+          <li *ngIf="!locationList[2]" nz-col nzSpan="24">---</li>
+        </ul>
       </div>
-      <div *ngIf="isSingleLine" class="text-green-500">
-        <h1>Single Line Order</h1>
-        <h1>Auto Aggregation Out</h1>
-      </div>
-      <!-- Location input form -->
+
+      <!-- Input from -->
       <form
+        nz-form
         focusInvalidInput
         [formGroup]="locationForm"
-        class="mt-2 md:mt-6"
         (ngSubmit)="onSubmit()"
       >
-        <div class="z-0 w-full relative mt-4">
-          <input
-            oninput="this.value = this.value.toUpperCase()"
-            type="text"
-            name="location"
-            placeholder=" "
-            formControlName="location"
-            class="float-input"
-            autocomplete="off"
-            maxlength="20"
-            #location
-          />
-          <label for="location" class="float-label"> location or tote </label>
-          <div
-            class="text-red-500 text-sm absolute"
-            *ngIf="
-              this.f.location.invalid &&
-              (this.f.location.dirty || this.f.location.touched)
-            "
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-control
+            nz-col
+            nzHasFeedback
+            nzErrorTip="The input is not valid container!"
           >
-            <div *ngIf="this.f.location.errors.required">
-              Location is required.
-            </div>
-            <div *ngIf="this.f.location.errors.regex">
-              Example: 10-AG-01-01-A-00 or 50-01-01
-            </div>
-          </div>
-        </div>
-        <div>{{ updateLocation$ | async }}</div>
-        <div class="grid grid-cols-3 mt-6 md:mt-10">
-          <form-button
-            class="col-span-2"
-            type="submit"
-            [disabled]="isLoading"
-            [isLoading]="isLoading"
-            [label]="buttonLabel"
-            (click)="onSubmit()"
-          ></form-button>
-          <button
-            *ngIf="!newLocation"
-            class="
-              ml-3
-              py-2
-              flex
-              items-center
-              justify-center
-              px-2
-              bg-blue-600
-              rounded
-              font-semibold
-              text-sm text-blue-100
-              hover:bg-blue-700
-            "
-            (click)="toggleNewLocation()"
-          >
-            New
-          </button>
-        </div>
-        <div class="mt-2 md:mt-6">
-          <message-bar
-            [message]="message"
-            [type]="messageType"
-            class="md:mt-4"
-          ></message-bar>
-        </div>
-      </form>
+            <input
+              nz-input
+              oninput="this.value = this.value.toUpperCase()"
+              nzMaxCharacterCount="25"
+              placeholder="To:"
+              nzSize="large"
+              type="text"
+              id="location"
+              formControlName="location"
+              autocomplete="off"
+              #location
+            />
+          </nz-form-control>
+        </nz-form-item>
 
-      <!-- ITN info table -->
+        <nz-form-item nz-row nzGutter="16" nzJustify="center">
+          <div nz-col nzSpan="16">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              {{ buttonLabel }}
+            </button>
+          </div>
+          <div nz-col nzSpan="8">
+            <button
+              *ngIf="!newLocation"
+              nz-button
+              type="button"
+              nzSize="large"
+              (click)="toggleNewLocation()"
+              class="w-full"
+            >
+              New
+            </button>
+          </div>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
+      </form>
+      <div>{{ updateLocation$ | async }}</div>
+      <!-- Item Info -->
+      <nz-skeleton
+        *ngIf="!locationList.length"
+        [nzActive]="true"
+        [nzParagraph]="{ rows: 2 }"
+      ></nz-skeleton>
       <div *ngIf="!isRelocation" class="mt-2 md:mt-6">
         <div class="text-black grid grid-cols-2 dark:text-white">
           <div *ngFor="let detail of ITNInfo | slice: 0:6; let i = index">

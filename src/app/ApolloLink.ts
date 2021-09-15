@@ -14,7 +14,9 @@ export const errorLink = onError(
 );
 
 export const middleware = new ApolloLink((operation, forward) => {
-  const authToken = JSON.parse(sessionStorage.getItem('userToken')).idToken;
+  const authToken = JSON.parse(
+    sessionStorage.getItem('userToken') || ''
+  ).idToken;
   operation.setContext({
     headers: new HttpHeaders().set(
       'Authorization',

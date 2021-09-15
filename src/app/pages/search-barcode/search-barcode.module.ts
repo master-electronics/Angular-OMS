@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 import { SearchBarcodeComponent } from './search-barcode.component';
 import { SearchBarcodeRoutingModule } from './search-barcode.routing';
@@ -13,7 +12,6 @@ import { SharedUtilityModule } from '../../shared/shared-utility.module';
   imports: [
     CommonModule,
     FormsModule,
-    KeyboardShortcutsModule,
     ReactiveFormsModule,
     SearchBarcodeRoutingModule,
     SharedComponentModule,

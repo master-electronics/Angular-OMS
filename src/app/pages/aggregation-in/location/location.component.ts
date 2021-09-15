@@ -51,11 +51,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading = false;
   isRelocation = false;
   newLocation = false;
-  buttonLabel = 'place to the shelf';
+  buttonLabel = 'Relocate';
   locationList = [];
   ITNInfo = [];
-  message = '';
-  messageType = 'error';
+  alertMessage = '';
+  alertType = 'error';
 
   regex(input: FormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
@@ -257,7 +257,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         }),
 
         catchError((error) => {
-          this.message = error;
+          this.alertMessage = error;
           this.isLoading = false;
           this.locationInput.nativeElement.select();
           return of();
@@ -276,7 +276,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (!this.locationForm.valid) {
       return;
     }
@@ -284,8 +284,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const barcode =
       barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
     if (this.urlParams.Barcode === barcode) {
-      this.message = 'Should scan a new Container';
-      this.messageType = 'warning';
+      this.alertMessage = 'Should scan a new Container';
+      this.alertType = 'warning';
       this.locationInput.nativeElement.select();
       return;
     }
@@ -294,8 +294,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         return location.substring(0, 11) === barcode;
       });
       if (!inList) {
-        this.message = 'This container is a new location';
-        this.messageType = 'error';
+        this.alertMessage = 'This container is a new location';
+        this.alertType = 'error';
         this.locationInput.nativeElement.select();
         return;
       }
@@ -420,7 +420,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         }),
 
         catchError((error) => {
-          this.message = error;
+          this.alertMessage = error;
+          this.alertType = 'error';
           this.isLoading = false;
           this.locationInput.nativeElement.select();
           return of();

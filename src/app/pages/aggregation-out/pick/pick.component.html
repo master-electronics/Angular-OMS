@@ -1,99 +1,115 @@
-<div class="container px-4 mx-auto mb-10 md:max-w-md">
-  <div class="flex flex-col md:mt-6 ...">
-    <!-- Top location info table -->
-    <form
-      focusInvalidInput
-      [formGroup]="containerForm"
-      class="mt-2 md:mt-6"
-      (ngSubmit)="onSubmit()"
-    >
-      <div class="z-0 w-full relative mt-4">
-        <input
-          type="text"
-          name="containerNumber"
-          placeholder=" "
-          formControlName="containerNumber"
-          class="float-input"
-          autocomplete="off"
-          maxlength="15"
-          #containerNumber
-        />
-        <label for="containerNumber" class="float-label"> Container# </label>
-        <div
-          class="text-red-500 text-sm absolute"
-          *ngIf="
-            this.f.containerNumber.invalid &&
-            (this.f.containerNumber.dirty || this.f.containerNumber.touched)
-          "
-        >
-          <div *ngIf="this.f.containerNumber.errors.required">
-            Container is required.
-          </div>
-          <div *ngIf="this.f.containerNumber.errors.pattern">
-            Container Example: 50-01-01
-          </div>
-        </div>
-      </div>
-      <div class="mt-6 md:mt-10">
-        <form-button
-          [styles]="buttonStyles"
-          [type]="'submit'"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          [label]="buttonLabel"
-        ></form-button>
-      </div>
-      <div class="mt-2 md:mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-    <!-- ITN location info of selected order -->
-    <table class="w-full">
-      <thead class="grid grid-cols-3 gap-3 justify-items-start">
-        <th class="col-span-2">Location</th>
-        <th>Barcode</th>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let item of itemList"
-          class="grid grid-cols-3 gap-3 text-xl"
-        >
-          <td class="col-span-2">
-            <span>{{ item.Container.Warehouse }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Row }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Aisle }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Section }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Shelf }}</span>
-            <span>-</span>
-            <span>{{ item.Container.ShelfDetail }}</span>
-          </td>
-          <td>{{ item.Container.Barcode }}</td>
-        </tr>
-        <tr
-          *ngFor="let item of selectedList"
-          class="text-green-500 grid grid-cols-3 gap-3 text-xl"
-        >
-          <td class="col-span-2">
-            <span>{{ item.Container.Warehouse }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Row }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Aisle }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Section }}</span>
-            <span>-</span>
-            <span>{{ item.Container.Shelf }}</span>
-            <span>-</span>
-            <span>{{ item.Container.ShelfDetail }}</span>
-          </td>
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="containerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-label nzRequired>Auto Selected Order</nz-form-label>
+          <nz-form-control
+            nz-col
+            nzHasFeedback
+            nzErrorTip="The input is not valid container!"
+          >
+            <input
+              nz-input
+              placeholder=" "
+              formControlName="containerNumber"
+              placeholder="Order#"
+              nzMaxCharacterCount="15"
+              nzSize="large"
+              type="text"
+              id="containerNumber"
+              name="containerNumber"
+              autocomplete="off"
+              #containerNumber
+            />
+          </nz-form-control>
+        </nz-form-item>
 
-          <td>{{ item.Container.Barcode }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <nz-form-item nz-row nzJustify="center">
+          <button
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            {{ buttonLabel }}
+          </button>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
+
+        <!-- Order container list -->
+        <table class="w-full">
+          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+            <th class="col-span-2">Location</th>
+            <th>Barcode</th>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let item of itemList"
+              class="grid grid-cols-3 gap-3 text-xl"
+            >
+              <td class="col-span-2">
+                <span>{{ item.Container.Warehouse }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Row }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Aisle }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Section }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Shelf }}</span>
+                <span>-</span>
+                <span>{{ item.Container.ShelfDetail }}</span>
+              </td>
+              <td>{{ item.Container.Barcode }}</td>
+            </tr>
+            <tr
+              *ngFor="let item of selectedList"
+              class="text-green-500 grid grid-cols-3 gap-3 text-xl"
+            >
+              <td class="col-span-2">
+                <span>{{ item.Container.Warehouse }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Row }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Aisle }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Section }}</span>
+                <span>-</span>
+                <span>{{ item.Container.Shelf }}</span>
+                <span>-</span>
+                <span>{{ item.Container.ShelfDetail }}</span>
+              </td>
+
+              <td>{{ item.Container.Barcode }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
 </div>

@@ -3,18 +3,17 @@
     <form focusInvalidInput [formGroup]="ITNForm" (ngSubmit)="onSubmit()">
       <div class="z-0 w-full relative mt-4">
         <input
+          nz-input
           type="text"
           name="ITNInput"
           id="ITNInput"
-          placeholder=" "
+          placeholder="ITN#"
           formControlName="ITN"
-          class="float-input"
           autocomplete="off"
           maxlength="15"
           #ITNInput
           required
         />
-        <label for="containerNumber" class="float-label"> ITN </label>
         <div
           class="text-red-500 text-sm absolute"
           *ngIf="this.f.ITN.invalid && (this.f.ITN.dirty || this.f.ITN.touched)"

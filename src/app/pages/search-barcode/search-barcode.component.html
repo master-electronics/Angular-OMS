@@ -32,7 +32,7 @@
             <div *ngIf="this.f.barcode.errors.required">
               Barcode is required.
             </div>
-            <div *ngIf="this.f.barcode.errors.regex">Invaild Barcode!</div>
+            <div *ngIf="this.f.barcode.errors.regex">Invalid Barcode!</div>
           </div>
           <button
             type="submit"
@@ -60,13 +60,14 @@
     </form>
   </div>
 
+  <div *ngIf="isLoading">Loading</div>
   <!-- Container Information -->
   <div *ngIf="search$ | async as list">
     <div *ngIf="isContainer" class="mt-2">
       <div class="mb-2 divide-y">
-        <ul *ngFor="let container of list">
+        <ul *ngFor="let container of search$">
           <li>Container: {{ container.Barcode }}</li>
-          <li *ngIf="list.length < 2">
+          <li>
             Location:
             {{ container.Warehouse }}-{{ container.Row }}-{{
               container.Aisle
@@ -94,11 +95,10 @@
       </div>
     </div>
 
-    <div *ngIf="isLoading">Loading</div>
     <!-- ITN information  -->
     <div *ngIf="isITN">
       <div class="divide-y">
-        <ul *ngFor="let ITN of list">
+        <ul *ngFor="let ITN of search$">
           <li>ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})</li>
           <li>
             Location:
@@ -123,7 +123,7 @@
 
     <!-- Order Infromation -->
     <div *ngIf="isOrder">
-      <ul *ngFor="let order of list">
+      <ul *ngFor="let order of search$">
         <li>
           Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
           <span>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</span>

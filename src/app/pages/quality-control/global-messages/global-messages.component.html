@@ -1,35 +1,54 @@
-<div class="container px-4 mx-auto mb-10 md:max-w-md">
-  <div class="flex flex-col mt-4 md:mt-10 ...">
-    <form [formGroup]="gmForm" (ngSubmit)="onSubmit()">
-      <p></p>
-      <p class="text-lg font-bold text-indigo-600">Order Line Message:</p>
+<div class="container py-6 px-10 grid grid-flow-row gap-4">
+  <nz-skeleton *ngIf="isLoading" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
+  <p class="hidden">{{ globalMessage$ | async }}</p>
+  <nz-descriptions *ngIf="!isLoading" nzTitle="Global Message" nzBordered>
+    <nz-descriptions-item nzTitle="Order Line Messages">
       <ul>
         <li *ngFor="let comment of orderComments">
           <span>{{ comment }}</span>
         </li>
       </ul>
-      <p class="text-lg font-bold text-indigo-600 mt-4">Part Message:</p>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Part Messages">
       <ul>
         <li *ngFor="let comment of partComments">
           <span>{{ comment }}</span>
         </li>
       </ul>
-      <form-button
-        [type]="'submit'"
-        [disabled]="isLoading"
-        [isLoading]="isLoading"
-        (click)="onSubmit()"
-      ></form-button>
-      <div class="mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
+    </nz-descriptions-item>
+  </nz-descriptions>
+
+  <div nz-row nzJustify="center">
+    <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+      <nz-form-item nz-row nzJustify="center">
+        <button
+          nz-button
+          type="submit"
+          nzType="primary"
+          (click)="onSubmit()"
+          [nzLoading]="isLoading"
+          nzSize="large"
+          class="w-full"
+        >
+          Submit
+        </button>
+      </nz-form-item>
+
+      <nz-alert
+        *ngIf="alertMessage"
+        [nzType]="
+          alertType === 'error'
+            ? 'error'
+            : alertType === 'success'
+            ? 'success'
+            : alertType === 'info'
+            ? 'info'
+            : 'warning'
+        "
+        [nzMessage]="alertMessage"
+        nzShowIcon
+        class="w-full"
+      ></nz-alert>
+    </div>
   </div>
 </div>
-
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>

@@ -1,11 +1,9 @@
-const plugin = require('tailwindcss/plugin');
-
 module.exports = {
   prefix: '',
   purge: {
+    enabled: true,
     content: ['./src/**/*.{html,ts}'],
   },
-  darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {},
   },
@@ -15,10 +13,5 @@ module.exports = {
       opacity: ['disabled', 'active'],
     },
   },
-  plugins: [
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/forms')],
 };

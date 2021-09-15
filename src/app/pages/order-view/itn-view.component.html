@@ -5,17 +5,16 @@
       <div class="grid grid-cols-12 text-sm gap-3">
         <div class="z-0 w-full relative col-span-2">
           <input
+            nz-input
             oninput="this.value = this.value.toUpperCase()"
             type="text"
             name="barcode"
-            placeholder=" "
+            placeholder="Barcode"
             formControlName="barcode"
-            class="float-input"
             autocomplete="off"
             maxlength="30"
             #barcode
           />
-          <label for="barcode" class="float-label">Order Barcode</label>
           <div
             class="text-red-500 text-sm absolute"
             *ngIf="
@@ -24,20 +23,18 @@
             "
           >
             <div *ngIf="this.f.barcode.errors.required">Order is required.</div>
-            <div *ngIf="this.f.barcode.errors.regex">Invaild order!</div>
+            <div *ngIf="this.f.barcode.errors.regex">Invalid order!</div>
           </div>
         </div>
         <form-button
           [styles]="'bg-green-500'"
           [type]="'submit'"
           [label]="'Search'"
-          isHighLight="true"
         ></form-button>
         <form-button
           [styles]="'bg-gray-500'"
           [label]="'Back'"
           (click)="back()"
-          isHighLight="true"
         ></form-button>
       </div>
       <div class="mt-2 md:mt-6">
@@ -95,10 +92,3 @@
     <div *ngIf="OrderInfo$">Loading...</div>
   </ng-template>
 </div>
-
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>

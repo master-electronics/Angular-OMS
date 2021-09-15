@@ -31,8 +31,8 @@ export class AggregationInComponent
 {
   title = 'Aggregation In';
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
 
   containerForm = new FormGroup({
     containerNumber: new FormControl('', [
@@ -56,10 +56,10 @@ export class AggregationInComponent
     this.titleService.setTitle('agin');
   }
 
-  @ViewChild('containerNumber') containerInput: ElementRef;
+  @ViewChild('containerNumber') containerInput!: ElementRef;
   ngOnInit(): void {
-    this.messageType = this.route.snapshot.queryParams['result'];
-    this.message = this.route.snapshot.queryParams['message'];
+    this.alertType = this.route.snapshot.queryParams['result'];
+    this.alertMessage = this.route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -68,7 +68,7 @@ export class AggregationInComponent
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (!this.containerForm.valid) {
       this.containerInput.nativeElement.select();
       return;
@@ -89,18 +89,18 @@ export class AggregationInComponent
         .valueChanges.pipe(
           tap((res) => {
             const container = res.data.findContainer;
-            if (!container.length) throw 'Container not found!';
+            if (!container?.length) throw 'Container not found!';
             // only accepte mobile container
-            if (!container[0].ContainerType.IsMobile)
+            if (!container[0]?.ContainerType.IsMobile)
               throw 'This container is not mobile!';
-            if (container[0].ORDERLINEDETAILs.length === 0)
+            if (container[0].ORDERLINEDETAILs?.length === 0)
               throw 'No item in this container!';
             // verify all line have the same orderID and statusID in the tote
             if (
-              !container[0].ORDERLINEDETAILs.every(
+              !container[0].ORDERLINEDETAILs?.every(
                 (line, i, arr) =>
-                  line.OrderID === arr[0].OrderID &&
-                  line.StatusID === arr[0].StatusID
+                  line?.OrderID === arr[0]?.OrderID &&
+                  line?.StatusID === arr[0]?.StatusID
               )
             )
               throw 'Have different order or status in the container.';
@@ -146,8 +146,8 @@ export class AggregationInComponent
           },
           (error) => {
             this.isLoading = false;
-            this.message = error;
-            this.messageType = 'error';
+            this.alertMessage = error;
+            this.alertType = 'error';
           }
         )
     );

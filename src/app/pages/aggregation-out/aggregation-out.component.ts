@@ -17,7 +17,7 @@ import {
   VerifyOrderForAgOutGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { environment } from 'src/environments/environment';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 @Component({
   selector: 'aggregation-out',
@@ -26,8 +26,8 @@ import { of } from 'rxjs';
 export class AggregationOutComponent implements OnInit, AfterViewInit {
   title = 'Aggregation Out';
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   pickOrder$;
   verifyOrder$;
 
@@ -57,8 +57,8 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   @ViewChild('orderNumber') orderInpt: ElementRef;
   ngOnInit(): void {
     // read info from previous page.
-    this.messageType = this.route.snapshot.queryParams['result'];
-    this.message = this.route.snapshot.queryParams['message'];
+    this.alertType = this.route.snapshot.queryParams['result'];
+    this.alertMessage = this.route.snapshot.queryParams['message'];
     this.isLoading = true;
     this.pickOrder$ = this.pickOrder.mutate(null).pipe(
       tap((res) => {
@@ -72,7 +72,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
       }),
       catchError((error) => {
-        this.message = error;
+        this.alertMessage = error;
         this.orderInpt.nativeElement.select();
         this.isLoading = false;
         return of([]);
@@ -87,8 +87,8 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
-    this.messageType = 'error';
+    this.alertMessage = '';
+    this.alertType = 'error';
     if (!this.orderForm.valid) {
       this.orderInpt.nativeElement.select();
       return;
@@ -116,7 +116,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
             order[0].StatusID !== environment.agInComplete_ID &&
             order[0].StatusID !== environment.agOutComplete_ID
           ) {
-            throw `Invaild Order Status!`;
+            throw `Invalid Order Status!`;
           }
         }),
         map((res) => {
@@ -129,10 +129,10 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
           });
         }),
         catchError((error) => {
-          this.message = error;
+          this.alertMessage = error;
           this.orderInpt.nativeElement.select();
           this.isLoading = false;
-          return of([]);
+          return throwError(error);
         })
       );
   }

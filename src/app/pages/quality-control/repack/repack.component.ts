@@ -11,13 +11,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
-import { QualityControlService } from '../quality-control.server';
+import { QualityControlService, urlParams } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
-import { AllowIn, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
@@ -33,14 +32,12 @@ import {
 })
 export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
-  messageType = 'error';
+  alertType = 'error';
   buttonStyles = 'bg-green-500';
   buttonLabel = 'submit';
-  message = '';
+  alertMessage = '';
   inProcess = 0;
-  urlParams: { [key: string]: any };
-  isNeed;
-
+  urlParams = {};
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -66,44 +63,25 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.urlParams = { ...this.route.snapshot.queryParams };
-    this.qcService.changeTab(4);
+    this.urlParams = this.route.snapshot.queryParams;
+    this.qcService.changeTab(['finish', 'finish', 'finish', 'process']);
   }
 
-  @ViewChild('container') containerInput: ElementRef;
-  @ViewChild('containerError') containerError: ElementRef;
-  shortcuts: ShortcutInput[] = [];
+  @ViewChild('container') containerInput!: ElementRef;
+  @ViewChild('containerError') containerError!: ElementRef;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.containerInput.nativeElement.select();
     }, 10);
-    this.shortcuts.push({
-      key: ['ctrl + s'],
-      label: 'Quick Access',
-      description: 'Submit',
-      preventDefault: true,
-      allowIn: [AllowIn.Textarea, AllowIn.Input],
-      command: () => {
-        this.onSubmit();
-      },
-    });
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (this.containerForm.invalid) {
-      if (this.containerForm.get('container').errors.required)
-        this.containerError.nativeElement.textContent =
-          'A Tote barcode is required.';
-      if (this.containerForm.get('container').errors.pattern)
-        this.containerError.nativeElement.textContent =
-          'Incorrect barcode format.';
-      this.containerError.nativeElement.classList.remove('hidden');
       return;
     }
 
     this.isLoading = true;
-    this.containerError.nativeElement.classList.add('hidden');
     this.subscription.add(
       this.verifyQCRepack
         .watch(
@@ -114,8 +92,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             Order: {
               DistributionCenter: environment.DistributionCenter,
-              OrderNumber: this.urlParams.OrderNum,
-              NOSINumber: this.urlParams.NOSI,
+              OrderNumber: this.urlParams['OrderNum'],
+              NOSINumber: this.urlParams['NOSI'],
             },
           },
           { fetchPolicy: 'network-only' }
@@ -135,7 +113,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (targetContainer.ORDERLINEDETAILs.length) {
               targetContainer.ORDERLINEDETAILs.forEach((itn) => {
                 if (
-                  itn.InternalTrackingNumber !== this.urlParams.ITN &&
+                  itn.InternalTrackingNumber !== this.urlParams['ITN'] &&
                   itn.StatusID < environment.agOutComplete_ID
                 )
                   throw 'This tote is not empty.';
@@ -149,7 +127,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             let inProcess = 0;
             let sourceContainer: number;
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
-              if (line.InternalTrackingNumber !== this.urlParams.ITN) {
+              if (line.InternalTrackingNumber !== this.urlParams['ITN']) {
                 line.StatusID !== environment.qcComplete_ID && ++inProcess;
               } else {
                 sourceContainer = line.ContainerID;
@@ -158,7 +136,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Setup graphql queries
             const updateDetail = this.updateOrderLineDetail.mutate({
-              InternalTrackingNumber: this.urlParams.ITN,
+              InternalTrackingNumber: this.urlParams['ITN'],
               OrderLineDetail: {
                 StatusID: environment.qcComplete_ID,
                 ContainerID: targetContainer._id,
@@ -189,8 +167,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             const updateMerpLog = this.updateMerpLastLine.mutate({
-              OrderNumber: this.urlParams.OrderNum,
-              NOSINumber: this.urlParams.NOSI,
+              OrderNumber: this.urlParams['OrderNum'],
+              NOSINumber: this.urlParams['NOSI'],
               Status: '60',
               UserOrStatus: 'AGGREGATION-IN',
             });
@@ -216,7 +194,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               const needCleanup = targetContainer.ORDERLINEDETAILs.some(
                 (itn) => {
                   return (
-                    itn.InternalTrackingNumber !== this.urlParams.ITN &&
+                    itn.InternalTrackingNumber !== this.urlParams['ITN'] &&
                     itn.StatusID >= environment.agOutComplete_ID
                   );
                 }
@@ -236,10 +214,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(
           (res: any) => {
             let type = 'info';
-            let message = `QC complete for ${this.urlParams.ITN}`;
+            let message = `QC complete for ${this.urlParams['ITN']}`;
             if (res.updateMerpLog) {
               type = 'success';
-              message = `QC complete for ${this.urlParams.ITN}\nQC complete for Order ${this.urlParams.OrderNum}`;
+              message = `QC complete for ${this.urlParams['ITN']}\nQC complete for Order ${this.urlParams['OrderNum']}`;
               if (
                 !res.updateMerpLog.data.updateMerpOrderStatus.success ||
                 !res.updateMerpLog.data.clearMerpTote.success
@@ -263,8 +241,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           (error) => {
             this.isLoading = false;
-            this.messageType = 'error';
-            this.message = error;
+            this.alertType = 'error';
+            this.alertMessage = error;
             this.containerInput.nativeElement.select();
           }
         )

@@ -24,9 +24,15 @@ export class AppComponent implements OnInit {
     private gtmService: GoogleTagManagerService,
     private auth: AuthenticationService
   ) {
-    this.router.events.subscribe((routerEvent: RouterEvent) => {
-      this.checkRouterEvent(routerEvent);
-    });
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((routerEvent: RouterEvent) => {
+        this.checkRouterEvent(routerEvent);
+      });
   }
 
   ngOnInit(): void {

@@ -2,24 +2,29 @@ import { BehaviorSubject } from 'rxjs';
 
 export class QualityControlService {
   // Tab
-  private activeTabSubject = new BehaviorSubject<number>(1);
-  public activeTab = this.activeTabSubject.asObservable();
-  public changeTab(tab: number): void {
-    this.activeTabSubject.next(tab);
+  private tabStatus = new BehaviorSubject<any>([
+    'process',
+    'wait',
+    'wait',
+    'wait',
+  ]);
+  public tabStatus$ = this.tabStatus.asObservable();
+  public changeTab(tab: string[]): void {
+    this.tabStatus.next(tab);
   }
 
   // global messages
-  private globalMessagesSubject = new BehaviorSubject<string[]>(null);
-  public globalMessagesObs$ = this.activeTabSubject.asObservable();
-  public changeGlobalMessages(messages: string[]): void {
-    this.globalMessagesSubject.next(messages);
+  private globalMessage = new BehaviorSubject<any>([]);
+  public globalMessage$ = this.globalMessage.asObservable();
+  public changeGlobalMessages(messages: any): void {
+    this.globalMessage.next(messages!);
   }
   public get globalMessages(): string[] {
-    return this.globalMessagesSubject.value;
+    return this.globalMessage.value;
   }
 
   // task start time
-  private qcStartTime = new BehaviorSubject<number>(null);
+  private qcStartTime = new BehaviorSubject<number>(0);
   public resetQCStartTime(date: number): void {
     this.qcStartTime.next(date);
   }

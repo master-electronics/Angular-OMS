@@ -1,34 +1,6 @@
-/* Tailwind css */
+/* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-.-z-1 {
-  z-index: -1;
-}
-
-.origin-0 {
-  transform-origin: 0%;
-}
-
-input:focus ~ label,
-input:not(:placeholder-shown) ~ label,
-textarea:focus ~ label,
-textarea:not(:placeholder-shown) ~ label,
-select:focus ~ label,
-select:not([value='']):valid ~ label {
-  @apply transform -translate-y-6 scale-75;
-}
-
-input:focus ~ label,
-select:focus ~ label {
-  @apply left-0 text-black;
-}
-
-.float-input {
-  @apply dark:focus:border-white block mt-0 pb-2 pt-3 px-0 w-full text-black dark:text-white bg-transparent border-0 border-b-2 focus:border-black border-gray-200 dark:border-gray-700 focus:outline-none appearance-none focus:ring-0;
-}
-
-.float-label {
-  @apply -z-1 origin-0 absolute top-3 dark:text-gray-300 text-gray-600 duration-300;
-}
+@import '~ng-zorro-antd/ng-zorro-antd.css';

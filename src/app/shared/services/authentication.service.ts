@@ -42,7 +42,7 @@ export class AuthenticationService {
   logout(): void {
     // remove user from session
     sessionStorage.setItem('userToken', '');
-    this.user.next(null);
+    this.user.next('');
     this.router.navigate(['/login']);
   }
 }

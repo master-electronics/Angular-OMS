@@ -1,51 +1,68 @@
-<div class="container px-4 mx-auto mb-10 md:max-w-md">
-  <div class="flex flex-col md:mt-6 ...">
-    <!-- Order Detail -->
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="orderForm"
+    (ngSubmit)="onSubmit()"
+  >
     <div class="hidden">{{ pickOrder$ | async }}</div>
-    <div class="mb-2">
-      <h1 class="text-md font-bold">Auto Selected Order:</h1>
-    </div>
-    <!-- Order input form -->
-    <form focusInvalidInput [formGroup]="orderForm" (ngSubmit)="onSubmit()">
-      <div class="z-0 w-full relative mt-4">
-        <input
-          oninput="this.value = this.value.toUpperCase()"
-          type="text"
-          name="orderNumber"
-          placeholder=" "
-          formControlName="orderNumber"
-          class="float-input"
-          autocomplete="off"
-          maxlength="15"
-          #orderNumber
-        />
-        <label for="orderNumber" class="float-label"> Order# </label>
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-label nzRequired>Auto Selected Order</nz-form-label>
+          <nz-form-control
+            nz-col
+            nzHasFeedback
+            nzErrorTip="The input is not valid Order!"
+          >
+            <input
+              nz-input
+              formControlName="orderNumber"
+              placeholder="Order#"
+              nzMaxCharacterCount="15"
+              nzSize="large"
+              type="text"
+              id="orderNumber"
+              name="orderNumber"
+              autocomplete="off"
+              #orderNumber
+            />
+          </nz-form-control>
+        </nz-form-item>
+
         <div>{{ verifyOrder$ | async }}</div>
-        <div
-          class="text-red-500 text-sm absolute"
-          *ngIf="
-            this.f.orderNumber.invalid &&
-            (this.f.orderNumber.dirty || this.f.orderNumber.touched)
-          "
-        >
-          <div *ngIf="this.f.orderNumber.errors.required">
-            Order is required.
-          </div>
-          <div *ngIf="this.f.orderNumber.errors.pattern">
-            Order Example: RS0060-02
-          </div>
-        </div>
+
+        <nz-form-item nz-row nzJustify="center">
+          <button
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            Submit
+          </button>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
       </div>
-      <div class="mt-6 md:mt-10">
-        <form-button
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          (click)="onSubmit()"
-        ></form-button>
-      </div>
-      <div class="mt-2 md:mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>

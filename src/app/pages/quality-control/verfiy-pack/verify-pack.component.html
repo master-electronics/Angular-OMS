@@ -1,274 +1,281 @@
-<div class="mx-auto md:max-w-2xl flex flex-col text-black dark:text-white">
-  <!-- item picture and detail link -->
-  <section>
-    <div class="grid grid-cols-12">
-      <p class="font-bold col-span-3">ITN: {{ this.urlParams.ITN }}</p>
-      <p class="font-bold col-span-2">PRC: {{ this.urlParams.PRC }}</p>
-      <a
-        [href]="productURL"
-        target="_blank"
-        class="col-span-2 underline font-bold text-indigo-500"
-        >Product</a
-      >
-      <a
-        [href]="specSheetURL"
-        target="_blank"
-        class="col-span-2 underline font-bold text-indigo-500"
-        >Spec sheet</a
-      >
-      <button
-        *ngIf="globalMessages"
-        type="button"
-        (click)="toggleGlobalMessagesModal()"
-        class="
-          grid-cols-2
-          w-full
-          border
-          text-base
-          font-medium
-          rounded-r-md
-          text-black
-          bg-white
-          hover:bg-gray-100
-        "
-      >
-        GMs
-      </button>
-      <p class="font-bold col-span-10">
-        PartNumber: {{ this.urlParams.PartNum }}
-      </p>
-      <button class="col-span-2 bg-gray-300 rounded-r-sm" (click)="print()">
-        Print ITN
-      </button>
-      <p *ngIf="printITN$ | async"></p>
-    </div>
-
-    <div class="grid grid-cols-8 mt-2 h-40">
-      <div class="col-span-4">
-        <div *ngIf="isImgExist">
-          <img
-            [src]="imgURL"
-            class="h-40"
-            alt="ProductImage"
-            onError="this.src='assets/img/image-not-found.png'"
-          />
+<div class="flex flex-col">
+  <div nz-row nzGutter="16">
+    <!-- picture and print button -->
+    <div nz-col [nzSpan]="4">
+      <div *ngIf="isInit">
+        <nz-skeleton-element
+          nzType="button"
+          [nzActive]="true"
+          nzSize="large"
+          class="mb-4"
+        ></nz-skeleton-element>
+        <nz-skeleton-element
+          nzType="image"
+          [nzActive]="true"
+          style="width: 400px"
+        ></nz-skeleton-element>
+      </div>
+      <div *ngIf="productInfo$ | async">
+        <div nz-row>
+          <button
+            nz-button
+            type="button"
+            (click)="print()"
+            [nzLoading]="isLoading"
+            class="w-full"
+          >
+            Print ITN
+          </button>
         </div>
+        <img
+          nz-image
+          [nzSrc]="imgURL"
+          width="200px"
+          height="200px"
+          alt="ProductImage"
+          nzFallback="assets/img/image-not-found.png"
+        />
       </div>
-
-      <div class="grid items-center text-lg font-bold col-span-3">
-        <p>Quantity:</p>
-        <p class="text-indigo-600 text-2xl">
-          {{ this.urlParams.Quantity }}({{ this.UnitOfMeasure }})
-        </p>
-        <p>HML:</p>
-        <p class="text-indigo-600">{{ HazardMaterialLevel ? 'Yes' : 'No' }}</p>
-      </div>
-
-      <div *ngIf="isLoading">loading</div>
     </div>
-  </section>
+
+    <!-- ITN Info -->
+    <div nz-col [nzSpan]="20">
+      <nz-descriptions nzBordered>
+        <nz-descriptions-item nzTitle="ITN">{{
+          this.urlParams.ITN
+        }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="PRC">{{
+          this.urlParams.PRC
+        }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Links">
+          <div class="grid grid-cols-2">
+            <a [href]="productURL" target="_blank">Product</a>
+            <a [href]="specSheetURL" target="_blank">Spec sheet</a>
+          </div>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="PartNumber" [nzSpan]="24">{{
+          this.urlParams.PartNum
+        }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Quantity">
+          <span class="text-2xl font-bold">
+            {{ this.urlParams.Quantity }}({{ this.UnitOfMeasure }})</span
+          >
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="HML">
+          <span *ngIf="HazardMaterialLevel" class="text-2xl text-red-500"
+            >Yes</span
+          >
+          <span *ngIf="!HazardMaterialLevel" class="text-2xl">No</span>
+        </nz-descriptions-item>
+      </nz-descriptions>
+      <p class="hidden">{{ printITN$ | async }}</p>
+    </div>
+  </div>
+
+  <nz-divider nzText="Order Line Detail"></nz-divider>
 
   <!-- User input form -->
-  <section class="flex flex-col mt-3">
-    <form
-      focusInvalidInput
-      [formGroup]="verifyPack"
-      (ngSubmit)="onSubmit()"
-      class="border-t border-gray-200 dark:border-gray-800"
-    >
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500 grid grid-rows-2 gap-2">
-          <p>DateCode:</p>
-          <p *ngIf="this.urlParams.dateCode">{{ this.urlParams.dateCode }}</p>
-          <p *ngIf="!this.urlParams.dateCode">Unknown</p>
-        </dt>
-        <div class="z-0 w-full relative mt-4 col-span-2">
-          <input
-            type="text"
-            name="dateCode"
-            placeholder=" "
-            formControlName="dateCode"
-            class="float-input"
-            autocomplete="off"
-            #dateCode
-          />
-          <label for="dateCode" class="float-label"> DateCode </label>
-          <span
-            class="text-sm text-red-600 hidden"
-            id="dateCodeError"
-            #dateCodeError
-          ></span>
-        </div>
-      </div>
-
-      <div
-        class="
-          px-4
-          py-4
-          sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6
-          bg-gray-100
-          dark:bg-gray-700
-        "
-      >
-        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
-          <p>ROHS:</p>
-          <p>{{ this.urlParams.ROHS === '1' ? 'Yes' : 'No' }}</p>
-        </dt>
-        <fieldset class="relative z-0 p-px w-full mt-2">
-          <legend
-            class="origin-0 absolute -top-3 text-gray-500 transform scale-75"
+  <form focusInvalidInput [formGroup]="verifyPack" (ngSubmit)="onSubmit()">
+    <!-- editable area -->
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="6">
+        <nz-form-item>
+          <nz-form-label nzFor="DateCode" nzSpan="8">DateCode</nz-form-label>
+          <nz-form-control
+            nzSpan="16"
+            nzHasFeedback
+            nzErrorTip="Invalid DateCode!"
           >
-            ROHS
-          </legend>
-          <div class="grid grid-cols-2 pb-2 pt-3 space-x-4">
-            <label *ngFor="let ROHS of booleanOptions">
+            <input
+              type="text"
+              nz-input
+              nzSize="large"
+              id="DateCode"
+              placeholder=""
+              formControlName="dateCode"
+              autocomplete="off"
+              #DateCode
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item class="grid grid-flow-row justify-center">
+          <nz-form-label nzFor="DateCode">ROHS</nz-form-label>
+          <div class="grid grid-cols-2 pt-1 space-x-4">
+            <div *ngFor="let ROHS of booleanOptions">
               <input
                 type="radio"
                 name="ROHS"
                 formControlName="ROHS"
-                [readonly]="!editable"
                 [value]="ROHS.id"
-                class="
-                  mr-2
-                  text-black
-                  border-2 border-gray-300
-                  focus:border-gray-300 focus:ring-black
-                "
               />
               {{ ROHS.name }}
-            </label>
+            </div>
           </div>
-        </fieldset>
+        </nz-form-item>
       </div>
-
-      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-md font-medium text-gray-500 grid grid-rows-2 gap-2">
-          <p>Country of Origin:</p>
-          <p>{{ this.urlParams.coo }}</p>
-        </dt>
-        <div class="col-span-2">
-          <label for="countryOfOrigin" class="text-sm text-gray-500"
-            >Country of Origin</label
+      <div nz-col nzSpan="10">
+        <nz-form-item nz-row>
+          <nz-form-label nzFor="DateCode" nz-col nzSpan="10"
+            >Country of Origin</nz-form-label
           >
-          <div>
-            <ng-autocomplete
-              [data]="countryData"
-              [focusFirst]="true"
-              [searchKeyword]="COOkeyword"
-              [customFilter]="COOFilter"
-              [itemTemplate]="COOTemplate"
-              [notFoundTemplate]="notFoundTemplate"
-              formControlName="countryOfOrigin"
-              class="text-black"
-            >
-            </ng-autocomplete>
-            <ng-template #COOTemplate let-item>
-              <a [innerHTML]="item.name" class="ml-2"></a>
-            </ng-template>
-            <ng-template #notFoundTemplate let-notFound>
-              <div [innerHTML]="notFound"></div>
-            </ng-template>
-          </div>
-          <span class="text-sm text-red-600 hidden" id="cooError"></span>
+          <nz-select
+            formControlName="countryOfOrigin"
+            nz-col
+            nzSpan="14"
+            nzShowSearch
+            nzAllowClear
+            formControlName="countryOfOrigin"
+            nzPlaceHolder="Select a country"
+          >
+            <nz-option
+              *ngFor="let country of countryData"
+              [nzLabel]="country.name"
+              [nzValue]="country._id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <!-- button -->
+    <div nz-row nzGutter="16">
+      <div nz-col nzSpan="4" nzOffset="4">
+        <div class="bg-yellow-500 rounded-md">
+          <button
+            nz-button
+            type="button"
+            (click)="open()"
+            nzGhost
+            class="w-full"
+          >
+            Hold
+          </button>
         </div>
       </div>
-      <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3 mb-3">
-        <form-button
-          label="Hold"
-          styles="bg-yellow-300"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          (click)="toggleHoldModal()"
-          isHighLight="true"
-        ></form-button>
-
-        <form-button
-          label="edit"
-          styles="bg-purple-500"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          (click)="toggleEdit()"
-          isHighLight="true"
-        ></form-button>
-      </div>
-      <div
-        class="
-          px-4
-          py-5
-          sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6
-          bg-gray-100
-          dark:bg-gray-700
-        "
-      >
-        <div class="col-span-3">
-          <div class="mt-6">
-            <fieldset class="relative z-0 mb-5 p-px">
-              <legend class="origin-0 absolute -top-8 transform text-gray-500">
-                Count Method
-              </legend>
-              <div class="grid grid-cols-3 gap-3">
-                <label *ngFor="let countMethod of countMethods">
-                  <input
-                    type="radio"
-                    name="countMethods"
-                    value="{{ countMethod.id }}"
-                    formControlName="countMethods"
-                    #countMethods
-                    class="
-                      mr-2
-                      focus:ring-black
-                      text-black
-                      border-2 border-gray-300
-                      focus:border-gray-300
-                    "
-                  />
-                  {{ countMethod.content }}
-                </label>
-              </div>
-              <span class="hidden text-red-600 text-sm" #countMethodError
-                >Must select a method</span
-              >
-            </fieldset>
-          </div>
+      <div nz-col nzSpan="4" nzOffset="6">
+        <div class="bg-green-500 rounded-md">
+          <button
+            nz-button
+            type="button"
+            (click)="toggleEdit()"
+            nzGhost
+            class="w-full"
+          >
+            Edit
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- buttons -->
-      <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 mt-3">
-        <form-button
-          styles="bg-gray-500"
-          label="Back"
-          isHighLight="true"
-          (onClickEmt)="back()"
-        ></form-button>
-        <form-button
-          [type]="'submit'"
-          [disabled]="isLoading"
-          [isLoading]="isLoading"
-          label="Submit"
+    <!-- count method -->
+    <nz-divider nzText="Count Method"></nz-divider>
+    <div class="grid grid-cols-3 gap-3">
+      <div *ngFor="let countMethod of countMethods">
+        <label for="countMethods">
+          <input
+            type="radio"
+            id="countMethods"
+            name="countMethods"
+            value="{{ countMethod.id }}"
+            formControlName="countMethods"
+            #countMethods
+          />
+          {{ countMethod.content }}
+        </label>
+      </div>
+    </div>
+    <span class="hidden text-red-600 text-sm" #countMethodError
+      >Must select a method</span
+    >
+
+    <nz-divider></nz-divider>
+    <!-- button -->
+    <nz-form-item nz-row nzGutter="16">
+      <div nz-col nzSpan="4" nzOffset="4">
+        <div class="bg-gray-500 rounded-md">
+          <button
+            nz-button
+            type="button"
+            (click)="back()"
+            nzGhost
+            class="w-full"
+          >
+            Cancal
+          </button>
+        </div>
+      </div>
+      <div nz-col nzSpan="4" nzOffset="6">
+        <button
+          nz-button
+          nzType="primary"
           (click)="onSubmit()"
-        ></form-button>
+          type="submit"
+          class="w-full"
+          [nzLoading]="isLoading"
+        >
+          Submit
+        </button>
       </div>
-      <div class="mt-3">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </section>
+    </nz-form-item>
+
+    <nz-form-item nz-row *ngIf="alertMessage">
+      <nz-form-control [nzSpan]="6" [nzOffset]="4">
+        <nz-alert
+          [nzType]="
+            alertType === 'error'
+              ? 'error'
+              : alertType === 'success'
+              ? 'success'
+              : alertType === 'info'
+              ? 'info'
+              : 'warning'
+          "
+          [nzMessage]="alertMessage"
+          nzShowIcon
+          class="w-full"
+        ></nz-alert>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
 </div>
-<!-- modal -->
-<hold-modal
-  *ngIf="!isHoldModalHidden"
-  [(isModalHidden)]="isHoldModalHidden"
-  [ITN]="this.urlParams.ITN"
-></hold-modal>
-<global-messages-modal
-  *ngIf="!isGlobalMessagesModalHidden"
-  [(isModalHidden)]="isGlobalMessagesModalHidden"
-></global-messages-modal>
-<!-- shortcut -->
-<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-<ng-keyboard-shortcuts-help
-  [key]="'f1'"
-  [closeKey]="'escape'"
-  [title]="'Help'"
-></ng-keyboard-shortcuts-help>
+<!-- hold drawer -->
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="holdVisible"
+  nzPlacement="left"
+  nzTitle="Place an order on hold"
+  (nzOnClose)="close()"
+>
+  <ng-container *nzDrawerContent>
+    <form focusInvalidInput [formGroup]="holdForm" (ngSubmit)="onSubmit()">
+      <div class="block pb-2 pt-3 space-x-4" *ngFor="let option of holdOptions">
+        <label>
+          <input
+            type="radio"
+            name="holdReason"
+            formControlName="holdReason"
+            [value]="option.id"
+            #holdInput
+          />
+          {{ option.content }}
+        </label>
+      </div>
+      <span class="hidden fixed text-red-600 text-sm" id="error"
+        >Option has to be selected</span
+      >
+      <button
+        nz-button
+        nzType="primary"
+        (click)="onHold()"
+        type="submit"
+        class="w-full"
+        [nzLoading]="isLoading"
+      >
+        Hold
+      </button>
+    </form>
+  </ng-container>
+</nz-drawer>
