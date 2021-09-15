@@ -1,133 +1,72 @@
-<div class="container px-4 mx-auto mb-10">
-  <div class="flex flex-col">
-    <!-- filter form -->
-    <form focusInvalidInput [formGroup]="filterForm" (ngSubmit)="search(true)">
-      <div class="grid grid-cols-10 text-sm gap-3">
-        <!-- Order barcode input -->
-        <div class="z-0 w-full relative col-span-2 mt-2">
-          <input
-            nz-input
-            oninput="this.value = this.value.toUpperCase()"
-            type="text"
-            name="orderBarcode"
-            placeholder=" "
-            formControlName="orderBarcode"
-            autocomplete="off"
-            maxlength="30"
-            #orderBarcode
-          />
-          <div
-            class="text-red-500 text-sm absolute"
-            *ngIf="
-              this.f.orderBarcode.invalid &&
-              (this.f.orderBarcode.dirty || this.f.orderBarcode.touched)
-            "
+<div class="container px-4 mx-auto">
+  <!-- order table -->
+  <div *ngIf="OrderInfo$ | async"></div>
+  <nz-table #orderView [nzData]="orderListDisplay" nzTableLayout="fixed">
+    <thead>
+      <tr>
+        <th nzCustomFilter>
+          Order
+          <nz-filter-trigger
+            [(nzVisible)]="searchVisible"
+            [nzActive]="searchValue.length > 0"
+            [nzDropdownMenu]="menu"
           >
-            <div *ngIf="this.f.orderBarcode.errors.regex">Invalid order!</div>
-          </div>
-        </div>
-        <!-- Priority -->
-        <div class="grid grid-flow-row col-span-1">
-          <label for="Priority" class=""> Priority</label>
-          <select
-            class="rounded-md text-sm"
-            id="Priority"
-            formControlName="Priority"
+            <i nz-icon nzType="search"></i>
+          </nz-filter-trigger>
+        </th>
+        <th
+          *ngFor="let column of listOfColumns; trackBy: trackByName"
+          [nzFilters]="column.listOfFilter"
+          [nzFilterFn]="column.filterFn"
+        >
+          {{ column.name }}
+        </th>
+        <th>Unpicked</th>
+        <th>Aggregated</th>
+        <th>In Process</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orderView.data">
+        <td>
+          <a
+            [routerLink]="['itnview']"
+            [queryParams]="{
+              orderNumber: order.OrderNumber,
+              NOSINumber: order.NOSINumber
+            }"
+            >{{ order.OrderNumber }}-{{ order.NOSINumber }}</a
           >
-            <option *ngFor="let priority of priorityList" [value]="priority">
-              {{ priority === '' ? '' : priority ? 'Yes' : 'No' }}
-            </option>
-          </select>
-        </div>
-        <!-- ShipMethod -->
-        <div class="grid grid-flow-row col-span-3">
-          <label for="ShippingMethod" class=""> ShipMethod</label>
-          <select
-            class="rounded-md text-sm"
-            id="ShippingMethod"
-            formControlName="ShippingMethod"
-          >
-            <option
-              *ngFor="let shipMethod of shipMethodList"
-              [value]="shipMethod"
-            >
-              {{ shipMethod }}
-            </option>
-          </select>
-        </div>
-        <!-- Status -->
-        <div class="grid grid-flow-row col-span-2">
-          <label for="Status" class="">Status</label>
-          <select
-            class="rounded-md text-sm"
-            id="Status"
-            formControlName="Status"
-          >
-            <option *ngFor="let status of statusList" [value]="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-        <form-button
-          class="mt-4"
-          [styles]="'bg-green-500'"
-          [type]="'submit'"
-          [label]="'Search'"
-        ></form-button>
-        <form-button
-          class="mt-4"
-          [styles]="'bg-gray-500'"
-          [label]="'Reset'"
-          (click)="reset()"
-        ></form-button>
-      </div>
-      <div class="mt-2">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </div>
-  <!-- Order Infromation -->
-  <div
-    *ngIf="OrderInfo$ | async as obs; else Orderloading"
-    class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg mt-4"
-  >
-    <table class="table-auto min-w-full divide-y divide-gray-200">
-      <thead class="text-sm">
-        <tr>
-          <th class="text-left tracking-wider">Order</th>
-          <th class="text-left tracking-wider">Status</th>
-          <th class="text-left tracking-wider">Priority</th>
-          <th class="text-left tracking-wider">ShipMethod</th>
-          <th class="text-left tracking-wider">Unpicked</th>
-          <th class="text-left tracking-wider">Aggregated</th>
-          <th class="text-left tracking-wider">In Process</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200 text-sm">
-        <tr *ngFor="let order of obs" ng-click="goToITNView(order)">
-          <td class="py-2">
-            <a
-              [routerLink]="['itnview']"
-              [queryParams]="{
-                orderNumber: order.OrderNumber,
-                NOSINumber: order.NOSINumber
-              }"
-              >{{ order.OrderNumber }}-{{ order.NOSINumber }}</a
-            >
-          </td>
-          <td class="py-2">{{ order.Status }}</td>
-          <td class="py-2">{{ order.Priority ? 'Yes' : 'No' }}</td>
-          <td class="py-2">
-            {{ order.ShippingMethod }}
-          </td>
-          <td class="py-2">{{ order.Unpicked }}</td>
-          <td class="py-2">{{ order.Aggregated }}</td>
-          <td class="py-2">{{ order.InProcess }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <ng-template #Orderloading>
-    <div class="text-black" *ngIf="OrderInfo$">Loading...</div>
-  </ng-template>
+        </td>
+        <td>{{ order.Status }}</td>
+        <td>{{ order.Priority ? 'Yes' : 'No' }}</td>
+        <td>{{ order.ShippingMethod }}</td>
+        <td>{{ order.Unpicked }}</td>
+        <td>{{ order.Aggregated }}</td>
+        <td>{{ order.InProcess }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="px-2 py-2 grid grid-cols-2">
+      <input
+        type="text"
+        nz-input
+        oninput="this.value = this.value.toUpperCase()"
+        placeholder="Search name"
+        [(ngModel)]="searchValue"
+        class="col-span-2"
+      />
+      <button
+        nz-button
+        nzSize="small"
+        nzType="primary"
+        (click)="searchOrder()"
+        class="search-button"
+      >
+        Search
+      </button>
+      <button nz-button nzSize="small" (click)="resetSearch()">Reset</button>
+    </div>
+  </nz-dropdown-menu>
 </div>

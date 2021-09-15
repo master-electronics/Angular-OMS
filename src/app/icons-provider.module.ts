@@ -9,6 +9,7 @@ import {
   FullscreenExitOutline,
   LogoutOutline,
   LockOutline,
+  SearchOutline,
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
@@ -19,6 +20,7 @@ const icons = [
   FullscreenExitOutline,
   LogoutOutline,
   LockOutline,
+  SearchOutline,
 ];
 
 @NgModule({

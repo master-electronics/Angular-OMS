@@ -1,20 +1,28 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
-import { OrderBarcodeRegex } from '../../shared/dataRegex';
 import { FetchOrderViewGQL } from '../../graphql/orderView.graphql-gen';
 import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
+
+interface DataItem {
+  OrderNumber: string;
+  NOSINumber: string;
+  Status: string;
+  Priority: boolean;
+  ShippingMethod: string;
+  Unpicked: number;
+  Aggregated: number;
+  InProcess: number;
+}
+
+interface ColumnItem {
+  name: string;
+  listOfFilter: NzTableFilterList;
+  filterFn: NzTableFilterFn<DataItem> | null;
+}
 
 @Component({
   selector: 'order-view',
@@ -25,15 +33,11 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
   message = '';
   messageType = 'error';
   searchType: string;
-  priorityList = [];
-  shipMethodList = [];
-  statusList = [];
   OrderInfo$: Observable<any>;
 
   private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
     private titleService: Title,
     private fetchOrderView: FetchOrderViewGQL
   ) {
@@ -41,87 +45,85 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.titleService.setTitle(this.title);
   }
 
-  filterForm = this.fb.group({
-    orderBarcode: ['', [this.regex]],
-    Priority: [''],
-    ShippingMethod: [''],
-    Status: [''],
-  });
-  get f(): { [key: string]: AbstractControl } {
-    return this.filterForm.controls;
-  }
-
-  regex(input: FormControl): { regex: { valid: boolean } } {
-    return OrderBarcodeRegex.test(input.value) || input.value === ''
-      ? null
-      : {
-          regex: {
-            valid: false,
-          },
-        };
-  }
-
-  @ViewChild('orderBarcode') orderBarcode: ElementRef;
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.orderBarcode.nativeElement.select();
-    }, 10);
-  }
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    this.search(false);
+    this.search();
   }
 
-  search(isreload: boolean): void {
+  search(): void {
     this.message = '';
-    this.OrderInfo$ = null;
-    if (this.filterForm.valid) {
-      let filter = this.filterForm.value;
-      if (filter.orderBarcode) {
-        filter.DistributionCenter = environment.DistributionCenter;
-        [filter.OrderNumber, filter.NOSINumber] =
-          filter.orderBarcode.split('-');
-        delete filter.orderBarcode;
-      }
-      let isEmpty = true;
-      for (const key in filter) {
-        filter[key] ? (isEmpty = false) : delete filter[key];
-      }
-      isEmpty ? (filter = null) : null;
+    this.OrderInfo$ = this.fetchOrderView
+      .watch(null, { fetchPolicy: 'network-only' })
+      .valueChanges.pipe(
+        map((res) => {
+          const shipMethodSet = new Set<string>();
+          const statusSet = new Set<string>();
+          res.data.fetchOrderView.forEach((element) => {
+            shipMethodSet.add(element.ShippingMethod.trim());
+            statusSet.add(element.Status.trim());
+          });
+          this.orderList = [...res.data.fetchOrderView];
+          this.orderListDisplay = [...this.orderList];
 
-      this.OrderInfo$ = this.fetchOrderView
-        .watch(
-          {
-            filter: filter,
-          },
-          { fetchPolicy: isreload ? 'network-only' : 'cache-first' }
-        )
-        .valueChanges.pipe(
-          map((res) => {
-            const prioritySet = new Set();
-            const shipMethodSet = new Set();
-            const statusSet = new Set();
-            res.data.fetchOrderView.forEach((element) => {
-              prioritySet.add(element.Priority);
-              shipMethodSet.add(element.ShippingMethod.trim());
-              statusSet.add(element.Status.trim());
-            });
-            this.priorityList = ['', ...prioritySet];
-            this.shipMethodList = ['', ...shipMethodSet];
-            this.statusList = ['', ...statusSet];
-            return res.data.fetchOrderView;
-          })
-        );
-    }
+          this.listOfColumns = [
+            {
+              name: 'Status',
+              listOfFilter: [...statusSet].map((res) => {
+                return { text: res, value: res };
+              }),
+              filterFn: (list: string[], item: DataItem) =>
+                list.some((name) => item.Status.indexOf(name) !== -1),
+            },
+            {
+              name: 'Priority',
+              listOfFilter: [
+                { text: 'Yes', value: true },
+                { text: 'No', value: false },
+              ],
+              filterFn: (list: boolean[], item: DataItem) =>
+                list.some((priority) => priority === item.Priority),
+            },
+            {
+              name: 'ShipMethod',
+              listOfFilter: [...shipMethodSet].map((res) => {
+                return { text: res, value: res };
+              }),
+              filterFn: (list: string[], item: DataItem) =>
+                list.some(
+                  (method) => item.ShippingMethod.indexOf(method) !== -1
+                ),
+            },
+          ];
+          return res.data.fetchOrderView;
+        })
+      );
   }
 
-  reset(): void {
-    this.filterForm.setValue({
-      orderBarcode: '',
-      Priority: '',
-      ShippingMethod: '',
-      Status: '',
-    });
+  // table setting:
+  searchVisible = false;
+  searchValue = '';
+  orderList = [];
+  orderListDisplay = [];
+
+  resetSearch(): void {
+    this.searchValue = '';
+    this.searchOrder();
+  }
+
+  searchOrder(): void {
+    this.searchVisible = false;
+    this.orderListDisplay = this.orderList.filter(
+      (item: DataItem) =>
+        `${item.OrderNumber}-${item.NOSINumber}`.indexOf(this.searchValue) !==
+        -1
+    );
+  }
+
+  listOfColumns: ColumnItem[];
+
+  trackByName(_: number, item: ColumnItem): string {
+    return item.name;
   }
 
   ngOnDestroy(): void {
