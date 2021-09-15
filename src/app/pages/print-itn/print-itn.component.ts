@@ -13,7 +13,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, throwError } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ITNBarcodeRegex } from '../../shared/dataRegex';
@@ -21,7 +21,7 @@ import {
   FetchPrinterStationGQL,
   PrintItnLabelGQL,
 } from '../../graphql/qualityControl.graphql-gen';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'print-itn',
@@ -29,12 +29,12 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'Print ITN';
-  isModalHidden = true;
+  isModalVisible = false;
   modalMessage: string;
-  station$;
+  printerStation$;
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   currentStation: string;
 
   ITNForm = new FormGroup({
@@ -43,9 +43,6 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
       Validators.pattern(ITNBarcodeRegex),
     ]),
   });
-  get f(): { [key: string]: AbstractControl } {
-    return this.ITNForm.controls;
-  }
 
   private subscription: Subscription = new Subscription();
   constructor(
@@ -58,30 +55,28 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
     this.titleService.setTitle('printITN');
   }
 
-  @ViewChild('ITNInput') ITNInput: ElementRef;
   ngOnInit(): void {
     this.currentStation = this.commonService.printerInfo;
     if (this.currentStation) return;
-    this.station$ = this.fetchPrinterStation.fetch().pipe(
+    this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
       map((res) => {
         this.currentStation = res.data.fetchPrinterStation;
         this.commonService.changeStation(this.currentStation);
       }),
       catchError((error) => {
         this.modalMessage = error.error;
-        this.isModalHidden = false;
+        this.isModalVisible = true;
         return of();
       })
     );
   }
+  @ViewChild('ITN') ITNInput!: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
+    this.ITNInput.nativeElement.select();
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (this.ITNForm.valid) {
       this.printITN();
     }
@@ -95,23 +90,28 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
           InternalTrackingNumber: this.ITNForm.get('ITN').value,
           Station: this.currentStation,
         })
-        .subscribe(
-          (res) => {
-            this.messageType = 'success';
-            this.message = 'Print success.';
+        .pipe(
+          tap((res) => {
             if (!res.data.printITNLabel.success) {
-              this.messageType = 'error';
-              this.message = res.data.printITNLabel.message;
+              throw res.data.printITNLabel.message;
             }
             this.isLoading = false;
-          },
-          (error) => {
-            this.message = error;
-            this.messageType = 'error';
+            this.alertType = 'success';
+            this.alertMessage = 'Print ITN label success.';
+          }),
+          catchError((error) => {
+            this.alertMessage = error;
+            this.alertType = 'error';
             this.isLoading = false;
-          }
+            return throwError(error);
+          })
         )
+        .subscribe()
     );
+  }
+
+  closeModal() {
+    this.isModalVisible = false;
   }
 
   ngOnDestroy(): void {

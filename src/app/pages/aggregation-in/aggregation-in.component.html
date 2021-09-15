@@ -10,13 +10,11 @@
         <nz-form-item nz-row nzJustify="center">
           <nz-form-label nzRequired> Container </nz-form-label>
           <nz-form-control
-            nz-col
             nzHasFeedback
             nzErrorTip="The input is not valid container!"
           >
             <input
               nz-input
-              nzMaxCharacterCount="15"
               placeholder="Barcode: 50-01-01"
               nzSize="large"
               type="text"
@@ -29,17 +27,19 @@
         </nz-form-item>
 
         <nz-form-item nz-row nzJustify="center">
-          <button
-            nz-button
-            type="submit"
-            nzType="primary"
-            (click)="onSubmit()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-            class="w-full"
-          >
-            Submit
-          </button>
+          <div nz-col nzSpan="13">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              Submit
+            </button>
+          </div>
         </nz-form-item>
 
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">

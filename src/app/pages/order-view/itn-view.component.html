@@ -1,94 +1,77 @@
-<div class="container px-4 mx-auto mb-10">
-  <div class="flex flex-col md:mt-2">
-    <!-- Order input form -->
-    <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-12 text-sm gap-3">
-        <div class="z-0 w-full relative col-span-2">
-          <input
-            nz-input
-            oninput="this.value = this.value.toUpperCase()"
-            type="text"
-            name="barcode"
-            placeholder="Barcode"
-            formControlName="barcode"
-            autocomplete="off"
-            maxlength="30"
-            #barcode
-          />
-          <div
-            class="text-red-500 text-sm absolute"
-            *ngIf="
-              this.f.barcode.invalid &&
-              (this.f.barcode.dirty || this.f.barcode.touched)
-            "
-          >
-            <div *ngIf="this.f.barcode.errors.required">Order is required.</div>
-            <div *ngIf="this.f.barcode.errors.regex">Invalid order!</div>
+<div class="container px-2 mx-auto md:mt-6">
+  <form nz-form [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="22" nzSm="18" nzMd="14" nzLg="12" nzXl="10" nzXXl="8">
+        <div nz-row nzGutter="8" nzJustify="center">
+          <div nz-col [nzSpan]="16">
+            <nz-form-item>
+              <nz-form-label nzRequired>Order Barcode</nz-form-label>
+              <nz-form-control nzHasFeedback>
+                <input
+                  nz-input
+                  id="barcode"
+                  name="barcode"
+                  formControlName="barcode"
+                  autocomplete="off"
+                  #barcode
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="4">
+            <button
+              type="submit"
+              nz-button
+              [nzType]="'primary'"
+              (click)="onSubmit()"
+            >
+              Search
+            </button>
+          </div>
+          <div nz-col nzSpan="4">
+            <button type="button" nz-button (click)="back()">Back</button>
           </div>
         </div>
-        <form-button
-          [styles]="'bg-green-500'"
-          [type]="'submit'"
-          [label]="'Search'"
-        ></form-button>
-        <form-button
-          [styles]="'bg-gray-500'"
-          [label]="'Back'"
-          (click)="back()"
-        ></form-button>
       </div>
-      <div class="mt-2 md:mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
   <!-- Order Infromation -->
-  <div
-    *ngIf="OrderInfo$ | async as obs; else Orderloading"
-    class="
-      min-w-full
-      shadow
-      overflow-hidden
-      border-b border-gray-200
-      sm:rounded-lg
-    "
+
+  <nz-table
+    #nzTable
+    [nzData]="OrderInfo$ | async"
+    [nzPageSize]="20"
+    nzShowSizeChanger
   >
-    <ul *ngFor="let order of obs">
-      <table class="table-auto min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th class="text-left tracking-wider">ITN</th>
-            <th class="text-left tracking-wider">Status</th>
-            <th class="text-left tracking-wider">Container</th>
-            <th class="text-left tracking-wider">Location</th>
-            <th class="text-left tracking-wider">ProductCode</th>
-            <th class="text-left tracking-wider">PartNumber</th>
-            <th class="text-left tracking-wider">Quantity</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let detail of order.ORDERLINEDETAILs">
-            <td class="py-2">
-              {{ detail.InternalTrackingNumber }}
-            </td>
-            <td class="py-2">{{ detail.Status.Name }}</td>
-            <td class="py-2">{{ detail.Container.Barcode }}</td>
-            <td class="py-2">
-              {{ detail.Container.Warehouse }}-{{ detail.Container.Row }}-{{
-                detail.Container.Aisle
-              }}-{{ detail.Container.Section }}-{{ detail.Container.Shelf }}-{{
-                detail.Container.ShelfDetail
-              }}
-            </td>
-            <td class="py-2">{{ detail.OrderLine.ProductCode }}</td>
-            <td class="py-2">{{ detail.OrderLine.PartNumber }}</td>
-            <td class="py-2">{{ detail.Quantity }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </ul>
-  </div>
-  <ng-template #Orderloading>
-    <div *ngIf="OrderInfo$">Loading...</div>
-  </ng-template>
+    <thead>
+      <tr>
+        <th>ITN</th>
+        <th>Status</th>
+        <th>Container</th>
+        <th>Location</th>
+        <th>ProductCode</th>
+        <th>PartNumber</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let detail of nzTable.data">
+        <td>
+          {{ detail.InternalTrackingNumber }}
+        </td>
+        <td>{{ detail.Status.Name }}</td>
+        <td>{{ detail.Container.Barcode }}</td>
+        <td>
+          {{ detail.Container.Warehouse }}-{{ detail.Container.Row }}-{{
+            detail.Container.Aisle
+          }}-{{ detail.Container.Section }}-{{ detail.Container.Shelf }}-{{
+            detail.Container.ShelfDetail
+          }}
+        </td>
+        <td>{{ detail.OrderLine.ProductCode }}</td>
+        <td>{{ detail.OrderLine.PartNumber }}</td>
+        <td>{{ detail.Quantity }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 </div>

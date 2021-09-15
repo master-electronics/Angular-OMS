@@ -12,7 +12,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { VerifyContainerForAggregationInGQL } from 'src/app/graphql/aggregationIn.graphql-gen';
 import {
@@ -32,8 +32,8 @@ import {
 })
 export class DestinationComponent implements OnInit, AfterViewInit {
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   urlParams;
   updateContainer$;
 
@@ -52,9 +52,6 @@ export class DestinationComponent implements OnInit, AfterViewInit {
   containerForm = new FormGroup({
     containerNumber: new FormControl('', [Validators.required, this.regex]),
   });
-  get f(): { [key: string]: AbstractControl } {
-    return this.containerForm.controls;
-  }
 
   constructor(
     private route: ActivatedRoute,
@@ -76,8 +73,8 @@ export class DestinationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
-    const barcodeInput = this.f.containerNumber.value;
+    this.alertMessage = '';
+    const barcodeInput = this.containerForm.controls['containerNumber'].value;
     const barcode =
       barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
     if (!this.containerForm.valid) {
@@ -85,8 +82,8 @@ export class DestinationComponent implements OnInit, AfterViewInit {
       return;
     }
     if (this.urlParams.Barcode === barcode) {
-      this.message = 'Should scan a new Container';
-      this.messageType = 'warning';
+      this.alertMessage = 'Should scan a new Container';
+      this.alertType = 'warning';
       this.containerInput.nativeElement.select();
       return;
     }
@@ -203,10 +200,10 @@ export class DestinationComponent implements OnInit, AfterViewInit {
         }),
 
         catchError((error) => {
-          this.message = error;
+          this.alertMessage = error;
           this.isLoading = false;
           this.containerInput.nativeElement.select();
-          return of();
+          return throwError(error);
         })
       );
   }

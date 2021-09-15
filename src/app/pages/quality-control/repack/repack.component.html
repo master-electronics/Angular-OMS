@@ -23,10 +23,9 @@
   >
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-        <nz-form-item nz-row>
+        <nz-form-item nz-row nzJustify="center">
           <nz-form-label nzRequired> Container </nz-form-label>
           <nz-form-control
-            nz-col
             nzHasFeedback
             nzErrorTip="The input is not valid Container!"
           >
@@ -44,17 +43,19 @@
         </nz-form-item>
 
         <nz-form-item nz-row nzJustify="center">
-          <button
-            nz-button
-            type="submit"
-            nzType="primary"
-            (click)="onSubmit()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-            class="w-full"
-          >
-            Pack
-          </button>
+          <div nz-col nzSpan="13">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              Pack
+            </button>
+          </div>
         </nz-form-item>
 
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">

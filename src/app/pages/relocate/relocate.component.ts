@@ -28,8 +28,8 @@ import { VerifyContainerForAggregationInGQL } from 'src/app/graphql/aggregationI
 export class RelocateComponent implements OnInit, AfterViewInit {
   title = 'Relocate';
   isLoading = false;
-  messageType = 'error';
-  message = '';
+  alertType = 'error';
+  alertMessage = '';
   tote$;
 
   containerForm = new FormGroup({
@@ -55,8 +55,8 @@ export class RelocateComponent implements OnInit, AfterViewInit {
 
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
-    this.messageType = this.route.snapshot.queryParams['result'];
-    this.message = this.route.snapshot.queryParams['message'];
+    this.alertType = this.route.snapshot.queryParams['result'];
+    this.alertMessage = this.route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -65,7 +65,7 @@ export class RelocateComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
+    this.alertMessage = '';
     if (!this.containerForm.valid) {
       this.containerInput.nativeElement.select();
       return;
@@ -129,8 +129,8 @@ export class RelocateComponent implements OnInit, AfterViewInit {
 
         catchError((error) => {
           this.isLoading = false;
-          this.message = error;
-          this.messageType = 'error';
+          this.alertMessage = error;
+          this.alertType = 'error';
           return of();
         })
       );

@@ -17,12 +17,11 @@ import { QualityControlService } from './quality-control.server';
 })
 export class QualityControlComponent implements OnInit {
   @ViewChild('stepPage') stepPage: ElementRef;
-  isModalHidden = true;
+  isModalVisible = false;
   modalMessage: string;
   printerStation$;
   title = 'Quality Control';
 
-  private subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private qcService: QualityControlService,
@@ -41,13 +40,13 @@ export class QualityControlComponent implements OnInit {
       }),
       catchError((error) => {
         this.modalMessage = error.error;
-        this.isModalHidden = false;
+        this.isModalVisible = true;
         return of();
       })
     );
   }
 
-  toggleModal(): void {
-    this.isModalHidden = !this.isModalHidden;
+  closeModal(): void {
+    this.isModalVisible = false;
   }
 }

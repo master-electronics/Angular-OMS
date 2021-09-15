@@ -26,6 +26,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzDividerModule,
     NzSelectModule,
     NzDrawerModule,
+    NzModalModule,
   ],
   providers: [QualityControlService],
 

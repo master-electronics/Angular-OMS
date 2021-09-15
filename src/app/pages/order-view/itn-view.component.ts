@@ -24,9 +24,6 @@ import { environment } from 'src/environments/environment';
   templateUrl: './itn-view.component.html',
 })
 export class ITNViewComponent implements OnInit, AfterViewInit {
-  message = '';
-  messageType = 'error';
-  searchType: string;
   OrderInfo$: Observable<any>;
 
   constructor(
@@ -55,9 +52,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
 
   @ViewChild('barcode') barcode: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.barcode.nativeElement.select();
-    }, 10);
+    this.barcode.nativeElement.select();
   }
 
   ngOnInit(): void {
@@ -69,23 +64,25 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
-    this.OrderInfo$ = null;
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
       const barcodeSplit = barcode.split('-');
       this.OrderInfo$ = this.fetchOrderDetail
-        .watch(
-          {
-            Order: {
-              DistributionCenter: environment.DistributionCenter,
-              OrderNumber: barcodeSplit[0],
-              NOSINumber: barcodeSplit[1],
-            },
+        .fetch({
+          Order: {
+            DistributionCenter: environment.DistributionCenter,
+            OrderNumber: barcodeSplit[0],
+            NOSINumber: barcodeSplit[1],
           },
-          { fetchPolicy: 'no-cache' }
-        )
-        .valueChanges.pipe(map((res) => res.data.findOrder));
+        })
+        .pipe(
+          map((res) => {
+            if (res.data.findOrder.length) {
+              return res.data.findOrder[0].ORDERLINEDETAILs;
+            }
+            return '';
+          })
+        );
     }
   }
 

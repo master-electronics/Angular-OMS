@@ -12,6 +12,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @NgModule({
   declarations: [OrderViewComponent, ITNViewComponent],
@@ -27,6 +28,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzDropDownModule,
     NzButtonModule,
     IconsProviderModule,
+    NzFormModule,
   ],
   bootstrap: [OrderViewComponent],
 })

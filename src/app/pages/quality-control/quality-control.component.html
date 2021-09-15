@@ -2,8 +2,14 @@
   <step-tabs></step-tabs>
   <router-outlet></router-outlet>
 </div>
-<check-printer-modal
-  *ngIf="(printerStation$ | async) && !isModalHidden"
-  [(isModalHidden)]="isModalHidden"
-  [modalMessage]="modalMessage"
-></check-printer-modal>
+
+<nz-modal
+  *ngIf="printerStation$ | async"
+  [(nzVisible)]="isModalVisible"
+  nzTitle="The first Modal"
+  (nzOnOk)="closeModal()"
+>
+  <ng-container *nzModalContent>
+    <p>{{ modalMessage }}</p>
+  </ng-container>
+</nz-modal>

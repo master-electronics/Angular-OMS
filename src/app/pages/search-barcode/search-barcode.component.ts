@@ -21,6 +21,7 @@ import {
 } from '../../graphql/searchBarcode.graphql-gen';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 
 const DistributionCenter = 'PH';
 
@@ -30,13 +31,14 @@ const DistributionCenter = 'PH';
 })
 export class SearchBarcodeComponent implements AfterViewInit {
   title = 'Search Barcode';
-  message = '';
-  messageType = 'error';
   isLoading = false;
   isContainer = false;
   isITN = false;
   isOrder = false;
-  search$;
+  search$ = new Observable<any>();
+  displayContainer = [];
+  displayITN = [];
+  displayOrder = [];
 
   constructor(
     private commonService: CommonService,
@@ -53,9 +55,6 @@ export class SearchBarcodeComponent implements AfterViewInit {
   barcodeForm = this.fb.group({
     barcode: ['', [Validators.required, this.regex]],
   });
-  get f(): { [key: string]: AbstractControl } {
-    return this.barcodeForm.controls;
-  }
 
   regex(input: FormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
@@ -79,10 +78,12 @@ export class SearchBarcodeComponent implements AfterViewInit {
   }
 
   onSubmit(): void {
-    this.message = '';
-    this.isLoading = true;
+    this.isContainer = false;
+    this.isITN = false;
+    this.isOrder = false;
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
+      this.isLoading = true;
       if (ToteBarcodeRegex.test(barcode)) {
         this.isContainer = true;
         const containerInfo = { Barcode: barcode };
@@ -129,7 +130,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
           .valueChanges.pipe(
             map((res) => {
               this.isLoading = false;
-              res.data.findOrderLineDetail;
+              return res.data.findOrderLineDetail;
             })
           );
       }

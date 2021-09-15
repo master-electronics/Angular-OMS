@@ -1,150 +1,135 @@
-<div class="container px-4 mx-auto mb-10">
-  <!-- Order input form -->
-  <div class="flex flex-col md:mt-2 md:max-w-md h-auto">
-    <form focusInvalidInput [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
-      <div class="mt-2">
-        <div class="relative">
-          <input
-            oninput="this.value = this.value.toUpperCase()"
-            formControlName="barcode"
-            type="search"
-            class="
-              w-full
-              pl-10
-              pr-4
-              py-2
-              rounded-lg
-              shadow
-              focus:outline-none focus:shadow-outline
-              text-gray-600
-              font-medium
-            "
-            placeholder="Search..."
-            #barcode
-          />
-          <div
-            class="text-red-500 text-sm absolute"
-            *ngIf="
-              this.f.barcode.invalid &&
-              (this.f.barcode.dirty || this.f.barcode.touched)
-            "
-          >
-            <div *ngIf="this.f.barcode.errors.required">
-              Barcode is required.
-            </div>
-            <div *ngIf="this.f.barcode.errors.regex">Invalid Barcode!</div>
+<div class="container px-2 py-2 mx-auto">
+  <!-- Barcode input form -->
+  <form nz-form [formGroup]="barcodeForm" (ngSubmit)="onSubmit()">
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="22" nzSm="18" nzMd="14" nzLg="12" nzXl="10" nzXXl="8">
+        <div nz-row nzGutter="8" nzJustify="center">
+          <div nz-col [nzSpan]="16">
+            <nz-form-item>
+              <nz-form-control nzHasFeedback>
+                <input
+                  nz-input
+                  id="barcode"
+                  placeholder="Barcode"
+                  name="barcode"
+                  formControlName="barcode"
+                  autocomplete="off"
+                  #barcode
+                />
+              </nz-form-control>
+            </nz-form-item>
           </div>
-          <button
-            type="submit"
-            class="absolute top-0 left-0 inline-flex items-center p-2"
-          >
-            <svg
-              class="w-6 h-6 text-gray-400"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <div nz-col [nzSpan]="8">
+            <button
+              type="submit"
+              nz-button
+              nzType="primary"
+              (click)="onSubmit()"
             >
-              <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-              <circle cx="10" cy="10" r="7" />
-              <line x1="21" y1="21" x2="15" y2="15" />
-            </svg>
-          </button>
+              Search
+            </button>
+          </div>
         </div>
       </div>
-
-      <div class="mt-2 md:mt-6">
-        <message-bar [message]="message" [type]="messageType"></message-bar>
-      </div>
-    </form>
-  </div>
-
-  <div *ngIf="isLoading">Loading</div>
-  <!-- Container Information -->
-  <div *ngIf="search$ | async as list">
-    <div *ngIf="isContainer" class="mt-2">
-      <div class="mb-2 divide-y">
-        <ul *ngFor="let container of search$">
-          <li>Container: {{ container.Barcode }}</li>
-          <li>
-            Location:
-            {{ container.Warehouse }}-{{ container.Row }}-{{
-              container.Aisle
-            }}-{{ container.Section }}-{{ container.Shelf }}-{{
-              container.ShelfDetail
-            }}
-          </li>
-          <div class="divide-y">
-            <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
-              <li class="ml-3">
-                ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
-              </li>
-              <li class="ml-3">
-                Order: {{ ITN.Order.OrderNumber }}-{{
-                  ITN.Order.NOSINumber
-                }}
-                #{{ ITN.OrderLine.OrderLineNumber }}
-                <span>{{
-                  ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
-                }}</span>
-              </li>
-            </ul>
-          </div>
-        </ul>
-      </div>
     </div>
+  </form>
 
-    <!-- ITN information  -->
-    <div *ngIf="isITN">
-      <div class="divide-y">
-        <ul *ngFor="let ITN of search$">
-          <li>ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})</li>
-          <li>
-            Location:
-            {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-              ITN.Container.Aisle
-            }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-              ITN.Container.ShelfDetail
-            }}
-          </li>
-          <li>Container: {{ ITN.Container.Barcode }}</li>
-          <li>
-            Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
-              ITN.OrderLine.OrderLineNumber
-            }}
-            <span>{{
-              ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
-            }}</span>
-          </li>
-        </ul>
+  <!-- tree view of result -->
+  <div nz-row nzJustify="center">
+    <div nz-col nzXs="24" nzSm="20" nzMd="16" nzLg="12" nzXl="10" nzXXl="8">
+      <div *ngIf="isLoading">
+        <nz-skeleton [nzActive]="true"></nz-skeleton>
       </div>
-    </div>
+      <div ngIf="search$ | async"></div>
 
-    <!-- Order Infromation -->
-    <div *ngIf="isOrder">
-      <ul *ngFor="let order of search$">
-        <li>
-          Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
-          <span>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</span>
-        </li>
-        <div class="divide-y">
-          <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
-            <li>Line: {{ line.OrderLineNumber }}</li>
-            <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
-              <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
-              <li>
-                Location: {{ ITN.Container.Warehouse }}-{{
-                  ITN.Container.Row
-                }}-{{ ITN.Container.Aisle }}-{{ ITN.Container.Section }}-{{
-                  ITN.Container.Shelf
-                }}-{{ ITN.Container.ShelfDetail }}
-              </li>
-              <li>Container: {{ ITN.Container.Barcode }}</li>
-            </ul>
+      <!-- Container Information -->
+      <div *ngIf="isContainer" class="mt-2">
+        <div class="mb-2 divide-y">
+          <ul *ngFor="let container of search$ | async">
+            <li>Container: {{ container.Barcode }}</li>
+            <li>
+              Location:
+              {{ container.Warehouse }}-{{ container.Row }}-{{
+                container.Aisle
+              }}-{{ container.Section }}-{{ container.Shelf }}-{{
+                container.ShelfDetail
+              }}
+            </li>
+            <div class="divide-y">
+              <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
+                <li class="ml-3">
+                  ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
+                </li>
+                <li class="ml-3">
+                  Order: {{ ITN.Order.OrderNumber }}-{{
+                    ITN.Order.NOSINumber
+                  }}
+                  #{{ ITN.OrderLine.OrderLineNumber }}
+                  <span>{{
+                    ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+                  }}</span>
+                </li>
+              </ul>
+            </div>
           </ul>
         </div>
-      </ul>
+      </div>
+
+      <!-- ITN information  -->
+      <div *ngIf="isITN">
+        <div class="divide-y">
+          <ul *ngFor="let ITN of search$ | async">
+            <li>
+              ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})
+            </li>
+            <li>
+              Location:
+              {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
+                ITN.Container.Aisle
+              }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
+                ITN.Container.ShelfDetail
+              }}
+            </li>
+            <li>Container: {{ ITN.Container.Barcode }}</li>
+            <li>
+              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
+                ITN.OrderLine.OrderLineNumber
+              }}
+              <span>{{
+                ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+              }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Order Infromation -->
+      <div *ngIf="isOrder">
+        <ul *ngFor="let order of search$ | async">
+          <li>
+            Order: {{ order.OrderNumber }}-{{ order.NOSINumber }}
+            <span>{{
+              order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+            }}</span>
+          </li>
+          <div class="divide-y">
+            <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
+              <li>Line: {{ line.OrderLineNumber }}</li>
+              <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
+                <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+                <li>
+                  Location: {{ ITN.Container.Warehouse }}-{{
+                    ITN.Container.Row
+                  }}-{{ ITN.Container.Aisle }}-{{ ITN.Container.Section }}-{{
+                    ITN.Container.Shelf
+                  }}-{{ ITN.Container.ShelfDetail }}
+                </li>
+                <li>Container: {{ ITN.Container.Barcode }}</li>
+              </ul>
+            </ul>
+          </div>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

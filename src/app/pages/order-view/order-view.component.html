@@ -1,7 +1,12 @@
 <div class="container px-4 mx-auto">
   <!-- order table -->
   <div *ngIf="OrderInfo$ | async"></div>
-  <nz-table #orderView [nzData]="orderListDisplay" nzTableLayout="fixed">
+  <nz-table
+    #orderView
+    [nzData]="orderListDisplay"
+    [nzPageSize]="20"
+    nzShowSizeChanger
+  >
     <thead>
       <tr>
         <th nzCustomFilter>
@@ -53,9 +58,10 @@
         type="text"
         nz-input
         oninput="this.value = this.value.toUpperCase()"
-        placeholder="Search name"
+        placeholder="Order#"
         [(ngModel)]="searchValue"
         class="col-span-2"
+        #searchInput
       />
       <button
         nz-button

@@ -10,7 +10,6 @@
         <nz-form-item nz-row nzJustify="center">
           <nz-form-label nzRequired>Auto Selected Order</nz-form-label>
           <nz-form-control
-            nz-col
             nzHasFeedback
             nzErrorTip="The input is not valid container!"
           >
@@ -19,7 +18,6 @@
               placeholder=" "
               formControlName="containerNumber"
               placeholder="Order#"
-              nzMaxCharacterCount="15"
               nzSize="large"
               type="text"
               id="containerNumber"
@@ -31,17 +29,19 @@
         </nz-form-item>
 
         <nz-form-item nz-row nzJustify="center">
-          <button
-            nz-button
-            type="submit"
-            nzType="primary"
-            (click)="onSubmit()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-            class="w-full"
-          >
-            {{ buttonLabel }}
-          </button>
+          <div nz-col nzSpan="13">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              {{ buttonLabel }}
+            </button>
+          </div>
         </nz-form-item>
 
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">

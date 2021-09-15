@@ -53,51 +53,47 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   search(): void {
     this.message = '';
-    this.OrderInfo$ = this.fetchOrderView
-      .watch(null, { fetchPolicy: 'network-only' })
-      .valueChanges.pipe(
-        map((res) => {
-          const shipMethodSet = new Set<string>();
-          const statusSet = new Set<string>();
-          res.data.fetchOrderView.forEach((element) => {
-            shipMethodSet.add(element.ShippingMethod.trim());
-            statusSet.add(element.Status.trim());
-          });
-          this.orderList = [...res.data.fetchOrderView];
-          this.orderListDisplay = [...this.orderList];
+    this.OrderInfo$ = this.fetchOrderView.fetch(null).pipe(
+      map((res) => {
+        const shipMethodSet = new Set<string>();
+        const statusSet = new Set<string>();
+        res.data.fetchOrderView.forEach((element) => {
+          shipMethodSet.add(element.ShippingMethod.trim());
+          statusSet.add(element.Status.trim());
+        });
+        this.orderList = [...res.data.fetchOrderView];
+        this.orderListDisplay = [...this.orderList];
 
-          this.listOfColumns = [
-            {
-              name: 'Status',
-              listOfFilter: [...statusSet].map((res) => {
-                return { text: res, value: res };
-              }),
-              filterFn: (list: string[], item: DataItem) =>
-                list.some((name) => item.Status.indexOf(name) !== -1),
-            },
-            {
-              name: 'Priority',
-              listOfFilter: [
-                { text: 'Yes', value: true },
-                { text: 'No', value: false },
-              ],
-              filterFn: (list: boolean[], item: DataItem) =>
-                list.some((priority) => priority === item.Priority),
-            },
-            {
-              name: 'ShipMethod',
-              listOfFilter: [...shipMethodSet].map((res) => {
-                return { text: res, value: res };
-              }),
-              filterFn: (list: string[], item: DataItem) =>
-                list.some(
-                  (method) => item.ShippingMethod.indexOf(method) !== -1
-                ),
-            },
-          ];
-          return res.data.fetchOrderView;
-        })
-      );
+        this.listOfColumns = [
+          {
+            name: 'Status',
+            listOfFilter: [...statusSet].map((res) => {
+              return { text: res, value: res };
+            }),
+            filterFn: (list: string[], item: DataItem) =>
+              list.some((name) => item.Status.indexOf(name) !== -1),
+          },
+          {
+            name: 'Priority',
+            listOfFilter: [
+              { text: 'Yes', value: true },
+              { text: 'No', value: false },
+            ],
+            filterFn: (list: boolean[], item: DataItem) =>
+              list.some((priority) => priority === item.Priority),
+          },
+          {
+            name: 'ShipMethod',
+            listOfFilter: [...shipMethodSet].map((res) => {
+              return { text: res, value: res };
+            }),
+            filterFn: (list: string[], item: DataItem) =>
+              list.some((method) => item.ShippingMethod.indexOf(method) !== -1),
+          },
+        ];
+        return res.data.fetchOrderView;
+      })
+    );
   }
 
   // table setting:

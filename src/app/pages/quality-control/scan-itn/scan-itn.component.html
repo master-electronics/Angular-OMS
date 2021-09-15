@@ -5,7 +5,6 @@
         <nz-form-item nz-row nzJustify="center">
           <nz-form-label nzRequired> ITN </nz-form-label>
           <nz-form-control
-            nz-col
             nzHasFeedback
             nzErrorTip="The input is not valid ITN!"
           >
@@ -15,6 +14,7 @@
               nzSize="large"
               type="text"
               id="ITN"
+              name="ITN"
               formControlName="ITN"
               autocomplete="off"
               #ITN
@@ -23,17 +23,19 @@
         </nz-form-item>
 
         <nz-form-item nz-row nzJustify="center">
-          <button
-            nz-button
-            type="submit"
-            nzType="primary"
-            (click)="onSubmit()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-            class="w-full"
-          >
-            Submit
-          </button>
+          <div nz-col nzSpan="13">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              Submit
+            </button>
+          </div>
         </nz-form-item>
 
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
