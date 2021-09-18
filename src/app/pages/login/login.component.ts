@@ -74,7 +74,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.login$ = this.authenticationService
-        .userAuth(this.f.username.value, this.f.password.value)
+        .userAuth(this.f.username.value.trim(), this.f.password.value)
         .pipe(
           map((res) => {
             const userToken = JSON.stringify(res);

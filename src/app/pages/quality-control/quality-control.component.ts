@@ -1,11 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { of, Subscription } from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { FetchPrinterStationGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -16,10 +10,10 @@ import { QualityControlService } from './quality-control.server';
   templateUrl: './quality-control.component.html',
 })
 export class QualityControlComponent implements OnInit {
-  @ViewChild('stepPage') stepPage: ElementRef;
+  @ViewChild('stepPage') stepPage!: ElementRef;
   isModalVisible = false;
-  modalMessage: string;
-  printerStation$;
+  modalMessage = '';
+  printerStation$ = new Observable();
   title = 'Quality Control';
 
   constructor(
