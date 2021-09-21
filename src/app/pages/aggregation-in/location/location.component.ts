@@ -52,7 +52,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   isRelocation = false;
   newLocation = false;
   buttonLabel = 'Relocate';
-  locationList = [];
+  locationList: string[];
   ITNInfo = [];
   alertMessage = '';
   alertType = 'error';
