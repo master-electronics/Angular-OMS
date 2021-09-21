@@ -3,9 +3,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsProviderModule } from '../../icons-provider.module';
 
-import { ITNViewComponent } from './itn-view.component';
-import { OrderViewComponent } from './order-view.component';
-import { OrderViewRoutingModule } from './order-view.routing';
+import { TableViewsComponent } from './table-views.component';
+import { ITNViewComponent } from './order-view/itn-view.component';
+import { ItnStatusComponent } from './itn-countby-status/itn-status.component';
+import { TableViewsRoutingModule } from './table-views.routing';
+import { OrderViewComponent } from './order-view/order-view.component';
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -13,23 +15,32 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @NgModule({
-  declarations: [OrderViewComponent, ITNViewComponent],
+  declarations: [
+    TableViewsComponent,
+    ItnStatusComponent,
+    OrderViewComponent,
+    ITNViewComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    OrderViewRoutingModule,
     SharedUtilityModule,
     SharedComponentModule,
+    TableViewsRoutingModule,
     NzInputModule,
     NzTableModule,
     NzDropDownModule,
     NzButtonModule,
     IconsProviderModule,
     NzFormModule,
+    NzListModule,
+    NzCardModule,
   ],
-  bootstrap: [OrderViewComponent],
+  bootstrap: [TableViewsComponent],
 })
-export class OrderViewModule {}
+export class TableViewsModule {}

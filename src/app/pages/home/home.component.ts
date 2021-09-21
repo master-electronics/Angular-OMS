@@ -16,7 +16,7 @@ export class HomeComponent {
     { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
   ];
   toolList = [
-    { link: '/orderview', front: '', highlight: 'O', end: 'rder View' },
+    { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
     { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
     { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },

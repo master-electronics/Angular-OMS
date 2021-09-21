@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
-import { CommonService } from '../../shared/services/common.service';
-import { FetchOrderViewGQL } from '../../graphql/orderView.graphql-gen';
+import { CommonService } from '../../../shared/services/common.service';
+import { FetchOrderViewGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
 
@@ -28,7 +27,7 @@ interface ColumnItem {
   selector: 'order-view',
   templateUrl: './order-view.component.html',
 })
-export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
+export class OrderViewComponent implements OnInit, OnDestroy {
   title = 'Order View';
   message = '';
   messageType = 'error';
@@ -38,14 +37,10 @@ export class OrderViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
-    private titleService: Title,
     private fetchOrderView: FetchOrderViewGQL
   ) {
     this.commonService.changeNavbar(this.title);
-    this.titleService.setTitle(this.title);
   }
-
-  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     this.search();

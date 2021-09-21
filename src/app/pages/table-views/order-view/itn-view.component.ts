@@ -13,8 +13,8 @@ import {
 } from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { OrderBarcodeRegex } from '../../shared/dataRegex';
-import { FetchOrderDetailforitnViewGQL } from '../../graphql/orderView.graphql-gen';
+import { OrderBarcodeRegex } from '../../../shared/dataRegex';
+import { FetchOrderDetailforitnViewGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';

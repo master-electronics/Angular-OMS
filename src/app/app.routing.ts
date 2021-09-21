@@ -47,10 +47,10 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'orderview',
+        path: 'tableviews',
         loadChildren: () =>
-          import('./pages/order-view/order-view.module').then(
-            (m) => m.OrderViewModule
+          import('./pages/table-views/table-views.module').then(
+            (m) => m.TableViewsModule
           ),
       },
       {

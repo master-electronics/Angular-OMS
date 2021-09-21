@@ -538,104 +538,84 @@ export type UpdateOrderLineDetail = {
   StatusID?: Maybe<Scalars['Int']>;
 };
 
-export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
-  Container: Types.SearchContainer;
+export type FetchOrderViewQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.OrderViewFilter>;
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = (
+export type FetchOrderViewQuery = (
   { __typename?: 'Query' }
-  & { findContainer?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Container' }
-    & Pick<Types.Container, 'Barcode'>
+  & { fetchOrderView?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'orderView' }
+    & Pick<Types.OrderView, 'OrderNumber' | 'NOSINumber' | 'Status' | 'Priority' | 'ShippingMethod' | 'Unpicked' | 'Aggregated' | 'InProcess'>
+  )>>> }
+);
+
+export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
+  Order: Types.SearchOrder;
+}>;
+
+
+export type FetchOrderDetailforitnViewQuery = (
+  { __typename?: 'Query' }
+  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'Order' }
     & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
+      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
       & { Status: (
         { __typename?: 'OrderStatus' }
         & Pick<Types.OrderStatus, 'Name'>
       ), OrderLine: (
         { __typename?: 'OrderLine' }
-        & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-      ), Order: (
-        { __typename?: 'Order' }
-        & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-        & { ShipmentMethod?: Types.Maybe<(
-          { __typename?: 'ShipmentMethod' }
-          & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-        )> }
+        & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber'>
+      ), Container: (
+        { __typename?: 'Container' }
+        & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
       ) }
     )>>> }
   )>>> }
 );
 
-export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
-  InternalTrackingNumber: Types.Scalars['String'];
-}>;
+export type FetchItnStatusViewQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type FindItNforSearchBarcodeQuery = (
+export type FetchItnStatusViewQuery = (
   { __typename?: 'Query' }
-  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'OrderLineDetail' }
-    & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
-    & { Status: (
-      { __typename?: 'OrderStatus' }
-      & Pick<Types.OrderStatus, 'Name'>
-    ), Container: (
-      { __typename?: 'Container' }
-      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    ), OrderLine: (
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-    ), Order: (
-      { __typename?: 'Order' }
-      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-      & { ShipmentMethod?: Types.Maybe<(
-        { __typename?: 'ShipmentMethod' }
-        & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-      )> }
-    ) }
+  & { fetchITNStatusView?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'ITNStatusView' }
+    & Pick<Types.ItnStatusView, 'ID' | 'Status' | 'Number'>
   )>>> }
 );
 
-export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
-  DistributionCenter: Types.Scalars['String'];
-  OrderNumber: Types.Scalars['String'];
-  NOSINumber: Types.Scalars['String'];
-}>;
+export const FetchOrderViewDocument = gql`
+    query fetchOrderView($filter: orderViewFilter) {
+  fetchOrderView(filter: $filter) {
+    OrderNumber
+    NOSINumber
+    Status
+    Priority
+    ShippingMethod
+    Unpicked
+    Aggregated
+    InProcess
+  }
+}
+    `;
 
-
-export type FindOrderForSearchBarcodeQuery = (
-  { __typename?: 'Query' }
-  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Order' }
-    & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-    & { ShipmentMethod?: Types.Maybe<(
-      { __typename?: 'ShipmentMethod' }
-      & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-    )>, ORDERLINEs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-      & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-        { __typename?: 'OrderLineDetail' }
-        & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
-        & { Status: (
-          { __typename?: 'OrderStatus' }
-          & Pick<Types.OrderStatus, 'Name'>
-        ), Container: (
-          { __typename?: 'Container' }
-          & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-        ) }
-      )>>> }
-    )>>> }
-  )>>> }
-);
-
-export const FindContainerForSearchBarcodeDocument = gql`
-    query findContainerForSearchBarcode($Container: searchContainer!) {
-  findContainer(Container: $Container) {
-    Barcode
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderViewGQL extends Apollo.Query<FetchOrderViewQuery, FetchOrderViewQueryVariables> {
+    document = FetchOrderViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchOrderDetailforitnViewDocument = gql`
+    query fetchOrderDetailforitnView($Order: searchOrder!) {
+  findOrder(Order: $Order) {
     ORDERLINEDETAILs {
       InternalTrackingNumber
       Status {
@@ -644,14 +624,16 @@ export const FindContainerForSearchBarcodeDocument = gql`
       OrderLine {
         ProductCode
         PartNumber
-        OrderLineNumber
       }
-      Order {
-        OrderNumber
-        NOSINumber
-        ShipmentMethod {
-          PriorityPinkPaper
-        }
+      Quantity
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
       }
     }
   }
@@ -661,43 +643,19 @@ export const FindContainerForSearchBarcodeDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FindContainerForSearchBarcodeGQL extends Apollo.Query<FindContainerForSearchBarcodeQuery, FindContainerForSearchBarcodeQueryVariables> {
-    document = FindContainerForSearchBarcodeDocument;
+  export class FetchOrderDetailforitnViewGQL extends Apollo.Query<FetchOrderDetailforitnViewQuery, FetchOrderDetailforitnViewQueryVariables> {
+    document = FetchOrderDetailforitnViewDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FindItNforSearchBarcodeDocument = gql`
-    query findITNforSearchBarcode($InternalTrackingNumber: String!) {
-  findOrderLineDetail(
-    OrderLineDetail: {InternalTrackingNumber: $InternalTrackingNumber}
-  ) {
-    InternalTrackingNumber
-    Status {
-      Name
-    }
-    Container {
-      Barcode
-      Warehouse
-      Row
-      Aisle
-      Section
-      Shelf
-      ShelfDetail
-    }
-    OrderLine {
-      ProductCode
-      PartNumber
-      OrderLineNumber
-    }
-    Order {
-      OrderNumber
-      NOSINumber
-      ShipmentMethod {
-        PriorityPinkPaper
-      }
-    }
+export const FetchItnStatusViewDocument = gql`
+    query fetchITNStatusView {
+  fetchITNStatusView {
+    ID
+    Status
+    Number
   }
 }
     `;
@@ -705,53 +663,8 @@ export const FindItNforSearchBarcodeDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FindItNforSearchBarcodeGQL extends Apollo.Query<FindItNforSearchBarcodeQuery, FindItNforSearchBarcodeQueryVariables> {
-    document = FindItNforSearchBarcodeDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FindOrderForSearchBarcodeDocument = gql`
-    query findOrderForSearchBarcode($DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!) {
-  findOrder(
-    Order: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
-  ) {
-    OrderNumber
-    NOSINumber
-    ShipmentMethod {
-      PriorityPinkPaper
-    }
-    ORDERLINEs {
-      ProductCode
-      PartNumber
-      OrderLineNumber
-      ORDERLINEDETAILs {
-        InternalTrackingNumber
-        Status {
-          Name
-        }
-        Quantity
-        Container {
-          Barcode
-          Warehouse
-          Row
-          Aisle
-          Section
-          Shelf
-          ShelfDetail
-        }
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindOrderForSearchBarcodeGQL extends Apollo.Query<FindOrderForSearchBarcodeQuery, FindOrderForSearchBarcodeQueryVariables> {
-    document = FindOrderForSearchBarcodeDocument;
+  export class FetchItnStatusViewGQL extends Apollo.Query<FetchItnStatusViewQuery, FetchItnStatusViewQueryVariables> {
+    document = FetchItnStatusViewDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

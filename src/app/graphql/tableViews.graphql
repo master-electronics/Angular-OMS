@@ -35,3 +35,11 @@ query fetchOrderDetailforitnView($Order: searchOrder!) {
     }
   }
 }
+
+query fetchITNStatusView {
+  fetchITNStatusView {
+    ID
+    Status
+    Number
+  }
+}
