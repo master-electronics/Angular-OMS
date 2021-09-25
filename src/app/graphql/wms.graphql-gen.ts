@@ -54,6 +54,17 @@ export type Equipment = {
   _id: Scalars['Int'];
 };
 
+export type EventLog = {
+  __typename?: 'EventLog';
+  DateTime: Scalars['String'];
+  Event: Scalars['String'];
+  Module?: Maybe<Scalars['String']>;
+  Target?: Maybe<Scalars['String']>;
+  UserID: Scalars['Int'];
+  UserInfo: UserInfo;
+  _id: Scalars['Int'];
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -70,6 +81,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
   clearMerpTote: Response;
+  createEventLog: EventLog;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -77,6 +89,7 @@ export type Mutation = {
   findOrCreateOrder?: Maybe<Order>;
   findOrCreateOrderLine?: Maybe<OrderLine>;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
+  findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
@@ -102,6 +115,11 @@ export type MutationChangeQcLineInfoArgs = {
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type MutationCreateEventLogArgs = {
+  EventLog: InsertEventLog;
 };
 
 
@@ -149,6 +167,11 @@ export type MutationFindOrCreateOrderLineArgs = {
 
 export type MutationFindOrCreateOrderLineDetailArgs = {
   OrderLineDetail: InsertOrderLineDetail;
+};
+
+
+export type MutationFindOrCreateUserInfoArgs = {
+  UserInfo: InsertUserInfo;
 };
 
 
@@ -381,6 +404,30 @@ export type ShipmentMethod = {
   _id: Scalars['String'];
 };
 
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
+  Name: Scalars['String'];
+  Zone?: Maybe<Zone>;
+  ZoneID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type Zone = {
+  __typename?: 'Zone';
+  DistributionCenter: Scalars['String'];
+  USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
+  Zone: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type InsertEventLog = {
+  Event: Scalars['String'];
+  Module?: Maybe<Scalars['String']>;
+  Target?: Maybe<Scalars['String']>;
+  UserID: Scalars['Int'];
+};
+
 export type InsertOrder = {
   BranchID?: Maybe<Scalars['String']>;
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -413,6 +460,11 @@ export type InsertOrderLineDetail = {
   Quantity: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
+};
+
+export type InsertUserInfo = {
+  Name: Scalars['String'];
+  ZoneID?: Maybe<Scalars['Int']>;
 };
 
 export type OrderView = {
@@ -565,6 +617,19 @@ export type Update_ContainerMutation = (
   & Pick<Types.Mutation, 'updateContainer'>
 );
 
+export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
+  UserInfo: Types.InsertUserInfo;
+}>;
+
+
+export type Find_Or_Create_UserInfoMutation = (
+  { __typename?: 'Mutation' }
+  & { findOrCreateUserInfo?: Types.Maybe<(
+    { __typename?: 'UserInfo' }
+    & Pick<Types.UserInfo, '_id' | 'Name' | 'ZoneID'>
+  )> }
+);
+
 export const Update_OrderLineDetailDocument = gql`
     mutation update_OrderLineDetail($_id: Int, $InternalTrackingNumber: String, $OrderLineID: Int, $OrderID: Int, $ContainerID: Int, $OrderLineDetail: updateOrderLineDetail!) {
   updateOrderLineDetail(
@@ -599,6 +664,26 @@ export const Update_ContainerDocument = gql`
   })
   export class Update_ContainerGQL extends Apollo.Mutation<Update_ContainerMutation, Update_ContainerMutationVariables> {
     document = Update_ContainerDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Find_Or_Create_UserInfoDocument = gql`
+    mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
+  findOrCreateUserInfo(UserInfo: $UserInfo) {
+    _id
+    Name
+    ZoneID
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
+    document = Find_Or_Create_UserInfoDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

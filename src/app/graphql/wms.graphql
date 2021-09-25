@@ -23,3 +23,11 @@ mutation update_Container(
 ) {
   updateContainer(_id: $_id, Barcode: $Barcode, Container: $Container)
 }
+
+mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
+  findOrCreateUserInfo(UserInfo: $UserInfo) {
+    _id
+    Name
+    ZoneID
+  }
+}

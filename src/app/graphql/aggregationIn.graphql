@@ -58,8 +58,8 @@ mutation updateAfterAgOut(
   $OrderID: Int!
   $OrderLineDetail: updateOrderLineDetail!
   $DistributionCenter: String!
-  $Container: updateContainer!
-  $BarcodeList: [String]!
+  # $Container: updateContainer!
+  # $BarcodeList: [String]!
   $OrderNumber: String!
   $NOSINumber: String!
   $MerpStatus: String!
@@ -70,11 +70,11 @@ mutation updateAfterAgOut(
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
 
-  updateContainerList(
-    DistributionCenter: $DistributionCenter
-    BarcodeList: $BarcodeList
-    Container: $Container
-  )
+  # updateContainerList(
+  #   DistributionCenter: $DistributionCenter
+  #   BarcodeList: $BarcodeList
+  #   Container: $Container
+  # )
 
   updateOrder(_id: $OrderID, Order: { isSelected: false })
 

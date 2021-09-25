@@ -17,11 +17,13 @@ export const middleware = new ApolloLink((operation, forward) => {
   const authToken = JSON.parse(
     sessionStorage.getItem('userToken') || ''
   ).idToken;
-  operation.setContext({
-    headers: new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${authToken || ''}`
-    ),
-  });
+  if (authToken) {
+    operation.setContext({
+      headers: new HttpHeaders().set(
+        'Authorization',
+        `Bearer ${authToken || ''}`
+      ),
+    });
+  }
   return forward(operation);
 });

@@ -133,15 +133,15 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderLineDetail: {
           StatusID: environment.agOutComplete_ID,
         },
-        Container: {
-          Warehouse: '10',
-          Row: 'AG',
-          Aisle: null,
-          Section: null,
-          Shelf: null,
-          ShelfDetail: null,
-        },
-        BarcodeList,
+        // Container: {
+        //   Warehouse: '10',
+        //   Row: 'AG',
+        //   Aisle: null,
+        //   Section: null,
+        //   Shelf: null,
+        //   ShelfDetail: null,
+        // },
+        // BarcodeList,
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
@@ -166,15 +166,6 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           // throw errors
           tap((res) => {
             let error = '';
-            if (!res.updateOrder.data.updateOrderLineDetail.length) {
-              error += 'Update SQL OrderLineDetail failed.\n';
-            }
-            if (!res.updateOrder.data.updateContainerList.length) {
-              error += 'Update SQL Container failed.\n';
-            }
-            if (!res.updateOrder.data.updateOrder.length) {
-              error += 'Update SQL Order failed.\n';
-            }
             if (!res.updateOrder.data.updateMerpOrderStatus.success) {
               error += res.updateOrder.data.updateMerpOrderStatus.message;
             }

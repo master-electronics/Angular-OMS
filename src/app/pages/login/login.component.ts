@@ -11,7 +11,8 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, throwError } from 'rxjs';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'app-login',
@@ -37,6 +38,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private authenticationService: AuthenticationService,
+    private fetchUserInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,
     private titleService: Title
   ) {
@@ -76,10 +78,18 @@ export class LoginComponent implements OnDestroy, OnInit {
       this.login$ = this.authenticationService
         .userAuth(this.f.username.value.trim(), this.f.password.value)
         .pipe(
-          map((res) => {
+          switchMap((res) => {
             const userToken = JSON.stringify(res);
             sessionStorage.setItem('userToken', userToken);
             this.authenticationService.changeUser(userToken);
+            const UserInfo = {
+              Name: this.authenticationService.userName,
+            };
+            return this.fetchUserInfo.mutate({ UserInfo: UserInfo });
+          }),
+          map((res) => {
+            const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
+            sessionStorage.setItem('userInfo', userInfo);
             const returnUrl =
               this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(returnUrl);
