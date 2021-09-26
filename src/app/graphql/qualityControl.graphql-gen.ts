@@ -325,9 +325,11 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findEventLog?: Maybe<Array<Maybe<EventLog>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
 };
 
 
@@ -371,6 +373,15 @@ export type QueryFindContainerListArgs = {
 };
 
 
+export type QueryFindEventLogArgs = {
+  EventLog: SearchEventLog;
+  endDate?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryFindOrderArgs = {
   Order: SearchOrder;
   limit?: Maybe<Scalars['Int']>;
@@ -387,6 +398,13 @@ export type QueryFindOrderLineArgs = {
 
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail: SearchOrderLineDetail;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryFindUserInfoArgs = {
+  UserInfo?: Maybe<SearchUserInfo>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
@@ -506,6 +524,14 @@ export type SearchContainer = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type SearchEventLog = {
+  Event?: Maybe<Scalars['String']>;
+  Module?: Maybe<Scalars['String']>;
+  Target?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type SearchOrder = {
   BranchID?: Maybe<Scalars['String']>;
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -539,6 +565,12 @@ export type SearchOrderLineDetail = {
   Quantity?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchUserInfo = {
+  Name?: Maybe<Scalars['String']>;
+  ZoneID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -696,6 +728,7 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   Status: Types.Scalars['String'];
   Station: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
+  EventLog: Types.InsertEventLog;
 }>;
 
 
@@ -705,6 +738,9 @@ export type HoldQcOrderMutation = (
   & { holdQCOrder: (
     { __typename?: 'Response' }
     & Pick<Types.Response, 'success' | 'message'>
+  ), createEventLog: (
+    { __typename?: 'EventLog' }
+    & Pick<Types.EventLog, '_id'>
   ) }
 );
 
@@ -896,7 +932,7 @@ export const VerifyQcRepackDocument = gql`
     }
   }
 export const HoldQcOrderDocument = gql`
-    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!) {
+    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $EventLog: insertEventLog!) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
     Status: $Status
@@ -909,6 +945,9 @@ export const HoldQcOrderDocument = gql`
     InternalTrackingNumber: $InternalTrackingNumber
     OrderLineDetail: {StatusID: $StatusID}
   )
+  createEventLog(EventLog: $EventLog) {
+    _id
+  }
 }
     `;
 

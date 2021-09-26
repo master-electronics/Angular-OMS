@@ -91,5 +91,7 @@ export class GlobalMessagesComponent implements OnInit {
     }
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    //
+  }
 }

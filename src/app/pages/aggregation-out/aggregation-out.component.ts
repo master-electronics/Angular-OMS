@@ -89,7 +89,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     this.alertMessage = '';
     this.alertType = 'error';
-    if (!this.orderForm.valid) {
+    if (!this.orderForm.valid || this.isLoading) {
       this.orderInpt.nativeElement.select();
       return;
     }

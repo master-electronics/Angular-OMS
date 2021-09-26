@@ -20,6 +20,8 @@ import {
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
+import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
   selector: 'aggregationout-pick',
@@ -59,7 +61,9 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
     private titleService: Title,
     private fetchLocation: FetchContainerForAgoutPickGQL,
     private fetchHazard: FetchHazardMaterialLevelGQL,
-    private updateAfterQC: UpdateAfterAgOutGQL
+    private updateAfterQC: UpdateAfterAgOutGQL,
+    private gtmService: GoogleTagManagerService,
+    private authService: AuthenticationService
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -101,7 +105,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.containerForm.valid) {
+    if (!this.containerForm.valid || this.isLoading) {
       this.containerInput.nativeElement.select();
       return;
     }
@@ -142,6 +146,12 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         //   ShelfDetail: null,
         // },
         // BarcodeList,
+        EventLog: {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          Event: `Ag Out`,
+          Module: `Ag Out`,
+          Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
+        },
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
@@ -186,6 +196,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
               result = 'warning';
               message = message + `\nThis order contains hazardous materials`;
             }
+            this.sendGTM();
             this.router.navigate(['/agout'], {
               queryParams: {
                 result,
@@ -226,6 +237,12 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       this.f.containerNumber.setValue('');
       this.containerInput.nativeElement.select();
     }
+  }
+  sendGTM(): void {
+    this.gtmService.pushTag({
+      event: 'AggregationOut',
+      userID: this.authService.userName,
+    });
   }
 
   ngOnDestroy(): void {

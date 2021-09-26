@@ -56,10 +56,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (this.ITNForm.invalid) {
+    if (this.ITNForm.invalid || this.isLoading) {
       return;
     }
-    this.verfiyITN(this.ITNForm.get('ITN')!.value.trim());
+    this.verfiyITN(this.ITNForm.get('ITN').value.trim());
   }
 
   verfiyITN(ITN: string): void {
@@ -83,7 +83,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 environment.qcComplete_ID,
                 environment.warehouseHold_ID,
                 environment.droppedQC_ID,
-              ].includes(res.data.findOrderLineDetail[0]!.StatusID)
+              ].includes(res.data.findOrderLineDetail[0].StatusID)
             ) {
               throw 'Invalid order line status.';
             }
@@ -92,7 +92,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         )
         .subscribe(
           (res) => {
-            const detail = res.data.findOrderLineDetail![0]!;
+            const detail = res.data.findOrderLineDetail[0];
             const queryParams: urlParams = {
               ITN: ITN,
               CustomerNum: detail.Order.CustomerNumber.trim() || '',

@@ -89,6 +89,7 @@ mutation holdQCOrder(
   $Status: String!
   $Station: String!
   $StatusID: Int!
+  $EventLog: insertEventLog!
 ) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
@@ -103,6 +104,10 @@ mutation holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
     OrderLineDetail: { StatusID: $StatusID }
   )
+
+  createEventLog(EventLog: $EventLog) {
+    _id
+  }
 }
 
 mutation updateMerpAfterQcVerify(

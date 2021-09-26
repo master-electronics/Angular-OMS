@@ -22,6 +22,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
+  Create_EventLogGQL,
   Update_ContainerGQL,
   Update_OrderLineDetailGQL,
 } from '../../../graphql/wms.graphql-gen';
@@ -50,6 +51,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateOrderLineDetail: Update_OrderLineDetailGQL,
     private updateContainer: Update_ContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
+    private createEventLog: Create_EventLogGQL,
     private gtmService: GoogleTagManagerService
   ) {
     this.titleService.setTitle('qc/repack');
@@ -77,14 +79,14 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (this.containerForm.invalid) {
+    if (this.containerForm.invalid || this.isLoading) {
       return;
     }
 
     this.isLoading = true;
     this.subscription.add(
       this.verifyQCRepack
-        .watch(
+        .fetch(
           {
             Container: {
               DistributionCenter: environment.DistributionCenter,
@@ -99,7 +101,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           { fetchPolicy: 'network-only' }
         )
 
-        .valueChanges.pipe(
+        .pipe(
           tap((res) => {
             const targetContainer = res.data.findContainer[0];
             const returnOrder = res.data.findOrder[0];
@@ -135,6 +137,16 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             // Setup graphql queries
+            const createEventLog = this.createEventLog.mutate({
+              EventLog: {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                Event: `${this.urlParams['ITN']} to ${this.containerForm.value.container}`,
+                Module: `qc`,
+                Target: `${this.urlParams['OrderNum']}-${this.urlParams['NOSI']}`,
+              },
+            });
             const updateDetail = this.updateOrderLineDetail.mutate({
               InternalTrackingNumber: this.urlParams['ITN'],
               OrderLineDetail: {
@@ -176,6 +188,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Send different query combination
             const updateQueries = {
               updateDetail,
+              createEventLog,
               updateTargetConatiner,
               updateSourceConatiner,
               updateMerpLog,

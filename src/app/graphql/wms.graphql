@@ -31,3 +31,9 @@ mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
     ZoneID
   }
 }
+
+mutation create_EventLog($EventLog: insertEventLog!) {
+  createEventLog(EventLog: $EventLog) {
+    _id
+  }
+}

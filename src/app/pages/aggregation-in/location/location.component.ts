@@ -32,6 +32,8 @@ import {
   UpdateSqlAfterAgInGQL,
   VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { GoogleTagManagerService } from 'angular-google-tag-manager';
 
 @Component({
   selector: 'location',
@@ -89,7 +91,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private verifyContainer: VerifyContainerForAggregationInGQL,
     private updateSql: UpdateSqlAfterAgInGQL,
     private updateMerpLog: UpdateMerpWmsLogGQL,
-    private updateMerpOrder: UpdateMerpOrderStatusGQL
+    private updateMerpOrder: UpdateMerpOrderStatusGQL,
+    private gtmService: GoogleTagManagerService,
+    private authService: AuthenticationService
   ) {}
 
   @ViewChild('location') locationInput: ElementRef;
@@ -102,6 +106,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const FileKeyListforAgOut = [];
     const ProductList = [];
+    let singleITN = '';
     this.initInfo$ = this.fetchLocation
       .fetch(
         { OrderLineDetail: { OrderID: Number(this.urlParams.OrderID) } },
@@ -116,6 +121,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           res.data.findOrderLineDetail.forEach((line) => {
             ++totalLines;
             // set for other queries
+            singleITN = line.InternalTrackingNumber;
             this.OrderNumber = line.Order.OrderNumber;
             this.NOSINumber = line.Order.NOSINumber;
             FileKeyListforAgOut.push(
@@ -200,6 +206,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               //   ShelfDetail: null,
               // },
               // BarcodeList: [this.urlParams.Barcode],
+              EventLog: {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                Event: `${this.urlParams.Barcode} ${singleITN} Ag out`,
+                Module: `Ag In`,
+                Target: `${this.OrderNumber}-${this.NOSINumber}`,
+              },
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               UserOrStatus: 'Packing',
@@ -268,7 +282,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.locationForm.valid) {
+    if (!this.locationForm.valid || this.isLoading) {
       return;
     }
     const barcodeInput = this.f.location.value;
@@ -360,6 +374,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             ContainerID: Number(this.urlParams.toteID),
             Container: sourceTote,
             OrderLineDetail: OrderLineDetail,
+            EventLog: {
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              Event: `${this.urlParams.Barcode} to ${barcodeInput}`,
+              Module: `Ag In`,
+              Target: `${this.OrderNumber}-${this.NOSINumber}`,
+            },
           });
           // set query for merp update.
           if (!this.isRelocation) {
@@ -402,10 +424,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Navgate to first after update success
         map(() => {
+          this.sendGTM();
           this.router.navigate(['agin'], {
             queryParams: {
               result: 'info',
-              message: `Place in ${barcode}.`,
+              message: `Place in ${barcodeInput}.`,
             },
           });
         }),
@@ -418,6 +441,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           return of();
         })
       );
+  }
+
+  sendGTM(): void {
+    this.gtmService.pushTag({
+      event: 'AggregationIn',
+      userID: this.authService.userName,
+    });
   }
 
   ngOnDestroy(): void {

@@ -26,6 +26,8 @@ import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
   selector: 'verify-pack',
@@ -107,7 +109,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateWms: Update_OrderLineDetailGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
-    private holdQCOrder: HoldQcOrderGQL
+    private holdQCOrder: HoldQcOrderGQL,
+    private gtmService: GoogleTagManagerService,
+    private authService: AuthenticationService
   ) {
     this.titleService.setTitle('qc/verifypack');
   }
@@ -168,7 +172,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (this.verifyPack.invalid) {
+    if (this.verifyPack.invalid || this.isLoading) {
       if (this.verifyPack.get('countMethods').errors) {
         this.countMethodError.nativeElement.classList.remove('hidden');
       }
@@ -331,6 +335,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
       StatusID: environment.warehouseHold_ID,
+      EventLog: {
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        Event: `Hold ${this.urlParams.ITN} ${String(Status).padStart(2)}`,
+        Module: `qc`,
+        Target: `${this.urlParams.OrderNum}-${this.urlParams.NOSI}`,
+      },
     };
     this.isLoading = true;
     this.writeInfoToMerp(qcHoldOrderInfo);
@@ -356,11 +366,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = `warning`;
             message = `${this.urlParams.ITN} is on hold.`;
           }
+          this.sendGTM();
           this.router.navigate(['qc'], {
             queryParams: { type, message },
           });
         },
         (error) => {
+          this.sendGTM();
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
@@ -371,6 +383,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       )
     );
+  }
+
+  sendGTM(): void {
+    const taskTime = Date.now() - this.qcService.qcStart;
+    this.qcService.resetQCStartTime(Date.now());
+    this.gtmService.pushTag({
+      event: 'QCHoldOn',
+      userID: this.authService.userName,
+      taskTime: taskTime,
+    });
   }
 
   ngOnDestroy(): void {

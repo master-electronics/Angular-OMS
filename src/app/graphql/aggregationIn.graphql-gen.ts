@@ -325,9 +325,11 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findEventLog?: Maybe<Array<Maybe<EventLog>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
 };
 
 
@@ -371,6 +373,15 @@ export type QueryFindContainerListArgs = {
 };
 
 
+export type QueryFindEventLogArgs = {
+  EventLog: SearchEventLog;
+  endDate?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryFindOrderArgs = {
   Order: SearchOrder;
   limit?: Maybe<Scalars['Int']>;
@@ -387,6 +398,13 @@ export type QueryFindOrderLineArgs = {
 
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail: SearchOrderLineDetail;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryFindUserInfoArgs = {
+  UserInfo?: Maybe<SearchUserInfo>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
@@ -506,6 +524,14 @@ export type SearchContainer = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type SearchEventLog = {
+  Event?: Maybe<Scalars['String']>;
+  Module?: Maybe<Scalars['String']>;
+  Target?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type SearchOrder = {
   BranchID?: Maybe<Scalars['String']>;
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -539,6 +565,12 @@ export type SearchOrderLineDetail = {
   Quantity?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchUserInfo = {
+  Name?: Maybe<Scalars['String']>;
+  ZoneID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -643,6 +675,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
+  EventLog: Types.InsertEventLog;
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
@@ -654,7 +687,10 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 export type UpdateAfterAgOutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder'>
-  & { updateMerpOrderStatus: (
+  & { createEventLog: (
+    { __typename?: 'EventLog' }
+    & Pick<Types.EventLog, '_id'>
+  ), updateMerpOrderStatus: (
     { __typename?: 'Response' }
     & Pick<Types.Response, 'success' | 'message'>
   ), updateMerpWMSLog: (
@@ -680,12 +716,17 @@ export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
   Container: Types.UpdateContainer;
   OrderLineDetail: Types.UpdateOrderLineDetail;
+  EventLog: Types.InsertEventLog;
 }>;
 
 
 export type UpdateSqlAfterAgInMutation = (
   { __typename?: 'Mutation' }
   & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateContainer'>
+  & { createEventLog: (
+    { __typename?: 'EventLog' }
+    & Pick<Types.EventLog, '_id'>
+  ) }
 );
 
 export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
@@ -845,9 +886,12 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
     }
   }
 export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: {isSelected: false})
+  createEventLog(EventLog: $EventLog) {
+    _id
+  }
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
@@ -898,12 +942,15 @@ export const FetchHazardMaterialLevelDocument = gql`
     }
   }
 export const UpdateSqlAfterAgInDocument = gql`
-    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!) {
+    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $EventLog: insertEventLog!) {
   updateOrderLineDetail(
     ContainerID: $ContainerID
     OrderLineDetail: $OrderLineDetail
   )
   updateContainer(_id: $ContainerID, Container: $Container)
+  createEventLog(EventLog: $EventLog) {
+    _id
+  }
 }
     `;
 

@@ -69,7 +69,7 @@ export class AggregationInComponent
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.containerForm.valid) {
+    if (!this.containerForm.valid || this.isLoading) {
       this.containerInput.nativeElement.select();
       return;
     }
