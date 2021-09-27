@@ -60,8 +60,8 @@ export type EventLog = {
   Event: Scalars['String'];
   Module?: Maybe<Scalars['String']>;
   Target?: Maybe<Scalars['String']>;
+  User: UserInfo;
   UserID: Scalars['Int'];
-  UserInfo: UserInfo;
   _id: Scalars['Int'];
 };
 

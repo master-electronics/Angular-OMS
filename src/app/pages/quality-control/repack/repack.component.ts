@@ -79,7 +79,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (this.containerForm.invalid || this.isLoading) {
+    if (this.containerForm.invalid) {
       return;
     }
 

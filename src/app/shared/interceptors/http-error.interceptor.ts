@@ -21,17 +21,17 @@ export class ErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
-      // retryWhen((error) =>
-      //   error.pipe(
-      //     concatMap((error, count) => {
-      //       if (count < retryCount && [503, 0].includes(error.status)) {
-      //         return of(error);
-      //       }
-      //       return throwError(error);
-      //     }),
-      //     delay(retryWaitMilliSeconds)
-      //   )
-      // ),
+      retryWhen((error) =>
+        error.pipe(
+          concatMap((error, count) => {
+            if (count < retryCount && [503, 0].includes(error.status)) {
+              return of(error);
+            }
+            return throwError(error);
+          }),
+          delay(retryWaitMilliSeconds)
+        )
+      ),
       catchError((err) => {
         if (err.status === 401) {
           // auto logout if 401 response returned from api

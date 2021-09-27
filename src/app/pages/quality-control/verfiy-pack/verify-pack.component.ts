@@ -2,14 +2,13 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, Subscription, throwError } from 'rxjs';
+import { forkJoin, Subscription, throwError } from 'rxjs';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
@@ -24,7 +23,7 @@ import {
 import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { catchError, map, take, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -41,7 +40,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   alertType = 'error';
   alertMessage = '';
   isEditable = false;
-  urlParams: any;
+  urlParams;
   UnitOfMeasure = 'loading';
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
@@ -221,6 +220,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.subscription.add(
       forkJoin(updateQuery).subscribe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (res: any) => {
           let type: string;
           let message: string;
@@ -337,7 +337,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       StatusID: environment.warehouseHold_ID,
       EventLog: {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-        Event: `Hold ${this.urlParams.ITN} ${String(Status).padStart(2)}`,
+        Event: `Hold ${this.urlParams.ITN} ${String(Status).padStart(2, '3')}`,
         Module: `qc`,
         Target: `${this.urlParams.OrderNum}-${this.urlParams.NOSI}`,
       },

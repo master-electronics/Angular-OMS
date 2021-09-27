@@ -17,17 +17,15 @@ export class ItnStatusComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchTable$ = this.fetchtable.fetch().pipe(
-      map((res) => {
-        return res.data.fetchITNStatusView;
-      })
-    );
+    this.fetchTable$ = this.fetchtable
+      .fetch(null, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => {
+          return res.data.fetchITNStatusView;
+        })
+      );
   }
 
   // table setting:
   fetchTable$;
-  searchVisible = false;
-  searchValue = '';
-  orderList = [];
-  orderListDisplay = [];
 }

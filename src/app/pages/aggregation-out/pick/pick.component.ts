@@ -12,7 +12,7 @@ import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
-import { catchError, map, take, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
@@ -230,7 +230,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
       this.alertMessage = `Container is not in the list.`;
     }
     if (this.totalITNs === this.selectedList.length) {
-      this.buttonLabel = `Aggregation Out`;
+      this.buttonLabel = `Ag Out`;
       this.buttonStyles = `bg-green-500`;
       this.updateAfterPick();
     } else {

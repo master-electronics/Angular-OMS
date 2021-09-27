@@ -1,6 +1,5 @@
 <div class="container px-4 mx-auto">
   <!-- order table -->
-  <div *ngIf="fetchTable$ | async"></div>
   <nz-table
     #table
     [nzData]="fetchTable$ | async"

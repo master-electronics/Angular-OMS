@@ -60,8 +60,8 @@ export type EventLog = {
   Event: Scalars['String'];
   Module?: Maybe<Scalars['String']>;
   Target?: Maybe<Scalars['String']>;
+  User: UserInfo;
   UserID: Scalars['Int'];
-  UserInfo: UserInfo;
   _id: Scalars['Int'];
 };
 
@@ -672,6 +672,37 @@ export type FetchItnStatusViewQuery = (
   )>>> }
 );
 
+export type FetchUserInfoQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchUserInfoQuery = (
+  { __typename?: 'Query' }
+  & { findUserInfo?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserInfo' }
+    & Pick<Types.UserInfo, '_id' | 'Name'>
+  )>>> }
+);
+
+export type FetchEventLogQueryVariables = Types.Exact<{
+  EventLog: Types.SearchEventLog;
+  startDate?: Types.Maybe<Types.Scalars['String']>;
+  endDate?: Types.Maybe<Types.Scalars['String']>;
+  limit?: Types.Maybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FetchEventLogQuery = (
+  { __typename?: 'Query' }
+  & { findEventLog?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'EventLog' }
+    & Pick<Types.EventLog, 'Event' | 'DateTime' | 'Module' | 'Target'>
+    & { User: (
+      { __typename?: 'UserInfo' }
+      & Pick<Types.UserInfo, 'Name'>
+    ) }
+  )>>> }
+);
+
 export const FetchOrderViewDocument = gql`
     query fetchOrderView($filter: orderViewFilter) {
   fetchOrderView(filter: $filter) {
@@ -749,6 +780,54 @@ export const FetchItnStatusViewDocument = gql`
   })
   export class FetchItnStatusViewGQL extends Apollo.Query<FetchItnStatusViewQuery, FetchItnStatusViewQueryVariables> {
     document = FetchItnStatusViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchUserInfoDocument = gql`
+    query fetchUserInfo {
+  findUserInfo {
+    _id
+    Name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchUserInfoGQL extends Apollo.Query<FetchUserInfoQuery, FetchUserInfoQueryVariables> {
+    document = FetchUserInfoDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchEventLogDocument = gql`
+    query fetchEventLog($EventLog: searchEventLog!, $startDate: String, $endDate: String, $limit: Int) {
+  findEventLog(
+    EventLog: $EventLog
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    Event
+    DateTime
+    User {
+      Name
+    }
+    Module
+    Target
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchEventLogGQL extends Apollo.Query<FetchEventLogQuery, FetchEventLogQueryVariables> {
+    document = FetchEventLogDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

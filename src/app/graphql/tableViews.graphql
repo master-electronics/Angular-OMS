@@ -43,3 +43,32 @@ query fetchITNStatusView {
     Number
   }
 }
+
+query fetchUserInfo {
+  findUserInfo {
+    _id
+    Name
+  }
+}
+
+query fetchEventLog(
+  $EventLog: searchEventLog!
+  $startDate: String
+  $endDate: String
+  $limit: Int
+) {
+  findEventLog(
+    EventLog: $EventLog
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    Event
+    DateTime
+    User {
+      Name
+    }
+    Module
+    Target
+  }
+}

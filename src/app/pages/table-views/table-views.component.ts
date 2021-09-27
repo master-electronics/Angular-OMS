@@ -18,6 +18,11 @@ export class TableViewsComponent {
       link: 'itnstatus',
       content: 'Count how many ITNs are in each status',
     },
+    {
+      title: 'User Event Logs',
+      link: 'usereventlog',
+      content: 'View the user activity event logs on WMS',
+    },
   ];
 
   constructor(
