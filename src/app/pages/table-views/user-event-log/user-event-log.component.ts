@@ -86,7 +86,12 @@ export class UserEventLogComponent implements OnInit {
       .pipe(
         map((res) => {
           this.isLoading = false;
-          this.tableData = res.data.findEventLog;
+          this.tableData = res.data.findEventLog.map((log) => {
+            const result = { ...log };
+            const tmp = new Date(Number(log.DateTime));
+            result.DateTime = tmp.toLocaleString();
+            return result;
+          });
         })
       );
   }

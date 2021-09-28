@@ -95,18 +95,18 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             const detail = res.data.findOrderLineDetail[0];
             const queryParams: urlParams = {
               ITN: ITN,
-              CustomerNum: detail.Order.CustomerNumber.trim() || '',
-              DC: detail.Order.DistributionCenter.trim(),
-              OrderNum: detail.Order.OrderNumber.trim(),
-              NOSI: detail.Order.NOSINumber.trim(),
+              CustomerNum: detail.Order.CustomerNumber?.trim() || '',
+              DC: detail.Order.DistributionCenter?.trim(),
+              OrderNum: detail.Order.OrderNumber?.trim(),
+              NOSI: detail.Order.NOSINumber?.trim(),
               OrderLine: detail.OrderLine.OrderLineNumber,
-              PartNum: detail.OrderLine.PartNumber.trim(),
-              PRC: detail.OrderLine.ProductCode.trim(),
+              PartNum: detail.OrderLine.PartNumber?.trim(),
+              PRC: detail.OrderLine.ProductCode?.trim(),
               Quantity: detail.Quantity,
-              ParentITN: detail.ParentITN.trim() || '',
+              ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS ? 1 : 0,
-              DateCode: detail.DateCode.trim() || '',
-              coo: detail.CountryOfOrigin.trim() || '',
+              DateCode: detail.DateCode?.trim() || '',
+              coo: detail.CountryOfOrigin?.trim() || '',
             };
             this.router.navigate(['/qc/globalmessages'], {
               queryParams: queryParams,
