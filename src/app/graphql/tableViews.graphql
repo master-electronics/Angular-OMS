@@ -63,6 +63,7 @@ query fetchEventLog(
     endDate: $endDate
     limit: $limit
   ) {
+    _id
     Event
     DateTime
     User {

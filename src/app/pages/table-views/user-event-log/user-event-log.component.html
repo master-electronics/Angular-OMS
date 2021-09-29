@@ -97,28 +97,22 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let event of table.data">
-        <td>{{ event.User.Name }}</td>
-        <td>{{ event.Module }}</td>
-        <!-- show order-NOSI and dropdown for ITN display -->
-        <td>
-          <span>
-            <a nz-dropdown class="operation" [nzDropdownMenu]="menu">
-              {{ event.Target }}
-              <i nz-icon nzType="down"></i>
-            </a>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu>
-                <li *ngFor="let itn of event.ITNList" nz-menu-item>
-                  <span>{{ itn }}</span>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-          </span>
-        </td>
-        <td>{{ event.Event }}</td>
-        <td>{{ event.DateTime }}</td>
-      </tr>
+      <ng-container *ngFor="let data of table.data">
+        <tr>
+          <td
+            [nzExpand]="expandSet.has(data._id)"
+            (nzExpandChange)="onExpandChange(data._id, $event)"
+          ></td>
+          <td>{{ data.User.Name }}</td>
+          <td>{{ data.Module }}</td>
+          <td>{{ data.Target }}</td>
+          <td>{{ data.Event }}</td>
+          <td>{{ data.DateTime }}</td>
+        </tr>
+        <tr [nzExpand]="expandSet.has(data._id)">
+          <li *ngFor="let itn of data.ITNList">{{ itn }}</li>
+        </tr>
+      </ng-container>
     </tbody>
   </nz-table>
 </div>
