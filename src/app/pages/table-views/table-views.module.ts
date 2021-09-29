@@ -20,6 +20,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzCardModule,
     NzDatePickerModule,
     NzSelectModule,
+    NzDividerModule,
   ],
   bootstrap: [TableViewsComponent],
 })

@@ -59,6 +59,7 @@ export type EventLog = {
   DateTime: Scalars['String'];
   Event: Scalars['String'];
   Module?: Maybe<Scalars['String']>;
+  SubTarget?: Maybe<Scalars['String']>;
   Target?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserID: Scalars['Int'];
@@ -91,6 +92,7 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertMissITN: MissItn;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -179,6 +181,11 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
+};
+
+
+export type MutationInsertMissItnArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -442,6 +449,7 @@ export type Zone = {
 export type InsertEventLog = {
   Event: Scalars['String'];
   Module?: Maybe<Scalars['String']>;
+  SubTarget?: Maybe<Scalars['String']>;
   Target?: Maybe<Scalars['String']>;
   UserID: Scalars['Int'];
 };
@@ -483,6 +491,22 @@ export type InsertOrderLineDetail = {
 export type InsertUserInfo = {
   Name: Scalars['String'];
   ZoneID?: Maybe<Scalars['Int']>;
+};
+
+export type MissItn = {
+  __typename?: 'missITN';
+  CountryOfOrigin: Scalars['String'];
+  CustomerNumber: Scalars['String'];
+  DateCode: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  ParentITN: Scalars['String'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  Quantity: Scalars['Float'];
+  ROHS: Scalars['Boolean'];
 };
 
 export type OrderView = {
@@ -527,6 +551,7 @@ export type SearchContainer = {
 export type SearchEventLog = {
   Event?: Maybe<Scalars['String']>;
   Module?: Maybe<Scalars['String']>;
+  SubTarget?: Maybe<Scalars['String']>;
   Target?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
@@ -695,7 +720,7 @@ export type FetchEventLogQuery = (
   { __typename?: 'Query' }
   & { findEventLog?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, 'Event' | 'DateTime' | 'Module' | 'Target'>
+    & Pick<Types.EventLog, 'Event' | 'DateTime' | 'Module' | 'Target' | 'SubTarget'>
     & { User: (
       { __typename?: 'UserInfo' }
       & Pick<Types.UserInfo, 'Name'>
@@ -819,6 +844,7 @@ export const FetchEventLogDocument = gql`
     }
     Module
     Target
+    SubTarget
   }
 }
     `;

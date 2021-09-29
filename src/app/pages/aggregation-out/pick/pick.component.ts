@@ -41,6 +41,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
   totalITNs = 0;
   itemList = [];
   selectedList = [];
+  ITNsInOrder = '';
 
   containerForm = this.fb.group({
     containerNumber: [
@@ -92,6 +93,9 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(
           (res) => {
             this.itemList = res.data.findOrderLineDetail;
+            res.data.findOrderLineDetail.map((item) => {
+              this.ITNsInOrder += item.InternalTrackingNumber + ',';
+            });
             this.totalITNs = this.itemList.length;
             this.isLoading = res.loading;
           },
@@ -151,6 +155,7 @@ export class PickComponent implements OnInit, OnDestroy, AfterViewInit {
           Event: `Ag Out`,
           Module: `Ag Out`,
           Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
+          SubTarget: this.ITNsInOrder.slice(0, -1),
         },
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,

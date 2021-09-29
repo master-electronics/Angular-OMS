@@ -23,12 +23,11 @@ export class AuthenticationService {
   }
 
   public get userName(): string {
-    let username;
     const info = this.user.value;
     if (info) {
-      username = JSON.parse(info).username;
+      return JSON.parse(info).username;
     }
-    return username;
+    return null;
   }
 
   constructor(private router: Router, private http: HttpClient) {}
@@ -42,6 +41,7 @@ export class AuthenticationService {
   logout(): void {
     // remove user from session
     sessionStorage.setItem('userToken', '');
+    sessionStorage.setItem('userInfo', '');
     this.user.next('');
     this.router.navigate(['/login']);
   }

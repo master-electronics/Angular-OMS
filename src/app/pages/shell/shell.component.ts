@@ -16,15 +16,15 @@ export class ShellComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userIdle.startWatching();
-    this.subscription.add(this.userIdle.onTimerStart().subscribe());
-    this.subscription.add(
-      this.userIdle.onTimeout().subscribe(() => this.auth.logout())
-    );
+    // this.userIdle.startWatching();
+    // this.subscription.add(this.userIdle.onTimerStart().subscribe());
+    // this.subscription.add(
+    //   this.userIdle.onTimeout().subscribe(() => this.auth.logout())
+    // );
   }
 
   ngOnDestroy(): void {
-    this.userIdle.stopWatching();
-    this.subscription.unsubscribe();
+    // this.userIdle.stopWatching();
+    // this.subscription.unsubscribe();
   }
 }

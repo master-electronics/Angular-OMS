@@ -36,6 +36,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (err.status === 401) {
           // auto logout if 401 response returned from api
           sessionStorage.setItem('userToken', '');
+          sessionStorage.setItem('userInfo', '');
           this.router.navigate(['/login']);
         }
         if ([0].includes(err.status)) {

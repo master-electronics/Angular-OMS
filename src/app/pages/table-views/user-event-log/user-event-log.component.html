@@ -88,7 +88,25 @@
       <tr *ngFor="let event of table.data">
         <td>{{ event.User.Name }}</td>
         <td>{{ event.Module }}</td>
-        <td>{{ event.Target }}</td>
+        <!-- show order-NOSI and dropdown for ITN display -->
+        <td>
+          <span>
+            <a nz-dropdown class="operation" [nzDropdownMenu]="menu">
+              {{ event.Target }}
+              <i nz-icon nzType="down"></i>
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item>
+                  <a>Action 1</a>
+                </li>
+                <li nz-menu-item>
+                  <a>Action 2</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </span>
+        </td>
         <td>{{ event.Event }}</td>
         <td>{{ event.DateTime }}</td>
       </tr>

@@ -56,6 +56,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   buttonLabel = 'Relocate';
   locationList: string[];
   ITNInfo = [];
+  ITNsInTote = '';
   alertMessage = '';
   alertType = 'error';
 
@@ -140,6 +141,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 )
               );
             }
+            // add ITN to list if there are in the same tote.
+            if (line.Container.Barcode === this.urlParams.Barcode) {
+              this.ITNsInTote += line.InternalTrackingNumber + ',';
+            }
             if (line._id === Number(this.urlParams.orderLineDetailID)) {
               this.ITNInfo = [
                 ['Order#', line.Order.OrderNumber],
@@ -210,9 +215,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                Event: `${this.urlParams.Barcode} ${singleITN} Ag out`,
+                Event: `Single ITN Ag out ${this.urlParams.Barcode}`,
                 Module: `Ag In`,
                 Target: `${this.OrderNumber}-${this.NOSINumber}`,
+                SubTarget: `${singleITN}`,
               },
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
@@ -381,6 +387,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               Event: `${this.urlParams.Barcode} to ${barcodeInput}`,
               Module: `Ag In`,
               Target: `${this.OrderNumber}-${this.NOSINumber}`,
+              SubTarget: this.ITNsInTote.slice(0, -1),
             },
           });
           // set query for merp update.

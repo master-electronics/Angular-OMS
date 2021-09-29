@@ -45,6 +45,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
   countryData = Countries;
+  printITN$;
 
   countMethods = [
     { id: 1, content: 'Factory bag' },
@@ -270,7 +271,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.countMethodsInput.nativeElement.select();
   }
 
-  printITN$;
   print(): void {
     this.alertMessage = '';
     this.isLoading = true;
@@ -337,9 +337,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       StatusID: environment.warehouseHold_ID,
       EventLog: {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-        Event: `Hold ${this.urlParams.ITN} ${String(Status).padStart(2, '3')}`,
+        Event: `Hold on ${String(Status).padStart(2, '3')}`,
         Module: `qc`,
         Target: `${this.urlParams.OrderNum}-${this.urlParams.NOSI}`,
+        SubTarget: `${this.urlParams.ITN}`,
       },
     };
     this.isLoading = true;

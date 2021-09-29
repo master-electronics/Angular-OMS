@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
-import { QualityControlService, urlParams } from '../quality-control.server';
+import { QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
@@ -142,9 +142,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                Event: `${this.urlParams['ITN']} to ${this.containerForm.value.container}`,
+                Event: `Repack to ${this.containerForm.value.container}`,
                 Module: `qc`,
                 Target: `${this.urlParams['OrderNum']}-${this.urlParams['NOSI']}`,
+                SubTarget: `${this.urlParams['ITN']}`,
               },
             });
             const updateDetail = this.updateOrderLineDetail.mutate({
