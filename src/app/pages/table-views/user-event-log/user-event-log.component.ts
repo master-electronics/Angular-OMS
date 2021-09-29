@@ -7,7 +7,7 @@ import {
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { FormBuilder, Validators } from '@angular/forms';
-import { OrderBarcodeRegex } from 'src/app/shared/dataRegex';
+import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 
 @Component({
   selector: 'user-event-log',
@@ -30,6 +30,7 @@ export class UserEventLogComponent implements OnInit {
     user: [''],
     module: [''],
     target: ['', [Validators.pattern(OrderBarcodeRegex)]],
+    subTarget: ['', [Validators.pattern(ITNBarcodeRegex)]],
     timeRange: [''],
   });
 
@@ -59,6 +60,7 @@ export class UserEventLogComponent implements OnInit {
     const user = this.filterForm.get('user').value;
     const module = this.filterForm.get('module').value;
     const target = this.filterForm.get('target').value;
+    const subTarget = this.filterForm.get('subTarget').value;
     let limit = 200;
     if (user) {
       eventLog['UserID'] = user;
@@ -68,6 +70,9 @@ export class UserEventLogComponent implements OnInit {
     }
     if (target) {
       eventLog['Target'] = target;
+    }
+    if (subTarget) {
+      eventLog['SubTarget'] = subTarget;
     }
     if (Object.keys(eventLog).length) {
       limit = null;
@@ -90,6 +95,11 @@ export class UserEventLogComponent implements OnInit {
             const result = { ...log };
             const tmp = new Date(Number(log.DateTime));
             result.DateTime = tmp.toLocaleString();
+            if (log.SubTarget) {
+              result['ITNList'] = log.SubTarget.split(',');
+            } else {
+              result['ITNList'] = '';
+            }
             return result;
           });
         })

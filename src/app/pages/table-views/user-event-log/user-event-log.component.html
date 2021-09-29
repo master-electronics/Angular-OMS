@@ -46,6 +46,20 @@
         </nz-form-control>
       </nz-form-item>
 
+      <nz-form-item nz-col nzSpan="4">
+        <nz-form-control
+          nzHasFeedback
+          nzErrorTip="The input is not valid barcode!"
+        >
+          <input
+            nz-input
+            formControlName="subTarget"
+            placeholder="filter by ITN"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-row nzJustify="start">
       <nz-form-item nz-col nzSpan="8">
         <nz-form-control>
           <nz-range-picker
@@ -55,9 +69,7 @@
           ></nz-range-picker>
         </nz-form-control>
       </nz-form-item>
-    </div>
-    <div nz-row>
-      <div nz-col [nzSpan]="24" class="search-area">
+      <div nz-col nzSpan="4" nzOffset="12">
         <button
           nz-button
           [nzType]="'primary'"
@@ -97,11 +109,8 @@
             </a>
             <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu>
-                <li nz-menu-item>
-                  <a>Action 1</a>
-                </li>
-                <li nz-menu-item>
-                  <a>Action 2</a>
+                <li *ngFor="let itn of event.ITNList" nz-menu-item>
+                  <span>{{ itn }}</span>
                 </li>
               </ul>
             </nz-dropdown-menu>
