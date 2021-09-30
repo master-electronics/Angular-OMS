@@ -12,7 +12,7 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
@@ -27,13 +27,15 @@ import {
   FetchHazardMaterialLevelGQL,
   FetchLocationAndOrderDetailForAgInGQL,
   UpdateAfterAgOutGQL,
-  UpdateMerpOrderStatusGQL,
-  UpdateMerpWmsLogGQL,
-  UpdateSqlAfterAgInGQL,
   VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
+import {
+  AggregationInService,
+  endContainer,
+  outsetContainer,
+} from '../aggregation-in.server';
 
 @Component({
   selector: 'location',
@@ -41,17 +43,14 @@ import { GoogleTagManagerService } from 'angular-google-tag-manager';
 })
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   // varable for query
-  urlParams;
-  initInfo$: Observable<any>;
-  updateLocation$: Observable<any>;
-  OrderNumber: string;
-  NOSINumber: string;
-  FileKeyListforAgIn = [];
-  isLastLine = false;
-  isSingleLine = false;
+  private OrderNumber: string;
+  private NOSINumber: string;
+  private FileKeyListforAgIn = [];
   // control html element
+  outsetContainer: outsetContainer;
+  initInfo$: Observable<boolean>;
+  verifyContainer$: Observable<boolean>;
   isLoading = false;
-  isRelocation = false;
   newLocation = false;
   buttonLabel = 'Relocate';
   locationList: string[];
@@ -59,6 +58,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ITNsInTote = '';
   alertMessage = '';
   alertType = 'error';
+  isLastLine = false;
 
   regex(input: FormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
@@ -72,7 +72,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         };
   }
 
-  locationForm = this.fb.group({
+  locationForm = this._fb.group({
     location: ['', [Validators.required, this.regex]],
   });
   get f(): { [key: string]: AbstractControl } {
@@ -81,28 +81,30 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private fb: FormBuilder,
-    private commonService: CommonService,
-    private titleService: Title,
-    private router: Router,
-    private route: ActivatedRoute,
+    private _fb: FormBuilder,
+    private _commonService: CommonService,
+    private _titleService: Title,
+    private _router: Router,
     private fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
     private updateAfterAgOut: UpdateAfterAgOutGQL,
     private fetchHazard: FetchHazardMaterialLevelGQL,
     private verifyContainer: VerifyContainerForAggregationInGQL,
-    private updateSql: UpdateSqlAfterAgInGQL,
-    private updateMerpLog: UpdateMerpWmsLogGQL,
-    private updateMerpOrder: UpdateMerpOrderStatusGQL,
     private gtmService: GoogleTagManagerService,
-    private authService: AuthenticationService
-  ) {}
+    private authService: AuthenticationService,
+    private _agInService: AggregationInService
+  ) {
+    this._titleService.setTitle('agin/location');
+  }
 
   @ViewChild('location') locationInput: ElementRef;
   ngOnInit(): void {
-    this.urlParams = { ...this.route.snapshot.queryParams };
-    this.titleService.setTitle('agin/location');
-    this.commonService.changeNavbar(`AGIN: ${this.urlParams.Barcode}`);
-    this.isRelocation = this.urlParams.isRelocation === 'true';
+    this.outsetContainer = this._agInService.outsetContainer;
+    if (!this.outsetContainer) {
+      this._router.navigate(['agin']);
+      return;
+    }
+    this._agInService.changeEndContainer(null);
+    this._commonService.changeNavbar(`AGIN: ${this.outsetContainer.Barcode}`);
     // fetch location and orderlinedetail
     this.isLoading = true;
     const FileKeyListforAgOut = [];
@@ -110,7 +112,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     let singleITN = '';
     this.initInfo$ = this.fetchLocation
       .fetch(
-        { OrderLineDetail: { OrderID: Number(this.urlParams.OrderID) } },
+        { OrderLineDetail: { OrderID: this.outsetContainer.OrderID } },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -142,10 +144,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               );
             }
             // add ITN to list if there are in the same tote.
-            if (line.Container.Barcode === this.urlParams.Barcode) {
+            if (line.Container.Barcode === this.outsetContainer.Barcode) {
               this.ITNsInTote += line.InternalTrackingNumber + ',';
             }
-            if (line._id === Number(this.urlParams.orderLineDetailID)) {
+            if (line._id === this.outsetContainer.orderLineDetailID) {
               this.ITNInfo = [
                 ['Order#', line.Order.OrderNumber],
                 [
@@ -180,7 +182,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.newLocation = true;
             this.buttonLabel = 'New Location';
           }
-          if (this.isRelocation) {
+          if (this.outsetContainer.isRelocation) {
             this.newLocation = true;
             this.buttonLabel = 'Relocate';
             this.ITNInfo = [];
@@ -188,18 +190,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLastLine = countLines === totalLines;
           this.locationList = [...locationsSet];
           if (totalLines === 1) {
-            this.isSingleLine = true;
             return true;
           }
+          // if not single Line ITN stop here.
           this.isLoading = false;
           return false;
         }),
 
-        // swith to ag out update observeable
+        // swith to ag out update observeable If this is single Line ITN
         switchMap(() => {
           return forkJoin({
             updateOrder: this.updateAfterAgOut.mutate({
-              OrderID: Number(this.urlParams.OrderID),
+              OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: environment.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
               // Container: {
@@ -215,7 +217,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                Event: `Single ITN Ag out ${this.urlParams.Barcode}`,
+                Event: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
                 Module: `Ag In`,
                 Target: `${this.OrderNumber}-${this.NOSINumber}`,
                 SubTarget: `${singleITN}`,
@@ -236,13 +238,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         }),
 
         // Emite errors
-        tap((res) => {
-          let error = '';
-          if (!res.updateOrder.data.updateMerpOrderStatus.success) {
-            error += res.updateOrder.data.updateMerpOrderStatus.message;
-          }
-          if (error) throw error;
-        }),
+        // tap((res) => {
+        // let error = '';
+        // if (!res.updateOrder.data.updateMerpOrderStatus.success) {
+        //   error += res.updateOrder.data.updateMerpOrderStatus.message;
+        // }
+        // if (error) throw error;
+        // }),
 
         // Back to first page after ag out success
         map((res) => {
@@ -258,20 +260,24 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             result = 'warning';
             message = message + `\nThis order contains hazardous materials`;
           }
-          this.router.navigate(['agin'], {
+
+          // return the first step
+          this.sendGTM();
+          this._router.navigate(['agin'], {
             queryParams: {
               result,
               message,
             },
           });
           this.isLoading = false;
+          return true;
         }),
 
         catchError((error) => {
           this.alertMessage = error;
           this.isLoading = false;
           this.locationInput.nativeElement.select();
-          return of();
+          return of(false);
         })
       );
   }
@@ -292,17 +298,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     const barcodeInput = this.f.location.value;
-    const barcode =
+    const Barcode =
       barcodeInput.length === 8 ? barcodeInput : barcodeInput.replace(/-/g, '');
-    if (this.urlParams.Barcode === barcode) {
+    const type = barcodeInput.length === 8 ? 'tote' : 'shelf';
+    if (this.outsetContainer.Barcode === Barcode) {
       this.alertMessage = 'Should scan a new Container';
       this.alertType = 'warning';
       this.locationInput.nativeElement.select();
       return;
     }
-    if (!this.newLocation && barcode.length > 8) {
+    if (!this.newLocation && Barcode.length > 8) {
       const inList = this.locationList.some((location) => {
-        return location.substring(0, 11) === barcode;
+        return location.substring(0, 11) === Barcode;
       });
       if (!inList) {
         this.alertMessage = 'This container is a new location';
@@ -311,11 +318,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
     }
+
+    // if pass all verifercation jump to verify page
     this.isLoading = true;
-    // fetch container data for verification
-    this.updateLocation$ = this.verifyContainer
+    this.verifyContainer$ = this.verifyContainer
       .fetch(
-        { Container: { Barcode: barcode } },
+        { Container: { Barcode: Barcode } },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -339,118 +347,52 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           if (container[0].ContainerType.IsMobile) {
             container[0].ORDERLINEDETAILs.forEach((line) => {
               // check if the item in container
-              if (line.OrderID !== Number(this.urlParams.OrderID)) {
+              if (line.OrderID !== this.outsetContainer.OrderID) {
                 throw 'This container has other order in it.';
               }
             });
           }
         }),
 
-        // switch to update Observable
-        switchMap((res) => {
+        map((res) => {
           const container = res.data.findContainer[0];
-          const updatequery = {};
-          // if target container is shelf, update source container's location with new location, else release tote to dc.
-          let sourceTote = {
-            Warehouse: null,
-            Row: null,
-            Aisle: null,
-            Section: null,
-            Shelf: null,
-            ShelfDetail: null,
-          };
-          const OrderLineDetail = {
-            StatusID: environment.agInComplete_ID,
-            ContainerID: container._id,
-          };
-          if (!container.ContainerType.IsMobile) {
-            sourceTote = {
+          const endContainer: endContainer = {
+            Barcode: barcodeInput,
+            type,
+            isLastLine: this.isLastLine,
+            location: {
               Warehouse: container.Warehouse,
               Row: container.Row,
               Aisle: container.Aisle,
               Section: container.Section,
               Shelf: container.Shelf,
               ShelfDetail: container.ShelfDetail,
-            };
-            delete OrderLineDetail.ContainerID;
-          }
-          // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
-          // set query for updateSql
-          updatequery['updateSql'] = this.updateSql.mutate({
-            ContainerID: Number(this.urlParams.toteID),
-            Container: sourceTote,
-            OrderLineDetail: OrderLineDetail,
-            EventLog: {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
-              Event: `${this.urlParams.Barcode} to ${barcodeInput}`,
-              Module: `Ag In`,
-              Target: `${this.OrderNumber}-${this.NOSINumber}`,
-              SubTarget: this.ITNsInTote.slice(0, -1),
             },
-          });
-          // set query for merp update.
-          if (!this.isRelocation) {
-            updatequery['updateMerpLog'] = this.updateMerpLog.mutate({
-              DistributionCenter: environment.DistributionCenter,
-              FileKeyList: this.FileKeyListforAgIn,
-              ActionType: 'A',
-              Action: 'line_aggregation_in',
-            });
-            if (this.isLastLine) {
-              updatequery['updateMerpOrder'] = this.updateMerpOrder.mutate({
-                OrderNumber: this.OrderNumber,
-                NOSINumber: this.NOSINumber,
-                Status: String(environment.agInComplete_ID),
-                UserOrStatus: 'AGGREGATION-OUT',
-              });
-            }
-          }
-          return forkJoin(updatequery);
-        }),
-
-        // Emit Errors
-        tap((res: any) => {
-          let error: string;
-          if (!res.updateSql.data.updateOrderLineDetail.length) {
-            error += `\nFail to update SQL OrderLineDetail.`;
-          }
-          if (!res.updateSql.data.updateContainer.length) {
-            error += `\nFail to update SQL Container.`;
-          }
-          if (
-            res.updateMerpOrder &&
-            !res.updateMerpOrder.data.updateMerpOrderStatus.success
-          ) {
-            error += res.updateMerpOrder.data.updateMerpOrderStatus.message;
-          }
-          if (error)
-            throw `${this.OrderNumber}-${this.NOSINumber}`.concat(error);
-        }),
-
-        // Navgate to first after update success
-        map(() => {
-          this.sendGTM();
-          this.router.navigate(['agin'], {
-            queryParams: {
-              result: 'info',
-              message: `Place in ${barcodeInput}.`,
-            },
-          });
+            OrderNumber: this.OrderNumber,
+            NOSINumber: this.NOSINumber,
+            containerID: container._id,
+            ITNsInTote: this.ITNsInTote,
+            FileKeyListforAgIn: this.FileKeyListforAgIn,
+          };
+          this._agInService.changeEndContainer(endContainer);
+          this._router.navigate(['agin/verifytote']);
+          return true;
         }),
 
         catchError((error) => {
           this.alertMessage = error;
-          this.alertType = 'error';
           this.isLoading = false;
           this.locationInput.nativeElement.select();
-          return of();
+          return of(false);
         })
       );
   }
 
   sendGTM(): void {
+    this.gtmService.pushTag({
+      event: 'AggregationOut',
+      userID: this.authService.userName,
+    });
     this.gtmService.pushTag({
       event: 'AggregationIn',
       userID: this.authService.userName,

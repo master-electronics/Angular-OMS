@@ -43,6 +43,7 @@ import en from '@angular/common/locales/en';
 registerLocaleData(en);
 
 import { environment } from '../environments/environment';
+import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
 
 @NgModule({
   declarations: [
@@ -89,11 +90,11 @@ import { environment } from '../environments/environment';
       useClass: HttpHeaderInterceptor,
       multi: true,
     },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: ErrorInterceptor,
-    //   multi: true,
-    // },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
 
     {
       provide: APOLLO_NAMED_OPTIONS,

@@ -39,11 +39,11 @@ export class ErrorInterceptor implements HttpInterceptor {
           sessionStorage.setItem('userInfo', '');
           this.router.navigate(['/login']);
         }
-        if ([0].includes(err.status)) {
-          this.router.navigate(['/error'], {
-            queryParams: { err: err.status },
-          });
-        }
+        // if ([0].includes(err.status)) {
+        //   this.router.navigate(['/error'], {
+        //     queryParams: { err: err.status },
+        //   });
+        // }
         return throwError(err);
       })
     );

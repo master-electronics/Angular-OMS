@@ -21,6 +21,7 @@ import { ToteBarcodeRegex } from '../../shared/dataRegex';
 import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { AggregationInService, outsetContainer } from './aggregation-in.server';
 
 @Component({
   selector: 'aggregation-in',
@@ -46,20 +47,23 @@ export class AggregationInComponent
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private commonService: CommonService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private titleService: Title,
-    private verifyContainer: VerifyContainerForAggregationInGQL
+    private _commonService: CommonService,
+    private _route: ActivatedRoute,
+    private _router: Router,
+    private _titleService: Title,
+    private _verifyContainer: VerifyContainerForAggregationInGQL,
+    private _agInService: AggregationInService
   ) {
-    this.commonService.changeNavbar(this.title);
-    this.titleService.setTitle('agin');
+    this._agInService.changeOutsetContainer(null);
+    this._agInService.changeEndContainer(null);
+    this._commonService.changeNavbar(this.title);
+    this._titleService.setTitle('agin');
   }
 
   @ViewChild('containerNumber') containerInput!: ElementRef;
   ngOnInit(): void {
-    this.alertType = this.route.snapshot.queryParams['result'];
-    this.alertMessage = this.route.snapshot.queryParams['message'];
+    this.alertType = this._route.snapshot.queryParams['result'];
+    this.alertMessage = this._route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -75,7 +79,7 @@ export class AggregationInComponent
     }
     this.isLoading = true;
     this.subscription.add(
-      this.verifyContainer
+      this._verifyContainer
         .watch(
           {
             Container: {
@@ -127,21 +131,18 @@ export class AggregationInComponent
             this.isLoading = false;
             const container = res.data.findContainer[0];
             // if pass all naveigate to next page
-            const isRelocation =
-              container.ORDERLINEDETAILs[0].StatusID ===
-              environment.agInComplete_ID;
-            const toteID = container._id;
-            const Barcode = container.Barcode;
-            const OrderID = container.ORDERLINEDETAILs[0].OrderID;
-            const orderLineDetailID = container.ORDERLINEDETAILs[0]._id;
-            this.router.navigate(['agin/location'], {
-              queryParams: {
-                isRelocation,
-                OrderID,
-                Barcode,
-                orderLineDetailID,
-                toteID,
-              },
+            const outsetContainer: outsetContainer = {
+              toteID: container._id,
+              Barcode: container.Barcode,
+              OrderID: container.ORDERLINEDETAILs[0].OrderID,
+              orderLineDetailID: container.ORDERLINEDETAILs[0]._id,
+              isRelocation:
+                container.ORDERLINEDETAILs[0].StatusID ===
+                environment.agInComplete_ID,
+            };
+            this._agInService.changeOutsetContainer(outsetContainer);
+            this._router.navigate(['agin/location'], {
+              queryParams: outsetContainer,
             });
           },
           (error) => {

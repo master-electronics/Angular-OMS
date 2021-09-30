@@ -42,10 +42,11 @@ export class UserEventLogComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.filterForm.setValue({
+    this.filterForm.reset({
       user: '',
       module: '',
       target: '',
+      subTarget: '',
       timeRange: '',
     });
     this.startDate = null;
@@ -126,3 +127,4 @@ export class UserEventLogComponent implements OnInit {
     }
   }
 }
+null;

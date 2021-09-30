@@ -7,6 +7,7 @@ import { AggregationInComponent } from './aggregation-in.component';
 import { LocationComponent } from './location/location.component';
 import { AggregationInRoutingModule } from './aggregation-in.routing';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { AggregationInService } from './aggregation-in.server';
 // ng-zorro
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -16,9 +17,14 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { VerifyToteComponent } from './verify-tote/verify-tote.component';
 
 @NgModule({
-  declarations: [AggregationInComponent, LocationComponent],
+  declarations: [
+    AggregationInComponent,
+    LocationComponent,
+    VerifyToteComponent,
+  ],
   imports: [
     CommonModule,
     AggregationInRoutingModule,
@@ -35,6 +41,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzSkeletonModule,
     NzDividerModule,
   ],
+  providers: [AggregationInService],
   bootstrap: [AggregationInComponent],
 })
 export class AggregationInModule {}
