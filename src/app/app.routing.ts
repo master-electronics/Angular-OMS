@@ -67,6 +67,11 @@ const routes: Routes = [
             (m) => m.RelocateModule
           ),
       },
+      {
+        path: 'pick',
+        loadChildren: () =>
+          import('./pages/pick/pick.module').then((m) => m.PickModule),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

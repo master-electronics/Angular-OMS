@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AuthGuard } from '../../shared/services/auth-guard.service';
 import { AggregationOutComponent } from './aggregation-out.component';
-import { PickComponent } from './pick/pick.component';
+import { PickITNComponent } from './pick-itn/pick-itn.component';
+import { PickToteComponent } from './pick-tote/pick-tote.component';
 
 const routes: Routes = [
   { path: '', component: AggregationOutComponent },
   {
-    path: 'pick',
-    component: PickComponent,
-    canActivate: [AuthGuard],
+    path: 'picktote',
+    component: PickToteComponent,
+  },
+  {
+    path: 'pickitn',
+    component: PickITNComponent,
   },
 ];
 

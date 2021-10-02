@@ -4,9 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AggregationOutComponent } from './aggregation-out.component';
 import { AggregationOutRoutingModule } from './aggregation-out.routing';
-import { PickComponent } from './pick/pick.component';
+import { PickToteComponent } from './pick-tote/pick-tote.component';
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { AggregationOutService } from './aggregation-out.server';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -16,9 +17,10 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { PickITNComponent } from './pick-itn/pick-itn.component';
 
 @NgModule({
-  declarations: [AggregationOutComponent, PickComponent],
+  declarations: [AggregationOutComponent, PickToteComponent, PickITNComponent],
   imports: [
     CommonModule,
     AggregationOutRoutingModule,
@@ -35,6 +37,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzSkeletonModule,
     NzDividerModule,
   ],
+  providers: [AggregationOutService],
   bootstrap: [AggregationOutComponent],
 })
 export class AggregationOutModule {}

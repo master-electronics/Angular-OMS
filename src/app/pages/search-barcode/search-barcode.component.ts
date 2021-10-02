@@ -23,8 +23,6 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 
-const DistributionCenter = 'PH';
-
 @Component({
   selector: 'search-barcode',
   templateUrl: './search-barcode.component.html',
@@ -140,7 +138,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.search$ = this.searchOrder
           .watch(
             {
-              DistributionCenter: DistributionCenter,
+              DistributionCenter: environment.DistributionCenter,
               OrderNumber: barcodeSplit[0],
               NOSINumber: barcodeSplit[1],
             },

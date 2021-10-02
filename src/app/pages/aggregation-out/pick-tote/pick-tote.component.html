@@ -1,0 +1,118 @@
+<div *ngIf="locationInfo$ | async"></div>
+<div *ngIf="updateSQL$ | async"></div>
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="containerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-label nzRequired>Pick Tote in the List</nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="The input is not valid container!"
+          >
+            <input
+              nz-input
+              placeholder=" "
+              formControlName="containerNumber"
+              placeholder="Tote#"
+              nzSize="large"
+              type="text"
+              id="containerNumber"
+              name="containerNumber"
+              autocomplete="off"
+              #containerNumber
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item nz-row nzJustify="center">
+          <div nz-col nzSpan="13">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              (click)="onSubmit()"
+              [nzLoading]="isLoading"
+              [disabled]="isLoading"
+              nzSize="large"
+              class="w-full"
+            >
+              {{ buttonLabel }}
+            </button>
+          </div>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
+
+        <!-- Order container list -->
+        <table class="w-full">
+          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+            <th class="col-span-2">Location</th>
+            <th>Barcode</th>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let item of containerList"
+              class="grid grid-cols-3 gap-3 text-lg"
+            >
+              <td class="col-span-2">
+                <span>{{ item.Warehouse }}</span>
+                <span>-</span>
+                <span>{{ item.Row }}</span>
+                <span>-</span>
+                <span>{{ item.Aisle }}</span>
+                <span>-</span>
+                <span>{{ item.Section }}</span>
+                <span>-</span>
+                <span>{{ item.Shelf }}</span>
+                <span>-</span>
+                <span>{{ item.ShelfDetail }}</span>
+              </td>
+              <td>{{ item.Barcode }}</td>
+            </tr>
+            <tr
+              *ngFor="let item of selectedList"
+              class="text-green-500 grid grid-cols-3 gap-3 text-lg"
+            >
+              <td class="col-span-2">
+                <span>{{ item.Warehouse }}</span>
+                <span>-</span>
+                <span>{{ item.Row }}</span>
+                <span>-</span>
+                <span>{{ item.Aisle }}</span>
+                <span>-</span>
+                <span>{{ item.Section }}</span>
+                <span>-</span>
+                <span>{{ item.Shelf }}</span>
+                <span>-</span>
+                <span>{{ item.ShelfDetail }}</span>
+              </td>
+
+              <td>{{ item.Barcode }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>

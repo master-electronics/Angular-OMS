@@ -18,6 +18,7 @@ import {
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { of, throwError } from 'rxjs';
+import { AggregationOutService } from './aggregation-out.server';
 
 @Component({
   selector: 'aggregation-out',
@@ -48,7 +49,8 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     private router: Router,
     private titleService: Title,
     private pickOrder: PickOrderForAgOutGQL,
-    private verifyOrder: VerifyOrderForAgOutGQL
+    private verifyOrder: VerifyOrderForAgOutGQL,
+    private agOutService: AggregationOutService
   ) {
     this.commonService.changeNavbar(this.title);
     this.titleService.setTitle(this.title);
@@ -56,6 +58,10 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
 
   @ViewChild('orderNumber') orderInpt: ElementRef;
   ngOnInit(): void {
+    // reset
+    this.agOutService.changeContainerList(null);
+    this.agOutService.changeselectedList(null);
+    this.agOutService.changeContainerList(-1);
     // read info from previous page.
     this.alertType = this.route.snapshot.queryParams['result'];
     this.alertMessage = this.route.snapshot.queryParams['message'];
@@ -120,7 +126,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
           }
         }),
         map((res) => {
-          this.router.navigate(['/agout/pick'], {
+          this.router.navigate(['/agout/picktote'], {
             queryParams: {
               OrderNumber,
               NOSINumber,
