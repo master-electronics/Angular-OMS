@@ -72,20 +72,19 @@ export class PickITNComponent implements OnInit, AfterViewInit {
       }
       return !isEqual;
     });
-    if (count === 0) {
-      this.alertMessage = `ITN is not in the list.`;
-    }
     if (this.totalITNs === this.selectedList.length) {
       this.changeContainerList();
       this._router.navigate(['agout/picktote'], {
         queryParams: this._route.snapshot.queryParams,
       });
-    } else {
-      this.containerForm.reset({
-        containerNumber: '',
-      });
-      this.containerInput.nativeElement.select();
+    } else if (count === 0) {
+      this.alertMessage = `ITN is not in the list.`;
     }
+
+    this.containerForm.reset({
+      containerNumber: '',
+    });
+    this.containerInput.nativeElement.select();
     return;
   }
 
