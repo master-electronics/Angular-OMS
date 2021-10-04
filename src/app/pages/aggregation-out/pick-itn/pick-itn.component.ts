@@ -90,7 +90,7 @@ export class PickITNComponent implements OnInit, AfterViewInit {
 
   changeContainerList(): void {
     let containerList = this._agOutService.containerList;
-    const selectedContainerList = this._agOutService.selectedList;
+    const selectedContainerList = this._agOutService.selectedList || [];
     containerList = containerList.filter((node) => {
       const isEqual = node.Barcode === this._agOutService.pickedContainer;
       if (isEqual) {
