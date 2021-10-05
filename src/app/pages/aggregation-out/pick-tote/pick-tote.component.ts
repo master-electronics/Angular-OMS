@@ -95,6 +95,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               containerSet.add(node.Container);
               this.ITNsInOrder += node.InternalTrackingNumber + ',';
             });
+            this.agOutService.changeITNsInOrder(this.ITNsInOrder);
             this.containerList = [...containerSet];
             this.totalTotes = this.containerList.length;
             this.isLoading = res.loading;
@@ -200,7 +201,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           Event: `Ag Out`,
           Module: `Ag Out`,
           Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
-          SubTarget: this.ITNsInOrder.slice(0, -1),
+          SubTarget: this.agOutService.ITNsInOrder.slice(0, -1),
         },
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
