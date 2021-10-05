@@ -126,16 +126,14 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   selectContainer(): void {
-    let count = 0;
-    this.containerList.some((node) => {
-      const isEqual =
-        node.Barcode === this.containerForm.get('containerNumber').value;
-      if (isEqual) {
+    const inList = this.containerList.some((node) => {
+      if (node.Barcode === this.containerForm.get('containerNumber').value) {
         this.agOutService.changePickedContainer(node.Barcode);
-        count += 1;
+        return true;
       }
+      return false;
     });
-    if (count === 0) {
+    if (!inList) {
       this.alertMessage = `Container is not in the list.`;
       this.containerInput.nativeElement.select();
       return;
