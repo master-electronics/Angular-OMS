@@ -1,3 +1,4 @@
+<div *ngIf="updateAfterAgIn$ | async"></div>
 <div class="container mx-auto px-2 py-2 md:mt-4">
   <form
     nz-form
@@ -7,38 +8,23 @@
   >
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-        <div *ngIf="endContainer" class="grid grid-rows-3">
-          <p *ngIf="endContainer.type === 'shelf'" class="text-xl font-bold">
-            Place to Shelf
-          </p>
-          <p *ngIf="endContainer.type === 'tote'" class="text-xl font-bold">
-            Conbine into another tote
-          </p>
-          <p class="text-lg">{{ endContainer.Barcode }}</p>
-          <p *ngIf="endContainer.type === 'shelf'" class="text-lg">
-            Scan the start tote
-          </p>
-          <p *ngIf="endContainer.type === 'tote'" class="text-lg">
-            Scan the end tote again
-          </p>
-        </div>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired>Tote</nz-form-label>
+          <nz-form-label nzRequired>Scan ITNs in the tote</nz-form-label>
           <nz-form-control
             nzHasFeedback
-            nzErrorTip="The input is not valid container!"
+            nzErrorTip="The input is not valid ITN!"
           >
             <input
               nz-input
               placeholder=" "
-              formControlName="container"
-              placeholder="Barcode"
+              formControlName="containerNumber"
+              placeholder="ITN#"
               nzSize="large"
               type="text"
-              id="container"
-              name="container"
+              id="containerNumber"
+              name="containerNumber"
               autocomplete="off"
-              #container
+              #containerNumber
             />
           </nz-form-control>
         </nz-form-item>
@@ -51,6 +37,8 @@
               nzType="primary"
               (click)="onSubmit()"
               nzSize="large"
+              [nzLoading]="isLoading"
+              [disabled]="isLoading"
               class="w-full"
             >
               Submit
@@ -74,6 +62,24 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
+
+        <!-- Order container list -->
+        <table class="w-full">
+          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+            <th>ITN</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemList" class="text-lg">
+              <td>{{ item }}</td>
+            </tr>
+            <tr
+              *ngFor="let item of selectedList"
+              class="text-green-500 text-lg"
+            >
+              <td>{{ item }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </form>

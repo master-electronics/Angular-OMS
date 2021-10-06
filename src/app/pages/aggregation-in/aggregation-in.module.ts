@@ -18,12 +18,14 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { VerifyToteComponent } from './verify-tote/verify-tote.component';
+import { VerifyITNComponent } from './verify-itn/verify-itn.component';
 
 @NgModule({
   declarations: [
     AggregationInComponent,
     LocationComponent,
     VerifyToteComponent,
+    VerifyITNComponent,
   ],
   imports: [
     CommonModule,

@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  HostListener,
-  Inject,
-} from '@angular/core';
+import { Component, OnInit, HostListener, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
@@ -70,8 +64,7 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private commonService: CommonService,
-    @Inject(DOCUMENT) private document: any,
-    private elementRef: ElementRef
+    @Inject(DOCUMENT) private document: any
   ) {
     this.elem = document.documentElement;
   }

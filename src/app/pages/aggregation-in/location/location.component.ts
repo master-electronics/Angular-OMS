@@ -371,7 +371,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             OrderNumber: this.OrderNumber,
             NOSINumber: this.NOSINumber,
             containerID: container._id,
-            ITNsInTote: this.ITNsInTote,
+            ITNsInTote: this.ITNsInTote.slice(0, -1),
             FileKeyListforAgIn: this.FileKeyListforAgIn,
           };
           this._agInService.changeEndContainer(endContainer);

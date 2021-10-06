@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AggregationInComponent } from './aggregation-in.component';
 import { LocationComponent } from './location/location.component';
+import { VerifyITNComponent } from './verify-itn/verify-itn.component';
 import { VerifyToteComponent } from './verify-tote/verify-tote.component';
 
 const routes: Routes = [
@@ -14,6 +15,10 @@ const routes: Routes = [
   {
     path: 'verifytote',
     component: VerifyToteComponent,
+  },
+  {
+    path: 'verifyitn',
+    component: VerifyITNComponent,
   },
 ];
 
