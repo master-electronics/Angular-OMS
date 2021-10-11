@@ -1,0 +1,19 @@
+<nz-steps nz-row class="mb-4">
+  <nz-step nzTitle="Scan ITN" [nzStatus]="tabStatus[0]" nzIcon="scan"></nz-step>
+  <nz-step
+    nzTitle="Global Messages"
+    [nzStatus]="tabStatus[1]"
+    nzIcon="message"
+  ></nz-step>
+  <nz-step
+    nzTitle="Verification"
+    [nzStatus]="tabStatus[2]"
+    nzIcon="solution"
+  ></nz-step>
+  <nz-step
+    [nzStatus]="tabStatus[3]"
+    nzTitle="Repack"
+    nzStatus="wait"
+    nzIcon="dropbox"
+  ></nz-step>
+</nz-steps>

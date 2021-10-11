@@ -1,0 +1,24 @@
+<div class="container px-4 mx-auto">
+  <!-- order table -->
+  <nz-table
+    #table
+    [nzData]="fetchTable$ | async"
+    [nzPageSize]="20"
+    nzShowSizeChanger
+  >
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Distribution center</th>
+        <th>Zoom</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of table.data">
+        <td>{{ user.Name }}</td>
+        <td>{{ user.Zoom }}</td>
+        <td>{{}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

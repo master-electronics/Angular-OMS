@@ -65,18 +65,22 @@ export class UserEventLogComponent implements OnInit {
     let limit = 200;
     if (user) {
       eventLog['UserID'] = user;
+      limit = 500;
     }
     if (module) {
       eventLog['Module'] = module;
+      limit = 500;
     }
     if (target) {
       eventLog['Target'] = target;
+      limit = null;
     }
     if (subTarget) {
       eventLog['SubTarget'] = subTarget;
+      limit = null;
     }
-    if (Object.keys(eventLog).length) {
-      limit = 500;
+    if (this.startDate) {
+      limit = null;
     }
     this.isLoading = true;
     this.fetchTable$ = this.fetchEventLog

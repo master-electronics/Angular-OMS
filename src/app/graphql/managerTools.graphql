@@ -1,0 +1,18 @@
+query fetchUserAndZone {
+  findUserInfo {
+    Name
+    Zone {
+      DistributionCenter
+      Zone
+    }
+  }
+}
+
+mutation updateUserZone(
+  $UserInfo: updateUserInfo!
+  $_id: Int
+  $ZoneID: Int
+  $Name: String
+) {
+  updateUserInfo(UserInfo: $UserInfo, _id: $_id, ZoneID: $ZoneID)
+}

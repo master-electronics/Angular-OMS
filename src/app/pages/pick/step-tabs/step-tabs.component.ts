@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { QualityControlService } from '../quality-control.server';
+import { PickService } from '../pick.server';
 
 @Component({
   selector: 'step-tabs',
@@ -10,12 +10,12 @@ export class StepTabsComponent implements OnInit, OnDestroy {
   tabStatus = ['process', 'wait', 'wait', 'wait'];
 
   private subscription: Subscription = new Subscription();
-  constructor(private qcService: QualityControlService) {
+  constructor(private pickService: PickService) {
     //
   }
   ngOnInit(): void {
     this.subscription.add(
-      this.qcService.tabStatus$.subscribe((res) => (this.tabStatus = res))
+      this.pickService.tabStatus$.subscribe((res) => (this.tabStatus = res))
     );
   }
 

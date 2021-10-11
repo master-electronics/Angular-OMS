@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export class QualityControlService {
   // Tab
-  private _tabStatus = new BehaviorSubject<any>([
+  private _tabStatus = new BehaviorSubject<string[]>([
     'process',
     'wait',
     'wait',
