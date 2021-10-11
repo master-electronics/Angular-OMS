@@ -100,7 +100,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               OrderNum: detail.Order.OrderNumber?.trim(),
               NOSI: detail.Order.NOSINumber?.trim(),
               OrderLine: detail.OrderLine.OrderLineNumber,
-              PartNum: detail.OrderLine.PartNumber?.trim().replace("'", '%27'),
+              PartNum: detail.OrderLine.PartNumber?.trim(),
               PRC: detail.OrderLine.ProductCode?.trim(),
               Quantity: detail.Quantity,
               ParentITN: detail.ParentITN?.trim() || '',
