@@ -76,7 +76,7 @@ export class UserEventLogComponent implements OnInit {
       eventLog['SubTarget'] = subTarget;
     }
     if (Object.keys(eventLog).length) {
-      limit = null;
+      limit = 500;
     }
     this.isLoading = true;
     this.fetchTable$ = this.fetchEventLog
