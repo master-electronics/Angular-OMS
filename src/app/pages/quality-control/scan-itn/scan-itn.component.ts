@@ -72,6 +72,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
           { fetchPolicy: 'network-only' }
         )
         .pipe(
+          // check vaild
           tap((res) => {
             if (!res.data.findOrderLineDetail?.length) {
               throw 'Can not find this ITN';

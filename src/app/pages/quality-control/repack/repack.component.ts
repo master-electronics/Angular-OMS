@@ -37,7 +37,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonStyles = 'bg-green-500';
   buttonLabel = 'submit';
   alertMessage = '';
-  inProcess = 0;
   itemInfo: itemParams;
   private subscription = new Subscription();
   constructor(
@@ -144,17 +143,20 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             // Setup graphql queries
-            const createEventLog = this.createEventLog.mutate({
-              EventLog: {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
-                Event: `Repack to ${this.containerForm.value.container}`,
-                Module: `qc`,
-                Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
-                SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
-              },
-            });
+
+            const EventLog = {
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              Event: `Repack to ${this.containerForm.value.container}`,
+              Module: `qc`,
+              Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
+              SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
+            };
+            if (!inProcess) {
+              EventLog.Event = 'Order Done ' + EventLog.Event;
+            }
+            const createEventLog = this.createEventLog.mutate({ EventLog });
             const updateDetail = this.updateOrderLineDetail.mutate({
               InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
               OrderLineDetail: {

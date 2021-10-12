@@ -1,0 +1,56 @@
+<div class="container px-4 py-4 mx-auto">
+  <form nz-form [formGroup]="filterForm">
+    <div nz-row nzGutter="8" nzJustify="space-between">
+      <nz-form-item nz-col nzSpan="6">
+        <nz-form-control
+          nzHasFeedback
+          nzErrorTip="The input is not valid barcode!"
+        >
+          <input
+            nz-input
+            formControlName="target"
+            placeholder="filter by Order-NOSI"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-col nzSpan="8">
+        <button
+          nz-button
+          [nzType]="'primary'"
+          (click)="onSubmit()"
+          [disabled]="isLoading"
+          class="mr-4"
+        >
+          Search
+        </button>
+        <button nz-button (click)="resetForm()">Clear</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Event log table -->
+  <nz-table
+    #table
+    [nzData]="fetchTable$ | async"
+    [nzPageSize]="20"
+    nzShowSizeChanger
+  >
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Ag In</th>
+        <th>Ag out</th>
+        <th>QC</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data">
+        <td>{{ data.User }}</td>
+        <td>{{ data.AgIn }}</td>
+        <td>{{ data.AgOut }}</td>
+        <td>{{ data.QC }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
