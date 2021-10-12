@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
-import { QualityControlService } from '../quality-control.server';
+import { itemParams, QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
@@ -38,12 +38,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonLabel = 'submit';
   alertMessage = '';
   inProcess = 0;
-  urlParams = {};
+  itemInfo: itemParams;
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute,
     private titleService: Title,
     private authService: AuthenticationService,
     private qcService: QualityControlService,
@@ -65,8 +64,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.urlParams = this.route.snapshot.queryParams;
     this.qcService.changeTab(['finish', 'finish', 'finish', 'process']);
+    this.itemInfo = this.qcService.itemInfo;
+    if (!this.itemInfo) {
+      this.router.navigate(['qc']);
+      return;
+    }
   }
 
   @ViewChild('container') containerInput!: ElementRef;
@@ -94,8 +97,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             Order: {
               DistributionCenter: environment.DistributionCenter,
-              OrderNumber: this.urlParams['OrderNum'],
-              NOSINumber: this.urlParams['NOSI'],
+              OrderNumber: this.itemInfo.OrderNumber,
+              NOSINumber: this.itemInfo.NOSI,
             },
           },
           { fetchPolicy: 'network-only' }
@@ -115,7 +118,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (targetContainer.ORDERLINEDETAILs.length) {
               targetContainer.ORDERLINEDETAILs.forEach((itn) => {
                 if (
-                  itn.InternalTrackingNumber !== this.urlParams['ITN'] &&
+                  itn.InternalTrackingNumber !==
+                    this.itemInfo.InternalTrackingNumber &&
                   itn.StatusID < environment.agOutComplete_ID
                 )
                   throw 'This tote is not empty.';
@@ -129,7 +133,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             let inProcess = 0;
             let sourceContainer: number;
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
-              if (line.InternalTrackingNumber !== this.urlParams['ITN']) {
+              if (
+                line.InternalTrackingNumber !==
+                this.itemInfo.InternalTrackingNumber
+              ) {
                 line.StatusID !== environment.qcComplete_ID && ++inProcess;
               } else {
                 sourceContainer = line.ContainerID;
@@ -144,12 +151,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 ),
                 Event: `Repack to ${this.containerForm.value.container}`,
                 Module: `qc`,
-                Target: `${this.urlParams['OrderNum']}-${this.urlParams['NOSI']}`,
-                SubTarget: `${this.urlParams['ITN']}`,
+                Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
+                SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
               },
             });
             const updateDetail = this.updateOrderLineDetail.mutate({
-              InternalTrackingNumber: this.urlParams['ITN'],
+              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
               OrderLineDetail: {
                 StatusID: environment.qcComplete_ID,
                 ContainerID: targetContainer._id,
@@ -180,8 +187,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             const updateMerpLog = this.updateMerpLastLine.mutate({
-              OrderNumber: this.urlParams['OrderNum'],
-              NOSINumber: this.urlParams['NOSI'],
+              OrderNumber: this.itemInfo.OrderNumber,
+              NOSINumber: this.itemInfo.NOSI,
               Status: '60',
               UserOrStatus: 'AGGREGATION-IN',
             });
@@ -208,7 +215,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               const needCleanup = targetContainer.ORDERLINEDETAILs.some(
                 (itn) => {
                   return (
-                    itn.InternalTrackingNumber !== this.urlParams['ITN'] &&
+                    itn.InternalTrackingNumber !==
+                      this.itemInfo.InternalTrackingNumber &&
                     itn.StatusID >= environment.agOutComplete_ID
                   );
                 }
@@ -228,10 +236,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(
           (res: any) => {
             let type = 'info';
-            let message = `QC complete for ${this.urlParams['ITN']}`;
+            let message = `QC complete for ${this.itemInfo.InternalTrackingNumber}`;
             if (res.updateMerpLog) {
               type = 'success';
-              message = `QC complete for ${this.urlParams['ITN']}\nQC complete for Order ${this.urlParams['OrderNum']}`;
+              message = `QC complete for ${this.itemInfo.InternalTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
               if (
                 !res.updateMerpLog.data.updateMerpOrderStatus.success ||
                 !res.updateMerpLog.data.clearMerpTote.success

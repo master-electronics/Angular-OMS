@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { QcGlobalMessageQuery } from 'src/app/graphql/qualityControl.graphql-gen';
 
 export class QualityControlService {
   // Tab
@@ -14,12 +15,12 @@ export class QualityControlService {
   }
 
   // global messages
-  private _globalMessage = new BehaviorSubject<any>([]);
+  private _globalMessage = new BehaviorSubject<QcGlobalMessageQuery>(null);
   public globalMessage$ = this._globalMessage.asObservable();
-  public changeGlobalMessages(messages: any): void {
-    this._globalMessage.next(messages!);
+  public changeGlobalMessages(messages: QcGlobalMessageQuery): void {
+    this._globalMessage.next(messages);
   }
-  public get globalMessages(): string[] {
+  public get globalMessages(): QcGlobalMessageQuery {
     return this._globalMessage.value;
   }
 
@@ -31,20 +32,29 @@ export class QualityControlService {
   public get qcStart(): number {
     return this._qcStartTime.value;
   }
+
+  // item info
+  private _itemInfo = new BehaviorSubject<itemParams>(null);
+  public changeItemParams(item: itemParams): void {
+    this._itemInfo.next(item);
+  }
+  public get itemInfo(): itemParams {
+    return this._itemInfo.value;
+  }
 }
 
-export interface urlParams {
-  ITN: string;
-  CustomerNum: string;
-  DC: string;
-  OrderNum: string;
-  OrderLine: number;
+export interface itemParams {
+  InternalTrackingNumber: string;
+  CustomerNumber: string;
+  DistributionCenter: string;
+  OrderNumber: string;
+  OrderLineNumber: string;
   NOSI: string;
-  PRC: string;
-  PartNum: string;
+  ProductCode: string;
+  PartNumber: string;
   Quantity: number;
   ParentITN: string;
-  ROHS: number;
-  coo: string;
+  ROHS: boolean;
+  CountryOfOrigin: string;
   DateCode: string;
 }

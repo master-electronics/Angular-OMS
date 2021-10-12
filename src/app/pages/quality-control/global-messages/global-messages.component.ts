@@ -2,18 +2,12 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { QualityControlService } from '../quality-control.server';
-import { QcGlobalMessageGQL } from '../../../graphql/qualityControl.graphql-gen';
+import {
+  QcGlobalMessageGQL,
+  QcGlobalMessageQueryVariables,
+} from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { catchError, map } from 'rxjs/operators';
-
-interface globalMessageParams {
-  PartNumber: string;
-  ProductCode: string;
-  CustomerNumber: string;
-  DistributionCenter: string;
-  OrderNumber: string;
-  OrderLineNumber: string;
-}
 
 @Component({
   selector: 'global-messages',
@@ -36,15 +30,25 @@ export class GlobalMessagesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const {
+      CustomerNumber,
+      DistributionCenter,
+      OrderNumber,
+      OrderLineNumber,
+      PartNumber,
+      ProductCode,
+    } = this.qcService.itemInfo;
+    if (!DistributionCenter) {
+      this.router.navigate(['qc']);
+    }
     this.qcService.changeTab(['finish', 'process', 'wait', 'wait']);
-    const urlParams = this.route.snapshot.queryParams;
-    const params: globalMessageParams = {
-      CustomerNumber: urlParams['CustomerNum'],
-      DistributionCenter: urlParams['DC'],
-      OrderNumber: urlParams['OrderNum'],
-      OrderLineNumber: urlParams['OrderLine'],
-      PartNumber: urlParams['PartNum'],
-      ProductCode: urlParams['PRC'],
+    const params: QcGlobalMessageQueryVariables = {
+      CustomerNumber,
+      DistributionCenter,
+      OrderNumber,
+      OrderLineNumber,
+      PartNumber,
+      ProductCode,
     };
     this.getGlobalMessage(params);
   }
@@ -57,11 +61,11 @@ export class GlobalMessagesComponent implements OnInit {
 
   orderComments = [];
   partComments = [];
-  getGlobalMessage(params: globalMessageParams): void {
+  getGlobalMessage(params: QcGlobalMessageQueryVariables): void {
     this.isLoading = true;
     this.globalMessage$ = this.qcGlobalMessage
-      .watch(params, { fetchPolicy: 'no-cache' })
-      .valueChanges.pipe(
+      .fetch(params, { fetchPolicy: 'no-cache' })
+      .pipe(
         map((res) => {
           this.orderComments = res.data.fetchOrderLineMessage.comments;
           this.partComments = res.data.fetchPartMessage.comments;

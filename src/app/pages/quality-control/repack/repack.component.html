@@ -4,13 +4,13 @@
     [nzColumn]="{ xxl: 3, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"
   >
     <nz-descriptions-item nzTitle="ITN">{{
-      this.urlParams['ITN']
+      this.itemInfo.InternalTrackingNumber
     }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="PRC">{{
-      this.urlParams['PRC']
+      this.itemInfo.ProductCode
     }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="PartNumber">{{
-      this.urlParams['PartNum']
+      this.itemInfo.PartNumber
     }}</nz-descriptions-item>
   </nz-descriptions>
 

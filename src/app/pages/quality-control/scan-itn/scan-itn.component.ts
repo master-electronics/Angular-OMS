@@ -9,7 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { QualityControlService, urlParams } from '../quality-control.server';
+import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
@@ -46,6 +46,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.alertMessage = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(['process', 'wait', 'wait', 'wait']);
     this.qcService.changeGlobalMessages(null);
+    this.qcService.changeItemParams(null);
   }
 
   ngAfterViewInit(): void {
@@ -93,24 +94,23 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(
           (res) => {
             const detail = res.data.findOrderLineDetail[0];
-            const queryParams: urlParams = {
-              ITN: ITN,
-              CustomerNum: detail.Order.CustomerNumber?.trim() || '',
-              DC: detail.Order.DistributionCenter?.trim(),
-              OrderNum: detail.Order.OrderNumber?.trim(),
+            const itemInfo: itemParams = {
+              InternalTrackingNumber: ITN,
+              CustomerNumber: detail.Order.CustomerNumber?.trim() || '',
+              DistributionCenter: detail.Order.DistributionCenter?.trim(),
+              OrderNumber: detail.Order.OrderNumber?.trim(),
               NOSI: detail.Order.NOSINumber?.trim(),
-              OrderLine: detail.OrderLine.OrderLineNumber,
-              PartNum: detail.OrderLine.PartNumber?.trim().replace("'", ''),
-              PRC: detail.OrderLine.ProductCode?.trim(),
+              OrderLineNumber: detail.OrderLine.OrderLineNumber.toString(),
+              PartNumber: detail.OrderLine.PartNumber?.trim(),
+              ProductCode: detail.OrderLine.ProductCode?.trim(),
               Quantity: detail.Quantity,
               ParentITN: detail.ParentITN?.trim() || '',
-              ROHS: detail.ROHS ? 1 : 0,
+              ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
-              coo: detail.CountryOfOrigin?.trim() || '',
+              CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
             };
-            this.router.navigate(['/qc/globalmessages'], {
-              queryParams: queryParams,
-            });
+            this.qcService.changeItemParams(itemInfo);
+            this.router.navigate(['/qc/globalmessages']);
             this.isLoading = false;
           },
           (error) => {

@@ -7,12 +7,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+import { forkJoin, Observable, Subscription, throwError } from 'rxjs';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
-import { QualityControlService } from '../quality-control.server';
+import { itemParams, QualityControlService } from '../quality-control.server';
 import {
   FetchProductInfoFromMerpGQL,
   HoldQcOrderGQL,
@@ -37,15 +37,17 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   productURL = 'https://www.onlinecomponents.com/en/grayhill/';
   specSheetURL = 'https://www.onlinecomponents.com/en/datasheet/';
   isLoading = false;
+  isInit = true;
   alertType = 'error';
   alertMessage = '';
   isEditable = false;
-  urlParams;
   UnitOfMeasure = 'loading';
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
   countryData = Countries;
-  printITN$;
+  itemInfo: itemParams;
+  printITN$ = new Observable();
+  productInfo$ = new Observable();
 
   countMethods = [
     { id: 1, content: 'Factory bag' },
@@ -58,8 +60,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   booleanOptions = [
-    { id: '1', name: 'Yes' },
-    { id: '0', name: 'No' },
+    { id: true, name: 'Yes' },
+    { id: false, name: 'No' },
   ];
 
   COOFilter(
@@ -101,7 +103,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute,
     private commonService: CommonService,
     private titleService: Title,
     private qcService: QualityControlService,
@@ -115,17 +116,19 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.titleService.setTitle('qc/verifypack');
   }
-  isInit = true;
-  productInfo$;
+
   ngOnInit(): void {
     this.qcService.changeTab(['finish', 'finish', 'process', 'wait']);
     // Set up urlParams
-    this.urlParams = { ...this.route.snapshot.queryParams };
-    this.urlParams.coo = this.urlParams.coo ? this.urlParams.coo : 'Unknown';
-    this.urlParams.Quantity = Number(this.urlParams.Quantity);
+    const itemInfo = this.qcService.itemInfo;
+    if (!itemInfo) {
+      this.router.navigate(['qc']);
+      return;
+    }
+    itemInfo.CountryOfOrigin = itemInfo.CountryOfOrigin || 'Unknown';
     // Set up for html element
     let selectedCountry = this.countryData.find(
-      (element) => element.name.substring(0, 2) === this.urlParams.coo
+      (element) => element.name.substring(0, 2) === itemInfo.CountryOfOrigin
     );
     selectedCountry ||
       (selectedCountry = this.countryData.find(
@@ -133,16 +136,17 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       ));
     // set html by urlParams
     this.verifyPack.setValue({
-      dateCode: this.urlParams.DateCode || '',
-      ROHS: this.urlParams.ROHS,
+      dateCode: itemInfo.DateCode || '',
+      ROHS: itemInfo.ROHS,
       countMethods: '',
       countryOfOrigin: selectedCountry._id,
     });
+    this.itemInfo = itemInfo;
 
     // fetch infor from merp
     this.productInfo$ = this.fetchProductInfoFromMerp
       .fetch({
-        ProductList: [this.urlParams.PRC.padEnd(3) + this.urlParams.PartNum],
+        ProductList: [itemInfo.ProductCode.padEnd(3) + itemInfo.PartNumber],
       })
       .pipe(
         map((res) => {
@@ -155,8 +159,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.fetchProductInfoFromMerp[0].HazardMaterialLevel.trim();
             this.HazardMaterialLevel = tmp === 'N' || !tmp ? false : true;
             this.imgURL = `${this.imgURL}${this.MICPartNumber}.jpg`;
-            this.productURL = `${this.productURL}${this.urlParams.PartNum}-${this.MICPartNumber}.html`;
-            this.specSheetURL = `${this.specSheetURL}${this.urlParams.PartNum}-${this.MICPartNumber}/`;
+            this.productURL = `${this.productURL}${itemInfo.PartNumber}-${this.MICPartNumber}.html`;
+            this.specSheetURL = `${this.specSheetURL}${itemInfo.PartNumber}-${this.MICPartNumber}/`;
           }
           this.isInit = false;
           return res;
@@ -191,25 +195,27 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       cooValue = cooValue.substring(0, 2);
     }
 
+    // update itemInfo
+    this.itemInfo.ROHS = this.verifyPack.get('ROHS').value;
+    this.itemInfo.CountryOfOrigin = cooValue;
+    this.itemInfo.DateCode = this.verifyPack.get('dateCode').value;
+    this.qcService.changeItemParams(this.itemInfo);
+
+    // send query
     const orderInfo = {
-      InternalTrackingNumber: this.urlParams.ITN,
+      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
       DateCode: this.verifyPack.get('dateCode').value,
       CountryOfOrigin: cooValue,
-      ROHS: this.verifyPack.get('ROHS').value === '1' ? 'Y' : 'N',
+      ROHS: this.verifyPack.get('ROHS').value ? 'Y' : 'N',
       CountMethod: this.verifyPack.get('countMethods').value,
     };
-
-    this.urlParams.ROHS = this.verifyPack.get('ROHS').value;
-    this.urlParams.coo = cooValue;
-    this.urlParams.DateCode = this.verifyPack.get('dateCode').value;
-
     const updateMerp = this.updateMerp.mutate(orderInfo);
     const updateWms = this.updateWms.mutate({
-      InternalTrackingNumber: this.urlParams.ITN,
+      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
       OrderLineDetail: {
-        ROHS: this.urlParams.ROHS === '1' ? true : false,
-        CountryOfOrigin: this.urlParams.coo,
-        DateCode: this.urlParams.DateCode,
+        ROHS: this.itemInfo.ROHS,
+        CountryOfOrigin: this.itemInfo.CountryOfOrigin,
+        DateCode: this.itemInfo.DateCode,
       },
     });
 
@@ -223,21 +229,19 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       forkJoin(updateQuery).subscribe(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (res: any) => {
-          let type: string;
-          let message: string;
-          if (!res.updateMerp.data.changeQCLineInfo.success) {
-            type = 'error';
-            message = `QCCOMPELETE: ${res.updateMerp.data.changeQCLineInfo.message}\n`;
-          }
+          let type = '';
+          let message = '';
+          // if (!res.updateMerp.data.changeQCLineInfo.success) {
+          //   type = 'error';
+          //   message = `QCCOMPELETE: ${res.updateMerp.data.changeQCLineInfo.message}\n`;
+          // }
           if (res.updateWms && !res.updateWms.data.updateOrderLineDetail[0]) {
             type = 'error';
             message += `Fail to update SQL`;
           }
           this.isLoading = false;
           if (!type) {
-            this.router.navigate(['qc/repack'], {
-              queryParams: this.urlParams,
-            });
+            this.router.navigate(['qc/repack']);
             return;
           }
           this.router.navigate(['qc'], {
@@ -249,7 +253,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
-              message: `${this.urlParams.ITN} failed\n${error}`,
+              message: `${this.itemInfo.InternalTrackingNumber} failed\n${error}`,
             },
           });
         }
@@ -276,7 +280,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.printITN$ = this.printITN
       .mutate({
-        InternalTrackingNumber: this.urlParams.ITN,
+        InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
         Station: this.commonService.printerInfo,
       })
       .pipe(
@@ -331,7 +335,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   onHold(): void {
     const Status = this.holdForm.get('holdReason').value;
     const qcHoldOrderInfo = {
-      InternalTrackingNumber: this.urlParams.ITN,
+      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
       StatusID: environment.warehouseHold_ID,
@@ -339,8 +343,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         Event: `Hold on ${String(Status).padStart(2, '3')}`,
         Module: `qc`,
-        Target: `${this.urlParams.OrderNum}-${this.urlParams.NOSI}`,
-        SubTarget: `${this.urlParams.ITN}`,
+        Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
+        SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
       },
     };
     this.isLoading = true;
@@ -362,10 +366,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = 'error';
             message = message.concat(`Fail to update SQL`);
           }
-          message = `${this.urlParams.ITN} hold failed\n`.concat(message);
+          message =
+            `${this.itemInfo.InternalTrackingNumber} hold failed\n`.concat(
+              message
+            );
           if (!type) {
             type = `warning`;
-            message = `${this.urlParams.ITN} is on hold.`;
+            message = `${this.itemInfo.InternalTrackingNumber} is on hold.`;
           }
           this.sendGTM();
           this.router.navigate(['qc'], {
@@ -373,11 +380,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         (error) => {
-          this.sendGTM();
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
-              message: `${this.urlParams.ITN} hold failed.\n${error}`,
+              message: `${this.itemInfo.InternalTrackingNumber} hold failed.\n${error}`,
             },
           });
           this.isLoading = false;

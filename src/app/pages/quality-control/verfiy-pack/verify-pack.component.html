@@ -42,10 +42,10 @@
     <div nz-col [nzSpan]="20">
       <nz-descriptions nzBordered>
         <nz-descriptions-item nzTitle="ITN">{{
-          this.urlParams.ITN
+          this.itemInfo.InternalTrackingNumber
         }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="PRC">{{
-          this.urlParams.PRC
+          this.itemInfo.ProductCode
         }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Links">
           <div class="grid grid-cols-2">
@@ -54,11 +54,11 @@
           </div>
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="PartNumber" [nzSpan]="24">{{
-          this.urlParams.PartNum
+          this.itemInfo.PartNumber
         }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Quantity">
           <span class="text-2xl font-bold">
-            {{ this.urlParams.Quantity }}({{ this.UnitOfMeasure }})</span
+            {{ this.itemInfo.Quantity }}({{ this.UnitOfMeasure }})</span
           >
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="HML">
