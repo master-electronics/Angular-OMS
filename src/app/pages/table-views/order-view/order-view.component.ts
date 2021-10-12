@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchOrderViewGQL } from '../../../graphql/tableViews.graphql-gen';
@@ -27,14 +27,13 @@ interface ColumnItem {
   selector: 'order-view',
   templateUrl: './order-view.component.html',
 })
-export class OrderViewComponent implements OnInit, OnDestroy {
+export class OrderViewComponent implements OnInit {
   title = 'Order View';
   message = '';
   messageType = 'error';
   searchType: string;
   OrderInfo$: Observable<any>;
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private commonService: CommonService,
     private fetchOrderView: FetchOrderViewGQL
@@ -115,9 +114,5 @@ export class OrderViewComponent implements OnInit, OnDestroy {
 
   trackByName(_: number, item: ColumnItem): string {
     return item.name;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

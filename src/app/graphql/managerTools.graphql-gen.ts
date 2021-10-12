@@ -677,189 +677,42 @@ export type UpdateUserInfo = {
   ZoneID?: Maybe<Scalars['Int']>;
 };
 
-export type FetchOrderViewQueryVariables = Types.Exact<{
-  filter?: Types.Maybe<Types.OrderViewFilter>;
-}>;
+export type FetchUserAndZoneQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type FetchOrderViewQuery = (
-  { __typename?: 'Query' }
-  & { fetchOrderView?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'orderView' }
-    & Pick<Types.OrderView, 'OrderNumber' | 'NOSINumber' | 'Status' | 'Priority' | 'ShippingMethod' | 'Unpicked' | 'Aggregated' | 'InProcess'>
-  )>>> }
-);
-
-export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
-  Order: Types.SearchOrder;
-}>;
-
-
-export type FetchOrderDetailforitnViewQuery = (
-  { __typename?: 'Query' }
-  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Order' }
-    & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
-      & { Status: (
-        { __typename?: 'OrderStatus' }
-        & Pick<Types.OrderStatus, 'Name'>
-      ), OrderLine: (
-        { __typename?: 'OrderLine' }
-        & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber'>
-      ), Container: (
-        { __typename?: 'Container' }
-        & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-      ) }
-    )>>> }
-  )>>> }
-);
-
-export type FetchItnStatusViewQueryVariables = Types.Exact<{ [key: string]: never; }>;
-
-
-export type FetchItnStatusViewQuery = (
-  { __typename?: 'Query' }
-  & { fetchITNStatusView?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'ITNStatusView' }
-    & Pick<Types.ItnStatusView, 'ID' | 'Status' | 'Number'>
-  )>>> }
-);
-
-export type FetchUserInfoQueryVariables = Types.Exact<{ [key: string]: never; }>;
-
-
-export type FetchUserInfoQuery = (
+export type FetchUserAndZoneQuery = (
   { __typename?: 'Query' }
   & { findUserInfo?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserInfo' }
-    & Pick<Types.UserInfo, '_id' | 'Name'>
+    & Pick<Types.UserInfo, 'Name'>
+    & { Zone?: Types.Maybe<(
+      { __typename?: 'Zone' }
+      & Pick<Types.Zone, 'DistributionCenter' | 'Zone'>
+    )> }
   )>>> }
 );
 
-export type FetchEventLogQueryVariables = Types.Exact<{
-  EventLog: Types.SearchEventLog;
-  startDate?: Types.Maybe<Types.Scalars['String']>;
-  endDate?: Types.Maybe<Types.Scalars['String']>;
-  limit?: Types.Maybe<Types.Scalars['Int']>;
+export type UpdateUserZoneMutationVariables = Types.Exact<{
+  UserInfo: Types.UpdateUserInfo;
+  _id?: Types.Maybe<Types.Scalars['Int']>;
+  ZoneID?: Types.Maybe<Types.Scalars['Int']>;
+  Name?: Types.Maybe<Types.Scalars['String']>;
 }>;
 
 
-export type FetchEventLogQuery = (
-  { __typename?: 'Query' }
-  & { findEventLog?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id' | 'Event' | 'DateTime' | 'Module' | 'Target' | 'SubTarget'>
-    & { User: (
-      { __typename?: 'UserInfo' }
-      & Pick<Types.UserInfo, 'Name'>
-    ) }
-  )>>> }
+export type UpdateUserZoneMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Types.Mutation, 'updateUserInfo'>
 );
 
-export type FetchTaskCounterQueryVariables = Types.Exact<{
-  UserInfo?: Types.Maybe<Types.SearchUserInfo>;
-  startDate?: Types.Maybe<Types.Scalars['String']>;
-  endDate?: Types.Maybe<Types.Scalars['String']>;
-}>;
-
-
-export type FetchTaskCounterQuery = (
-  { __typename?: 'Query' }
-  & { fetchTaskCounting?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'taskCounting' }
-    & Pick<Types.TaskCounting, 'User' | 'AgIn' | 'AgOut' | 'QC'>
-  )>>> }
-);
-
-export const FetchOrderViewDocument = gql`
-    query fetchOrderView($filter: orderViewFilter) {
-  fetchOrderView(filter: $filter) {
-    OrderNumber
-    NOSINumber
-    Status
-    Priority
-    ShippingMethod
-    Unpicked
-    Aggregated
-    InProcess
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchOrderViewGQL extends Apollo.Query<FetchOrderViewQuery, FetchOrderViewQueryVariables> {
-    document = FetchOrderViewDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchOrderDetailforitnViewDocument = gql`
-    query fetchOrderDetailforitnView($Order: searchOrder!) {
-  findOrder(Order: $Order) {
-    ORDERLINEDETAILs {
-      InternalTrackingNumber
-      Status {
-        Name
-      }
-      OrderLine {
-        ProductCode
-        PartNumber
-      }
-      Quantity
-      Container {
-        Barcode
-        Warehouse
-        Row
-        Aisle
-        Section
-        Shelf
-        ShelfDetail
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchOrderDetailforitnViewGQL extends Apollo.Query<FetchOrderDetailforitnViewQuery, FetchOrderDetailforitnViewQueryVariables> {
-    document = FetchOrderDetailforitnViewDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchItnStatusViewDocument = gql`
-    query fetchITNStatusView {
-  fetchITNStatusView {
-    ID
-    Status
-    Number
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchItnStatusViewGQL extends Apollo.Query<FetchItnStatusViewQuery, FetchItnStatusViewQueryVariables> {
-    document = FetchItnStatusViewDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchUserInfoDocument = gql`
-    query fetchUserInfo {
+export const FetchUserAndZoneDocument = gql`
+    query fetchUserAndZone {
   findUserInfo {
-    _id
     Name
+    Zone {
+      DistributionCenter
+      Zone
+    }
   }
 }
     `;
@@ -867,60 +720,24 @@ export const FetchUserInfoDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchUserInfoGQL extends Apollo.Query<FetchUserInfoQuery, FetchUserInfoQueryVariables> {
-    document = FetchUserInfoDocument;
+  export class FetchUserAndZoneGQL extends Apollo.Query<FetchUserAndZoneQuery, FetchUserAndZoneQueryVariables> {
+    document = FetchUserAndZoneDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchEventLogDocument = gql`
-    query fetchEventLog($EventLog: searchEventLog!, $startDate: String, $endDate: String, $limit: Int) {
-  findEventLog(
-    EventLog: $EventLog
-    startDate: $startDate
-    endDate: $endDate
-    limit: $limit
-  ) {
-    _id
-    Event
-    DateTime
-    User {
-      Name
-    }
-    Module
-    Target
-    SubTarget
-  }
+export const UpdateUserZoneDocument = gql`
+    mutation updateUserZone($UserInfo: updateUserInfo!, $_id: Int, $ZoneID: Int, $Name: String) {
+  updateUserInfo(UserInfo: $UserInfo, _id: $_id, ZoneID: $ZoneID)
 }
     `;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchEventLogGQL extends Apollo.Query<FetchEventLogQuery, FetchEventLogQueryVariables> {
-    document = FetchEventLogDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchTaskCounterDocument = gql`
-    query fetchTaskCounter($UserInfo: searchUserInfo, $startDate: String, $endDate: String) {
-  fetchTaskCounting(UserInfo: $UserInfo, startDate: $startDate, endDate: $endDate) {
-    User
-    AgIn
-    AgOut
-    QC
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchTaskCounterGQL extends Apollo.Query<FetchTaskCounterQuery, FetchTaskCounterQueryVariables> {
-    document = FetchTaskCounterDocument;
+  export class UpdateUserZoneGQL extends Apollo.Mutation<UpdateUserZoneMutation, UpdateUserZoneMutationVariables> {
+    document = UpdateUserZoneDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

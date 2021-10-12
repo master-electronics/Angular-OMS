@@ -23,6 +23,11 @@ export class TableViewsComponent {
       link: 'usereventlog',
       content: 'View the user activity event logs on WMS',
     },
+    {
+      title: 'Task Counter',
+      link: 'taskcounter',
+      content: 'Count how many ITN was processed by each user.',
+    },
   ];
 
   constructor(

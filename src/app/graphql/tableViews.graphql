@@ -74,3 +74,20 @@ query fetchEventLog(
     SubTarget
   }
 }
+
+query fetchTaskCounter(
+  $UserInfo: searchUserInfo
+  $startDate: String
+  $endDate: String
+) {
+  fetchTaskCounting(
+    UserInfo: $UserInfo
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    User
+    AgIn
+    AgOut
+    QC
+  }
+}

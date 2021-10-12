@@ -102,6 +102,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 
@@ -249,6 +250,14 @@ export type MutationUpdateOrderLineDetailArgs = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+
+export type MutationUpdateUserInfoArgs = {
+  Name?: Maybe<Scalars['String']>;
+  UserInfo: UpdateUserInfo;
+  ZoneID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Order = {
   __typename?: 'Order';
   BranchID?: Maybe<Scalars['String']>;
@@ -330,6 +339,7 @@ export type Query = {
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  fetchTaskCounting?: Maybe<Array<Maybe<TaskCounting>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findEventLog?: Maybe<Array<Maybe<EventLog>>>;
@@ -361,6 +371,13 @@ export type QueryFetchPartMessageArgs = {
 
 export type QueryFetchProductInfoFromMerpArgs = {
   ProductList: Array<Maybe<Scalars['String']>>;
+};
+
+
+export type QueryFetchTaskCountingArgs = {
+  UserInfo?: Maybe<SearchUserInfo>;
+  endDate?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['String']>;
 };
 
 
@@ -599,6 +616,14 @@ export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type TaskCounting = {
+  __typename?: 'taskCounting';
+  AgIn: Scalars['Int'];
+  AgOut: Scalars['Int'];
+  QC: Scalars['Int'];
+  User: Scalars['String'];
+};
+
 export type UpdateContainer = {
   Aisle?: Maybe<Scalars['String']>;
   Barcode?: Maybe<Scalars['String']>;
@@ -645,6 +670,11 @@ export type UpdateOrderLineDetail = {
   Quantity?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateUserInfo = {
+  Name?: Maybe<Scalars['String']>;
+  ZoneID?: Maybe<Scalars['Int']>;
 };
 
 export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
