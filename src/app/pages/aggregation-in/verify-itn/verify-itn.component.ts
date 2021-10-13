@@ -6,7 +6,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import {
   UpdateMerpOrderStatusGQL,
@@ -134,20 +134,22 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
     // set query for updateSql
-    updatequery['updateSql'] = this._updateSql.mutate({
+    const updateSqlQuery = {
       ContainerID: Number(this.outsetContainer.toteID),
       Container: sourceTote,
       OrderLineDetail: OrderLineDetail,
       EventLog: {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-        Event: `${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
+        Event: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
         Module: `Ag In`,
         Target: `${this.endContainer.OrderNumber}-${this.endContainer.NOSINumber}`,
         SubTarget: this.endContainer.ITNsInTote,
       },
-    });
+    };
     // set query for merp update.
     if (!this.outsetContainer.isRelocation) {
+      updateSqlQuery.EventLog.Event =
+        updateSqlQuery.EventLog.Event.substring(9);
       updatequery['updateMerpLog'] = this._updateMerpLog.mutate({
         DistributionCenter: environment.DistributionCenter,
         FileKeyList: this.endContainer.FileKeyListforAgIn,
@@ -155,6 +157,8 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Action: 'line_aggregation_in',
       });
       if (this.endContainer.isLastLine) {
+        updateSqlQuery.EventLog.Event =
+          'AgIn done ' + updateSqlQuery.EventLog.Event;
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
@@ -163,6 +167,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         });
       }
     }
+    updatequery['updateSql'] = this._updateSql.mutate(updateSqlQuery);
     // update infor to sql and merp
     this.isLoading = true;
     this.updateAfterAgIn$ = forkJoin(updatequery).pipe(

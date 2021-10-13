@@ -117,11 +117,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (targetContainer.ORDERLINEDETAILs.length) {
               targetContainer.ORDERLINEDETAILs.forEach((itn) => {
                 if (
-                  itn.InternalTrackingNumber !==
-                    this.itemInfo.InternalTrackingNumber &&
+                  itn.OrderID !== this.itemInfo.OrderID &&
                   itn.StatusID < environment.agOutComplete_ID
                 )
-                  throw 'This tote is not empty.';
+                  throw 'This tote has other order item in it.';
               });
             }
           }),

@@ -12,6 +12,7 @@ query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
       PartNumber
     }
     Order {
+      _id
       DistributionCenter
       OrderNumber
       NOSINumber

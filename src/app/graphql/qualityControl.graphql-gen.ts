@@ -692,7 +692,7 @@ export type VerifyItNforQcQuery = (
       & Pick<Types.OrderLine, 'OrderLineNumber' | 'ProductCode' | 'PartNumber'>
     ), Order: (
       { __typename?: 'Order' }
-      & Pick<Types.Order, 'DistributionCenter' | 'OrderNumber' | 'NOSINumber' | 'CustomerNumber'>
+      & Pick<Types.Order, '_id' | 'DistributionCenter' | 'OrderNumber' | 'NOSINumber' | 'CustomerNumber'>
     ) }
   )>>> }
 );
@@ -850,6 +850,7 @@ export const VerifyItNforQcDocument = gql`
       PartNumber
     }
     Order {
+      _id
       DistributionCenter
       OrderNumber
       NOSINumber

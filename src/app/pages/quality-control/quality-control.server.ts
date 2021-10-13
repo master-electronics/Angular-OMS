@@ -47,6 +47,7 @@ export interface itemParams {
   InternalTrackingNumber: string;
   CustomerNumber: string;
   DistributionCenter: string;
+  OrderID: number;
   OrderNumber: string;
   OrderLineNumber: string;
   NOSI: string;

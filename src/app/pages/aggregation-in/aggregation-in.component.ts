@@ -116,13 +116,6 @@ export class AggregationInComponent
                 environment.agOutComplete_ID
             )
               throw "OrderLine's status is invalid.";
-            // if the order status before Aggregation in complete, not allow multiple items in it.
-            if (
-              container[0].ORDERLINEDETAILs.length > 1 &&
-              container[0].ORDERLINEDETAILs[0].StatusID <
-                environment.agInComplete_ID
-            )
-              throw 'More than one ITN in this container.';
           })
         )
 

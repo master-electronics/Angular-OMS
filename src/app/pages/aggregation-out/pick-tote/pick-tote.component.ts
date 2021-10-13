@@ -215,14 +215,14 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         { fetchPolicy: 'network-only' }
       ),
     }).pipe(
-      // throw errors
-      tap((res) => {
-        let error = '';
-        if (!res.updateOrder.data.updateMerpOrderStatus.success) {
-          error += res.updateOrder.data.updateMerpOrderStatus.message;
-        }
-        if (error) throw error;
-      }),
+      // // throw errors
+      // tap((res) => {
+      //   let error = '';
+      //   if (!res.updateOrder.data.updateMerpOrderStatus.success) {
+      //     error += res.updateOrder.data.updateMerpOrderStatus.message;
+      //   }
+      //   if (error) throw error;
+      // }),
 
       // navgate to first page if success
       map((res) => {

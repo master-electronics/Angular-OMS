@@ -130,7 +130,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             FileKeyListforAgOut.push(
               `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.InternalTrackingNumber}`
             );
-            // store top 3 locations in Aggregation area.
+            // store locations in Aggregation area.
             if (line.Container.Row === 'AG') {
               locationsSet.add(
                 line.Container.Warehouse.concat(
