@@ -2,7 +2,11 @@
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="6">
-        <nz-form-control>
+        <nz-form-label nzRequired> Module </nz-form-label>
+        <nz-form-control
+          nzHasFeedback
+          nzErrorTip="The input is not valid container!"
+        >
           <nz-select
             nzShowSearch
             nzAllowClear
@@ -17,11 +21,9 @@
       </nz-form-item>
 
       <nz-form-item nz-col nzSpan="8">
+        <nz-form-label nzRequired> Date </nz-form-label>
         <nz-form-control>
-          <nz-range-picker
-            formControlName="timeRange"
-            (ngModelChange)="onChange($event)"
-          ></nz-range-picker>
+          <nz-date-picker formControlName="timeRange"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
       <div nz-col nzSpan="8">
@@ -40,26 +42,26 @@
   </form>
 
   <!-- Event log table -->
-  <nz-table
-    #table
-    [nzData]="fetchTable$ | async"
-    [nzPageSize]="20"
-    nzShowSizeChanger
-  >
+  <nz-table #table [nzData]="fetchTable$ | async">
     <thead>
       <tr>
         <th>User</th>
-        <th>Ag In</th>
-        <th>Ag out</th>
-        <th>QC</th>
+        <th>Total</th>
+        <th *ngFor="let item of [].constructor(13); let i = index">
+          {{ i }}am
+        </th>
+        <th *ngFor="let item of [].constructor(11); let i = index">
+          {{ i + 1 }}pm
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of table.data">
         <td>{{ data.User }}</td>
-        <td>{{ data.AgIn }}</td>
-        <td>{{ data.AgOut }}</td>
-        <td>{{ data.QC }}</td>
+        <td>
+          {{ data.total }}
+        </td>
+        <td *ngFor="let task of data.taskCounter">{{ task }}</td>
       </tr>
     </tbody>
   </nz-table>

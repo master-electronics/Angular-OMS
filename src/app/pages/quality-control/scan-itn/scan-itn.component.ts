@@ -85,6 +85,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 environment.qcComplete_ID,
                 environment.warehouseHold_ID,
                 environment.droppedQC_ID,
+                environment.salesHold_ID,
+                environment.pickComplete_ID,
               ].includes(res.data.findOrderLineDetail[0].StatusID)
             ) {
               throw 'Invalid order line status.';

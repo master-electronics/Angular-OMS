@@ -15,6 +15,7 @@ export const environment = {
   pickComplete_ID: 10,
   droppedQC_ID: 20,
   warehouseHold_ID: 30,
+  salesHold_ID: 40,
   qcComplete_ID: 60,
   agInComplete_ID: 63,
   agOutComplete_ID: 65,

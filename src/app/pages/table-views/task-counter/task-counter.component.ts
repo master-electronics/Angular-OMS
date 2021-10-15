@@ -2,26 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import {
-  FetchTaskCounterGQL,
-  FetchUserInfoGQL,
-} from '../../../graphql/tableViews.graphql-gen';
-import { map } from 'rxjs/operators';
-import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
-import { FormBuilder } from '@angular/forms';
-
-interface DataItem {
-  User: string;
-  AgIn: number;
-  AgOut: number;
-  QC: number;
-}
-
-interface ColumnItem {
-  name: string;
-  listOfFilter: NzTableFilterList;
-  filterFn: NzTableFilterFn<DataItem> | null;
-}
+import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
+import { catchError, map, tap } from 'rxjs/operators';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'task-counter',
@@ -29,27 +12,23 @@ interface ColumnItem {
 })
 export class TaskCounterComponent implements OnInit {
   isLoading = false;
-  fetchUser$: Observable<any>;
   fetchTable$: Observable<any>;
 
   constructor(
     private commonService: CommonService,
     private fb: FormBuilder,
-    private fetchUser: FetchUserInfoGQL,
     private fetchTaskCounter: FetchTaskCounterGQL
   ) {
     this.commonService.changeNavbar('Task Counting');
   }
 
   filterForm = this.fb.group({
-    module: [''],
-    timeRange: [''],
+    module: ['', [Validators.required]],
+    timeRange: ['', [Validators.required]],
   });
 
   ngOnInit(): void {
-    this.fetchUser$ = this.fetchUser
-      .fetch()
-      .pipe(map((res) => res.data.findUserInfo));
+    //
   }
 
   resetForm(): void {
@@ -57,42 +36,44 @@ export class TaskCounterComponent implements OnInit {
       module: '',
       timeRanger: '',
     });
-    this.startDate = '';
-    this.endDate = '';
-  }
-
-  private startDate;
-  private endDate;
-  onChange(result: Date[]): void {
-    this.startDate = result[0]?.toISOString();
-    this.endDate = result[1]?.toISOString();
-    console.log(this.startDate);
-    console.log(this.endDate);
   }
 
   onSubmit(): void {
-    if (this.filterForm.invalid || this.isLoading) {
-      return;
-    }
+    if (this.filterForm.invalid || this.isLoading) return;
+    const selectedDate = this.filterForm.get('timeRange').value;
+    const startDate = new Date(selectedDate.setHours(0, 0, 0, 0)).toISOString();
+    const endDate = new Date(
+      selectedDate.setHours(23, 59, 59, 999)
+    ).toISOString();
+
     // prepare query data then send
-    const userInfo = {};
-    const user = this.filterForm.get('user').value;
-    if (user) userInfo['_id'] = user;
     this.isLoading = true;
     this.fetchTable$ = this.fetchTaskCounter
       .fetch(
         {
-          UserInfo: userInfo,
-          startDate: this.startDate,
-          endDate: this.endDate,
+          Module: this.filterForm.get('module').value,
+          startDate: startDate,
+          endDate: endDate,
         },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
         map((res) => {
           this.isLoading = false;
-          return res.data.fetchTaskCounting;
+          return res.data.fetchTaskCounter.map((element) => {
+            const result = { ...element };
+            result['total'] = element.taskCounter.reduce(
+              (acc, curr) => acc + curr
+            );
+            return result;
+          });
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          return error;
         })
       );
   }
+
+  // table setting
 }
