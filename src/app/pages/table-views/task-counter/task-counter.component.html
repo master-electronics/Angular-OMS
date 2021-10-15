@@ -42,14 +42,20 @@
   </form>
 
   <!-- Event log table -->
-  <nz-table #table [nzData]="fetchTable$ | async">
+  <nz-table
+    #table
+    [nzPageSize]="50"
+    nzShowSizeChanger
+    [nzData]="fetchTable$ | async"
+  >
     <thead>
       <tr>
         <th>User</th>
         <th>Total</th>
-        <th *ngFor="let item of [].constructor(13); let i = index">
+        <th *ngFor="let item of [].constructor(12); let i = index">
           {{ i }}am
         </th>
+        <th>12pm</th>
         <th *ngFor="let item of [].constructor(11); let i = index">
           {{ i + 1 }}pm
         </th>
