@@ -328,11 +328,12 @@ export type Query = {
   __typename?: 'Query';
   fetchITNStatusView?: Maybe<Array<Maybe<ItnStatusView>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
+  fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
-  fetchTaskCounting?: Maybe<Array<Maybe<TaskCounting>>>;
+  fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findEventLog?: Maybe<Array<Maybe<EventLog>>>;
@@ -348,6 +349,12 @@ export type QueryFetchOrderLineMessageArgs = {
   DistributionCenter: Scalars['String'];
   OrderLineNumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchOrderTasktimeArgs = {
+  Order?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -367,10 +374,10 @@ export type QueryFetchProductInfoFromMerpArgs = {
 };
 
 
-export type QueryFetchTaskCountingArgs = {
-  UserInfo?: Maybe<SearchUserInfo>;
-  endDate?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['String']>;
+export type QueryFetchTaskCounterArgs = {
+  Module: Scalars['String'];
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
 };
 
 
@@ -519,6 +526,15 @@ export type MissItn = {
   ROHS: Scalars['Boolean'];
 };
 
+export type OrderTasktime = {
+  __typename?: 'orderTasktime';
+  Order: Scalars['String'];
+  agIn?: Maybe<Scalars['String']>;
+  agOut?: Maybe<Scalars['String']>;
+  qcFirst?: Maybe<Scalars['String']>;
+  qcLast?: Maybe<Scalars['String']>;
+};
+
 export type OrderView = {
   __typename?: 'orderView';
   Aggregated?: Maybe<Scalars['Int']>;
@@ -609,12 +625,10 @@ export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type TaskCounting = {
-  __typename?: 'taskCounting';
-  AgIn: Scalars['Int'];
-  AgOut: Scalars['Int'];
-  QC: Scalars['Int'];
+export type TaskCounter = {
+  __typename?: 'taskCounter';
   User: Scalars['String'];
+  taskCounter: Array<Maybe<Scalars['Int']>>;
 };
 
 export type UpdateContainer = {

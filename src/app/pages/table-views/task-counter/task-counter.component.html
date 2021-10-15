@@ -6,21 +6,19 @@
           <nz-select
             nzShowSearch
             nzAllowClear
-            nzPlaceHolder="Select a User"
-            formControlName="user"
+            nzPlaceHolder="Select a module"
+            formControlName="module"
           >
-            <nz-option
-              *ngFor="let user of fetchUser$ | async"
-              [nzLabel]="user.Name"
-              [nzValue]="user._id"
-            ></nz-option>
+            <nz-option nzLabel="Ag In" nzValue="Ag In"></nz-option>
+            <nz-option nzLabel="Ag Out" nzValue="Ag Out"></nz-option>
+            <nz-option nzLabel="qc" nzValue="qc"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
+
       <nz-form-item nz-col nzSpan="8">
         <nz-form-control>
           <nz-range-picker
-            [nzShowTime]="true"
             formControlName="timeRange"
             (ngModelChange)="onChange($event)"
           ></nz-range-picker>

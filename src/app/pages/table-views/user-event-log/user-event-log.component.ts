@@ -114,8 +114,6 @@ export class UserEventLogComponent implements OnInit {
   onChange(result: Date[]): void {
     this.startDate = result[0]?.toISOString();
     this.endDate = result[1]?.toISOString();
-    console.log(this.startDate);
-    console.log(this.endDate);
   }
 
   // table setting:

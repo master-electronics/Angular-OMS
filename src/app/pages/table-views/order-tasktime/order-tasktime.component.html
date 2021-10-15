@@ -38,18 +38,24 @@
   >
     <thead>
       <tr>
-        <th>User</th>
+        <th>Order</th>
+        <th>QC Start</th>
+        <th>QC End</th>
+        <th>QC Tasktime</th>
         <th>Ag In</th>
-        <th>Ag out</th>
-        <th>QC</th>
+        <th>Ag Out</th>
+        <th>Ag Tasktime</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of table.data">
-        <td>{{ data.User }}</td>
-        <td>{{ data.AgIn }}</td>
-        <td>{{ data.AgOut }}</td>
-        <td>{{ data.QC }}</td>
+        <td>{{ data.Order }}</td>
+        <td>{{ data.qcFirst }}</td>
+        <td>{{ data.qcLast }}</td>
+        <td>{{ data.qcTime }}</td>
+        <td>{{ data.agIn }}</td>
+        <td>{{ data.agOut }}</td>
+        <td>{{ data.agTime }}</td>
       </tr>
     </tbody>
   </nz-table>

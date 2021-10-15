@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import {
-  FetchOrderViewGQL,
   FetchTaskCounterGQL,
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
@@ -43,7 +42,7 @@ export class TaskCounterComponent implements OnInit {
   }
 
   filterForm = this.fb.group({
-    user: [''],
+    module: [''],
     timeRange: [''],
   });
 
@@ -55,7 +54,7 @@ export class TaskCounterComponent implements OnInit {
 
   resetForm(): void {
     this.filterForm.reset({
-      user: '',
+      module: '',
       timeRanger: '',
     });
     this.startDate = '';

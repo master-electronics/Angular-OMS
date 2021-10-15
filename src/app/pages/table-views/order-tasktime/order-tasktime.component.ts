@@ -2,26 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import {} from '../../../graphql/tableViews.graphql-gen';
+import { FetchOrderTasktimeGQL } from '../../../graphql/tableViews.graphql-gen';
+import { FormBuilder, Validators } from '@angular/forms';
+import { OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 import { map } from 'rxjs/operators';
-import { FormBuilder } from '@angular/forms';
 
 @Component({
-  selector: 'task-counter',
-  templateUrl: './task-counter.component.html',
+  selector: 'order-tasktime',
+  templateUrl: './order-tasktime.component.html',
 })
-export class TaskCounterComponent implements OnInit {
+export class OrderTasktimeComponent implements OnInit {
   isLoading = false;
-  fetchUser$ = new Observable();
-  fetchTable$ = new Observable();
+  fetchTable$: Observable<any>;
 
-  constructor(private commonService: CommonService, private fb: FormBuilder) {
+  constructor(
+    private commonService: CommonService,
+    private fb: FormBuilder,
+    private fetchTable: FetchOrderTasktimeGQL
+  ) {
     this.commonService.changeNavbar('Task Counting');
   }
 
   filterForm = this.fb.group({
-    user: [''],
-    timeRange: [''],
+    target: ['', [Validators.pattern(OrderBarcodeRegex)]],
   });
 
   ngOnInit(): void {
@@ -30,20 +33,8 @@ export class TaskCounterComponent implements OnInit {
 
   resetForm(): void {
     this.filterForm.reset({
-      user: '',
-      timeRanger: '',
+      target: '',
     });
-    this.startDate = '';
-    this.endDate = '';
-  }
-
-  private startDate;
-  private endDate;
-  onChange(result: Date[]): void {
-    this.startDate = result[0]?.toISOString();
-    this.endDate = result[1]?.toISOString();
-    console.log(this.startDate);
-    console.log(this.endDate);
   }
 
   onSubmit(): void {
@@ -51,24 +42,55 @@ export class TaskCounterComponent implements OnInit {
       return;
     }
     // prepare query data then send
-    const userInfo = {};
-    const user = this.filterForm.get('user').value;
-    if (user) userInfo['_id'] = user;
     this.isLoading = true;
-    // this.fetchTable$ = this.fetchTaskCounter
-    //   .fetch(
-    //     {
-    //       UserInfo: userInfo,
-    //       startDate: this.startDate,
-    //       endDate: this.endDate,
-    //     },
-    //     { fetchPolicy: 'network-only' }
-    //   )
-    //   .pipe(
-    //     map((res) => {
-    //       this.isLoading = false;
-    //       return res.data.fetchTaskCounting;
-    //     })
-    //   );
+    this.fetchTable$ = this.fetchTable
+      .fetch(
+        {
+          target: this.filterForm.get('target').value,
+          limit: 200,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          this.isLoading = false;
+          return res.data.fetchOrderTasktime.map((ele) => {
+            const result = { ...ele };
+            const qcFirst = new Date(Number(ele.qcFirst));
+            const qcLast = new Date(Number(ele.qcLast));
+            const agIn = new Date(Number(ele.agIn));
+            const agOut = new Date(Number(ele.agOut));
+            if (ele.agIn) {
+              result.agIn = agIn.toLocaleString();
+            }
+            if (ele.agOut) {
+              result.agOut = agOut.toLocaleString();
+            }
+            if (qcFirst !== qcLast) {
+              result['qcTime'] = this.dateFormat(qcFirst, qcLast);
+            }
+            if (ele.agIn && ele.agOut) {
+              result['agTime'] = this.dateFormat(agIn, agOut);
+            }
+            result.qcFirst = qcFirst.toLocaleString();
+            result.qcLast = qcLast.toLocaleString();
+            return result;
+          });
+        })
+      );
+  }
+
+  dateFormat(start: Date, end: Date): string {
+    const qcTime = Math.ceil((end.getTime() - start.getTime()) / 60000);
+    const hours = Math.floor(qcTime / 60);
+    const minutes = qcTime % 60;
+    let result = '';
+    if (hours) {
+      result = `${hours}hr`;
+    }
+    if (minutes) {
+      result += `${minutes}min`;
+    }
+    return result;
   }
 }

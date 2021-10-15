@@ -21,7 +21,8 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { TaskCounterComponent } from './task-counter/task-counter.component';
+import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+// import { TaskCounterComponent } from './task-counter/task-counter.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
     OrderViewComponent,
     ITNViewComponent,
     UserEventLogComponent,
-    TaskCounterComponent,
+    // TaskCounterComponent,
+    OrderTasktimeComponent,
   ],
   imports: [
     CommonModule,

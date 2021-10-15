@@ -335,11 +335,12 @@ export type Query = {
   __typename?: 'Query';
   fetchITNStatusView?: Maybe<Array<Maybe<ItnStatusView>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
+  fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
-  fetchTaskCounting?: Maybe<Array<Maybe<TaskCounting>>>;
+  fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findEventLog?: Maybe<Array<Maybe<EventLog>>>;
@@ -355,6 +356,12 @@ export type QueryFetchOrderLineMessageArgs = {
   DistributionCenter: Scalars['String'];
   OrderLineNumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchOrderTasktimeArgs = {
+  Order?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -374,10 +381,10 @@ export type QueryFetchProductInfoFromMerpArgs = {
 };
 
 
-export type QueryFetchTaskCountingArgs = {
-  UserInfo?: Maybe<SearchUserInfo>;
-  endDate?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['String']>;
+export type QueryFetchTaskCounterArgs = {
+  Module: Scalars['String'];
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
 };
 
 
@@ -526,6 +533,15 @@ export type MissItn = {
   ROHS: Scalars['Boolean'];
 };
 
+export type OrderTasktime = {
+  __typename?: 'orderTasktime';
+  Order: Scalars['String'];
+  agIn?: Maybe<Scalars['String']>;
+  agOut?: Maybe<Scalars['String']>;
+  qcFirst?: Maybe<Scalars['String']>;
+  qcLast?: Maybe<Scalars['String']>;
+};
+
 export type OrderView = {
   __typename?: 'orderView';
   Aggregated?: Maybe<Scalars['Int']>;
@@ -616,12 +632,10 @@ export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type TaskCounting = {
-  __typename?: 'taskCounting';
-  AgIn: Scalars['Int'];
-  AgOut: Scalars['Int'];
-  QC: Scalars['Int'];
+export type TaskCounter = {
+  __typename?: 'taskCounter';
   User: Scalars['String'];
+  taskCounter: Array<Maybe<Scalars['Int']>>;
 };
 
 export type UpdateContainer = {
@@ -759,17 +773,31 @@ export type FetchEventLogQuery = (
 );
 
 export type FetchTaskCounterQueryVariables = Types.Exact<{
-  UserInfo?: Types.Maybe<Types.SearchUserInfo>;
-  startDate?: Types.Maybe<Types.Scalars['String']>;
-  endDate?: Types.Maybe<Types.Scalars['String']>;
+  Module: Types.Scalars['String'];
+  startDate: Types.Scalars['String'];
+  endDate: Types.Scalars['String'];
 }>;
 
 
 export type FetchTaskCounterQuery = (
   { __typename?: 'Query' }
-  & { fetchTaskCounting?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'taskCounting' }
-    & Pick<Types.TaskCounting, 'User' | 'AgIn' | 'AgOut' | 'QC'>
+  & { fetchTaskCounter?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'taskCounter' }
+    & Pick<Types.TaskCounter, 'User' | 'taskCounter'>
+  )>>> }
+);
+
+export type FetchOrderTasktimeQueryVariables = Types.Exact<{
+  target?: Types.Maybe<Types.Scalars['String']>;
+  limit: Types.Scalars['Int'];
+}>;
+
+
+export type FetchOrderTasktimeQuery = (
+  { __typename?: 'Query' }
+  & { fetchOrderTasktime?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'orderTasktime' }
+    & Pick<Types.OrderTasktime, 'Order' | 'qcFirst' | 'qcLast' | 'agIn' | 'agOut'>
   )>>> }
 );
 
@@ -906,12 +934,10 @@ export const FetchEventLogDocument = gql`
     }
   }
 export const FetchTaskCounterDocument = gql`
-    query fetchTaskCounter($UserInfo: searchUserInfo, $startDate: String, $endDate: String) {
-  fetchTaskCounting(UserInfo: $UserInfo, startDate: $startDate, endDate: $endDate) {
+    query fetchTaskCounter($Module: String!, $startDate: String!, $endDate: String!) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
     User
-    AgIn
-    AgOut
-    QC
+    taskCounter
   }
 }
     `;
@@ -921,6 +947,28 @@ export const FetchTaskCounterDocument = gql`
   })
   export class FetchTaskCounterGQL extends Apollo.Query<FetchTaskCounterQuery, FetchTaskCounterQueryVariables> {
     document = FetchTaskCounterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchOrderTasktimeDocument = gql`
+    query fetchOrderTasktime($target: String, $limit: Int!) {
+  fetchOrderTasktime(Order: $target, limit: $limit) {
+    Order
+    qcFirst
+    qcLast
+    agIn
+    agOut
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderTasktimeGQL extends Apollo.Query<FetchOrderTasktimeQuery, FetchOrderTasktimeQueryVariables> {
+    document = FetchOrderTasktimeDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

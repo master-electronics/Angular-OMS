@@ -23,10 +23,16 @@ export class TableViewsComponent {
       link: 'usereventlog',
       content: 'View the user activity event logs on WMS',
     },
+    // {
+    //   title: 'Task Counter',
+    //   link: 'taskcounter',
+    //   content: 'Count how many ITN was processed by each user.',
+    // },
     {
-      title: 'Task Counter',
-      link: 'taskcounter',
-      content: 'Count how many ITN was processed by each user.',
+      title: 'Order Tasktime',
+      link: 'ordertasktime',
+      content:
+        'Show how many time spend on single line qc and aggregation for each order',
     },
   ];
 

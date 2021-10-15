@@ -76,18 +76,22 @@ query fetchEventLog(
 }
 
 query fetchTaskCounter(
-  $UserInfo: searchUserInfo
-  $startDate: String
-  $endDate: String
+  $Module: String!
+  $startDate: String!
+  $endDate: String!
 ) {
-  fetchTaskCounting(
-    UserInfo: $UserInfo
-    startDate: $startDate
-    endDate: $endDate
-  ) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
     User
-    AgIn
-    AgOut
-    QC
+    taskCounter
+  }
+}
+
+query fetchOrderTasktime($target: String, $limit: Int!) {
+  fetchOrderTasktime(Order: $target, limit: $limit) {
+    Order
+    qcFirst
+    qcLast
+    agIn
+    agOut
   }
 }
