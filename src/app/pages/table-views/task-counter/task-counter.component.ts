@@ -3,8 +3,14 @@ import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { FormBuilder, Validators } from '@angular/forms';
+
+interface tableData {
+  User: string;
+  total: number;
+  taskCounter: number[];
+}
 
 @Component({
   selector: 'task-counter',
@@ -28,7 +34,17 @@ export class TaskCounterComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    //
+    for (let index = 0; index < 24; index++) {
+      let title = '';
+      if (index < 12) title = `${index}am`;
+      if (index === 12) title = '12pm';
+      if (index > 12) title = `${index - 12}pm`;
+      this.listOfColumn.push({
+        title,
+        compare: (a: tableData, b: tableData): number =>
+          a.taskCounter[index] - b.taskCounter[index],
+      });
+    }
   }
 
   resetForm(): void {
@@ -60,13 +76,30 @@ export class TaskCounterComponent implements OnInit {
       .pipe(
         map((res) => {
           this.isLoading = false;
-          return res.data.fetchTaskCounter.map((element) => {
-            const result = { ...element };
-            result['total'] = element.taskCounter.reduce(
-              (acc, curr) => acc + curr
-            );
-            return result;
+          let totalForAll = 0;
+          const taskCounterForAll = new Array(24).fill(0);
+          // iterate each user record
+          const tableData: tableData[] = res.data.fetchTaskCounter.map(
+            (element) => {
+              const total = element.taskCounter.reduce((acc, curr, index) => {
+                taskCounterForAll[index] += curr;
+                return acc + curr;
+              });
+              totalForAll += total;
+              return {
+                User: element.User,
+                total,
+                taskCounter: element.taskCounter,
+              };
+            }
+          );
+          // Insert Total record at the end.
+          tableData.push({
+            User: 'Total',
+            total: totalForAll,
+            taskCounter: taskCounterForAll,
           });
+          return tableData;
         }),
         catchError((error) => {
           this.isLoading = false;
@@ -76,5 +109,15 @@ export class TaskCounterComponent implements OnInit {
   }
 
   // table setting
-  listOfColumn = [{}];
+  listOfColumn = [
+    {
+      title: 'User',
+      compare: (a: tableData, b: tableData): number =>
+        a.User.localeCompare(b.User),
+    },
+    {
+      title: 'Total',
+      compare: (a: tableData, b: tableData): number => a.total - b.total,
+    },
+  ];
 }

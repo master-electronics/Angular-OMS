@@ -57,7 +57,14 @@
     <tbody>
       <tr *ngFor="let detail of nzTable.data">
         <td>
-          {{ detail.InternalTrackingNumber }}
+          <a
+            [routerLink]="['/tableviews/usereventlog']"
+            [queryParams]="{
+              ITN: detail.InternalTrackingNumber
+            }"
+          >
+            {{ detail.InternalTrackingNumber }}</a
+          >
         </td>
         <td>{{ detail.Status.Name }}</td>
         <td>{{ detail.Container.Barcode }}</td>

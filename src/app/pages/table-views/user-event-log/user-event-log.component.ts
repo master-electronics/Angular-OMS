@@ -5,9 +5,10 @@ import {
   FetchEventLogGQL,
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'user-event-log',
@@ -20,6 +21,7 @@ export class UserEventLogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
+    private route: ActivatedRoute,
     private fetchUser: FetchUserInfoGQL,
     private fetchEventLog: FetchEventLogGQL
   ) {
@@ -39,6 +41,11 @@ export class UserEventLogComponent implements OnInit {
     this.fetchUser$ = this.fetchUser
       .fetch()
       .pipe(map((res) => res.data.findUserInfo));
+    const urlParams = { ...this.route.snapshot.queryParams };
+    if (urlParams.ITN) {
+      this.filterForm.get('subTarget').setValue(urlParams.ITN);
+      this.onSubmit();
+    }
   }
 
   resetForm(): void {
