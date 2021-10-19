@@ -9,7 +9,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
-import { CommonService } from '../../../shared/services/common.service';
 import { AggregationOutService } from '../aggregation-out.server';
 
 @Component({
@@ -32,7 +31,6 @@ export class PickITNComponent implements OnInit, AfterViewInit {
 
   constructor(
     private _fb: FormBuilder,
-    private _commonService: CommonService,
     private _router: Router,
     private _route: ActivatedRoute,
     private _agOutService: AggregationOutService

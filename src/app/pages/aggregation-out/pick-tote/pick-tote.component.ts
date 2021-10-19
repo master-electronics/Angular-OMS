@@ -12,7 +12,7 @@ import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
@@ -172,7 +172,9 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       BarcodeList.push(node.Container.Barcode);
       productSet.add(
-        `${node.OrderLine.ProductCode.padEnd(3)}${node.OrderLine.PartNumber}`
+        `${node.OrderLine.ProductCode.padEnd(
+          3
+        )}${node.OrderLine.PartNumber.replace("'", '')}`
       );
     });
     const productList = [...productSet];

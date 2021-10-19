@@ -4,7 +4,8 @@
       <div *ngFor="let table of tableList">
         <nz-list-item>
           <nz-card [nzTitle]="table.title">
-            <a [routerLink]="[table.link]">{{ table.content }}</a>
+            <p>{{ table.content }}</p>
+            <a [routerLink]="[table.link]">view</a>
           </nz-card>
         </nz-list-item>
       </div>
