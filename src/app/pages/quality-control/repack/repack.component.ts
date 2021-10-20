@@ -121,6 +121,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                   itn.StatusID < environment.agOutComplete_ID
                 )
                   throw 'This tote has other order item in it.';
+                if (
+                  itn.OrderID === this.itemInfo.OrderID &&
+                  itn.StatusID !== environment.qcComplete_ID
+                )
+                  throw 'This tote is not in QC area.';
               });
             }
           }),
