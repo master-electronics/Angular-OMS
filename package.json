@@ -30,6 +30,7 @@
     "angular-user-idle": "^2.2.7",
     "apollo-angular": "^2.6.0",
     "autoprefixer": "^10.3.4",
+    "file-saver": "^2.0.5",
     "graphql": "^15.5.3",
     "ng-zorro-antd": "^12.0.1",
     "postcss": "^8.3.6",
@@ -37,6 +38,7 @@
     "tailwindcss": "^2.2.15",
     "tslib": "^2.3.0",
     "uuid": "^8.3.2",
+    "xlsx": "^0.17.3",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

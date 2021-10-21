@@ -26,7 +26,7 @@
           <nz-date-picker formControlName="timeRange"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
-      <div nz-col nzSpan="8">
+      <div nz-col nzSpan="10">
         <button
           nz-button
           [nzType]="'primary'"
@@ -36,13 +36,17 @@
         >
           Search
         </button>
-        <button nz-button (click)="resetForm()">Clear</button>
+        <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
+        <button nz-button (click)="exportexcel()" class="bg-green-500">
+          Save
+        </button>
       </div>
     </div>
   </form>
 
   <!-- Event log table -->
   <nz-table
+    id="excel-table"
     #table
     [nzPageSize]="50"
     nzShowSizeChanger

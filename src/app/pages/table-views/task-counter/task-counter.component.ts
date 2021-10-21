@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
@@ -19,6 +20,7 @@ interface tableData {
 export class TaskCounterComponent implements OnInit {
   isLoading = false;
   fetchTable$: Observable<any>;
+  startDate: string;
 
   constructor(
     private commonService: CommonService,
@@ -58,6 +60,7 @@ export class TaskCounterComponent implements OnInit {
     if (this.filterForm.invalid || this.isLoading) return;
     const selectedDate = this.filterForm.get('timeRange').value;
     const startDate = new Date(selectedDate.setHours(0, 0, 0, 0)).toISOString();
+    this.startDate = startDate;
     const endDate = new Date(
       selectedDate.setHours(23, 59, 59, 999)
     ).toISOString();
@@ -120,4 +123,22 @@ export class TaskCounterComponent implements OnInit {
       compare: (a: tableData, b: tableData): number => a.total - b.total,
     },
   ];
+
+  exportexcel(): void {
+    /* table id is passed over here */
+    const element = document.getElementById('excel-table');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(
+      wb,
+      `${this.filterForm
+        .get('module')
+        .value.replace(' ', '')}${this.startDate.substring(0, 10)}.xlsx`
+    );
+  }
 }
