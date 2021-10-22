@@ -60,7 +60,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.ITNForm.invalid || this.isLoading) {
       return;
     }
-    this.verfiyITN(this.ITNForm.get('ITN').value.trim());
+    this.verfiyITN(this.ITNForm.get('ITN').value.trim().toUpperCase());
   }
 
   verfiyITN(ITN: string): void {
