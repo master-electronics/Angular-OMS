@@ -240,6 +240,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
         )
 
         .subscribe(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (res: any) => {
             let type = 'info';
             let message = `QC complete for ${this.itemInfo.InternalTrackingNumber}`;

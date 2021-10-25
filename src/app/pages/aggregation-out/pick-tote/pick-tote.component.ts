@@ -172,9 +172,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       BarcodeList.push(node.Container.Barcode);
       productSet.add(
-        `${node.OrderLine.ProductCode.padEnd(
-          3
-        )}${node.OrderLine.PartNumber.replace("'", '')}`
+        `${node.OrderLine.ProductCode.padEnd(3)}${node.OrderLine.PartNumber}`
       );
     });
     const productList = [...productSet];
