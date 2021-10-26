@@ -68,13 +68,16 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
     if (this.barcodeForm.valid) {
       const barcodeSplit = barcode.toUpperCase().split('-');
       this.OrderInfo$ = this.fetchOrderDetail
-        .fetch({
-          Order: {
-            DistributionCenter: environment.DistributionCenter,
-            OrderNumber: barcodeSplit[0],
-            NOSINumber: barcodeSplit[1],
+        .fetch(
+          {
+            Order: {
+              DistributionCenter: environment.DistributionCenter,
+              OrderNumber: barcodeSplit[0],
+              NOSINumber: barcodeSplit[1],
+            },
           },
-        })
+          { fetchPolicy: 'network-only' }
+        )
         .pipe(
           map((res) => {
             if (res.data.findOrder.length) {
