@@ -19,7 +19,7 @@ import {
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Create_EventLogGQL,
@@ -38,6 +38,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   buttonLabel = 'submit';
   alertMessage = '';
   itemInfo: itemParams;
+  updateDetail;
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -161,7 +162,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               EventLog.Event = 'Order Done ' + EventLog.Event;
             }
             const createEventLog = this.createEventLog.mutate({ EventLog });
-            const updateDetail = this.updateOrderLineDetail.mutate({
+            this.updateDetail = this.updateOrderLineDetail.mutate({
               InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
               OrderLineDetail: {
                 StatusID: environment.qcComplete_ID,
@@ -201,7 +202,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Send different query combination
             const updateQueries = {
-              updateDetail,
               createEventLog,
               updateTargetConatiner,
               updateSourceConatiner,
@@ -216,33 +216,30 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               delete updateQueries.updateSourceConatiner;
             }
             if (inProcess) delete updateQueries.updateMerpLog;
-            // // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
-            // if (targetContainer.ORDERLINEDETAILs.length) {
-            //   const needCleanup = targetContainer.ORDERLINEDETAILs.some(
-            //     (itn) => {
-            //       return (
-            //         itn.InternalTrackingNumber !==
-            //           this.itemInfo.InternalTrackingNumber &&
-            //         itn.StatusID >= environment.agOutComplete_ID
-            //       );
-            //     }
-            //   );
-            //   if (needCleanup)
-            //     updateQueries['cleanContainerFromPrevOrder'] =
-            //       this.updateOrderLineDetail.mutate({
-            //         ContainerID: targetContainer._id,
-            //         OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
-            //         OrderLineDetail: { ContainerID: environment.DC_PH_ID },
-            //       });
-            // }
+            // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            if (targetContainer.ORDERLINEDETAILs.length) {
+              const needCleanup = targetContainer.ORDERLINEDETAILs.some(
+                (itn) => {
+                  return (
+                    itn.InternalTrackingNumber !==
+                      this.itemInfo.InternalTrackingNumber &&
+                    itn.StatusID >= environment.agOutComplete_ID
+                  );
+                }
+              );
+              if (needCleanup)
+                updateQueries['cleanContainerFromPrevOrder'] =
+                  this.updateOrderLineDetail.mutate({
+                    ContainerID: targetContainer._id,
+                    OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
+                    OrderLineDetail: { ContainerID: environment.DC_PH_ID },
+                  });
+            }
             return forkJoin(updateQueries);
           }),
 
           tap((res: any) => {
             let error: string;
-            if (!res.updateDetail.data.updateOrderLineDetail[0]) {
-              error = `${this.itemInfo.InternalTrackingNumber} Fail to update OrderLineDetail SQL`;
-            }
             if (
               res.updateTargetContainer &&
               !res.updateTargetContainer.data.updateContainer[0]
@@ -256,6 +253,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               error += `${this.itemInfo.InternalTrackingNumber} Fail to update source Container SQL`;
             }
             if (error) throw error;
+          }),
+
+          switchMap(() => {
+            return this.updateDetail;
+          }),
+
+          tap((res: any) => {
+            console.log(res);
+            if (!res.data.updateOrderLineDetail[0]) {
+              throw `${this.itemInfo.InternalTrackingNumber} Fail to update OrderLineDetail SQL`;
+            }
           })
         )
         .subscribe(
@@ -266,18 +274,18 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (res.updateMerpLog) {
               type = 'success';
               message = `QC complete for ${this.itemInfo.InternalTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
-              if (
-                !res.updateMerpLog.data.updateMerpOrderStatus.success ||
-                !res.updateMerpLog.data.clearMerpTote.success
-              ) {
-                type = 'warning';
-                message = [
-                  res.updateMerpLog.data.updateMerpOrderStatus.message,
-                  res.updateMerpLog.data.clearMerpTote.message,
-                ]
-                  .filter(Boolean)
-                  .join(`\n`);
-              }
+              // if (
+              //   !res.updateMerpLog.data.updateMerpOrderStatus.success ||
+              //   !res.updateMerpLog.data.clearMerpTote.success
+              // ) {
+              //   type = 'warning';
+              //   message = [
+              //     res.updateMerpLog.data.updateMerpOrderStatus.message,
+              //     res.updateMerpLog.data.clearMerpTote.message,
+              //   ]
+              //     .filter(Boolean)
+              //     .join(`\n`);
+              // }
             }
             this.sendGTM();
             this.router.navigate(['/qc'], {
