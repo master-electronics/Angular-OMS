@@ -66,7 +66,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     const barcode = this.barcodeForm.get('barcode').value;
     if (this.barcodeForm.valid) {
-      const barcodeSplit = barcode.split('-');
+      const barcodeSplit = barcode.toUpperCase().split('-');
       this.OrderInfo$ = this.fetchOrderDetail
         .fetch({
           Order: {
