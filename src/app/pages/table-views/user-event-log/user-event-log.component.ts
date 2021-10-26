@@ -67,8 +67,8 @@ export class UserEventLogComponent implements OnInit {
     const eventLog = {};
     const user = this.filterForm.get('user').value;
     const module = this.filterForm.get('module').value;
-    const target = this.filterForm.get('target').value;
-    const subTarget = this.filterForm.get('subTarget').value;
+    const target = this.filterForm.get('target').value.toUpperCase();
+    const subTarget = this.filterForm.get('subTarget').value.toUpperCase();
     let limit = 200;
     if (user) {
       eventLog['UserID'] = user;
