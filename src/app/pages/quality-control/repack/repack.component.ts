@@ -216,29 +216,45 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               delete updateQueries.updateSourceConatiner;
             }
             if (inProcess) delete updateQueries.updateMerpLog;
-            // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
-            if (targetContainer.ORDERLINEDETAILs.length) {
-              const needCleanup = targetContainer.ORDERLINEDETAILs.some(
-                (itn) => {
-                  return (
-                    itn.InternalTrackingNumber !==
-                      this.itemInfo.InternalTrackingNumber &&
-                    itn.StatusID >= environment.agOutComplete_ID
-                  );
-                }
-              );
-              if (needCleanup)
-                updateQueries['cleanContainerFromPrevOrder'] =
-                  this.updateOrderLineDetail.mutate({
-                    ContainerID: targetContainer._id,
-                    OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
-                    OrderLineDetail: { ContainerID: environment.DC_PH_ID },
-                  });
-            }
+            // // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            // if (targetContainer.ORDERLINEDETAILs.length) {
+            //   const needCleanup = targetContainer.ORDERLINEDETAILs.some(
+            //     (itn) => {
+            //       return (
+            //         itn.InternalTrackingNumber !==
+            //           this.itemInfo.InternalTrackingNumber &&
+            //         itn.StatusID >= environment.agOutComplete_ID
+            //       );
+            //     }
+            //   );
+            //   if (needCleanup)
+            //     updateQueries['cleanContainerFromPrevOrder'] =
+            //       this.updateOrderLineDetail.mutate({
+            //         ContainerID: targetContainer._id,
+            //         OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
+            //         OrderLineDetail: { ContainerID: environment.DC_PH_ID },
+            //       });
+            // }
             return forkJoin(updateQueries);
           })
-        )
 
+          // tap((res: any) => {
+          //   let error: string;
+          //   if (!res.updateDetail.data.updateOrderLineDetail[0]) {
+          //     error = `${this.itemInfo.InternalTrackingNumber} Fail to update OrderLineDetail SQL`;
+          //   }
+          //   if (!res.updateTargetContainer.data.updateContainer[0]) {
+          //     error += `${this.itemInfo.InternalTrackingNumber} Fail to update Target Container SQL`;
+          //   }
+          //   if (
+          //     res.updateSourceContainer &&
+          //     !res.updateSourceContainer.data.updateContainer[0]
+          //   ) {
+          //     error += `${this.itemInfo.InternalTrackingNumber} Fail to update source Container SQL`;
+          //   }
+          //   if (error) throw error;
+          // })
+        )
         .subscribe(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (res: any) => {

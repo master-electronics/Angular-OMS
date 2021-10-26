@@ -1,10 +1,19 @@
 query fetchUserAndZone {
   findUserInfo {
+    _id
     Name
     Zone {
       DistributionCenter
       Zone
     }
+  }
+}
+
+query fetchAllZone {
+  findZone {
+    _id
+    DistributionCenter
+    Zone
   }
 }
 
