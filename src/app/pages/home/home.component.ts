@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
@@ -18,7 +18,7 @@ export class HomeComponent {
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
-    { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
+    // { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
     { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },
   ];
   isMobile: boolean;
