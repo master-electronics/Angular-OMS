@@ -216,13 +216,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               delete updateQueries.updateSourceConatiner;
             }
             if (inProcess) delete updateQueries.updateMerpLog;
-            // if target container has item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
             if (targetContainer.ORDERLINEDETAILs.length) {
               const needCleanup = targetContainer.ORDERLINEDETAILs.some(
                 (itn) => {
                   return (
-                    itn.InternalTrackingNumber !==
-                      this.itemInfo.InternalTrackingNumber &&
+                    itn.OrderID !== this.itemInfo.OrderID &&
                     itn.StatusID >= environment.agOutComplete_ID
                   );
                 }
