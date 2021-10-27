@@ -92,7 +92,6 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
-  insertMissITN: MissItn;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -182,11 +181,6 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
-};
-
-
-export type MutationInsertMissItnArgs = {
-  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -348,6 +342,7 @@ export type Query = {
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
+  findZone?: Maybe<Array<Maybe<Zone>>>;
 };
 
 
@@ -440,6 +435,13 @@ export type QueryFindUserInfoArgs = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFindZoneArgs = {
+  ZoneInfo?: Maybe<SearchZone>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
@@ -515,22 +517,6 @@ export type InsertOrderLineDetail = {
 export type InsertUserInfo = {
   Name: Scalars['String'];
   ZoneID?: Maybe<Scalars['Int']>;
-};
-
-export type MissItn = {
-  __typename?: 'missITN';
-  CountryOfOrigin: Scalars['String'];
-  CustomerNumber: Scalars['String'];
-  DateCode: Scalars['String'];
-  DistributionCenter: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  OrderLineNumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
-  ParentITN: Scalars['String'];
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
-  Quantity: Scalars['Float'];
-  ROHS: Scalars['Boolean'];
 };
 
 export type OrderTasktime = {
@@ -629,6 +615,12 @@ export type SearchOrderLineDetail = {
 export type SearchUserInfo = {
   Name?: Maybe<Scalars['String']>;
   ZoneID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchZone = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 

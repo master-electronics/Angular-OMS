@@ -15,11 +15,12 @@ import { itemParams, QualityControlService } from '../quality-control.server';
 import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
+  UpdateMerpAfterQcRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Create_EventLogGQL,
@@ -50,6 +51,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateOrderLineDetail: Update_OrderLineDetailGQL,
     private updateContainer: Update_ContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
+    private updateMerp: UpdateMerpAfterQcRepackGQL,
     private createEventLog: Create_EventLogGQL,
     private gtmService: GoogleTagManagerService
   ) {
@@ -149,6 +151,14 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Setup graphql queries
 
+            const updatQCComplete = this.updateMerp.mutate({
+              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+              DateCode: this.itemInfo.DateCode,
+              CountryOfOrigin: this.itemInfo.CountryOfOrigin,
+              ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
+              CountMethod: this.itemInfo.CountMethod,
+            });
+
             const EventLog = {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
@@ -206,6 +216,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               updateTargetConatiner,
               updateSourceConatiner,
               updateMerpLog,
+              updatQCComplete,
             };
             environment.qcComplete_ID;
             if (sourceContainer === environment.DC_PH_ID) {
@@ -259,32 +270,18 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           }),
 
           tap((res: any) => {
-            console.log(res);
             if (!res.data.updateOrderLineDetail[0]) {
               throw `${this.itemInfo.InternalTrackingNumber} Fail to update OrderLineDetail SQL`;
             }
           })
         )
         .subscribe(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (res: any) => {
             let type = 'info';
             let message = `QC complete for ${this.itemInfo.InternalTrackingNumber}`;
             if (res.updateMerpLog) {
               type = 'success';
               message = `QC complete for ${this.itemInfo.InternalTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
-              // if (
-              //   !res.updateMerpLog.data.updateMerpOrderStatus.success ||
-              //   !res.updateMerpLog.data.clearMerpTote.success
-              // ) {
-              //   type = 'warning';
-              //   message = [
-              //     res.updateMerpLog.data.updateMerpOrderStatus.message,
-              //     res.updateMerpLog.data.clearMerpTote.message,
-              //   ]
-              //     .filter(Boolean)
-              //     .join(`\n`);
-              // }
             }
             this.sendGTM();
             this.router.navigate(['/qc'], {

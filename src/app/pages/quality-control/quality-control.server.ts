@@ -58,4 +58,5 @@ export interface itemParams {
   ROHS: boolean;
   CountryOfOrigin: string;
   DateCode: string;
+  CountMethod: string;
 }

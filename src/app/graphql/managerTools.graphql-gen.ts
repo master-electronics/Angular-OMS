@@ -92,7 +92,6 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
-  insertMissITN: MissItn;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -182,11 +181,6 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
-};
-
-
-export type MutationInsertMissItnArgs = {
-  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -348,6 +342,7 @@ export type Query = {
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
+  findZone?: Maybe<Array<Maybe<Zone>>>;
 };
 
 
@@ -440,6 +435,13 @@ export type QueryFindUserInfoArgs = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFindZoneArgs = {
+  ZoneInfo?: Maybe<SearchZone>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
@@ -515,22 +517,6 @@ export type InsertOrderLineDetail = {
 export type InsertUserInfo = {
   Name: Scalars['String'];
   ZoneID?: Maybe<Scalars['Int']>;
-};
-
-export type MissItn = {
-  __typename?: 'missITN';
-  CountryOfOrigin: Scalars['String'];
-  CustomerNumber: Scalars['String'];
-  DateCode: Scalars['String'];
-  DistributionCenter: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  OrderLineNumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
-  ParentITN: Scalars['String'];
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
-  Quantity: Scalars['Float'];
-  ROHS: Scalars['Boolean'];
 };
 
 export type OrderTasktime = {
@@ -632,6 +618,12 @@ export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type SearchZone = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type TaskCounter = {
   __typename?: 'taskCounter';
   User: Scalars['String'];
@@ -698,11 +690,22 @@ export type FetchUserAndZoneQuery = (
   { __typename?: 'Query' }
   & { findUserInfo?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserInfo' }
-    & Pick<Types.UserInfo, 'Name'>
+    & Pick<Types.UserInfo, '_id' | 'Name'>
     & { Zone?: Types.Maybe<(
       { __typename?: 'Zone' }
       & Pick<Types.Zone, 'DistributionCenter' | 'Zone'>
     )> }
+  )>>> }
+);
+
+export type FetchAllZoneQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchAllZoneQuery = (
+  { __typename?: 'Query' }
+  & { findZone?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'Zone' }
+    & Pick<Types.Zone, '_id' | 'DistributionCenter' | 'Zone'>
   )>>> }
 );
 
@@ -722,6 +725,7 @@ export type UpdateUserZoneMutation = (
 export const FetchUserAndZoneDocument = gql`
     query fetchUserAndZone {
   findUserInfo {
+    _id
     Name
     Zone {
       DistributionCenter
@@ -736,6 +740,26 @@ export const FetchUserAndZoneDocument = gql`
   })
   export class FetchUserAndZoneGQL extends Apollo.Query<FetchUserAndZoneQuery, FetchUserAndZoneQueryVariables> {
     document = FetchUserAndZoneDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchAllZoneDocument = gql`
+    query fetchAllZone {
+  findZone {
+    _id
+    DistributionCenter
+    Zone
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchAllZoneGQL extends Apollo.Query<FetchAllZoneQuery, FetchAllZoneQueryVariables> {
+    document = FetchAllZoneDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

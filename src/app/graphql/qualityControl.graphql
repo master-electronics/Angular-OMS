@@ -6,6 +6,7 @@ query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
     ROHS
     DateCode
     CountryOfOrigin
+    BinLocation
     OrderLine {
       OrderLineNumber
       ProductCode
@@ -111,7 +112,7 @@ mutation holdQCOrder(
   }
 }
 
-mutation updateMerpAfterQcVerify(
+mutation updateMerpAfterQcRepack(
   $InternalTrackingNumber: String!
   $DateCode: String!
   $CountryOfOrigin: String!

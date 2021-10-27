@@ -18,7 +18,6 @@ import {
   HoldQcOrderGQL,
   HoldQcOrderMutationVariables,
   PrintItnLabelGQL,
-  UpdateMerpAfterQcVerifyGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 import { Title } from '@angular/platform-browser';
@@ -106,7 +105,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private commonService: CommonService,
     private titleService: Title,
     private qcService: QualityControlService,
-    private updateMerp: UpdateMerpAfterQcVerifyGQL,
     private updateWms: Update_OrderLineDetailGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
@@ -199,17 +197,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.itemInfo.ROHS = this.verifyPack.get('ROHS').value;
     this.itemInfo.CountryOfOrigin = cooValue;
     this.itemInfo.DateCode = this.verifyPack.get('dateCode').value;
+    this.itemInfo.CountMethod = this.verifyPack.get('countMethods').value;
     this.qcService.changeItemParams(this.itemInfo);
 
     // send query
-    const orderInfo = {
-      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
-      DateCode: this.verifyPack.get('dateCode').value,
-      CountryOfOrigin: cooValue,
-      ROHS: this.verifyPack.get('ROHS').value ? 'Y' : 'N',
-      CountMethod: this.verifyPack.get('countMethods').value,
-    };
-    const updateMerp = this.updateMerp.mutate(orderInfo);
     const updateWms = this.updateWms.mutate({
       InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
       OrderLineDetail: {
@@ -219,46 +210,44 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     });
 
-    //check if change then update info to merp and wms
-    const updateQuery = { updateMerp, updateWms };
-    if (!this.isEditable) {
-      delete updateQuery.updateWms;
+    //check if change then update info to wms
+    if (this.isEditable) {
+      this.subscription.add(
+        updateWms.subscribe(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (res: any) => {
+            let type = '';
+            let message = '';
+            // if (!res.updateMerp.data.changeQCLineInfo.success) {
+            //   type = 'error';
+            //   message = `QCCOMPELETE: ${res.updateMerp.data.changeQCLineInfo.message}\n`;
+            // }
+            if (res.updateWms && !res.updateWms.data.updateOrderLineDetail[0]) {
+              type = 'error';
+              message += `Fail to update SQL`;
+            }
+            this.isLoading = false;
+            if (!type) {
+              this.router.navigate(['qc/repack']);
+              return;
+            }
+            this.router.navigate(['qc'], {
+              queryParams: { type, message },
+            });
+          },
+          (error) => {
+            this.isLoading = false;
+            this.router.navigate(['qc'], {
+              queryParams: {
+                type: `error`,
+                message: `${this.itemInfo.InternalTrackingNumber} failed\n${error}`,
+              },
+            });
+          }
+        )
+      );
     }
-    this.isLoading = true;
-    this.subscription.add(
-      forkJoin(updateQuery).subscribe(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: any) => {
-          let type = '';
-          let message = '';
-          // if (!res.updateMerp.data.changeQCLineInfo.success) {
-          //   type = 'error';
-          //   message = `QCCOMPELETE: ${res.updateMerp.data.changeQCLineInfo.message}\n`;
-          // }
-          if (res.updateWms && !res.updateWms.data.updateOrderLineDetail[0]) {
-            type = 'error';
-            message += `Fail to update SQL`;
-          }
-          this.isLoading = false;
-          if (!type) {
-            this.router.navigate(['qc/repack']);
-            return;
-          }
-          this.router.navigate(['qc'], {
-            queryParams: { type, message },
-          });
-        },
-        (error) => {
-          this.isLoading = false;
-          this.router.navigate(['qc'], {
-            queryParams: {
-              type: `error`,
-              message: `${this.itemInfo.InternalTrackingNumber} failed\n${error}`,
-            },
-          });
-        }
-      )
-    );
+    this.router.navigate(['qc/repack']);
   }
 
   back(): void {

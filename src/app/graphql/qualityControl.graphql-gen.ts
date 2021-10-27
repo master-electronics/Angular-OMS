@@ -92,7 +92,6 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
-  insertMissITN: MissItn;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -182,11 +181,6 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
-};
-
-
-export type MutationInsertMissItnArgs = {
-  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -348,6 +342,7 @@ export type Query = {
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
+  findZone?: Maybe<Array<Maybe<Zone>>>;
 };
 
 
@@ -440,6 +435,13 @@ export type QueryFindUserInfoArgs = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+
+export type QueryFindZoneArgs = {
+  ZoneInfo?: Maybe<SearchZone>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
@@ -515,22 +517,6 @@ export type InsertOrderLineDetail = {
 export type InsertUserInfo = {
   Name: Scalars['String'];
   ZoneID?: Maybe<Scalars['Int']>;
-};
-
-export type MissItn = {
-  __typename?: 'missITN';
-  CountryOfOrigin: Scalars['String'];
-  CustomerNumber: Scalars['String'];
-  DateCode: Scalars['String'];
-  DistributionCenter: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  OrderLineNumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
-  ParentITN: Scalars['String'];
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
-  Quantity: Scalars['Float'];
-  ROHS: Scalars['Boolean'];
 };
 
 export type OrderTasktime = {
@@ -632,6 +618,12 @@ export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type SearchZone = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type TaskCounter = {
   __typename?: 'taskCounter';
   User: Scalars['String'];
@@ -700,7 +692,7 @@ export type VerifyItNforQcQuery = (
   { __typename?: 'Query' }
   & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'OrderLineDetail' }
-    & Pick<Types.OrderLineDetail, 'StatusID' | 'ParentITN' | 'Quantity' | 'ROHS' | 'DateCode' | 'CountryOfOrigin'>
+    & Pick<Types.OrderLineDetail, 'StatusID' | 'ParentITN' | 'Quantity' | 'ROHS' | 'DateCode' | 'CountryOfOrigin' | 'BinLocation'>
     & { OrderLine: (
       { __typename?: 'OrderLine' }
       & Pick<Types.OrderLine, 'OrderLineNumber' | 'ProductCode' | 'PartNumber'>
@@ -813,7 +805,7 @@ export type HoldQcOrderMutation = (
   ) }
 );
 
-export type UpdateMerpAfterQcVerifyMutationVariables = Types.Exact<{
+export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
   DateCode: Types.Scalars['String'];
   CountryOfOrigin: Types.Scalars['String'];
@@ -822,7 +814,7 @@ export type UpdateMerpAfterQcVerifyMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateMerpAfterQcVerifyMutation = (
+export type UpdateMerpAfterQcRepackMutation = (
   { __typename?: 'Mutation' }
   & { changeQCLineInfo: (
     { __typename?: 'Response' }
@@ -858,6 +850,7 @@ export const VerifyItNforQcDocument = gql`
     ROHS
     DateCode
     CountryOfOrigin
+    BinLocation
     OrderLine {
       OrderLineNumber
       ProductCode
@@ -1031,8 +1024,8 @@ export const HoldQcOrderDocument = gql`
       super(apollo);
     }
   }
-export const UpdateMerpAfterQcVerifyDocument = gql`
-    mutation updateMerpAfterQcVerify($InternalTrackingNumber: String!, $DateCode: String!, $CountryOfOrigin: String!, $ROHS: String!, $CountMethod: String!) {
+export const UpdateMerpAfterQcRepackDocument = gql`
+    mutation updateMerpAfterQcRepack($InternalTrackingNumber: String!, $DateCode: String!, $CountryOfOrigin: String!, $ROHS: String!, $CountMethod: String!) {
   changeQCLineInfo(
     InternalTrackingNumber: $InternalTrackingNumber
     DateCode: $DateCode
@@ -1049,8 +1042,8 @@ export const UpdateMerpAfterQcVerifyDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateMerpAfterQcVerifyGQL extends Apollo.Mutation<UpdateMerpAfterQcVerifyMutation, UpdateMerpAfterQcVerifyMutationVariables> {
-    document = UpdateMerpAfterQcVerifyDocument;
+  export class UpdateMerpAfterQcRepackGQL extends Apollo.Mutation<UpdateMerpAfterQcRepackMutation, UpdateMerpAfterQcRepackMutationVariables> {
+    document = UpdateMerpAfterQcRepackDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

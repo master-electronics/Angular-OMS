@@ -80,18 +80,25 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             if (res.data.findOrderLineDetail.length > 1) {
               throw 'Invalid ITN';
             }
+            let error = '';
+            if (
+              res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim() !==
+              'qc'
+            ) {
+              error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC`;
+            }
             if (
               ![
-                environment.qcComplete_ID,
-                environment.warehouseHold_ID,
                 environment.droppedQC_ID,
-                environment.salesHold_ID,
-                environment.pickComplete_ID,
+                environment.warehouseHold_ID,
+                environment.qcComplete_ID,
               ].includes(res.data.findOrderLineDetail[0].StatusID)
             ) {
-              throw 'Invalid order line status.';
+              error += `Invalid order line status ${res.data.findOrderLineDetail[0].StatusID}. Must be 20, 30, or 60!\n`;
             }
-            return res;
+            if (error) {
+              throw error;
+            }
           })
         )
         .subscribe(
@@ -112,6 +119,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
+              CountMethod: '',
             };
             this.qcService.changeItemParams(itemInfo);
             this.router.navigate(['/qc/globalmessages']);
