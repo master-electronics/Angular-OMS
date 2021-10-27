@@ -214,15 +214,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isEditable) {
       this.subscription.add(
         updateWms.subscribe(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (res: any) => {
+          (res) => {
             let type = '';
             let message = '';
-            // if (!res.updateMerp.data.changeQCLineInfo.success) {
-            //   type = 'error';
-            //   message = `QCCOMPELETE: ${res.updateMerp.data.changeQCLineInfo.message}\n`;
-            // }
-            if (res.updateWms && !res.updateWms.data.updateOrderLineDetail[0]) {
+            if (!res.data.updateOrderLineDetail[0]) {
               type = 'error';
               message += `Fail to update SQL`;
             }

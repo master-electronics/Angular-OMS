@@ -7,12 +7,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { of, Subscription, throwError } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
