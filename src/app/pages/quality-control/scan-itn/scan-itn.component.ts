@@ -85,7 +85,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim() !==
               'qc'
             ) {
-              error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC`;
+              error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC\n`;
             }
             if (
               ![
@@ -94,7 +94,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 environment.qcComplete_ID,
               ].includes(res.data.findOrderLineDetail[0].StatusID)
             ) {
-              error += `Invalid order line status ${res.data.findOrderLineDetail[0].StatusID}. Must be 20, 30, or 60!\n`;
+              error += `Invalid order line status ${res.data.findOrderLineDetail[0].StatusID}. Must be 20, 30, or 60`;
             }
             if (error) {
               throw error;
