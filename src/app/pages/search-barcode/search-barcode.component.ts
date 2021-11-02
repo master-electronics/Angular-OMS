@@ -1,10 +1,5 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 
 import { CommonService } from '../../shared/services/common.service';

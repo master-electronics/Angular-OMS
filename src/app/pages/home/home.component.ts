@@ -17,9 +17,15 @@ export class HomeComponent {
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },
+    { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },
+    {
+      link: '/shelfinventory',
+      front: 'Shelf ',
+      highlight: 'I',
+      end: 'nventory',
+    },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
     // { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
-    { link: '/searchbarcode', front: '', highlight: 'S', end: 'earch Barcode' },
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;

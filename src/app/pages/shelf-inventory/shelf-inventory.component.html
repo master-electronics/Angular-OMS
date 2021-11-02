@@ -1,29 +1,29 @@
-<div class="container mx-auto px-2 py-2 md:mt-4">
+<div class="container py-6">
   <form
     nz-form
     focusInvalidInput
-    [formGroup]="containerForm"
+    [formGroup]="barcodeForm"
     (ngSubmit)="onSubmit()"
   >
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired>Pick ITNs in the tote</nz-form-label>
+          <nz-form-label nzRequired> Shelf </nz-form-label>
           <nz-form-control
             nzHasFeedback
-            nzErrorTip="The input is not valid ITN!"
+            nzErrorTip="The input is not valid shelf barcode!"
           >
             <input
               nz-input
-              placeholder=" "
-              formControlName="containerNumber"
-              placeholder="ITN#"
+              oninput="this.value = this.value.toUpperCase()"
+              placeholder="10-AG-01-01-A-00"
               nzSize="large"
               type="text"
-              id="containerNumber"
-              name="containerNumber"
+              id="barcode"
+              name="barcode"
+              formControlName="barcode"
               autocomplete="off"
-              #containerNumber
+              #barcode
             />
           </nz-form-control>
         </nz-form-item>
@@ -35,14 +35,16 @@
               type="submit"
               nzType="primary"
               (click)="onSubmit()"
+              [nzLoading]="isLoading"
               nzSize="large"
               class="w-full"
             >
-              Submit
+              Search
             </button>
           </div>
         </nz-form-item>
 
+        <div *ngIf="search$ | async"></div>
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
           <nz-alert
             [nzType]="
@@ -59,24 +61,6 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
-
-        <!-- ITN list -->
-        <table class="w-full">
-          <thead class="grid grid-cols-3 gap-3 justify-items-start">
-            <th>ITN</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of itemList" class="text-lg">
-              <td>{{ item }}</td>
-            </tr>
-            <tr
-              *ngFor="let item of selectedList"
-              class="text-green-500 text-lg"
-            >
-              <td>{{ item }}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </form>

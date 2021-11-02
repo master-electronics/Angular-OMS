@@ -72,6 +72,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/pick/pick.module').then((m) => m.PickModule),
       },
+      {
+        path: 'shelfinventory',
+        loadChildren: () =>
+          import('./pages//shelf-inventory/shelf-inventory.module').then(
+            (m) => m.ShelfInventoryModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

@@ -1,0 +1,68 @@
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="inputForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-label nzRequired>Pick ITNs in the shelf</nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="The input is not valid ITN!"
+          >
+            <input
+              nz-input
+              placeholder=" "
+              formControlName="ITNBarcode"
+              placeholder="ITN#"
+              nzSize="large"
+              type="text"
+              id="ITNBarcode"
+              name="ITNBarcode"
+              autocomplete="off"
+              #ITNBarcode
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item nz-row nzGutter="16" nzJustify="center">
+          <div nz-col nzSpan="16">
+            <button
+              nz-button
+              type="submit"
+              nzType="primary"
+              nzSize="large"
+              class="mr-6"
+            >
+              Submit
+            </button>
+          </div>
+
+          <div nz-col nzSpan="8">
+            <button nz-button (click)="back()" nzSize="large">Back</button>
+          </div>
+        </nz-form-item>
+
+        <!-- ITN list -->
+        <table class="w-full">
+          <tbody>
+            <div *ngIf="this.invalidITN.length > 0">
+              <tr class="text-red-500 font-bold">
+                InvalidITN
+              </tr>
+              <tr *ngFor="let item of invalidITN" class="text-red-500 text-lg">
+                <td>{{ item }}</td>
+              </tr>
+            </div>
+            <tr *ngFor="let item of itemList" class="text-lg">
+              <td>{{ item }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
