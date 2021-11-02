@@ -24,10 +24,7 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
   invalidITN = [];
 
   inputForm = this._fb.group({
-    ITNBarcode: [
-      '',
-      [Validators.required, Validators.pattern(ITNBarcodeRegex)],
-    ],
+    ITNBarcode: ['', [Validators.pattern(ITNBarcodeRegex)]],
   });
 
   constructor(
@@ -52,7 +49,7 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.inputForm.valid) {
+    if (!this.inputForm.valid || this.inputForm.value.ITNBarcode.length < 1) {
       this.ITNinput.nativeElement.select();
       return;
     }
@@ -90,10 +87,6 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
     } else if (!isInList) {
       this.alertMessage = `This ITN is not in the list.`;
     }
-    if (isInList) {
-      this.inputForm.get('ITNBarcode').setValue('');
-    }
-
     this.ITNinput.nativeElement.select();
     return;
   }
