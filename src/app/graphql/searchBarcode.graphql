@@ -1,6 +1,12 @@
 query findContainerForSearchBarcode($Container: searchContainer!) {
   findContainer(Container: $Container) {
     Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
     ORDERLINEDETAILs {
       InternalTrackingNumber
       Status {

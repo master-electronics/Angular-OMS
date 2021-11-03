@@ -692,7 +692,7 @@ export type FindContainerForSearchBarcodeQuery = (
   { __typename?: 'Query' }
   & { findContainer?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'Container' }
-    & Pick<Types.Container, 'Barcode'>
+    & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
     & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
       & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
@@ -781,6 +781,12 @@ export const FindContainerForSearchBarcodeDocument = gql`
     query findContainerForSearchBarcode($Container: searchContainer!) {
   findContainer(Container: $Container) {
     Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
     ORDERLINEDETAILs {
       InternalTrackingNumber
       Status {

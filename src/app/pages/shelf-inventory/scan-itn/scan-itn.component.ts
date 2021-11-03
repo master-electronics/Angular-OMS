@@ -52,8 +52,9 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
 
   selectITN(): void {
     let isInList = false;
+    const barcode = this.inputForm.value.ITNBarcode.toUpperCase();
     this.itemList = this.itemList.filter((node) => {
-      isInList = node === this.inputForm.get('ITNBarcode').value;
+      isInList = node === barcode;
       if (isInList) {
         this.selectedList.add(node);
       }
@@ -61,15 +62,13 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
     });
 
     if (!isInList) {
-      isInList = this.selectedList.has(this.inputForm.get('ITNBarcode').value);
+      isInList = this.selectedList.has(barcode);
     }
 
     if (!isInList) {
-      const isInInvalidList = this.invalidITN.includes(
-        this.inputForm.get('ITNBarcode').value
-      );
+      const isInInvalidList = this.invalidITN.includes(barcode);
       if (!isInInvalidList) {
-        this.invalidITN.unshift(this.inputForm.get('ITNBarcode').value);
+        this.invalidITN.unshift(barcode);
       }
     }
 
