@@ -26,6 +26,7 @@
           </nz-form-control>
         </nz-form-item>
 
+        <div *ngIf="query$ | async"></div>
         <nz-form-item nz-row nzJustify="center">
           <div nz-col nzSpan="13">
             <button

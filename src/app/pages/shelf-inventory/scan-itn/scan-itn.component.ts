@@ -16,11 +16,8 @@ import { ShelfInventoryService } from '../shelf-inventory.server';
   templateUrl: './scan-itn.component.html',
 })
 export class ScanITNComponent implements OnInit, AfterViewInit {
-  alertType = 'error';
-  alertMessage = '';
-  totalITNs = 0;
   itemList = [];
-  selectedList = [];
+  selectedList = new Set();
   invalidITN = [];
 
   inputForm = this._fb.group({
@@ -38,8 +35,6 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
     this.itemList = this._shelfInventoryService.ITNList;
     if (!this.itemList) {
       this._router.navigate(['/shelfinventory']);
-    } else {
-      this.totalITNs = this.itemList.length;
     }
   }
 
@@ -48,7 +43,6 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    this.alertMessage = '';
     if (!this.inputForm.valid || this.inputForm.value.ITNBarcode.length < 1) {
       this.ITNinput.nativeElement.select();
       return;
@@ -61,15 +55,13 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
     this.itemList = this.itemList.filter((node) => {
       isInList = node === this.inputForm.get('ITNBarcode').value;
       if (isInList) {
-        this.selectedList.push(node);
+        this.selectedList.add(node);
       }
       return !isInList;
     });
 
     if (!isInList) {
-      isInList = this.selectedList.includes(
-        this.inputForm.get('ITNBarcode').value
-      );
+      isInList = this.selectedList.has(this.inputForm.get('ITNBarcode').value);
     }
 
     if (!isInList) {
@@ -81,12 +73,6 @@ export class ScanITNComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (this.totalITNs === this.selectedList.length) {
-      this.alertType = 'success';
-      this.alertMessage = 'All ITNs are scaned.';
-    } else if (!isInList) {
-      this.alertMessage = `This ITN is not in the list.`;
-    }
     this.ITNinput.nativeElement.select();
     return;
   }

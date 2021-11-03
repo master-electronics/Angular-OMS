@@ -698,7 +698,11 @@ export type VerifyContainerForAggregationInQuery = (
       & Pick<Types.ContainerType, 'IsMobile'>
     ), ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, '_id' | 'StatusID' | 'OrderID'>
+      & Pick<Types.OrderLineDetail, '_id' | 'InternalTrackingNumber' | 'StatusID' | 'OrderID'>
+      & { Order: (
+        { __typename?: 'Order' }
+        & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
+      ) }
     )>>> }
   )>>> }
 );
@@ -885,8 +889,13 @@ export const VerifyContainerForAggregationInDocument = gql`
     }
     ORDERLINEDETAILs {
       _id
+      InternalTrackingNumber
       StatusID
       OrderID
+      Order {
+        OrderNumber
+        NOSINumber
+      }
     }
   }
 }

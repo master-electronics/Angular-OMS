@@ -14,8 +14,13 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
     }
     ORDERLINEDETAILs {
       _id
+      InternalTrackingNumber
       StatusID
       OrderID
+      Order {
+        OrderNumber
+        NOSINumber
+      }
     }
   }
 }

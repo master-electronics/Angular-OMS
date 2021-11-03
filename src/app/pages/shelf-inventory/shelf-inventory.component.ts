@@ -14,7 +14,7 @@ import { AggregationShelfBarcodeRegex } from '../../shared/dataRegex';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { ShelfInventoryService } from './shelf-inventory.server';
 import { FindItNsByShelfGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
@@ -63,6 +63,7 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
       this.barcode.nativeElement.select();
       return;
     }
+    this.isLoading = true;
     const barcode = this.barcodeForm.get('barcode').value;
     const containerInfo = {
       DistributionCenter: environment.DistributionCenter,
@@ -92,7 +93,14 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
           return;
         }
         this.shelfInventory.setITNList(itnList);
+        this.isLoading = false;
         this.router.navigate(['/shelfinventory/scanitn/']);
+      }),
+      catchError((error) => {
+        this.alertMessage = error.message;
+        this.alertType = 'error';
+        this.isLoading = false;
+        return error;
       })
     );
   }
