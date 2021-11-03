@@ -2,6 +2,7 @@ query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
     ORDERLINEDETAILs {
       InternalTrackingNumber
+      StatusID
     }
   }
 }

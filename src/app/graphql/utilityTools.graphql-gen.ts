@@ -694,7 +694,7 @@ export type FindItNsByShelfQuery = (
     { __typename?: 'Container' }
     & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
+      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'StatusID'>
     )>>> }
   )>>> }
 );
@@ -704,6 +704,7 @@ export const FindItNsByShelfDocument = gql`
   findContainer(Container: $Container) {
     ORDERLINEDETAILs {
       InternalTrackingNumber
+      StatusID
     }
   }
 }

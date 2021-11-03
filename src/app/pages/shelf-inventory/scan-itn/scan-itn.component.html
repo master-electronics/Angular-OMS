@@ -54,11 +54,29 @@
                 InvalidITN
               </tr>
               <tr *ngFor="let item of invalidITN" class="text-red-500 text-lg">
-                <td>{{ item }}</td>
+                <td>
+                  <a
+                    [routerLink]="['/tableviews/usereventlog']"
+                    [queryParams]="{
+                      ITN: item
+                    }"
+                  >
+                    {{ detail.InternalTrackingNumber }}</a
+                  >
+                </td>
               </tr>
             </div>
             <tr *ngFor="let item of itemList" class="text-lg">
-              <td>{{ item }}</td>
+              <td>
+                <a
+                  [routerLink]="['/tableviews/usereventlog']"
+                  [queryParams]="{
+                    ITN: item
+                  }"
+                >
+                  {{ detail.InternalTrackingNumber }}</a
+                >
+              </td>
             </tr>
           </tbody>
         </table>
