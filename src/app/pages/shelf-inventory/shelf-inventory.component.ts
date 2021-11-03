@@ -74,34 +74,36 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
       Shelf: barcode.substring(12, 13),
       ShelfDetail: barcode.substring(14),
     };
-    this.search$ = this.searchITNList.fetch({ Container: containerInfo }).pipe(
-      map((result) => {
-        if (result.data.findContainer.length === 0) {
-          this.alertMessage = 'No Container found for this barcode';
-          this.alertType = 'error';
-          return;
-        }
-        const itnList = [];
-        result.data.findContainer.forEach((container) => {
-          container.ORDERLINEDETAILs.forEach((itn) => {
-            itnList.push(itn.InternalTrackingNumber);
+    this.search$ = this.searchITNList
+      .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((result) => {
+          if (result.data.findContainer.length === 0) {
+            this.alertMessage = 'No Container found for this barcode';
+            this.alertType = 'error';
+            return;
+          }
+          const itnList = [];
+          result.data.findContainer.forEach((container) => {
+            container.ORDERLINEDETAILs.forEach((itn) => {
+              itnList.push(itn.InternalTrackingNumber);
+            });
           });
-        });
-        if (itnList.length === 0) {
-          this.alertMessage = 'No ITN found for this barcode';
+          if (itnList.length === 0) {
+            this.alertMessage = 'No ITN found for this barcode';
+            this.alertType = 'error';
+            return;
+          }
+          this.shelfInventory.setITNList(itnList);
+          this.isLoading = false;
+          this.router.navigate(['/shelfinventory/scanitn/']);
+        }),
+        catchError((error) => {
+          this.alertMessage = error.message;
           this.alertType = 'error';
-          return;
-        }
-        this.shelfInventory.setITNList(itnList);
-        this.isLoading = false;
-        this.router.navigate(['/shelfinventory/scanitn/']);
-      }),
-      catchError((error) => {
-        this.alertMessage = error.message;
-        this.alertType = 'error';
-        this.isLoading = false;
-        return error;
-      })
-    );
+          this.isLoading = false;
+          return error;
+        })
+      );
   }
 }
