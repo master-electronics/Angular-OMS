@@ -212,7 +212,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         // BarcodeList,
         EventLog: {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-          Event: `Ag Out`,
+          Event: `Done`,
           Module: `Ag Out`,
           Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
           SubTarget: this.agOutService.ITNsInOrder,
