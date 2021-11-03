@@ -9,6 +9,7 @@
               <nz-form-control nzHasFeedback>
                 <input
                   nz-input
+                  oninput="this.value = this.value.toUpperCase()"
                   id="barcode"
                   placeholder="Barcode"
                   name="barcode"
@@ -57,7 +58,15 @@
             <div class="divide-y">
               <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
                 <li class="ml-3">
-                  ITN: {{ ITN.InternalTrackingNumber }} ({{ ITN.Status.Name }})
+                  ITN:
+                  <a
+                    [routerLink]="['/tableviews/usereventlog']"
+                    [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                    class="text-blue-500"
+                  >
+                    {{ ITN.InternalTrackingNumber }}</a
+                  >
+                  ({{ ITN.Status.Name }})
                 </li>
                 <li class="ml-3">
                   Order: {{ ITN.Order.OrderNumber }}-{{
@@ -79,7 +88,15 @@
         <div class="divide-y">
           <ul *ngFor="let ITN of search$ | async">
             <li>
-              ITN: {{ ITN.InternalTrackingNumber }}({{ ITN.Status.Name }})
+              ITN:
+              <a
+                [routerLink]="['/tableviews/usereventlog']"
+                [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                class="text-blue-500"
+              >
+                {{ ITN.InternalTrackingNumber }}</a
+              >
+              ({{ ITN.Status.Name }})
             </li>
             <li>
               Location:
@@ -115,7 +132,17 @@
             <ul class="ml-2" *ngFor="let line of order.ORDERLINEs">
               <li>Line: {{ line.OrderLineNumber }}</li>
               <ul *ngFor="let ITN of line.ORDERLINEDETAILs">
-                <li>ITN: {{ ITN.InternalTrackingNumber }}</li>
+                <li>
+                  ITN:
+                  <a
+                    [routerLink]="['/tableviews/usereventlog']"
+                    [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                    class="text-blue-500"
+                  >
+                    {{ ITN.InternalTrackingNumber }}</a
+                  >
+                  ({{ ITN.Status.Name }})
+                </li>
                 <li>
                   Location: {{ ITN.Container.Warehouse }}-{{
                     ITN.Container.Row
