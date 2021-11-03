@@ -865,6 +865,9 @@ export type FetchContainerForAgoutPickQuery = (
     & { OrderLine: (
       { __typename?: 'OrderLine' }
       & Pick<Types.OrderLine, 'OrderLineNumber' | 'ProductCode' | 'PartNumber'>
+    ), Order: (
+      { __typename?: 'Order' }
+      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
     ), Container: (
       { __typename?: 'Container' }
       & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
@@ -1131,6 +1134,10 @@ export const FetchContainerForAgoutPickDocument = gql`
       OrderLineNumber
       ProductCode
       PartNumber
+    }
+    Order {
+      OrderNumber
+      NOSINumber
     }
     Container {
       Barcode

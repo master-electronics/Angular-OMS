@@ -198,6 +198,10 @@ query fetchContainerForAgoutPick($OrderID: Int) {
       ProductCode
       PartNumber
     }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
     Container {
       Barcode
       Warehouse

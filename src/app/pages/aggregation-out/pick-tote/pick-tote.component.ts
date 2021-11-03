@@ -12,7 +12,7 @@ import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
@@ -23,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
+import { Create_EventLogGQL } from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'pick-tote',
@@ -60,6 +61,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _titleService: Title,
     private _fetchLocation: FetchContainerForAgoutPickGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
+    private _updateUserEvent: Create_EventLogGQL,
     private _updateAfterQC: UpdateAfterAgOutGQL,
     private _gtmService: GoogleTagManagerService,
     private _authService: AuthenticationService
@@ -87,7 +89,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           { fetchPolicy: 'network-only' }
         )
         .pipe(
-          map((res) => {
+          switchMap((res) => {
             this.orderLineDetailList = res.data.findOrderLineDetail;
             this.agOutService.changeOrderLine(this.orderLineDetailList);
             const containerSet = new Set();
@@ -98,7 +100,21 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             this.agOutService.changeITNsInOrder(this.ITNsInOrder.slice(0, -1));
             this.containerList = [...containerSet];
             this.totalTotes = this.containerList.length;
-            this.isLoading = res.loading;
+            return this._updateUserEvent.mutate({
+              EventLog: {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                Event: `Start`,
+                Module: `Ag Out`,
+                Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
+                SubTarget: `${this.ITNsInOrder.slice(0, -1)}`,
+              },
+            });
+          }),
+          map(() => {
+            //
+            this.isLoading = false;
             return true;
           }),
           catchError((error) => {
