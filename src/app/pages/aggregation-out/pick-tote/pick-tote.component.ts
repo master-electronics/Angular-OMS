@@ -194,6 +194,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const productList = [...productSet];
 
     // Process query
+    const toteSet = new Set<string>();
+    this.agOutService.selectedList.forEach((node) => toteSet.add(node.Barcode));
     this.isLoading = true;
     this.updateSQL$ = forkJoin({
       updateOrder: this._updateAfterQC.mutate({
@@ -210,6 +212,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         //   ShelfDetail: null,
         // },
         // BarcodeList,
+        toteList: [...toteSet],
         EventLog: {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           Event: `Done`,

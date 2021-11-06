@@ -213,6 +213,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               //   ShelfDetail: null,
               // },
               // BarcodeList: [this.urlParams.Barcode],
+              toteList: [this.outsetContainer.Barcode],
               EventLog: {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id

@@ -71,6 +71,7 @@ mutation updateAfterAgOut(
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
+  $toteList: [String!]!
   $ActionType: String!
   $Action: String!
 ) {
@@ -87,6 +88,8 @@ mutation updateAfterAgOut(
   createEventLog(EventLog: $EventLog) {
     _id
   }
+
+  deleteAndInsertRouteTable(lpnList: $toteList)
 
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber

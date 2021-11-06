@@ -83,6 +83,7 @@ export type Mutation = {
   changeQCLineInfo: Response;
   clearMerpTote: Response;
   createEventLog: EventLog;
+  deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -122,6 +123,11 @@ export type MutationClearMerpToteArgs = {
 
 export type MutationCreateEventLogArgs = {
   EventLog: InsertEventLog;
+};
+
+
+export type MutationDeleteAndInsertRouteTableArgs = {
+  lpnList: Array<Maybe<Scalars['String']>>;
 };
 
 
@@ -550,6 +556,13 @@ export type OrderViewFilter = {
   Priority?: Maybe<Scalars['String']>;
   ShippingMethod?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
+};
+
+export type Route_Table = {
+  __typename?: 'route_table';
+  dest: Scalars['Int'];
+  dt: Scalars['String'];
+  lpn: Scalars['String'];
 };
 
 export type SearchContainer = {

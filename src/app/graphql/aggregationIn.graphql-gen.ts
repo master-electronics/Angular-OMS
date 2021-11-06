@@ -83,6 +83,7 @@ export type Mutation = {
   changeQCLineInfo: Response;
   clearMerpTote: Response;
   createEventLog: EventLog;
+  deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -122,6 +123,11 @@ export type MutationClearMerpToteArgs = {
 
 export type MutationCreateEventLogArgs = {
   EventLog: InsertEventLog;
+};
+
+
+export type MutationDeleteAndInsertRouteTableArgs = {
+  lpnList: Array<Maybe<Scalars['String']>>;
 };
 
 
@@ -552,6 +558,13 @@ export type OrderViewFilter = {
   Status?: Maybe<Scalars['String']>;
 };
 
+export type Route_Table = {
+  __typename?: 'route_table';
+  dest: Scalars['Int'];
+  dt: Scalars['String'];
+  lpn: Scalars['String'];
+};
+
 export type SearchContainer = {
   Aisle?: Maybe<Scalars['String']>;
   Barcode?: Maybe<Scalars['String']>;
@@ -744,6 +757,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  toteList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
 }>;
@@ -751,7 +765,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 
 export type UpdateAfterAgOutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder'>
+  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder' | 'deleteAndInsertRouteTable'>
   & { createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
@@ -959,12 +973,13 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
     }
   }
 export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: {isSelected: false})
   createEventLog(EventLog: $EventLog) {
     _id
   }
+  deleteAndInsertRouteTable(lpnList: $toteList)
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
