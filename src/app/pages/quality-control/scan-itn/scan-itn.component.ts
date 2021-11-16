@@ -82,9 +82,12 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             let error = '';
             if (
-              !['qc', 'hld-3'].includes(
+              !['qc'].includes(
                 res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim()
-              )
+              ) &&
+              res.data.findOrderLineDetail[0].BinLocation.toLowerCase()
+                .trim()
+                .match('/^hld-[0-9]/i')
             ) {
               error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC or hold\n`;
             }
