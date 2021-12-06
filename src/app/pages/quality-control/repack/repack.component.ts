@@ -103,7 +103,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               NOSINumber: this.itemInfo.NOSI,
             },
           },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'no-cache' }
         )
 
         .pipe(
