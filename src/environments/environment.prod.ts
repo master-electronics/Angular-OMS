@@ -18,4 +18,8 @@ export const environment = {
   //WMS ContainerType table
   shelfType_ID: 2,
   toteType_ID: 3,
+
+  // User Event ID
+  Event_QC_Start: 200,
+  Event_QC_Hold: 201,
 };

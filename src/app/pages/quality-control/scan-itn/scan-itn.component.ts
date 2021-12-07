@@ -11,10 +11,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'scan-itn',
@@ -24,6 +25,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
   alertType = 'error';
   alertMessage = '';
+  itemInfo: itemParams;
   private subscription = new Subscription();
   constructor(
     private fb: FormBuilder,
@@ -31,6 +33,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private titleService: Title,
     private qcService: QualityControlService,
+    private insertUserEventLog: Insert_UserEventLogsGQL,
     private verifyITNQC: VerifyItNforQcGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
@@ -103,12 +106,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             if (error) {
               throw error;
             }
-          })
-        )
-        .subscribe(
-          (res) => {
+          }),
+          switchMap((res) => {
             const detail = res.data.findOrderLineDetail[0];
-            const itemInfo: itemParams = {
+            this.itemInfo = {
               InternalTrackingNumber: ITN,
               OrderID: detail.Order._id,
               CustomerNumber: detail.Order.CustomerNumber?.trim() || '',
@@ -125,7 +126,23 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
             };
-            this.qcService.changeItemParams(itemInfo);
+            const log = [
+              {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                OrderNumber: detail.Order.OrderNumber?.trim(),
+                NOSINumber: detail.Order.NOSINumber.trim(),
+                InternalTrackingNumber: ITN,
+                UserEventID: environment.Event_QC_Start,
+              },
+            ];
+            return this.insertUserEventLog.mutate({ log });
+          })
+        )
+        .subscribe(
+          () => {
+            this.qcService.changeItemParams(this.itemInfo);
             this.router.navigate(['/qc/globalmessages']);
             this.isLoading = false;
           },

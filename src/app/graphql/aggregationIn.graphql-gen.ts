@@ -93,6 +93,7 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -187,6 +188,11 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
+};
+
+
+export type MutationInsertUserEventLogsArgs = {
+  log: Array<Maybe<InsertUserEventLog>>;
 };
 
 
@@ -461,6 +467,27 @@ export type ShipmentMethod = {
   _id: Scalars['String'];
 };
 
+export type UserEvent = {
+  __typename?: 'UserEvent';
+  Event: Scalars['String'];
+  Module: Scalars['String'];
+  _id: Scalars['String'];
+};
+
+export type UserEventLog = {
+  __typename?: 'UserEventLog';
+  DateTime: Scalars['String'];
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  User: UserInfo;
+  UserEvent: UserEvent;
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
 export type UserInfo = {
   __typename?: 'UserInfo';
   EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
@@ -518,6 +545,15 @@ export type InsertOrderLineDetail = {
   Quantity: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
+};
+
+export type InsertUserEventLog = {
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
 };
 
 export type InsertUserInfo = {
@@ -754,6 +790,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
   EventLog: Types.InsertEventLog;
+  log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
@@ -769,7 +806,10 @@ export type UpdateAfterAgOutMutation = (
   & { createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
-  ), updateMerpOrderStatus: (
+  ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserEventLog' }
+    & Pick<Types.UserEventLog, '_id'>
+  )>>>, updateMerpOrderStatus: (
     { __typename?: 'Response' }
     & Pick<Types.Response, 'success' | 'message'>
   ), updateMerpWMSLog: (
@@ -796,6 +836,7 @@ export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
   Container: Types.UpdateContainer;
   OrderLineDetail: Types.UpdateOrderLineDetail;
   EventLog: Types.InsertEventLog;
+  log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
 }>;
 
 
@@ -805,7 +846,10 @@ export type UpdateSqlAfterAgInMutation = (
   & { createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
-  ) }
+  ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserEventLog' }
+    & Pick<Types.UserEventLog, '_id'>
+  )>>> }
 );
 
 export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
@@ -973,10 +1017,13 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
     }
   }
 export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: {isSelected: false})
   createEventLog(EventLog: $EventLog) {
+    _id
+  }
+  insertUserEventLogs(log: $log) {
     _id
   }
   deleteAndInsertRouteTable(lpnList: $toteList)
@@ -1030,13 +1077,16 @@ export const FetchHazardMaterialLevelDocument = gql`
     }
   }
 export const UpdateSqlAfterAgInDocument = gql`
-    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $EventLog: insertEventLog!) {
+    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!) {
   updateOrderLineDetail(
     ContainerID: $ContainerID
     OrderLineDetail: $OrderLineDetail
   )
   updateContainer(_id: $ContainerID, Container: $Container)
   createEventLog(EventLog: $EventLog) {
+    _id
+  }
+  insertUserEventLogs(log: $log) {
     _id
   }
 }

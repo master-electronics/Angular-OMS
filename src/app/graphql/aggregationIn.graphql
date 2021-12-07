@@ -68,6 +68,7 @@ mutation updateAfterAgOut(
   $OrderNumber: String!
   $NOSINumber: String!
   $EventLog: insertEventLog!
+  $log: [insertUserEventLog]!
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
@@ -86,6 +87,10 @@ mutation updateAfterAgOut(
   updateOrder(_id: $OrderID, Order: { isSelected: false })
 
   createEventLog(EventLog: $EventLog) {
+    _id
+  }
+
+  insertUserEventLogs(log: $log) {
     _id
   }
 
@@ -123,6 +128,7 @@ mutation updateSQLAfterAgIn(
   $Container: updateContainer!
   $OrderLineDetail: updateOrderLineDetail!
   $EventLog: insertEventLog!
+  $log: [insertUserEventLog]!
 ) {
   updateOrderLineDetail(
     ContainerID: $ContainerID
@@ -130,6 +136,9 @@ mutation updateSQLAfterAgIn(
   )
   updateContainer(_id: $ContainerID, Container: $Container)
   createEventLog(EventLog: $EventLog) {
+    _id
+  }
+  insertUserEventLogs(log: $log) {
     _id
   }
 }

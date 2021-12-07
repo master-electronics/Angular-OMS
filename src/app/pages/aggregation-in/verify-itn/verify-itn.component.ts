@@ -35,6 +35,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
   totalITNs = 0;
   itemList = [];
   selectedList = [];
+  ITNList = [];
   endContainer: endContainer;
   outsetContainer: outsetContainer;
   updateAfterAgIn$: Observable<number>;
@@ -66,6 +67,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       return;
     }
     this.itemList = this.endContainer.ITNsInTote.split(',');
+    this.ITNList = this.itemList;
     this.totalITNs = this.itemList.length;
   }
 
@@ -134,6 +136,16 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
     // set query for updateSql
+    const log = this.ITNList.map((node) => {
+      return {
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        OrderNumber: this.endContainer.OrderNumber,
+        NOSINumber: this.endContainer.NOSINumber,
+        UserEventID: environment.Event_AgIn_Relocate,
+        InternalTrackingNumber: node,
+        Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
+      };
+    });
     const updateSqlQuery = {
       ContainerID: Number(this.outsetContainer.toteID),
       Container: sourceTote,
@@ -145,11 +157,16 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Target: `${this.endContainer.OrderNumber}-${this.endContainer.NOSINumber}`,
         SubTarget: this.endContainer.ITNsInTote,
       },
+      log: log,
     };
     // set query for merp update.
     if (!this.outsetContainer.isRelocation) {
       updateSqlQuery.EventLog.Event =
         updateSqlQuery.EventLog.Event.substring(9);
+      log.forEach((node) => {
+        node.Message = node.Message.substring(9);
+        node.UserEventID = environment.Event_AgIn_Done;
+      });
       updatequery['updateMerpLog'] = this._updateMerpLog.mutate({
         DistributionCenter: environment.DistributionCenter,
         FileKeyList: this.endContainer.FileKeyListforAgIn,
@@ -159,6 +176,14 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       if (this.endContainer.isLastLine) {
         updateSqlQuery.EventLog.Event =
           'AgIn done ' + updateSqlQuery.EventLog.Event;
+        log.push({
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          OrderNumber: this.endContainer.OrderNumber,
+          NOSINumber: this.endContainer.NOSINumber,
+          UserEventID: environment.Event_AgIn_OrderComplete,
+          InternalTrackingNumber: null,
+          Message: null,
+        });
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,

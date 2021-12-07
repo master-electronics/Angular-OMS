@@ -93,6 +93,7 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -187,6 +188,11 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
+};
+
+
+export type MutationInsertUserEventLogsArgs = {
+  log: Array<Maybe<InsertUserEventLog>>;
 };
 
 
@@ -461,6 +467,27 @@ export type ShipmentMethod = {
   _id: Scalars['String'];
 };
 
+export type UserEvent = {
+  __typename?: 'UserEvent';
+  Event: Scalars['String'];
+  Module: Scalars['String'];
+  _id: Scalars['String'];
+};
+
+export type UserEventLog = {
+  __typename?: 'UserEventLog';
+  DateTime: Scalars['String'];
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  User: UserInfo;
+  UserEvent: UserEvent;
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
 export type UserInfo = {
   __typename?: 'UserInfo';
   EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
@@ -518,6 +545,15 @@ export type InsertOrderLineDetail = {
   Quantity: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
+};
+
+export type InsertUserEventLog = {
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
 };
 
 export type InsertUserInfo = {
@@ -803,6 +839,7 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   Station: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
   EventLog: Types.InsertEventLog;
+  log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
 }>;
 
 
@@ -815,7 +852,10 @@ export type HoldQcOrderMutation = (
   ), createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
-  ) }
+  ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserEventLog' }
+    & Pick<Types.UserEventLog, '_id'>
+  )>>> }
 );
 
 export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
@@ -1008,7 +1048,7 @@ export const VerifyQcRepackDocument = gql`
     }
   }
 export const HoldQcOrderDocument = gql`
-    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $EventLog: insertEventLog!) {
+    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
     Status: $Status
@@ -1022,6 +1062,9 @@ export const HoldQcOrderDocument = gql`
     OrderLineDetail: {StatusID: $StatusID}
   )
   createEventLog(EventLog: $EventLog) {
+    _id
+  }
+  insertUserEventLogs(log: $log) {
     _id
   }
 }

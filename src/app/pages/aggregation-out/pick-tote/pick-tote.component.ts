@@ -23,7 +23,10 @@ import { environment } from 'src/environments/environment';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
-import { Create_EventLogGQL } from 'src/app/graphql/wms.graphql-gen';
+import {
+  Create_EventLogGQL,
+  Insert_UserEventLogsGQL,
+} from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'pick-tote',
@@ -43,6 +46,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   containerList = [];
   selectedList = [];
   ITNsInOrder = '';
+  ITNListForEvent = [];
 
   containerForm = this._fb.group({
     containerNumber: [
@@ -62,6 +66,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchLocation: FetchContainerForAgoutPickGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _updateUserEvent: Create_EventLogGQL,
+    private _insertUserEvnetLog: Insert_UserEventLogsGQL,
     private _updateAfterQC: UpdateAfterAgOutGQL,
     private _gtmService: GoogleTagManagerService,
     private _authService: AuthenticationService
@@ -96,11 +101,12 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             res.data.findOrderLineDetail.forEach((node) => {
               containerSet.add(node.Container);
               this.ITNsInOrder += node.InternalTrackingNumber + ',';
+              this.ITNListForEvent.push(node.InternalTrackingNumber);
             });
             this.agOutService.changeITNsInOrder(this.ITNsInOrder.slice(0, -1));
             this.containerList = [...containerSet];
             this.totalTotes = this.containerList.length;
-            return this._updateUserEvent.mutate({
+            const oldEvent = this._updateUserEvent.mutate({
               EventLog: {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
@@ -111,6 +117,19 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 SubTarget: `${this.ITNsInOrder.slice(0, -1)}`,
               },
             });
+            const log = this.ITNListForEvent.map((ITN) => {
+              return {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                OrderNumber: this.urlParams.OrderNumber,
+                NOSINumber: this.urlParams.NOSINumber,
+                InternalTrackingNumber: ITN,
+                UserEventID: environment.Event_AgOut_Start,
+              };
+            });
+            const newEvent = this._insertUserEvnetLog.mutate({ log });
+            return forkJoin({ oldEvent, newEvent });
           }),
           map(() => {
             //
@@ -197,6 +216,16 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const toteSet = new Set<string>();
     this.agOutService.selectedList.forEach((node) => toteSet.add(node.Barcode));
     this.isLoading = true;
+    const ITNList = this.agOutService.ITNsInOrder.split(',');
+    const log = ITNList.map((node) => {
+      return {
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        OrderNumber: this.urlParams.OrderNumber,
+        NOSINumber: this.urlParams.NOSINumber,
+        InternalTrackingNumber: node,
+        UserEventID: environment.Event_AgOut_Done,
+      };
+    });
     this.updateSQL$ = forkJoin({
       updateOrder: this._updateAfterQC.mutate({
         OrderID: Number(this.urlParams.OrderID),
@@ -220,6 +249,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           Target: `${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`,
           SubTarget: this.agOutService.ITNsInOrder,
         },
+        log: log,
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,

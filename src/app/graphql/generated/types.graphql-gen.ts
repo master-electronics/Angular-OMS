@@ -86,6 +86,7 @@ export type Mutation = {
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -180,6 +181,11 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
+};
+
+
+export type MutationInsertUserEventLogsArgs = {
+  log: Array<Maybe<InsertUserEventLog>>;
 };
 
 
@@ -454,6 +460,27 @@ export type ShipmentMethod = {
   _id: Scalars['String'];
 };
 
+export type UserEvent = {
+  __typename?: 'UserEvent';
+  Event: Scalars['String'];
+  Module: Scalars['String'];
+  _id: Scalars['String'];
+};
+
+export type UserEventLog = {
+  __typename?: 'UserEventLog';
+  DateTime: Scalars['String'];
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  User: UserInfo;
+  UserEvent: UserEvent;
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
 export type UserInfo = {
   __typename?: 'UserInfo';
   EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
@@ -511,6 +538,15 @@ export type InsertOrderLineDetail = {
   Quantity: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
+};
+
+export type InsertUserEventLog = {
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
 };
 
 export type InsertUserInfo = {

@@ -37,3 +37,9 @@ mutation create_EventLog($EventLog: insertEventLog!) {
     _id
   }
 }
+
+mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}

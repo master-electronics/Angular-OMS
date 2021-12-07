@@ -330,6 +330,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
         SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
       },
+      log: [
+        {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          OrderNumber: this.itemInfo.OrderNumber,
+          NOSINumber: this.itemInfo.NOSI,
+          InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+          UserEventID: environment.Event_QC_Hold,
+          Message: `Hold on ${String(Status).padStart(2, '3')}`,
+        },
+      ],
     };
     this.isLoading = true;
     this.writeInfoToMerp(qcHoldOrderInfo);

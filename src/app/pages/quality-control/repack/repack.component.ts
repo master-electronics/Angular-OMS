@@ -24,6 +24,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Create_EventLogGQL,
+  Insert_UserEventLogsGQL,
   Update_ContainerGQL,
   Update_OrderLineDetailGQL,
 } from '../../../graphql/wms.graphql-gen';
@@ -53,6 +54,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private createEventLog: Create_EventLogGQL,
+    private insertUserEventLog: Insert_UserEventLogsGQL,
     private gtmService: GoogleTagManagerService
   ) {
     this.titleService.setTitle('qc/repack');
@@ -89,6 +91,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.isLoading = true;
+    let inProcess = 0;
+    let sourceContainer: number;
     this.subscription.add(
       this.verifyQCRepack
         .fetch(
@@ -98,9 +102,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               Barcode: this.containerForm.value.container,
             },
             Order: {
-              DistributionCenter: environment.DistributionCenter,
-              OrderNumber: this.itemInfo.OrderNumber,
-              NOSINumber: this.itemInfo.NOSI,
+              _id: this.itemInfo.OrderID,
             },
           },
           { fetchPolicy: 'no-cache' }
@@ -131,13 +133,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                   throw 'This tote is not in QC area.';
               });
             }
-          }),
-          switchMap((res) => {
-            const targetContainer = res.data.findContainer[0];
-            const returnOrder = res.data.findOrder[0];
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
-            let inProcess = 0;
-            let sourceContainer: number;
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
               if (
                 line.InternalTrackingNumber !==
@@ -148,9 +144,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 sourceContainer = line.ContainerID;
               }
             });
-
+          }),
+          switchMap((res) => {
+            const targetContainer = res.data.findContainer[0];
             // Setup graphql queries
-
             const updatQCComplete = this.updateMerp.mutate({
               InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
               DateCode: this.itemInfo.DateCode,
@@ -168,10 +165,35 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
               SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
             };
+            const UserEventLog = [
+              {
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                OrderNumber: this.itemInfo.OrderNumber,
+                NOSINumber: this.itemInfo.NOSI,
+                InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+                UserEventID: environment.Event_QC_Done,
+                Message: EventLog.Event,
+              },
+            ];
             if (!inProcess) {
               EventLog.Event = 'Order Done ' + EventLog.Event;
+              UserEventLog.push({
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                OrderNumber: this.itemInfo.OrderNumber,
+                NOSINumber: this.itemInfo.NOSI,
+                UserEventID: environment.Event_QC_OrderComplete,
+                InternalTrackingNumber: null,
+                Message: null,
+              });
             }
             const createEventLog = this.createEventLog.mutate({ EventLog });
+            const insertUserEventLog = this.insertUserEventLog.mutate({
+              log: UserEventLog,
+            });
             this.updateDetail = this.updateOrderLineDetail.mutate({
               InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
               OrderLineDetail: {
@@ -213,6 +235,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Send different query combination
             const updateQueries = {
               createEventLog,
+              insertUserEventLog,
               updateTargetConatiner,
               updateSourceConatiner,
               updateMerpLog,

@@ -14,7 +14,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/dataRegex';
@@ -22,7 +22,10 @@ import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
-import { Create_EventLogGQL } from 'src/app/graphql/wms.graphql-gen';
+import {
+  Create_EventLogGQL,
+  Insert_UserEventLogsGQL,
+} from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'aggregation-in',
@@ -55,6 +58,7 @@ export class AggregationInComponent
     private _titleService: Title,
     private _verifyContainer: VerifyContainerForAggregationInGQL,
     private _createEventlog: Create_EventLogGQL,
+    private _insertEventlog: Insert_UserEventLogsGQL,
     private _agInService: AggregationInService
   ) {
     this._agInService.changeOutsetContainer(null);
@@ -122,8 +126,10 @@ export class AggregationInComponent
         switchMap((res) => {
           const container = res.data.findContainer[0];
           let ITNsInTote = '';
+          const ITNList = [];
           res.data.findContainer[0].ORDERLINEDETAILs.forEach((line) => {
             ITNsInTote += line.InternalTrackingNumber + ',';
+            ITNList.push(line.InternalTrackingNumber);
           });
           // if pass all naveigate to next page
           const outsetContainer: outsetContainer = {
@@ -137,8 +143,21 @@ export class AggregationInComponent
           };
           this._agInService.changeOutsetContainer(outsetContainer);
 
+          // setup user event log
+          const logList = ITNList.map((ITN) => {
+            return {
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              OrderNumber: container.ORDERLINEDETAILs[0].Order.OrderNumber,
+              NOSINumber: container.ORDERLINEDETAILs[0].Order.NOSINumber,
+              InternalTrackingNumber: ITN,
+              UserEventID: environment.Event_AgIn_Start,
+              Message: `Start ${outsetContainer.Barcode}`,
+            };
+          });
           //
-          return this._createEventlog.mutate({
+          const oldLog = this._createEventlog.mutate({
             EventLog: {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
@@ -149,6 +168,12 @@ export class AggregationInComponent
               SubTarget: `${ITNsInTote.slice(0, -1)}`,
             },
           });
+
+          const newLog = this._insertEventlog.mutate({
+            log: logList,
+          });
+
+          return forkJoin({ oldLog, newLog });
         }),
         map(() => {
           this.isLoading = false;

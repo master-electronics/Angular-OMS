@@ -223,6 +223,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 Target: `${this.OrderNumber}-${this.NOSINumber}`,
                 SubTarget: `${singleITN}`,
               },
+              log: [
+                {
+                  UserID: Number(
+                    JSON.parse(sessionStorage.getItem('userInfo'))._id
+                  ),
+                  OrderNumber: this.OrderNumber,
+                  NOSINumber: this.NOSINumber,
+                  InternalTrackingNumber: singleITN,
+                  UserEventID: environment.Event_AgIn_SingleITNAgOut,
+                  Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
+                },
+              ],
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               UserOrStatus: 'Packing',
