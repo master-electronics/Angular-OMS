@@ -139,7 +139,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 line.InternalTrackingNumber !==
                 this.itemInfo.InternalTrackingNumber
               ) {
-                line.StatusID !== environment.qcComplete_ID && ++inProcess;
+                line.StatusID < environment.qcComplete_ID && ++inProcess;
               } else {
                 sourceContainer = line.ContainerID;
               }
