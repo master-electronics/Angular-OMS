@@ -14,9 +14,9 @@ export class TableViewsComponent {
       content: 'Order overview.',
     },
     {
-      title: 'ITN-Status',
-      link: 'itnstatus',
-      content: 'Count how many ITNs are in each status',
+      title: 'WMS-Status',
+      link: 'wmsstatus',
+      content: 'Count how many ITNs, lines or orders are in each status',
     },
     {
       title: 'User Event Logs',

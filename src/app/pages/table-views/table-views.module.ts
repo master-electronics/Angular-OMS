@@ -5,7 +5,7 @@ import { IconsProviderModule } from '../../icons-provider.module';
 
 import { TableViewsComponent } from './table-views.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
-import { ItnStatusComponent } from './itn-countby-status/itn-status.component';
+import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
 import { UserEventLogComponent } from './user-event-log/user-event-log.component';
 import { TableViewsRoutingModule } from './table-views.routing';
 import { OrderViewComponent } from './order-view/order-view.component';
@@ -27,7 +27,7 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
 @NgModule({
   declarations: [
     TableViewsComponent,
-    ItnStatusComponent,
+    WmsStatusComponent,
     OrderViewComponent,
     ITNViewComponent,
     UserEventLogComponent,

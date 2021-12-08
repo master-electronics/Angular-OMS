@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { TableViewsComponent } from './table-views.component';
-import { ItnStatusComponent } from './itn-countby-status/itn-status.component';
+import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { UserEventLogComponent } from './user-event-log/user-event-log.component';
@@ -12,8 +12,8 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
 const routes: Routes = [
   { path: '', component: TableViewsComponent },
   {
-    path: 'itnstatus',
-    component: ItnStatusComponent,
+    path: 'wmsstatus',
+    component: WmsStatusComponent,
   },
   {
     path: 'orderview',

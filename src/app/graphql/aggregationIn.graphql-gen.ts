@@ -71,13 +71,6 @@ export type GlobalMessage = {
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
-export type ItnStatusView = {
-  __typename?: 'ITNStatusView';
-  ID?: Maybe<Scalars['Int']>;
-  Number?: Maybe<Scalars['Int']>;
-  Status?: Maybe<Scalars['String']>;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
@@ -320,6 +313,7 @@ export type OrderLineDetail = {
   ROHS: Scalars['Boolean'];
   Status: OrderStatus;
   StatusID: Scalars['Int'];
+  WMSPriority: Scalars['Int'];
   _id: Scalars['Int'];
 };
 
@@ -339,7 +333,6 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  fetchITNStatusView?: Maybe<Array<Maybe<ItnStatusView>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
@@ -347,12 +340,14 @@ export type Query = {
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
+  fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findEventLog?: Maybe<Array<Maybe<EventLog>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
 };
@@ -441,6 +436,15 @@ export type QueryFindOrderLineDetailArgs = {
 };
 
 
+export type QueryFindUserEventLogArgs = {
+  UserEventLog: SearchUserEventLog;
+  endDate?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryFindUserInfoArgs = {
   UserInfo?: Maybe<SearchUserInfo>;
   limit?: Maybe<Scalars['Int']>;
@@ -471,6 +475,7 @@ export type UserEvent = {
   __typename?: 'UserEvent';
   Event: Scalars['String'];
   Module: Scalars['String'];
+  USEREVENTLOGs?: Maybe<Array<Maybe<UserEventLog>>>;
   _id: Scalars['String'];
 };
 
@@ -492,9 +497,22 @@ export type UserInfo = {
   __typename?: 'UserInfo';
   EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
   Name: Scalars['String'];
+  USEREVENTLOGs?: Maybe<Array<Maybe<UserEventLog>>>;
   Zone?: Maybe<Zone>;
   ZoneID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
+};
+
+export type WmsStatusView = {
+  __typename?: 'WMSStatusView';
+  Head_Priority: Scalars['Int'];
+  Head_Total: Scalars['Int'];
+  ITN_Priority: Scalars['Int'];
+  ITN_Total: Scalars['Int'];
+  Line_Priority: Scalars['Int'];
+  Line_Total: Scalars['Int'];
+  Status: Scalars['String'];
+  StatusID: Scalars['Int'];
 };
 
 export type Zone = {
@@ -545,6 +563,7 @@ export type InsertOrderLineDetail = {
   Quantity: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
+  WMSPriority?: Maybe<Scalars['Int']>;
 };
 
 export type InsertUserEventLog = {
@@ -658,6 +677,17 @@ export type SearchOrderLineDetail = {
   Quantity?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID?: Maybe<Scalars['Int']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchUserEventLog = {
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  UserEventID?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -725,6 +755,7 @@ export type UpdateOrderLineDetail = {
   Quantity?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
   StatusID?: Maybe<Scalars['Int']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateUserInfo = {

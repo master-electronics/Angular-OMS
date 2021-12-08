@@ -36,11 +36,16 @@ query fetchOrderDetailforitnView($Order: searchOrder!) {
   }
 }
 
-query fetchITNStatusView {
-  fetchITNStatusView {
-    ID
+query fetchWMSStatusView {
+  fetchWMSStatusView {
+    StatusID
     Status
-    Number
+    ITN_Priority
+    ITN_Total
+    Line_Priority
+    Line_Total
+    Head_Priority
+    Head_Total
   }
 }
 

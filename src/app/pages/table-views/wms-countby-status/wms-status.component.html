@@ -1,0 +1,34 @@
+<div class="container px-4 mx-auto">
+  <!-- order table -->
+  <nz-table
+    #table
+    [nzData]="fetchTable$ | async"
+    [nzPageSize]="20"
+    nzShowSizeChanger
+  >
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>ITN_Priority</th>
+        <th>ITN_Total</th>
+        <th>Line_Priority</th>
+        <th>Line_Total</th>
+        <th>Order_Priority</th>
+        <th>Order_Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of table.data">
+        <td>{{ order.StatusID }}</td>
+        <td>{{ order.Status }}</td>
+        <td>{{ order.ITN_Priority }}</td>
+        <td>{{ order.ITN_Total }}</td>
+        <td>{{ order.Line_Priority }}</td>
+        <td>{{ order.Line_Total }}</td>
+        <td>{{ order.Head_Priority }}</td>
+        <td>{{ order.Head_Priority }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

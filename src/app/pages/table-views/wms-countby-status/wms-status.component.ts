@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { FetchItnStatusViewGQL } from '../../../graphql/tableViews.graphql-gen';
+import { FetchWmsStatusViewGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'itn-status',
-  templateUrl: './itn-status.component.html',
+  selector: 'wms-status',
+  templateUrl: './wms-status.component.html',
 })
-export class ItnStatusComponent implements OnInit {
+export class WmsStatusComponent implements OnInit {
+  fetchTable$;
   constructor(
     private commonService: CommonService,
-    private fetchtable: FetchItnStatusViewGQL
+    private fetchtable: FetchWmsStatusViewGQL
   ) {
-    this.commonService.changeNavbar('ITN-Status');
+    this.commonService.changeNavbar('WMS-Status');
   }
 
   ngOnInit(): void {
@@ -21,11 +22,10 @@ export class ItnStatusComponent implements OnInit {
       .fetch(null, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
-          return res.data.fetchITNStatusView;
+          return res.data.fetchWMSStatusView;
         })
       );
   }
 
   // table setting:
-  fetchTable$;
 }
