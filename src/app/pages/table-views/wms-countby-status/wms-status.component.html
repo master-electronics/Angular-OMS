@@ -8,26 +8,71 @@
   >
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Status</th>
-        <th>ITN_Priority</th>
-        <th>ITN_Total</th>
-        <th>Line_Priority</th>
-        <th>Line_Total</th>
-        <th>Order_Priority</th>
-        <th>Order_Total</th>
+        <th rowspan="3"></th>
+
+        <th colspan="2">00</th>
+        <th colspan="2">10</th>
+        <th colspan="2">15</th>
+        <th colspan="2">20</th>
+        <th colspan="2">30</th>
+        <th colspan="2">60</th>
+        <th colspan="2">63</th>
+        <th colspan="2">65</th>
+        <th colspan="2">80</th>
+      </tr>
+      <tr>
+        <th colspan="2">Pick Queue</th>
+        <th colspan="2">Pick Complete</th>
+        <th colspan="2">Not Found</th>
+        <th colspan="2">Dropped at QC</th>
+        <th colspan="2">Warehouse Hold</th>
+        <th colspan="2">QC Complete</th>
+        <th colspan="2">AGIn Complete</th>
+        <th colspan="2">AGOut Complete</th>
+        <th colspan="2">Pack Complete</th>
+      </tr>
+      <tr>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
+        <th>Priority</th>
+        <th>Total</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let order of table.data">
-        <td>{{ order.StatusID }}</td>
-        <td>{{ order.Status }}</td>
-        <td>{{ order.ITN_Priority }}</td>
-        <td>{{ order.ITN_Total }}</td>
-        <td>{{ order.Line_Priority }}</td>
-        <td>{{ order.Line_Total }}</td>
-        <td>{{ order.Head_Priority }}</td>
-        <td>{{ order.Head_Priority }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.aP }}</td>
+        <td>{{ order.aT }}</td>
+        <td>{{ order.bP }}</td>
+        <td>{{ order.bT }}</td>
+        <td>{{ order.cP }}</td>
+        <td>{{ order.cT }}</td>
+        <td>{{ order.dP }}</td>
+        <td>{{ order.dT }}</td>
+        <td>{{ order.eP }}</td>
+        <td>{{ order.eT }}</td>
+        <td>{{ order.fP }}</td>
+        <td>{{ order.fT }}</td>
+        <td>{{ order.gP }}</td>
+        <td>{{ order.gT }}</td>
+        <td>{{ order.hP }}</td>
+        <td>{{ order.hT }}</td>
+        <td>{{ order.iP }}</td>
+        <td>{{ order.iT }}</td>
       </tr>
     </tbody>
   </nz-table>
