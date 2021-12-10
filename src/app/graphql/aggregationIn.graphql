@@ -72,7 +72,7 @@ mutation updateAfterAgOut(
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
-  $toteList: [String!]!
+  # $toteList: [String!]!
   $ActionType: String!
   $Action: String!
 ) {
