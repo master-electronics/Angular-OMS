@@ -53,7 +53,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr *ngIf="!isLoading">
         <td>{{ table.data[0].name }}</td>
         <td>
           <a
@@ -227,7 +227,7 @@
           >
         </td>
       </tr>
-      <tr>
+      <tr *ngIf="!isLoading">
         <td>{{ table.data[1].name }}</td>
         <td>{{ table.data[1].aP }}</td>
         <td>{{ table.data[1].aT }}</td>
@@ -249,7 +249,7 @@
         <td>{{ table.data[1].iT }}</td>
       </tr>
 
-      <tr>
+      <tr *ngIf="!isLoading">
         <td>{{ table.data[2].name }}</td>
         <td>
           <a

@@ -82,8 +82,6 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
       .fetch({ filter: filter }, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
-          console.log(res);
-
           return res.data.fetchOrderLineDetailforWMSCount;
         })
       );
