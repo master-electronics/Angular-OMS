@@ -837,6 +837,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  toteList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
 }>;
@@ -844,7 +845,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 
 export type UpdateAfterAgOutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder'>
+  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder' | 'deleteAndInsertRouteTable'>
   & { createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
@@ -1059,7 +1060,7 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
     }
   }
 export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: {isSelected: false})
   createEventLog(EventLog: $EventLog) {
@@ -1068,6 +1069,7 @@ export const UpdateAfterAgOutDocument = gql`
   insertUserEventLogs(log: $log) {
     _id
   }
+  deleteAndInsertRouteTable(lpnList: $toteList)
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber

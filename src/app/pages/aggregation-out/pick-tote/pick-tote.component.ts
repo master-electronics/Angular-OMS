@@ -241,7 +241,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         //   ShelfDetail: null,
         // },
         // BarcodeList,
-        // toteList: [...toteSet],
+        toteList: [...toteSet],
         EventLog: {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           Event: `Done`,
