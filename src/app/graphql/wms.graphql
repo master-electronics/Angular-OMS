@@ -43,3 +43,30 @@ mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
     _id
   }
 }
+
+query find_OrderLineDetail($detail: searchOrderLineDetail!) {
+  findOrderLineDetail(OrderLineDetail: $detail) {
+    InternalTrackingNumber
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    OrderLine {
+      ProductCode
+      PartNumber
+    }
+    Quantity
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+  }
+}

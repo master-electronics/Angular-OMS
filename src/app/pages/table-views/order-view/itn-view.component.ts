@@ -14,7 +14,11 @@ import {
 import { Observable } from 'rxjs';
 
 import { OrderBarcodeRegex } from '../../../shared/dataRegex';
-import { FetchOrderDetailforitnViewGQL } from '../../../graphql/tableViews.graphql-gen';
+import {
+  FetchOrderDetailforitnViewGQL,
+  FetchOrderLineDetailforWmsCountGQL,
+  SearchIntForWmsCount,
+} from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -24,13 +28,14 @@ import { environment } from 'src/environments/environment';
   templateUrl: './itn-view.component.html',
 })
 export class ITNViewComponent implements OnInit, AfterViewInit {
-  OrderInfo$: Observable<any>;
+  OrderInfo$;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private fetchOrderDetail: FetchOrderDetailforitnViewGQL
+    private fetchOrderDetail: FetchOrderDetailforitnViewGQL,
+    private findDetail: FetchOrderLineDetailforWmsCountGQL
   ) {}
 
   barcodeForm = this.fb.group({
@@ -57,10 +62,31 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const urlParams = { ...this.route.snapshot.queryParams };
-    this.barcodeForm.setValue({
-      barcode: `${urlParams.orderNumber}-${urlParams.NOSINumber}`,
-    });
-    this.onSubmit();
+    if (urlParams.orderNumber) {
+      this.barcodeForm.setValue({
+        barcode: `${urlParams.orderNumber}-${urlParams.NOSINumber}`,
+      });
+      this.onSubmit();
+    }
+    if (urlParams.statusID) {
+      const detail: SearchIntForWmsCount = {
+        StatusID: Number(urlParams.statusID),
+        Priority: urlParams.priority === '1' ? true : null,
+      };
+      this.fetchData(detail);
+    }
+  }
+
+  fetchData(filter: SearchIntForWmsCount): void {
+    this.OrderInfo$ = this.findDetail
+      .fetch({ filter: filter }, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => {
+          console.log(res);
+
+          return res.data.fetchOrderLineDetailforWMSCount;
+        })
+      );
   }
 
   onSubmit(): void {
@@ -81,7 +107,13 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         .pipe(
           map((res) => {
             if (res.data.findOrder.length) {
-              return res.data.findOrder[0].ORDERLINEDETAILs;
+              return res.data.findOrder[0].ORDERLINEDETAILs.map((item) => ({
+                ...item,
+                Order: {
+                  OrderNumber: res.data.findOrder[0].OrderNumber,
+                  NOSINumber: res.data.findOrder[0].NOSINumber,
+                },
+              }));
             }
             return '';
           })

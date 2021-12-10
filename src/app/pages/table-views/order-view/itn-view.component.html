@@ -47,6 +47,7 @@
     <thead>
       <tr>
         <th>ITN</th>
+        <th>Order</th>
         <th>Status</th>
         <th>Container</th>
         <th>Location</th>
@@ -67,6 +68,7 @@
             {{ detail.InternalTrackingNumber }}</a
           >
         </td>
+        <td>{{ detail.Order.OrderNumber }}-{{ detail.Order.NOSINumber }}</td>
         <td>{{ detail.Status.Name }}</td>
         <td>{{ detail.Container.Barcode }}</td>
         <td>

@@ -333,6 +333,7 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
+  fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
@@ -350,6 +351,11 @@ export type Query = {
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
+};
+
+
+export type QueryFetchOrderLineDetailforWmsCountArgs = {
+  filter?: Maybe<SearchIntForWmsCount>;
 };
 
 
@@ -608,9 +614,10 @@ export type OrderViewFilter = {
   DistributionCenter?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
-  Priority?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
   ShippingMethod?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
 };
 
 export type Route_Table = {
@@ -642,6 +649,11 @@ export type SearchEventLog = {
   Target?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchIntForWmsCount = {
+  Priority?: Maybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
 };
 
 export type SearchOrder = {
@@ -776,6 +788,32 @@ export type FetchOrderViewQuery = (
   )>>> }
 );
 
+export type FetchOrderLineDetailforWmsCountQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.SearchIntForWmsCount>;
+}>;
+
+
+export type FetchOrderLineDetailforWmsCountQuery = (
+  { __typename?: 'Query' }
+  & { fetchOrderLineDetailforWMSCount?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'OrderLineDetail' }
+    & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
+    & { Status: (
+      { __typename?: 'OrderStatus' }
+      & Pick<Types.OrderStatus, 'Name'>
+    ), Order: (
+      { __typename?: 'Order' }
+      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
+    ), OrderLine: (
+      { __typename?: 'OrderLine' }
+      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber'>
+    ), Container: (
+      { __typename?: 'Container' }
+      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
+    ) }
+  )>>> }
+);
+
 export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
   Order: Types.SearchOrder;
 }>;
@@ -785,6 +823,7 @@ export type FetchOrderDetailforitnViewQuery = (
   { __typename?: 'Query' }
   & { findOrder?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'Order' }
+    & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
     & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
       & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
@@ -898,9 +937,50 @@ export const FetchOrderViewDocument = gql`
       super(apollo);
     }
   }
+export const FetchOrderLineDetailforWmsCountDocument = gql`
+    query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
+  fetchOrderLineDetailforWMSCount(filter: $filter) {
+    InternalTrackingNumber
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    OrderLine {
+      ProductCode
+      PartNumber
+    }
+    Quantity
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderLineDetailforWmsCountGQL extends Apollo.Query<FetchOrderLineDetailforWmsCountQuery, FetchOrderLineDetailforWmsCountQueryVariables> {
+    document = FetchOrderLineDetailforWmsCountDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchOrderDetailforitnViewDocument = gql`
     query fetchOrderDetailforitnView($Order: searchOrder!) {
   findOrder(Order: $Order) {
+    OrderNumber
+    NOSINumber
     ORDERLINEDETAILs {
       InternalTrackingNumber
       Status {

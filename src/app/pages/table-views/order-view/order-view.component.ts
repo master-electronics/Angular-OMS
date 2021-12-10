@@ -2,9 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { FetchOrderViewGQL } from '../../../graphql/tableViews.graphql-gen';
+import {
+  FetchOrderViewGQL,
+  OrderViewFilter,
+} from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
+import { ActivatedRoute } from '@angular/router';
 
 interface DataItem {
   OrderNumber: string;
@@ -36,18 +40,30 @@ export class OrderViewComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
+    private _route: ActivatedRoute,
     private fetchOrderView: FetchOrderViewGQL
   ) {
     this.commonService.changeNavbar(this.title);
   }
 
   ngOnInit(): void {
-    this.search();
+    const urlParams = { ...this._route.snapshot.queryParams };
+    const filter = {
+      Priority: null,
+      StatusID: null,
+    };
+    if (urlParams.statusID) {
+      filter.StatusID = Number(urlParams.statusID);
+    }
+    if (urlParams.priority) {
+      filter.Priority = true;
+    }
+    this.search(filter);
   }
 
-  search(): void {
+  search(filter: OrderViewFilter): void {
     this.message = '';
-    this.OrderInfo$ = this.fetchOrderView.fetch(null).pipe(
+    this.OrderInfo$ = this.fetchOrderView.fetch({ filter }).pipe(
       map((res) => {
         const shipMethodSet = new Set<string>();
         const statusSet = new Set<string>();

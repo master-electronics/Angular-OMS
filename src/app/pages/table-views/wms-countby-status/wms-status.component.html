@@ -53,26 +53,375 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of table.data">
-        <td>{{ order.name }}</td>
-        <td>{{ order.aP }}</td>
-        <td>{{ order.aT }}</td>
-        <td>{{ order.bP }}</td>
-        <td>{{ order.bT }}</td>
-        <td>{{ order.cP }}</td>
-        <td>{{ order.cT }}</td>
-        <td>{{ order.dP }}</td>
-        <td>{{ order.dT }}</td>
-        <td>{{ order.eP }}</td>
-        <td>{{ order.eT }}</td>
-        <td>{{ order.fP }}</td>
-        <td>{{ order.fT }}</td>
-        <td>{{ order.gP }}</td>
-        <td>{{ order.gT }}</td>
-        <td>{{ order.hP }}</td>
-        <td>{{ order.hT }}</td>
-        <td>{{ order.iP }}</td>
-        <td>{{ order.iT }}</td>
+      <tr>
+        <td>{{ table.data[0].name }}</td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 0
+            }"
+            >{{ table.data[0].aP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 0
+            }"
+            >{{ table.data[0].aT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 10
+            }"
+            >{{ table.data[0].bP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 10
+            }"
+            >{{ table.data[0].bT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 15
+            }"
+            >{{ table.data[0].cP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 15
+            }"
+            >{{ table.data[0].cT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 20
+            }"
+            >{{ table.data[0].dP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 20
+            }"
+            >{{ table.data[0].dT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 30
+            }"
+            >{{ table.data[0].eP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 30
+            }"
+            >{{ table.data[0].eT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 60
+            }"
+            >{{ table.data[0].fP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 60
+            }"
+            >{{ table.data[0].fT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 63
+            }"
+            >{{ table.data[0].gP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 63
+            }"
+            >{{ table.data[0].gT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 65
+            }"
+            >{{ table.data[0].hP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 65
+            }"
+            >{{ table.data[0].hT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 80
+            }"
+            >{{ table.data[0].iP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 80
+            }"
+            >{{ table.data[0].iT }}</a
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>{{ table.data[1].name }}</td>
+        <td>{{ table.data[1].aP }}</td>
+        <td>{{ table.data[1].aT }}</td>
+        <td>{{ table.data[1].bP }}</td>
+        <td>{{ table.data[1].bT }}</td>
+        <td>{{ table.data[1].cP }}</td>
+        <td>{{ table.data[1].cT }}</td>
+        <td>{{ table.data[1].dP }}</td>
+        <td>{{ table.data[1].dT }}</td>
+        <td>{{ table.data[1].eP }}</td>
+        <td>{{ table.data[1].eT }}</td>
+        <td>{{ table.data[1].fP }}</td>
+        <td>{{ table.data[1].fT }}</td>
+        <td>{{ table.data[1].gP }}</td>
+        <td>{{ table.data[1].gT }}</td>
+        <td>{{ table.data[1].hP }}</td>
+        <td>{{ table.data[1].hT }}</td>
+        <td>{{ table.data[1].iP }}</td>
+        <td>{{ table.data[1].iT }}</td>
+      </tr>
+
+      <tr>
+        <td>{{ table.data[2].name }}</td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 0
+            }"
+            >{{ table.data[2].aP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 0
+            }"
+            >{{ table.data[2].aT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 10
+            }"
+            >{{ table.data[2].bP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 10
+            }"
+            >{{ table.data[2].bT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 15
+            }"
+            >{{ table.data[2].cP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 15
+            }"
+            >{{ table.data[2].cT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 20
+            }"
+            >{{ table.data[2].dP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 20
+            }"
+            >{{ table.data[2].dT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 30
+            }"
+            >{{ table.data[2].eP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 30
+            }"
+            >{{ table.data[2].eT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 60
+            }"
+            >{{ table.data[2].fP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 60
+            }"
+            >{{ table.data[2].fT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 63
+            }"
+            >{{ table.data[2].gP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 63
+            }"
+            >{{ table.data[2].gT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 65
+            }"
+            >{{ table.data[2].hP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 65
+            }"
+            >{{ table.data[2].hT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 80
+            }"
+            >{{ table.data[2].iP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 80
+            }"
+            >{{ table.data[2].iT }}</a
+          >
+        </td>
       </tr>
     </tbody>
   </nz-table>

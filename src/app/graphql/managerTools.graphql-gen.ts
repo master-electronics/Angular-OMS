@@ -333,6 +333,7 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
+  fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
@@ -350,6 +351,11 @@ export type Query = {
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
+};
+
+
+export type QueryFetchOrderLineDetailforWmsCountArgs = {
+  filter?: Maybe<SearchIntForWmsCount>;
 };
 
 
@@ -608,9 +614,10 @@ export type OrderViewFilter = {
   DistributionCenter?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
-  Priority?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
   ShippingMethod?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
 };
 
 export type Route_Table = {
@@ -642,6 +649,11 @@ export type SearchEventLog = {
   Target?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchIntForWmsCount = {
+  Priority?: Maybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
 };
 
 export type SearchOrder = {

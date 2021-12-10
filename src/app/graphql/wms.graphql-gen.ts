@@ -333,6 +333,7 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
+  fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
@@ -350,6 +351,11 @@ export type Query = {
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
+};
+
+
+export type QueryFetchOrderLineDetailforWmsCountArgs = {
+  filter?: Maybe<SearchIntForWmsCount>;
 };
 
 
@@ -608,9 +614,10 @@ export type OrderViewFilter = {
   DistributionCenter?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
-  Priority?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
   ShippingMethod?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
 };
 
 export type Route_Table = {
@@ -642,6 +649,11 @@ export type SearchEventLog = {
   Target?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
+};
+
+export type SearchIntForWmsCount = {
+  Priority?: Maybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
 };
 
 export type SearchOrder = {
@@ -829,6 +841,32 @@ export type Insert_UserEventLogsMutation = (
   )>>> }
 );
 
+export type Find_OrderLineDetailQueryVariables = Types.Exact<{
+  detail: Types.SearchOrderLineDetail;
+}>;
+
+
+export type Find_OrderLineDetailQuery = (
+  { __typename?: 'Query' }
+  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'OrderLineDetail' }
+    & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
+    & { Status: (
+      { __typename?: 'OrderStatus' }
+      & Pick<Types.OrderStatus, 'Name'>
+    ), Order: (
+      { __typename?: 'Order' }
+      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
+    ), OrderLine: (
+      { __typename?: 'OrderLine' }
+      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber'>
+    ), Container: (
+      { __typename?: 'Container' }
+      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
+    ) }
+  )>>> }
+);
+
 export const Update_OrderLineDetailDocument = gql`
     mutation update_OrderLineDetail($_id: Int, $InternalTrackingNumber: String, $OrderLineID: Int, $OrderID: Int, $ContainerID: Int, $OrderLineDetail: updateOrderLineDetail!) {
   updateOrderLineDetail(
@@ -919,6 +957,45 @@ export const Insert_UserEventLogsDocument = gql`
   })
   export class Insert_UserEventLogsGQL extends Apollo.Mutation<Insert_UserEventLogsMutation, Insert_UserEventLogsMutationVariables> {
     document = Insert_UserEventLogsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Find_OrderLineDetailDocument = gql`
+    query find_OrderLineDetail($detail: searchOrderLineDetail!) {
+  findOrderLineDetail(OrderLineDetail: $detail) {
+    InternalTrackingNumber
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    OrderLine {
+      ProductCode
+      PartNumber
+    }
+    Quantity
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Find_OrderLineDetailGQL extends Apollo.Query<Find_OrderLineDetailQuery, Find_OrderLineDetailQueryVariables> {
+    document = Find_OrderLineDetailDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

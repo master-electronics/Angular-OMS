@@ -11,8 +11,37 @@ query fetchOrderView($filter: orderViewFilter) {
   }
 }
 
+query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
+  fetchOrderLineDetailforWMSCount(filter: $filter) {
+    InternalTrackingNumber
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    OrderLine {
+      ProductCode
+      PartNumber
+    }
+    Quantity
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+  }
+}
+
 query fetchOrderDetailforitnView($Order: searchOrder!) {
   findOrder(Order: $Order) {
+    OrderNumber
+    NOSINumber
     ORDERLINEDETAILs {
       InternalTrackingNumber
       Status {

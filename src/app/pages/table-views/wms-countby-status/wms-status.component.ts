@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 })
 export class WmsStatusComponent implements OnInit {
   fetchTable$;
+  isLoading = true;
   constructor(
     private commonService: CommonService,
     private fetchtable: FetchWmsStatusViewGQL
@@ -120,6 +121,7 @@ export class WmsStatusComponent implements OnInit {
                 break;
             }
           });
+          this.isLoading = false;
           return result;
         })
       );
