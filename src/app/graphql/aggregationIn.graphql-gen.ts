@@ -845,7 +845,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 
 export type UpdateAfterAgOutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder' | 'deleteAndInsertRouteTable'>
+  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder'>
   & { createEventLog: (
     { __typename?: 'EventLog' }
     & Pick<Types.EventLog, '_id'>
@@ -1069,7 +1069,6 @@ export const UpdateAfterAgOutDocument = gql`
   insertUserEventLogs(log: $log) {
     _id
   }
-  deleteAndInsertRouteTable(lpnList: $toteList)
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber

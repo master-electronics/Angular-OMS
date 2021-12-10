@@ -94,7 +94,7 @@ mutation updateAfterAgOut(
     _id
   }
 
-  deleteAndInsertRouteTable(lpnList: $toteList)
+  # deleteAndInsertRouteTable(lpnList: $toteList)
 
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
