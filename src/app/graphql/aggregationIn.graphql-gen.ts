@@ -947,9 +947,13 @@ export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
 
 export type VerifyOrderForAgOutQuery = (
   { __typename?: 'Query' }
-  & { fetchOrderView?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'orderView' }
-    & Pick<Types.OrderView, 'OrderID' | 'StatusID'>
+  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'Order' }
+    & Pick<Types.Order, '_id'>
+    & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
+      { __typename?: 'OrderLineDetail' }
+      & Pick<Types.OrderLineDetail, 'StatusID'>
+    )>>> }
   )>>> }
 );
 
@@ -1215,11 +1219,13 @@ export const PickOrderForAgOutDocument = gql`
   }
 export const VerifyOrderForAgOutDocument = gql`
     query verifyOrderForAgOut($DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!) {
-  fetchOrderView(
-    filter: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
+  findOrder(
+    Order: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
   ) {
-    OrderID
-    StatusID
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+    }
   }
 }
     `;

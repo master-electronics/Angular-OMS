@@ -118,13 +118,18 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          const order = res.data.fetchOrderView;
+          const order = res.data.findOrder;
           if (!order.length) {
             throw `Can not find this order!`;
           }
           if (
-            order[0].StatusID !== environment.agInComplete_ID &&
-            order[0].StatusID !== environment.agOutComplete_ID
+            order[0].ORDERLINEDETAILs.some(
+              (item) =>
+                ![
+                  environment.agInComplete_ID,
+                  environment.agOutComplete_ID,
+                ].includes(item.StatusID)
+            )
           ) {
             throw `Invalid Order Status!`;
           }
@@ -134,7 +139,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
             queryParams: {
               OrderNumber,
               NOSINumber,
-              OrderID: res.data.fetchOrderView[0].OrderID,
+              OrderID: res.data.findOrder[0]._id,
             },
           });
         }),

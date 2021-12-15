@@ -190,15 +190,17 @@ query verifyOrderForAgOut(
   $OrderNumber: String!
   $NOSINumber: String!
 ) {
-  fetchOrderView(
-    filter: {
+  findOrder(
+    Order: {
       DistributionCenter: $DistributionCenter
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
     }
   ) {
-    OrderID
-    StatusID
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+    }
   }
 }
 
