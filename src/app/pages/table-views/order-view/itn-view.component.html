@@ -60,7 +60,7 @@
       <tr *ngFor="let detail of nzTable.data">
         <td>
           <a
-            [routerLink]="['/tableviews/usereventlog']"
+            [routerLink]="['/tableviews/eventlog']"
             [queryParams]="{
               ITN: detail.InternalTrackingNumber
             }"

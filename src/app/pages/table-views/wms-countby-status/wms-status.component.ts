@@ -75,7 +75,7 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['eT'] = item.Head_Total;
                 break;
 
-              case 60:
+              case 40:
                 result[0]['fP'] = item.ITN_Priority;
                 result[0]['fT'] = item.ITN_Total;
                 result[1]['fP'] = item.Line_Priority;
@@ -84,7 +84,7 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['fT'] = item.Head_Total;
                 break;
 
-              case 63:
+              case 60:
                 result[0]['gP'] = item.ITN_Priority;
                 result[0]['gT'] = item.ITN_Total;
                 result[1]['gP'] = item.Line_Priority;
@@ -93,7 +93,7 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['gT'] = item.Head_Total;
                 break;
 
-              case 65:
+              case 63:
                 result[0]['hP'] = item.ITN_Priority;
                 result[0]['hT'] = item.ITN_Total;
                 result[1]['hP'] = item.Line_Priority;
@@ -102,7 +102,7 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['hT'] = item.Head_Total;
                 break;
 
-              case 80:
+              case 65:
                 result[0]['iP'] = item.ITN_Priority;
                 result[0]['iT'] = item.ITN_Total;
                 result[1]['iP'] = item.Line_Priority;
@@ -111,13 +111,13 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['iT'] = item.Head_Total;
                 break;
 
-              case 90:
-                result[0]['kP'] = item.ITN_Priority;
-                result[0]['kT'] = item.ITN_Total;
-                result[1]['kP'] = item.Line_Priority;
-                result[1]['kT'] = item.Line_Total;
-                result[2]['kP'] = item.Head_Priority;
-                result[2]['kT'] = item.Head_Total;
+              case 80:
+                result[0]['jP'] = item.ITN_Priority;
+                result[0]['jT'] = item.ITN_Total;
+                result[1]['jP'] = item.Line_Priority;
+                result[1]['jT'] = item.Line_Total;
+                result[2]['jP'] = item.Head_Priority;
+                result[2]['jT'] = item.Head_Total;
                 break;
             }
           });

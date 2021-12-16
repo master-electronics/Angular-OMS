@@ -70,7 +70,7 @@ export class TaskCounterComponent implements OnInit {
     this.fetchTable$ = this.fetchTaskCounter
       .fetch(
         {
-          Module: this.filterForm.get('module').value,
+          Module: Number(this.filterForm.get('module').value),
           startDate: startDate,
           endDate: endDate,
         },

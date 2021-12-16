@@ -86,6 +86,7 @@ export type Mutation = {
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
   updateMerpWMSLog: Response;
+  updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -216,6 +217,11 @@ export type MutationUpdateMerpWmsLogArgs = {
   ActionType: Scalars['String'];
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
+};
+
+
+export type MutationUpdateOrCreateOrderLineDetailArgs = {
+  OrderLineDetail: InsertOrderLineDetail;
 };
 
 
@@ -383,7 +389,7 @@ export type QueryFetchProductInfoFromMerpArgs = {
 
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['String'];
+  Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
@@ -436,6 +442,7 @@ export type QueryFindOrderLineDetailArgs = {
 
 
 export type QueryFindUserEventLogArgs = {
+  Module?: Maybe<Scalars['Int']>;
   UserEventLog: SearchUserEventLog;
   endDate?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;

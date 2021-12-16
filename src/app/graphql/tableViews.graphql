@@ -109,11 +109,36 @@ query fetchEventLog(
   }
 }
 
-query fetchTaskCounter(
-  $Module: String!
-  $startDate: String!
-  $endDate: String!
+query fetchUserEventLog(
+  $UserEventLog: searchUserEventLog!
+  $Module: Int
+  $startDate: String
+  $endDate: String
+  $limit: Int
 ) {
+  findUserEventLog(
+    UserEventLog: $UserEventLog
+    Module: $Module
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    _id
+    User {
+      Name
+    }
+    UserEvent {
+      Event
+      Module
+    }
+    OrderNumber
+    NOSINumber
+    InternalTrackingNumber
+    DateTime
+  }
+}
+
+query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
     User
     taskCounter

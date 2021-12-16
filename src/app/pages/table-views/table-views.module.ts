@@ -7,10 +7,12 @@ import { TableViewsComponent } from './table-views.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
 import { UserEventLogComponent } from './user-event-log/user-event-log.component';
+import { EventLogComponent } from './event-log/event-log.component';
 import { TableViewsRoutingModule } from './table-views.routing';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
+
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -30,6 +32,7 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
     WmsStatusComponent,
     OrderViewComponent,
     ITNViewComponent,
+    EventLogComponent,
     UserEventLogComponent,
     TaskCounterComponent,
     OrderTasktimeComponent,

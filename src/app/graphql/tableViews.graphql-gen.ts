@@ -93,6 +93,7 @@ export type Mutation = {
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
   updateMerpWMSLog: Response;
+  updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -223,6 +224,11 @@ export type MutationUpdateMerpWmsLogArgs = {
   ActionType: Scalars['String'];
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
+};
+
+
+export type MutationUpdateOrCreateOrderLineDetailArgs = {
+  OrderLineDetail: InsertOrderLineDetail;
 };
 
 
@@ -390,7 +396,7 @@ export type QueryFetchProductInfoFromMerpArgs = {
 
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['String'];
+  Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
@@ -443,6 +449,7 @@ export type QueryFindOrderLineDetailArgs = {
 
 
 export type QueryFindUserEventLogArgs = {
+  Module?: Maybe<Scalars['Int']>;
   UserEventLog: SearchUserEventLog;
   endDate?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
@@ -883,8 +890,32 @@ export type FetchEventLogQuery = (
   )>>> }
 );
 
+export type FetchUserEventLogQueryVariables = Types.Exact<{
+  UserEventLog: Types.SearchUserEventLog;
+  Module?: Types.Maybe<Types.Scalars['Int']>;
+  startDate?: Types.Maybe<Types.Scalars['String']>;
+  endDate?: Types.Maybe<Types.Scalars['String']>;
+  limit?: Types.Maybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FetchUserEventLogQuery = (
+  { __typename?: 'Query' }
+  & { findUserEventLog?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserEventLog' }
+    & Pick<Types.UserEventLog, '_id' | 'OrderNumber' | 'NOSINumber' | 'InternalTrackingNumber' | 'DateTime'>
+    & { User: (
+      { __typename?: 'UserInfo' }
+      & Pick<Types.UserInfo, 'Name'>
+    ), UserEvent: (
+      { __typename?: 'UserEvent' }
+      & Pick<Types.UserEvent, 'Event' | 'Module'>
+    ) }
+  )>>> }
+);
+
 export type FetchTaskCounterQueryVariables = Types.Exact<{
-  Module: Types.Scalars['String'];
+  Module: Types.Scalars['Int'];
   startDate: Types.Scalars['String'];
   endDate: Types.Scalars['String'];
 }>;
@@ -1090,8 +1121,43 @@ export const FetchEventLogDocument = gql`
       super(apollo);
     }
   }
+export const FetchUserEventLogDocument = gql`
+    query fetchUserEventLog($UserEventLog: searchUserEventLog!, $Module: Int, $startDate: String, $endDate: String, $limit: Int) {
+  findUserEventLog(
+    UserEventLog: $UserEventLog
+    Module: $Module
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    _id
+    User {
+      Name
+    }
+    UserEvent {
+      Event
+      Module
+    }
+    OrderNumber
+    NOSINumber
+    InternalTrackingNumber
+    DateTime
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchUserEventLogGQL extends Apollo.Query<FetchUserEventLogQuery, FetchUserEventLogQueryVariables> {
+    document = FetchUserEventLogDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchTaskCounterDocument = gql`
-    query fetchTaskCounter($Module: String!, $startDate: String!, $endDate: String!) {
+    query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
     User
     taskCounter

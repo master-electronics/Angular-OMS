@@ -15,6 +15,7 @@
         <th colspan="2">15</th>
         <th colspan="2">20</th>
         <th colspan="2">30</th>
+        <th colspan="2">40</th>
         <th colspan="2">60</th>
         <th colspan="2">63</th>
         <th colspan="2">65</th>
@@ -26,12 +27,15 @@
         <th colspan="2">Not Found</th>
         <th colspan="2">Dropped at QC</th>
         <th colspan="2">Warehouse Hold</th>
+        <th colspan="2">Sales Hold</th>
         <th colspan="2">QC Complete</th>
         <th colspan="2">AGIn Complete</th>
         <th colspan="2">AGOut Complete</th>
         <th colspan="2">Pack Complete</th>
       </tr>
       <tr>
+        <th>Priority</th>
+        <th>Total</th>
         <th>Priority</th>
         <th>Total</th>
         <th>Priority</th>
@@ -155,7 +159,7 @@
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
               priority: 1,
-              statusID: 60
+              statusID: 40
             }"
             >{{ table.data[0].fP }}</a
           >
@@ -164,7 +168,7 @@
           <a
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
-              statusID: 60
+              statusID: 40
             }"
             >{{ table.data[0].fT }}</a
           >
@@ -174,7 +178,7 @@
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
               priority: 1,
-              statusID: 63
+              statusID: 60
             }"
             >{{ table.data[0].gP }}</a
           >
@@ -183,7 +187,7 @@
           <a
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
-              statusID: 63
+              statusID: 60
             }"
             >{{ table.data[0].gT }}</a
           >
@@ -193,7 +197,7 @@
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
               priority: 1,
-              statusID: 65
+              statusID: 63
             }"
             >{{ table.data[0].hP }}</a
           >
@@ -202,7 +206,7 @@
           <a
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
-              statusID: 65
+              statusID: 63
             }"
             >{{ table.data[0].hT }}</a
           >
@@ -212,7 +216,7 @@
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
               priority: 1,
-              statusID: 80
+              statusID: 65
             }"
             >{{ table.data[0].iP }}</a
           >
@@ -221,9 +225,28 @@
           <a
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
-              statusID: 80
+              statusID: 65
             }"
             >{{ table.data[0].iT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 80
+            }"
+            >{{ table.data[0].jP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 80
+            }"
+            >{{ table.data[0].jT }}</a
           >
         </td>
       </tr>
@@ -247,6 +270,8 @@
         <td>{{ table.data[1].hT }}</td>
         <td>{{ table.data[1].iP }}</td>
         <td>{{ table.data[1].iT }}</td>
+        <td>{{ table.data[1].jP }}</td>
+        <td>{{ table.data[1].jT }}</td>
       </tr>
 
       <tr *ngIf="!isLoading">
@@ -351,7 +376,7 @@
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
               priority: 1,
-              statusID: 60
+              statusID: 40
             }"
             >{{ table.data[2].fP }}</a
           >
@@ -360,7 +385,7 @@
           <a
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
-              statusID: 60
+              statusID: 40
             }"
             >{{ table.data[2].fT }}</a
           >
@@ -370,7 +395,7 @@
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
               priority: 1,
-              statusID: 63
+              statusID: 60
             }"
             >{{ table.data[2].gP }}</a
           >
@@ -379,7 +404,7 @@
           <a
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
-              statusID: 63
+              statusID: 60
             }"
             >{{ table.data[2].gT }}</a
           >
@@ -389,7 +414,7 @@
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
               priority: 1,
-              statusID: 65
+              statusID: 63
             }"
             >{{ table.data[2].hP }}</a
           >
@@ -398,7 +423,7 @@
           <a
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
-              statusID: 65
+              statusID: 63
             }"
             >{{ table.data[2].hT }}</a
           >
@@ -408,7 +433,7 @@
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
               priority: 1,
-              statusID: 80
+              statusID: 65
             }"
             >{{ table.data[2].iP }}</a
           >
@@ -417,9 +442,29 @@
           <a
             [routerLink]="['/tableviews/orderview']"
             [queryParams]="{
-              statusID: 80
+              statusID: 65
             }"
             >{{ table.data[2].iT }}</a
+          >
+        </td>
+
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 80
+            }"
+            >{{ table.data[2].jP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview']"
+            [queryParams]="{
+              statusID: 80
+            }"
+            >{{ table.data[2].jT }}</a
           >
         </td>
       </tr>
