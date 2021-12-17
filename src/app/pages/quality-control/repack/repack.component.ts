@@ -23,7 +23,6 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
-  Create_EventLogGQL,
   Insert_UserEventLogsGQL,
   Update_ContainerGQL,
   Update_OrderLineDetailGQL,
@@ -53,7 +52,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateContainer: Update_ContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
-    private createEventLog: Create_EventLogGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
     private gtmService: GoogleTagManagerService
   ) {
@@ -156,15 +154,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               CountMethod: this.itemInfo.CountMethod,
             });
 
-            const EventLog = {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
-              Event: `Repack to ${this.containerForm.value.container}`,
-              Module: `qc`,
-              Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
-              SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
-            };
             const UserEventLog = [
               {
                 UserID: Number(
@@ -174,11 +163,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 NOSINumber: this.itemInfo.NOSI,
                 InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
                 UserEventID: environment.Event_QC_Done,
-                Message: EventLog.Event,
+                Message: `Repack to ${this.containerForm.value.container}`,
               },
             ];
             if (!inProcess) {
-              EventLog.Event = 'Order Done ' + EventLog.Event;
               UserEventLog.push({
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
@@ -190,7 +178,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 Message: null,
               });
             }
-            const createEventLog = this.createEventLog.mutate({ EventLog });
             const insertUserEventLog = this.insertUserEventLog.mutate({
               log: UserEventLog,
             });
@@ -234,7 +221,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Send different query combination
             const updateQueries = {
-              createEventLog,
               insertUserEventLog,
               updateTargetConatiner,
               updateSourceConatiner,

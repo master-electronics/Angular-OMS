@@ -55,7 +55,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   buttonLabel = 'Relocate';
   locationList: string[];
   ITNInfo = [];
-  ITNsInTote = '';
+  ITNsInTote = [];
   alertMessage = '';
   alertType = 'error';
   isLastLine = false;
@@ -145,7 +145,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             // add ITN to list if there are in the same tote.
             if (line.Container.Barcode === this.outsetContainer.Barcode) {
-              this.ITNsInTote += line.InternalTrackingNumber + ',';
+              this.ITNsInTote.push(line.InternalTrackingNumber);
             }
             if (line._id === this.outsetContainer.orderLineDetailID) {
               this.ITNInfo = [
@@ -204,25 +204,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: environment.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
-              // Container: {
-              //   Warehouse: '10',
-              //   Row: 'AG',
-              //   Aisle: null,
-              //   Section: null,
-              //   Shelf: null,
-              //   ShelfDetail: null,
-              // },
-              // BarcodeList: [this.urlParams.Barcode],
               toteList: [this.outsetContainer.Barcode],
-              EventLog: {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
-                Event: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
-                Module: `Ag In`,
-                Target: `${this.OrderNumber}-${this.NOSINumber}`,
-                SubTarget: `${singleITN}`,
-              },
               log: [
                 {
                   UserID: Number(
@@ -384,7 +366,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             OrderNumber: this.OrderNumber,
             NOSINumber: this.NOSINumber,
             containerID: container._id,
-            ITNsInTote: this.ITNsInTote.slice(0, -1),
+            ITNsInTote: this.ITNsInTote,
             FileKeyListforAgIn: this.FileKeyListforAgIn,
           };
           this._agInService.changeEndContainer(endContainer);

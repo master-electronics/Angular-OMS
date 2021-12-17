@@ -893,7 +893,6 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   Status: Types.Scalars['String'];
   Station: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
-  EventLog: Types.InsertEventLog;
   log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
 }>;
 
@@ -904,9 +903,6 @@ export type HoldQcOrderMutation = (
   & { holdQCOrder: (
     { __typename?: 'Response' }
     & Pick<Types.Response, 'success' | 'message'>
-  ), createEventLog: (
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id'>
   ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserEventLog' }
     & Pick<Types.UserEventLog, '_id'>
@@ -1103,7 +1099,7 @@ export const VerifyQcRepackDocument = gql`
     }
   }
 export const HoldQcOrderDocument = gql`
-    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!) {
+    mutation holdQCOrder($InternalTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $log: [insertUserEventLog]!) {
   holdQCOrder(
     InternalTrackingNumber: $InternalTrackingNumber
     Status: $Status
@@ -1116,9 +1112,6 @@ export const HoldQcOrderDocument = gql`
     InternalTrackingNumber: $InternalTrackingNumber
     OrderLineDetail: {StatusID: $StatusID}
   )
-  createEventLog(EventLog: $EventLog) {
-    _id
-  }
   insertUserEventLogs(log: $log) {
     _id
   }

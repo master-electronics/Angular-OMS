@@ -32,12 +32,6 @@ mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
   }
 }
 
-mutation create_EventLog($EventLog: insertEventLog!) {
-  createEventLog(EventLog: $EventLog) {
-    _id
-  }
-}
-
 mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
   insertUserEventLogs(log: $log) {
     _id

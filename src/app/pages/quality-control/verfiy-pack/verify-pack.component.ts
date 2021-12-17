@@ -323,13 +323,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
       StatusID: environment.warehouseHold_ID,
-      EventLog: {
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-        Event: `Hold on ${String(Status).padStart(2, '3')}`,
-        Module: `qc`,
-        Target: `${this.itemInfo.OrderNumber}-${this.itemInfo.NOSI}`,
-        SubTarget: `${this.itemInfo.InternalTrackingNumber}`,
-      },
       log: [
         {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),

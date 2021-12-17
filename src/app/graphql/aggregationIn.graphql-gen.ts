@@ -844,7 +844,6 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
-  EventLog: Types.InsertEventLog;
   log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
@@ -858,10 +857,7 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 export type UpdateAfterAgOutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder' | 'deleteAndInsertRouteTable'>
-  & { createEventLog: (
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id'>
-  ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
+  & { insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserEventLog' }
     & Pick<Types.UserEventLog, '_id'>
   )>>>, updateMerpOrderStatus: (
@@ -890,7 +886,6 @@ export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
   Container: Types.UpdateContainer;
   OrderLineDetail: Types.UpdateOrderLineDetail;
-  EventLog: Types.InsertEventLog;
   log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
 }>;
 
@@ -898,10 +893,7 @@ export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
 export type UpdateSqlAfterAgInMutation = (
   { __typename?: 'Mutation' }
   & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateContainer'>
-  & { createEventLog: (
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id'>
-  ), insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
+  & { insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserEventLog' }
     & Pick<Types.UserEventLog, '_id'>
   )>>> }
@@ -1076,12 +1068,9 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
     }
   }
 export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: {isSelected: false})
-  createEventLog(EventLog: $EventLog) {
-    _id
-  }
   insertUserEventLogs(log: $log) {
     _id
   }
@@ -1136,15 +1125,12 @@ export const FetchHazardMaterialLevelDocument = gql`
     }
   }
 export const UpdateSqlAfterAgInDocument = gql`
-    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $EventLog: insertEventLog!, $log: [insertUserEventLog]!) {
+    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $log: [insertUserEventLog]!) {
   updateOrderLineDetail(
     ContainerID: $ContainerID
     OrderLineDetail: $OrderLineDetail
   )
   updateContainer(_id: $ContainerID, Container: $Container)
-  createEventLog(EventLog: $EventLog) {
-    _id
-  }
   insertUserEventLogs(log: $log) {
     _id
   }

@@ -53,11 +53,11 @@ export class AggregationOutService {
     return this._pickedContainer.value;
   }
 
-  private _ITNsInOrder = new BehaviorSubject<string>(null);
-  public changeITNsInOrder(node: string): void {
+  private _ITNsInOrder = new BehaviorSubject<string[]>(null);
+  public changeITNsInOrder(node: string[]): void {
     this._ITNsInOrder.next(node);
   }
-  public get ITNsInOrder(): string {
+  public get ITNsInOrder(): string[] {
     return this._ITNsInOrder.value;
   }
 }

@@ -133,6 +133,7 @@ query fetchUserEventLog(
     }
     OrderNumber
     NOSINumber
+    Message
     InternalTrackingNumber
     DateTime
   }

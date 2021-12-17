@@ -827,19 +827,6 @@ export type Find_Or_Create_UserInfoMutation = (
   )> }
 );
 
-export type Create_EventLogMutationVariables = Types.Exact<{
-  EventLog: Types.InsertEventLog;
-}>;
-
-
-export type Create_EventLogMutation = (
-  { __typename?: 'Mutation' }
-  & { createEventLog: (
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id'>
-  ) }
-);
-
 export type Insert_UserEventLogsMutationVariables = Types.Exact<{
   log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
 }>;
@@ -933,24 +920,6 @@ export const Find_Or_Create_UserInfoDocument = gql`
   })
   export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
     document = Find_Or_Create_UserInfoDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const Create_EventLogDocument = gql`
-    mutation create_EventLog($EventLog: insertEventLog!) {
-  createEventLog(EventLog: $EventLog) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class Create_EventLogGQL extends Apollo.Mutation<Create_EventLogMutation, Create_EventLogMutationVariables> {
-    document = Create_EventLogDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

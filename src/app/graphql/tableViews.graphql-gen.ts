@@ -908,7 +908,7 @@ export type FetchUserEventLogQuery = (
   { __typename?: 'Query' }
   & { findUserEventLog?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'UserEventLog' }
-    & Pick<Types.UserEventLog, '_id' | 'OrderNumber' | 'NOSINumber' | 'InternalTrackingNumber' | 'DateTime'>
+    & Pick<Types.UserEventLog, '_id' | 'OrderNumber' | 'NOSINumber' | 'Message' | 'InternalTrackingNumber' | 'DateTime'>
     & { User: (
       { __typename?: 'UserInfo' }
       & Pick<Types.UserInfo, 'Name'>
@@ -1163,6 +1163,7 @@ export const FetchUserEventLogDocument = gql`
     }
     OrderNumber
     NOSINumber
+    Message
     InternalTrackingNumber
     DateTime
   }

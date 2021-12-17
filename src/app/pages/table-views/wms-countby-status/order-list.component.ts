@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { FindOrderByStatusGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'order-list',
@@ -10,9 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class OrderListComponent implements OnInit {
   OrderInfo$;
-
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private fetchOrder: FindOrderByStatusGQL
   ) {}

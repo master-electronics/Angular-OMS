@@ -16,11 +16,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let detail of nzTable.data">
-        <td>{{ detail.OrderNumber }}-{{ detail.NOSINumber }}</td>
-        <td>{{ detail.CustomerNumber }}</td>
-        <td>{{ detail.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</td>
-        <td>{{ detail.ShipmentMethod.ShippingMethod }}</td>
+      <tr *ngFor="let order of nzTable.data">
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              orderNumber: order.OrderNumber,
+              NOSINumber: order.NOSINumber
+            }"
+            >{{ order.OrderNumber }}-{{ order.NOSINumber }}</a
+          >
+        </td>
+        <td>{{ order.CustomerNumber }}</td>
+        <td>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</td>
+        <td>{{ order.ShipmentMethod.ShippingMethod }}</td>
       </tr>
     </tbody>
   </nz-table>

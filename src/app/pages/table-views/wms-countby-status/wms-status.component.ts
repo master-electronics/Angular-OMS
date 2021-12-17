@@ -111,6 +111,15 @@ export class WmsStatusComponent implements OnInit {
                 result[2]['iT'] = item.Head_Total;
                 break;
 
+              case 75:
+                result[0]['kP'] = item.ITN_Priority;
+                result[0]['kT'] = item.ITN_Total;
+                result[1]['kP'] = item.Line_Priority;
+                result[1]['kT'] = item.Line_Total;
+                result[2]['kP'] = item.Head_Priority;
+                result[2]['kT'] = item.Head_Total;
+                break;
+
               case 80:
                 result[0]['jP'] = item.ITN_Priority;
                 result[0]['jT'] = item.ITN_Total;

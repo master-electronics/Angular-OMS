@@ -23,7 +23,7 @@ export interface endContainer {
     ShelfDetail: string;
   };
   containerID: number;
-  ITNsInTote: string;
+  ITNsInTote: string[];
   FileKeyListforAgIn: string[];
 }
 

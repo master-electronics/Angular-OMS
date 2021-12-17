@@ -19,6 +19,7 @@
         <th colspan="2">60</th>
         <th colspan="2">63</th>
         <th colspan="2">65</th>
+        <th colspan="2">75</th>
         <th colspan="2">80</th>
       </tr>
       <tr>
@@ -31,9 +32,12 @@
         <th colspan="2">QC Complete</th>
         <th colspan="2">AGIn Complete</th>
         <th colspan="2">AGOut Complete</th>
+        <th colspan="2">Packing Hold</th>
         <th colspan="2">Pack Complete</th>
       </tr>
       <tr>
+        <th>Priority</th>
+        <th>Total</th>
         <th>Priority</th>
         <th>Total</th>
         <th>Priority</th>
@@ -235,6 +239,25 @@
             [routerLink]="['/tableviews/orderview/itnview']"
             [queryParams]="{
               priority: 1,
+              statusID: 75
+            }"
+            >{{ table.data[0].kP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              statusID: 75
+            }"
+            >{{ table.data[0].kT }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/orderview/itnview']"
+            [queryParams]="{
+              priority: 1,
               statusID: 80
             }"
             >{{ table.data[0].jP }}</a
@@ -270,6 +293,8 @@
         <td>{{ table.data[1].hT }}</td>
         <td>{{ table.data[1].iP }}</td>
         <td>{{ table.data[1].iT }}</td>
+        <td>{{ table.data[1].kP }}</td>
+        <td>{{ table.data[1].kT }}</td>
         <td>{{ table.data[1].jP }}</td>
         <td>{{ table.data[1].jT }}</td>
       </tr>
@@ -447,7 +472,25 @@
             >{{ table.data[2].iT }}</a
           >
         </td>
-
+        <td>
+          <a
+            [routerLink]="['orderlist']"
+            [queryParams]="{
+              priority: 1,
+              statusID: 75
+            }"
+            >{{ table.data[2].kP }}</a
+          >
+        </td>
+        <td>
+          <a
+            [routerLink]="['orderlist']"
+            [queryParams]="{
+              statusID: 75
+            }"
+            >{{ table.data[2].kT }}</a
+          >
+        </td>
         <td>
           <a
             [routerLink]="['orderlist']"
