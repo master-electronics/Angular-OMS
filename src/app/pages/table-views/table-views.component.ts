@@ -23,11 +23,11 @@ export class TableViewsComponent {
     //   link: 'usereventlog',
     //   content: 'View the user activity event logs on WMS',
     // },
-    // {
-    //   title: 'Event Logs',
-    //   link: 'eventlog',
-    //   content: 'View the user activity event logs on WMS',
-    // },
+    {
+      title: 'Event Logs',
+      link: 'eventlog',
+      content: 'View the user activity event logs on WMS',
+    },
     {
       title: 'Task Counter',
       link: 'taskcounter',

@@ -28,10 +28,10 @@ const routes: Routes = [
   //   path: 'usereventlog',
   //   component: UserEventLogComponent,
   // },
-  // {
-  //   path: 'eventlog',
-  //   component: EventLogComponent,
-  // },
+  {
+    path: 'eventlog',
+    component: EventLogComponent,
+  },
   {
     path: 'taskcounter',
     component: TaskCounterComponent,
