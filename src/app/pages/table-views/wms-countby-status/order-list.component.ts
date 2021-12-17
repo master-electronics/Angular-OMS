@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {
-  FetchOrderDetailforitnViewGQL,
-  FetchOrderLineDetailforWmsCountGQL,
-  SearchIntForWmsCount,
-} from '../../../graphql/tableViews.graphql-gen';
+import { FindOrderByStatusGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -18,29 +14,25 @@ export class OrderListComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fetchOrderDetail: FetchOrderDetailforitnViewGQL,
-    private findDetail: FetchOrderLineDetailforWmsCountGQL
+    private fetchOrder: FindOrderByStatusGQL
   ) {}
 
   ngOnInit(): void {
     const urlParams = { ...this.route.snapshot.queryParams };
     if (urlParams.statusID) {
-      const detail: SearchIntForWmsCount = {
-        StatusID: Number(urlParams.statusID),
-        Priority: urlParams.priority === '1' ? true : null,
-      };
-      this.fetchData(detail);
-    } else {
-      this.router.navigate(['/wmsstatus']);
+      this.fetchData(
+        urlParams.priority === '1' ? true : null,
+        Number(urlParams.statusID)
+      );
     }
   }
 
-  fetchData(filter: SearchIntForWmsCount): void {
-    this.OrderInfo$ = this.findDetail
-      .fetch({ filter: filter }, { fetchPolicy: 'network-only' })
+  fetchData(PriorityPinkPaper: boolean, StatusID: number): void {
+    this.OrderInfo$ = this.fetchOrder
+      .fetch({ PriorityPinkPaper, StatusID }, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
-          return res.data.fetchOrderLineDetailforWMSCount;
+          return res.data.findOrderByStatus;
         })
       );
   }

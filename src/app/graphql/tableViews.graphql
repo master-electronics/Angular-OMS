@@ -154,3 +154,18 @@ query fetchOrderTasktime($target: String, $limit: Int!) {
     agOut
   }
 }
+
+query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
+  findOrderByStatus(
+    PriorityPinkPaper: $PriorityPinkPaper
+    StatusID: $StatusID
+  ) {
+    OrderNumber
+    NOSINumber
+    CustomerNumber
+    ShipmentMethod {
+      PriorityPinkPaper
+      ShippingMethod
+    }
+  }
+}

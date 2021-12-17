@@ -948,6 +948,24 @@ export type FetchOrderTasktimeQuery = (
   )>>> }
 );
 
+export type FindOrderByStatusQueryVariables = Types.Exact<{
+  PriorityPinkPaper?: Types.Maybe<Types.Scalars['Boolean']>;
+  StatusID: Types.Scalars['Int'];
+}>;
+
+
+export type FindOrderByStatusQuery = (
+  { __typename?: 'Query' }
+  & { findOrderByStatus?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'Order' }
+    & Pick<Types.Order, 'OrderNumber' | 'NOSINumber' | 'CustomerNumber'>
+    & { ShipmentMethod?: Types.Maybe<(
+      { __typename?: 'ShipmentMethod' }
+      & Pick<Types.ShipmentMethod, 'PriorityPinkPaper' | 'ShippingMethod'>
+    )> }
+  )>>> }
+);
+
 export const FetchOrderViewDocument = gql`
     query fetchOrderView($filter: orderViewFilter) {
   fetchOrderView(filter: $filter) {
@@ -1197,6 +1215,30 @@ export const FetchOrderTasktimeDocument = gql`
   })
   export class FetchOrderTasktimeGQL extends Apollo.Query<FetchOrderTasktimeQuery, FetchOrderTasktimeQueryVariables> {
     document = FetchOrderTasktimeDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindOrderByStatusDocument = gql`
+    query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
+  findOrderByStatus(PriorityPinkPaper: $PriorityPinkPaper, StatusID: $StatusID) {
+    OrderNumber
+    NOSINumber
+    CustomerNumber
+    ShipmentMethod {
+      PriorityPinkPaper
+      ShippingMethod
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindOrderByStatusGQL extends Apollo.Query<FindOrderByStatusQuery, FindOrderByStatusQueryVariables> {
+    document = FindOrderByStatusDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

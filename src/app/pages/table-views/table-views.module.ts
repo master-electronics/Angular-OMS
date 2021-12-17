@@ -6,6 +6,7 @@ import { IconsProviderModule } from '../../icons-provider.module';
 import { TableViewsComponent } from './table-views.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
+import { OrderListComponent } from './wms-countby-status/order-list.component';
 import { UserEventLogComponent } from './user-event-log/user-event-log.component';
 import { EventLogComponent } from './event-log/event-log.component';
 import { TableViewsRoutingModule } from './table-views.routing';
@@ -30,6 +31,7 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
   declarations: [
     TableViewsComponent,
     WmsStatusComponent,
+    OrderListComponent,
     OrderViewComponent,
     ITNViewComponent,
     EventLogComponent,
