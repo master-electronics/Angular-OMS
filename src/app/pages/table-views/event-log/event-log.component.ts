@@ -22,7 +22,7 @@ export class EventLogComponent implements OnInit {
     private fb: FormBuilder,
     private commonService: CommonService,
     private route: ActivatedRoute,
-    private fetchUser: FetchUserInfoGQL,
+    // private fetchUser: FetchUserInfoGQL,
     private fetchEventLog: FetchUserEventLogGQL
   ) {
     this.commonService.changeNavbar('User Event Logs');
@@ -36,11 +36,11 @@ export class EventLogComponent implements OnInit {
     timeRange: [''],
   });
 
-  fetchUser$;
+  // fetchUser$;
   ngOnInit(): void {
-    this.fetchUser$ = this.fetchUser
-      .fetch()
-      .pipe(map((res) => res.data.findUserInfo));
+    // this.fetchUser$ = this.fetchUser
+    //   .fetch()
+    //   .pipe(map((res) => res.data.findUserInfo));
     const urlParams = { ...this.route.snapshot.queryParams };
     if (urlParams.ITN) {
       this.filterForm.get('ITN').setValue(urlParams.ITN);

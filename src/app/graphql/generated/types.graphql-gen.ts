@@ -345,6 +345,7 @@ export type Query = {
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findEventLog?: Maybe<Array<Maybe<EventLog>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
+  findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
@@ -427,6 +428,12 @@ export type QueryFindOrderArgs = {
 };
 
 
+export type QueryFindOrderByStatusArgs = {
+  PriorityPinkPaper?: Maybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
+};
+
+
 export type QueryFindOrderLineArgs = {
   OrderLine: SearchOrderLine;
   limit?: Maybe<Scalars['Int']>;
@@ -501,9 +508,7 @@ export type UserEventLog = {
 
 export type UserInfo = {
   __typename?: 'UserInfo';
-  EVENTLOGs?: Maybe<Array<Maybe<EventLog>>>;
   Name: Scalars['String'];
-  USEREVENTLOGs?: Maybe<Array<Maybe<UserEventLog>>>;
   Zone?: Maybe<Zone>;
   ZoneID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
@@ -559,7 +564,7 @@ export type InsertOrderLine = {
 
 export type InsertOrderLineDetail = {
   BinLocation: Scalars['String'];
-  ContainerID: Scalars['Int'];
+  ContainerID?: Maybe<Scalars['Int']>;
   CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
