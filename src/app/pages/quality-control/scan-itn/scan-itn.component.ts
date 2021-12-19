@@ -84,13 +84,14 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid ITN';
             }
             let error = '';
+            const regex = /^hld*/g;
             if (
               !['qc'].includes(
                 res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim()
               ) &&
-              res.data.findOrderLineDetail[0].BinLocation.toLowerCase()
+              !res.data.findOrderLineDetail[0].BinLocation.toLowerCase()
                 .trim()
-                .match('/^hld-3[0-9]/i')
+                .match(regex)
             ) {
               error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC or hold\n`;
             }

@@ -339,6 +339,7 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
+  countOrderItns: Scalars['Int'];
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -358,6 +359,13 @@ export type Query = {
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
+};
+
+
+export type QueryCountOrderItnsArgs = {
+  LocationCode: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
 };
 
 
@@ -838,6 +846,18 @@ export type FetchLocationAndOrderDetailForAgInQuery = (
   )>>> }
 );
 
+export type CountOrderItnsFromMerpQueryVariables = Types.Exact<{
+  LocationCode: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+
+export type CountOrderItnsFromMerpQuery = (
+  { __typename?: 'Query' }
+  & Pick<Types.Query, 'countOrderItns'>
+);
+
 export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   OrderID: Types.Scalars['Int'];
   OrderLineDetail: Types.UpdateOrderLineDetail;
@@ -1062,6 +1082,26 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
   })
   export class FetchLocationAndOrderDetailForAgInGQL extends Apollo.Query<FetchLocationAndOrderDetailForAgInQuery, FetchLocationAndOrderDetailForAgInQueryVariables> {
     document = FetchLocationAndOrderDetailForAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CountOrderItnsFromMerpDocument = gql`
+    query countOrderItnsFromMerp($LocationCode: String!, $OrderNumber: String!, $NOSINumber: String!) {
+  countOrderItns(
+    LocationCode: $LocationCode
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CountOrderItnsFromMerpGQL extends Apollo.Query<CountOrderItnsFromMerpQuery, CountOrderItnsFromMerpQueryVariables> {
+    document = CountOrderItnsFromMerpDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

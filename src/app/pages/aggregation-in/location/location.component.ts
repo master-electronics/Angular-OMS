@@ -24,6 +24,7 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
 import {
+  CountOrderItnsFromMerpGQL,
   FetchHazardMaterialLevelGQL,
   FetchLocationAndOrderDetailForAgInGQL,
   UpdateAfterAgOutGQL,
@@ -91,6 +92,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private verifyContainer: VerifyContainerForAggregationInGQL,
     private gtmService: GoogleTagManagerService,
     private authService: AuthenticationService,
+    private countOrderItns: CountOrderItnsFromMerpGQL,
     private _agInService: AggregationInService
   ) {
     this._titleService.setTitle('agin/location');
@@ -193,6 +195,25 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             return true;
           }
           // if not single Line ITN stop here.
+          this.isLoading = false;
+          return false;
+        }),
+        // fetch ITN count from Merp
+        switchMap(() => {
+          return this.countOrderItns.fetch(
+            {
+              LocationCode: environment.DistributionCenter,
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+            },
+            { fetchPolicy: 'network-only' }
+          );
+        }),
+        // filter if the merp count ITN is not 1
+        filter((res) => {
+          if (res.data.countOrderItns === 1) {
+            return true;
+          }
           this.isLoading = false;
           return false;
         }),

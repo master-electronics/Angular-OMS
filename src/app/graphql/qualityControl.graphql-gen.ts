@@ -339,6 +339,7 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
+  countOrderItns: Scalars['Int'];
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -358,6 +359,13 @@ export type Query = {
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
+};
+
+
+export type QueryCountOrderItnsArgs = {
+  LocationCode: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
 };
 
 
