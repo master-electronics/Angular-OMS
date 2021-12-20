@@ -87,7 +87,7 @@ mutation updateAfterAgOut(
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
 
-  updateOrder(_id: $OrderID, Order: { isSelected: false })
+  updateOrder(_id: $OrderID, Order: { isSelected: 0 })
 
   insertUserEventLogs(log: $log) {
     _id
@@ -197,6 +197,11 @@ query verifyOrderForAgOut(
       StatusID
     }
   }
+  countOrderItns(
+    LocationCode: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
 }
 
 query fetchContainerForAgoutPick($OrderID: Int) {

@@ -278,7 +278,7 @@ export type Order = {
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
-  isSelected: Scalars['Boolean'];
+  isSelected: Scalars['Int'];
 };
 
 export type OrderForAgOut = {
@@ -686,7 +686,7 @@ export type SearchOrder = {
   OrderType?: Maybe<Scalars['String']>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
-  isSelected?: Maybe<Scalars['Boolean']>;
+  isSelected?: Maybe<Scalars['Int']>;
 };
 
 export type SearchOrderLine = {
@@ -764,7 +764,7 @@ export type UpdateOrder = {
   OrderStatusCode?: Maybe<Scalars['String']>;
   OrderType?: Maybe<Scalars['String']>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
-  isSelected?: Maybe<Scalars['Boolean']>;
+  isSelected?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrderLine = {
@@ -971,6 +971,7 @@ export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
 
 export type VerifyOrderForAgOutQuery = (
   { __typename?: 'Query' }
+  & Pick<Types.Query, 'countOrderItns'>
   & { findOrder?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'Order' }
     & Pick<Types.Order, '_id'>
@@ -1110,7 +1111,7 @@ export const CountOrderItnsFromMerpDocument = gql`
 export const UpdateAfterAgOutDocument = gql`
     mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
-  updateOrder(_id: $OrderID, Order: {isSelected: false})
+  updateOrder(_id: $OrderID, Order: {isSelected: 0})
   insertUserEventLogs(log: $log) {
     _id
   }
@@ -1265,6 +1266,11 @@ export const VerifyOrderForAgOutDocument = gql`
       StatusID
     }
   }
+  countOrderItns(
+    LocationCode: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
 }
     `;
 

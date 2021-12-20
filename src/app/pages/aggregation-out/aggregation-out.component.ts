@@ -133,6 +133,9 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
           ) {
             throw `Invalid Order Status!`;
           }
+          if (order[0].ORDERLINEDETAILs.length !== res.data.countOrderItns) {
+            throw `ITNs in SQL are not equal to ITNs in Merp.`;
+          }
         }),
         map((res) => {
           this.router.navigate(['/agout/picktote'], {

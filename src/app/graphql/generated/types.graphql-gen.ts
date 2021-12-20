@@ -271,7 +271,7 @@ export type Order = {
   ShipmentMethod?: Maybe<ShipmentMethod>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
-  isSelected: Scalars['Boolean'];
+  isSelected: Scalars['Int'];
 };
 
 export type OrderForAgOut = {
@@ -679,7 +679,7 @@ export type SearchOrder = {
   OrderType?: Maybe<Scalars['String']>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
-  isSelected?: Maybe<Scalars['Boolean']>;
+  isSelected?: Maybe<Scalars['Int']>;
 };
 
 export type SearchOrderLine = {
@@ -757,7 +757,7 @@ export type UpdateOrder = {
   OrderStatusCode?: Maybe<Scalars['String']>;
   OrderType?: Maybe<Scalars['String']>;
   ShipmentMethodID?: Maybe<Scalars['String']>;
-  isSelected?: Maybe<Scalars['Boolean']>;
+  isSelected?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrderLine = {
