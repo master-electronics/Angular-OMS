@@ -151,3 +151,12 @@ mutation updateMerpForLastLineAfterQCRepack(
     message
   }
 }
+
+query findNewOrderLineDetailAfterUpdateBin(
+  $OrderLineDetail: searchOrderLineDetail!
+) {
+  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+    _id
+    BinLocation
+  }
+}

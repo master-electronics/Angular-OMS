@@ -8,14 +8,17 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
+import {
+  Insert_UserEventLogsGQL,
+  Update_Merp_QcBinGQL,
+} from 'src/app/graphql/wms.graphql-gen';
 
 @Component({
   selector: 'scan-itn',
@@ -34,6 +37,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private qcService: QualityControlService,
     private insertUserEventLog: Insert_UserEventLogsGQL,
+    private updateQCBin: Update_Merp_QcBinGQL,
     private verifyITNQC: VerifyItNforQcGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
@@ -126,6 +130,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
+              isQCDrop: detail.BinLocation.toLowerCase().trim() === 'qc',
             };
             const log = [
               {
@@ -138,7 +143,22 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 UserEventID: environment.Event_QC_Start,
               },
             ];
-            return this.insertUserEventLog.mutate({ log });
+            const updateLog = this.insertUserEventLog.mutate({ log });
+            const updateQueries = { updateLog };
+            if (!this.itemInfo.isQCDrop) {
+              updateQueries['updateMerpQCBin'] = this.updateQCBin.mutate({
+                InternalTrackingNumber: ITN,
+              });
+            }
+            return forkJoin(updateQueries);
+          }),
+          tap((res: any) => {
+            if (
+              !this.itemInfo.isQCDrop &&
+              !res.updateMerpQCBin.data.updateMerpQCBin.success
+            ) {
+              // throw new Error(`Can't update binlocation to qc`);
+            }
           })
         )
         .subscribe(

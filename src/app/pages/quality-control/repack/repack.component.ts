@@ -16,11 +16,12 @@ import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
+  FindNewOrderLineDetailAfterUpdateBinGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Insert_UserEventLogsGQL,
@@ -34,6 +35,7 @@ import {
 })
 export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
+  needSearch = false;
   alertType = 'error';
   buttonStyles = 'bg-green-500';
   buttonLabel = 'submit';
@@ -53,6 +55,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
+    private findNewID: FindNewOrderLineDetailAfterUpdateBinGQL,
     private gtmService: GoogleTagManagerService
   ) {
     this.titleService.setTitle('qc/repack');
@@ -72,6 +75,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['qc']);
       return;
     }
+    if (!this.itemInfo.isQCDrop) {
+      this.findDetailID();
+    }
   }
 
   @ViewChild('container') containerInput!: ElementRef;
@@ -82,9 +88,56 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 10);
   }
 
+  findDetailID(): void {
+    this.isLoading = true;
+    this.subscription.add(
+      this.findNewID
+        .fetch(
+          {
+            OrderLineDetail: {
+              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+            },
+          },
+          { fetchPolicy: 'network-only' }
+        )
+        .subscribe(
+          (res) => {
+            this.isLoading = false;
+            let message = '';
+            if (res.data.findOrderLineDetail[0].BinLocation.trim() !== 'qc') {
+              this.needSearch = true;
+              message = `Bin location is not qc, Click search button again!`;
+            }
+            if (res.data.findOrderLineDetail.length > 1) {
+              this.needSearch = true;
+              message = `More than one ITN, Click search button again!`;
+            }
+            if (this.needSearch) {
+              this.needSearch = true;
+              this.alertType = 'error';
+              this.alertMessage = message;
+              this.containerInput.nativeElement.select();
+            } else {
+              this.needSearch = false;
+            }
+          },
+          (error) => {
+            this.isLoading = false;
+            this.needSearch = true;
+            this.alertType = 'error';
+            this.alertMessage = error;
+            this.containerInput.nativeElement.select();
+          }
+        )
+    );
+  }
+
   onSubmit(): void {
     this.alertMessage = '';
     if (this.containerForm.invalid) {
+      return;
+    }
+    if (this.needSearch) {
       return;
     }
 

@@ -92,6 +92,7 @@ export type Mutation = {
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
+  updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
   updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -216,6 +217,11 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   Status: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateMerpQcBinArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -874,6 +880,19 @@ export type Find_OrderLineDetailQuery = (
   )>>> }
 );
 
+export type Update_Merp_QcBinMutationVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+}>;
+
+
+export type Update_Merp_QcBinMutation = (
+  { __typename?: 'Mutation' }
+  & { updateMerpQCBin: (
+    { __typename?: 'Response' }
+    & Pick<Types.Response, 'success'>
+  ) }
+);
+
 export const Update_OrderLineDetailDocument = gql`
     mutation update_OrderLineDetail($_id: Int, $InternalTrackingNumber: String, $OrderLineID: Int, $OrderID: Int, $ContainerID: Int, $OrderLineDetail: updateOrderLineDetail!) {
   updateOrderLineDetail(
@@ -985,6 +1004,24 @@ export const Find_OrderLineDetailDocument = gql`
   })
   export class Find_OrderLineDetailGQL extends Apollo.Query<Find_OrderLineDetailQuery, Find_OrderLineDetailQueryVariables> {
     document = Find_OrderLineDetailDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_Merp_QcBinDocument = gql`
+    mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
+  updateMerpQCBin(InternalTrackingNumber: $InternalTrackingNumber) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_Merp_QcBinGQL extends Apollo.Mutation<Update_Merp_QcBinMutation, Update_Merp_QcBinMutationVariables> {
+    document = Update_Merp_QcBinDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

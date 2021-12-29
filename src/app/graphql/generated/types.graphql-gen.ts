@@ -85,6 +85,7 @@ export type Mutation = {
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
+  updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
   updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -209,6 +210,11 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   Status: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateMerpQcBinArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 

@@ -92,6 +92,7 @@ export type Mutation = {
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
+  updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
   updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -216,6 +217,11 @@ export type MutationUpdateMerpOrderStatusArgs = {
   OrderNumber: Scalars['String'];
   Status: Scalars['String'];
   UserOrStatus?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateMerpQcBinArgs = {
+  InternalTrackingNumber: Scalars['String'];
 };
 
 
@@ -953,6 +959,19 @@ export type UpdateMerpForLastLineAfterQcRepackMutation = (
   ) }
 );
 
+export type FindNewOrderLineDetailAfterUpdateBinQueryVariables = Types.Exact<{
+  OrderLineDetail: Types.SearchOrderLineDetail;
+}>;
+
+
+export type FindNewOrderLineDetailAfterUpdateBinQuery = (
+  { __typename?: 'Query' }
+  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'OrderLineDetail' }
+    & Pick<Types.OrderLineDetail, '_id' | 'BinLocation'>
+  )>>> }
+);
+
 export const VerifyItNforQcDocument = gql`
     query verifyITNforQc($OrderLineDetail: searchOrderLineDetail!) {
   findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
@@ -1184,6 +1203,25 @@ export const UpdateMerpForLastLineAfterQcRepackDocument = gql`
   })
   export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<UpdateMerpForLastLineAfterQcRepackMutation, UpdateMerpForLastLineAfterQcRepackMutationVariables> {
     document = UpdateMerpForLastLineAfterQcRepackDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindNewOrderLineDetailAfterUpdateBinDocument = gql`
+    query findNewOrderLineDetailAfterUpdateBin($OrderLineDetail: searchOrderLineDetail!) {
+  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+    _id
+    BinLocation
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindNewOrderLineDetailAfterUpdateBinGQL extends Apollo.Query<FindNewOrderLineDetailAfterUpdateBinQuery, FindNewOrderLineDetailAfterUpdateBinQueryVariables> {
+    document = FindNewOrderLineDetailAfterUpdateBinDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -64,3 +64,9 @@ query find_OrderLineDetail($detail: searchOrderLineDetail!) {
     }
   }
 }
+
+mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
+  updateMerpQCBin(InternalTrackingNumber: $InternalTrackingNumber) {
+    success
+  }
+}
