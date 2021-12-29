@@ -157,7 +157,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               !this.itemInfo.isQCDrop &&
               !res.updateMerpQCBin.data.updateMerpQCBin.success
             ) {
-              // throw new Error(`Can't update binlocation to qc`);
+              throw new Error(`Can't update binlocation to qc`);
             }
           })
         )

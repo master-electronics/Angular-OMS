@@ -21,7 +21,7 @@ import {
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Insert_UserEventLogsGQL,
@@ -117,8 +117,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               this.alertType = 'error';
               this.alertMessage = message;
               this.containerInput.nativeElement.select();
-            } else {
-              this.needSearch = false;
             }
           },
           (error) => {
