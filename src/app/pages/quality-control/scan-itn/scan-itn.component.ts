@@ -144,12 +144,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               },
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });
-            const updateQueries = { updateLog };
-            if (!this.itemInfo.isQCDrop) {
-              updateQueries['updateMerpQCBin'] = this.updateQCBin.mutate({
-                InternalTrackingNumber: ITN,
-              });
-            }
+            const updateMerpQCBin = this.updateQCBin.mutate({
+              InternalTrackingNumber: ITN,
+            });
+            const updateQueries = { updateLog, updateMerpQCBin };
             return forkJoin(updateQueries);
           }),
           tap((res: any) => {
