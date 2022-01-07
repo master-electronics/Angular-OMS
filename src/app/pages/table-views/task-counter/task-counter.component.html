@@ -60,7 +60,16 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of table.data">
-        <td>{{ data.User }}</td>
+        <td>
+          <a
+            [routerLink]="['/tableviews/eventlog']"
+            [queryParams]="{
+              UserID: data.ID,
+              Name: data.User
+            }"
+            >{{ data.User }}</a
+          >
+        </td>
         <td>
           {{ data.total }}
         </td>

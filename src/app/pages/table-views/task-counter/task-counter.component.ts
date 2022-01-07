@@ -90,6 +90,7 @@ export class TaskCounterComponent implements OnInit {
               });
               totalForAll += total;
               return {
+                ID: element.ID,
                 User: element.User,
                 total,
                 taskCounter: element.taskCounter,

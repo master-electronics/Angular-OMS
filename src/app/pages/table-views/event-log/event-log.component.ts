@@ -16,13 +16,14 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class EventLogComponent implements OnInit {
   isLoading = false;
+  urlParams;
   startDate;
   endDate;
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
     private route: ActivatedRoute,
-    // private fetchUser: FetchUserInfoGQL,
+    private fetchUser: FetchUserInfoGQL,
     private fetchEventLog: FetchUserEventLogGQL
   ) {
     this.commonService.changeNavbar('User Event Logs');
@@ -36,14 +37,17 @@ export class EventLogComponent implements OnInit {
     timeRange: [''],
   });
 
-  // fetchUser$;
+  fetchUser$;
   ngOnInit(): void {
-    // this.fetchUser$ = this.fetchUser
-    //   .fetch()
-    //   .pipe(map((res) => res.data.findUserInfo));
-    const urlParams = { ...this.route.snapshot.queryParams };
-    if (urlParams.ITN) {
-      this.filterForm.get('ITN').setValue(urlParams.ITN);
+    this.fetchUser$ = this.fetchUser
+      .fetch()
+      .pipe(map((res) => res.data.findUserInfo));
+    this.urlParams = { ...this.route.snapshot.queryParams };
+    if (this.urlParams.ITN) {
+      this.filterForm.get('ITN').setValue(this.urlParams.ITN);
+      this.onSubmit();
+    }
+    if (this.urlParams.UserID) {
       this.onSubmit();
     }
   }
@@ -65,7 +69,8 @@ export class EventLogComponent implements OnInit {
       return;
     }
     const eventLog = {};
-    const user = this.filterForm.get('user').value;
+    const user =
+      Number(this.urlParams.UserID) || this.filterForm.get('user').value;
     const module = Number(this.filterForm.get('module').value);
     const order = this.filterForm.get('order').value.toUpperCase();
     const ITN = this.filterForm.get('ITN').value.toUpperCase();

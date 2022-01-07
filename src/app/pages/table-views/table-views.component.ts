@@ -18,11 +18,6 @@ export class TableViewsComponent {
       link: 'wmsstatus',
       content: 'Count how many ITNs, lines or orders are in each status',
     },
-    // {
-    //   title: 'User Event Logs',
-    //   link: 'usereventlog',
-    //   content: 'View the user activity event logs on WMS',
-    // },
     {
       title: 'Event Logs',
       link: 'eventlog',

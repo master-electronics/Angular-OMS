@@ -5,7 +5,6 @@ import { TableViewsComponent } from './table-views.component';
 import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
-import { UserEventLogComponent } from './user-event-log/user-event-log.component';
 import { OrderListComponent } from './wms-countby-status/order-list.component';
 import { EventLogComponent } from './event-log/event-log.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
@@ -29,10 +28,6 @@ const routes: Routes = [
     path: 'orderview/itnview',
     component: ITNViewComponent,
   },
-  // {
-  //   path: 'usereventlog',
-  //   component: UserEventLogComponent,
-  // },
   {
     path: 'eventlog',
     component: EventLogComponent,

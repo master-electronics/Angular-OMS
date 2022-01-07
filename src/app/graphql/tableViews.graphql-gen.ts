@@ -54,18 +54,6 @@ export type Equipment = {
   _id: Scalars['Int'];
 };
 
-export type EventLog = {
-  __typename?: 'EventLog';
-  DateTime: Scalars['String'];
-  Event: Scalars['String'];
-  Module?: Maybe<Scalars['String']>;
-  SubTarget?: Maybe<Scalars['String']>;
-  Target?: Maybe<Scalars['String']>;
-  User: UserInfo;
-  UserID: Scalars['Int'];
-  _id: Scalars['Int'];
-};
-
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -75,7 +63,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
   clearMerpTote: Response;
-  createEventLog: EventLog;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
@@ -114,11 +101,6 @@ export type MutationChangeQcLineInfoArgs = {
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
-};
-
-
-export type MutationCreateEventLogArgs = {
-  EventLog: InsertEventLog;
 };
 
 
@@ -357,7 +339,6 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
-  findEventLog?: Maybe<Array<Maybe<EventLog>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
@@ -430,15 +411,6 @@ export type QueryFindContainerListArgs = {
   Limit?: Maybe<Scalars['Int']>;
   idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindEventLogArgs = {
-  EventLog: SearchEventLog;
-  endDate?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  startDate?: Maybe<Scalars['String']>;
 };
 
 
@@ -555,14 +527,6 @@ export type Zone = {
   _id: Scalars['Int'];
 };
 
-export type InsertEventLog = {
-  Event: Scalars['String'];
-  Module?: Maybe<Scalars['String']>;
-  SubTarget?: Maybe<Scalars['String']>;
-  Target?: Maybe<Scalars['String']>;
-  UserID: Scalars['Int'];
-};
-
 export type InsertOrder = {
   BranchID?: Maybe<Scalars['String']>;
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -668,15 +632,6 @@ export type SearchContainer = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type SearchEventLog = {
-  Event?: Maybe<Scalars['String']>;
-  Module?: Maybe<Scalars['String']>;
-  SubTarget?: Maybe<Scalars['String']>;
-  Target?: Maybe<Scalars['String']>;
-  UserID?: Maybe<Scalars['Int']>;
-  _id?: Maybe<Scalars['Int']>;
-};
-
 export type SearchIntForWmsCount = {
   Priority?: Maybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
@@ -743,6 +698,7 @@ export type SearchZone = {
 
 export type TaskCounter = {
   __typename?: 'taskCounter';
+  ID: Scalars['Int'];
   User: Scalars['String'];
   taskCounter: Array<Maybe<Scalars['Int']>>;
 };
@@ -889,26 +845,6 @@ export type FetchUserInfoQuery = (
   )>>> }
 );
 
-export type FetchEventLogQueryVariables = Types.Exact<{
-  EventLog: Types.SearchEventLog;
-  startDate?: Types.Maybe<Types.Scalars['String']>;
-  endDate?: Types.Maybe<Types.Scalars['String']>;
-  limit?: Types.Maybe<Types.Scalars['Int']>;
-}>;
-
-
-export type FetchEventLogQuery = (
-  { __typename?: 'Query' }
-  & { findEventLog?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'EventLog' }
-    & Pick<Types.EventLog, '_id' | 'Event' | 'DateTime' | 'Module' | 'Target' | 'SubTarget'>
-    & { User: (
-      { __typename?: 'UserInfo' }
-      & Pick<Types.UserInfo, 'Name'>
-    ) }
-  )>>> }
-);
-
 export type FetchUserEventLogQueryVariables = Types.Exact<{
   UserEventLog: Types.SearchUserEventLog;
   Module?: Types.Maybe<Types.Scalars['Int']>;
@@ -944,7 +880,7 @@ export type FetchTaskCounterQuery = (
   { __typename?: 'Query' }
   & { fetchTaskCounter?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'taskCounter' }
-    & Pick<Types.TaskCounter, 'User' | 'taskCounter'>
+    & Pick<Types.TaskCounter, 'ID' | 'User' | 'taskCounter'>
   )>>> }
 );
 
@@ -1127,37 +1063,6 @@ export const FetchUserInfoDocument = gql`
       super(apollo);
     }
   }
-export const FetchEventLogDocument = gql`
-    query fetchEventLog($EventLog: searchEventLog!, $startDate: String, $endDate: String, $limit: Int) {
-  findEventLog(
-    EventLog: $EventLog
-    startDate: $startDate
-    endDate: $endDate
-    limit: $limit
-  ) {
-    _id
-    Event
-    DateTime
-    User {
-      Name
-    }
-    Module
-    Target
-    SubTarget
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchEventLogGQL extends Apollo.Query<FetchEventLogQuery, FetchEventLogQueryVariables> {
-    document = FetchEventLogDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const FetchUserEventLogDocument = gql`
     query fetchUserEventLog($UserEventLog: searchUserEventLog!, $Module: Int, $startDate: String, $endDate: String, $limit: Int) {
   findUserEventLog(
@@ -1197,6 +1102,7 @@ export const FetchUserEventLogDocument = gql`
 export const FetchTaskCounterDocument = gql`
     query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    ID
     User
     taskCounter
   }

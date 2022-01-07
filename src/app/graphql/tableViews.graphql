@@ -85,30 +85,6 @@ query fetchUserInfo {
   }
 }
 
-query fetchEventLog(
-  $EventLog: searchEventLog!
-  $startDate: String
-  $endDate: String
-  $limit: Int
-) {
-  findEventLog(
-    EventLog: $EventLog
-    startDate: $startDate
-    endDate: $endDate
-    limit: $limit
-  ) {
-    _id
-    Event
-    DateTime
-    User {
-      Name
-    }
-    Module
-    Target
-    SubTarget
-  }
-}
-
 query fetchUserEventLog(
   $UserEventLog: searchUserEventLog!
   $Module: Int
@@ -141,6 +117,7 @@ query fetchUserEventLog(
 
 query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    ID
     User
     taskCounter
   }
