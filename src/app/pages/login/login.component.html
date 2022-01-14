@@ -39,6 +39,7 @@
               <nz-form-control nzErrorTip="Please input your username!">
                 <nz-input-group nzSize="large" nzPrefixIcon="user">
                   <input
+                    id="username"
                     nz-input
                     type="text"
                     autocomplete="off"
@@ -57,6 +58,7 @@
                   nzSize="large"
                 >
                   <input
+                    id="password"
                     [type]="passwordVisible ? 'text' : 'password'"
                     nz-input
                     id="password"
@@ -79,6 +81,7 @@
             <!-- submit button -->
             <div class="hidden">{{ login$ | async }}</div>
             <button
+              id="login"
               nz-button
               type="submit"
               nzType="primary"
