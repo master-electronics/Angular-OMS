@@ -1,3 +1,4 @@
 {
-  "projectId": "oohdus"
+  "projectId": "oohdus",
+  "baseUrl": "http://localhost:4200"
 }
