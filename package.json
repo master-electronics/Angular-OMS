@@ -46,7 +46,7 @@
     "@angular-devkit/build-angular": "~12.2.5",
     "@angular/cli": "~12.2.5",
     "@angular/compiler-cli": "~12.2.0",
-    "@graphql-codegen/cli": "^2.2.0",
+    "@graphql-codegen/cli": "^1.9.0",
     "@graphql-codegen/fragment-matcher": "2.0.1",
     "@graphql-codegen/introspection": "1.18.1",
     "@graphql-codegen/near-operation-file-preset": "^1.18.4",
