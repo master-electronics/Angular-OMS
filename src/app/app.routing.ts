@@ -61,13 +61,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'relocate',
-        loadChildren: () =>
-          import('./pages/relocate/relocate.module').then(
-            (m) => m.RelocateModule
-          ),
-      },
-      {
         path: 'pick',
         loadChildren: () =>
           import('./pages/pick/pick.module').then((m) => m.PickModule),

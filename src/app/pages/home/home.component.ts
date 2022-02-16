@@ -14,7 +14,7 @@ export class HomeComponent {
     { link: '/agin', front: 'Aggregation ', highlight: 'I', end: 'n' },
     { link: '/agout', front: 'Aggregation ', highlight: 'O', end: 'ut' },
     { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
-    { link: '/pick', front: '', highlight: 'P', end: 'ick' },
+    // { link: '/pick', front: '', highlight: 'P', end: 'ick' },
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },
@@ -26,7 +26,6 @@ export class HomeComponent {
       end: 'nventory',
     },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
-    // { link: '/relocate', front: '', highlight: 'R', end: 'elocate' },
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;
