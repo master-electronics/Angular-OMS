@@ -9,6 +9,7 @@ import { OrderListComponent } from './wms-countby-status/order-list.component';
 import { EventLogComponent } from './event-log/event-log.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
 
 const routes: Routes = [
   { path: '', component: TableViewsComponent },
@@ -39,6 +40,10 @@ const routes: Routes = [
   {
     path: 'ordertasktime',
     component: OrderTasktimeComponent,
+  },
+  {
+    path: 'holdoncounter',
+    component: HoldOnCounterComponent,
   },
 ];
 

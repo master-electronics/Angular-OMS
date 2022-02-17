@@ -32,7 +32,12 @@ export class TableViewsComponent {
       title: 'Order Tasktime',
       link: 'ordertasktime',
       content:
-        'Show how many time spend on single line qc and aggregation for each order',
+        'Show how many time spend on single line qc and aggregation for each order.',
+    },
+    {
+      title: 'Hold-on Counter',
+      link: 'holdoncounter',
+      content: 'Show how many lines were kicked out by Quality Control.',
     },
   ];
 
