@@ -1,14 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-import { PickComponent } from './pick.component';
-import { StepTabsComponent } from './step-tabs/step-tabs.component';
-import { PickRoutingModule } from './pick.routing';
-import { PickService } from './pick.server';
+// Utiltiy Module
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
-
+//UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -17,19 +13,25 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
-import { NzSpaceModule } from 'ng-zorro-antd/space';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzImageModule } from 'ng-zorro-antd/image';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+// local components
+import { PickRoutingModule } from './pick.routing';
+import { PickService } from './pick.server';
+import { PullITNComponent } from './pull-itn/pull-itn.component';
+import { PickComponent } from './pick.component';
+import { PositionComponent } from './position/position.component';
+import { DropOffComponent } from './drop-off/drop-off.component';
 
 @NgModule({
-  declarations: [PickComponent, StepTabsComponent],
+  declarations: [
+    PickComponent,
+    PullITNComponent,
+    PositionComponent,
+    DropOffComponent,
+  ],
   imports: [
     CommonModule,
-    FormsModule,
     PickRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
     SharedComponentModule,
     SharedUtilityModule,
@@ -40,13 +42,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzAlertModule,
     NzDescriptionsModule,
     NzSkeletonModule,
-    NzStepsModule,
-    NzSpaceModule,
-    NzImageModule,
     NzDividerModule,
-    NzSelectModule,
-    NzDrawerModule,
-    NzModalModule,
   ],
   providers: [PickService],
   bootstrap: [PickComponent],

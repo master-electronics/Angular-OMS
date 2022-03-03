@@ -5,26 +5,29 @@
     [formGroup]="containerForm"
     (ngSubmit)="onSubmit()"
   >
-    <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired> Cart </nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
+          <nz-form-label nzRequired>Pick ITNs in the tote</nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="The input is not valid ITN!"
+          >
             <input
               nz-input
-              placeholder="Cart: OS1001"
+              placeholder=" "
+              formControlName="containerNumber"
+              placeholder="ITN#"
               nzSize="large"
               type="text"
               id="containerNumber"
-              formControlName="containerNumber"
+              name="containerNumber"
               autocomplete="off"
               #containerNumber
             />
           </nz-form-control>
         </nz-form-item>
 
-        <div *ngIf="submit$ | async"></div>
         <nz-form-item nz-row nzJustify="center">
           <div nz-col nzSpan="13">
             <button
@@ -32,7 +35,6 @@
               type="submit"
               nzType="primary"
               (click)="onSubmit()"
-              [nzLoading]="isLoading"
               nzSize="large"
               class="w-full"
             >
@@ -57,6 +59,24 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
+
+        <!-- ITN list -->
+        <table class="w-full">
+          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+            <th>ITN</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemList" class="text-lg">
+              <td>{{ item }}</td>
+            </tr>
+            <tr
+              *ngFor="let item of selectedList"
+              class="text-green-500 text-lg"
+            >
+              <td>{{ item }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </form>

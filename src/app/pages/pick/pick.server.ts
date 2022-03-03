@@ -1,24 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject } from 'rxjs';
 
-export class PickService {
-  private _tabStatus = new BehaviorSubject<string[]>([
-    'process',
-    'wait',
-    'wait',
-    'wait',
-  ]);
-  public tabStatus$ = this._tabStatus.asObservable();
-  public changeTab(tab: string[]): void {
-    this._tabStatus.next(tab);
-  }
+export interface PickSettings {
+  Zone: number;
+  StrictPriority: boolean;
+  PriorityCutoff: number;
+}
 
-  // task start time
-  private _pickStartTime = new BehaviorSubject<number>(0);
-  public resetPickStartTime(date: number): void {
-    this._pickStartTime.next(date);
+export class PickService {
+  private _pickSettings = new BehaviorSubject<PickSettings>(null);
+  public changePickSettings(node: PickSettings): void {
+    this._pickSettings.next(node);
   }
-  public get pickStartTime(): number {
-    return this._pickStartTime.value;
+  public get pickSettings(): PickSettings {
+    return this._pickSettings.value;
   }
 }

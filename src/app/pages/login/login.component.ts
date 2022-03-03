@@ -12,7 +12,7 @@ import { Subscription, throwError } from 'rxjs';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/wms.graphql-gen';
+import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private authenticationService: AuthenticationService,
-    private fetchUserInfo: Find_Or_Create_UserInfoGQL,
+    private userInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,
     private titleService: Title
   ) {
@@ -88,7 +88,7 @@ export class LoginComponent implements OnDestroy, OnInit {
             const UserInfo = {
               Name: this.authenticationService.userName,
             };
-            return this.fetchUserInfo.mutate({ UserInfo: UserInfo });
+            return this.userInfo.mutate({ UserInfo: UserInfo });
           }),
           map((res) => {
             const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);

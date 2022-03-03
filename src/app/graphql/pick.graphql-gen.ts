@@ -27,7 +27,7 @@ export type Container = {
   _id: Scalars['Int'];
   ContainerTypeID: Scalars['Int'];
   Barcode: Scalars['String'];
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter: Scalars['String'];
   Warehouse?: Maybe<Scalars['String']>;
@@ -36,9 +36,13 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
+  ParentContainer?: Maybe<Container>;
+  CONTAINERs?: Maybe<Array<Maybe<Container>>>;
   ContainerType: ContainerType;
   Equipment?: Maybe<Equipment>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type ContainerType = {
@@ -66,13 +70,42 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnInfoforPulling = {
+  __typename?: 'ITNInfoforPulling';
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand?: Maybe<Scalars['Float']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  StatusID?: Maybe<Scalars['Int']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  Zone?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
+};
+
+export type Inventory = {
+  __typename?: 'Inventory';
+  _id: Scalars['Int'];
+  DistributionCenter: Scalars['String'];
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID: Scalars['Int'];
+  ContainerID: Scalars['Int'];
+  Container: Container;
+  Product: Product;
+  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
   updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  updateOrCreateProduct?: Maybe<Product>;
+  updateOrCreateProduct: Product;
+  updateOrCreateInventory?: Maybe<Inventory>;
   holdQCOrder: Response;
   printITNLabel: Response;
   changeQCLineInfo: Response;
@@ -82,8 +115,9 @@ export type Mutation = {
   updateMerpQCBin: Response;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  findOrCreateOrderLine?: Maybe<OrderLine>;
-  findOrCreateOrder?: Maybe<Order>;
+  findOrCreateOrderLine: OrderLine;
+  findOrCreateOrder: Order;
+  findOrCreateProduct: Product;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
@@ -119,6 +153,11 @@ export type MutationUpdateOrCreateOrderLineDetailArgs = {
 
 export type MutationUpdateOrCreateProductArgs = {
   Product: InsertProduct;
+};
+
+
+export type MutationUpdateOrCreateInventoryArgs = {
+  Inventory: InsertInventory;
 };
 
 
@@ -191,6 +230,11 @@ export type MutationFindOrCreateOrderArgs = {
 };
 
 
+export type MutationFindOrCreateProductArgs = {
+  Product: InsertProduct;
+};
+
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<Maybe<InsertUserEventLog>>;
 };
@@ -222,7 +266,7 @@ export type MutationUpdateUserInfoArgs = {
   UserInfo: UpdateUserInfo;
   _id?: Maybe<Scalars['Int']>;
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
 };
 
 
@@ -294,8 +338,6 @@ export type OrderLine = {
   _id: Scalars['Int'];
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
-  PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
   LastUpdated?: Maybe<Scalars['String']>;
   ProductID: Scalars['Int'];
@@ -309,17 +351,14 @@ export type OrderLineDetail = {
   _id: Scalars['Int'];
   OrderLineID: Scalars['Int'];
   StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
   ContainerID: Scalars['Int'];
   Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS: Scalars['Boolean'];
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
   BinLocation?: Maybe<Scalars['String']>;
   WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
+  Inventory?: Maybe<Inventory>;
   OrderLine: OrderLine;
   Status: OrderStatus;
   Container: Container;
@@ -337,6 +376,8 @@ export type Product = {
   _id: Scalars['Int'];
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+  ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
+  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type ProdunctInfoFromMerp = {
@@ -354,6 +395,7 @@ export type Query = {
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
   countOrderItns: Scalars['Int'];
+  findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
@@ -363,7 +405,6 @@ export type Query = {
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
-  findZone?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -395,6 +436,13 @@ export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
+};
+
+
+export type QueryFindNextItnForPullingArgs = {
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 
@@ -445,13 +493,6 @@ export type QueryFindUserEventLogArgs = {
 
 export type QueryFindUserInfoArgs = {
   UserInfo?: Maybe<SearchUserInfo>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindZoneArgs = {
-  ZoneInfo?: Maybe<SearchZone>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
@@ -532,8 +573,9 @@ export type UserInfo = {
   __typename?: 'UserInfo';
   _id: Scalars['Int'];
   Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
-  Zone?: Maybe<Zone>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type WmsStatusView = {
@@ -548,12 +590,15 @@ export type WmsStatusView = {
   Head_Total: Scalars['Int'];
 };
 
-export type Zone = {
-  __typename?: 'Zone';
-  _id: Scalars['Int'];
+export type InsertInventory = {
   DistributionCenter: Scalars['String'];
-  Zone: Scalars['Int'];
-  USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID: Scalars['Int'];
 };
 
 export type InsertOrder = {
@@ -571,24 +616,20 @@ export type InsertOrder = {
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
-  PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
+  ProductID: Scalars['Int'];
 };
 
 export type InsertOrderLineDetail = {
   OrderLineID: Scalars['Int'];
   StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
+  ContainerID: Scalars['Int'];
   Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
-  BinLocation: Scalars['String'];
-  WMSPriority?: Maybe<Scalars['Int']>;
+  BinLocation?: Maybe<Scalars['String']>;
+  WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type InsertProduct = {
@@ -606,8 +647,10 @@ export type InsertUserEventLog = {
 };
 
 export type InsertUserInfo = {
-  Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
+  Name?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -655,7 +698,7 @@ export type SearchContainer = {
   _id?: Maybe<Scalars['Int']>;
   ContainerTypeID?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Warehouse?: Maybe<Scalars['String']>;
@@ -664,6 +707,7 @@ export type SearchContainer = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type SearchIntForWmsCount = {
@@ -688,24 +732,19 @@ export type SearchOrderLine = {
   _id?: Maybe<Scalars['Int']>;
   OrderID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
+  ProductID: Scalars['Int'];
 };
 
 export type SearchOrderLineDetail = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderLineID?: Maybe<Scalars['Int']>;
-  StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
-  Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
-  OrderID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+  OrderLineID: Scalars['Int'];
+  StatusID: Scalars['Int'];
+  ContainerID: Scalars['Int'];
+  Quantity: Scalars['Float'];
+  OrderID: Scalars['Int'];
   BinLocation?: Maybe<Scalars['String']>;
-  WMSPriority?: Maybe<Scalars['Int']>;
+  WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type SearchUserEventLog = {
@@ -721,13 +760,9 @@ export type SearchUserEventLog = {
 export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
-};
-
-export type SearchZone = {
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type TaskCounter = {
@@ -740,7 +775,7 @@ export type TaskCounter = {
 export type UpdateContainer = {
   ContainerTypeID?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Warehouse?: Maybe<Scalars['String']>;
@@ -749,6 +784,7 @@ export type UpdateContainer = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrder = {
@@ -766,265 +802,94 @@ export type UpdateOrder = {
 export type UpdateOrderLine = {
   OrderID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
+  ProductID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrderLineDetail = {
   OrderLineID?: Maybe<Scalars['Int']>;
   StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
   ContainerID?: Maybe<Scalars['Int']>;
   Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   OrderID?: Maybe<Scalars['Int']>;
   BinLocation?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateUserInfo = {
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
-export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
+export type VerifyCartBarcodeQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
 }>;
 
 
-export type VerifyContainerForAggregationInQuery = (
+export type VerifyCartBarcodeQuery = (
   { __typename?: 'Query' }
   & { findContainer?: Types.Maybe<Array<Types.Maybe<(
     { __typename?: 'Container' }
-    & Pick<Types.Container, '_id' | 'Barcode' | 'ContainerTypeID' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    & { ContainerType: (
-      { __typename?: 'ContainerType' }
-      & Pick<Types.ContainerType, 'IsMobile'>
-    ), ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, '_id' | 'InternalTrackingNumber' | 'StatusID' | 'OrderID'>
-      & { Order: (
-        { __typename?: 'Order' }
-        & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-      ) }
+    & Pick<Types.Container, '_id' | 'ContainerTypeID'>
+    & { CONTAINERs?: Types.Maybe<Array<Types.Maybe<(
+      { __typename?: 'Container' }
+      & Pick<Types.Container, '_id'>
     )>>> }
   )>>> }
 );
 
-export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
-  OrderLineDetail: Types.SearchOrderLineDetail;
+export type VerifyPositionBarcodeForPullingQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
 }>;
 
 
-export type FetchLocationAndOrderDetailForAgInQuery = (
+export type VerifyPositionBarcodeForPullingQuery = (
   { __typename?: 'Query' }
-  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'OrderLineDetail' }
-    & Pick<Types.OrderLineDetail, '_id' | 'Quantity' | 'StatusID' | 'InternalTrackingNumber'>
-    & { OrderLine: (
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'OrderLineNumber' | 'ProductCode' | 'PartNumber'>
-    ), Order: (
-      { __typename?: 'Order' }
-      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber' | 'CustomerNumber'>
-      & { ShipmentMethod?: Types.Maybe<(
-        { __typename?: 'ShipmentMethod' }
-        & Pick<Types.ShipmentMethod, 'PriorityPinkPaper' | 'ShippingMethod'>
-      )> }
-    ), Container: (
-      { __typename?: 'Container' }
-      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    ) }
+  & { findContainer?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'Container' }
+    & Pick<Types.Container, '_id'>
   )>>> }
 );
 
-export type CountOrderItnsFromMerpQueryVariables = Types.Exact<{
-  LocationCode: Types.Scalars['String'];
-  OrderNumber: Types.Scalars['String'];
-  NOSINumber: Types.Scalars['String'];
+export type FetchPickingSettingsQueryVariables = Types.Exact<{
+  UserInfo: Types.SearchUserInfo;
 }>;
 
 
-export type CountOrderItnsFromMerpQuery = (
+export type FetchPickingSettingsQuery = (
   { __typename?: 'Query' }
-  & Pick<Types.Query, 'countOrderItns'>
-);
-
-export type UpdateAfterAgOutMutationVariables = Types.Exact<{
-  OrderID: Types.Scalars['Int'];
-  OrderLineDetail: Types.UpdateOrderLineDetail;
-  DistributionCenter: Types.Scalars['String'];
-  OrderNumber: Types.Scalars['String'];
-  NOSINumber: Types.Scalars['String'];
-  log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
-  MerpStatus: Types.Scalars['String'];
-  UserOrStatus: Types.Scalars['String'];
-  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
-  toteList: Array<Types.Scalars['String']> | Types.Scalars['String'];
-  ActionType: Types.Scalars['String'];
-  Action: Types.Scalars['String'];
-}>;
-
-
-export type UpdateAfterAgOutMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateOrder' | 'deleteAndInsertRouteTable'>
-  & { insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'UserEventLog' }
-    & Pick<Types.UserEventLog, '_id'>
-  )>>>, updateMerpOrderStatus: (
-    { __typename?: 'Response' }
-    & Pick<Types.Response, 'success' | 'message'>
-  ), updateMerpWMSLog: (
-    { __typename?: 'Response' }
-    & Pick<Types.Response, 'success' | 'message'>
-  ) }
-);
-
-export type FetchHazardMaterialLevelQueryVariables = Types.Exact<{
-  ProductList: Array<Types.Maybe<Types.Scalars['String']>> | Types.Maybe<Types.Scalars['String']>;
-}>;
-
-
-export type FetchHazardMaterialLevelQuery = (
-  { __typename?: 'Query' }
-  & { fetchProductInfoFromMerp?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'ProdunctInfoFromMerp' }
-    & Pick<Types.ProdunctInfoFromMerp, 'HazardMaterialLevel'>
+  & { findUserInfo?: Types.Maybe<Array<Types.Maybe<(
+    { __typename?: 'UserInfo' }
+    & Pick<Types.UserInfo, 'Zone' | 'StrictPriority' | 'PriorityCutoff'>
   )>>> }
 );
 
-export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-  Container: Types.UpdateContainer;
-  OrderLineDetail: Types.UpdateOrderLineDetail;
-  log: Array<Types.Maybe<Types.InsertUserEventLog>> | Types.Maybe<Types.InsertUserEventLog>;
+export type FindNextItnForPullingQueryVariables = Types.Exact<{
+  Zone: Types.Scalars['Int'];
+  StrictPriority: Types.Scalars['Boolean'];
+  PriorityCutoff: Types.Scalars['Int'];
 }>;
 
 
-export type UpdateSqlAfterAgInMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'updateOrderLineDetail' | 'updateContainer'>
-  & { insertUserEventLogs?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'UserEventLog' }
-    & Pick<Types.UserEventLog, '_id'>
-  )>>> }
-);
-
-export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
-  DistributionCenter: Types.Scalars['String'];
-  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
-  ActionType: Types.Scalars['String'];
-  Action: Types.Scalars['String'];
-}>;
-
-
-export type UpdateMerpWmsLogMutation = (
-  { __typename?: 'Mutation' }
-  & { updateMerpWMSLog: (
-    { __typename?: 'Response' }
-    & Pick<Types.Response, 'success' | 'message'>
-  ) }
-);
-
-export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
-  OrderNumber: Types.Scalars['String'];
-  NOSINumber: Types.Scalars['String'];
-  Status: Types.Scalars['String'];
-  UserOrStatus: Types.Scalars['String'];
-}>;
-
-
-export type UpdateMerpOrderStatusMutation = (
-  { __typename?: 'Mutation' }
-  & { updateMerpOrderStatus: (
-    { __typename?: 'Response' }
-    & Pick<Types.Response, 'success' | 'message'>
-  ) }
-);
-
-export type PickOrderForAgOutMutationVariables = Types.Exact<{ [key: string]: never; }>;
-
-
-export type PickOrderForAgOutMutation = (
-  { __typename?: 'Mutation' }
-  & { pickOrderForAgOut?: Types.Maybe<(
-    { __typename?: 'OrderForAgOut' }
-    & Pick<Types.OrderForAgOut, 'OrderID' | 'OrderNumber' | 'NOSINumber'>
+export type FindNextItnForPullingQuery = (
+  { __typename?: 'Query' }
+  & { findNextITNForPulling?: Types.Maybe<(
+    { __typename?: 'ITNInfoforPulling' }
+    & Pick<Types.ItnInfoforPulling, 'InventoryTrackingNumber' | 'QuantityOnHand' | 'WMSPriority' | 'StatusID' | 'Quantity' | 'Zone' | 'Barcode'>
   )> }
 );
 
-export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
-  DistributionCenter: Types.Scalars['String'];
-  OrderNumber: Types.Scalars['String'];
-  NOSINumber: Types.Scalars['String'];
-}>;
-
-
-export type VerifyOrderForAgOutQuery = (
-  { __typename?: 'Query' }
-  & Pick<Types.Query, 'countOrderItns'>
-  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Order' }
-    & Pick<Types.Order, '_id'>
-    & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'StatusID'>
-    )>>> }
-  )>>> }
-);
-
-export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
-  OrderID?: Types.Maybe<Types.Scalars['Int']>;
-}>;
-
-
-export type FetchContainerForAgoutPickQuery = (
-  { __typename?: 'Query' }
-  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'OrderLineDetail' }
-    & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
-    & { OrderLine: (
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'OrderLineNumber' | 'ProductCode' | 'PartNumber'>
-    ), Order: (
-      { __typename?: 'Order' }
-      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-    ), Container: (
-      { __typename?: 'Container' }
-      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    ) }
-  )>>> }
-);
-
-export const VerifyContainerForAggregationInDocument = gql`
-    query verifyContainerForAggregationIn($Container: searchContainer!) {
+export const VerifyCartBarcodeDocument = gql`
+    query verifyCartBarcode($Container: searchContainer!) {
   findContainer(Container: $Container) {
     _id
-    Barcode
     ContainerTypeID
-    Warehouse
-    Row
-    Aisle
-    Section
-    Shelf
-    ShelfDetail
-    ContainerType {
-      IsMobile
-    }
-    ORDERLINEDETAILs {
+    CONTAINERs {
       _id
-      InternalTrackingNumber
-      StatusID
-      OrderID
-      Order {
-        OrderNumber
-        NOSINumber
-      }
     }
   }
 }
@@ -1033,43 +898,65 @@ export const VerifyContainerForAggregationInDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyContainerForAggregationInGQL extends Apollo.Query<VerifyContainerForAggregationInQuery, VerifyContainerForAggregationInQueryVariables> {
-    document = VerifyContainerForAggregationInDocument;
+  export class VerifyCartBarcodeGQL extends Apollo.Query<VerifyCartBarcodeQuery, VerifyCartBarcodeQueryVariables> {
+    document = VerifyCartBarcodeDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchLocationAndOrderDetailForAgInDocument = gql`
-    query fetchLocationAndOrderDetailForAgIn($OrderLineDetail: searchOrderLineDetail!) {
-  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+export const VerifyPositionBarcodeForPullingDocument = gql`
+    query verifyPositionBarcodeForPulling($Container: searchContainer!) {
+  findContainer(Container: $Container) {
     _id
-    Quantity
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyPositionBarcodeForPullingGQL extends Apollo.Query<VerifyPositionBarcodeForPullingQuery, VerifyPositionBarcodeForPullingQueryVariables> {
+    document = VerifyPositionBarcodeForPullingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchPickingSettingsDocument = gql`
+    query fetchPickingSettings($UserInfo: searchUserInfo!) {
+  findUserInfo(UserInfo: $UserInfo) {
+    Zone
+    StrictPriority
+    PriorityCutoff
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchPickingSettingsGQL extends Apollo.Query<FetchPickingSettingsQuery, FetchPickingSettingsQueryVariables> {
+    document = FetchPickingSettingsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindNextItnForPullingDocument = gql`
+    query findNextITNForPulling($Zone: Int!, $StrictPriority: Boolean!, $PriorityCutoff: Int!) {
+  findNextITNForPulling(
+    Zone: $Zone
+    StrictPriority: $StrictPriority
+    PriorityCutoff: $PriorityCutoff
+  ) {
+    InventoryTrackingNumber
+    QuantityOnHand
+    WMSPriority
     StatusID
-    InternalTrackingNumber
-    OrderLine {
-      OrderLineNumber
-      ProductCode
-      PartNumber
-    }
-    Order {
-      OrderNumber
-      NOSINumber
-      CustomerNumber
-      ShipmentMethod {
-        PriorityPinkPaper
-        ShippingMethod
-      }
-    }
-    Container {
-      Barcode
-      Warehouse
-      Row
-      Aisle
-      Section
-      Shelf
-      ShelfDetail
-    }
+    Quantity
+    Zone
+    Barcode
   }
 }
     `;
@@ -1077,240 +964,8 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchLocationAndOrderDetailForAgInGQL extends Apollo.Query<FetchLocationAndOrderDetailForAgInQuery, FetchLocationAndOrderDetailForAgInQueryVariables> {
-    document = FetchLocationAndOrderDetailForAgInDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const CountOrderItnsFromMerpDocument = gql`
-    query countOrderItnsFromMerp($LocationCode: String!, $OrderNumber: String!, $NOSINumber: String!) {
-  countOrderItns(
-    LocationCode: $LocationCode
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CountOrderItnsFromMerpGQL extends Apollo.Query<CountOrderItnsFromMerpQuery, CountOrderItnsFromMerpQueryVariables> {
-    document = CountOrderItnsFromMerpDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateAfterAgOutDocument = gql`
-    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $toteList: [String!]!, $ActionType: String!, $Action: String!) {
-  updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
-  updateOrder(_id: $OrderID, Order: {isSelected: 0})
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-  deleteAndInsertRouteTable(lpnList: $toteList)
-  updateMerpOrderStatus(
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
-    Status: $MerpStatus
-    UserOrStatus: $UserOrStatus
-  ) {
-    success
-    message
-  }
-  updateMerpWMSLog(
-    FileKeyList: $FileKeyList
-    LocationCode: $DistributionCenter
-    ActionType: $ActionType
-    Action: $Action
-  ) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateAfterAgOutGQL extends Apollo.Mutation<UpdateAfterAgOutMutation, UpdateAfterAgOutMutationVariables> {
-    document = UpdateAfterAgOutDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchHazardMaterialLevelDocument = gql`
-    query fetchHazardMaterialLevel($ProductList: [String]!) {
-  fetchProductInfoFromMerp(ProductList: $ProductList) {
-    HazardMaterialLevel
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchHazardMaterialLevelGQL extends Apollo.Query<FetchHazardMaterialLevelQuery, FetchHazardMaterialLevelQueryVariables> {
-    document = FetchHazardMaterialLevelDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateSqlAfterAgInDocument = gql`
-    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $log: [insertUserEventLog]!) {
-  updateOrderLineDetail(
-    ContainerID: $ContainerID
-    OrderLineDetail: $OrderLineDetail
-  )
-  updateContainer(_id: $ContainerID, Container: $Container)
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateSqlAfterAgInGQL extends Apollo.Mutation<UpdateSqlAfterAgInMutation, UpdateSqlAfterAgInMutationVariables> {
-    document = UpdateSqlAfterAgInDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateMerpWmsLogDocument = gql`
-    mutation updateMerpWMSLog($DistributionCenter: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
-  updateMerpWMSLog(
-    FileKeyList: $FileKeyList
-    LocationCode: $DistributionCenter
-    ActionType: $ActionType
-    Action: $Action
-  ) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateMerpWmsLogGQL extends Apollo.Mutation<UpdateMerpWmsLogMutation, UpdateMerpWmsLogMutationVariables> {
-    document = UpdateMerpWmsLogDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateMerpOrderStatusDocument = gql`
-    mutation updateMerpOrderStatus($OrderNumber: String!, $NOSINumber: String!, $Status: String!, $UserOrStatus: String!) {
-  updateMerpOrderStatus(
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
-    Status: $Status
-    UserOrStatus: $UserOrStatus
-  ) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<UpdateMerpOrderStatusMutation, UpdateMerpOrderStatusMutationVariables> {
-    document = UpdateMerpOrderStatusDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const PickOrderForAgOutDocument = gql`
-    mutation pickOrderForAgOut {
-  pickOrderForAgOut {
-    OrderID
-    OrderNumber
-    NOSINumber
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class PickOrderForAgOutGQL extends Apollo.Mutation<PickOrderForAgOutMutation, PickOrderForAgOutMutationVariables> {
-    document = PickOrderForAgOutDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const VerifyOrderForAgOutDocument = gql`
-    query verifyOrderForAgOut($DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!) {
-  findOrder(
-    Order: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
-  ) {
-    _id
-    ORDERLINEDETAILs {
-      StatusID
-    }
-  }
-  countOrderItns(
-    LocationCode: $DistributionCenter
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class VerifyOrderForAgOutGQL extends Apollo.Query<VerifyOrderForAgOutQuery, VerifyOrderForAgOutQueryVariables> {
-    document = VerifyOrderForAgOutDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchContainerForAgoutPickDocument = gql`
-    query fetchContainerForAgoutPick($OrderID: Int) {
-  findOrderLineDetail(OrderLineDetail: {OrderID: $OrderID}) {
-    InternalTrackingNumber
-    OrderLine {
-      OrderLineNumber
-      ProductCode
-      PartNumber
-    }
-    Order {
-      OrderNumber
-      NOSINumber
-    }
-    Container {
-      Barcode
-      Warehouse
-      Row
-      Aisle
-      Section
-      Shelf
-      ShelfDetail
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchContainerForAgoutPickGQL extends Apollo.Query<FetchContainerForAgoutPickQuery, FetchContainerForAgoutPickQueryVariables> {
-    document = FetchContainerForAgoutPickDocument;
+  export class FindNextItnForPullingGQL extends Apollo.Query<FindNextItnForPullingQuery, FindNextItnForPullingQueryVariables> {
+    document = FindNextItnForPullingDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

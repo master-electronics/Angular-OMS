@@ -1,8 +1,17 @@
 query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
     ORDERLINEDETAILs {
-      InternalTrackingNumber
       StatusID
+      Inventory {
+        InventoryTrackingNumber
+      }
     }
+  }
+}
+
+mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
+  findOrCreateUserInfo(UserInfo: $UserInfo) {
+    _id
+    Name
   }
 }

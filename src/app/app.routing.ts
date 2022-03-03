@@ -18,59 +18,59 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent,
       },
-      {
-        path: 'agin',
-        loadChildren: () =>
-          import('./pages/aggregation-in/aggregation-in.module').then(
-            (m) => m.AggregationInModule
-          ),
-      },
-      {
-        path: 'agout',
-        loadChildren: () =>
-          import('./pages/aggregation-out/aggregation-out.module').then(
-            (m) => m.AggregationOutModule
-          ),
-      },
-      {
-        path: 'qc',
-        loadChildren: () =>
-          import('./pages/quality-control/quality-control.module').then(
-            (m) => m.QualityControlModule
-          ),
-      },
-      {
-        path: 'searchbarcode',
-        loadChildren: () =>
-          import('./pages/search-barcode/search-barcode.module').then(
-            (m) => m.SearchBarcodeModule
-          ),
-      },
-      {
-        path: 'tableviews',
-        loadChildren: () =>
-          import('./pages/table-views/table-views.module').then(
-            (m) => m.TableViewsModule
-          ),
-      },
-      {
-        path: 'printitn',
-        loadChildren: () =>
-          import('./pages/print-itn/print-itn.module').then(
-            (m) => m.PrintITNModule
-          ),
-      },
+      // {
+      //   path: 'agin',
+      //   loadChildren: () =>
+      //     import('./pages/aggregation-in/aggregation-in.module').then(
+      //       (m) => m.AggregationInModule
+      //     ),
+      // },
+      // {
+      //   path: 'agout',
+      //   loadChildren: () =>
+      //     import('./pages/aggregation-out/aggregation-out.module').then(
+      //       (m) => m.AggregationOutModule
+      //     ),
+      // },
+      // {
+      //   path: 'qc',
+      //   loadChildren: () =>
+      //     import('./pages/quality-control/quality-control.module').then(
+      //       (m) => m.QualityControlModule
+      //     ),
+      // },
+      // {
+      //   path: 'searchbarcode',
+      //   loadChildren: () =>
+      //     import('./pages/search-barcode/search-barcode.module').then(
+      //       (m) => m.SearchBarcodeModule
+      //     ),
+      // },
+      // {
+      //   path: 'tableviews',
+      //   loadChildren: () =>
+      //     import('./pages/table-views/table-views.module').then(
+      //       (m) => m.TableViewsModule
+      //     ),
+      // },
+      // {
+      //   path: 'printitn',
+      //   loadChildren: () =>
+      //     import('./pages/print-itn/print-itn.module').then(
+      //       (m) => m.PrintITNModule
+      //     ),
+      // },
+      // {
+      //   path: 'shelfinventory',
+      //   loadChildren: () =>
+      //     import('./pages//shelf-inventory/shelf-inventory.module').then(
+      //       (m) => m.ShelfInventoryModule
+      //     ),
+      // },
       {
         path: 'pick',
         loadChildren: () =>
           import('./pages/pick/pick.module').then((m) => m.PickModule),
-      },
-      {
-        path: 'shelfinventory',
-        loadChildren: () =>
-          import('./pages//shelf-inventory/shelf-inventory.module').then(
-            (m) => m.ShelfInventoryModule
-          ),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],

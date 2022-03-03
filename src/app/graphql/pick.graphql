@@ -1,0 +1,43 @@
+query verifyCartBarcode($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    _id
+    ContainerTypeID
+    CONTAINERs {
+      _id
+    }
+  }
+}
+
+query verifyPositionBarcodeForPulling($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    _id
+  }
+}
+
+query fetchPickingSettings($UserInfo: searchUserInfo!) {
+  findUserInfo(UserInfo: $UserInfo) {
+    Zone
+    StrictPriority
+    PriorityCutoff
+  }
+}
+
+query findNextITNForPulling(
+  $Zone: Int!
+  $StrictPriority: Boolean!
+  $PriorityCutoff: Int!
+) {
+  findNextITNForPulling(
+    Zone: $Zone
+    StrictPriority: $StrictPriority
+    PriorityCutoff: $PriorityCutoff
+  ) {
+    InventoryTrackingNumber
+    QuantityOnHand
+    WMSPriority
+    StatusID
+    Quantity
+    Zone
+    Barcode
+  }
+}

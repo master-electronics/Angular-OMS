@@ -27,7 +27,7 @@ export type Container = {
   _id: Scalars['Int'];
   ContainerTypeID: Scalars['Int'];
   Barcode: Scalars['String'];
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter: Scalars['String'];
   Warehouse?: Maybe<Scalars['String']>;
@@ -36,9 +36,13 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
+  ParentContainer?: Maybe<Container>;
+  CONTAINERs?: Maybe<Array<Maybe<Container>>>;
   ContainerType: ContainerType;
   Equipment?: Maybe<Equipment>;
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type ContainerType = {
@@ -66,13 +70,42 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnInfoforPulling = {
+  __typename?: 'ITNInfoforPulling';
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand?: Maybe<Scalars['Float']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  StatusID?: Maybe<Scalars['Int']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  Zone?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
+};
+
+export type Inventory = {
+  __typename?: 'Inventory';
+  _id: Scalars['Int'];
+  DistributionCenter: Scalars['String'];
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID: Scalars['Int'];
+  ContainerID: Scalars['Int'];
+  Container: Container;
+  Product: Product;
+  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
   updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  updateOrCreateProduct?: Maybe<Product>;
+  updateOrCreateProduct: Product;
+  updateOrCreateInventory?: Maybe<Inventory>;
   holdQCOrder: Response;
   printITNLabel: Response;
   changeQCLineInfo: Response;
@@ -82,8 +115,9 @@ export type Mutation = {
   updateMerpQCBin: Response;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  findOrCreateOrderLine?: Maybe<OrderLine>;
-  findOrCreateOrder?: Maybe<Order>;
+  findOrCreateOrderLine: OrderLine;
+  findOrCreateOrder: Order;
+  findOrCreateProduct: Product;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
@@ -119,6 +153,11 @@ export type MutationUpdateOrCreateOrderLineDetailArgs = {
 
 export type MutationUpdateOrCreateProductArgs = {
   Product: InsertProduct;
+};
+
+
+export type MutationUpdateOrCreateInventoryArgs = {
+  Inventory: InsertInventory;
 };
 
 
@@ -191,6 +230,11 @@ export type MutationFindOrCreateOrderArgs = {
 };
 
 
+export type MutationFindOrCreateProductArgs = {
+  Product: InsertProduct;
+};
+
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<Maybe<InsertUserEventLog>>;
 };
@@ -222,7 +266,7 @@ export type MutationUpdateUserInfoArgs = {
   UserInfo: UpdateUserInfo;
   _id?: Maybe<Scalars['Int']>;
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
 };
 
 
@@ -294,8 +338,6 @@ export type OrderLine = {
   _id: Scalars['Int'];
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
-  PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
   LastUpdated?: Maybe<Scalars['String']>;
   ProductID: Scalars['Int'];
@@ -309,17 +351,14 @@ export type OrderLineDetail = {
   _id: Scalars['Int'];
   OrderLineID: Scalars['Int'];
   StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
   ContainerID: Scalars['Int'];
   Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS: Scalars['Boolean'];
   LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
   BinLocation?: Maybe<Scalars['String']>;
   WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
+  Inventory?: Maybe<Inventory>;
   OrderLine: OrderLine;
   Status: OrderStatus;
   Container: Container;
@@ -337,6 +376,8 @@ export type Product = {
   _id: Scalars['Int'];
   ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+  ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
+  INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
 };
 
 export type ProdunctInfoFromMerp = {
@@ -354,6 +395,7 @@ export type Query = {
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
   countOrderItns: Scalars['Int'];
+  findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
@@ -363,7 +405,6 @@ export type Query = {
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
-  findZone?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -395,6 +436,13 @@ export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   OrderNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
+};
+
+
+export type QueryFindNextItnForPullingArgs = {
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 
@@ -445,13 +493,6 @@ export type QueryFindUserEventLogArgs = {
 
 export type QueryFindUserInfoArgs = {
   UserInfo?: Maybe<SearchUserInfo>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindZoneArgs = {
-  ZoneInfo?: Maybe<SearchZone>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
@@ -532,8 +573,9 @@ export type UserInfo = {
   __typename?: 'UserInfo';
   _id: Scalars['Int'];
   Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
-  Zone?: Maybe<Zone>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type WmsStatusView = {
@@ -548,12 +590,15 @@ export type WmsStatusView = {
   Head_Total: Scalars['Int'];
 };
 
-export type Zone = {
-  __typename?: 'Zone';
-  _id: Scalars['Int'];
+export type InsertInventory = {
   DistributionCenter: Scalars['String'];
-  Zone: Scalars['Int'];
-  USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
+  InventoryTrackingNumber: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID: Scalars['Int'];
 };
 
 export type InsertOrder = {
@@ -571,24 +616,20 @@ export type InsertOrder = {
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
-  PartNumber: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
+  ProductID: Scalars['Int'];
 };
 
 export type InsertOrderLineDetail = {
   OrderLineID: Scalars['Int'];
   StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
+  ContainerID: Scalars['Int'];
   Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   OrderID: Scalars['Int'];
-  BinLocation: Scalars['String'];
-  WMSPriority?: Maybe<Scalars['Int']>;
+  BinLocation?: Maybe<Scalars['String']>;
+  WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type InsertProduct = {
@@ -606,8 +647,10 @@ export type InsertUserEventLog = {
 };
 
 export type InsertUserInfo = {
-  Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
+  Name?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -655,7 +698,7 @@ export type SearchContainer = {
   _id?: Maybe<Scalars['Int']>;
   ContainerTypeID?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Warehouse?: Maybe<Scalars['String']>;
@@ -664,6 +707,7 @@ export type SearchContainer = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type SearchIntForWmsCount = {
@@ -688,24 +732,19 @@ export type SearchOrderLine = {
   _id?: Maybe<Scalars['Int']>;
   OrderID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
+  ProductID: Scalars['Int'];
 };
 
 export type SearchOrderLineDetail = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderLineID?: Maybe<Scalars['Int']>;
-  StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
-  Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
-  OrderID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+  OrderLineID: Scalars['Int'];
+  StatusID: Scalars['Int'];
+  ContainerID: Scalars['Int'];
+  Quantity: Scalars['Float'];
+  OrderID: Scalars['Int'];
   BinLocation?: Maybe<Scalars['String']>;
-  WMSPriority?: Maybe<Scalars['Int']>;
+  WMSPriority: Scalars['Int'];
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type SearchUserEventLog = {
@@ -721,13 +760,9 @@ export type SearchUserEventLog = {
 export type SearchUserInfo = {
   _id?: Maybe<Scalars['Int']>;
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
-};
-
-export type SearchZone = {
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type TaskCounter = {
@@ -740,7 +775,7 @@ export type TaskCounter = {
 export type UpdateContainer = {
   ContainerTypeID?: Maybe<Scalars['Int']>;
   Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
   EquipmentID?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Warehouse?: Maybe<Scalars['String']>;
@@ -749,6 +784,7 @@ export type UpdateContainer = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  ParentContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrder = {
@@ -766,29 +802,27 @@ export type UpdateOrder = {
 export type UpdateOrderLine = {
   OrderID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
+  ProductID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrderLineDetail = {
   OrderLineID?: Maybe<Scalars['Int']>;
   StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
   ContainerID?: Maybe<Scalars['Int']>;
   Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   OrderID?: Maybe<Scalars['Int']>;
   BinLocation?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
+  InventoryID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateUserInfo = {
   Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Boolean']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
 };
 
 export type FindItNsByShelfQueryVariables = Types.Exact<{
@@ -802,17 +836,36 @@ export type FindItNsByShelfQuery = (
     { __typename?: 'Container' }
     & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'StatusID'>
+      & Pick<Types.OrderLineDetail, 'StatusID'>
+      & { Inventory?: Types.Maybe<(
+        { __typename?: 'Inventory' }
+        & Pick<Types.Inventory, 'InventoryTrackingNumber'>
+      )> }
     )>>> }
   )>>> }
+);
+
+export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
+  UserInfo: Types.InsertUserInfo;
+}>;
+
+
+export type Find_Or_Create_UserInfoMutation = (
+  { __typename?: 'Mutation' }
+  & { findOrCreateUserInfo?: Types.Maybe<(
+    { __typename?: 'UserInfo' }
+    & Pick<Types.UserInfo, '_id' | 'Name'>
+  )> }
 );
 
 export const FindItNsByShelfDocument = gql`
     query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
     ORDERLINEDETAILs {
-      InternalTrackingNumber
       StatusID
+      Inventory {
+        InventoryTrackingNumber
+      }
     }
   }
 }
@@ -823,6 +876,25 @@ export const FindItNsByShelfDocument = gql`
   })
   export class FindItNsByShelfGQL extends Apollo.Query<FindItNsByShelfQuery, FindItNsByShelfQueryVariables> {
     document = FindItNsByShelfDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Find_Or_Create_UserInfoDocument = gql`
+    mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
+  findOrCreateUserInfo(UserInfo: $UserInfo) {
+    _id
+    Name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
+    document = Find_Or_Create_UserInfoDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
