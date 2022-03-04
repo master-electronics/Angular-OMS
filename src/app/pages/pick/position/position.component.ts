@@ -63,7 +63,9 @@ export class PositionComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    //
+    if (!this._pickService.pickSettings) {
+      this._router.navigate(['pick']);
+    }
   }
 
   onSubmit(): void {
@@ -108,5 +110,9 @@ export class PositionComponent implements OnInit, AfterViewInit {
           return [];
         })
       );
+  }
+
+  dropOff(): void {
+    this._router.navigate(['pick/dropoff']);
   }
 }

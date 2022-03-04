@@ -65,7 +65,8 @@ export type HoldOnCounter = {
 
 export type ItnInfoforPulling = {
   __typename?: 'ITNInfoforPulling';
-  InventoryTrackingNumber: Scalars['String'];
+  InventoryID?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   QuantityOnHand?: Maybe<Scalars['Float']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   StatusID?: Maybe<Scalars['Int']>;
@@ -121,6 +122,7 @@ export type Mutation = {
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateInventory?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 
@@ -281,7 +283,7 @@ export type MutationUpdateContainerListArgs = {
 export type MutationUpdateOrderLineDetailArgs = {
   OrderLineDetail: UpdateOrderLineDetail;
   _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryID?: Maybe<Scalars['Int']>;
   OrderLineID?: Maybe<Scalars['Int']>;
   OrderID?: Maybe<Scalars['Int']>;
   ContainerID?: Maybe<Scalars['Int']>;
@@ -299,6 +301,14 @@ export type MutationUpdateOrderArgs = {
   DistributionCenter?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateInventoryArgs = {
+  Inventory: UpdateInventory;
+  _id?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  ContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type Order = {
@@ -400,6 +410,7 @@ export type Query = {
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
@@ -436,6 +447,7 @@ export type QueryFindNextItnForPullingArgs = {
   Zone?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;
   PriorityCutoff?: Maybe<Scalars['Int']>;
+  Barcode?: Maybe<Scalars['String']>;
 };
 
 
@@ -503,6 +515,13 @@ export type QueryFindContainerListArgs = {
   BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryFindInventoryArgs = {
+  Inventory: SearchInventory;
+  limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
 
@@ -708,6 +727,19 @@ export type SearchIntForWmsCount = {
   Priority?: Maybe<Scalars['Boolean']>;
 };
 
+export type SearchInventory = {
+  _id?: Maybe<Scalars['Int']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  QuantityOnHand?: Maybe<Scalars['Float']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID?: Maybe<Scalars['Int']>;
+  ContainerID?: Maybe<Scalars['Int']>;
+};
+
 export type SearchOrder = {
   _id?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
@@ -778,6 +810,18 @@ export type UpdateContainer = {
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
   ParentContainerID?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateInventory = {
+  DistributionCenter?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  QuantityOnHand?: Maybe<Scalars['Float']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ProductID?: Maybe<Scalars['Int']>;
+  ContainerID?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateOrder = {

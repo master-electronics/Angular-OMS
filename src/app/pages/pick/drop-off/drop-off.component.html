@@ -5,10 +5,11 @@
     [formGroup]="containerForm"
     (ngSubmit)="onSubmit()"
   >
+    <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired>Pick ITNs in the tote</nz-form-label>
+          <nz-form-label nzRequired>{{ hint }}</nz-form-label>
           <nz-form-control
             nzHasFeedback
             nzErrorTip="The input is not valid ITN!"
@@ -17,7 +18,6 @@
               nz-input
               placeholder=" "
               formControlName="containerNumber"
-              placeholder="ITN#"
               nzSize="large"
               type="text"
               id="containerNumber"
@@ -28,6 +28,7 @@
           </nz-form-control>
         </nz-form-item>
 
+        <div *ngIf="submit$ | async"></div>
         <nz-form-item nz-row nzJustify="center">
           <div nz-col nzSpan="13">
             <button
@@ -38,7 +39,7 @@
               nzSize="large"
               class="w-full"
             >
-              Submit
+              {{ process }}
             </button>
           </div>
         </nz-form-item>

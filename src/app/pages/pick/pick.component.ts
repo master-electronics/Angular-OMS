@@ -12,7 +12,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
@@ -30,7 +30,7 @@ import {
   templateUrl: './pick.component.html',
 })
 export class PickComponent implements OnInit, AfterViewInit {
-  title = 'Pick';
+  title = 'Pick Cart';
   isLoading = true;
   alertType = 'error';
   alertMessage = '';
@@ -50,17 +50,20 @@ export class PickComponent implements OnInit, AfterViewInit {
   constructor(
     private _commonService: CommonService,
     private _router: Router,
+    private _route: ActivatedRoute,
     private _titleService: Title,
     private _verifyCart: VerifyCartBarcodeGQL,
     private _pickService: PickService,
     private _fetchSettings: FetchPickingSettingsGQL
   ) {
     this._commonService.changeNavbar(this.title);
-    this._titleService.setTitle('Pick a Cart');
+    this._titleService.setTitle(this.title);
   }
 
   @ViewChild('containerNumber') containerInput!: ElementRef;
   ngOnInit(): void {
+    this.alertType = this._route.snapshot.queryParams['result'];
+    this.alertMessage = this._route.snapshot.queryParams['message'];
     const userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
     this.init$ = this._fetchSettings
       .fetch(

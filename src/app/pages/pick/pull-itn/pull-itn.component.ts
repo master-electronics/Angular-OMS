@@ -18,7 +18,11 @@ import { Observable } from 'rxjs';
 import { CommonService } from '../../../shared/services/common.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
-import { FindNextItnForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
+import {
+  FindNextItnForPullingGQL,
+  UpdateAfterPullingGQL,
+} from 'src/app/graphql/pick.graphql-gen';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'pull-itn',
@@ -27,12 +31,16 @@ import { FindNextItnForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 export class PullITNComponent implements OnInit, AfterViewInit {
   title = 'Pull ITN';
   isLoading = false;
+  step = 'Position';
   alertType = 'error';
   alertMessage = '';
-  query$ = new Observable();
+  init$ = new Observable();
+  submit$ = new Observable();
   inputRegex = /^(\w{2}\d{8})|(\w{2}-\w{2}-\d{2}-\d{2}-[A-Z]-\d{2})$/;
-  location = '';
+  lastPosition = '';
+  position = '';
   ITN = '';
+  inventoryID;
 
   inputForm = new FormGroup({
     barcodeInput: new FormControl('', [
@@ -49,7 +57,8 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     private _router: Router,
     private _titleService: Title,
     private _pickService: PickService,
-    private _findNextITN: FindNextItnForPullingGQL
+    private _findNextITN: FindNextItnForPullingGQL,
+    private _updateAfterPulling: UpdateAfterPullingGQL
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle('Pick a Cart');
@@ -57,7 +66,11 @@ export class PullITNComponent implements OnInit, AfterViewInit {
 
   @ViewChild('barcodeInput') barcodeInput!: ElementRef;
   ngOnInit(): void {
-    //
+    this.lastPosition = this._pickService.lastPosition;
+    if (!this.lastPosition) {
+      this._router.navigate(['pick/position']);
+    }
+    this.fetchNext();
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -65,14 +78,8 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     }, 10);
   }
 
-  onSubmit(): void {
-    this.alertMessage = '';
-    if (!this.inputForm.valid || this.isLoading) {
-      this.barcodeInput.nativeElement.select();
-      return;
-    }
-    this.isLoading = true;
-    this.query$ = this._findNextITN
+  fetchNext(): void {
+    this.init$ = this._findNextITN
       .fetch(
         {
           Zone: this._pickService.pickSettings.Zone,
@@ -82,14 +89,78 @@ export class PullITNComponent implements OnInit, AfterViewInit {
         },
         { fetchPolicy: 'network-only' }
       )
-
       .pipe(
         tap((res) => {
-          const targetITN = res.data.findNextITNForPulling;
+          //
         }),
+        map((res) => {
+          this.isLoading = false;
+          this.inventoryID = res.data.findNextITNForPulling.InventoryID;
+          this.ITN = res.data.findNextITNForPulling.InventoryTrackingNumber;
+          this.position = res.data.findNextITNForPulling.Barcode;
+        }),
+        catchError((err) => {
+          this.alertMessage = err;
+          this.alertType = 'error';
+          this.isLoading = false;
+          return [];
+        })
+      );
+  }
+
+  onSubmit(): void {
+    this.alertMessage = '';
+    if (!this.inputForm.valid || this.isLoading) {
+      this.barcodeInput.nativeElement.select();
+      return;
+    }
+    // verify input barcode
+    const barcode = this.f.barcodeInput.value.replace(/-/g, '').trim();
+    if (this.step === 'Position') {
+      if (barcode === this.position) {
+        this.step = 'ITN';
+        this.f.barcodeInput.reset();
+        this.barcodeInput.nativeElement.select();
+        return;
+      } else {
+        this.alertMessage = 'Invalid Position';
+        this.alertType = 'error';
+        this.barcodeInput.nativeElement.select();
+        return;
+      }
+    }
+    if (barcode !== this.ITN) {
+      this.alertMessage = 'Invalid ITN';
+      this.alertType = 'error';
+      this.barcodeInput.nativeElement.select();
+      return;
+    }
+    // Update Inventory
+    this.step = 'Submit';
+    this.isLoading = true;
+    this.submit$ = this._updateAfterPulling
+      .mutate(
+        {
+          OrderLineDetail: {
+            StatusID: environment.pickComplete_ID,
+          },
+          Inventory: {
+            ContainerID: this._pickService.cartID,
+          },
+          InventoryID: this.inventoryID,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+
+      .pipe(
         map(() => {
           this.isLoading = false;
-          this._router.navigate(['pick/pullitn']);
+          this._pickService.changeLastPosition(this.position);
+          this.lastPosition = this.position;
+          this.step = 'Position';
+          this.f.barcodeInput.reset();
+          this.barcodeInput.nativeElement.select();
+          this.fetchNext();
           return true;
         }),
         catchError((err) => {

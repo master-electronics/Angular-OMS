@@ -5,15 +5,16 @@
     [formGroup]="inputForm"
     (ngSubmit)="onSubmit()"
   >
+    <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-        <h1>Location:</h1>
-        <span>{{ location }}</span>
-        <h1>ITN:</h1>
-        <span>{{ ITN }}</span>
-        <h1></h1>
+        <h1 *ngIf="step === 'Position'">Position :{{ position }}</h1>
+        <h1 *ngIf="step !== 'Position'" class="text-green-500">
+          Position :{{ position }}
+        </h1>
+        <h1 *ngIf="step === 'Submit'" class="text-green-500">ITN :{{ ITN }}</h1>
+        <h1 *ngIf="step !== 'Submit'">ITN :{{ ITN }}</h1>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired> Barcode </nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
@@ -28,7 +29,7 @@
           </nz-form-control>
         </nz-form-item>
 
-        <div *ngIf="query$ | async"></div>
+        <div *ngIf="submit$ | async"></div>
         <nz-form-item nz-row nzJustify="center">
           <div nz-col nzSpan="13">
             <button
@@ -40,7 +41,7 @@
               nzSize="large"
               class="w-full"
             >
-              Submit
+              {{ step }}
             </button>
           </div>
         </nz-form-item>
@@ -62,7 +63,7 @@
           ></nz-alert>
         </nz-form-item>
 
-        <h1>Last Location</h1>
+        <h1>Last Pocation: {{ lastPosition }}</h1>
         <button
           class="w-full"
           nz-button

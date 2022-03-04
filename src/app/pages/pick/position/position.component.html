@@ -14,7 +14,7 @@
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
-              placeholder="Shelf: 01005405J01"
+              placeholder="Shelf: 01-01-03-01-A-00"
               nzSize="large"
               type="text"
               id="positionNumber"
@@ -58,6 +58,15 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
+        <button
+          class="w-full"
+          nz-button
+          (click)="dropOff()"
+          [nzLoading]="isLoading"
+          nzSize="large"
+        >
+          Drop Off
+        </button>
       </div>
     </div>
   </form>

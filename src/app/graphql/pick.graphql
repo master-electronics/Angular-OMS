@@ -32,13 +32,38 @@ query findNextITNForPulling(
     Zone: $Zone
     StrictPriority: $StrictPriority
     PriorityCutoff: $PriorityCutoff
+    Barcode: $Barcode
   ) {
+    InventoryID
     InventoryTrackingNumber
-    QuantityOnHand
-    WMSPriority
-    StatusID
-    Quantity
-    Zone
     Barcode
+  }
+}
+
+mutation updateAfterPulling(
+  $OrderLineDetail: updateOrderLineDetail!
+  $Inventory: updateInventory!
+  $InventoryID: Int!
+) {
+  updateOrderLineDetail(
+    OrderLineDetail: $OrderLineDetail
+    InventoryID: $InventoryID
+  )
+  updateInventory(_id: $InventoryID, Inventory: $Inventory)
+}
+
+query findITNsInCartForDropOff($Inventory: searchInventory!) {
+  findInventory(Inventory: $Inventory) {
+    InventoryTrackingNumber
+  }
+}
+
+mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!) {
+  updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+}
+
+query findContainer($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    _id
   }
 }
