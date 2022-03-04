@@ -14,4 +14,20 @@ export class PickService {
   public get pickSettings(): PickSettings {
     return this._pickSettings.value;
   }
+
+  private _cartID = new BehaviorSubject<number>(null);
+  public changeCartID(id: number): void {
+    this._cartID.next(id);
+  }
+  public get cartID(): number {
+    return this._cartID.value;
+  }
+
+  private _lastPosition = new BehaviorSubject<string>(null);
+  public changeLastPosition(barcode: string): void {
+    this._lastPosition.next(barcode);
+  }
+  public get lastPosition(): string {
+    return this._lastPosition.value;
+  }
 }

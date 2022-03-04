@@ -128,8 +128,9 @@ export class PickComponent implements OnInit, AfterViewInit {
           if (container[0].CONTAINERs.length !== 0)
             throw 'The Cart is not empty!';
         }),
-        map(() => {
+        map((res) => {
           this.isLoading = false;
+          this._pickService.changeCartID(res.data.findContainer[0]._id);
           this._router.navigate(['pick/position']);
           return true;
         }),

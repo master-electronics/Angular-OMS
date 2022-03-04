@@ -1,23 +1,29 @@
 <div class="container mx-auto px-2 py-2 md:mt-4">
-  <h1>Order Picking</h1>
-
-  <h1>Bin:</h1>
-  <h1>ITN:</h1>
-  <form nz-form focusInvalidInput [formGroup]="ITNForm" (ngSubmit)="onSubmit()">
+  <form
+    nz-form
+    focusInvalidInput
+    [formGroup]="inputForm"
+    (ngSubmit)="onSubmit()"
+  >
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <h1>Location:</h1>
+        <span>{{ location }}</span>
+        <h1>ITN:</h1>
+        <span>{{ ITN }}</span>
+        <h1></h1>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired> ITN </nz-form-label>
+          <nz-form-label nzRequired> Barcode </nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
-              placeholder="ITN"
+              placeholder="Barcode"
               nzSize="large"
               type="text"
-              id="itnInput"
-              formControlName="itnInput"
+              id="barcodeInput"
+              formControlName="barcodeInput"
               autocomplete="off"
-              #itnInput
+              #barcodeInput
             />
           </nz-form-control>
         </nz-form-item>
@@ -32,10 +38,10 @@
               (click)="onSubmit()"
               [nzLoading]="isLoading"
               nzSize="large"
+              class="w-full"
             >
               Submit
             </button>
-            <button nz-button (click)="endPick()" nzSize="large">End</button>
           </div>
         </nz-form-item>
 
@@ -55,8 +61,18 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
+
+        <h1>Last Location</h1>
+        <button
+          class="w-full"
+          nz-button
+          (click)="dropOff()"
+          [nzLoading]="isLoading"
+          nzSize="large"
+        >
+          Drop Off
+        </button>
       </div>
     </div>
   </form>
-  <h1>Last Location</h1>
 </div>

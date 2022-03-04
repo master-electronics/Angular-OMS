@@ -26,6 +26,7 @@ query findNextITNForPulling(
   $Zone: Int!
   $StrictPriority: Boolean!
   $PriorityCutoff: Int!
+  $Barcode: String!
 ) {
   findNextITNForPulling(
     Zone: $Zone

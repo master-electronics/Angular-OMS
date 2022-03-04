@@ -16,14 +16,11 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { CartBarcodeRegex } from '../../../shared/dataRegex';
+import { ShelfBarcodeBarcodeRegex } from '../../../shared/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
-import {
-  VerifyCartBarcodeGQL,
-  VerifyPositionBarcodeForPullingGQL,
-} from 'src/app/graphql/pick.graphql-gen';
+import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 
 @Component({
   selector: 'position',
@@ -31,7 +28,7 @@ import {
 })
 export class PositionComponent implements OnInit, AfterViewInit {
   title = 'Position';
-  isLoading = true;
+  isLoading = false;
   alertType = 'error';
   alertMessage = '';
   submit$ = new Observable();
@@ -40,7 +37,7 @@ export class PositionComponent implements OnInit, AfterViewInit {
   positionForm = new FormGroup({
     positionNumber: new FormControl('', [
       Validators.required,
-      Validators.pattern(CartBarcodeRegex),
+      Validators.pattern(ShelfBarcodeBarcodeRegex),
     ]),
   });
   get f(): { [key: string]: AbstractControl } {
@@ -51,7 +48,6 @@ export class PositionComponent implements OnInit, AfterViewInit {
     private _commonService: CommonService,
     private _router: Router,
     private _titleService: Title,
-    private _verifyCart: VerifyCartBarcodeGQL,
     private _pickService: PickService,
     private _verifyPosition: VerifyPositionBarcodeForPullingGQL
   ) {
@@ -72,17 +68,23 @@ export class PositionComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.alertMessage = '';
+    this.alertMessage = '';
+    if (!this.positionForm.valid || this.isLoading) {
+      return;
+    }
+    const barcodeInput = this.f.positionNumber.value;
+    const Barcode = barcodeInput.replace(/-/g, '');
     if (!this.positionForm.valid || this.isLoading) {
       this.positionInput.nativeElement.select();
       return;
     }
     this.isLoading = true;
-    this.submit$ = this._verifyCart
+    this.submit$ = this._verifyPosition
       .fetch(
         {
           Container: {
             DistributionCenter: environment.DistributionCenter,
-            Barcode: this.positionForm.value.positionNumber,
+            Barcode,
           },
         },
         { fetchPolicy: 'network-only' }
@@ -95,6 +97,7 @@ export class PositionComponent implements OnInit, AfterViewInit {
         }),
         map(() => {
           this.isLoading = false;
+          this._pickService.changeLastPosition(Barcode);
           this._router.navigate(['pick/pullitn']);
           return true;
         }),

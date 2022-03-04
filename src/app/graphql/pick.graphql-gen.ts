@@ -872,6 +872,7 @@ export type FindNextItnForPullingQueryVariables = Types.Exact<{
   Zone: Types.Scalars['Int'];
   StrictPriority: Types.Scalars['Boolean'];
   PriorityCutoff: Types.Scalars['Int'];
+  Barcode: Types.Scalars['String'];
 }>;
 
 
@@ -944,7 +945,7 @@ export const FetchPickingSettingsDocument = gql`
     }
   }
 export const FindNextItnForPullingDocument = gql`
-    query findNextITNForPulling($Zone: Int!, $StrictPriority: Boolean!, $PriorityCutoff: Int!) {
+    query findNextITNForPulling($Zone: Int!, $StrictPriority: Boolean!, $PriorityCutoff: Int!, $Barcode: String!) {
   findNextITNForPulling(
     Zone: $Zone
     StrictPriority: $StrictPriority

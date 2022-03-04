@@ -16,9 +16,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import { FindNextItnForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 
@@ -27,20 +25,23 @@ import { FindNextItnForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
   templateUrl: './pull-itn.component.html',
 })
 export class PullITNComponent implements OnInit, AfterViewInit {
-  title = 'Pick ITN';
+  title = 'Pull ITN';
   isLoading = false;
   alertType = 'error';
   alertMessage = '';
   query$ = new Observable();
+  inputRegex = /^(\w{2}\d{8})|(\w{2}-\w{2}-\d{2}-\d{2}-[A-Z]-\d{2})$/;
+  location = '';
+  ITN = '';
 
-  ITNForm = new FormGroup({
-    containerNumber: new FormControl('', [
+  inputForm = new FormGroup({
+    barcodeInput: new FormControl('', [
       Validators.required,
-      Validators.pattern(ITNBarcodeRegex),
+      Validators.pattern(this.inputRegex),
     ]),
   });
   get f(): { [key: string]: AbstractControl } {
-    return this.ITNForm.controls;
+    return this.inputForm.controls;
   }
 
   constructor(
@@ -54,20 +55,20 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     this._titleService.setTitle('Pick a Cart');
   }
 
-  @ViewChild('containerNumber') containerInput!: ElementRef;
+  @ViewChild('barcodeInput') barcodeInput!: ElementRef;
   ngOnInit(): void {
     //
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.containerInput.nativeElement.select();
+      this.barcodeInput.nativeElement.select();
     }, 10);
   }
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.ITNForm.valid || this.isLoading) {
-      this.containerInput.nativeElement.select();
+    if (!this.inputForm.valid || this.isLoading) {
+      this.barcodeInput.nativeElement.select();
       return;
     }
     this.isLoading = true;
@@ -77,6 +78,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           Zone: this._pickService.pickSettings.Zone,
           StrictPriority: this._pickService.pickSettings.StrictPriority,
           PriorityCutoff: this._pickService.pickSettings.PriorityCutoff,
+          Barcode: this._pickService.lastPosition,
         },
         { fetchPolicy: 'network-only' }
       )
@@ -87,7 +89,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
         }),
         map(() => {
           this.isLoading = false;
-          this._router.navigate(['agin/location']);
+          this._router.navigate(['pick/pullitn']);
           return true;
         }),
         catchError((err) => {
@@ -99,7 +101,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
       );
   }
 
-  endPick(): void {
-    this._router.navigate(['pick']);
+  dropOff(): void {
+    this._router.navigate(['pick/dropoff']);
   }
 }

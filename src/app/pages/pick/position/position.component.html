@@ -1,4 +1,4 @@
-<div class="mx-auto px-2 py-2 md:mt-4">
+<div class="container mx-auto px-2 py-2 md:mt-4">
   <form
     nz-form
     focusInvalidInput
@@ -8,12 +8,13 @@
     <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <h1 for="positionNumber">Scan nearby shelf's barcode</h1>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired> Cart </nz-form-label>
+          <nz-form-label nzRequired> Position </nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
-              placeholder="Cart: OS1001"
+              placeholder="Shelf: 01005405J01"
               nzSize="large"
               type="text"
               id="positionNumber"
