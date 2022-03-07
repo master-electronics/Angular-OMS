@@ -155,12 +155,12 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           );
         }),
         map(() => {
-          this._router.navigate(['pick'], {
+          this._router.navigate(['pulltopick'], {
             queryParams: {
               result: 'success',
-              message: `Drop off in ${this.containerForm.get(
-                'containerNumber'
-              )} is successful.`,
+              message: `Drop off in ${
+                this.containerForm.get('containerNumber').value
+              } is successful.`,
             },
           });
         }),

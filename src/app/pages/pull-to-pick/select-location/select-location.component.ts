@@ -23,10 +23,10 @@ import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 
 @Component({
-  selector: 'position',
-  templateUrl: './position.component.html',
+  selector: 'select-location',
+  templateUrl: './select-location.component.html',
 })
-export class PositionComponent implements OnInit, AfterViewInit {
+export class SelectLocationComponent implements OnInit, AfterViewInit {
   title = 'Position';
   isLoading = false;
   alertType = 'error';
@@ -64,7 +64,7 @@ export class PositionComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if (!this._pickService.pickSettings) {
-      this._router.navigate(['pick']);
+      this._router.navigate(['pulltopick']);
     }
   }
 
@@ -99,8 +99,8 @@ export class PositionComponent implements OnInit, AfterViewInit {
         }),
         map(() => {
           this.isLoading = false;
-          this._pickService.changeLastPosition(Barcode);
-          this._router.navigate(['pick/pullitn']);
+          this._pickService.changeLastLocation(Barcode);
+          this._router.navigate(['/pulltopick/pullitn']);
           return true;
         }),
         catchError((err) => {
@@ -113,6 +113,6 @@ export class PositionComponent implements OnInit, AfterViewInit {
   }
 
   dropOff(): void {
-    this._router.navigate(['pick/dropoff']);
+    this._router.navigate(['pulltopick/dropoff']);
   }
 }

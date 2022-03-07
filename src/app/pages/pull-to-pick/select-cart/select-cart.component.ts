@@ -15,22 +15,22 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../shared/services/common.service';
-import { CartBarcodeRegex } from '../../shared/dataRegex';
+import { CommonService } from '../../../shared/services/common.service';
+import { CartBarcodeRegex } from '../../../shared/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { PickService } from './pick.server';
+import { PickService } from '../pick.server';
 import {
   FetchPickingSettingsGQL,
   VerifyCartBarcodeGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 
 @Component({
-  selector: 'pick',
-  templateUrl: './pick.component.html',
+  selector: 'select-cart',
+  templateUrl: './select-cart.component.html',
 })
-export class PickComponent implements OnInit, AfterViewInit {
-  title = 'Pick Cart';
+export class SelectCartComponent implements OnInit, AfterViewInit {
+  title = 'Select a cart';
   isLoading = true;
   alertType = 'error';
   alertMessage = '';
@@ -134,7 +134,7 @@ export class PickComponent implements OnInit, AfterViewInit {
         map((res) => {
           this.isLoading = false;
           this._pickService.changeCartID(res.data.findContainer[0]._id);
-          this._router.navigate(['pick/position']);
+          this._router.navigate(['pulltopick/location']);
           return true;
         }),
         catchError((err) => {

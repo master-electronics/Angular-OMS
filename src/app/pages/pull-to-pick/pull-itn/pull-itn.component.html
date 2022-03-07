@@ -2,25 +2,39 @@
   <form
     nz-form
     focusInvalidInput
-    [formGroup]="positionForm"
+    [formGroup]="inputForm"
     (ngSubmit)="onSubmit()"
   >
     <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-        <h1 for="positionNumber">Scan nearby shelf's barcode</h1>
+        <h1 *ngIf="step === 'Location'">
+          Location: {{ Location.substring(0, 2) }}-{{
+            Location.substring(2, 4)
+          }}-{{ Location.substring(4, 6) }}-{{ Location.substring(6, 8) }}-{{
+            Location.substring(8, 9)
+          }}-{{ Location.substring(9, 11) }}
+        </h1>
+        <h1 *ngIf="step !== 'Location'" class="text-green-500">
+          Location: {{ Location.substring(0, 2) }}-{{
+            Location.substring(2, 4)
+          }}-{{ Location.substring(4, 6) }}-{{ Location.substring(6, 8) }}-{{
+            Location.substring(8, 9)
+          }}-{{ Location.substring(9, 11) }}
+        </h1>
+        <h1 *ngIf="step === 'Submit'" class="text-green-500">ITN: {{ ITN }}</h1>
+        <h1 *ngIf="step !== 'Submit'">ITN: {{ ITN }}</h1>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-label nzRequired> Position </nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
-              placeholder="Shelf: 01-01-03-01-A-00"
+              placeholder="Barcode"
               nzSize="large"
               type="text"
-              id="positionNumber"
-              formControlName="positionNumber"
+              id="barcodeInput"
+              formControlName="barcodeInput"
               autocomplete="off"
-              #positionNumber
+              #barcodeInput
             />
           </nz-form-control>
         </nz-form-item>
@@ -37,7 +51,7 @@
               nzSize="large"
               class="w-full"
             >
-              Submit
+              {{ step }}
             </button>
           </div>
         </nz-form-item>
@@ -58,6 +72,16 @@
             class="w-full"
           ></nz-alert>
         </nz-form-item>
+
+        <h1>
+          Last Location: {{ lastLocation.substring(0, 2) }}-{{
+            lastLocation.substring(2, 4)
+          }}-{{ lastLocation.substring(4, 6) }}-{{
+            lastLocation.substring(6, 8)
+          }}-{{ lastLocation.substring(8, 9) }}-{{
+            lastLocation.substring(9, 11)
+          }}
+        </h1>
         <button
           class="w-full"
           nz-button

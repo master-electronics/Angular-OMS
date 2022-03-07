@@ -14,7 +14,7 @@ export class HomeComponent {
     { link: '/agin', front: 'Aggregation ', highlight: 'I', end: 'n' },
     { link: '/agout', front: 'Aggregation ', highlight: 'O', end: 'ut' },
     { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
-    { link: '/pick', front: '', highlight: 'P', end: 'ick' },
+    { link: '/pulltopick', front: '', highlight: 'P', end: 'ull to Pick' },
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },

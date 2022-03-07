@@ -31,14 +31,14 @@ import { environment } from 'src/environments/environment';
 export class PullITNComponent implements OnInit, AfterViewInit {
   title = 'Pull ITN';
   isLoading = false;
-  step = 'Position';
+  step = 'Location';
   alertType = 'error';
   alertMessage = '';
   init$ = new Observable();
   submit$ = new Observable();
   inputRegex = /^(\w{2}\d{8})|(\w{2}-\w{2}-\d{2}-\d{2}-[A-Z]-\d{2})$/;
-  lastPosition = '';
-  position = '';
+  lastLocation = '';
+  Location = '';
   ITN = '';
   inventoryID;
 
@@ -66,9 +66,9 @@ export class PullITNComponent implements OnInit, AfterViewInit {
 
   @ViewChild('barcodeInput') barcodeInput!: ElementRef;
   ngOnInit(): void {
-    this.lastPosition = this._pickService.lastPosition;
-    if (!this.lastPosition) {
-      this._router.navigate(['pick/position']);
+    this.lastLocation = this._pickService.lastLocation;
+    if (!this.lastLocation) {
+      this._router.navigate(['pulltopick/location']);
     }
     this.fetchNext();
   }
@@ -85,7 +85,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           Zone: this._pickService.pickSettings.Zone,
           StrictPriority: this._pickService.pickSettings.StrictPriority,
           PriorityCutoff: this._pickService.pickSettings.PriorityCutoff,
-          Barcode: this._pickService.lastPosition,
+          Barcode: this._pickService.lastLocation,
         },
         { fetchPolicy: 'network-only' }
       )
@@ -97,7 +97,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           this.isLoading = false;
           this.inventoryID = res.data.findNextITNForPulling.InventoryID;
           this.ITN = res.data.findNextITNForPulling.InventoryTrackingNumber;
-          this.position = res.data.findNextITNForPulling.Barcode;
+          this.Location = res.data.findNextITNForPulling.Barcode;
         }),
         catchError((err) => {
           this.alertMessage = err;
@@ -116,14 +116,14 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     }
     // verify input barcode
     const barcode = this.f.barcodeInput.value.replace(/-/g, '').trim();
-    if (this.step === 'Position') {
-      if (barcode === this.position) {
+    if (this.step === 'Location') {
+      if (barcode === this.Location) {
         this.step = 'ITN';
         this.f.barcodeInput.reset();
         this.barcodeInput.nativeElement.select();
         return;
       } else {
-        this.alertMessage = 'Invalid Position';
+        this.alertMessage = 'Invalid Location';
         this.alertType = 'error';
         this.barcodeInput.nativeElement.select();
         return;
@@ -155,9 +155,9 @@ export class PullITNComponent implements OnInit, AfterViewInit {
       .pipe(
         map(() => {
           this.isLoading = false;
-          this._pickService.changeLastPosition(this.position);
-          this.lastPosition = this.position;
-          this.step = 'Position';
+          this._pickService.changeLastLocation(this.Location);
+          this.lastLocation = this.Location;
+          this.step = 'Location';
           this.f.barcodeInput.reset();
           this.barcodeInput.nativeElement.select();
           this.fetchNext();
@@ -173,6 +173,6 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   }
 
   dropOff(): void {
-    this._router.navigate(['pick/dropoff']);
+    this._router.navigate(['dropoff']);
   }
 }

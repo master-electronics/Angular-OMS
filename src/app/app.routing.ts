@@ -68,9 +68,9 @@ const routes: Routes = [
       //     ),
       // },
       {
-        path: 'pick',
+        path: 'pulltopick',
         loadChildren: () =>
-          import('./pages/pick/pick.module').then((m) => m.PickModule),
+          import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],

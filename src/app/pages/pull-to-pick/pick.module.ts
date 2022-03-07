@@ -17,15 +17,15 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PickRoutingModule } from './pick.routing';
 import { PickService } from './pick.server';
 import { PullITNComponent } from './pull-itn/pull-itn.component';
-import { PickComponent } from './pick.component';
-import { PositionComponent } from './position/position.component';
+import { SelectCartComponent } from './select-cart/select-cart.component';
+import { SelectLocationComponent } from './select-location/select-location.component';
 import { DropOffComponent } from './drop-off/drop-off.component';
 
 @NgModule({
   declarations: [
-    PickComponent,
+    SelectCartComponent,
+    SelectLocationComponent,
     PullITNComponent,
-    PositionComponent,
     DropOffComponent,
   ],
   imports: [
@@ -45,6 +45,6 @@ import { DropOffComponent } from './drop-off/drop-off.component';
     NzDividerModule,
   ],
   providers: [PickService],
-  bootstrap: [PickComponent],
+  bootstrap: [SelectCartComponent],
 })
 export class PickModule {}

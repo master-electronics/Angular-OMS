@@ -2,29 +2,28 @@
   <form
     nz-form
     focusInvalidInput
-    [formGroup]="inputForm"
+    [formGroup]="containerForm"
     (ngSubmit)="onSubmit()"
   >
     <div *ngIf="init$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-        <h1 *ngIf="step === 'Position'">Position :{{ position }}</h1>
-        <h1 *ngIf="step !== 'Position'" class="text-green-500">
-          Position :{{ position }}
-        </h1>
-        <h1 *ngIf="step === 'Submit'" class="text-green-500">ITN :{{ ITN }}</h1>
-        <h1 *ngIf="step !== 'Submit'">ITN :{{ ITN }}</h1>
         <nz-form-item nz-row nzJustify="center">
-          <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
+          <nz-form-label nzRequired>{{ hint }}</nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="The input is not valid ITN!"
+          >
             <input
               nz-input
-              placeholder="Barcode"
+              placeholder=" "
+              formControlName="containerNumber"
               nzSize="large"
               type="text"
-              id="barcodeInput"
-              formControlName="barcodeInput"
+              id="containerNumber"
+              name="containerNumber"
               autocomplete="off"
-              #barcodeInput
+              #containerNumber
             />
           </nz-form-control>
         </nz-form-item>
@@ -37,11 +36,10 @@
               type="submit"
               nzType="primary"
               (click)="onSubmit()"
-              [nzLoading]="isLoading"
               nzSize="large"
               class="w-full"
             >
-              {{ step }}
+              {{ process }}
             </button>
           </div>
         </nz-form-item>
@@ -63,16 +61,23 @@
           ></nz-alert>
         </nz-form-item>
 
-        <h1>Last Pocation: {{ lastPosition }}</h1>
-        <button
-          class="w-full"
-          nz-button
-          (click)="dropOff()"
-          [nzLoading]="isLoading"
-          nzSize="large"
-        >
-          Drop Off
-        </button>
+        <!-- ITN list -->
+        <table class="w-full">
+          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+            <th>ITN</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemList" class="text-lg">
+              <td>{{ item }}</td>
+            </tr>
+            <tr
+              *ngFor="let item of selectedList"
+              class="text-green-500 text-lg"
+            >
+              <td>{{ item }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </form>

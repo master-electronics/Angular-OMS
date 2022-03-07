@@ -23,11 +23,11 @@ export class PickService {
     return this._cartID.value;
   }
 
-  private _lastPosition = new BehaviorSubject<string>(null);
-  public changeLastPosition(barcode: string): void {
-    this._lastPosition.next(barcode);
+  private _lastLocation = new BehaviorSubject<string>(null);
+  public changeLastLocation(barcode: string): void {
+    this._lastLocation.next(barcode);
   }
-  public get lastPosition(): string {
-    return this._lastPosition.value;
+  public get lastLocation(): string {
+    return this._lastLocation.value;
   }
 }
