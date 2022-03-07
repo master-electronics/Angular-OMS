@@ -10,7 +10,10 @@
     "cypress:run": "cypress run --record --key 44dfdd28-8118-4667-832f-96dcd359110d",
     "docker": "git checkout main && git pull && npm run build && sudo docker-compose up --build -d",
     "test": "ng test",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "gql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config gqlGen.yml",
+    "gql:codegen": "graphql codegen",
+    "gql:coverage": "graphql coverage"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +45,10 @@
     "@angular-devkit/build-angular": "^13.2.5",
     "@angular/cli": "~12.2.5",
     "@angular/compiler-cli": "~12.2.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/near-operation-file-preset": "^2.2.6",
+    "@graphql-codegen/typescript-apollo-angular": "^3.4.2",
+    "@graphql-codegen/typescript-operations": "^2.3.2",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
