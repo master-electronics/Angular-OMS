@@ -36,6 +36,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
   alertMessage = '';
   submit$ = new Observable();
   init$ = new Observable();
+  urlParams;
 
   containerForm = new FormGroup({
     containerNumber: new FormControl('', [
@@ -64,6 +65,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.alertType = this._route.snapshot.queryParams['result'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
+    this.urlParams = { ...this._route.snapshot.queryParams };
     const userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
     this.init$ = this._fetchSettings
       .fetch(
@@ -134,7 +136,9 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
         map((res) => {
           this.isLoading = false;
           this._pickService.changeCartID(res.data.findContainer[0]._id);
-          this._router.navigate(['pulltopick/location']);
+          this.urlParams.dropoof === '1'
+            ? this._router.navigate(['pulltopick/dropoff'])
+            : this._router.navigate(['pulltopick/location']);
           return true;
         }),
         catchError((err) => {

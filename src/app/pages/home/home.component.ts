@@ -15,6 +15,12 @@ export class HomeComponent {
     { link: '/agout', front: 'Aggregation ', highlight: 'O', end: 'ut' },
     { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
     { link: '/pulltopick', front: '', highlight: 'P', end: 'ull to Pick' },
+    {
+      link: '/pulltopick?dropoff=1',
+      front: '',
+      highlight: 'D',
+      end: 'rop Cart',
+    },
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },
