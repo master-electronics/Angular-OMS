@@ -47,24 +47,12 @@ export class NavbarComponent implements OnInit {
   }
 
   closeFullscreen(): void {
-    if (document.exitFullscreen) {
-      this.document.exitFullscreen();
-    } else if (this.document.mozCancelFullScreen) {
-      /* Firefox */
-      this.document.mozCancelFullScreen();
-    } else if (this.document.webkitExitFullscreen) {
-      /* Chrome, Safari and Opera */
-      this.document.webkitExitFullscreen();
-    } else if (this.document.msExitFullscreen) {
-      /* IE/Edge */
-      this.document.msExitFullscreen();
-    }
+    //
   }
 
   constructor(
     private authenticationService: AuthenticationService,
-    private commonService: CommonService,
-    @Inject(DOCUMENT) private document: any
+    private commonService: CommonService
   ) {
     this.elem = document.documentElement;
   }
