@@ -30,4 +30,12 @@ export class PickService {
   public get lastLocation(): string {
     return this._lastLocation.value;
   }
+
+  private _isSupr = new BehaviorSubject<boolean>(null);
+  public changeisSupr(value: boolean): void {
+    this._isSupr.next(value);
+  }
+  public get isSupr(): boolean {
+    return this._isSupr.value;
+  }
 }

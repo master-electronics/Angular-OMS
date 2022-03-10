@@ -29,8 +29,8 @@
         </nz-form-item>
 
         <div *ngIf="submit$ | async"></div>
-        <nz-form-item nz-row nzJustify="center">
-          <div nz-col nzSpan="13">
+        <nz-form-item nz-row [nzGutter]="16">
+          <div nz-col nzSpan="20">
             <button
               nz-button
               type="submit"
@@ -41,6 +41,9 @@
             >
               {{ process }}
             </button>
+          </div>
+          <div nz-col nzSpan="4">
+            <button nz-button nzSize="large" (click)="auth()">Detail</button>
           </div>
         </nz-form-item>
 
@@ -61,8 +64,13 @@
           ></nz-alert>
         </nz-form-item>
 
+        <!-- ITN Number -->
+        <h1 class="text-lg">
+          Total: {{ totalITNs }} | Selected: {{ selectedList.length }}
+        </h1>
+
         <!-- ITN list -->
-        <table class="w-full">
+        <table *ngIf="isShowDetail" class="w-full">
           <thead class="grid grid-cols-3 gap-3 justify-items-start">
             <th>ITN</th>
           </thead>

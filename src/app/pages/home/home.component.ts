@@ -16,7 +16,8 @@ export class HomeComponent {
     { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
     { link: '/pulltopick', front: '', highlight: 'P', end: 'ull to Pick' },
     {
-      link: '/pulltopick?dropoff=1',
+      link: '/pulltopick',
+      params: { dropoff: true },
       front: '',
       highlight: 'D',
       end: 'rop Cart',

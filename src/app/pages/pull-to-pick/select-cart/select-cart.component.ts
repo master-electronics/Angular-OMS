@@ -50,9 +50,9 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
 
   constructor(
     private _commonService: CommonService,
+    private _titleService: Title,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _titleService: Title,
     private _verifyCart: VerifyCartBarcodeGQL,
     private _pickService: PickService,
     private _fetchSettings: FetchPickingSettingsGQL
@@ -136,7 +136,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
         map((res) => {
           this.isLoading = false;
           this._pickService.changeCartID(res.data.findContainer[0]._id);
-          this.urlParams.dropoof === '1'
+          this.urlParams.dropoff === 'true'
             ? this._router.navigate(['pulltopick/dropoff'])
             : this._router.navigate(['pulltopick/location']);
           return true;

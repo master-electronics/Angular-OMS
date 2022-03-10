@@ -14,12 +14,14 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 // local components
+import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
 import { PickService } from './pick.server';
 import { PullITNComponent } from './pull-itn/pull-itn.component';
 import { SelectCartComponent } from './select-cart/select-cart.component';
 import { SelectLocationComponent } from './select-location/select-location.component';
 import { DropOffComponent } from './drop-off/drop-off.component';
+import { DetailAuthComponent } from './detail-auth/detail-auth.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { DropOffComponent } from './drop-off/drop-off.component';
     SelectLocationComponent,
     PullITNComponent,
     DropOffComponent,
+    DetailAuthComponent,
   ],
   imports: [
     CommonModule,
@@ -43,6 +46,7 @@ import { DropOffComponent } from './drop-off/drop-off.component';
     NzDescriptionsModule,
     NzSkeletonModule,
     NzDividerModule,
+    IconsProviderModule,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],

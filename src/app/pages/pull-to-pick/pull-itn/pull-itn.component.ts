@@ -173,6 +173,6 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   }
 
   dropOff(): void {
-    this._router.navigate(['dropoff']);
+    this._router.navigate(['pulltopick/dropoff']);
   }
 }

@@ -1,0 +1,100 @@
+<div nz-row nzJustify="center">
+  <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="8" nzXl="6" nzXXl="4">
+    <div
+      class="bg-gray-200 px-6 py-6 rounded-lg mt-10 md:mt-20 lg:mt-30 xl:mt-40 bg-opacity-80"
+    >
+      <!-- title of login form -->
+      <div class="rounded-t">
+        <div class="mb-3 text-center">
+          <h4 class="text-base font-bold text-gray-600">Sign in with</h4>
+        </div>
+        <hr class="py-4 border-gray-400 border-b-1" />
+      </div>
+      <!-- login form -->
+      <form
+        focusInvalidInput
+        nz-form
+        [formGroup]="loginForm"
+        autocomplete="off"
+        (ngSubmit)="onSubmit()"
+        class="grid grid-flow-row gap-6 px-4 py-4 lg:px-10"
+      >
+        <!-- two input box -->
+        <nz-form-item class="w-full relative">
+          <nz-form-control nzErrorTip="Please input your username!">
+            <nz-input-group nzSize="large" nzPrefixIcon="user">
+              <input
+                id="username"
+                nz-input
+                type="text"
+                autocomplete="off"
+                placeholder="USERNAME"
+                formControlName="username"
+                #username
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="w-full relative">
+          <nz-form-control nzErrorTip="Please input your password!">
+            <nz-input-group
+              [nzSuffix]="suffixTemplate"
+              nzPrefixIcon="lock"
+              nzSize="large"
+            >
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                nz-input
+                id="password"
+                autocomplete="off"
+                placeholder="PASSWORD "
+                formControlName="password"
+                #password
+              />
+              <ng-template #suffixTemplate>
+                <i
+                  nz-icon
+                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                  (click)="passwordVisible = !passwordVisible"
+                ></i>
+              </ng-template>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- submit button -->
+        <div class="hidden">{{ login$ | async }}</div>
+        <button
+          id="login"
+          nz-button
+          type="submit"
+          nzType="primary"
+          (click)="onSubmit()"
+          [nzLoading]="isLoading"
+          [disabled]="isLoading"
+          nzSize="large"
+          class="w-full"
+        >
+          <span>Auth</span>
+        </button>
+        <button
+          id="back"
+          nz-button
+          (click)="back()"
+          nzSize="large"
+          class="w-full"
+        >
+          <span>Back</span>
+        </button>
+        <nz-alert
+          *ngIf="message"
+          id="message"
+          nzType="error"
+          [nzMessage]="message"
+          class="w-full"
+        ></nz-alert>
+      </form>
+    </div>
+  </div>
+</div>

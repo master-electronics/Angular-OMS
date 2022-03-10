@@ -6,8 +6,8 @@ import {
   ElementRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { throwServerError } from '@apollo/client/core';
 import { Observable } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
@@ -15,8 +15,7 @@ import {
   FindItNsInCartForDropOffGQL,
   UpdateAfterDropOffGQL,
 } from 'src/app/graphql/pick.graphql-gen';
-
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
+import { CommonService } from 'src/app/shared/services/common.service';
 import { PickService } from '../pick.server';
 
 @Component({
@@ -24,6 +23,7 @@ import { PickService } from '../pick.server';
   templateUrl: './drop-off.component.html',
 })
 export class DropOffComponent implements OnInit, AfterViewInit {
+  title = 'Drop Off';
   process = 'Pick ITN';
   hint = 'Pick ITNs in the cart';
   alertType = 'error';
@@ -32,6 +32,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   totalITNs = 0;
   itemList = [];
   selectedList = [];
+  isShowDetail = false;
   submit$ = new Observable();
   init$ = new Observable();
 
@@ -40,18 +41,28 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
+    private _commonService: CommonService,
+    private _titleService: Title,
     private _fb: FormBuilder,
     private _router: Router,
     private _service: PickService,
     private _findITNs: FindItNsInCartForDropOffGQL,
     private _updateForDropOff: UpdateAfterDropOffGQL,
     private _findContainer: FindContainerGQL
-  ) {}
+  ) {
+    this._commonService.changeNavbar(this.title);
+    this._titleService.setTitle(this.title);
+  }
 
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     if (!this._service.cartID) {
-      this._router.navigate(['pick']);
+      this._router.navigate(['pulltopick']);
+    }
+
+    if (this._service.isSupr) {
+      this.isShowDetail = true;
+      this._service.changeisSupr(false);
     }
     this.init$ = this._findITNs
       .fetch(
@@ -170,5 +181,9 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           return err;
         })
       );
+  }
+
+  auth(): void {
+    this._router.navigate(['pulltopick/detailauth']);
   }
 }
