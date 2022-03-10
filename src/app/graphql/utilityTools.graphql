@@ -15,3 +15,9 @@ mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
     Name
   }
 }
+
+mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}

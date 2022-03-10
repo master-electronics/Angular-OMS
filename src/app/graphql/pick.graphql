@@ -36,6 +36,8 @@ query findNextITNForPulling(
   ) {
     InventoryID
     InventoryTrackingNumber
+    OrderNumber
+    NOSINumber
     Barcode
   }
 }
@@ -44,22 +46,39 @@ mutation updateAfterPulling(
   $OrderLineDetail: updateOrderLineDetail!
   $Inventory: updateInventory!
   $InventoryID: Int!
+  $log: [insertUserEventLog]!
 ) {
   updateOrderLineDetail(
     OrderLineDetail: $OrderLineDetail
     InventoryID: $InventoryID
   )
   updateInventory(_id: $InventoryID, Inventory: $Inventory)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
 
 query findITNsInCartForDropOff($Inventory: searchInventory!) {
   findInventory(Inventory: $Inventory) {
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+    }
     InventoryTrackingNumber
   }
 }
 
-mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!) {
+mutation updateAfterDropOff(
+  $Inventory: updateInventory!
+  $ContainerID: Int!
+  $log: [insertUserEventLog]!
+) {
   updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
 
 query findContainer($Container: searchContainer!) {

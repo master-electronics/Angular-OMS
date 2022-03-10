@@ -40,7 +40,9 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   lastLocation = '';
   Location = '';
   ITN = '';
-  inventoryID;
+  OrderNumber: string;
+  NOSINumber: string;
+  inventoryID: number;
 
   inputForm = new FormGroup({
     barcodeInput: new FormControl('', [
@@ -98,6 +100,8 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           this.inventoryID = res.data.findNextITNForPulling.InventoryID;
           this.ITN = res.data.findNextITNForPulling.InventoryTrackingNumber;
           this.Location = res.data.findNextITNForPulling.Barcode;
+          this.OrderNumber = res.data.findNextITNForPulling.OrderNumber;
+          this.NOSINumber = res.data.findNextITNForPulling.NOSINumber;
         }),
         catchError((err) => {
           this.alertMessage = err;
@@ -138,6 +142,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     // Update Inventory
     this.step = 'Submit';
     this.isLoading = true;
+    const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
     this.submit$ = this._updateAfterPulling
       .mutate(
         {
@@ -145,9 +150,18 @@ export class PullITNComponent implements OnInit, AfterViewInit {
             StatusID: environment.pickComplete_ID,
           },
           Inventory: {
-            ContainerID: this._pickService.cartID,
+            ContainerID: this._pickService.cartInfo.id,
           },
           InventoryID: this.inventoryID,
+          log: [
+            {
+              UserEventID: environment.Event_Pulling_PickITN,
+              InventoryTrackingNumber: this.ITN,
+              UserID,
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+            },
+          ],
         },
         { fetchPolicy: 'network-only' }
       )

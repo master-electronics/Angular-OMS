@@ -6,6 +6,7 @@
     (ngSubmit)="onSubmit()"
   >
     <div *ngIf="init$ | async"></div>
+    <div *ngIf="insertLog$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
@@ -36,6 +37,7 @@
               type="submit"
               nzType="primary"
               (click)="onSubmit()"
+              [nzLoading]="isLoading"
               nzSize="large"
               class="w-full"
             >
@@ -76,13 +78,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of itemList" class="text-lg">
-              <td>{{ item }}</td>
+              <td>{{ item.InventoryTrackingNumber }}</td>
             </tr>
             <tr
               *ngFor="let item of selectedList"
               class="text-green-500 text-lg"
             >
-              <td>{{ item }}</td>
+              <td>{{ item.InventoryTrackingNumber }}</td>
             </tr>
           </tbody>
         </table>

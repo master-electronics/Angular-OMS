@@ -17,13 +17,14 @@ import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { CartBarcodeRegex } from '../../../shared/dataRegex';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import {
   FetchPickingSettingsGQL,
   VerifyCartBarcodeGQL,
 } from 'src/app/graphql/pick.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'select-cart',
@@ -36,6 +37,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
   alertMessage = '';
   submit$ = new Observable();
   init$ = new Observable();
+  userID: number;
   urlParams;
 
   containerForm = new FormGroup({
@@ -55,7 +57,8 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     private _route: ActivatedRoute,
     private _verifyCart: VerifyCartBarcodeGQL,
     private _pickService: PickService,
-    private _fetchSettings: FetchPickingSettingsGQL
+    private _fetchSettings: FetchPickingSettingsGQL,
+    private _userLog: Insert_UserEventLogsGQL
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle(this.title);
@@ -66,12 +69,12 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     this.alertType = this._route.snapshot.queryParams['result'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this.urlParams = { ...this._route.snapshot.queryParams };
-    const userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
+    this.userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
     this.init$ = this._fetchSettings
       .fetch(
         {
           UserInfo: {
-            _id: userID,
+            _id: this.userID,
           },
         },
         { fetchPolicy: 'network-only' }
@@ -133,9 +136,24 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
           if (container[0].CONTAINERs.length !== 0)
             throw 'The Cart is not empty!';
         }),
-        map((res) => {
+        switchMap((res) => {
+          this._pickService.changeCartInfo({
+            id: res.data.findContainer[0]._id,
+            barcode: this.containerForm.value.containerNumber,
+          });
+          return this._userLog.mutate({
+            log: [
+              {
+                Message: `${this.containerForm.value.containerNumber}`,
+                UserEventID: environment.Event_Pulling_PickCart,
+                UserID: this.userID,
+              },
+            ],
+          });
+          //
+        }),
+        map(() => {
           this.isLoading = false;
-          this._pickService.changeCartID(res.data.findContainer[0]._id);
           this.urlParams.dropoff === 'true'
             ? this._router.navigate(['pulltopick/dropoff'])
             : this._router.navigate(['pulltopick/location']);

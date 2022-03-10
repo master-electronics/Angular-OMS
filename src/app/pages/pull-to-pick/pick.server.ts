@@ -6,6 +6,11 @@ export interface PickSettings {
   PriorityCutoff: number;
 }
 
+interface CartInfo {
+  id: number;
+  barcode: string;
+}
+
 export class PickService {
   private _pickSettings = new BehaviorSubject<PickSettings>(null);
   public changePickSettings(node: PickSettings): void {
@@ -15,12 +20,12 @@ export class PickService {
     return this._pickSettings.value;
   }
 
-  private _cartID = new BehaviorSubject<number>(null);
-  public changeCartID(id: number): void {
-    this._cartID.next(id);
+  private _cartInfo = new BehaviorSubject<CartInfo>(null);
+  public changeCartInfo(cart: CartInfo): void {
+    this._cartInfo.next(cart);
   }
-  public get cartID(): number {
-    return this._cartID.value;
+  public get cartInfo(): CartInfo {
+    return this._cartInfo.value;
   }
 
   private _lastLocation = new BehaviorSubject<string>(null);

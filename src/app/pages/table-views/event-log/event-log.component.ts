@@ -88,7 +88,7 @@ export class EventLogComponent implements OnInit {
       limit = null;
     }
     if (ITN) {
-      eventLog['InternalTrackingNumber'] = ITN;
+      eventLog['InventoryTrackingNumber'] = ITN;
       limit = null;
     }
     if (this.startDate) {

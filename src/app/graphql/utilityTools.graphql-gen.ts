@@ -74,6 +74,8 @@ export type ItnInfoforPulling = {
   Barcode?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   QuantityOnHand?: Maybe<Scalars['Float']>;
   StatusID?: Maybe<Scalars['Int']>;
@@ -168,7 +170,7 @@ export type MutationDeleteOrderLineArgs = {
 
 
 export type MutationDeleteOrderLineDetailArgs = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
@@ -576,10 +578,10 @@ export type UserEvent = {
 export type UserEventLog = {
   __typename?: 'UserEventLog';
   DateTime: Scalars['String'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
-  NOSINumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
@@ -656,10 +658,10 @@ export type InsertProduct = {
 };
 
 export type InsertUserEventLog = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
-  NOSINumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
 };
@@ -779,7 +781,7 @@ export type SearchOrderLineDetail = {
 };
 
 export type SearchUserEventLog = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
   OrderNumber?: InputMaybe<Scalars['String']>;
@@ -882,6 +884,13 @@ export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
 
 export type Find_Or_Create_UserInfoMutation = { __typename?: 'Mutation', findOrCreateUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string } | null };
 
+export type Insert_UserEventLogsMutationVariables = Types.Exact<{
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type Insert_UserEventLogsMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+
 export const FindItNsByShelfDocument = gql`
     query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
@@ -919,6 +928,24 @@ export const Find_Or_Create_UserInfoDocument = gql`
   })
   export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
     document = Find_Or_Create_UserInfoDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_UserEventLogsDocument = gql`
+    mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_UserEventLogsGQL extends Apollo.Mutation<Insert_UserEventLogsMutation, Insert_UserEventLogsMutationVariables> {
+    document = Insert_UserEventLogsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

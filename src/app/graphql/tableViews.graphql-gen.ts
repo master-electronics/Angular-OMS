@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -864,3 +869,75 @@ export type UpdateUserInfo = {
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
+
+export type FetchUserInfoQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchUserInfoQuery = { __typename?: 'Query', findUserInfo?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null };
+
+export type FetchUserEventLogQueryVariables = Types.Exact<{
+  UserEventLog: Types.SearchUserEventLog;
+  Module?: Types.InputMaybe<Types.Scalars['Int']>;
+  startDate?: Types.InputMaybe<Types.Scalars['String']>;
+  endDate?: Types.InputMaybe<Types.Scalars['String']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLog?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber?: string | null, NOSINumber?: string | null, Message?: string | null, InventoryTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
+
+export const FetchUserInfoDocument = gql`
+    query fetchUserInfo {
+  findUserInfo {
+    _id
+    Name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchUserInfoGQL extends Apollo.Query<FetchUserInfoQuery, FetchUserInfoQueryVariables> {
+    document = FetchUserInfoDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchUserEventLogDocument = gql`
+    query fetchUserEventLog($UserEventLog: searchUserEventLog!, $Module: Int, $startDate: String, $endDate: String, $limit: Int) {
+  findUserEventLog(
+    UserEventLog: $UserEventLog
+    Module: $Module
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    _id
+    User {
+      Name
+    }
+    UserEvent {
+      Event
+      Module
+    }
+    OrderNumber
+    NOSINumber
+    Message
+    InventoryTrackingNumber
+    DateTime
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchUserEventLogGQL extends Apollo.Query<FetchUserEventLogQuery, FetchUserEventLogQueryVariables> {
+    document = FetchUserEventLogDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

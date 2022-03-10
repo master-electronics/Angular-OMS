@@ -16,29 +16,29 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 
 import { TableViewsComponent } from './table-views.component';
-import { ITNViewComponent } from './order-view/itn-view.component';
-import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
-import { OrderListComponent } from './wms-countby-status/order-list.component';
-import { EventLogComponent } from './event-log/event-log.component';
 import { TableViewsRoutingModule } from './table-views.routing';
-import { OrderViewComponent } from './order-view/order-view.component';
-import { TaskCounterComponent } from './task-counter/task-counter.component';
-import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
+import { EventLogComponent } from './event-log/event-log.component';
+// import { ITNViewComponent } from './order-view/itn-view.component';
+// import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
+// import { OrderListComponent } from './wms-countby-status/order-list.component';
+// import { OrderViewComponent } from './order-view/order-view.component';
+// import { TaskCounterComponent } from './task-counter/task-counter.component';
+// import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
+// import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 
 @NgModule({
   declarations: [
     TableViewsComponent,
-    WmsStatusComponent,
-    OrderListComponent,
-    OrderViewComponent,
-    ITNViewComponent,
     EventLogComponent,
-    TaskCounterComponent,
-    OrderTasktimeComponent,
-    HoldOnCounterComponent,
+    // WmsStatusComponent,
+    // OrderListComponent,
+    // OrderViewComponent,
+    // ITNViewComponent,
+    // TaskCounterComponent,
+    // OrderTasktimeComponent,
+    // HoldOnCounterComponent,
   ],
   imports: [
     CommonModule,

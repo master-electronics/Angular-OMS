@@ -74,6 +74,8 @@ export type ItnInfoforPulling = {
   Barcode?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
   Quantity?: Maybe<Scalars['Float']>;
   QuantityOnHand?: Maybe<Scalars['Float']>;
   StatusID?: Maybe<Scalars['Int']>;
@@ -168,7 +170,7 @@ export type MutationDeleteOrderLineArgs = {
 
 
 export type MutationDeleteOrderLineDetailArgs = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
@@ -576,10 +578,10 @@ export type UserEvent = {
 export type UserEventLog = {
   __typename?: 'UserEventLog';
   DateTime: Scalars['String'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
-  NOSINumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
@@ -656,10 +658,10 @@ export type InsertProduct = {
 };
 
 export type InsertUserEventLog = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
-  NOSINumber: Scalars['String'];
-  OrderNumber: Scalars['String'];
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
 };
@@ -779,7 +781,7 @@ export type SearchOrderLineDetail = {
 };
 
 export type SearchUserEventLog = {
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
   OrderNumber?: InputMaybe<Scalars['String']>;
@@ -897,31 +899,33 @@ export type FindNextItnForPullingQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindNextItnForPullingQuery = { __typename?: 'Query', findNextITNForPulling?: { __typename?: 'ITNInfoforPulling', InventoryID?: number | null, InventoryTrackingNumber?: string | null, Barcode?: string | null } | null };
+export type FindNextItnForPullingQuery = { __typename?: 'Query', findNextITNForPulling?: { __typename?: 'ITNInfoforPulling', InventoryID?: number | null, InventoryTrackingNumber?: string | null, OrderNumber?: string | null, NOSINumber?: string | null, Barcode?: string | null } | null };
 
 export type UpdateAfterPullingMutationVariables = Types.Exact<{
   OrderLineDetail: Types.UpdateOrderLineDetail;
   Inventory: Types.UpdateInventory;
   InventoryID: Types.Scalars['Int'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 
-export type UpdateAfterPullingMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateInventory?: Array<number | null> | null };
+export type UpdateAfterPullingMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FindItNsInCartForDropOffQueryVariables = Types.Exact<{
   Inventory: Types.SearchInventory;
 }>;
 
 
-export type FindItNsInCartForDropOffQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string } | null> | null };
+export type FindItNsInCartForDropOffQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string } } | null> | null } | null> | null };
 
 export type UpdateAfterDropOffMutationVariables = Types.Exact<{
   Inventory: Types.UpdateInventory;
   ContainerID: Types.Scalars['Int'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 
-export type UpdateAfterDropOffMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+export type UpdateAfterDropOffMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FindContainerQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
@@ -1000,6 +1004,8 @@ export const FindNextItnForPullingDocument = gql`
   ) {
     InventoryID
     InventoryTrackingNumber
+    OrderNumber
+    NOSINumber
     Barcode
   }
 }
@@ -1016,12 +1022,15 @@ export const FindNextItnForPullingDocument = gql`
     }
   }
 export const UpdateAfterPullingDocument = gql`
-    mutation updateAfterPulling($OrderLineDetail: updateOrderLineDetail!, $Inventory: updateInventory!, $InventoryID: Int!) {
+    mutation updateAfterPulling($OrderLineDetail: updateOrderLineDetail!, $Inventory: updateInventory!, $InventoryID: Int!, $log: [insertUserEventLog]!) {
   updateOrderLineDetail(
     OrderLineDetail: $OrderLineDetail
     InventoryID: $InventoryID
   )
   updateInventory(_id: $InventoryID, Inventory: $Inventory)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
     `;
 
@@ -1038,6 +1047,12 @@ export const UpdateAfterPullingDocument = gql`
 export const FindItNsInCartForDropOffDocument = gql`
     query findITNsInCartForDropOff($Inventory: searchInventory!) {
   findInventory(Inventory: $Inventory) {
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+    }
     InventoryTrackingNumber
   }
 }
@@ -1054,8 +1069,11 @@ export const FindItNsInCartForDropOffDocument = gql`
     }
   }
 export const UpdateAfterDropOffDocument = gql`
-    mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!) {
+    mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!, $log: [insertUserEventLog]!) {
   updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
     `;
 

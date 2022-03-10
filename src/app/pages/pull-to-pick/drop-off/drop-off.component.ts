@@ -8,14 +8,16 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   FindContainerGQL,
   FindItNsInCartForDropOffGQL,
   UpdateAfterDropOffGQL,
 } from 'src/app/graphql/pick.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 
 @Component({
@@ -35,6 +37,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   isShowDetail = false;
   submit$ = new Observable();
   init$ = new Observable();
+  insertLog$ = new Observable();
 
   containerForm = this._fb.group({
     containerNumber: ['', [Validators.required]],
@@ -48,7 +51,8 @@ export class DropOffComponent implements OnInit, AfterViewInit {
     private _service: PickService,
     private _findITNs: FindItNsInCartForDropOffGQL,
     private _updateForDropOff: UpdateAfterDropOffGQL,
-    private _findContainer: FindContainerGQL
+    private _findContainer: FindContainerGQL,
+    private _insertLog: Insert_UserEventLogsGQL
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle(this.title);
@@ -56,40 +60,49 @@ export class DropOffComponent implements OnInit, AfterViewInit {
 
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
-    if (!this._service.cartID) {
+    if (!this._service.cartInfo) {
       this._router.navigate(['pulltopick']);
+      return;
     }
 
     if (this._service.isSupr) {
       this.isShowDetail = true;
       this._service.changeisSupr(false);
     }
-    this.init$ = this._findITNs
-      .fetch(
+    this.init$ = forkJoin({
+      findITNs: this._findITNs.fetch(
         {
           Inventory: {
-            ContainerID: this._service.cartID,
+            ContainerID: this._service.cartInfo.id,
           },
         },
         { fetchPolicy: 'network-only' }
-      )
-      .pipe(
-        tap((res) => {
-          if (!res.data.findInventory) throw 'Not found any ITN in the cart';
-        }),
-        map((res) => {
-          res.data.findInventory.forEach((node) => {
-            this.itemList.push(node.InventoryTrackingNumber);
-            this.totalITNs += 1;
-          });
-          return true;
-        }),
-        catchError((err) => {
-          this.alertMessage = err;
-          this.alertType = 'error';
-          return err;
-        })
-      );
+      ),
+      insertUserLog: this._insertLog.mutate({
+        log: {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserEventID: environment.Event_DropOff_Start,
+          Message: `Drop from ${this._service.cartInfo.barcode}`,
+        },
+      }),
+    }).pipe(
+      tap((res) => {
+        if (!res.findITNs.data.findInventory)
+          throw 'Not found any ITN in the cart';
+      }),
+      map((res) => {
+        res.findITNs.data.findInventory.forEach((node) => {
+          this.itemList.push(node);
+          this.totalITNs += 1;
+        });
+        return true;
+      }),
+      catchError((err) => {
+        this.alertMessage = err;
+        this.alertType = 'error';
+        return err;
+      })
+    );
   }
 
   ngAfterViewInit(): void {
@@ -112,10 +125,27 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   selectITN(): void {
     let count = 0;
     this.itemList = this.itemList.filter((node) => {
-      const isEqual = node === this.containerForm.get('containerNumber').value;
+      const isEqual =
+        node.InventoryTrackingNumber ===
+        this.containerForm.get('containerNumber').value;
       if (isEqual) {
         this.selectedList.unshift(node);
         count += 1;
+        this.isLoading = true;
+        this.insertLog$ = this._insertLog
+          .mutate({
+            log: {
+              InventoryTrackingNumber: node.InventoryTrackingNumber,
+              OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
+              NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
+              UserEventID: environment.Event_DropOff_SelectITN,
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              Message: `From ${this._service.cartInfo.barcode}`,
+            },
+          })
+          .pipe(map(() => (this.isLoading = false)));
       }
       return !isEqual;
     });
@@ -135,6 +165,17 @@ export class DropOffComponent implements OnInit, AfterViewInit {
 
   dropOff(): void {
     this.isLoading = true;
+    const log = [];
+    this.selectedList.forEach((node) => {
+      log.push({
+        InventoryTrackingNumber: node.InventoryTrackingNumber,
+        OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
+        NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
+        UserEventID: environment.Event_DropOff_Done,
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        Message: `From ${this._service.cartInfo.barcode}`,
+      });
+    });
     this.submit$ = this._findContainer
       .fetch(
         {
@@ -160,7 +201,8 @@ export class DropOffComponent implements OnInit, AfterViewInit {
               Inventory: {
                 ContainerID,
               },
-              ContainerID: this._service.cartID,
+              ContainerID: this._service.cartInfo.id,
+              log,
             },
             { fetchPolicy: 'network-only' }
           );

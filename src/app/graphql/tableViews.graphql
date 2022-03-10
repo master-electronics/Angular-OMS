@@ -1,0 +1,157 @@
+# query fetchOrderView($filter: orderViewFilter) {
+#   fetchOrderView(filter: $filter) {
+#     OrderNumber
+#     NOSINumber
+#     Status
+#     Priority
+#     ShippingMethod
+#     Unpicked
+#     Aggregated
+#     InProcess
+#   }
+# }
+
+# query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
+#   fetchOrderLineDetailforWMSCount(filter: $filter) {
+#     InventoryTrackingNumber
+#     Status {
+#       Name
+#     }
+#     Order {
+#       OrderNumber
+#       NOSINumber
+#     }
+#     OrderLine {
+#       ProductCode
+#       PartNumber
+#     }
+#     Quantity
+#     Container {
+#       Barcode
+#       Warehouse
+#       Row
+#       Aisle
+#       Section
+#       Shelf
+#       ShelfDetail
+#     }
+#   }
+# }
+
+# query fetchOrderDetailforitnView($Order: searchOrder!) {
+#   findOrder(Order: $Order) {
+#     OrderNumber
+#     NOSINumber
+#     ORDERLINEDETAILs {
+#       InventoryTrackingNumber
+#       Status {
+#         Name
+#       }
+#       OrderLine {
+#         ProductCode
+#         PartNumber
+#       }
+#       Quantity
+#       Container {
+#         Barcode
+#         Warehouse
+#         Row
+#         Aisle
+#         Section
+#         Shelf
+#         ShelfDetail
+#       }
+#     }
+#   }
+# }
+
+# query fetchWMSStatusView {
+#   fetchWMSStatusView {
+#     StatusID
+#     Status
+#     ITN_Priority
+#     ITN_Total
+#     Line_Priority
+#     Line_Total
+#     Head_Priority
+#     Head_Total
+#   }
+# }
+
+query fetchUserInfo {
+  findUserInfo {
+    _id
+    Name
+  }
+}
+
+query fetchUserEventLog(
+  $UserEventLog: searchUserEventLog!
+  $Module: Int
+  $startDate: String
+  $endDate: String
+  $limit: Int
+) {
+  findUserEventLog(
+    UserEventLog: $UserEventLog
+    Module: $Module
+    startDate: $startDate
+    endDate: $endDate
+    limit: $limit
+  ) {
+    _id
+    User {
+      Name
+    }
+    UserEvent {
+      Event
+      Module
+    }
+    OrderNumber
+    NOSINumber
+    Message
+    InventoryTrackingNumber
+    DateTime
+  }
+}
+
+# query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
+#   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+#     ID
+#     User
+#     taskCounter
+#   }
+# }
+
+# query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
+#   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
+#     ID
+#     User
+#     detail
+#   }
+# }
+
+# query fetchOrderTasktime($target: String, $limit: Int!) {
+#   fetchOrderTasktime(Order: $target, limit: $limit) {
+#     Order
+#     qcFirst
+#     qcLast
+#     agIn
+#     agOut
+#   }
+# }
+
+# query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
+#   findOrderByStatus(
+#     PriorityPinkPaper: $PriorityPinkPaper
+#     StatusID: $StatusID
+#   ) {
+#     OrderNumber
+#     NOSINumber
+#     CustomerNumber
+#     ShipmentMethod {
+#       PriorityPinkPaper
+#       ShippingMethod
+#     }
+#   }
+# }

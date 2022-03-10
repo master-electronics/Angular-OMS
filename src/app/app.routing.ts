@@ -46,13 +46,13 @@ const routes: Routes = [
       //       (m) => m.SearchBarcodeModule
       //     ),
       // },
-      // {
-      //   path: 'tableviews',
-      //   loadChildren: () =>
-      //     import('./pages/table-views/table-views.module').then(
-      //       (m) => m.TableViewsModule
-      //     ),
-      // },
+      {
+        path: 'tableviews',
+        loadChildren: () =>
+          import('./pages/table-views/table-views.module').then(
+            (m) => m.TableViewsModule
+          ),
+      },
       // {
       //   path: 'printitn',
       //   loadChildren: () =>

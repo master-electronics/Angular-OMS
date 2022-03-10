@@ -35,6 +35,12 @@ export const environment = {
   Event_QC_Hold: 201,
   Event_QC_Done: 202,
   Event_QC_OrderComplete: 203,
+  Event_Pulling_Start: 400,
+  Event_Pulling_PickCart: 401,
+  Event_Pulling_PickITN: 402,
+  Event_DropOff_Start: 500,
+  Event_DropOff_SelectITN: 501,
+  Event_DropOff_Done: 502,
 };
 
 /*
