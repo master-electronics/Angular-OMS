@@ -19,6 +19,7 @@ import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-ge
 import { CommonService } from 'src/app/shared/services/common.service';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
+import { QADropOffRegex, ITNBarcodeRegex } from '../../../shared/dataRegex';
 
 @Component({
   selector: 'drop-off',
@@ -26,9 +27,12 @@ import { PickService } from '../pick.server';
 })
 export class DropOffComponent implements OnInit, AfterViewInit {
   title = 'Drop Off';
-  process = 'Pick ITN';
-  hint = 'Pick ITNs in the cart';
+  process = 'Submit';
+  hint = 'Scan Drop off position';
   alertType = 'error';
+  cartBarcode: string;
+  locationBarcode: string;
+  dropOffID: number;
   isLoading = false;
   alertMessage = '';
   totalITNs = 0;
@@ -36,11 +40,15 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   selectedList = [];
   isShowDetail = false;
   submit$ = new Observable();
+  inputRegex = /^(QADROP[0-9]{2})|(\w{2}\d{8})$/;
   init$ = new Observable();
   insertLog$ = new Observable();
 
   containerForm = this._fb.group({
-    containerNumber: ['', [Validators.required]],
+    containerNumber: [
+      '',
+      [Validators.required, Validators.pattern(this.inputRegex)],
+    ],
   });
 
   constructor(
@@ -64,7 +72,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       this._router.navigate(['pulltopick']);
       return;
     }
-
+    this.cartBarcode = this._service.cartInfo.barcode;
     if (this._service.isSupr) {
       this.isShowDetail = true;
       this._service.changeisSupr(false);
@@ -82,7 +90,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
         log: {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           UserEventID: environment.Event_DropOff_Start,
-          Message: `Drop from ${this._service.cartInfo.barcode}`,
+          Message: `From ${this._service.cartInfo.barcode}`,
         },
       }),
     }).pipe(
@@ -115,11 +123,12 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       this.containerInput.nativeElement.select();
       return;
     }
-    if (this.process === 'Drop off') {
-      this.dropOff();
+    if (this.process === 'Scan ITN') {
+      this.selectITN();
       return;
     }
-    this.selectITN();
+    // verify container
+    this.scanLocation();
   }
 
   selectITN(): void {
@@ -150,8 +159,47 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       return !isEqual;
     });
     if (this.totalITNs === this.selectedList.length) {
-      this.process = 'Drop off';
-      this.hint = `Scan Drop off position`;
+      this.process = 'Complete';
+      const log = [];
+      this.selectedList.forEach((node) => {
+        log.push({
+          InventoryTrackingNumber: node.InventoryTrackingNumber,
+          OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
+          NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
+          UserEventID: environment.Event_DropOff_Done,
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          Message: `From ${this._service.cartInfo.barcode}`,
+        });
+      });
+      this.isLoading = true;
+      this.submit$ = this._updateForDropOff
+        .mutate(
+          {
+            Inventory: {
+              ContainerID: this.dropOffID,
+            },
+            ContainerID: this._service.cartInfo.id,
+            log,
+          },
+          { fetchPolicy: 'network-only' }
+        )
+        .pipe(
+          map(() => {
+            this._router.navigate(['pulltopick'], {
+              queryParams: {
+                result: 'success',
+                message: `Drop off in ${
+                  this.containerForm.get('containerNumber').value
+                } is successful.`,
+              },
+            });
+          }),
+          catchError((err) => {
+            this.alertMessage = err;
+            this.alertType = 'error';
+            return err;
+          })
+        );
     } else if (count === 0) {
       this.alertMessage = `ITN is not in the list.`;
     }
@@ -163,19 +211,8 @@ export class DropOffComponent implements OnInit, AfterViewInit {
     return;
   }
 
-  dropOff(): void {
+  scanLocation(): void {
     this.isLoading = true;
-    const log = [];
-    this.selectedList.forEach((node) => {
-      log.push({
-        InventoryTrackingNumber: node.InventoryTrackingNumber,
-        OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
-        NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
-        UserEventID: environment.Event_DropOff_Done,
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-        Message: `From ${this._service.cartInfo.barcode}`,
-      });
-    });
     this.submit$ = this._findContainer
       .fetch(
         {
@@ -191,33 +228,18 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       .pipe(
         tap((res) => {
           if (res.data.findContainer.length === 0) {
-            throw 'Container not found';
+            throw 'Drop off location not found';
           }
         }),
-        switchMap((res) => {
-          const ContainerID = res.data.findContainer[0]._id;
-          return this._updateForDropOff.mutate(
-            {
-              Inventory: {
-                ContainerID,
-              },
-              ContainerID: this._service.cartInfo.id,
-              log,
-            },
-            { fetchPolicy: 'network-only' }
-          );
-        }),
         map(() => {
-          this._router.navigate(['pulltopick'], {
-            queryParams: {
-              result: 'success',
-              message: `Drop off in ${
-                this.containerForm.get('containerNumber').value
-              } is successful.`,
-            },
-          });
+          this.isLoading = false;
+          this.process = 'Scan ITN';
+          this.hint = 'Scan ITNs in the cart';
+          this.containerForm.get('containerNumber').reset();
+          this.containerInput.nativeElement.select();
         }),
         catchError((err) => {
+          this.isLoading = false;
           this.alertMessage = err;
           this.alertType = 'error';
           return err;

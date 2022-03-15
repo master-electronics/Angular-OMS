@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
 import {
   FindNextItnForPullingGQL,
@@ -92,7 +92,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
-        tap((res) => {
+        tap(() => {
           //
         }),
         map((res) => {

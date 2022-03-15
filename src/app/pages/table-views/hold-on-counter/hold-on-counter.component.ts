@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import * as XLSX from 'xlsx';
 
 import { CommonService } from '../../../shared/services/common.service';
@@ -19,7 +18,7 @@ interface tableData {
 })
 export class HoldOnCounterComponent implements OnInit {
   isLoading = false;
-  fetchTable$: Observable<any>;
+  fetchTable$;
   startDate: string;
 
   constructor(

@@ -9,12 +9,11 @@
     <div *ngIf="insertLog$ | async"></div>
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <h1>Cart: {{ cartBarcode }}</h1>
+        <h1>Location: {{ locationBarcode }}</h1>
         <nz-form-item nz-row nzJustify="center">
           <nz-form-label nzRequired>{{ hint }}</nz-form-label>
-          <nz-form-control
-            nzHasFeedback
-            nzErrorTip="The input is not valid ITN!"
-          >
+          <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
               placeholder=" "

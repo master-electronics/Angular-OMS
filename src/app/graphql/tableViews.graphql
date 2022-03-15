@@ -123,23 +123,23 @@ query fetchUserEventLog(
 #   }
 # }
 
-# query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
-#   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
-#     ID
-#     User
-#     detail
-#   }
-# }
+query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
+  fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
+    ID
+    User
+    detail
+  }
+}
 
-# query fetchOrderTasktime($target: String, $limit: Int!) {
-#   fetchOrderTasktime(Order: $target, limit: $limit) {
-#     Order
-#     qcFirst
-#     qcLast
-#     agIn
-#     agOut
-#   }
-# }
+query fetchOrderTasktime($target: String, $limit: Int!) {
+  fetchOrderTasktime(Order: $target, limit: $limit) {
+    Order
+    qcFirst
+    qcLast
+    agIn
+    agOut
+  }
+}
 
 # query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
 #   findOrderByStatus(

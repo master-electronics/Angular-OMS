@@ -886,6 +886,14 @@ export type FetchUserEventLogQueryVariables = Types.Exact<{
 
 export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLog?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber?: string | null, NOSINumber?: string | null, Message?: string | null, InventoryTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
 
+export type FetchHoldOnCounterQueryVariables = Types.Exact<{
+  startDate: Types.Scalars['String'];
+  endDate: Types.Scalars['String'];
+}>;
+
+
+export type FetchHoldOnCounterQuery = { __typename?: 'Query', fetchHoldOnCounter?: Array<{ __typename?: 'HoldOnCounter', ID: number, User: string, detail: Array<number | null> } | null> | null };
+
 export const FetchUserInfoDocument = gql`
     query fetchUserInfo {
   findUserInfo {
@@ -936,6 +944,26 @@ export const FetchUserEventLogDocument = gql`
   })
   export class FetchUserEventLogGQL extends Apollo.Query<FetchUserEventLogQuery, FetchUserEventLogQueryVariables> {
     document = FetchUserEventLogDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchHoldOnCounterDocument = gql`
+    query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
+  fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
+    ID
+    User
+    detail
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchHoldOnCounterGQL extends Apollo.Query<FetchHoldOnCounterQuery, FetchHoldOnCounterQueryVariables> {
+    document = FetchHoldOnCounterDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
