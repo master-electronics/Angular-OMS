@@ -155,7 +155,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           InventoryID: this.inventoryID,
           log: [
             {
-              UserEventID: environment.Event_Pulling_PickITN,
+              UserEventID: environment.Event_Pulling_PullITN,
               InventoryTrackingNumber: this.ITN,
               UserID,
               OrderNumber: this.OrderNumber,

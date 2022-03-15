@@ -9,7 +9,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import {
   FindContainerGQL,
   FindItNsInCartForDropOffGQL,
@@ -19,7 +19,6 @@ import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-ge
 import { CommonService } from 'src/app/shared/services/common.service';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
-import { QADropOffRegex, ITNBarcodeRegex } from '../../../shared/dataRegex';
 
 @Component({
   selector: 'drop-off',
@@ -231,10 +230,12 @@ export class DropOffComponent implements OnInit, AfterViewInit {
             throw 'Drop off location not found';
           }
         }),
-        map(() => {
+        map((res) => {
           this.isLoading = false;
+          this.dropOffID = res.data.findContainer[0]._id;
           this.process = 'Scan ITN';
           this.hint = 'Scan ITNs in the cart';
+          this.locationBarcode = this.containerForm.value.containerNumber;
           this.containerForm.get('containerNumber').reset();
           this.containerInput.nativeElement.select();
         }),

@@ -145,12 +145,11 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
             log: [
               {
                 Message: `${this.containerForm.value.containerNumber}`,
-                UserEventID: environment.Event_Pulling_PickCart,
+                UserEventID: environment.Event_Pulling_SelectCart,
                 UserID: this.userID,
               },
             ],
           });
-          //
         }),
         map(() => {
           this.isLoading = false;

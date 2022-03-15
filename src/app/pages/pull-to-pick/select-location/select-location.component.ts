@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { ShelfBarcodeBarcodeRegex } from '../../../shared/dataRegex';
@@ -21,6 +21,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'select-location',
@@ -49,7 +50,8 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
     private _router: Router,
     private _titleService: Title,
     private _pickService: PickService,
-    private _verifyPosition: VerifyPositionBarcodeForPullingGQL
+    private _verifyPosition: VerifyPositionBarcodeForPullingGQL,
+    private _insertLog: Insert_UserEventLogsGQL
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle(this.title);
@@ -80,9 +82,16 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
       this.positionInput.nativeElement.select();
       return;
     }
+    const log = [
+      {
+        Message: `${this.f.positionNumber.value}`,
+        UserEventID: environment.Event_Pulling_SelectLocation,
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+      },
+    ];
     this.isLoading = true;
-    this.submit$ = this._verifyPosition
-      .fetch(
+    this.submit$ = forkJoin({
+      verifyPosition: this._verifyPosition.fetch(
         {
           Container: {
             DistributionCenter: environment.DistributionCenter,
@@ -90,26 +99,26 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
           },
         },
         { fetchPolicy: 'network-only' }
-      )
-
-      .pipe(
-        tap((res) => {
-          const position = res.data.findContainer;
-          if (!position?.length) throw 'Cart not found!';
-        }),
-        map(() => {
-          this.isLoading = false;
-          this._pickService.changeLastLocation(Barcode);
-          this._router.navigate(['/pulltopick/pullitn']);
-          return true;
-        }),
-        catchError((err) => {
-          this.alertMessage = err;
-          this.alertType = 'error';
-          this.isLoading = false;
-          return [];
-        })
-      );
+      ),
+      insertLog: this._insertLog.mutate({ log }, { fetchPolicy: 'no-cache' }),
+    }).pipe(
+      tap((res) => {
+        const position = res.verifyPosition.data.findContainer;
+        if (!position?.length) throw 'Cart not found!';
+      }),
+      map(() => {
+        this.isLoading = false;
+        this._pickService.changeLastLocation(Barcode);
+        this._router.navigate(['/pulltopick/pullitn']);
+        return true;
+      }),
+      catchError((err) => {
+        this.alertMessage = err;
+        this.alertType = 'error';
+        this.isLoading = false;
+        return [];
+      })
+    );
   }
 
   dropOff(): void {
