@@ -11,8 +11,6 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { Observable } from 'rxjs';
-
 import { OrderBarcodeRegex } from '../../../shared/dataRegex';
 import {
   FetchOrderDetailforitnViewGQL,

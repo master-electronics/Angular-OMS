@@ -21,11 +21,11 @@ import { TableViewsComponent } from './table-views.component';
 import { TableViewsRoutingModule } from './table-views.routing';
 import { EventLogComponent } from './event-log/event-log.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
-// import { ITNViewComponent } from './order-view/itn-view.component';
-// import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
-// import { OrderListComponent } from './wms-countby-status/order-list.component';
-// import { OrderViewComponent } from './order-view/order-view.component';
-// import { TaskCounterComponent } from './task-counter/task-counter.component';
+import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
+import { OrderListComponent } from './wms-countby-status/order-list.component';
+import { OrderViewComponent } from './order-view/order-view.component';
+import { ITNViewComponent } from './order-view/itn-view.component';
+import { TaskCounterComponent } from './task-counter/task-counter.component';
 // import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 
 @NgModule({
@@ -33,11 +33,11 @@ import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.compon
     TableViewsComponent,
     EventLogComponent,
     HoldOnCounterComponent,
-    // WmsStatusComponent,
-    // OrderListComponent,
-    // OrderViewComponent,
-    // ITNViewComponent,
-    // TaskCounterComponent,
+    WmsStatusComponent,
+    OrderListComponent,
+    OrderViewComponent,
+    ITNViewComponent,
+    TaskCounterComponent,
     // OrderTasktimeComponent,
   ],
   imports: [

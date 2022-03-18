@@ -1,82 +1,86 @@
-# query fetchOrderView($filter: orderViewFilter) {
-#   fetchOrderView(filter: $filter) {
-#     OrderNumber
-#     NOSINumber
-#     Status
-#     Priority
-#     ShippingMethod
-#     Unpicked
-#     Aggregated
-#     InProcess
-#   }
-# }
+query fetchOrderView($filter: orderViewFilter) {
+  fetchOrderView(filter: $filter) {
+    OrderNumber
+    NOSINumber
+    Status
+    Priority
+    ShippingMethod
+    Unpicked
+    Aggregated
+    InProcess
+  }
+}
 
-# query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
-#   fetchOrderLineDetailforWMSCount(filter: $filter) {
-#     InventoryTrackingNumber
-#     Status {
-#       Name
-#     }
-#     Order {
-#       OrderNumber
-#       NOSINumber
-#     }
-#     OrderLine {
-#       ProductCode
-#       PartNumber
-#     }
-#     Quantity
-#     Container {
-#       Barcode
-#       Warehouse
-#       Row
-#       Aisle
-#       Section
-#       Shelf
-#       ShelfDetail
-#     }
-#   }
-# }
+query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
+  fetchOrderLineDetailforWMSCount(filter: $filter) {
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode
+        PartNumber
+      }
+    }
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    Quantity
+  }
+}
 
-# query fetchOrderDetailforitnView($Order: searchOrder!) {
-#   findOrder(Order: $Order) {
-#     OrderNumber
-#     NOSINumber
-#     ORDERLINEDETAILs {
-#       InventoryTrackingNumber
-#       Status {
-#         Name
-#       }
-#       OrderLine {
-#         ProductCode
-#         PartNumber
-#       }
-#       Quantity
-#       Container {
-#         Barcode
-#         Warehouse
-#         Row
-#         Aisle
-#         Section
-#         Shelf
-#         ShelfDetail
-#       }
-#     }
-#   }
-# }
+query fetchOrderDetailforitnView($Order: searchOrder!) {
+  findOrder(Order: $Order) {
+    OrderNumber
+    NOSINumber
+    ORDERLINEDETAILs {
+      Inventory {
+        InventoryTrackingNumber
+        Container {
+          Barcode
+          Warehouse
+          Row
+          Aisle
+          Section
+          Shelf
+          ShelfDetail
+        }
+        Product {
+          ProductCode
+          PartNumber
+        }
+      }
+      Status {
+        Name
+      }
+      Quantity
+    }
+  }
+}
 
-# query fetchWMSStatusView {
-#   fetchWMSStatusView {
-#     StatusID
-#     Status
-#     ITN_Priority
-#     ITN_Total
-#     Line_Priority
-#     Line_Total
-#     Head_Priority
-#     Head_Total
-#   }
-# }
+query fetchWMSStatusView {
+  fetchWMSStatusView {
+    StatusID
+    Status
+    ITN_Priority
+    ITN_Total
+    Line_Priority
+    Line_Total
+    Head_Priority
+    Head_Total
+  }
+}
 
 query fetchUserInfo {
   findUserInfo {
@@ -115,13 +119,13 @@ query fetchUserEventLog(
   }
 }
 
-# query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
-#   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
-#     ID
-#     User
-#     taskCounter
-#   }
-# }
+query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    ID
+    User
+    taskCounter
+  }
+}
 
 query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
@@ -141,17 +145,17 @@ query fetchOrderTasktime($target: String, $limit: Int!) {
   }
 }
 
-# query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
-#   findOrderByStatus(
-#     PriorityPinkPaper: $PriorityPinkPaper
-#     StatusID: $StatusID
-#   ) {
-#     OrderNumber
-#     NOSINumber
-#     CustomerNumber
-#     ShipmentMethod {
-#       PriorityPinkPaper
-#       ShippingMethod
-#     }
-#   }
-# }
+query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
+  findOrderByStatus(
+    PriorityPinkPaper: $PriorityPinkPaper
+    StatusID: $StatusID
+  ) {
+    OrderNumber
+    NOSINumber
+    CustomerNumber
+    ShipmentMethod {
+      PriorityPinkPaper
+      ShippingMethod
+    }
+  }
+}

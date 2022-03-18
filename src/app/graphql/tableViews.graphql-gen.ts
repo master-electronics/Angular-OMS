@@ -870,6 +870,32 @@ export type UpdateUserInfo = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
+export type FetchOrderViewQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.OrderViewFilter>;
+}>;
+
+
+export type FetchOrderViewQuery = { __typename?: 'Query', fetchOrderView?: Array<{ __typename?: 'orderView', OrderNumber?: string | null, NOSINumber?: string | null, Status?: string | null, Priority?: boolean | null, ShippingMethod?: string | null, Unpicked?: number | null, Aggregated?: number | null, InProcess?: number | null } | null> | null };
+
+export type FetchOrderLineDetailforWmsCountQueryVariables = Types.Exact<{
+  filter?: Types.InputMaybe<Types.SearchIntForWmsCount>;
+}>;
+
+
+export type FetchOrderLineDetailforWmsCountQuery = { __typename?: 'Query', fetchOrderLineDetailforWMSCount?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null, Status: { __typename?: 'OrderStatus', Name: string }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string } } | null> | null };
+
+export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
+  Order: Types.SearchOrder;
+}>;
+
+
+export type FetchOrderDetailforitnViewQuery = { __typename?: 'Query', findOrder?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null> | null };
+
+export type FetchWmsStatusViewQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchWmsStatusViewQuery = { __typename?: 'Query', fetchWMSStatusView?: Array<{ __typename?: 'WMSStatusView', StatusID: number, Status: string, ITN_Priority: number, ITN_Total: number, Line_Priority: number, Line_Total: number, Head_Priority: number, Head_Total: number } | null> | null };
+
 export type FetchUserInfoQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
@@ -886,6 +912,15 @@ export type FetchUserEventLogQueryVariables = Types.Exact<{
 
 export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLog?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber?: string | null, NOSINumber?: string | null, Message?: string | null, InventoryTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
 
+export type FetchTaskCounterQueryVariables = Types.Exact<{
+  Module: Types.Scalars['Int'];
+  startDate: Types.Scalars['String'];
+  endDate: Types.Scalars['String'];
+}>;
+
+
+export type FetchTaskCounterQuery = { __typename?: 'Query', fetchTaskCounter?: Array<{ __typename?: 'taskCounter', ID: number, User: string, taskCounter: Array<number | null> } | null> | null };
+
 export type FetchHoldOnCounterQueryVariables = Types.Exact<{
   startDate: Types.Scalars['String'];
   endDate: Types.Scalars['String'];
@@ -894,6 +929,154 @@ export type FetchHoldOnCounterQueryVariables = Types.Exact<{
 
 export type FetchHoldOnCounterQuery = { __typename?: 'Query', fetchHoldOnCounter?: Array<{ __typename?: 'HoldOnCounter', ID: number, User: string, detail: Array<number | null> } | null> | null };
 
+export type FetchOrderTasktimeQueryVariables = Types.Exact<{
+  target?: Types.InputMaybe<Types.Scalars['String']>;
+  limit: Types.Scalars['Int'];
+}>;
+
+
+export type FetchOrderTasktimeQuery = { __typename?: 'Query', fetchOrderTasktime?: Array<{ __typename?: 'orderTasktime', Order: string, qcFirst?: string | null, qcLast?: string | null, agIn?: string | null, agOut?: string | null } | null> | null };
+
+export type FindOrderByStatusQueryVariables = Types.Exact<{
+  PriorityPinkPaper?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  StatusID: Types.Scalars['Int'];
+}>;
+
+
+export type FindOrderByStatusQuery = { __typename?: 'Query', findOrderByStatus?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } | null> | null };
+
+export const FetchOrderViewDocument = gql`
+    query fetchOrderView($filter: orderViewFilter) {
+  fetchOrderView(filter: $filter) {
+    OrderNumber
+    NOSINumber
+    Status
+    Priority
+    ShippingMethod
+    Unpicked
+    Aggregated
+    InProcess
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderViewGQL extends Apollo.Query<FetchOrderViewQuery, FetchOrderViewQueryVariables> {
+    document = FetchOrderViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchOrderLineDetailforWmsCountDocument = gql`
+    query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
+  fetchOrderLineDetailforWMSCount(filter: $filter) {
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode
+        PartNumber
+      }
+    }
+    Status {
+      Name
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    Quantity
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderLineDetailforWmsCountGQL extends Apollo.Query<FetchOrderLineDetailforWmsCountQuery, FetchOrderLineDetailforWmsCountQueryVariables> {
+    document = FetchOrderLineDetailforWmsCountDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchOrderDetailforitnViewDocument = gql`
+    query fetchOrderDetailforitnView($Order: searchOrder!) {
+  findOrder(Order: $Order) {
+    OrderNumber
+    NOSINumber
+    ORDERLINEDETAILs {
+      Inventory {
+        InventoryTrackingNumber
+        Container {
+          Barcode
+          Warehouse
+          Row
+          Aisle
+          Section
+          Shelf
+          ShelfDetail
+        }
+        Product {
+          ProductCode
+          PartNumber
+        }
+      }
+      Status {
+        Name
+      }
+      Quantity
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderDetailforitnViewGQL extends Apollo.Query<FetchOrderDetailforitnViewQuery, FetchOrderDetailforitnViewQueryVariables> {
+    document = FetchOrderDetailforitnViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchWmsStatusViewDocument = gql`
+    query fetchWMSStatusView {
+  fetchWMSStatusView {
+    StatusID
+    Status
+    ITN_Priority
+    ITN_Total
+    Line_Priority
+    Line_Total
+    Head_Priority
+    Head_Total
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchWmsStatusViewGQL extends Apollo.Query<FetchWmsStatusViewQuery, FetchWmsStatusViewQueryVariables> {
+    document = FetchWmsStatusViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchUserInfoDocument = gql`
     query fetchUserInfo {
   findUserInfo {
@@ -949,6 +1132,26 @@ export const FetchUserEventLogDocument = gql`
       super(apollo);
     }
   }
+export const FetchTaskCounterDocument = gql`
+    query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    ID
+    User
+    taskCounter
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchTaskCounterGQL extends Apollo.Query<FetchTaskCounterQuery, FetchTaskCounterQueryVariables> {
+    document = FetchTaskCounterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchHoldOnCounterDocument = gql`
     query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
@@ -964,6 +1167,52 @@ export const FetchHoldOnCounterDocument = gql`
   })
   export class FetchHoldOnCounterGQL extends Apollo.Query<FetchHoldOnCounterQuery, FetchHoldOnCounterQueryVariables> {
     document = FetchHoldOnCounterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchOrderTasktimeDocument = gql`
+    query fetchOrderTasktime($target: String, $limit: Int!) {
+  fetchOrderTasktime(Order: $target, limit: $limit) {
+    Order
+    qcFirst
+    qcLast
+    agIn
+    agOut
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchOrderTasktimeGQL extends Apollo.Query<FetchOrderTasktimeQuery, FetchOrderTasktimeQueryVariables> {
+    document = FetchOrderTasktimeDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindOrderByStatusDocument = gql`
+    query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
+  findOrderByStatus(PriorityPinkPaper: $PriorityPinkPaper, StatusID: $StatusID) {
+    OrderNumber
+    NOSINumber
+    CustomerNumber
+    ShipmentMethod {
+      PriorityPinkPaper
+      ShippingMethod
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindOrderByStatusGQL extends Apollo.Query<FindOrderByStatusQuery, FindOrderByStatusQueryVariables> {
+    document = FindOrderByStatusDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

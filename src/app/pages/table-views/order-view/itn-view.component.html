@@ -65,21 +65,23 @@
               ITN: detail.InternalTrackingNumber
             }"
           >
-            {{ detail.InternalTrackingNumber }}</a
+            {{ detail.Inventory.InventoryTrackingNumber }}</a
           >
         </td>
         <td>{{ detail.Order.OrderNumber }}-{{ detail.Order.NOSINumber }}</td>
         <td>{{ detail.Status.Name }}</td>
-        <td>{{ detail.Container.Barcode }}</td>
+        <td>{{ detail.Inventory.Container.Barcode }}</td>
         <td>
-          {{ detail.Container.Warehouse }}-{{ detail.Container.Row }}-{{
-            detail.Container.Aisle
-          }}-{{ detail.Container.Section }}-{{ detail.Container.Shelf }}-{{
-            detail.Container.ShelfDetail
+          {{ detail.Inventory.Container.Warehouse }}-{{
+            detail.Inventory.Container.Row
+          }}-{{ detail.Inventory.Container.Aisle }}-{{
+            detail.Inventory.Container.Section
+          }}-{{ detail.Inventory.Container.Shelf }}-{{
+            detail.Inventory.Container.ShelfDetail
           }}
         </td>
-        <td>{{ detail.OrderLine.ProductCode }}</td>
-        <td>{{ detail.OrderLine.PartNumber }}</td>
+        <td>{{ detail.Inventory.Product.ProductCode }}</td>
+        <td>{{ detail.Inventory.Product.PartNumber }}</td>
         <td>{{ detail.Quantity }}</td>
       </tr>
     </tbody>
