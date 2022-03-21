@@ -26,7 +26,7 @@ import { OrderListComponent } from './wms-countby-status/order-list.component';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
-// import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +38,7 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
     OrderViewComponent,
     ITNViewComponent,
     TaskCounterComponent,
-    // OrderTasktimeComponent,
+    OrderTasktimeComponent,
   ],
   imports: [
     CommonModule,

@@ -8,7 +8,7 @@ import { OrderListComponent } from './wms-countby-status/order-list.component';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
-// import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
 
 const routes: Routes = [
@@ -37,10 +37,10 @@ const routes: Routes = [
     path: 'taskcounter',
     component: TaskCounterComponent,
   },
-  // {
-  //   path: 'ordertasktime',
-  //   component: OrderTasktimeComponent,
-  // },
+  {
+    path: 'ordertasktime',
+    component: OrderTasktimeComponent,
+  },
   {
     path: 'holdoncounter',
     component: HoldOnCounterComponent,
