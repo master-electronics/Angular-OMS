@@ -1,0 +1,229 @@
+# query verifyContainerForAggregationIn($Container: searchContainer!) {
+#   findContainer(Container: $Container) {
+#     _id
+#     Barcode
+#     ContainerTypeID
+#     Warehouse
+#     Row
+#     Aisle
+#     Section
+#     Shelf
+#     ShelfDetail
+#     ContainerType {
+#       IsMobile
+#     }
+#     ORDERLINEDETAILs {
+#       _id
+#       InternalTrackingNumber
+#       StatusID
+#       OrderID
+#       Order {
+#         OrderNumber
+#         NOSINumber
+#       }
+#     }
+#   }
+# }
+
+# query fetchLocationAndOrderDetailForAgIn(
+#   $OrderLineDetail: searchOrderLineDetail!
+# ) {
+#   findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+#     _id
+#     Quantity
+#     StatusID
+#     InternalTrackingNumber
+#     OrderLine {
+#       OrderLineNumber
+#       ProductCode
+#       PartNumber
+#     }
+#     Order {
+#       OrderNumber
+#       NOSINumber
+#       CustomerNumber
+#       ShipmentMethod {
+#         PriorityPinkPaper
+#         ShippingMethod
+#       }
+#     }
+#     Container {
+#       Barcode
+#       Warehouse
+#       Row
+#       Aisle
+#       Section
+#       Shelf
+#       ShelfDetail
+#     }
+#   }
+# }
+
+# query countOrderItnsFromMerp(
+#   $LocationCode: String!
+#   $OrderNumber: String!
+#   $NOSINumber: String!
+# ) {
+#   countOrderItns(
+#     LocationCode: $LocationCode
+#     OrderNumber: $OrderNumber
+#     NOSINumber: $NOSINumber
+#   )
+# }
+
+# mutation updateAfterAgOut(
+#   $OrderID: Int!
+#   $OrderLineDetail: updateOrderLineDetail!
+#   $DistributionCenter: String!
+#   $OrderNumber: String!
+#   $NOSINumber: String!
+#   $log: [insertUserEventLog]!
+#   $MerpStatus: String!
+#   $UserOrStatus: String!
+#   $FileKeyList: [String!]!
+#   $toteList: [String!]!
+#   $ActionType: String!
+#   $Action: String!
+# ) {
+#   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+
+#   updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+
+#   insertUserEventLogs(log: $log) {
+#     _id
+#   }
+
+#   deleteAndInsertRouteTable(lpnList: $toteList)
+
+#   updateMerpOrderStatus(
+#     OrderNumber: $OrderNumber
+#     NOSINumber: $NOSINumber
+#     Status: $MerpStatus
+#     UserOrStatus: $UserOrStatus
+#   ) {
+#     success
+#     message
+#   }
+
+#   updateMerpWMSLog(
+#     FileKeyList: $FileKeyList
+#     LocationCode: $DistributionCenter
+#     ActionType: $ActionType
+#     Action: $Action
+#   ) {
+#     success
+#     message
+#   }
+# }
+
+# query fetchHazardMaterialLevel($ProductList: [String]!) {
+#   fetchProductInfoFromMerp(ProductList: $ProductList) {
+#     HazardMaterialLevel
+#   }
+# }
+
+# mutation updateSQLAfterAgIn(
+#   $ContainerID: Int!
+#   $Container: updateContainer!
+#   $OrderLineDetail: updateOrderLineDetail!
+#   $log: [insertUserEventLog]!
+# ) {
+#   updateOrderLineDetail(
+#     ContainerID: $ContainerID
+#     OrderLineDetail: $OrderLineDetail
+#   )
+#   updateContainer(_id: $ContainerID, Container: $Container)
+#   insertUserEventLogs(log: $log) {
+#     _id
+#   }
+# }
+
+# mutation updateMerpWMSLog(
+#   $DistributionCenter: String!
+#   $FileKeyList: [String!]!
+#   $ActionType: String!
+#   $Action: String!
+# ) {
+#   updateMerpWMSLog(
+#     FileKeyList: $FileKeyList
+#     LocationCode: $DistributionCenter
+#     ActionType: $ActionType
+#     Action: $Action
+#   ) {
+#     success
+#     message
+#   }
+# }
+
+# mutation updateMerpOrderStatus(
+#   $OrderNumber: String!
+#   $NOSINumber: String!
+#   $Status: String!
+#   $UserOrStatus: String!
+# ) {
+#   updateMerpOrderStatus(
+#     OrderNumber: $OrderNumber
+#     NOSINumber: $NOSINumber
+#     Status: $Status
+#     UserOrStatus: $UserOrStatus
+#   ) {
+#     success
+#     message
+#   }
+# }
+
+# mutation pickOrderForAgOut {
+#   pickOrderForAgOut {
+#     OrderID
+#     OrderNumber
+#     NOSINumber
+#   }
+# }
+
+# query verifyOrderForAgOut(
+#   $DistributionCenter: String!
+#   $OrderNumber: String!
+#   $NOSINumber: String!
+# ) {
+#   findOrder(
+#     Order: {
+#       DistributionCenter: $DistributionCenter
+#       OrderNumber: $OrderNumber
+#       NOSINumber: $NOSINumber
+#     }
+#   ) {
+#     _id
+#     ORDERLINEDETAILs {
+#       StatusID
+#     }
+#   }
+#   countOrderItns(
+#     LocationCode: $DistributionCenter
+#     OrderNumber: $OrderNumber
+#     NOSINumber: $NOSINumber
+#   )
+# }
+
+# query fetchContainerForAgoutPick($OrderID: Int) {
+#   findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+#     InternalTrackingNumber
+#     OrderLine {
+#       OrderLineNumber
+#       ProductCode
+#       PartNumber
+#     }
+#     Order {
+#       OrderNumber
+#       NOSINumber
+#     }
+#     Container {
+#       Barcode
+#       Warehouse
+#       Row
+#       Aisle
+#       Section
+#       Shelf
+#       ShelfDetail
+#     }
+#   }
+# }
