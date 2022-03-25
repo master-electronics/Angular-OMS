@@ -39,6 +39,11 @@ export class TableViewsComponent {
       link: 'holdoncounter',
       content: 'Show how many lines were kicked out by Quality Control.',
     },
+    {
+      title: 'ITN Lifecycle',
+      link: 'itnlifecycle',
+      content: 'The life of every ITN worked each day',
+    },
   ];
 
   constructor(

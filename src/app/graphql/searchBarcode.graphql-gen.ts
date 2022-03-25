@@ -4,6 +4,7 @@ import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -16,42 +17,40 @@ export type Scalars = {
   Float: number;
 };
 
-
-
 export type Container = {
   __typename?: 'Container';
+  Aisle?: Maybe<Scalars['String']>;
+  Barcode: Scalars['String'];
+  ContainerType: ContainerType;
+  ContainerTypeID: Scalars['Int'];
+  DistributionCenter: Scalars['String'];
+  Equipment?: Maybe<Equipment>;
+  EquipmentID?: Maybe<Scalars['Int']>;
+  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  Row?: Maybe<Scalars['String']>;
+  Section?: Maybe<Scalars['String']>;
+  Shelf?: Maybe<Scalars['String']>;
+  ShelfDetail?: Maybe<Scalars['String']>;
+  Warehouse?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['String']>;
   /**
    * Related tables:
    * one to many ORDERLINEDETAILs
    */
   _id: Scalars['Int'];
-  ContainerTypeID: Scalars['Int'];
-  Barcode: Scalars['String'];
-  Zone?: Maybe<Scalars['String']>;
-  EquipmentID?: Maybe<Scalars['Int']>;
-  DistributionCenter: Scalars['String'];
-  Warehouse?: Maybe<Scalars['String']>;
-  Row?: Maybe<Scalars['String']>;
-  Aisle?: Maybe<Scalars['String']>;
-  Section?: Maybe<Scalars['String']>;
-  Shelf?: Maybe<Scalars['String']>;
-  ShelfDetail?: Maybe<Scalars['String']>;
-  ContainerType: ContainerType;
-  Equipment?: Maybe<Equipment>;
-  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
 };
 
 export type ContainerType = {
   __typename?: 'ContainerType';
-  _id: Scalars['Int'];
-  Name: Scalars['String'];
   IsMobile: Scalars['Boolean'];
+  Name: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type Equipment = {
   __typename?: 'Equipment';
-  _id: Scalars['Int'];
   Name: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type GlobalMessage = {
@@ -66,49 +65,183 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnLifeCycle = {
+  __typename?: 'ITNLifeCycle';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  agDone?: Maybe<Scalars['String']>;
+  agStart?: Maybe<Scalars['String']>;
+  pickDone?: Maybe<Scalars['String']>;
+  pickStart?: Maybe<Scalars['String']>;
+  qcDone?: Maybe<Scalars['String']>;
+  qcStart?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  pickOrderForAgOut?: Maybe<OrderForAgOut>;
-  deleteAndInsertRouteTable: Scalars['Boolean'];
-  deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  updateOrCreateProduct?: Maybe<Product>;
-  holdQCOrder: Response;
-  printITNLabel: Response;
   changeQCLineInfo: Response;
-  updateMerpOrderStatus: Response;
-  updateMerpWMSLog: Response;
   clearMerpTote: Response;
-  updateMerpQCBin: Response;
-  findOrCreateUserInfo?: Maybe<UserInfo>;
-  findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  findOrCreateOrderLine?: Maybe<OrderLine>;
-  findOrCreateOrder?: Maybe<Order>;
-  insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
-  deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
+  deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
-  updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
+  deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findOrCreateOrder?: Maybe<Order>;
+  findOrCreateOrderLine?: Maybe<OrderLine>;
+  findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
+  findOrCreateUserInfo?: Maybe<UserInfo>;
+  holdQCOrder: Response;
+  insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  pickOrderForAgOut?: Maybe<OrderForAgOut>;
+  printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateMerpOrderStatus: Response;
+  updateMerpQCBin: Response;
+  updateMerpWMSLog: Response;
+  updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
+  updateOrCreateProduct?: Maybe<Product>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
+};
+
+
+export type MutationChangeQcLineInfoArgs = {
+  CountMethod: Scalars['String'];
+  CountryOfOrigin: Scalars['String'];
+  DateCode: Scalars['String'];
+  InternalTrackingNumber: Scalars['String'];
+  ROHS: Scalars['String'];
+};
+
+
+export type MutationClearMerpToteArgs = {
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
 };
 
 
 export type MutationDeleteAndInsertRouteTableArgs = {
-  lpnList: Array<Maybe<Scalars['String']>>;
+  lpnList: Array<InputMaybe<Scalars['String']>>;
+};
+
+
+export type MutationDeleteOrderArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationDeleteOrderLineArgs = {
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationDeleteOrderLineDetailArgs = {
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  OrderLineID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
+  BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
+  InternalTrackingNumber: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['Int'];
+  OrderNumber: Scalars['String'];
+};
+
+
+export type MutationFindOrCreateOrderArgs = {
+  Order: InsertOrder;
+};
+
+
+export type MutationFindOrCreateOrderLineArgs = {
+  OrderLine: InsertOrderLine;
+};
+
+
+export type MutationFindOrCreateOrderLineDetailArgs = {
+  OrderLineDetail: InsertOrderLineDetail;
+};
+
+
+export type MutationFindOrCreateUserInfoArgs = {
+  UserInfo: InsertUserInfo;
+};
+
+
+export type MutationHoldQcOrderArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  Station: Scalars['String'];
+  Status: Scalars['String'];
+};
+
+
+export type MutationInsertUserEventLogsArgs = {
+  log: Array<InputMaybe<InsertUserEventLog>>;
+};
+
+
+export type MutationPrintItnLabelArgs = {
+  InternalTrackingNumber: Scalars['String'];
+  Station: Scalars['String'];
+};
+
+
+export type MutationUpdateContainerArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+  Container: UpdateContainer;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateContainerListArgs = {
+  BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  Container: UpdateContainer;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+
+export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
-  OrderLineNumber: Scalars['Int'];
+  Status: Scalars['String'];
+  UserOrStatus?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateMerpQcBinArgs = {
   InternalTrackingNumber: Scalars['String'];
-  BinLocation: Scalars['String'];
+};
+
+
+export type MutationUpdateMerpWmsLogArgs = {
+  Action: Scalars['String'];
+  ActionType: Scalars['String'];
+  FileKeyList: Array<Scalars['String']>;
+  LocationCode: Scalars['String'];
 };
 
 
@@ -122,132 +255,12 @@ export type MutationUpdateOrCreateProductArgs = {
 };
 
 
-export type MutationHoldQcOrderArgs = {
-  InternalTrackingNumber: Scalars['String'];
-  Status: Scalars['String'];
-  Station: Scalars['String'];
-};
-
-
-export type MutationPrintItnLabelArgs = {
-  InternalTrackingNumber: Scalars['String'];
-  Station: Scalars['String'];
-};
-
-
-export type MutationChangeQcLineInfoArgs = {
-  InternalTrackingNumber: Scalars['String'];
-  DateCode: Scalars['String'];
-  CountryOfOrigin: Scalars['String'];
-  ROHS: Scalars['String'];
-  CountMethod: Scalars['String'];
-};
-
-
-export type MutationUpdateMerpOrderStatusArgs = {
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  Status: Scalars['String'];
-  UserOrStatus?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateMerpWmsLogArgs = {
-  FileKeyList: Array<Scalars['String']>;
-  LocationCode: Scalars['String'];
-  ActionType: Scalars['String'];
-  Action: Scalars['String'];
-};
-
-
-export type MutationClearMerpToteArgs = {
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-};
-
-
-export type MutationUpdateMerpQcBinArgs = {
-  InternalTrackingNumber: Scalars['String'];
-};
-
-
-export type MutationFindOrCreateUserInfoArgs = {
-  UserInfo: InsertUserInfo;
-};
-
-
-export type MutationFindOrCreateOrderLineDetailArgs = {
-  OrderLineDetail: InsertOrderLineDetail;
-};
-
-
-export type MutationFindOrCreateOrderLineArgs = {
-  OrderLine: InsertOrderLine;
-};
-
-
-export type MutationFindOrCreateOrderArgs = {
-  Order: InsertOrder;
-};
-
-
-export type MutationInsertUserEventLogsArgs = {
-  log: Array<Maybe<InsertUserEventLog>>;
-};
-
-
-export type MutationDeleteOrderLineDetailArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  OrderLineID?: Maybe<Scalars['Int']>;
-};
-
-
-export type MutationDeleteOrderLineArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderID?: Maybe<Scalars['Int']>;
-  OrderLineNumber?: Maybe<Scalars['Int']>;
-};
-
-
-export type MutationDeleteOrderArgs = {
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateUserInfoArgs = {
-  UserInfo: UpdateUserInfo;
-  _id?: Maybe<Scalars['Int']>;
-  Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
-};
-
-
-export type MutationUpdateContainerArgs = {
-  Container: UpdateContainer;
-  _id?: Maybe<Scalars['Int']>;
-  Barcode?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateContainerListArgs = {
-  Container: UpdateContainer;
-  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
-};
-
-
-export type MutationUpdateOrderLineDetailArgs = {
-  OrderLineDetail: UpdateOrderLineDetail;
-  _id?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  OrderLineID?: Maybe<Scalars['Int']>;
-  OrderID?: Maybe<Scalars['Int']>;
-  ContainerID?: Maybe<Scalars['Int']>;
+export type MutationUpdateOrderArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  Order: UpdateOrder;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -256,87 +269,94 @@ export type MutationUpdateOrderLineArgs = {
 };
 
 
-export type MutationUpdateOrderArgs = {
-  Order: UpdateOrder;
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
+export type MutationUpdateOrderLineDetailArgs = {
+  ContainerID?: InputMaybe<Scalars['Int']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineDetail: UpdateOrderLineDetail;
+  OrderLineID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateUserInfoArgs = {
+  Name?: InputMaybe<Scalars['String']>;
+  UserInfo: UpdateUserInfo;
+  ZoneID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type Order = {
   __typename?: 'Order';
-  _id: Scalars['Int'];
-  DistributionCenter: Scalars['String'];
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
-  LastUpdated?: Maybe<Scalars['String']>;
-  CustomerNumber?: Maybe<Scalars['String']>;
   BranchID?: Maybe<Scalars['String']>;
-  OrderStatusCode?: Maybe<Scalars['String']>;
-  ShipmentMethodID?: Maybe<Scalars['String']>;
-  OrderType?: Maybe<Scalars['String']>;
-  isSelected: Scalars['Int'];
-  ShipmentMethod?: Maybe<ShipmentMethod>;
-  ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
+  CustomerNumber?: Maybe<Scalars['String']>;
+  DistributionCenter: Scalars['String'];
+  LastUpdated?: Maybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
+  OrderNumber: Scalars['String'];
+  OrderStatusCode?: Maybe<Scalars['String']>;
+  OrderType?: Maybe<Scalars['String']>;
+  ShipmentMethod?: Maybe<ShipmentMethod>;
+  ShipmentMethodID?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+  isSelected: Scalars['Int'];
 };
 
 export type OrderForAgOut = {
   __typename?: 'OrderForAgOut';
+  NOSINumber: Scalars['String'];
   OrderID: Scalars['Int'];
   OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
 };
 
 export type OrderLine = {
   __typename?: 'OrderLine';
-  _id: Scalars['Int'];
+  LastUpdated?: Maybe<Scalars['String']>;
+  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  Order: Order;
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
   Quantity?: Maybe<Scalars['Float']>;
-  LastUpdated?: Maybe<Scalars['String']>;
-  ProductID: Scalars['Int'];
-  Product: Product;
-  Order: Order;
-  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  _id: Scalars['Int'];
 };
 
 export type OrderLineDetail = {
   __typename?: 'OrderLineDetail';
-  _id: Scalars['Int'];
-  OrderLineID: Scalars['Int'];
-  StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID: Scalars['Int'];
-  Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS: Scalars['Boolean'];
-  LastUpdated?: Maybe<Scalars['String']>;
-  OrderID: Scalars['Int'];
   BinLocation?: Maybe<Scalars['String']>;
-  WMSPriority: Scalars['Int'];
-  OrderLine: OrderLine;
-  Status: OrderStatus;
   Container: Container;
+  ContainerID: Scalars['Int'];
+  CountryOfOrigin?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  LastUpdated?: Maybe<Scalars['String']>;
   Order: Order;
+  OrderID: Scalars['Int'];
+  OrderLine: OrderLine;
+  OrderLineID: Scalars['Int'];
+  ParentITN?: Maybe<Scalars['String']>;
+  Quantity: Scalars['Float'];
+  ROHS: Scalars['Boolean'];
+  Status: OrderStatus;
+  StatusID: Scalars['Int'];
+  WMSPriority: Scalars['Int'];
+  _id: Scalars['Int'];
 };
 
 export type OrderStatus = {
   __typename?: 'OrderStatus';
-  _id: Scalars['Int'];
   Name: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type Product = {
   __typename?: 'Product';
-  _id: Scalars['Int'];
-  ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type ProdunctInfoFromMerp = {
@@ -349,385 +369,422 @@ export type ProdunctInfoFromMerp = {
 
 export type Query = {
   __typename?: 'Query';
-  fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  countOrderItns: Scalars['Int'];
+  fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
+  fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
+  fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
+  fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
+  fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPrinterStation: Scalars['String'];
-  countOrderItns: Scalars['Int'];
-  fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
-  fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
-  fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
+  fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
-  fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
+  fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
+  findContainer?: Maybe<Array<Maybe<Container>>>;
+  findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findOrder?: Maybe<Array<Maybe<Order>>>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
+  findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
+  findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
   findZone?: Maybe<Array<Maybe<Zone>>>;
-  findContainer?: Maybe<Array<Maybe<Container>>>;
-  findContainerList?: Maybe<Array<Maybe<Container>>>;
-  findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
-  findOrder?: Maybe<Array<Maybe<Order>>>;
 };
 
 
-export type QueryFetchProductInfoFromMerpArgs = {
-  ProductList: Array<Maybe<Scalars['String']>>;
+export type QueryCountOrderItnsArgs = {
+  LocationCode: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchHoldOnCounterArgs = {
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+
+export type QueryFetchItnLifecycleArgs = {
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+
+export type QueryFetchOrderLineDetailforWmsCountArgs = {
+  filter?: InputMaybe<SearchIntForWmsCount>;
 };
 
 
 export type QueryFetchOrderLineMessageArgs = {
   CustomerNumber: Scalars['String'];
   DistributionCenter: Scalars['String'];
-  OrderNumber: Scalars['String'];
   OrderLineNumber: Scalars['String'];
-};
-
-
-export type QueryFetchPartMessageArgs = {
-  ProductCode: Scalars['String'];
-  PartNumber: Scalars['String'];
-};
-
-
-export type QueryCountOrderItnsArgs = {
-  LocationCode: Scalars['String'];
   OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
+};
+
+
+export type QueryFetchOrderTasktimeArgs = {
+  Order?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
 export type QueryFetchOrderViewArgs = {
-  filter?: Maybe<OrderViewFilter>;
+  filter?: InputMaybe<OrderViewFilter>;
 };
 
 
-export type QueryFetchOrderLineDetailforWmsCountArgs = {
-  filter?: Maybe<SearchIntForWmsCount>;
+export type QueryFetchPartMessageArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 
-export type QueryFetchHoldOnCounterArgs = {
-  startDate: Scalars['String'];
-  endDate: Scalars['String'];
+export type QueryFetchProductInfoFromMerpArgs = {
+  ProductList: Array<InputMaybe<Scalars['String']>>;
 };
 
 
 export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
-  startDate: Scalars['String'];
   endDate: Scalars['String'];
-};
-
-
-export type QueryFetchOrderTasktimeArgs = {
-  Order?: Maybe<Scalars['String']>;
-  limit: Scalars['Int'];
-};
-
-
-export type QueryFindOrderByStatusArgs = {
-  PriorityPinkPaper?: Maybe<Scalars['Boolean']>;
-  StatusID: Scalars['Int'];
-};
-
-
-export type QueryFindUserEventLogArgs = {
-  UserEventLog: SearchUserEventLog;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  Module?: Maybe<Scalars['Int']>;
-  endDate?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryFindUserInfoArgs = {
-  UserInfo?: Maybe<SearchUserInfo>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindZoneArgs = {
-  ZoneInfo?: Maybe<SearchZone>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  startDate: Scalars['String'];
 };
 
 
 export type QueryFindContainerArgs = {
   Container: SearchContainer;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryFindContainerListArgs = {
-  idList?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  BarcodeList?: Maybe<Array<Maybe<Scalars['String']>>>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindOrderLineDetailArgs = {
-  OrderLineDetail: SearchOrderLineDetail;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryFindOrderLineArgs = {
-  OrderLine: SearchOrderLine;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  Limit?: InputMaybe<Scalars['Int']>;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryFindOrderArgs = {
   Order: SearchOrder;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindOrderByStatusArgs = {
+  PriorityPinkPaper?: InputMaybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
+};
+
+
+export type QueryFindOrderLineArgs = {
+  OrderLine: SearchOrderLine;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindOrderLineDetailArgs = {
+  OrderLineDetail: SearchOrderLineDetail;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindUserEventLogArgs = {
+  Module?: InputMaybe<Scalars['Int']>;
+  UserEventLog: SearchUserEventLog;
+  endDate?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  startDate?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFindUserInfoArgs = {
+  UserInfo?: InputMaybe<SearchUserInfo>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindZoneArgs = {
+  ZoneInfo?: InputMaybe<SearchZone>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type Response = {
   __typename?: 'Response';
-  success: Scalars['Boolean'];
   message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
 };
 
 export type ShipmentMethod = {
   __typename?: 'ShipmentMethod';
-  _id: Scalars['String'];
-  ShippingMethod: Scalars['String'];
   PriorityPinkPaper: Scalars['Boolean'];
+  ShippingMethod: Scalars['String'];
+  _id: Scalars['String'];
 };
 
 export type UserEvent = {
   __typename?: 'UserEvent';
-  _id: Scalars['String'];
   Event: Scalars['String'];
   Module: Scalars['String'];
   USEREVENTLOGs?: Maybe<Array<Maybe<UserEventLog>>>;
+  _id: Scalars['String'];
 };
 
 export type UserEventLog = {
   __typename?: 'UserEventLog';
-  _id: Scalars['Int'];
-  OrderNumber: Scalars['String'];
-  NOSINumber: Scalars['String'];
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
+  DateTime: Scalars['String'];
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
-  UserID: Scalars['Int'];
-  UserEventID: Scalars['Int'];
-  DateTime: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNumber: Scalars['String'];
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
+  UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
 };
 
 export type UserInfo = {
   __typename?: 'UserInfo';
-  _id: Scalars['Int'];
   Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Zone>;
+  ZoneID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
 };
 
 export type WmsStatusView = {
   __typename?: 'WMSStatusView';
-  StatusID: Scalars['Int'];
-  Status: Scalars['String'];
+  Head_Priority: Scalars['Int'];
+  Head_Total: Scalars['Int'];
   ITN_Priority: Scalars['Int'];
   ITN_Total: Scalars['Int'];
   Line_Priority: Scalars['Int'];
   Line_Total: Scalars['Int'];
-  Head_Priority: Scalars['Int'];
-  Head_Total: Scalars['Int'];
+  Status: Scalars['String'];
+  StatusID: Scalars['Int'];
 };
 
 export type Zone = {
   __typename?: 'Zone';
-  _id: Scalars['Int'];
   DistributionCenter: Scalars['String'];
-  Zone: Scalars['Int'];
   USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
+  Zone: Scalars['Int'];
+  _id: Scalars['Int'];
 };
 
 export type InsertOrder = {
+  BranchID?: InputMaybe<Scalars['String']>;
+  CustomerNumber?: InputMaybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
-  OrderNumber: Scalars['String'];
+  LastUpdated?: InputMaybe<Scalars['String']>;
   NOSINumber: Scalars['String'];
-  LastUpdated?: Maybe<Scalars['String']>;
-  CustomerNumber?: Maybe<Scalars['String']>;
-  BranchID?: Maybe<Scalars['String']>;
-  OrderStatusCode?: Maybe<Scalars['String']>;
-  ShipmentMethodID?: Maybe<Scalars['String']>;
-  OrderType?: Maybe<Scalars['String']>;
+  OrderNumber: Scalars['String'];
+  OrderStatusCode?: InputMaybe<Scalars['String']>;
+  OrderType?: InputMaybe<Scalars['String']>;
+  ShipmentMethodID?: InputMaybe<Scalars['String']>;
 };
 
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
-  Quantity?: Maybe<Scalars['Float']>;
+  ProductCode: Scalars['String'];
+  Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type InsertOrderLineDetail = {
-  OrderLineID: Scalars['Int'];
-  StatusID: Scalars['Int'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
-  Quantity: Scalars['Float'];
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
-  OrderID: Scalars['Int'];
   BinLocation: Scalars['String'];
-  WMSPriority?: Maybe<Scalars['Int']>;
+  ContainerID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  OrderID: Scalars['Int'];
+  OrderLineID: Scalars['Int'];
+  ParentITN?: InputMaybe<Scalars['String']>;
+  Quantity: Scalars['Float'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  StatusID: Scalars['Int'];
+  WMSPriority?: InputMaybe<Scalars['Int']>;
 };
 
 export type InsertProduct = {
-  ProductCode: Scalars['String'];
   PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 export type InsertUserEventLog = {
-  OrderNumber: Scalars['String'];
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  Message?: InputMaybe<Scalars['String']>;
   NOSINumber: Scalars['String'];
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  Message?: Maybe<Scalars['String']>;
-  UserID: Scalars['Int'];
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber: Scalars['String'];
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
+  UserID: Scalars['Int'];
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type InsertUserInfo = {
   Name: Scalars['String'];
-  ZoneID?: Maybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
   __typename?: 'orderTasktime';
   Order: Scalars['String'];
-  qcFirst?: Maybe<Scalars['String']>;
-  qcLast?: Maybe<Scalars['String']>;
   agIn?: Maybe<Scalars['String']>;
   agOut?: Maybe<Scalars['String']>;
+  qcFirst?: Maybe<Scalars['String']>;
+  qcLast?: Maybe<Scalars['String']>;
 };
 
 export type OrderView = {
   __typename?: 'orderView';
-  OrderID?: Maybe<Scalars['Int']>;
+  Aggregated?: Maybe<Scalars['Int']>;
   DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
+  InProcess?: Maybe<Scalars['Int']>;
   NOSINumber?: Maybe<Scalars['String']>;
-  StatusID?: Maybe<Scalars['Int']>;
-  Status?: Maybe<Scalars['String']>;
+  OrderID?: Maybe<Scalars['Int']>;
+  OrderNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ShippingMethod?: Maybe<Scalars['String']>;
+  Status?: Maybe<Scalars['String']>;
+  StatusID?: Maybe<Scalars['Int']>;
   Unpicked?: Maybe<Scalars['Int']>;
-  Aggregated?: Maybe<Scalars['Int']>;
-  InProcess?: Maybe<Scalars['Int']>;
 };
 
 export type OrderViewFilter = {
-  DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
-  Priority?: Maybe<Scalars['Boolean']>;
-  ShippingMethod?: Maybe<Scalars['String']>;
-  Status?: Maybe<Scalars['String']>;
-  StatusID?: Maybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ShippingMethod?: InputMaybe<Scalars['String']>;
+  Status?: InputMaybe<Scalars['String']>;
+  StatusID?: InputMaybe<Scalars['Int']>;
 };
 
 export type Route_Table = {
   __typename?: 'route_table';
-  lpn: Scalars['String'];
   dest: Scalars['Int'];
   dt: Scalars['String'];
+  lpn: Scalars['String'];
 };
 
 export type SearchContainer = {
-  _id?: Maybe<Scalars['Int']>;
-  ContainerTypeID?: Maybe<Scalars['Int']>;
-  Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
-  EquipmentID?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Warehouse?: Maybe<Scalars['String']>;
-  Row?: Maybe<Scalars['String']>;
-  Aisle?: Maybe<Scalars['String']>;
-  Section?: Maybe<Scalars['String']>;
-  Shelf?: Maybe<Scalars['String']>;
-  ShelfDetail?: Maybe<Scalars['String']>;
+  Aisle?: InputMaybe<Scalars['String']>;
+  Barcode?: InputMaybe<Scalars['String']>;
+  ContainerTypeID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  EquipmentID?: InputMaybe<Scalars['Int']>;
+  Row?: InputMaybe<Scalars['String']>;
+  Section?: InputMaybe<Scalars['String']>;
+  Shelf?: InputMaybe<Scalars['String']>;
+  ShelfDetail?: InputMaybe<Scalars['String']>;
+  Warehouse?: InputMaybe<Scalars['String']>;
+  Zone?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchIntForWmsCount = {
+  Priority?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
-  Priority?: Maybe<Scalars['Boolean']>;
 };
 
 export type SearchOrder = {
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
-  CustomerNumber?: Maybe<Scalars['String']>;
-  BranchID?: Maybe<Scalars['String']>;
-  OrderStatusCode?: Maybe<Scalars['String']>;
-  ShipmentMethodID?: Maybe<Scalars['String']>;
-  OrderType?: Maybe<Scalars['String']>;
-  isSelected?: Maybe<Scalars['Int']>;
+  BranchID?: InputMaybe<Scalars['String']>;
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  OrderStatusCode?: InputMaybe<Scalars['String']>;
+  OrderType?: InputMaybe<Scalars['String']>;
+  ShipmentMethodID?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+  isSelected?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchOrderLine = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderID?: Maybe<Scalars['Int']>;
-  OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchOrderLineDetail = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderLineID?: Maybe<Scalars['Int']>;
-  StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
-  Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
-  OrderID?: Maybe<Scalars['Int']>;
-  BinLocation?: Maybe<Scalars['String']>;
-  WMSPriority?: Maybe<Scalars['Int']>;
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ContainerID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineID?: InputMaybe<Scalars['Int']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  StatusID?: InputMaybe<Scalars['Int']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchUserEventLog = {
-  _id?: Maybe<Scalars['Int']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  Message?: Maybe<Scalars['String']>;
-  UserID?: Maybe<Scalars['Int']>;
-  UserEventID?: Maybe<Scalars['Int']>;
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  Message?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
+  UserEventID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchUserInfo = {
-  _id?: Maybe<Scalars['Int']>;
-  Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Name?: InputMaybe<Scalars['String']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchZone = {
-  _id?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  Zone?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type TaskCounter = {
@@ -738,57 +795,57 @@ export type TaskCounter = {
 };
 
 export type UpdateContainer = {
-  ContainerTypeID?: Maybe<Scalars['Int']>;
-  Barcode?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['String']>;
-  EquipmentID?: Maybe<Scalars['Int']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Warehouse?: Maybe<Scalars['String']>;
-  Row?: Maybe<Scalars['String']>;
-  Aisle?: Maybe<Scalars['String']>;
-  Section?: Maybe<Scalars['String']>;
-  Shelf?: Maybe<Scalars['String']>;
-  ShelfDetail?: Maybe<Scalars['String']>;
+  Aisle?: InputMaybe<Scalars['String']>;
+  Barcode?: InputMaybe<Scalars['String']>;
+  ContainerTypeID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  EquipmentID?: InputMaybe<Scalars['Int']>;
+  Row?: InputMaybe<Scalars['String']>;
+  Section?: InputMaybe<Scalars['String']>;
+  Shelf?: InputMaybe<Scalars['String']>;
+  ShelfDetail?: InputMaybe<Scalars['String']>;
+  Warehouse?: InputMaybe<Scalars['String']>;
+  Zone?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOrder = {
-  DistributionCenter?: Maybe<Scalars['String']>;
-  OrderNumber?: Maybe<Scalars['String']>;
-  NOSINumber?: Maybe<Scalars['String']>;
-  CustomerNumber?: Maybe<Scalars['String']>;
-  BranchID?: Maybe<Scalars['String']>;
-  OrderStatusCode?: Maybe<Scalars['String']>;
-  ShipmentMethodID?: Maybe<Scalars['String']>;
-  OrderType?: Maybe<Scalars['String']>;
-  isSelected?: Maybe<Scalars['Int']>;
+  BranchID?: InputMaybe<Scalars['String']>;
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  OrderStatusCode?: InputMaybe<Scalars['String']>;
+  OrderType?: InputMaybe<Scalars['String']>;
+  ShipmentMethodID?: InputMaybe<Scalars['String']>;
+  isSelected?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateOrderLine = {
-  OrderID?: Maybe<Scalars['Int']>;
-  OrderLineNumber?: Maybe<Scalars['Int']>;
-  ProductCode?: Maybe<Scalars['String']>;
-  PartNumber?: Maybe<Scalars['String']>;
-  Quantity?: Maybe<Scalars['Float']>;
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateOrderLineDetail = {
-  OrderLineID?: Maybe<Scalars['Int']>;
-  StatusID?: Maybe<Scalars['Int']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
-  ContainerID?: Maybe<Scalars['Int']>;
-  Quantity?: Maybe<Scalars['Float']>;
-  DateCode?: Maybe<Scalars['String']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
-  ParentITN?: Maybe<Scalars['String']>;
-  ROHS?: Maybe<Scalars['Boolean']>;
-  OrderID?: Maybe<Scalars['Int']>;
-  BinLocation?: Maybe<Scalars['String']>;
-  WMSPriority?: Maybe<Scalars['Int']>;
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ContainerID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineID?: InputMaybe<Scalars['Int']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  StatusID?: InputMaybe<Scalars['Int']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateUserInfo = {
-  Name?: Maybe<Scalars['String']>;
-  ZoneID?: Maybe<Scalars['Int']>;
+  Name?: InputMaybe<Scalars['String']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
@@ -796,61 +853,14 @@ export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = (
-  { __typename?: 'Query' }
-  & { findContainer?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Container' }
-    & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLineDetail' }
-      & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
-      & { Status: (
-        { __typename?: 'OrderStatus' }
-        & Pick<Types.OrderStatus, 'Name'>
-      ), OrderLine: (
-        { __typename?: 'OrderLine' }
-        & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-      ), Order: (
-        { __typename?: 'Order' }
-        & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-        & { ShipmentMethod?: Types.Maybe<(
-          { __typename?: 'ShipmentMethod' }
-          & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-        )> }
-      ) }
-    )>>> }
-  )>>> }
-);
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', InternalTrackingNumber?: string | null, Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', ProductCode: string, PartNumber: string, OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null };
 
 export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
   InternalTrackingNumber: Types.Scalars['String'];
 }>;
 
 
-export type FindItNforSearchBarcodeQuery = (
-  { __typename?: 'Query' }
-  & { findOrderLineDetail?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'OrderLineDetail' }
-    & Pick<Types.OrderLineDetail, 'InternalTrackingNumber'>
-    & { Status: (
-      { __typename?: 'OrderStatus' }
-      & Pick<Types.OrderStatus, 'Name'>
-    ), Container: (
-      { __typename?: 'Container' }
-      & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-    ), OrderLine: (
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-    ), Order: (
-      { __typename?: 'Order' }
-      & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-      & { ShipmentMethod?: Types.Maybe<(
-        { __typename?: 'ShipmentMethod' }
-        & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-      )> }
-    ) }
-  )>>> }
-);
+export type FindItNforSearchBarcodeQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', InternalTrackingNumber?: string | null, Status: { __typename?: 'OrderStatus', Name: string }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, OrderLine: { __typename?: 'OrderLine', ProductCode: string, PartNumber: string, OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null };
 
 export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -859,31 +869,7 @@ export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindOrderForSearchBarcodeQuery = (
-  { __typename?: 'Query' }
-  & { findOrder?: Types.Maybe<Array<Types.Maybe<(
-    { __typename?: 'Order' }
-    & Pick<Types.Order, 'OrderNumber' | 'NOSINumber'>
-    & { ShipmentMethod?: Types.Maybe<(
-      { __typename?: 'ShipmentMethod' }
-      & Pick<Types.ShipmentMethod, 'PriorityPinkPaper'>
-    )>, ORDERLINEs?: Types.Maybe<Array<Types.Maybe<(
-      { __typename?: 'OrderLine' }
-      & Pick<Types.OrderLine, 'ProductCode' | 'PartNumber' | 'OrderLineNumber'>
-      & { ORDERLINEDETAILs?: Types.Maybe<Array<Types.Maybe<(
-        { __typename?: 'OrderLineDetail' }
-        & Pick<Types.OrderLineDetail, 'InternalTrackingNumber' | 'Quantity'>
-        & { Status: (
-          { __typename?: 'OrderStatus' }
-          & Pick<Types.OrderStatus, 'Name'>
-        ), Container: (
-          { __typename?: 'Container' }
-          & Pick<Types.Container, 'Barcode' | 'Warehouse' | 'Row' | 'Aisle' | 'Section' | 'Shelf' | 'ShelfDetail'>
-        ) }
-      )>>> }
-    )>>> }
-  )>>> }
-);
+export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null, ORDERLINEs?: Array<{ __typename?: 'OrderLine', ProductCode: string, PartNumber: string, OrderLineNumber: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', InternalTrackingNumber?: string | null, Quantity: number, Status: { __typename?: 'OrderStatus', Name: string }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null> | null } | null> | null } | null> | null };
 
 export const FindContainerForSearchBarcodeDocument = gql`
     query findContainerForSearchBarcode($Container: searchContainer!) {

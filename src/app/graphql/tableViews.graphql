@@ -155,3 +155,27 @@ query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
     }
   }
 }
+
+query fetchITNLifecycle($startDate: String!, $endDate: String!) {
+  fetchITNLifecycle(startDate: $startDate, endDate: $endDate) {
+    OrderNumber
+    NOSINumber
+    InternalTrackingNumber
+    PartNumber
+    ProductCode
+    OrderLineNumber
+    CustomerNumber
+    CustomerTier
+    ProductTier
+    Zone
+    WMSPriority
+    Priority
+    TrackingNumber
+    pickStart
+    pickDone
+    qcStart
+    qcDone
+    agStart
+    agDone
+  }
+}

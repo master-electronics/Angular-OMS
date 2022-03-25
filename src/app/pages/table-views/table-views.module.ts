@@ -27,6 +27,7 @@ import { TableViewsRoutingModule } from './table-views.routing';
 import { OrderViewComponent } from './order-view/order-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
+import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.compon
     TaskCounterComponent,
     OrderTasktimeComponent,
     HoldOnCounterComponent,
+    ITNLifecycleComponent,
   ],
   imports: [
     CommonModule,

@@ -10,6 +10,7 @@ import { EventLogComponent } from './event-log/event-log.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
+import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
 
 const routes: Routes = [
   { path: '', component: TableViewsComponent },
@@ -44,6 +45,10 @@ const routes: Routes = [
   {
     path: 'holdoncounter',
     component: HoldOnCounterComponent,
+  },
+  {
+    path: 'itnlifecycle',
+    component: ITNLifecycleComponent,
   },
 ];
 

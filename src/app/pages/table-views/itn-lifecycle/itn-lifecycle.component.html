@@ -1,0 +1,84 @@
+<div class="container px-4 py-4 mx-auto">
+  <form nz-form [formGroup]="filterForm">
+    <div nz-row nzGutter="8" nzJustify="space-between">
+      <nz-form-item nz-col nzSpan="8">
+        <nz-form-label nzRequired> Date </nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="timeRange"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-col nzSpan="10">
+        <button
+          nz-button
+          [nzType]="'primary'"
+          (click)="onSubmit()"
+          [disabled]="isLoading"
+          class="mr-4"
+        >
+          Search
+        </button>
+        <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
+        <button nz-button (click)="exportexcel()">Save</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Event log table -->
+  <div *ngIf="fetchTable$ | async"></div>
+  <nz-table
+    id="excel-table"
+    #table
+    [nzPageSize]="50"
+    nzShowSizeChanger
+    [nzData]="tableData"
+  >
+    <thead>
+      <tr>
+        <th rowspan="2">Order</th>
+        <th rowspan="2">Line</th>
+        <th rowspan="2">ITN</th>
+        <th rowspan="2">Cust</th>
+        <th rowspan="2">Cust Tier</th>
+        <th rowspan="2">Part</th>
+        <th rowspan="2">Part Tier</th>
+        <th rowspan="2">Zone</th>
+        <th colspan="3">Pick</th>
+        <th colspan="3">QC</th>
+        <th colspan="3">Aggregation</th>
+      </tr>
+      <tr>
+        <th>Start</th>
+        <th>End</th>
+        <th>Elapsed</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Elapsed</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Elapsed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data; let i = index">
+        <td>{{ data.OrderNumber }}-{{ data.NOSINumber }}</td>
+        <td>{{ data.OrderLineNumber }}</td>
+        <td>{{ data.InternalTrackingNumber }}</td>
+        <td>{{ data.CustomerNumber }}</td>
+        <td>{{ data.CustomerTier }}</td>
+        <td>{{ data.PartNumber.trim() }}-{{ data.ProductCode }}</td>
+        <td>{{ data.ProductTier }}</td>
+        <td>{{ data.Zone }}</td>
+        <td>{{ data.pickStart }}</td>
+        <td>{{ data.pickDone }}</td>
+        <td>{{ data.pickElapsed }}</td>
+        <td>{{ data.qcStart }}</td>
+        <td>{{ data.qcDone }}</td>
+        <td>{{ data.qcElapsed }}</td>
+        <td>{{ data.agStart }}</td>
+        <td>{{ data.agDone }}</td>
+        <td>{{ data.agElapsed }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
