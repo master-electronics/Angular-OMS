@@ -97,6 +97,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('countMethodError') countMethodError: ElementRef;
   @ViewChild('countMethods') countMethodsInput: ElementRef;
   @ViewChild('holdInput') holdInput: ElementRef;
+  @ViewChild('quantity') quantityInput: ElementRef;
 
   private subscription = new Subscription();
   constructor(
@@ -174,6 +175,14 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit(): void {
     this.alertMessage = '';
+    if (
+      Number(this.quantityInput.nativeElement.value) !== this.itemInfo.Quantity
+    ) {
+      this.alertMessage = 'Input correct quantity!';
+      this.alertType = 'error';
+      return;
+    }
+
     if (this.verifyPack.invalid || this.isLoading) {
       if (this.verifyPack.get('countMethods').errors) {
         this.countMethodError.nativeElement.classList.remove('hidden');
@@ -256,7 +265,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateCodeInput.nativeElement.select();
   }
   ngAfterViewInit(): void {
-    this.countMethodsInput.nativeElement.select();
+    this.quantityInput.nativeElement.select();
   }
 
   print(): void {
