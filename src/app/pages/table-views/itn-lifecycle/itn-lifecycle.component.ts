@@ -42,7 +42,7 @@ export class ITNLifecycleComponent implements OnInit {
   onSubmit(): void {
     if (this.filterForm.invalid || this.isLoading) return;
     const selectedDate = this.filterForm.get('timeRange').value;
-    const startDate = new Date(selectedDate.setHours(0, 0, 0, 0)).toISOString();
+    const startDate = new Date((selectedDate.setHours(0, 0, 0, 0))).toISOString();
     this.startDate = startDate;
     const endDate = new Date(
       selectedDate.setHours(23, 59, 59, 999)
@@ -60,15 +60,19 @@ export class ITNLifecycleComponent implements OnInit {
               result.agStart = this.timeFormating(item.agStart);
               result.agDone = this.timeFormating(item.agDone);
               result['agElapsed'] =
-                Date.parse(item.agDone) - Date.parse(item.agStart);
+                this.elapsedFormating(Number(item.agDone) - Number(item.agStart));
             }
             if (item.pickStart && item.pickDone) {
-              result['pickElapsed'] =
-                Date.parse(item.pickDone) - Date.parse(item.pickStart);
+              result.pickStart = this.timeFormating(item.pickStart);
+              result.pickDone = this.timeFormating(item.pickDone);
+              result['pickElapsed'] = 
+                this.elapsedFormating(Number(item.pickDone) - Number(item.pickStart));
             }
             if (item.qcDone && item.qcStart) {
+              result.qcStart = this.timeFormating(item.qcStart);
+              result.qcDone = this.timeFormating(item.qcDone);
               result['qcElapsed'] =
-                Date.parse(item.qcDone) - Date.parse(item.qcStart);
+                this.elapsedFormating(Number(item.qcDone) - Number(item.qcStart));
             }
             return result;
           });
@@ -87,6 +91,16 @@ export class ITNLifecycleComponent implements OnInit {
       minute: '2-digit',
       hour12: false,
     });
+  }
+
+  elapsedFormating(elapsed: number): string {
+    const hours = Math.floor(((elapsed)/1000/60/60));
+    const minutes = Math.floor((elapsed - (hours * 60 * 60 * 1000))/1000/60);
+    const seconds = Math.floor((elapsed - (minutes * 60 * 1000))/1000);
+
+    return hours.toString().substring(0,2).padStart(2, '0') + ":" +
+      minutes.toString().substring(0,2).padStart(2, '0') + ":" +
+      seconds.toString().substring(0,2).padStart(2, '0');
   }
 
   exportexcel(): void {
