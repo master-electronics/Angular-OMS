@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, Observable, Subscription, throwError } from 'rxjs';
+import { Observable, Subscription, throwError } from 'rxjs';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';

@@ -9,6 +9,7 @@ export const environment = {
   DC_PH_ID: 1,
   //WMS Status table
   pickComplete_ID: 10,
+  notFound_ID: 15,
   droppedQC_ID: 20,
   warehouseHold_ID: 30,
   salesHold_ID: 40,
@@ -35,6 +36,7 @@ export const environment = {
   Event_Pulling_SelectCart: 401,
   Event_Pulling_PullITN: 402,
   Event_Pulling_SelectLocation: 403,
+  Event_Pulling_NotFound: 404,
   Event_DropOff_Start: 500,
   Event_DropOff_SelectITN: 501,
   Event_DropOff_Done: 502,

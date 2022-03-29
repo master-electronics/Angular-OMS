@@ -21,6 +21,7 @@ import { PickService } from '../pick.server';
 import {
   FindNextItnForPullingGQL,
   UpdateAfterPullingGQL,
+  UpdatePullingNotFoundGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
 
@@ -36,6 +37,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   alertMessage = '';
   init$ = new Observable();
   submit$ = new Observable();
+  notFound$ = new Observable();
   inputRegex = /^(\w{2}\d{8})|(\w{2}-\w{2}-\d{2}-\d{2}-[A-Z]-\d{2})$/;
   lastLocation = '';
   Location = '';
@@ -60,7 +62,8 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     private _titleService: Title,
     private _pickService: PickService,
     private _findNextITN: FindNextItnForPullingGQL,
-    private _updateAfterPulling: UpdateAfterPullingGQL
+    private _updateAfterPulling: UpdateAfterPullingGQL,
+    private _updateNotFound: UpdatePullingNotFoundGQL
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle('Pick a Cart');
@@ -81,6 +84,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   }
 
   fetchNext(): void {
+    this.isLoading = true;
     this.init$ = this._findNextITN
       .fetch(
         {
@@ -92,8 +96,10 @@ export class PullITNComponent implements OnInit, AfterViewInit {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
-        tap(() => {
-          //
+        tap((res) => {
+          if (res.data.findNextITNForPulling === null) {
+            throw 'No pick order found';
+          }
         }),
         map((res) => {
           this.isLoading = false;
@@ -168,12 +174,52 @@ export class PullITNComponent implements OnInit, AfterViewInit {
 
       .pipe(
         map(() => {
-          this.isLoading = false;
           this._pickService.changeLastLocation(this.Location);
           this.lastLocation = this.Location;
           this.step = 'Location';
           this.f.barcodeInput.reset();
           this.barcodeInput.nativeElement.select();
+          this.fetchNext();
+          return true;
+        }),
+        catchError((err) => {
+          this.alertMessage = err;
+          this.alertType = 'error';
+          this.isLoading = false;
+          return [];
+        })
+      );
+  }
+
+  notFound(): void {
+    this.isLoading = true;
+    const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
+    this.notFound$ = this._updateNotFound
+      .mutate(
+        {
+          InventoryID: this.inventoryID,
+          OrderLineDetail: {
+            StatusID: environment.notFound_ID,
+          },
+          log: [
+            {
+              UserEventID: environment.Event_Pulling_NotFound,
+              InventoryTrackingNumber: this.ITN,
+              UserID,
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+            },
+          ],
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map(() => {
+          this.step = 'Location';
+          this.f.barcodeInput.reset();
+          this.barcodeInput.nativeElement.select();
+          this.alertType = 'warning';
+          this.alertMessage = `${this.ITN} not found`;
           this.fetchNext();
           return true;
         }),

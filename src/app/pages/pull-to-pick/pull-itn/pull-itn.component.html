@@ -40,8 +40,14 @@
         </nz-form-item>
 
         <div *ngIf="submit$ | async"></div>
-        <nz-form-item nz-row nzJustify="center">
-          <div nz-col nzSpan="13">
+        <div *ngIf="notFound$ | async"></div>
+        <nz-form-item
+          *ngIf="inventoryID"
+          nz-row
+          nzJustify="center"
+          nzGutter="16"
+        >
+          <div nz-col nzSpan="24">
             <button
               nz-button
               type="submit"
@@ -88,9 +94,22 @@
           (click)="dropOff()"
           [nzLoading]="isLoading"
           nzSize="large"
+          class="w-full"
         >
           Drop Off
         </button>
+        <div class="bg-red-300 mt-6">
+          <button
+            nz-button
+            (click)="notFound()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            nzGhost
+            class="w-full font-bold"
+          >
+            Not Found
+          </button>
+        </div>
       </div>
     </div>
   </form>

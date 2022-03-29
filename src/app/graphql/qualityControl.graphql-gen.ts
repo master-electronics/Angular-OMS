@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -914,3 +919,25 @@ export type UpdateUserInfo = {
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
+
+export type FetchPrinterStationQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchPrinterStationQuery = { __typename?: 'Query', fetchPrinterStation: string };
+
+export const FetchPrinterStationDocument = gql`
+    query fetchPrinterStation {
+  fetchPrinterStation
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchPrinterStationGQL extends Apollo.Query<FetchPrinterStationQuery, FetchPrinterStationQueryVariables> {
+    document = FetchPrinterStationDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

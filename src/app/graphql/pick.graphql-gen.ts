@@ -83,6 +83,29 @@ export type ItnInfoforPulling = {
   Zone?: Maybe<Scalars['Int']>;
 };
 
+export type ItnLifeCycle = {
+  __typename?: 'ITNLifeCycle';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  agDone?: Maybe<Scalars['String']>;
+  agStart?: Maybe<Scalars['String']>;
+  pickDone?: Maybe<Scalars['String']>;
+  pickStart?: Maybe<Scalars['String']>;
+  qcDone?: Maybe<Scalars['String']>;
+  qcStart?: Maybe<Scalars['String']>;
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   Container: Container;
@@ -403,6 +426,7 @@ export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
+  fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -433,6 +457,12 @@ export type QueryCountOrderItnsArgs = {
 
 
 export type QueryFetchHoldOnCounterArgs = {
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+
+export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
@@ -577,15 +607,25 @@ export type UserEvent = {
 
 export type UserEventLog = {
   __typename?: 'UserEventLog';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
   DateTime: Scalars['String'];
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNumber?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
 };
 
@@ -781,12 +821,22 @@ export type SearchOrderLineDetail = {
 };
 
 export type SearchUserEventLog = {
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
   OrderNumber?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -910,6 +960,15 @@ export type UpdateAfterPullingMutationVariables = Types.Exact<{
 
 
 export type UpdateAfterPullingMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+
+export type UpdatePullingNotFoundMutationVariables = Types.Exact<{
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+  InventoryID: Types.Scalars['Int'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type UpdatePullingNotFoundMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FindItNsInCartForDropOffQueryVariables = Types.Exact<{
   Inventory: Types.SearchInventory;
@@ -1039,6 +1098,28 @@ export const UpdateAfterPullingDocument = gql`
   })
   export class UpdateAfterPullingGQL extends Apollo.Mutation<UpdateAfterPullingMutation, UpdateAfterPullingMutationVariables> {
     document = UpdateAfterPullingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdatePullingNotFoundDocument = gql`
+    mutation updatePullingNotFound($OrderLineDetail: updateOrderLineDetail!, $InventoryID: Int!, $log: [insertUserEventLog]!) {
+  updateOrderLineDetail(
+    OrderLineDetail: $OrderLineDetail
+    InventoryID: $InventoryID
+  )
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdatePullingNotFoundGQL extends Apollo.Mutation<UpdatePullingNotFoundMutation, UpdatePullingNotFoundMutationVariables> {
+    document = UpdatePullingNotFoundDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

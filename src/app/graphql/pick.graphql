@@ -58,6 +58,20 @@ mutation updateAfterPulling(
   }
 }
 
+mutation updatePullingNotFound(
+  $OrderLineDetail: updateOrderLineDetail!
+  $InventoryID: Int!
+  $log: [insertUserEventLog]!
+) {
+  updateOrderLineDetail(
+    OrderLineDetail: $OrderLineDetail
+    InventoryID: $InventoryID
+  )
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+
 query findITNsInCartForDropOff($Inventory: searchInventory!) {
   findInventory(Inventory: $Inventory) {
     ORDERLINEDETAILs {

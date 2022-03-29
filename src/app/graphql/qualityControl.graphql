@@ -1,0 +1,162 @@
+query fetchPrinterStation {
+  fetchPrinterStation
+}
+
+# query verifyITNforQc($Inventory: !) {
+#   findInventory(Inventory: $OrderLineDetail) {
+#     StatusID
+#     ParentITN
+#     Quantity
+#     ROHS
+#     DateCode
+#     CountryOfOrigin
+#     BinLocation
+#     OrderLine {
+#       OrderLineNumber
+#       ProductCode
+#       PartNumber
+#     }
+#     Order {
+#       _id
+#       DistributionCenter
+#       OrderNumber
+#       NOSINumber
+#       CustomerNumber
+#     }
+#   }
+# }
+
+# query fetchProductInfoFromMerp($ProductList: [String]!) {
+#   fetchProductInfoFromMerp(ProductList: $ProductList) {
+#     HazardMaterialLevel
+#     MICPartNumber
+#     UnitOfMeasure
+#   }
+# }
+
+# query qcGlobalMessage(
+#   $CustomerNumber: String!
+#   $DistributionCenter: String!
+#   $OrderNumber: String!
+#   $OrderLineNumber: String!
+#   $ProductCode: String!
+#   $PartNumber: String!
+# ) {
+#   fetchOrderLineMessage(
+#     CustomerNumber: $CustomerNumber
+#     DistributionCenter: $DistributionCenter
+#     OrderNumber: $OrderNumber
+#     OrderLineNumber: $OrderLineNumber
+#   ) {
+#     comments
+#   }
+#   fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+#     comments
+#   }
+# }
+
+# mutation printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
+#   printITNLabel(
+#     InternalTrackingNumber: $InternalTrackingNumber
+#     Station: $Station
+#   ) {
+#     success
+#     message
+#   }
+# }
+
+# query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
+#   findContainer(Container: $Container) {
+#     _id
+#     Row
+#     ContainerTypeID
+#     ORDERLINEDETAILs {
+#       InternalTrackingNumber
+#       StatusID
+#       OrderID
+#     }
+#   }
+#   findOrder(Order: $Order) {
+#     _id
+#     ORDERLINEDETAILs {
+#       InternalTrackingNumber
+#       StatusID
+#       ContainerID
+#     }
+#   }
+# }
+
+# mutation holdQCOrder(
+#   $InternalTrackingNumber: String!
+#   $Status: String!
+#   $Station: String!
+#   $StatusID: Int!
+#   $log: [insertUserEventLog]!
+# ) {
+#   holdQCOrder(
+#     InternalTrackingNumber: $InternalTrackingNumber
+#     Status: $Status
+#     Station: $Station
+#   ) {
+#     success
+#     message
+#   }
+
+#   updateOrderLineDetail(
+#     InternalTrackingNumber: $InternalTrackingNumber
+#     OrderLineDetail: { StatusID: $StatusID }
+#   )
+
+#   insertUserEventLogs(log: $log) {
+#     _id
+#   }
+# }
+
+# mutation updateMerpAfterQcRepack(
+#   $InternalTrackingNumber: String!
+#   $DateCode: String!
+#   $CountryOfOrigin: String!
+#   $ROHS: String!
+#   $CountMethod: String!
+# ) {
+#   changeQCLineInfo(
+#     InternalTrackingNumber: $InternalTrackingNumber
+#     DateCode: $DateCode
+#     CountryOfOrigin: $CountryOfOrigin
+#     ROHS: $ROHS
+#     CountMethod: $CountMethod
+#   ) {
+#     success
+#     message
+#   }
+# }
+
+# mutation updateMerpForLastLineAfterQCRepack(
+#   $OrderNumber: String!
+#   $NOSINumber: String!
+#   $Status: String!
+#   $UserOrStatus: String
+# ) {
+#   updateMerpOrderStatus(
+#     OrderNumber: $OrderNumber
+#     NOSINumber: $NOSINumber
+#     Status: $Status
+#     UserOrStatus: $UserOrStatus
+#   ) {
+#     success
+#     message
+#   }
+#   clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+#     success
+#     message
+#   }
+# }
+
+# query findNewOrderLineDetailAfterUpdateBin(
+#   $OrderLineDetail: searchOrderLineDetail!
+# ) {
+#   findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+#     _id
+#     BinLocation
+#   }
+# }
