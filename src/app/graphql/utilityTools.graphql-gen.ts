@@ -941,6 +941,13 @@ export type Insert_UserEventLogsMutationVariables = Types.Exact<{
 
 export type Insert_UserEventLogsMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
+export type Update_Merp_QcBinMutationVariables = Types.Exact<{
+  InternalTrackingNumber: Types.Scalars['String'];
+}>;
+
+
+export type Update_Merp_QcBinMutation = { __typename?: 'Mutation', updateMerpQCBin: { __typename?: 'Response', success: boolean } };
+
 export const FindItNsByShelfDocument = gql`
     query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
@@ -996,6 +1003,24 @@ export const Insert_UserEventLogsDocument = gql`
   })
   export class Insert_UserEventLogsGQL extends Apollo.Mutation<Insert_UserEventLogsMutation, Insert_UserEventLogsMutationVariables> {
     document = Insert_UserEventLogsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_Merp_QcBinDocument = gql`
+    mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
+  updateMerpQCBin(InternalTrackingNumber: $InternalTrackingNumber) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_Merp_QcBinGQL extends Apollo.Mutation<Update_Merp_QcBinMutation, Update_Merp_QcBinMutationVariables> {
+    document = Update_Merp_QcBinDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -925,6 +925,13 @@ export type FetchPrinterStationQueryVariables = Types.Exact<{ [key: string]: nev
 
 export type FetchPrinterStationQuery = { __typename?: 'Query', fetchPrinterStation: string };
 
+export type VerifyItNforQcQueryVariables = Types.Exact<{
+  Inventory: Types.SearchInventory;
+}>;
+
+
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', BinLocation?: string | null, StatusID: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null } } | null> | null, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
+
 export const FetchPrinterStationDocument = gql`
     query fetchPrinterStation {
   fetchPrinterStation
@@ -936,6 +943,46 @@ export const FetchPrinterStationDocument = gql`
   })
   export class FetchPrinterStationGQL extends Apollo.Query<FetchPrinterStationQuery, FetchPrinterStationQueryVariables> {
     document = FetchPrinterStationDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyItNforQcDocument = gql`
+    query verifyITNforQc($Inventory: searchInventory!) {
+  findInventory(Inventory: $Inventory) {
+    ParentITN
+    QuantityOnHand
+    ROHS
+    DateCode
+    CountryOfOrigin
+    ORDERLINEDETAILs {
+      BinLocation
+      StatusID
+      OrderLine {
+        OrderLineNumber
+      }
+      Order {
+        _id
+        DistributionCenter
+        OrderNumber
+        NOSINumber
+        CustomerNumber
+      }
+    }
+    Product {
+      ProductCode
+      PartNumber
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyItNforQcGQL extends Apollo.Query<VerifyItNforQcQuery, VerifyItNforQcQueryVariables> {
+    document = VerifyItNforQcDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -21,3 +21,15 @@ mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
     _id
   }
 }
+
+mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+
+mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
+  updateMerpQCBin(InternalTrackingNumber: $InternalTrackingNumber) {
+    success
+  }
+}

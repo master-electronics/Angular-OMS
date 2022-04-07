@@ -995,6 +995,14 @@ export type FindOrderByStatusQueryVariables = Types.Exact<{
 
 export type FindOrderByStatusQuery = { __typename?: 'Query', findOrderByStatus?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } | null> | null };
 
+export type FetchItnLifecycleQueryVariables = Types.Exact<{
+  startDate: Types.Scalars['String'];
+  endDate: Types.Scalars['String'];
+}>;
+
+
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, pickStart?: string | null, pickDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null } | null> | null };
+
 export const FetchOrderViewDocument = gql`
     query fetchOrderView($filter: orderViewFilter) {
   fetchOrderView(filter: $filter) {
@@ -1263,6 +1271,42 @@ export const FindOrderByStatusDocument = gql`
   })
   export class FindOrderByStatusGQL extends Apollo.Query<FindOrderByStatusQuery, FindOrderByStatusQueryVariables> {
     document = FindOrderByStatusDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchItnLifecycleDocument = gql`
+    query fetchITNLifecycle($startDate: String!, $endDate: String!) {
+  fetchITNLifecycle(startDate: $startDate, endDate: $endDate) {
+    OrderNumber
+    NOSINumber
+    InternalTrackingNumber
+    PartNumber
+    ProductCode
+    OrderLineNumber
+    CustomerNumber
+    CustomerTier
+    ProductTier
+    Zone
+    WMSPriority
+    Priority
+    TrackingNumber
+    pickStart
+    pickDone
+    qcStart
+    qcDone
+    agStart
+    agDone
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchItnLifecycleGQL extends Apollo.Query<FetchItnLifecycleQuery, FetchItnLifecycleQueryVariables> {
+    document = FetchItnLifecycleDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

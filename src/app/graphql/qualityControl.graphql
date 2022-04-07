@@ -2,29 +2,33 @@ query fetchPrinterStation {
   fetchPrinterStation
 }
 
-# query verifyITNforQc($Inventory: !) {
-#   findInventory(Inventory: $OrderLineDetail) {
-#     StatusID
-#     ParentITN
-#     Quantity
-#     ROHS
-#     DateCode
-#     CountryOfOrigin
-#     BinLocation
-#     OrderLine {
-#       OrderLineNumber
-#       ProductCode
-#       PartNumber
-#     }
-#     Order {
-#       _id
-#       DistributionCenter
-#       OrderNumber
-#       NOSINumber
-#       CustomerNumber
-#     }
-#   }
-# }
+query verifyITNforQc($Inventory: searchInventory!) {
+  findInventory(Inventory: $Inventory) {
+    ParentITN
+    QuantityOnHand
+    ROHS
+    DateCode
+    CountryOfOrigin
+    ORDERLINEDETAILs {
+      BinLocation
+      StatusID
+      OrderLine {
+        OrderLineNumber
+      }
+      Order {
+        _id
+        DistributionCenter
+        OrderNumber
+        NOSINumber
+        CustomerNumber
+      }
+    }
+    Product {
+      ProductCode
+      PartNumber
+    }
+  }
+}
 
 # query fetchProductInfoFromMerp($ProductList: [String]!) {
 #   fetchProductInfoFromMerp(ProductList: $ProductList) {

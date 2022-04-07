@@ -24,11 +24,6 @@ mutation update_Container(
   updateContainer(_id: $_id, Barcode: $Barcode, Container: $Container)
 }
 
-mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
 
 query find_OrderLineDetail($detail: searchOrderLineDetail!) {
   findOrderLineDetail(OrderLineDetail: $detail) {
@@ -54,11 +49,5 @@ query find_OrderLineDetail($detail: searchOrderLineDetail!) {
       Shelf
       ShelfDetail
     }
-  }
-}
-
-mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
-  updateMerpQCBin(InternalTrackingNumber: $InternalTrackingNumber) {
-    success
   }
 }

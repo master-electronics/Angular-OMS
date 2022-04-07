@@ -18,7 +18,7 @@ import { Title } from '@angular/platform-browser';
 import {
   Insert_UserEventLogsGQL,
   Update_Merp_QcBinGQL,
-} from 'src/app/graphql/wms.graphql-gen';
+} from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'scan-itn',
@@ -76,69 +76,74 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.verifyITNQC
         .fetch(
-          { OrderLineDetail: { InternalTrackingNumber: ITN } },
+          { Inventory: { InventoryTrackingNumber: ITN } },
           { fetchPolicy: 'network-only' }
         )
         .pipe(
           // check vaild
           tap((res) => {
-            if (!res.data.findOrderLineDetail?.length) {
+            if (!res.data.findInventory?.length) {
               throw 'Can not find this ITN';
             }
-            if (res.data.findOrderLineDetail.length > 1) {
+            if (res.data.findInventory.length > 1) {
               throw 'Invalid ITN';
             }
             let error = '';
             if (
               !['qc'].includes(
-                res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim()
+                res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
               ) &&
-              !res.data.findOrderLineDetail[0].BinLocation.toLowerCase()
+              !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
                 .match(regex)
             ) {
-              error = `The Binlocation ${res.data.findOrderLineDetail[0].BinLocation} must be QC or hold\n`;
+              error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
             }
             if (
               ![
                 environment.droppedQC_ID,
                 environment.warehouseHold_ID,
                 environment.qcComplete_ID,
-              ].includes(res.data.findOrderLineDetail[0].StatusID)
+              ].includes(res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID)
             ) {
-              error += `Invalid order line status ${res.data.findOrderLineDetail[0].StatusID}. Must be 20, 30, or 60`;
+              error += `Invalid order line status ${res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
             if (error) {
               throw error;
             }
           }),
           switchMap((res) => {
-            const detail = res.data.findOrderLineDetail[0];
+            const detail = res.data.findInventory[0];
+            const Order = res.data.findInventory[0].ORDERLINEDETAILs[0].Order;
+            const OrderLine =
+              res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine;
             this.itemInfo = {
               InternalTrackingNumber: ITN,
-              OrderID: detail.Order._id,
-              CustomerNumber: detail.Order.CustomerNumber?.trim() || '',
-              DistributionCenter: detail.Order.DistributionCenter?.trim(),
-              OrderNumber: detail.Order.OrderNumber?.trim(),
-              NOSI: detail.Order.NOSINumber?.trim(),
-              OrderLineNumber: detail.OrderLine.OrderLineNumber.toString(),
-              PartNumber: detail.OrderLine.PartNumber?.trim(),
-              ProductCode: detail.OrderLine.ProductCode?.trim(),
-              Quantity: detail.Quantity,
+              OrderID: Order._id,
+              CustomerNumber: Order.CustomerNumber?.trim() || '',
+              DistributionCenter: Order.DistributionCenter?.trim(),
+              OrderNumber: Order.OrderNumber?.trim(),
+              NOSI: Order.NOSINumber?.trim(),
+              OrderLineNumber: OrderLine.OrderLineNumber.toString(),
+              PartNumber: detail.Product.PartNumber?.trim(),
+              ProductCode: detail.Product.ProductCode?.trim(),
+              Quantity: detail.QuantityOnHand,
               ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
-              isQCDrop: detail.BinLocation.toLowerCase().trim() === 'qc',
+              isQCDrop:
+                detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() ===
+                'qc',
             };
             const log = [
               {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                OrderNumber: detail.Order.OrderNumber?.trim(),
-                NOSINumber: detail.Order.NOSINumber.trim(),
+                OrderNumber: Order.OrderNumber.trim(),
+                NOSINumber: Order.NOSINumber.trim(),
                 InternalTrackingNumber: ITN,
                 UserEventID: environment.Event_QC_Start,
               },
