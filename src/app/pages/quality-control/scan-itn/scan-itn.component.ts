@@ -72,6 +72,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   verfiyITN(ITN: string): void {
     this.isLoading = true;
+    const regex = /^hld*/g;
     this.subscription.add(
       this.verifyITNQC
         .fetch(
@@ -88,7 +89,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid ITN';
             }
             let error = '';
-            const regex = /^hld*/g;
             if (
               !['qc'].includes(
                 res.data.findOrderLineDetail[0].BinLocation.toLowerCase().trim()
@@ -147,7 +147,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             const updateMerpQCBin = this.updateQCBin.mutate({
               InternalTrackingNumber: ITN,
             });
-            const updateQueries = { updateLog, updateMerpQCBin };
+            // update QCBin when bin is hold
+            const updateQueries = this.itemInfo.isQCDrop
+              ? { updateLog }
+              : { updateLog, updateMerpQCBin };
             return forkJoin(updateQueries);
           }),
           tap((res: any) => {
