@@ -27,6 +27,7 @@ import { OrderViewComponent } from './order-view/order-view.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,8 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     ITNViewComponent,
     TaskCounterComponent,
     OrderTasktimeComponent,
+    HoldOnCounterComponent,
+    ITNLifecycleComponent,
   ],
   imports: [
     CommonModule,

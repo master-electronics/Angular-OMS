@@ -170,7 +170,22 @@
     </div>
 
     <!-- count method -->
-    <nz-divider nzText="Count Method"></nz-divider>
+    <nz-divider nzText="Count"></nz-divider>
+    <div nz-row nzGutter="16">
+      <span nz-col nzSpan="4" class="text-lg">Quantity:</span>
+      <input
+        nz-col
+        nzSpan="8"
+        type="number"
+        nz-input
+        nzSize="large"
+        id="quantity"
+        placeholder=""
+        formControlName="quantiry"
+        autocomplete="off"
+        #quantity
+      />
+    </div>
     <div class="grid grid-cols-3 gap-3">
       <div *ngFor="let countMethod of countMethods">
         <label for="countMethods">
