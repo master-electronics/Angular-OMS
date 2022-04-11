@@ -44,7 +44,8 @@ export class QualityControlService {
 }
 
 export interface itemParams {
-  InternalTrackingNumber: string;
+  InventoryTrackingNumber: string;
+  OrderLineDetailID: number;
   CustomerNumber: string;
   DistributionCenter: string;
   OrderID: number;

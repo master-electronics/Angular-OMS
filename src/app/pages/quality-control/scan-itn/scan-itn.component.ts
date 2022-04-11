@@ -118,7 +118,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             const OrderLine =
               res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine;
             this.itemInfo = {
-              InternalTrackingNumber: ITN,
+              InventoryTrackingNumber: ITN,
+              OrderLineDetailID: detail.ORDERLINEDETAILs[0]._id,
               OrderID: Order._id,
               CustomerNumber: Order.CustomerNumber?.trim() || '',
               DistributionCenter: Order.DistributionCenter?.trim(),

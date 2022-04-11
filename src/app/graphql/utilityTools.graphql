@@ -33,3 +33,7 @@ mutation update_Merp_QCBin($InternalTrackingNumber: String!) {
     success
   }
 }
+
+mutation updateContainer($Container: updateContainer!, $ContainerID: Int!) {
+  updateContainer(Container: $Container, _id: $ContainerID)
+}

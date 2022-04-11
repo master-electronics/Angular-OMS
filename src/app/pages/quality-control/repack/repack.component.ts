@@ -16,7 +16,7 @@ import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
-  FindNewOrderLineDetailAfterUpdateBinGQL,
+  FindNewAfterUpdateBinGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
@@ -25,9 +25,8 @@ import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Insert_UserEventLogsGQL,
-  Update_ContainerGQL,
-  Update_OrderLineDetailGQL,
-} from '../../../graphql/wms.graphql-gen';
+  UpdateContainerGQL,
+} from '../../../graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'repack',
@@ -50,12 +49,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthenticationService,
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
-    private updateOrderLineDetail: Update_OrderLineDetailGQL,
-    private updateContainer: Update_ContainerGQL,
+    private updateContainer: UpdateContainerGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
-    private findNewID: FindNewOrderLineDetailAfterUpdateBinGQL,
+    private findNewID: FindNewAfterUpdateBinGQL,
     private gtmService: GoogleTagManagerService
   ) {
     this.titleService.setTitle('qc/repack');
@@ -94,9 +92,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.findNewID
         .fetch(
           {
-            OrderLineDetail: {
-              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
-            },
+            InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
           },
           { fetchPolicy: 'network-only' }
         )
@@ -104,7 +100,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             this.isLoading = false;
             let message = '';
-            if (res.data.findOrderLineDetail[0].BinLocation.trim() !== 'qc') {
+            if (
+              res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.trim() !==
+              'qc'
+            ) {
               this.needSearch = true;
               message = `Bin location is not qc, Click search button again!`;
             }
@@ -362,13 +361,13 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sendGTM(): void {
-    const taskTime = Date.now() - this.qcService.qcStart;
-    this.qcService.resetQCStartTime(Date.now());
-    this.gtmService.pushTag({
-      event: 'QualityControlDone',
-      userID: this.authService.userName,
-      taskTime: taskTime,
-    });
+    // const taskTime = Date.now() - this.qcService.qcStart;
+    // this.qcService.resetQCStartTime(Date.now());
+    // this.gtmService.pushTag({
+    //   event: 'QualityControlDone',
+    //   userID: this.authService.userName,
+    //   taskTime: taskTime,
+    // });
   }
 
   ngOnDestroy(): void {

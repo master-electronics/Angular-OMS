@@ -276,10 +276,10 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sendGTM(): void {
-    this._gtmService.pushTag({
-      event: 'AggregationOut',
-      userID: this._authService.userName,
-    });
+    // this._gtmService.pushTag({
+    //   event: 'AggregationOut',
+    //   userID: this._authService.userName,
+    // });
   }
 
   ngOnDestroy(): void {

@@ -228,9 +228,9 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
   }
 
   sendGTM(): void {
-    this._gtmService.pushTag({
-      event: 'AggregationIn',
-      userID: this._authService.userName,
-    });
+    // this._gtmService.pushTag({
+    //   event: 'AggregationIn',
+    //   userID: this._authService.userName,
+    // });
   }
 }

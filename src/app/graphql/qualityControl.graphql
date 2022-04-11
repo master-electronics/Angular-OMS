@@ -10,6 +10,7 @@ query verifyITNforQc($Inventory: searchInventory!) {
     DateCode
     CountryOfOrigin
     ORDERLINEDETAILs {
+      _id
       BinLocation
       StatusID
       OrderLine {
@@ -30,137 +31,154 @@ query verifyITNforQc($Inventory: searchInventory!) {
   }
 }
 
-# query fetchProductInfoFromMerp($ProductList: [String]!) {
-#   fetchProductInfoFromMerp(ProductList: $ProductList) {
-#     HazardMaterialLevel
-#     MICPartNumber
-#     UnitOfMeasure
-#   }
-# }
+query fetchProductInfoFromMerp($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    HazardMaterialLevel
+    MICPartNumber
+    UnitOfMeasure
+  }
+}
 
-# query qcGlobalMessage(
-#   $CustomerNumber: String!
-#   $DistributionCenter: String!
-#   $OrderNumber: String!
-#   $OrderLineNumber: String!
-#   $ProductCode: String!
-#   $PartNumber: String!
-# ) {
-#   fetchOrderLineMessage(
-#     CustomerNumber: $CustomerNumber
-#     DistributionCenter: $DistributionCenter
-#     OrderNumber: $OrderNumber
-#     OrderLineNumber: $OrderLineNumber
-#   ) {
-#     comments
-#   }
-#   fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
-#     comments
-#   }
-# }
+query qcGlobalMessage(
+  $CustomerNumber: String!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $OrderLineNumber: String!
+  $ProductCode: String!
+  $PartNumber: String!
+) {
+  fetchOrderLineMessage(
+    CustomerNumber: $CustomerNumber
+    DistributionCenter: $DistributionCenter
+    OrderNumber: $OrderNumber
+    OrderLineNumber: $OrderLineNumber
+  ) {
+    comments
+  }
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
+  }
+}
 
-# mutation printITNLabel($InternalTrackingNumber: String!, $Station: String!) {
-#   printITNLabel(
-#     InternalTrackingNumber: $InternalTrackingNumber
-#     Station: $Station
-#   ) {
-#     success
-#     message
-#   }
-# }
+mutation printITNLabel($InventoryTrackingNumber: String!, $Station: String!) {
+  printITNLabel(
+    InternalTrackingNumber: $InventoryTrackingNumber
+    Station: $Station
+  ) {
+    success
+    message
+  }
+}
 
-# query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
-#   findContainer(Container: $Container) {
-#     _id
-#     Row
-#     ContainerTypeID
-#     ORDERLINEDETAILs {
-#       InternalTrackingNumber
-#       StatusID
-#       OrderID
-#     }
-#   }
-#   findOrder(Order: $Order) {
-#     _id
-#     ORDERLINEDETAILs {
-#       InternalTrackingNumber
-#       StatusID
-#       ContainerID
-#     }
-#   }
-# }
+mutation holdQCOrder(
+  $OrderLineDetailID: Int!
+  $InventoryTrackingNumber: String!
+  $Status: String!
+  $Station: String!
+  $StatusID: Int!
+  $log: [insertUserEventLog]!
+) {
+  holdQCOrder(
+    InternalTrackingNumber: $InventoryTrackingNumber
+    Status: $Status
+    Station: $Station
+  ) {
+    success
+    message
+  }
 
-# mutation holdQCOrder(
-#   $InternalTrackingNumber: String!
-#   $Status: String!
-#   $Station: String!
-#   $StatusID: Int!
-#   $log: [insertUserEventLog]!
-# ) {
-#   holdQCOrder(
-#     InternalTrackingNumber: $InternalTrackingNumber
-#     Status: $Status
-#     Station: $Station
-#   ) {
-#     success
-#     message
-#   }
+  updateOrderLineDetail(
+    _id: $OrderLineDetailID
+    OrderLineDetail: { StatusID: $StatusID }
+  )
 
-#   updateOrderLineDetail(
-#     InternalTrackingNumber: $InternalTrackingNumber
-#     OrderLineDetail: { StatusID: $StatusID }
-#   )
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
 
-#   insertUserEventLogs(log: $log) {
-#     _id
-#   }
-# }
+mutation updateAfterQcVerify(
+  $Inventory: updateInventory!
+  $InventoryTrackingNumber: String!
+) {
+  updateInventory(
+    Inventory: $Inventory
+    InventoryTrackingNumber: $InventoryTrackingNumber
+  )
+}
 
-# mutation updateMerpAfterQcRepack(
-#   $InternalTrackingNumber: String!
-#   $DateCode: String!
-#   $CountryOfOrigin: String!
-#   $ROHS: String!
-#   $CountMethod: String!
-# ) {
-#   changeQCLineInfo(
-#     InternalTrackingNumber: $InternalTrackingNumber
-#     DateCode: $DateCode
-#     CountryOfOrigin: $CountryOfOrigin
-#     ROHS: $ROHS
-#     CountMethod: $CountMethod
-#   ) {
-#     success
-#     message
-#   }
-# }
+query findNewAfterUpdateBin($InventoryTrackingNumber: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $InventoryTrackingNumber }
+  ) {
+    _id
+    ORDERLINEDETAILs {
+      BinLocation
+    }
+  }
+}
 
-# mutation updateMerpForLastLineAfterQCRepack(
-#   $OrderNumber: String!
-#   $NOSINumber: String!
-#   $Status: String!
-#   $UserOrStatus: String
-# ) {
-#   updateMerpOrderStatus(
-#     OrderNumber: $OrderNumber
-#     NOSINumber: $NOSINumber
-#     Status: $Status
-#     UserOrStatus: $UserOrStatus
-#   ) {
-#     success
-#     message
-#   }
-#   clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
-#     success
-#     message
-#   }
-# }
+query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
+  findContainer(Container: $Container) {
+    _id
+    Row
+    ContainerTypeID
+    INVENTORies {
+      InventoryTrackingNumber
+      ORDERLINEDETAILs {
+        StatusID
+        OrderID
+      }
+    }
+  }
+  findOrder(Order: $Order) {
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+      Inventory {
+        InventoryTrackingNumber
+        ContainerID
+      }
+    }
+  }
+}
 
-# query findNewOrderLineDetailAfterUpdateBin(
-#   $OrderLineDetail: searchOrderLineDetail!
-# ) {
-#   findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
-#     _id
-#     BinLocation
-#   }
-# }
+mutation updateMerpAfterQcRepack(
+  $InventoryTrackingNumber: String!
+  $DateCode: String!
+  $CountryOfOrigin: String!
+  $ROHS: String!
+  $CountMethod: String!
+) {
+  changeQCLineInfo(
+    InternalTrackingNumber: $InventoryTrackingNumber
+    DateCode: $DateCode
+    CountryOfOrigin: $CountryOfOrigin
+    ROHS: $ROHS
+    CountMethod: $CountMethod
+  ) {
+    success
+    message
+  }
+}
+
+mutation updateMerpForLastLineAfterQCRepack(
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $Status: String!
+  $UserOrStatus: String
+) {
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+    success
+    message
+  }
+}

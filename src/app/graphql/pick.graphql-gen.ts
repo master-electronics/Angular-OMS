@@ -639,9 +639,9 @@ export type UserEventLog = {
 
 export type UserInfo = {
   __typename?: 'UserInfo';
+  Cart?: Maybe<Container>;
   CartID?: Maybe<Scalars['Int']>;
   CartLastUpdated?: Maybe<Scalars['String']>;
-  Container?: Maybe<Container>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;

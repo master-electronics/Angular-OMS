@@ -405,14 +405,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sendGTM(): void {
-    this.gtmService.pushTag({
-      event: 'AggregationOut',
-      userID: this.authService.userName,
-    });
-    this.gtmService.pushTag({
-      event: 'AggregationIn',
-      userID: this.authService.userName,
-    });
+    // this.gtmService.pushTag({
+    //   event: 'AggregationOut',
+    //   userID: this.authService.userName,
+    // });
+    // this.gtmService.pushTag({
+    //   event: 'AggregationIn',
+    //   userID: this.authService.userName,
+    // });
   }
 
   ngOnDestroy(): void {

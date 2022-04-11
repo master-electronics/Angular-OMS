@@ -18,8 +18,8 @@ import {
   HoldQcOrderGQL,
   HoldQcOrderMutationVariables,
   PrintItnLabelGQL,
+  UpdateAfterQcVerifyGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
-import { Update_OrderLineDetailGQL } from 'src/app/graphql/wms.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -106,7 +106,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private commonService: CommonService,
     private titleService: Title,
     private qcService: QualityControlService,
-    private updateWms: Update_OrderLineDetailGQL,
+    private updateAfterQc: UpdateAfterQcVerifyGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
     private holdQCOrder: HoldQcOrderGQL,
@@ -210,9 +210,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qcService.changeItemParams(this.itemInfo);
 
     // send query
-    const updateWms = this.updateWms.mutate({
-      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
-      OrderLineDetail: {
+    const updateAfterQc = this.updateAfterQc.mutate({
+      InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+      Inventory: {
         ROHS: this.itemInfo.ROHS,
         CountryOfOrigin: this.itemInfo.CountryOfOrigin,
         DateCode: this.itemInfo.DateCode,
@@ -222,11 +222,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //check if change then update info to wms
     if (this.isEditable) {
       this.subscription.add(
-        updateWms.subscribe(
+        updateAfterQc.subscribe(
           (res) => {
             let type = '';
             let message = '';
-            if (!res.data.updateOrderLineDetail[0]) {
+            if (!res.data.updateInventory[0]) {
               type = 'error';
               message += `Fail to update SQL`;
             }
@@ -244,7 +244,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             this.router.navigate(['qc'], {
               queryParams: {
                 type: `error`,
-                message: `${this.itemInfo.InternalTrackingNumber} failed\n${error}`,
+                message: `${this.itemInfo.InventoryTrackingNumber} failed\n${error}`,
               },
             });
           }
@@ -273,7 +273,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.printITN$ = this.printITN
       .mutate({
-        InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+        InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
         Station: this.commonService.printerInfo,
       })
       .pipe(
@@ -328,7 +328,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   onHold(): void {
     const Status = this.holdForm.get('holdReason').value;
     const qcHoldOrderInfo = {
-      InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+      OrderLineDetailID: this.itemInfo.OrderLineDetailID,
+      InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
       StatusID: environment.warehouseHold_ID,
@@ -337,7 +338,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.itemInfo.OrderNumber,
           NOSINumber: this.itemInfo.NOSI,
-          InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
           UserEventID: environment.Event_QC_Hold,
           Message: `Hold on ${String(Status).padStart(2, '3')}`,
         },
@@ -363,12 +363,12 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             message = message.concat(`Fail to update SQL`);
           }
           message =
-            `${this.itemInfo.InternalTrackingNumber} hold failed\n`.concat(
+            `${this.itemInfo.InventoryTrackingNumber} hold failed\n`.concat(
               message
             );
           if (!type) {
             type = `warning`;
-            message = `${this.itemInfo.InternalTrackingNumber} is on hold.`;
+            message = `${this.itemInfo.InventoryTrackingNumber} is on hold.`;
           }
           this.sendGTM();
           this.router.navigate(['qc'], {
@@ -379,7 +379,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           this.router.navigate(['qc'], {
             queryParams: {
               type: `error`,
-              message: `${this.itemInfo.InternalTrackingNumber} hold failed.\n${error}`,
+              message: `${this.itemInfo.InventoryTrackingNumber} hold failed.\n${error}`,
             },
           });
           this.isLoading = false;
@@ -389,13 +389,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sendGTM(): void {
-    const taskTime = Date.now() - this.qcService.qcStart;
-    this.qcService.resetQCStartTime(Date.now());
-    this.gtmService.pushTag({
-      event: 'QCHoldOn',
-      userID: this.authService.userName,
-      taskTime: taskTime,
-    });
+    // const taskTime = Date.now() - this.qcService.qcStart;
+    // this.qcService.resetQCStartTime(Date.now());
+    // this.gtmService.pushTag({
+    //   event: 'QCHoldOn',
+    //   userID: this.authService.userName,
+    //   taskTime: taskTime,
+    // });
   }
 
   ngOnDestroy(): void {

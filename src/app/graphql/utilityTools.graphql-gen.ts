@@ -639,9 +639,9 @@ export type UserEventLog = {
 
 export type UserInfo = {
   __typename?: 'UserInfo';
+  Cart?: Maybe<Container>;
   CartID?: Maybe<Scalars['Int']>;
   CartLastUpdated?: Maybe<Scalars['String']>;
-  Container?: Maybe<Container>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;
@@ -962,6 +962,14 @@ export type Update_Merp_QcBinMutationVariables = Types.Exact<{
 
 export type Update_Merp_QcBinMutation = { __typename?: 'Mutation', updateMerpQCBin: { __typename?: 'Response', success: boolean } };
 
+export type UpdateContainerMutationVariables = Types.Exact<{
+  Container: Types.UpdateContainer;
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateContainerMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null };
+
 export const FindItNsByShelfDocument = gql`
     query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
@@ -1035,6 +1043,22 @@ export const Update_Merp_QcBinDocument = gql`
   })
   export class Update_Merp_QcBinGQL extends Apollo.Mutation<Update_Merp_QcBinMutation, Update_Merp_QcBinMutationVariables> {
     document = Update_Merp_QcBinDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateContainerDocument = gql`
+    mutation updateContainer($Container: updateContainer!, $ContainerID: Int!) {
+  updateContainer(Container: $Container, _id: $ContainerID)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateContainerGQL extends Apollo.Mutation<UpdateContainerMutation, UpdateContainerMutationVariables> {
+    document = UpdateContainerDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
