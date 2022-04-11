@@ -128,14 +128,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
         },
         { fetchPolicy: 'network-only' }
       )
-
       .pipe(
-        tap((res) => {
-          const container = res.data.findContainer;
-          if (!container?.length) throw 'Cart not found!';
-          if (container[0].CONTAINERs.length !== 0)
-            throw 'The Cart is not empty!';
-        }),
         switchMap((res) => {
           this._pickService.changeCartInfo({
             id: res.data.findContainer[0]._id,
