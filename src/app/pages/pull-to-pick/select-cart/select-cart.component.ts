@@ -22,7 +22,7 @@ import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import {
   FetchPickingSettingsGQL,
-  VerifyCartBarcodeGQL,
+  VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
@@ -55,7 +55,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     private _titleService: Title,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _verifyCart: VerifyCartBarcodeGQL,
+    private _verifyCart: VerifyCartAndUpdateGQL,
     private _pickService: PickService,
     private _fetchSettings: FetchPickingSettingsGQL,
     private _userLog: Insert_UserEventLogsGQL
@@ -119,19 +119,20 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     }
     this.isLoading = true;
     this.submit$ = this._verifyCart
-      .fetch(
+      .mutate(
         {
           Container: {
             DistributionCenter: environment.DistributionCenter,
             Barcode: this.containerForm.value.containerNumber,
           },
+          UserID: this.userID,
         },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
         switchMap((res) => {
           this._pickService.changeCartInfo({
-            id: res.data.findContainer[0]._id,
+            id: res.data.updateUserCart._id,
             barcode: this.containerForm.value.containerNumber,
           });
           return this._userLog.mutate({

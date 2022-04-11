@@ -1,5 +1,5 @@
-mutation updateUserCar($Container: searchContainer!) {
-  updateUserCar(Container: $Container) {
+mutation verifyCartAndUpdate($Container: searchContainer!, $UserID: Int!) {
+  updateUserCart(Container: $Container, UserID: $UserID) {
     _id
   }
 }
@@ -15,7 +15,7 @@ query fetchPickingSettings($UserInfo: searchUserInfo!) {
     Zone
     StrictPriority
     PriorityCutoff
-    CarID
+    CartID
   }
 }
 
@@ -84,9 +84,12 @@ query findITNsInCartForDropOff($Inventory: searchInventory!) {
 mutation updateAfterDropOff(
   $Inventory: updateInventory!
   $ContainerID: Int!
+  $UserID: Int!
+  $UserInfo: updateUserInfo!
   $log: [insertUserEventLog]!
 ) {
   updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+  updateUserInfo(UserInfo: $UserInfo, _id: $UserID)
   insertUserEventLogs(log: $log) {
     _id
   }

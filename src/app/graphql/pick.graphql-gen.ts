@@ -35,6 +35,7 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
   Warehouse?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
   /**
@@ -153,6 +154,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateUserCart?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
@@ -332,6 +334,12 @@ export type MutationUpdateOrderLineDetailArgs = {
   OrderLineDetail: UpdateOrderLineDetail;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateUserCartArgs = {
+  Container: SearchContainer;
+  UserID: Scalars['Int'];
 };
 
 
@@ -631,6 +639,9 @@ export type UserEventLog = {
 
 export type UserInfo = {
   __typename?: 'UserInfo';
+  CartID?: Maybe<Scalars['Int']>;
+  CartLastUpdated?: Maybe<Scalars['String']>;
+  Container?: Maybe<Container>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;
@@ -707,6 +718,7 @@ export type InsertUserEventLog = {
 };
 
 export type InsertUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
@@ -841,6 +853,7 @@ export type SearchUserEventLog = {
 };
 
 export type SearchUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
@@ -914,18 +927,20 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
-export type VerifyCartBarcodeQueryVariables = Types.Exact<{
+export type VerifyCartAndUpdateMutationVariables = Types.Exact<{
   Container: Types.SearchContainer;
+  UserID: Types.Scalars['Int'];
 }>;
 
 
-export type VerifyCartBarcodeQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerTypeID: number, CONTAINERs?: Array<{ __typename?: 'Container', _id: number } | null> | null } | null> | null };
+export type VerifyCartAndUpdateMutation = { __typename?: 'Mutation', updateUserCart?: { __typename?: 'Container', _id: number } | null };
 
 export type VerifyPositionBarcodeForPullingQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
@@ -939,7 +954,7 @@ export type FetchPickingSettingsQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchPickingSettingsQuery = { __typename?: 'Query', findUserInfo?: Array<{ __typename?: 'UserInfo', Zone?: number | null, StrictPriority?: boolean | null, PriorityCutoff?: number | null } | null> | null };
+export type FetchPickingSettingsQuery = { __typename?: 'Query', findUserInfo?: Array<{ __typename?: 'UserInfo', Zone?: number | null, StrictPriority?: boolean | null, PriorityCutoff?: number | null, CartID?: number | null } | null> | null };
 
 export type FindNextItnForPullingQueryVariables = Types.Exact<{
   Zone: Types.Scalars['Int'];
@@ -980,11 +995,13 @@ export type FindItNsInCartForDropOffQuery = { __typename?: 'Query', findInventor
 export type UpdateAfterDropOffMutationVariables = Types.Exact<{
   Inventory: Types.UpdateInventory;
   ContainerID: Types.Scalars['Int'];
+  UserID: Types.Scalars['Int'];
+  UserInfo: Types.UpdateUserInfo;
   log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 
-export type UpdateAfterDropOffMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+export type UpdateAfterDropOffMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, updateUserInfo?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FindContainerQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
@@ -993,14 +1010,10 @@ export type FindContainerQueryVariables = Types.Exact<{
 
 export type FindContainerQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number } | null> | null };
 
-export const VerifyCartBarcodeDocument = gql`
-    query verifyCartBarcode($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+export const VerifyCartAndUpdateDocument = gql`
+    mutation verifyCartAndUpdate($Container: searchContainer!, $UserID: Int!) {
+  updateUserCart(Container: $Container, UserID: $UserID) {
     _id
-    ContainerTypeID
-    CONTAINERs {
-      _id
-    }
   }
 }
     `;
@@ -1008,8 +1021,8 @@ export const VerifyCartBarcodeDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyCartBarcodeGQL extends Apollo.Query<VerifyCartBarcodeQuery, VerifyCartBarcodeQueryVariables> {
-    document = VerifyCartBarcodeDocument;
+  export class VerifyCartAndUpdateGQL extends Apollo.Mutation<VerifyCartAndUpdateMutation, VerifyCartAndUpdateMutationVariables> {
+    document = VerifyCartAndUpdateDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -1039,6 +1052,7 @@ export const FetchPickingSettingsDocument = gql`
     Zone
     StrictPriority
     PriorityCutoff
+    CartID
   }
 }
     `;
@@ -1150,8 +1164,9 @@ export const FindItNsInCartForDropOffDocument = gql`
     }
   }
 export const UpdateAfterDropOffDocument = gql`
-    mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!, $log: [insertUserEventLog]!) {
+    mutation updateAfterDropOff($Inventory: updateInventory!, $ContainerID: Int!, $UserID: Int!, $UserInfo: updateUserInfo!, $log: [insertUserEventLog]!) {
   updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+  updateUserInfo(UserInfo: $UserInfo, _id: $UserID)
   insertUserEventLogs(log: $log) {
     _id
   }

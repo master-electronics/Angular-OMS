@@ -35,6 +35,7 @@ export type Container = {
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
   ShelfDetail?: Maybe<Scalars['String']>;
+  USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
   Warehouse?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
   /**
@@ -153,6 +154,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateUserCart?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
@@ -332,6 +334,12 @@ export type MutationUpdateOrderLineDetailArgs = {
   OrderLineDetail: UpdateOrderLineDetail;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateUserCartArgs = {
+  Container: SearchContainer;
+  UserID: Scalars['Int'];
 };
 
 
@@ -631,6 +639,9 @@ export type UserEventLog = {
 
 export type UserInfo = {
   __typename?: 'UserInfo';
+  CartID?: Maybe<Scalars['Int']>;
+  CartLastUpdated?: Maybe<Scalars['String']>;
+  Container?: Maybe<Container>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;
@@ -707,6 +718,7 @@ export type InsertUserEventLog = {
 };
 
 export type InsertUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
@@ -841,6 +853,7 @@ export type SearchUserEventLog = {
 };
 
 export type SearchUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
@@ -914,6 +927,7 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateUserInfo = {
+  CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;

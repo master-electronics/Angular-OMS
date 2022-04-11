@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { catchError, map, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';

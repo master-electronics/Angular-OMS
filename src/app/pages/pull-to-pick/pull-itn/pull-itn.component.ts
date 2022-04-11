@@ -16,12 +16,13 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
 import {
   FindNextItnForPullingGQL,
   UpdateAfterPullingGQL,
   UpdatePullingNotFoundGQL,
+  VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
 
@@ -63,6 +64,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     private _pickService: PickService,
     private _findNextITN: FindNextItnForPullingGQL,
     private _updateAfterPulling: UpdateAfterPullingGQL,
+    private _updateUserCart: VerifyCartAndUpdateGQL,
     private _updateNotFound: UpdatePullingNotFoundGQL
   ) {
     this._commonService.changeNavbar(this.title);
@@ -149,30 +151,41 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     this.step = 'Submit';
     this.isLoading = true;
     const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
-    this.submit$ = this._updateAfterPulling
+    this.submit$ = this._updateUserCart
       .mutate(
         {
-          OrderLineDetail: {
-            StatusID: environment.pickComplete_ID,
+          Container: {
+            DistributionCenter: environment.DistributionCenter,
+            Barcode: this._pickService.cartInfo.barcode,
           },
-          Inventory: {
-            ContainerID: this._pickService.cartInfo.id,
-          },
-          InventoryID: this.inventoryID,
-          log: [
-            {
-              UserEventID: environment.Event_Pulling_PullITN,
-              InventoryTrackingNumber: this.ITN,
-              UserID,
-              OrderNumber: this.OrderNumber,
-              NOSINumber: this.NOSINumber,
-            },
-          ],
+          UserID,
         },
         { fetchPolicy: 'network-only' }
       )
-
       .pipe(
+        switchMap(() => {
+          return this._updateAfterPulling.mutate(
+            {
+              OrderLineDetail: {
+                StatusID: environment.pickComplete_ID,
+              },
+              Inventory: {
+                ContainerID: this._pickService.cartInfo.id,
+              },
+              InventoryID: this.inventoryID,
+              log: [
+                {
+                  UserEventID: environment.Event_Pulling_PullITN,
+                  InventoryTrackingNumber: this.ITN,
+                  UserID,
+                  OrderNumber: this.OrderNumber,
+                  NOSINumber: this.NOSINumber,
+                },
+              ],
+            },
+            { fetchPolicy: 'network-only' }
+          );
+        }),
         map(() => {
           this._pickService.changeLastLocation(this.Location);
           this.lastLocation = this.Location;

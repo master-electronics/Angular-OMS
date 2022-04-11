@@ -68,7 +68,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     if (!this._service.cartInfo) {
-      this._router.navigate(['pulltopick']);
+      this._router.navigate(['pulltopick'], { queryParams: { DropAll: true } });
       return;
     }
     this.cartBarcode = this._service.cartInfo.barcode;
@@ -174,6 +174,10 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       this.submit$ = this._updateForDropOff
         .mutate(
           {
+            UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+            UserInfo: {
+              CartID: null,
+            },
             Inventory: {
               ContainerID: this.dropOffID,
             },
