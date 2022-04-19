@@ -16,7 +16,11 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 import { TableViewsComponent } from './table-views.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
@@ -28,6 +32,11 @@ import { OrderViewComponent } from './order-view/order-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
 import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
+import { ColumnSelectorComponent } from './column-selector.component';
+import { LevelSelectorComponent } from './itn-lifecycle/level-selector.component';
+import { LevelSliderComponent } from './level-slider.component';
+import { TabsViewComponent } from './tabs-view.component';
+import { TemplateSettings } from './template-settings.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +50,11 @@ import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
     OrderTasktimeComponent,
     HoldOnCounterComponent,
     ITNLifecycleComponent,
+    ColumnSelectorComponent,
+    LevelSelectorComponent,
+    LevelSliderComponent,
+    TabsViewComponent,
+    TemplateSettings
   ],
   imports: [
     CommonModule,
@@ -60,6 +74,10 @@ import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
     NzDatePickerModule,
     NzSelectModule,
     NzDividerModule,
+    NzModalModule,
+    NzSliderModule,
+    NzTabsModule,
+    NzInputNumberModule
   ],
   bootstrap: [TableViewsComponent],
 })
