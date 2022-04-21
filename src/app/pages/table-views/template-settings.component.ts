@@ -144,6 +144,7 @@ export class TemplateSettings {
     this.selectedTemplateId = null;
     this.templateNameValue = null;
     this.selectedColumns = [];
+    this.allColumns = false;
     this.modalClosed.emit();
   }
 

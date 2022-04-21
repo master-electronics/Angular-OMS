@@ -46,7 +46,7 @@ export class ColumnSelectorComponent {
     constructor() { }
 
     ngOnInit(): void {
-
+        
     }
 
     //handle column checkbox change
