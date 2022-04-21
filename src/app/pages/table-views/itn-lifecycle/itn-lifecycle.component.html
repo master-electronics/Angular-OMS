@@ -13,23 +13,11 @@
             <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}" nzLabel="{{ template.name }}"></nz-option>
           </nz-select>
           <template-settings
-            (checked)="onColumnSelected($event)"
-            (unchecked)="onColumnUnselected($event)"
-            (checked)="onSaveTemplate()"
             (modalClosed)="onModalClose()"
             [templates]="templates"
             [columns]="columns"
-            [selectedColumns]="test"
+            [selectedColumns]="[]"
             [templateNameValue]="templateNameValue"></template-settings>
-          <!--<column-selector
-            (checked)="onColumnSelected($event)"
-            (unchecked)="onColumnUnselected($event)"
-            (modalClosed)="onColumnsChange()"
-            [columns]="columns"
-            [selectedColumns]="columnsVisible"
-            [allColumns]="allColumns">
-          </column-selector>-->
-          <level-selector></level-selector>
         </nz-form-control>
 
       </nz-form-item>
@@ -45,8 +33,7 @@
           Search
         </button>
         <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
-        <button nz-button (click)="exportexcel()">Save</button>
-        <button (click)="testC()">Test</button>
+        <button nz-button (click)="exportexcel()">Export to Excel</button>
       </div>
     </div>
   </form>
@@ -116,15 +103,15 @@
         <td *ngIf="columnsVisible.includes('WMSPriority')">{{ data.WMSPriority }}</td>
         <td *ngIf="columnsVisible.includes('Priority')">{{ data.Priority }}</td>
         <td *ngIf="columnsVisible.includes('Drop')">{{ data.release }}</td>
-        <td *ngIf="columnsVisible.includes('PickStart')" [ngClass]="testE(data.pickElapsedNum)">{{ data.pickStart }}</td>
-        <td *ngIf="columnsVisible.includes('PickEnd')" [ngClass]="data.pickLevel">{{ data.pickDone }}</td>
-        <td *ngIf="columnsVisible.includes('PickElapsed')" [ngClass]="data.pickLevel">{{ data.pickElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('QCStart')" [ngClass]="data.qcLevel">{{ data.qcStart }}</td>
-        <td *ngIf="columnsVisible.includes('QCEnd')" [ngClass]="data.qcLevel">{{ data.qcDone }}</td>
-        <td *ngIf="columnsVisible.includes('QCElapsed')" [ngClass]="data.qcLevel">{{ data.qcElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('AGStart')" [ngClass]="data.agLevel">{{ data.agStart }}</td>
-        <td *ngIf="columnsVisible.includes('AGEnd')" [ngClass]="data.agLevel">{{ data.agDone }}</td>
-        <td *ngIf="columnsVisible.includes('AGElapsed')" [ngClass]="data.agLevel">{{ data.agElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('PickStart')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickStart }}</td>
+        <td *ngIf="columnsVisible.includes('PickEnd')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickDone }}</td>
+        <td *ngIf="columnsVisible.includes('PickElapsed')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('QCStart')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcStart }}</td>
+        <td *ngIf="columnsVisible.includes('QCEnd')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcDone }}</td>
+        <td *ngIf="columnsVisible.includes('QCElapsed')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('AGStart')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agStart }}</td>
+        <td *ngIf="columnsVisible.includes('AGEnd')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agDone }}</td>
+        <td *ngIf="columnsVisible.includes('AGElapsed')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agElapsed }}</td>
         <td *ngIf="columnsVisible.includes('PullingStart')" [ngClass]="data.pullingLevel">{{ data.pullingStart }}</td>
         <td *ngIf="columnsVisible.includes('PullingEnd')" [ngClass]="data.pullingLevel">{{ data.pullingDone }}</td>
         <td *ngIf="columnsVisible.includes('PullingElapsed')" [ngClass]="data.pullingLevel">{{ data.pullingElapsed }}</td>

@@ -34,7 +34,6 @@ import { Subject } from 'rxjs';
           <div nz-col nzSpan="24">
             <level-slider 
             (levelEvent)="pickLowEvent($event)"
-            [lowLevel]="pickLow"
             [levelSubject]="pickLowNotifier"></level-slider>
           </div>
         </div>
@@ -50,7 +49,6 @@ import { Subject } from 'rxjs';
           <div nz-col nzSpan="24">
             <level-slider 
               (levelEvent)="pickMediumEvent($event)"
-              [mediumLevel]="pickMedium"
               [levelSubject]="pickMediumNotifier"></level-slider>
           </div>
         </div>
@@ -198,8 +196,8 @@ export class TabsViewComponent {
   @Input('selectedColumns') selectedColumns: string[];
   @Input('allColumns') allColumnsSelected: boolean;
   //@Input('limits') limits;
-  @Input() testN: Subject<any>;
-  limits;
+  @Input() limitsNotifier: Subject<any>;
+  //limits;
   pickLow;
   pickMedium;
   qcLow;
@@ -211,7 +209,7 @@ export class TabsViewComponent {
   dropoffLow;
   dropoffMedium;
   levelLimits = [];
-  test;
+  //test;
   value: string;
 
   pickLowNotifier: Subject<any> = new Subject<any>();
@@ -231,7 +229,7 @@ export class TabsViewComponent {
     this.value = "";
     const l = this.value.length;
 
-    this.testN.subscribe((data) => {
+    this.limitsNotifier.subscribe((data) => {
       for(let i=0;i<data.length;i++) {
          this[data[i].eventName.toString().toLowerCase()+"LowNotifier"].next(data[i].lowLevelLimit);
          this[data[i].eventName.toString().toLowerCase()+"MediumNotifier"].next(data[i].mediumLevelLimit);
@@ -241,39 +239,39 @@ export class TabsViewComponent {
       }
     });
 
-    const test = "a";
+    //const test = "a";
   }
 
-  testA(): void {
-    this.pickLow = 1000;
-    alert(this.pickLow);
-  }
+  // testA(): void {
+  //   this.pickLow = 1000;
+  //   alert(this.pickLow);
+  // }
   
-  testC(): void {
-    this.testN.subscribe((data) => {
-      //alert("B-"+JSON.stringify(data));
-      try {
-      for(let i=0;i<data.length;i++) {
-        //alert(JSON.stringify(data[i]));
-         //this[data[i].eventName.toString().toLowerCase()+"Low"] = data[i].lowLevelLimit;
-         //this[data[i].eventName.toString().toLowerCase()+"Medium"] = data[i].mediumLevelLimit;
+  // testC(): void {
+  //   this.testN.subscribe((data) => {
+  //     //alert("B-"+JSON.stringify(data));
+  //     try {
+  //     for(let i=0;i<data.length;i++) {
+  //       //alert(JSON.stringify(data[i]));
+  //        //this[data[i].eventName.toString().toLowerCase()+"Low"] = data[i].lowLevelLimit;
+  //        //this[data[i].eventName.toString().toLowerCase()+"Medium"] = data[i].mediumLevelLimit;
 
-         this[data[i].eventName.toString().toLowerCase()+"LowNotifier"] = data[i].lowLevelLimit;
-         this[data[i].eventName.toString().toLowerCase()+"MediumNotifier"] = data[i].mediumLevelLimit;
-      }
-      }
-      catch(error) {
-        alert(error);
-      }
+  //        this[data[i].eventName.toString().toLowerCase()+"LowNotifier"] = data[i].lowLevelLimit;
+  //        this[data[i].eventName.toString().toLowerCase()+"MediumNotifier"] = data[i].mediumLevelLimit;
+  //     }
+  //     }
+  //     catch(error) {
+  //       alert(error);
+  //     }
 
-      // this.pickLowNotifier.next(this.pickLow);
-      // this.pickMediumNotifier.next(this.pickMedium);
-      // this.qcLowNotifier.next(this.qcLow);
-      // this.qcMediumNotifier.next(this.qcMedium);
-      // this.agLowNotifier.next(this.agLow);
-    });
-    //alert("C-"+JSON.stringify(this.limits));
-  }
+  //     // this.pickLowNotifier.next(this.pickLow);
+  //     // this.pickMediumNotifier.next(this.pickMedium);
+  //     // this.qcLowNotifier.next(this.qcLow);
+  //     // this.qcMediumNotifier.next(this.qcMedium);
+  //     // this.agLowNotifier.next(this.agLow);
+  //   });
+  //   //alert("C-"+JSON.stringify(this.limits));
+  // }
 
   onColumnSelected(e): void {
     this.checked.emit(e);

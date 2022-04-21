@@ -10,7 +10,6 @@ import { Column } from '../../../column';
 import { Template } from '../../../template';
 import { LevelLimit } from 'src/app/LevelLimit';
 import { Observable, Subscription } from 'rxjs';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
 
 import { Insert_ItnUserColumnsGQL, Update_ItnUserColumnsGQL, 
   Insert_ItnUserLevelsGQL, Update_ItnUserLevelsGQL, FindItnTemplatesGQL,
@@ -28,18 +27,16 @@ export class ITNLifecycleComponent implements OnInit {
   fetchTable$;
   tableData = [];
   timeformat = {};
-  modalVisible = false;
-  orderVisible;
   columns: Column[];
-  columnList = [];
+  //columnList = [];
   private subscription = new Subscription();
   private templateList = new Subscription();
   private selTempSub = new Subscription();
 
   columnsVisible = [];
-  test = [];
+  //test = [];
   columnsVisibleId = "";
-  allColumns: boolean = false;
+  //allColumns: boolean = false;
   preColSpan=0;
   pickColSpan=0;
   qcColSpan=0;
@@ -47,9 +44,9 @@ export class ITNLifecycleComponent implements OnInit {
   pullingColSpan=0;
   dropoffColSpan=0;
   postColSpan=0;
-  highLevel;
-  mediumLevel;
-  lowLevel;
+  //highLevel;
+  //mediumLevel;
+  //lowLevel;
   templateNames = [];
   templates: Template[];
   selectedTemplate: Template;
@@ -57,7 +54,11 @@ export class ITNLifecycleComponent implements OnInit {
   templateNameValue: string;
   limits: LevelLimit[];
 
-  temp: number;
+  //temp: number;
+  //pickLow: number;
+  //pickMedium: number;
+  //pickHigh: number;
+  //tempClass;
 
   constructor(
     private commonService: CommonService,
@@ -65,7 +66,6 @@ export class ITNLifecycleComponent implements OnInit {
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _fetchITNColumns: FetchItnUserColumnsGQL,
     private _insertITNColumns: Insert_ItnUserColumnsGQL,
-    private _insertEventlog: Insert_UserEventLogsGQL,
     private _updateITNColumns: Update_ItnUserColumnsGQL,
     private _insertITNLevels: Insert_ItnUserLevelsGQL,
     private _updateITNLevels: Update_ItnUserLevelsGQL,
@@ -80,7 +80,8 @@ export class ITNLifecycleComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.temp = 10000;
+    //this.temp = 640000;
+    //this.tempClass = "low";
     this.selectedTemplate = {};
     const UserInfo = sessionStorage.getItem('userInfo');
     const userId = JSON.parse(UserInfo)._id;
@@ -122,35 +123,35 @@ export class ITNLifecycleComponent implements OnInit {
     )
 
     this.columns = [
-      { name: "Order", title: "Order", colSpan: "pre" },
-      { name: "Line", title: "Line", colSpan: "pre" },
-      { name: "ITN", title: "ITN", colSpan: "pre" },
-      { name: "SplitITN", title: "Split ITN", colSpan: "pre" },
-      { name: "Cust", title: "Cust", colSpan: "pre" },
-      { name: "CustTier", title: "Cust Tier", colSpan: "pre" },
-      { name: "Part", title: "Part", colSpan: "pre" },
-      { name: "PartTier", title: "Part Tier", colSpan: "pre" },
-      { name: "Zone", title: "Zone", colSpan: "pre" },
-      { name: "WMSPriority", title: "WMSPriority", colSpan: "pre" },
-      { name: "Priority", title: "Priority", colSpan: "pre" },
-      { name: "Drop", title: "Drop", colSpan: "pre" },
-      { name: "PickStart", title: "Pick Start", colSpan: "pick" },
-      { name: "PickEnd", title: "Pick End", colSpan: "pick" },
-      { name: "PickElapsed", title: "Pick Elapsed", colSpan: "pick" },
-      { name: "QCStart", title: "QC Start", colSpan: "qc" },
-      { name: "QCEnd", title: "QC End", colSpan: "qc" },
-      { name: "QCElapsed", title: "QC Elapsed", colSpan: "qc" },
-      { name: "AGStart", title: "Aggregation Start", colSpan: "ag" },
-      { name: "AGEnd", title: "Aggregation End", colSpan: "ag" },
-      { name: "AGElapsed", title: "Aggregation Elapsed", colSpan: "ag" },
-      { name: "PullingStart", title: "Pulling Start", colSpan: "pulling" },
-      { name: "PullingEnd", title: "Pulling End", colSpan: "pulling" },
-      { name: "PullingElapsed", title: "Pulling Elapsed", colSpan: "pulling" },
-      { name: "DropOffStart", title: "Drop Off Start", colSpan: "dropoff" },
-      { name: "DropOffEnd", title: "Drop Off End", colSpan: "dropoff" },
-      { name: "DropOffElapsed", title: "Drop Off Elapsed", colSpan: "dropoff" },
-      { name: "Notes", title: "Notes", colSpan: "post" },
-      { name: "TrackingNumber", title: "Tracking Number", colSpan: "post" }
+      { name: "Order", title: "Order", colSpan: "pre", position: 1 },
+      { name: "Line", title: "Line", colSpan: "pre", position: 2 },
+      { name: "ITN", title: "ITN", colSpan: "pre", position: 3 },
+      { name: "SplitITN", title: "Split ITN", colSpan: "pre", position: 4 },
+      { name: "Cust", title: "Cust", colSpan: "pre", position: 5 },
+      { name: "CustTier", title: "Cust Tier", colSpan: "pre", position: 6 },
+      { name: "Part", title: "Part", colSpan: "pre", position: 7 },
+      { name: "PartTier", title: "Part Tier", colSpan: "pre", position: 8 },
+      { name: "Zone", title: "Zone", colSpan: "pre", position: 9 },
+      { name: "WMSPriority", title: "WMSPriority", colSpan: "pre", position: 10 },
+      { name: "Priority", title: "Priority", colSpan: "pre", position: 11 },
+      { name: "Drop", title: "Drop", colSpan: "pre", position: 12 },
+      { name: "PickStart", title: "Pick Start", colSpan: "pick", position: 13 },
+      { name: "PickEnd", title: "Pick End", colSpan: "pick", position: 14 },
+      { name: "PickElapsed", title: "Pick Elapsed", colSpan: "pick", position: 15 },
+      { name: "QCStart", title: "QC Start", colSpan: "qc", position: 16 },
+      { name: "QCEnd", title: "QC End", colSpan: "qc", position: 17 },
+      { name: "QCElapsed", title: "QC Elapsed", colSpan: "qc", position: 18 },
+      { name: "AGStart", title: "Aggregation Start", colSpan: "ag", position: 19 },
+      { name: "AGEnd", title: "Aggregation End", colSpan: "ag", position: 20 },
+      { name: "AGElapsed", title: "Aggregation Elapsed", colSpan: "ag", position: 21 },
+      { name: "PullingStart", title: "Pulling Start", colSpan: "pulling", position: 22 },
+      { name: "PullingEnd", title: "Pulling End", colSpan: "pulling", position: 23 },
+      { name: "PullingElapsed", title: "Pulling Elapsed", colSpan: "pulling", position: 24 },
+      { name: "DropOffStart", title: "Drop Off Start", colSpan: "dropoff", position: 25 },
+      { name: "DropOffEnd", title: "Drop Off End", colSpan: "dropoff", position: 26 },
+      { name: "DropOffElapsed", title: "Drop Off Elapsed", colSpan: "dropoff", position: 27 },
+      { name: "Notes", title: "Notes", colSpan: "post", position: 28 },
+      { name: "TrackingNumber", title: "Tracking Number", colSpan: "post", position: 29 }
     ];
 
   }
@@ -190,6 +191,8 @@ export class ITNLifecycleComponent implements OnInit {
             if (item.agDone && item.agStart) {
               result['agElapsed'] =
                 this.elapsedFormating(Number(item.agDone) - Number(item.agStart));
+                result['agStartNum'] = Number(item.agStart);
+                result['agDoneNum'] = Number(item.agDone);
             }
             if (item.pickStart) {
               result.pickStart = this.timeFormating(item.pickStart);
@@ -201,6 +204,8 @@ export class ITNLifecycleComponent implements OnInit {
               result['pickElapsed'] = 
                 this.elapsedFormating(Number(item.pickDone) - Number(item.pickStart));
               result['pickElapsedNum'] = Number(item.pickDone) - Number(item.pickStart);
+              result['pickStartNum'] = Number(item.pickStart);
+              result['pickDoneNum'] = Number(item.pickDone);
             }
             if (item.qcStart) {
               result.qcStart = this.timeFormating(item.qcStart);
@@ -211,13 +216,15 @@ export class ITNLifecycleComponent implements OnInit {
             if (item.qcDone && item.qcStart) {
               result['qcElapsed'] =
                 this.elapsedFormating(Number(item.qcDone) - Number(item.qcStart));
+                result['qcStartNum'] = Number(item.qcStart);
+                result['qcDoneNum'] = Number(item.qcDone);
             }
 
-            result['pickLevel'] = this.getLevel('pick', item);
-            result['qcLevel'] = this.getLevel('qc', item);
-            result['agLevel'] = this.getLevel('ag', item);
-            result['pullingLevel'] = this.getLevel('pulling', item);
-            result['dropoffLevel'] = this.getLevel('dropoff', item);
+            // result['pickLevel'] = this.getLevel('pick', item);
+            // result['qcLevel'] = this.getLevel('qc', item);
+            // result['agLevel'] = this.getLevel('ag', item);
+            // result['pullingLevel'] = this.getLevel('pulling', item);
+            // result['dropoffLevel'] = this.getLevel('dropoff', item);
 
             return result;
           });
@@ -231,52 +238,69 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   onModalClose() {
-    this.onTemplateChange(this.templateId.toString());
-    
+    this.onTemplateChange(this.templateId.toString()); 
   }
 
-  testE(e): string {
-    alert(e);
-    if (Number(e) > this.temp) {
-      return "medium";
+  // testE(e): string {
+  //   let c = ""
+  //   if(Number(e) != this.temp) {
+  //     c = "medium";
+  //   } else {
+  //     c = "low";
+  //   }
+
+  //   return c;
+  // }
+
+  getClass(Start, Done, EventName): string {
+    let c = "none";
+
+    const l = this.limits.find(e => e.eventName.toLocaleLowerCase() == EventName.toLocaleLowerCase());
+
+    if (Start != "" && (!Done || Done == "")) {
+      c = "high";
     } else {
-      return "low";
-    }
-  }
-
-  testC() {
-    if (this.temp == 600000) {
-      this.temp = 10000;
-    } else {
-      this.temp = 600000;
-    }
-
-  }
-
-  getLevel(eventName: string, item): string {
-    let level = "none";
-
-    if (item[eventName+'Start'] && !item[eventName+'Done']) {
-      level = 'high';
-    } else {
-      const elapsed = (Number(item[eventName+'Done']) - Number(item[eventName+'Start']));
-
-      const l = this.limits.find(e => e.eventName.toLowerCase() == eventName.toLocaleLowerCase());
-
-      const t = "t";
+      let elapsed = (Number(Done) - Number(Start));
 
       if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
-        level = 'medium';
+        c = "medium";
       } else if ((l.lowLevelLimit > 0) && (elapsed > l.lowLevelLimit)) {
-        level = 'low';
-      } else {
-        const woot = "here";
+        c = "low";
       }
-
     }
-    
-    return level;
+
+    return c;
   }
+
+  // testC(i) {
+  //   alert(i);
+
+  // }
+
+  // getLevel(eventName: string, item): string {
+  //   let level = "none";
+
+  //   if (item[eventName+'Start'] && !item[eventName+'Done']) {
+  //     level = 'high';
+  //   } else {
+  //     const elapsed = (Number(item[eventName+'Done']) - Number(item[eventName+'Start']));
+
+  //     const l = this.limits.find(e => e.eventName.toLowerCase() == eventName.toLocaleLowerCase());
+
+  //     const t = "t";
+
+  //     if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
+  //       level = 'medium';
+  //     } else if ((l.lowLevelLimit > 0) && (elapsed > l.lowLevelLimit)) {
+  //       level = 'low';
+  //     } else {
+  //       const woot = "here";
+  //     }
+
+  //   }
+    
+  //   return level;
+  // }
 
   timeFormating(time: string): string {
     const date = new Date(Number(time));
@@ -342,36 +366,36 @@ export class ITNLifecycleComponent implements OnInit {
       }
     }
 
-    const t = "t";
+    //const t = "t";
   }
 
-  onCheckboxChange(e): void {
-    if (e.target.checked) {
-      this.orderVisible = true;
-    } else {
-      this.orderVisible = false;
-    }
-  }
+  // onCheckboxChange(e): void {
+  //   if (e.target.checked) {
+  //     this.orderVisible = true;
+  //   } else {
+  //     this.orderVisible = false;
+  //   }
+  // }
 
-  onColumnSelected(e): void {
-    const i = this.columnsVisible.indexOf(e);
+  // onColumnSelected(e): void {
+  //   const i = this.columnsVisible.indexOf(e);
 
-    if (i == -1) {
-      this.columnsVisible.push(e);
-    }
+  //   if (i == -1) {
+  //     this.columnsVisible.push(e);
+  //   }
 
-    this.setColSpans();
-  }
+  //   this.setColSpans();
+  // }
 
-  onColumnUnselected(e): void {
-    const i = this.columnsVisible.indexOf(e);
+  // onColumnUnselected(e): void {
+  //   const i = this.columnsVisible.indexOf(e);
 
-    if (i > -1) {
-      this.columnsVisible.splice(i, 1);
-    }
+  //   if (i > -1) {
+  //     this.columnsVisible.splice(i, 1);
+  //   }
 
-    this.setColSpans();
-  }
+  //   this.setColSpans();
+  // }
 
   onTemplateChange(e): void {
     this.limits = [];
@@ -398,7 +422,7 @@ export class ITNLifecycleComponent implements OnInit {
 
               if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length >0) {
 
-                let limits = []; //: LevelLimit[];
+                let limits = [];
 
                 for (let i=0; i<res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
                   try {
@@ -435,134 +459,135 @@ export class ITNLifecycleComponent implements OnInit {
     )
   }
 
-  onSaveTemplate(): void {
+  // onSaveTemplate(): void {
 
-  }
+  // }
 
-  onColumnsChange(): void {
-    let userColumns = [];
-    let cols = "";
-    let sep = "";
+  // onColumnsChange(): void {
+  //   let userColumns = [];
+  //   let cols = "";
+  //   let sep = "";
 
-    for (let i=0; i<this.columnsVisible.length; i++) {
-      cols+=sep+this.columnsVisible[i];
-      sep=",";
-    }
+  //   for (let i=0; i<this.columnsVisible.length; i++) {
+  //     cols+=sep+this.columnsVisible[i];
+  //     sep=",";
+  //   }
     
-    userColumns.push({
-      UserID: Number(
-        JSON.parse(sessionStorage.getItem('userInfo'))._id
-      ),
-      SelectedColumns: cols
-    });
-    try {
-        if (this.columnsVisibleId === "") {
-          this.subscription.add(this._insertITNColumns.mutate( {
-            itnUserColumns: userColumns,
-          }).subscribe((res) => {
-            //alert(JSON.stringify(res));
-          }));
-        } else {
-          userColumns = [];
+  //   userColumns.push({
+  //     UserID: Number(
+  //       JSON.parse(sessionStorage.getItem('userInfo'))._id
+  //     ),
+  //     SelectedColumns: cols
+  //   });
+  //   try {
+  //       if (this.columnsVisibleId === "") {
+  //         this.subscription.add(this._insertITNColumns.mutate( {
+  //           itnUserColumns: userColumns,
+  //         }).subscribe((res) => {
+  //           //alert(JSON.stringify(res));
+  //         }));
+  //       } else {
+  //         userColumns = [];
 
-          userColumns.push({
-            SelectedColumns: cols
-          });
+  //         userColumns.push({
+  //           SelectedColumns: cols
+  //         });
 
-          this.subscription.add(this._updateITNColumns.mutate( {
-            itnUserColumns: userColumns,
-            _id: Number(this.columnsVisibleId)
-          }).subscribe((res) => {
-            //alert(JSON.stringify(res));
-          }));
-        }
+  //         this.subscription.add(this._updateITNColumns.mutate( {
+  //           itnUserColumns: userColumns,
+  //           _id: Number(this.columnsVisibleId)
+  //         }).subscribe((res) => {
+  //           //alert(JSON.stringify(res));
+  //         }));
+  //       }
 
-      //);
+  //     //);
 
-      this.subscription.add(
-        this._fetchITNColumns
-          .fetch(
-            {
-              userId: this.userId,
-            },
-            { fetchPolicy: 'network-only' }
-          )
-          .subscribe(
-            (res) => {
-              if (res.data.fetchITNUserColumns.length > 0) {
-                this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
-                this.setColSpans();
-              }
-            },
-            (error) => {
-              const err = error;
-            }
-          )
-      );
-    } catch (error) {
-      alert(error);
-    }
+  //     this.subscription.add(
+  //       this._fetchITNColumns
+  //         .fetch(
+  //           {
+  //             userId: this.userId,
+  //           },
+  //           { fetchPolicy: 'network-only' }
+  //         )
+  //         .subscribe(
+  //           (res) => {
+  //             if (res.data.fetchITNUserColumns.length > 0) {
+  //               this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
+  //               this.setColSpans();
+  //             }
+  //           },
+  //           (error) => {
+  //             const err = error;
+  //           }
+  //         )
+  //     );
+  //   } catch (error) {
+  //     alert(error);
+  //   }
 
-  }
+  // }
 
-  onLevelsChange(): void {
-    let userLevels = [];
-    const test = this.filterForm.get('lowLevelLimit').value;
+  // onLevelsChange(): void {
+  //   let userLevels = [];
+  //   const test = this.filterForm.get('lowLevelLimit').value;
     
-    userLevels.push({
-      UserID: Number(
-        JSON.parse(sessionStorage.getItem('userInfo'))._id
-      ),
-      LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
-      MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
-    })
+  //   userLevels.push({
+  //     UserID: Number(
+  //       JSON.parse(sessionStorage.getItem('userInfo'))._id
+  //     ),
+  //     LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
+  //     MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
+  //   })
 
-    if (this.columnsVisibleId === "") {
-      this.subscription.add(this._insertITNLevels.mutate( {
-        itnUserLevels: userLevels,
-      }).subscribe((res) => {
+  //   if (this.columnsVisibleId === "") {
+  //     this.subscription.add(this._insertITNLevels.mutate( {
+  //       itnUserLevels: userLevels,
+  //     }).subscribe((res) => {
 
-      }));
-    } else {
-      userLevels = [];
+  //     }));
+  //   } else {
+  //     userLevels = [];
 
-      userLevels.push({
-        LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
-        MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
-      })
-      this.subscription.add(this._updateITNLevels.mutate( {
-        itnUserLevels: userLevels,
-        _id: Number(this.columnsVisibleId)
-      }).subscribe((res) => {
+  //     userLevels.push({
+  //       LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
+  //       MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
+  //     })
+  //     this.subscription.add(this._updateITNLevels.mutate( {
+  //       itnUserLevels: userLevels,
+  //       _id: Number(this.columnsVisibleId)
+  //     }).subscribe((res) => {
 
-      }));
-    }
-    const woot = "woot";
-    //this.subscription.add(
-      // this._fetchITNColumns
-      //   .fetch(
-      //     {
-      //       userId: this.userId,
-      //     },
-      //     { fetchPolicy: 'network-only' }
-      //   )
-      //   .subscribe(
-      //     (res) => {
-      //       if (res.data.fetchITNUserColumns.length > 0) {
-      //         this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
-      //         this.setColSpans();
-      //       }
-      //     },
-      //     (error) => {
-      //       const err = error;
-      //     }
-      //   );
-    //);
-  }
+  //     }));
+  //   }
+  //   const woot = "woot";
+  //   //this.subscription.add(
+  //     // this._fetchITNColumns
+  //     //   .fetch(
+  //     //     {
+  //     //       userId: this.userId,
+  //     //     },
+  //     //     { fetchPolicy: 'network-only' }
+  //     //   )
+  //     //   .subscribe(
+  //     //     (res) => {
+  //     //       if (res.data.fetchITNUserColumns.length > 0) {
+  //     //         this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
+  //     //         this.setColSpans();
+  //     //       }
+  //     //     },
+  //     //     (error) => {
+  //     //       const err = error;
+  //     //     }
+  //     //   );
+  //   //);
+  // }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.templateList.unsubscribe();
+    this.selTempSub.unsubscribe();
   }
 
 }

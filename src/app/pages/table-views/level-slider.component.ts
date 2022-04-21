@@ -58,8 +58,8 @@ import { Subject } from 'rxjs';
   ],
 })
 export class LevelSliderComponent {
-  @Input('lowLevel') lowLevel: Number;
-  @Input('mediumLevel') mediumLevel: Number;
+  //@Input('lowLevel') lowLevel: Number;
+  //@Input('mediumLevel') mediumLevel: Number;
   @Input() levelSubject: Subject<any>
   @Output() levelEvent = new EventEmitter<number>();
   hourValue;
@@ -84,15 +84,15 @@ export class LevelSliderComponent {
     })
   }
 
-  testC() {
-    this.levelSubject.subscribe((data) => {
-      const hrs = Math.trunc(Number(data)/60000);
-      const mins = Math.trunc((Number(data)-(hrs*60000))/1000);
+  // testC() {
+  //   this.levelSubject.subscribe((data) => {
+  //     const hrs = Math.trunc(Number(data)/60000);
+  //     const mins = Math.trunc((Number(data)-(hrs*60000))/1000);
 
-      this.hourValue = hrs;
-      this.minuteValue = mins;
-    })
-  }
+  //     this.hourValue = hrs;
+  //     this.minuteValue = mins;
+  //   })
+  // }
 
   hourFormatter(value: number): string {
     return `${value}hrs`;

@@ -19,11 +19,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
           nzOkText="Save"
             (nzOnCancel)="handleCancel()"
             (nzOnOk)="handleOk()"
-            (nzAfterClose)="modalClosed.emit()">            
+            (nzAfterClose)="handleClose()">            
             <ng-container *nzModalContent>
                 <nz-select class="templateSelect"
                   [nzDropdownRender]="renderTemplate"
-                    [(ngModel)]="test"
+                    [(ngModel)]="selectedTemplateId"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="onTemplateChange($event)"
                     nzPlaceHolder="Select Template">
@@ -58,7 +58,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                     [columns]="columns"
                     [selectedColumns]="selectedColumns"
                     [allColumns]="allColumns"
-                    [testN]="testN"></tabs-view>
+                    [limitsNotifier]="limitsNotifier"></tabs-view>
             </ng-container>
             <ng-template #footer>
               <span style="margin-right: 10px;">{{ message }}</span>
@@ -70,9 +70,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
     styleUrls: ['./template-settings.component.css']
 })
 export class TemplateSettings {
-  @Output() checked: EventEmitter<any> = new EventEmitter();
-  @Output() unchecked: EventEmitter<any> = new EventEmitter();
-  @Output() saveTemplate: EventEmitter<any> = new EventEmitter();
+  //@Output() checked: EventEmitter<any> = new EventEmitter();
+  //@Output() unchecked: EventEmitter<any> = new EventEmitter();
+  //@Output() saveTemplate: EventEmitter<any> = new EventEmitter();
   @Output() modalClosed: EventEmitter<any> = new EventEmitter();
   @Input('templates') templates: Template[];
   @Input('columns') columns: Column[];
@@ -90,16 +90,16 @@ export class TemplateSettings {
   templateId: number;
   selectedTemplate: Template;
   limits = [];
-  columnsVisible = [];
+  //columnsVisible = [];
   tempSelectedColumns: string[];
   isVisible = false;
   tempIdStr;
-  test;
+  selectedTemplateId;
   levelLimits;
   //templateNameValue: string;
-  value: boolean = false;
-  testN: Subject<any> = new Subject<any>();
-  childNotifier : Subject<any> = new Subject<any>();
+  //value: boolean = false;
+  limitsNotifier: Subject<any> = new Subject<any>();
+  //childNotifier : Subject<any> = new Subject<any>();
   allColumns: boolean;
   message
 
@@ -119,16 +119,16 @@ export class TemplateSettings {
   });
 
   ngOnInit(): void {
-    this.test = 1;
+    this.selectedTemplateId = 1;
     this.columnSelector.columns = this.columns;
     //this.tempSelectedColumns = this.selectedColumns;
     this.columnSelector.selectedColumns = this.selectedColumns;
   }
 
-  notifyTest() {
-    this.value = !this.value;
-    this.testN.next(this.value);
-  }
+  // notifyTest() {
+  //   this.value = !this.value;
+  //   this.testN.next(this.value);
+  // }
 
   showModal(): void {
     this.setMessage("");
@@ -149,11 +149,19 @@ export class TemplateSettings {
   }
 
   handleClose(): void {
-    alert(this.templateId);
-    this.loadTemplate();
+    this.templateId = null;
+    this.selectedTemplateId = null;
+    this.templateNameValue = null;
+    this.selectedColumns = [];
+    this.modalClosed.emit();
   }
 
   handleOk(): void {
+    if (this.templateNameValue === "") {
+      this.setMessage("Template Name Required");
+    }
+    else
+    {
     let cols = "";
     let sep = "";
     let err = "";
@@ -210,6 +218,7 @@ export class TemplateSettings {
         }
       )
     );
+    }
   }
 
   setMessage(msg): void {
@@ -220,16 +229,71 @@ export class TemplateSettings {
     const UserInfo = sessionStorage.getItem('userInfo');
     const userId = JSON.parse(UserInfo)._id;
 
+    let sep = "";
+    let cols = "";
+
+    for (let i=0; i < this.columns.length; i++) {
+      cols+=sep+this.columns[i].name;
+      sep = ",";
+    }
+
     this.insertTemplateSub.add(
       this._insertITNTemplate.mutate(
         {
           userID: userId,
-          templateName: input.value
+          templateName: input.value,
+          selectedColumns: cols
         }
       ).subscribe((res) => {
         const templateId = res.data.insertITNUserTemplate._id
         const template: Template = { name: input.value, id: templateId };
         this.templates.push(template);
+
+        const limits =
+          [
+            {
+              eventName: 'Pick',
+              eventID: 301
+            },
+            {
+              eventName: 'QC',
+              eventID: 200
+            },
+            {
+              eventName: 'Ag',
+              eventID: 1
+            },
+            {
+              eventName: 'Pulling',
+              eventID: 400
+            },
+            {
+              eventName: 'DropOff',
+              eventID: 500
+            }
+          ];
+
+        for (let i = 0; i < limits.length; i++) {
+          this.insertLevelLimitSub.add(
+            this._insertITNLevelLimit.mutate(
+              {
+                templateID: templateId,
+                eventName: limits[i].eventName,
+                eventID: Number(limits[i].eventID),
+                lowLevelLimit: 0,
+                mediumLevelLimit: 0
+              }
+            ).subscribe((res) => {
+              this.setMessage("Template Added");
+            },
+            (error) => {
+              this.setMessage("Error Adding Template");
+            })
+          )
+        };
+      },
+      (error) => {
+        this.setMessage("Error Adding Template");
       })
     );
   }
@@ -251,15 +315,63 @@ export class TemplateSettings {
               }
             ) .subscribe((res) => 
               {
+                const template = this.templates.find(e => e.id == this.templateId)
+                const i = this.templates.indexOf(template);
 
+                if (i > -1) {
+                  this.templates.splice(i, 1);
+                }
+
+                this.templateId = null;
+                this.selectedTemplateId = null;
+                this.templateNameValue = null;
+                this.selectedColumns = [];
+
+                this.limits = [
+                  {
+                    eventName: 'Pick',
+                    eventId: 301,
+                    lowLevelLimit: null,
+                    mediumLevelLimit: null
+                  },
+                  {
+                    eventName: 'QC',
+                    eventId: 200,
+                    lowLevelLimit: null,
+                    mediumLevelLimit: null
+                  },
+                  {
+                    eventName: 'Ag',
+                    eventId: 1,
+                    lowLevelLimit: null,
+                    mediumLevelLimit: null
+                  },
+                  {
+                    eventName: 'Pulling',
+                    eventId: 400,
+                    lowLevelLimit: null,
+                    mediumLevelLimit: null
+                  },
+                  {
+                    eventName: 'DropOff',
+                    eventId: 500,
+                    lowLevelLimit: null,
+                    mediumLevelLimit: null
+                  }
+                ];
+                this.limitsNotifier.next(this.limits);
+
+                this.setMessage("Template Deleted");
               },
               (error) => {
                 console.log(error);
+                this.setMessage("Error Deleting Template");
               })
             );
           },
           (error) => {
             console.log(error);
+            this.setMessage("Error Deleting Template");
           })
         )        
       }
@@ -316,85 +428,6 @@ export class TemplateSettings {
     this.templateNameValue = args[1];
 
     this.loadTemplate();
-
-    // this.selTempSub.add(
-    //   this._findITNTemplate
-    //     .fetch(
-    //       { _id: this.templateId },
-    //       { fetchPolicy: 'network-only'}
-    //     )
-    //     .subscribe(
-    //       (res) => {
-    //         if (res.data.findITNTemplate.length > 0) {
-    //           const template: Template = 
-    //           {
-    //             name: res.data.findITNTemplate[0].TemplateName,
-    //             id: res.data.findITNTemplate[0]._id,
-    //             selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
-    //           }
-    
-    //           if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length >0) {
-    //             let limits = []; //: LevelLimit[];
-    //             this.levelLimits = [];
-
-    //             for (let i=0; i<res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
-    //               try {
-    //                 let limit: LevelLimit = { 
-    //                   id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
-    //                   templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
-    //                   eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,
-    //                   eventId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventID,
-    //                   lowLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].LowLevelLimit,
-    //                   mediumLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].MediumLevelLimit
-    //                 };
-    
-    //                 limits.push(limit);
-    //                 this.levelLimits.push(
-    //                   {
-    //                     eventName: limit.eventName,
-    //                     eventId: limit.eventId,
-    //                     lowLimit: limit.lowLevelLimit,
-    //                     mediumLimit: limit.mediumLevelLimit
-    //                   }
-    //                 )
-    
-    //                 //template["limits"] = limits;
-    //               }
-    //               catch(error) {
-    //                 alert(error);
-    //               }
-    //             } 
-                
-    //             //template["limits"] = limits;
-    //             this.limits = limits;
-                
-    //             //this.value = !this.value;
-    //             const testL = [
-    //               {
-    //                 templateId: 1,
-    //                 eventName: 'Pick',
-    //                 eventId: 301,
-    //                 lowLevelLimit: 60000,
-    //                 mediumLevelLimit: 120000
-    //               }
-    //             ];
-    //             //this.limits = testL;
-    //             this.testN.next(this.limits);
-    //           }
-    //             this.selectedTemplate = template;
-    //         }
-    //         this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
-    //         this.tempSelectedColumns = this.selectedColumns;
-
-    //         if (this.columns.length == this.selectedColumns.length) {
-    //           this.allColumns = true;
-    //         } else {
-    //           this.allColumns = false;
-    //         }
-    //       }
-    //     )
-    // )
-
     this.templateNameValue = args[1];
 
   }
@@ -421,7 +454,6 @@ export class TemplateSettings {
                 this.levelLimits = [];
 
                 for (let i=0; i<res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
-                  try {
                     let limit: LevelLimit = { 
                       id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
                       templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
@@ -442,27 +474,15 @@ export class TemplateSettings {
                     )
     
                     //template["limits"] = limits;
-                  }
-                  catch(error) {
-                    alert(error);
-                  }
                 } 
                 
                 //template["limits"] = limits;
                 this.limits = limits;
                 
                 //this.value = !this.value;
-                const testL = [
-                  {
-                    templateId: 1,
-                    eventName: 'Pick',
-                    eventId: 301,
-                    lowLevelLimit: 60000,
-                    mediumLevelLimit: 120000
-                  }
-                ];
+
                 //this.limits = testL;
-                this.testN.next(this.limits);
+                this.limitsNotifier.next(this.limits);
               }
                 this.selectedTemplate = template;
             }
@@ -486,6 +506,6 @@ export class TemplateSettings {
     this.insertLevelLimitSub.unsubscribe();
     this.insertTemplateSub.unsubscribe();
     this.deleteTemplateSub.unsubscribe();
-    this.testN.unsubscribe();
+    this.limitsNotifier.unsubscribe();
   }
 }

@@ -280,8 +280,8 @@ mutation insert_ITNLevelLimit($templateID: Int, $eventName: String, $eventID: In
   }
 }
 
-mutation insert_ITNUserTemplate($userID: Int, $templateName: String) {
-  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName) {
+mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String) {
+  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName, SelectedColumns: $selectedColumns) {
     _id
   }
 }

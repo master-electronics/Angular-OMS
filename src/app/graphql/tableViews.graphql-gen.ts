@@ -1169,6 +1169,7 @@ export type Insert_ItnLevelLimitMutation = { __typename?: 'Mutation', insertITNL
 export type Insert_ItnUserTemplateMutationVariables = Types.Exact<{
   userID?: Types.InputMaybe<Types.Scalars['Int']>;
   templateName?: Types.InputMaybe<Types.Scalars['String']>;
+  selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -1722,8 +1723,12 @@ export const Insert_ItnLevelLimitDocument = gql`
     }
   }
 export const Insert_ItnUserTemplateDocument = gql`
-    mutation insert_ITNUserTemplate($userID: Int, $templateName: String) {
-  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName) {
+    mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String) {
+  insertITNUserTemplate(
+    UserID: $userID
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+  ) {
     _id
   }
 }

@@ -18,14 +18,30 @@ import { Column } from '../../column';
                     name="allCheckbox"
                     [checked]="allColumnsSelected"><label for="allCheckbox" style="position: relative; top: 2px;"> All</label>
                 <div id="columnsList">
-                    <div *ngFor="let column of columns">
-                        <input type="checkbox" 
+                    <div nz-row style="display: inline-block; width: 50%; vertical-align: top;">
+                        <div *ngFor="let column of columns">          
+                            <div nz-col *ngIf="column.position % 2 !== 0">
+                                <input type="checkbox" 
+                                    (change)="checkboxOnChange($event)" 
+                                    name="{{ column.name }}"
+                                    [checked]="selectedColumns.includes(column.name)">
+                                    <label style="position: relative; top: 2px;" for="{{ column.name }}"> {{ column.title }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div nz-row style="display: inline-block; width: 50%; vertical-align: top;">
+                        <div *ngFor="let column of columns">
+                            <div nz-col *ngIf="column.position % 2 === 0">
+                            <input type="checkbox" 
                             (change)="checkboxOnChange($event)" 
                             name="{{ column.name }}"
                             [checked]="selectedColumns.includes(column.name)">
                             <label style="position: relative; top: 2px;" for="{{ column.name }}"> {{ column.title }}</label>
+                            </div>
+                        </div>                         
                     </div>
                 </div>
+
                 <!--
             </ng-container>
         </nz-modal>
@@ -38,12 +54,12 @@ export class ColumnSelectorComponent {
     @Output() unchecked: EventEmitter<any> = new EventEmitter();
     @Output() allChecked: EventEmitter<any> = new EventEmitter();
     @Output() allUnchecked: EventEmitter<any> = new EventEmitter();
-    @Output() modalClosed: EventEmitter<any> = new EventEmitter();
+    //@Output() modalClosed: EventEmitter<any> = new EventEmitter();
     @Input('columns') columns: Column[];
     @Input('selectedColumns') selectedColumns: string[];
     @Input("allColumns") allColumnsSelected: boolean;
 
-    isVisible = false;
+    //isVisible = false;
 
     constructor() {}
 
@@ -51,21 +67,21 @@ export class ColumnSelectorComponent {
         //alert(JSON.stringify(this.columns));
     }
 
-    showModal(): void {
-        this.isVisible = true;
-    }
+    // showModal(): void {
+    //     this.isVisible = true;
+    // }
 
-    handleCancel(): void {
-        this.isVisible = false;
-    }
+    // handleCancel(): void {
+    //     this.isVisible = false;
+    // }
 
-    handleOk(): void {
-        this.isVisible = false;
-    }
+    // handleOk(): void {
+    //     this.isVisible = false;
+    // }
 
-    handleClose(): void {
-        this.modalClosed.emit();
-    }
+    // handleClose(): void {
+    //     this.modalClosed.emit();
+    // }
 
     checkboxOnChange(e) {
         if (e.target.checked) {
