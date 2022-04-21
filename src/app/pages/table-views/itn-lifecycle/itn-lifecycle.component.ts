@@ -11,9 +11,11 @@ import { Template } from '../../../template';
 import { LevelLimit } from 'src/app/LevelLimit';
 import { Observable, Subscription } from 'rxjs';
 
-import { Insert_ItnUserColumnsGQL, Update_ItnUserColumnsGQL, 
+import {
+  Insert_ItnUserColumnsGQL, Update_ItnUserColumnsGQL,
   Insert_ItnUserLevelsGQL, Update_ItnUserLevelsGQL, FindItnTemplatesGQL,
-  FindItnTemplateDocument } from 'src/app/graphql/tableViews.graphql-gen';
+  FindItnTemplateDocument
+} from 'src/app/graphql/tableViews.graphql-gen';
 
 @Component({
   selector: 'itn-lifecycle',
@@ -28,25 +30,18 @@ export class ITNLifecycleComponent implements OnInit {
   tableData = [];
   timeformat = {};
   columns: Column[];
-  //columnList = [];
   private subscription = new Subscription();
   private templateList = new Subscription();
-  private selTempSub = new Subscription();
-
+  private selTempSub = new Subscription()
   columnsVisible = [];
-  //test = [];
   columnsVisibleId = "";
-  //allColumns: boolean = false;
-  preColSpan=0;
-  pickColSpan=0;
-  qcColSpan=0;
-  agColSpan=0;
-  pullingColSpan=0;
-  dropoffColSpan=0;
-  postColSpan=0;
-  //highLevel;
-  //mediumLevel;
-  //lowLevel;
+  preColSpan = 0;
+  pickColSpan = 0;
+  qcColSpan = 0;
+  agColSpan = 0;
+  pullingColSpan = 0;
+  dropoffColSpan = 0;
+  postColSpan = 0;
   templateNames = [];
   templates: Template[];
   selectedTemplate: Template;
@@ -54,21 +49,10 @@ export class ITNLifecycleComponent implements OnInit {
   templateNameValue: string;
   limits: LevelLimit[];
 
-  //temp: number;
-  //pickLow: number;
-  //pickMedium: number;
-  //pickHigh: number;
-  //tempClass;
-
   constructor(
     private commonService: CommonService,
     private fb: FormBuilder,
     private _fetchITNLife: FetchItnLifecycleGQL,
-    private _fetchITNColumns: FetchItnUserColumnsGQL,
-    private _insertITNColumns: Insert_ItnUserColumnsGQL,
-    private _updateITNColumns: Update_ItnUserColumnsGQL,
-    private _insertITNLevels: Insert_ItnUserLevelsGQL,
-    private _updateITNLevels: Update_ItnUserLevelsGQL,
     private _findITNTemplates: FindItnTemplatesGQL,
     private _findITNTemplate: FindItnTemplateGQL
   ) {
@@ -80,8 +64,6 @@ export class ITNLifecycleComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    //this.temp = 640000;
-    //this.tempClass = "low";
     this.selectedTemplate = {};
     const UserInfo = sessionStorage.getItem('userInfo');
     const userId = JSON.parse(UserInfo)._id;
@@ -89,6 +71,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.templateNames = [];
     this.templates = [];
 
+    //Get templates for user
     this.templateList.add(
       this._findITNTemplates
         .fetch(
@@ -99,17 +82,17 @@ export class ITNLifecycleComponent implements OnInit {
         )
         .subscribe(
           (res) => {
-            for (let i=0; i<res.data.findITNTemplates.length; i++) {
+            for (let i = 0; i < res.data.findITNTemplates.length; i++) {
               const template: Template = { name: res.data.findITNTemplates[i].TemplateName, id: res.data.findITNTemplates[i]._id };
               this.templates.push(template);
 
               this.templateNames.push(res.data.findITNTemplates[i].TemplateName);
             }
-            
+
             if (!this.templateId || this.templates.length < 1) {
               this.columnsVisible = [];
 
-              for (let x=0; x<this.columns.length; x++) {
+              for (let x = 0; x < this.columns.length; x++) {
                 this.columnsVisible.push(this.columns[x].name);
               }
 
@@ -122,6 +105,7 @@ export class ITNLifecycleComponent implements OnInit {
         )
     )
 
+    //Set up array of available columns
     this.columns = [
       { name: "Order", title: "Order", colSpan: "pre", position: 1 },
       { name: "Line", title: "Line", colSpan: "pre", position: 2 },
@@ -156,12 +140,14 @@ export class ITNLifecycleComponent implements OnInit {
 
   }
 
+  //Clear search date
   resetForm(): void {
     this.filterForm.reset({
       timeRange: '',
     });
   }
 
+  //Get records for search date
   onSubmit(): void {
     if (this.filterForm.invalid || this.isLoading) return;
     const selectedDate = this.filterForm.get('timeRange').value;
@@ -191,8 +177,8 @@ export class ITNLifecycleComponent implements OnInit {
             if (item.agDone && item.agStart) {
               result['agElapsed'] =
                 this.elapsedFormating(Number(item.agDone) - Number(item.agStart));
-                result['agStartNum'] = Number(item.agStart);
-                result['agDoneNum'] = Number(item.agDone);
+              result['agStartNum'] = Number(item.agStart);
+              result['agDoneNum'] = Number(item.agDone);
             }
             if (item.pickStart) {
               result.pickStart = this.timeFormating(item.pickStart);
@@ -201,7 +187,7 @@ export class ITNLifecycleComponent implements OnInit {
               result.pickDone = this.timeFormating(item.pickDone);
             }
             if (item.pickStart && item.pickDone) {
-              result['pickElapsed'] = 
+              result['pickElapsed'] =
                 this.elapsedFormating(Number(item.pickDone) - Number(item.pickStart));
               result['pickElapsedNum'] = Number(item.pickDone) - Number(item.pickStart);
               result['pickStartNum'] = Number(item.pickStart);
@@ -216,15 +202,9 @@ export class ITNLifecycleComponent implements OnInit {
             if (item.qcDone && item.qcStart) {
               result['qcElapsed'] =
                 this.elapsedFormating(Number(item.qcDone) - Number(item.qcStart));
-                result['qcStartNum'] = Number(item.qcStart);
-                result['qcDoneNum'] = Number(item.qcDone);
+              result['qcStartNum'] = Number(item.qcStart);
+              result['qcDoneNum'] = Number(item.qcDone);
             }
-
-            // result['pickLevel'] = this.getLevel('pick', item);
-            // result['qcLevel'] = this.getLevel('qc', item);
-            // result['agLevel'] = this.getLevel('ag', item);
-            // result['pullingLevel'] = this.getLevel('pulling', item);
-            // result['dropoffLevel'] = this.getLevel('dropoff', item);
 
             return result;
           });
@@ -237,71 +217,39 @@ export class ITNLifecycleComponent implements OnInit {
 
   }
 
+  //When settings screen is closed refresh display
   onModalClose() {
-    this.onTemplateChange(this.templateId.toString()); 
+    this.onTemplateChange(this.templateId.toString());
   }
 
-  // testE(e): string {
-  //   let c = ""
-  //   if(Number(e) != this.temp) {
-  //     c = "medium";
-  //   } else {
-  //     c = "low";
-  //   }
-
-  //   return c;
-  // }
-
+  //Return class to for setting the color of event cells based on template hightlight limits
   getClass(Start, Done, EventName): string {
     let c = "none";
 
-    const l = this.limits.find(e => e.eventName.toLocaleLowerCase() == EventName.toLocaleLowerCase());
+    if (this.limits) {
+      //find limits for current event
+      const l = this.limits.find(e => e.eventName.toLocaleLowerCase() == EventName.toLocaleLowerCase());
 
-    if (Start != "" && (!Done || Done == "")) {
-      c = "high";
-    } else {
-      let elapsed = (Number(Done) - Number(Start));
+      //if there's a start time but no end time high alert
+      if (Start != "" && (!Done || Done == "")) {
+        c = "high";
+      } else {
+        let elapsed = (Number(Done) - Number(Start));
 
-      if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
-        c = "medium";
-      } else if ((l.lowLevelLimit > 0) && (elapsed > l.lowLevelLimit)) {
-        c = "low";
+        //if a medium level is set for the template and the elapsed time has supassed it medium alert
+        if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
+          c = "medium";
+        //if a low level is set for the template and the elapsed time has supassed it low alert
+        } else if ((l.lowLevelLimit > 0) && (elapsed > l.lowLevelLimit)) {
+          c = "low";
+        }
       }
     }
 
     return c;
   }
 
-  // testC(i) {
-  //   alert(i);
-
-  // }
-
-  // getLevel(eventName: string, item): string {
-  //   let level = "none";
-
-  //   if (item[eventName+'Start'] && !item[eventName+'Done']) {
-  //     level = 'high';
-  //   } else {
-  //     const elapsed = (Number(item[eventName+'Done']) - Number(item[eventName+'Start']));
-
-  //     const l = this.limits.find(e => e.eventName.toLowerCase() == eventName.toLocaleLowerCase());
-
-  //     const t = "t";
-
-  //     if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
-  //       level = 'medium';
-  //     } else if ((l.lowLevelLimit > 0) && (elapsed > l.lowLevelLimit)) {
-  //       level = 'low';
-  //     } else {
-  //       const woot = "here";
-  //     }
-
-  //   }
-    
-  //   return level;
-  // }
-
+  //format the time to be user readable
   timeFormating(time: string): string {
     const date = new Date(Number(time));
     return date.toLocaleString(navigator.language, {
@@ -314,16 +262,18 @@ export class ITNLifecycleComponent implements OnInit {
     });
   }
 
+  //format the elapsed time into hours, minutes, and seconds
   elapsedFormating(elapsed: number): string {
-    const hours = Math.floor(((elapsed)/1000/60/60));
-    const minutes = Math.floor((elapsed - (hours * 60 * 60 * 1000))/1000/60);
-    const seconds = Math.floor((elapsed - (minutes * 60 * 1000))/1000);
+    const hours = Math.floor(((elapsed) / 1000 / 60 / 60));
+    const minutes = Math.floor((elapsed - (hours * 60 * 60 * 1000)) / 1000 / 60);
+    const seconds = Math.floor((elapsed - (minutes * 60 * 1000)) / 1000);
 
-    return hours.toString().substring(0,2).padStart(2, '0') + ":" +
-      minutes.toString().substring(0,2).padStart(2, '0') + ":" +
-      seconds.toString().substring(0,2).padStart(2, '0');
+    return hours.toString().substring(0, 2).padStart(2, '0') + ":" +
+      minutes.toString().substring(0, 2).padStart(2, '0') + ":" +
+      seconds.toString().substring(0, 2).padStart(2, '0');
   }
 
+  //Export results to Excel
   exportexcel(): void {
     /* table id is passed over here */
     const element = document.getElementById('excel-table');
@@ -337,16 +287,18 @@ export class ITNLifecycleComponent implements OnInit {
     XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}.xlsx`);
   }
 
+  //Because the event name headers are in a separate row col spans need to be
+  //dynamically adjusted based on which columns are selected for viewing
   setColSpans(): void {
-    this.preColSpan=0;
-    this.pickColSpan=0;
-    this.qcColSpan=0;
-    this.agColSpan=0;
-    this.pullingColSpan=0;
-    this.dropoffColSpan=0;
-    this.postColSpan=0;
+    this.preColSpan = 0;
+    this.pickColSpan = 0;
+    this.qcColSpan = 0;
+    this.agColSpan = 0;
+    this.pullingColSpan = 0;
+    this.dropoffColSpan = 0;
+    this.postColSpan = 0;
 
-    for(let i=0; i<this.columns.length; i++) {
+    for (let i = 0; i < this.columns.length; i++) {
       if (this.columnsVisible.includes(this.columns[i].name)) {
         if (this.columns[i].colSpan == "pre") {
           this.preColSpan++;
@@ -366,37 +318,9 @@ export class ITNLifecycleComponent implements OnInit {
       }
     }
 
-    //const t = "t";
   }
 
-  // onCheckboxChange(e): void {
-  //   if (e.target.checked) {
-  //     this.orderVisible = true;
-  //   } else {
-  //     this.orderVisible = false;
-  //   }
-  // }
-
-  // onColumnSelected(e): void {
-  //   const i = this.columnsVisible.indexOf(e);
-
-  //   if (i == -1) {
-  //     this.columnsVisible.push(e);
-  //   }
-
-  //   this.setColSpans();
-  // }
-
-  // onColumnUnselected(e): void {
-  //   const i = this.columnsVisible.indexOf(e);
-
-  //   if (i > -1) {
-  //     this.columnsVisible.splice(i, 1);
-  //   }
-
-  //   this.setColSpans();
-  // }
-
+  //Update columns and limit highlights when a new template is selected
   onTemplateChange(e): void {
     this.limits = [];
     const args = e.split(',');
@@ -408,25 +332,25 @@ export class ITNLifecycleComponent implements OnInit {
       this._findITNTemplate
         .fetch(
           { _id: this.templateId },
-          { fetchPolicy: 'network-only'}
+          { fetchPolicy: 'network-only' }
         )
         .subscribe(
           (res) => {
             if (res.data.findITNTemplate.length > 0) {
-              const template: Template = 
+              const template: Template =
               {
                 name: res.data.findITNTemplate[0].TemplateName,
                 id: res.data.findITNTemplate[0]._id,
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
               }
 
-              if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length >0) {
+              if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {
 
                 let limits = [];
 
-                for (let i=0; i<res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
+                for (let i = 0; i < res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
                   try {
-                    let limit: LevelLimit = { 
+                    let limit: LevelLimit = {
                       id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
                       templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
                       eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,
@@ -441,12 +365,12 @@ export class ITNLifecycleComponent implements OnInit {
                     template["limits"] = limits;
 
                   }
-                  catch(error) {
+                  catch (error) {
                     alert(error);
                   }
                 }
 
-                
+
               }
 
               this.selectedTemplate = template;
@@ -458,131 +382,6 @@ export class ITNLifecycleComponent implements OnInit {
         )
     )
   }
-
-  // onSaveTemplate(): void {
-
-  // }
-
-  // onColumnsChange(): void {
-  //   let userColumns = [];
-  //   let cols = "";
-  //   let sep = "";
-
-  //   for (let i=0; i<this.columnsVisible.length; i++) {
-  //     cols+=sep+this.columnsVisible[i];
-  //     sep=",";
-  //   }
-    
-  //   userColumns.push({
-  //     UserID: Number(
-  //       JSON.parse(sessionStorage.getItem('userInfo'))._id
-  //     ),
-  //     SelectedColumns: cols
-  //   });
-  //   try {
-  //       if (this.columnsVisibleId === "") {
-  //         this.subscription.add(this._insertITNColumns.mutate( {
-  //           itnUserColumns: userColumns,
-  //         }).subscribe((res) => {
-  //           //alert(JSON.stringify(res));
-  //         }));
-  //       } else {
-  //         userColumns = [];
-
-  //         userColumns.push({
-  //           SelectedColumns: cols
-  //         });
-
-  //         this.subscription.add(this._updateITNColumns.mutate( {
-  //           itnUserColumns: userColumns,
-  //           _id: Number(this.columnsVisibleId)
-  //         }).subscribe((res) => {
-  //           //alert(JSON.stringify(res));
-  //         }));
-  //       }
-
-  //     //);
-
-  //     this.subscription.add(
-  //       this._fetchITNColumns
-  //         .fetch(
-  //           {
-  //             userId: this.userId,
-  //           },
-  //           { fetchPolicy: 'network-only' }
-  //         )
-  //         .subscribe(
-  //           (res) => {
-  //             if (res.data.fetchITNUserColumns.length > 0) {
-  //               this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
-  //               this.setColSpans();
-  //             }
-  //           },
-  //           (error) => {
-  //             const err = error;
-  //           }
-  //         )
-  //     );
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-
-  // }
-
-  // onLevelsChange(): void {
-  //   let userLevels = [];
-  //   const test = this.filterForm.get('lowLevelLimit').value;
-    
-  //   userLevels.push({
-  //     UserID: Number(
-  //       JSON.parse(sessionStorage.getItem('userInfo'))._id
-  //     ),
-  //     LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
-  //     MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
-  //   })
-
-  //   if (this.columnsVisibleId === "") {
-  //     this.subscription.add(this._insertITNLevels.mutate( {
-  //       itnUserLevels: userLevels,
-  //     }).subscribe((res) => {
-
-  //     }));
-  //   } else {
-  //     userLevels = [];
-
-  //     userLevels.push({
-  //       LowLevelLimit: Number(this.filterForm.get('lowLevelLimit').value),
-  //       MediumLevelLimit: Number(this.filterForm.get('mediumLevelLimit').value)
-  //     })
-  //     this.subscription.add(this._updateITNLevels.mutate( {
-  //       itnUserLevels: userLevels,
-  //       _id: Number(this.columnsVisibleId)
-  //     }).subscribe((res) => {
-
-  //     }));
-  //   }
-  //   const woot = "woot";
-  //   //this.subscription.add(
-  //     // this._fetchITNColumns
-  //     //   .fetch(
-  //     //     {
-  //     //       userId: this.userId,
-  //     //     },
-  //     //     { fetchPolicy: 'network-only' }
-  //     //   )
-  //     //   .subscribe(
-  //     //     (res) => {
-  //     //       if (res.data.fetchITNUserColumns.length > 0) {
-  //     //         this.columnsVisibleId = res.data.fetchITNUserColumns[0]._id.toString();
-  //     //         this.setColSpans();
-  //     //       }
-  //     //     },
-  //     //     (error) => {
-  //     //       const err = error;
-  //     //     }
-  //     //   );
-  //   //);
-  // }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

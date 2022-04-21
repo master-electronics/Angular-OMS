@@ -5,14 +5,16 @@ import { ColumnSelectorComponent } from './column-selector.component';
 import { Template } from '../../template';
 import { LevelLimit } from 'src/app/LevelLimit';
 import { Observable, Subscription, Subject } from 'rxjs';
-import { FindItnTemplateGQL, Update_ItnUserTemplateGQL, 
+import {
+  FindItnTemplateGQL, Update_ItnUserTemplateGQL,
   Delete_ItnLevelLimitGQL, Insert_ItnLevelLimitGQL,
-  Insert_ItnUserTemplateGQL, Delete_ItnUserTemplateGQL } from 'src/app/graphql/tableViews.graphql-gen';
+  Insert_ItnUserTemplateGQL, Delete_ItnUserTemplateGQL
+} from 'src/app/graphql/tableViews.graphql-gen';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
-    selector: 'template-settings',
-    template: `
+  selector: 'template-settings',
+  template: `
         <button nz-button (click)="showModal()"><i nz-icon nzType="form" nzTheme="outline" title="Template Settings"></i></button>
         <nz-modal [(nzVisible)]="isVisible" nzTitle="Template Settings"
           [nzFooter]="footer"
@@ -67,17 +69,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
             </ng-template>
         </nz-modal>
     `,
-    styleUrls: ['./template-settings.component.css']
+  styleUrls: ['./template-settings.component.css']
 })
 export class TemplateSettings {
-  //@Output() checked: EventEmitter<any> = new EventEmitter();
-  //@Output() unchecked: EventEmitter<any> = new EventEmitter();
-  //@Output() saveTemplate: EventEmitter<any> = new EventEmitter();
   @Output() modalClosed: EventEmitter<any> = new EventEmitter();
   @Input('templates') templates: Template[];
   @Input('columns') columns: Column[];
   @Input('selectedColumns') selectedColumns: string[];
-  //@Input('templateId') templateId: number;
   @Input('templateNameValue') templateNameValue: string;
 
   columnSelector: ColumnSelectorComponent = new ColumnSelectorComponent();
@@ -90,16 +88,12 @@ export class TemplateSettings {
   templateId: number;
   selectedTemplate: Template;
   limits = [];
-  //columnsVisible = [];
   tempSelectedColumns: string[];
   isVisible = false;
   tempIdStr;
   selectedTemplateId;
   levelLimits;
-  //templateNameValue: string;
-  //value: boolean = false;
   limitsNotifier: Subject<any> = new Subject<any>();
-  //childNotifier : Subject<any> = new Subject<any>();
   allColumns: boolean;
   message
 
@@ -112,7 +106,7 @@ export class TemplateSettings {
     private _deleteITNTemplate: Delete_ItnUserTemplateGQL,
     private fb: FormBuilder,
     private modal: NzModalService
-  ) {}
+  ) { }
 
   templateForm = this.fb.group({
     templateName: []
@@ -121,15 +115,10 @@ export class TemplateSettings {
   ngOnInit(): void {
     this.selectedTemplateId = 1;
     this.columnSelector.columns = this.columns;
-    //this.tempSelectedColumns = this.selectedColumns;
     this.columnSelector.selectedColumns = this.selectedColumns;
   }
 
-  // notifyTest() {
-  //   this.value = !this.value;
-  //   this.testN.next(this.value);
-  // }
-
+  //display settings screen
   showModal(): void {
     this.setMessage("");
     if (this.templateId) {
@@ -139,15 +128,17 @@ export class TemplateSettings {
     if (this.selectedColumns) {
       this.tempSelectedColumns = this.selectedColumns;
     }
-        
+
     this.isVisible = true;
   }
 
+  //close settings screen when canceled 
   handleCancel(): void {
     this.setMessage("");
     this.isVisible = false;
   }
 
+  //clear out setting inputs and trigger page to be redisplayed when settings screen closes
   handleClose(): void {
     this.templateId = null;
     this.selectedTemplateId = null;
@@ -156,75 +147,78 @@ export class TemplateSettings {
     this.modalClosed.emit();
   }
 
+  //save user template changes when Save is clicked
   handleOk(): void {
     if (this.templateNameValue === "") {
       this.setMessage("Template Name Required");
     }
-    else
-    {
-    let cols = "";
-    let sep = "";
-    let err = "";
+    else {
+      let cols = "";
+      let sep = "";
+      let err = "";
 
-    for (let i=0; i<this.tempSelectedColumns.length; i++) {
-      cols+=sep+this.tempSelectedColumns[i];
-      sep=",";
-    }
+      for (let i = 0; i < this.tempSelectedColumns.length; i++) {
+        cols += sep + this.tempSelectedColumns[i];
+        sep = ",";
+      }
 
-    this.updateTempSub.add(
-      this._updateITNTemplate.mutate(
-        {
-          _id: this.templateId,
-          templateName: this.templateForm.get('templateName').value,
-          selectedColumns: cols
-        }).subscribe((res) => {
-          //
-          this.deleteLevelLimitSub.add(
-            this._deleteITNLevelLimit.mutate(
-            {
-              templateID: this.templateId
-            }).subscribe((res) => {
-              for(let i = 0; i<this.levelLimits.length;i++) {
-                this.insertLevelLimitSub.add(
-                  this._insertITNLevelLimit.mutate(
-                    {
-                      templateID: this.templateId,
-                      eventName: this.levelLimits[i].eventName,
-                      eventID: Number(this.levelLimits[i].eventId),
-                      lowLevelLimit: Number(this.levelLimits[i].lowLimit),
-                      mediumLevelLimit: Number(this.levelLimits[i].mediumLimit)
-                    }
-                  ).subscribe((res) => {
-                    this.setMessage("Template Saved");
-                  },
+      this.updateTempSub.add(
+        //update ITNUSERTEMPLATE record
+        this._updateITNTemplate.mutate(
+          {
+            _id: this.templateId,
+            templateName: this.templateForm.get('templateName').value,
+            selectedColumns: cols
+          }).subscribe((res) => {
+            //delete all ITNLEVELLIMIT records for template
+            this.deleteLevelLimitSub.add(
+              this._deleteITNLevelLimit.mutate(
+                {
+                  templateID: this.templateId
+                }).subscribe((res) => {
+                  //add new ITNLEVELLIMIT records from settings screen
+                  for (let i = 0; i < this.levelLimits.length; i++) {
+                    this.insertLevelLimitSub.add(
+                      this._insertITNLevelLimit.mutate(
+                        {
+                          templateID: this.templateId,
+                          eventName: this.levelLimits[i].eventName,
+                          eventID: Number(this.levelLimits[i].eventId),
+                          lowLevelLimit: Number(this.levelLimits[i].lowLimit),
+                          mediumLevelLimit: Number(this.levelLimits[i].mediumLimit)
+                        }
+                      ).subscribe((res) => {
+                        this.setMessage("Template Saved");
+                      },
+                        (error) => {
+                          err = error;
+                          this.setMessage("Error Saving Template");
+                        })
+                    )
+                  };
+                },
                   (error) => {
                     err = error;
                     this.setMessage("Error Saving Template");
-                  })
+                  }
                 )
-              };
-            },
+            );
+          },
             (error) => {
               err = error;
               this.setMessage("Error Saving Template");
             }
           )
-        );
-          //
-        },
-        (error) => {
-          err = error;
-          this.setMessage("Error Saving Template");
-        }
-      )
-    );
+      );
     }
   }
 
+  //display message
   setMessage(msg): void {
     this.message = msg;
   }
 
+  //add new INTUSERTEMPLATE record with all columns selected and no limits set
   addTemplate(input: HTMLInputElement): void {
     const UserInfo = sessionStorage.getItem('userInfo');
     const userId = JSON.parse(UserInfo)._id;
@@ -232,8 +226,8 @@ export class TemplateSettings {
     let sep = "";
     let cols = "";
 
-    for (let i=0; i < this.columns.length; i++) {
-      cols+=sep+this.columns[i].name;
+    for (let i = 0; i < this.columns.length; i++) {
+      cols += sep + this.columns[i].name;
       sep = ",";
     }
 
@@ -273,6 +267,7 @@ export class TemplateSettings {
             }
           ];
 
+        //add a ITNLEVELLIMIT row for each event type with limits set to 0
         for (let i = 0; i < limits.length; i++) {
           this.insertLevelLimitSub.add(
             this._insertITNLevelLimit.mutate(
@@ -286,18 +281,19 @@ export class TemplateSettings {
             ).subscribe((res) => {
               this.setMessage("Template Added");
             },
-            (error) => {
-              this.setMessage("Error Adding Template");
-            })
+              (error) => {
+                this.setMessage("Error Adding Template");
+              })
           )
         };
       },
-      (error) => {
-        this.setMessage("Error Adding Template");
-      })
+        (error) => {
+          this.setMessage("Error Adding Template");
+        })
     );
   }
 
+  //delete template by deleting ITNUSERTEMPLATE record and all associated ITNLEVELLIMIT records
   deleteTemplate(): void {
     this.modal.confirm({
       nzTitle: 'Are you sure you want to delete this Template?',
@@ -310,11 +306,10 @@ export class TemplateSettings {
           ).subscribe((res) => {
             this.deleteTemplateSub.add(
               this._deleteITNTemplate.mutate(
-              {
-                _id: Number(this.templateId)
-              }
-            ) .subscribe((res) => 
-              {
+                {
+                  _id: Number(this.templateId)
+                }
+              ).subscribe((res) => {
                 const template = this.templates.find(e => e.id == this.templateId)
                 const i = this.templates.indexOf(template);
 
@@ -363,47 +358,50 @@ export class TemplateSettings {
 
                 this.setMessage("Template Deleted");
               },
-              (error) => {
-                console.log(error);
-                this.setMessage("Error Deleting Template");
-              })
+                (error) => {
+                  console.log(error);
+                  this.setMessage("Error Deleting Template");
+                })
             );
           },
-          (error) => {
-            console.log(error);
-            this.setMessage("Error Deleting Template");
-          })
-        )        
+            (error) => {
+              console.log(error);
+              this.setMessage("Error Deleting Template");
+            })
+        )
       }
     });
   }
 
+  //receive updated limits from the tabs-view component when any levels are changed there
   onLevelsChanged(e): void {
     this.levelLimits = e;
   }
 
+  //receive event from tabs-view when a column is selected
+  //and update temp columns list that will be used if the user saves the template
   onColumnSelected(e): void {
-    //this.checked.emit(e.target.name);
     const i = this.tempSelectedColumns.indexOf(e.target.name);
- 
+
     if (i == -1) {
       this.tempSelectedColumns.push(e.target.name);
     }
-      
-    //this.setColSpans();
+
   }
-      
+
+  //receive event from tabs-view when a column is unselected
+  //and update temp columns list that will be used if the user saves the template
   onColumnUnselected(e): void {
-    //this.unchecked.emit(e.target.name);
     const i = this.tempSelectedColumns.indexOf(e.target.name);
-      
+
     if (i > -1) {
       this.tempSelectedColumns.splice(i, 1);
     }
-      
-    // this.setColSpans();
+
   }
 
+  //receive event from tabs-view when all checkbox is selected
+  //and update temp columns list that will be used if the user saves the template
   onAllColumnsSelected(e): void {
     const i = this.tempSelectedColumns.indexOf(e);
 
@@ -412,6 +410,8 @@ export class TemplateSettings {
     }
   }
 
+  //receive event from tabs-view when all checkbox is unselected
+  //and update temp columns list that will be used if the user saves the template
   onAllColumnsUnselected(e): void {
     const i = this.tempSelectedColumns.indexOf(e);
 
@@ -420,6 +420,7 @@ export class TemplateSettings {
     }
   }
 
+  //handle user chaning template select value.  Set templateId and templateNameValue and load new template data
   onTemplateChange(e): void {
     this.setMessage("");
     const args = e.split(',');
@@ -432,59 +433,54 @@ export class TemplateSettings {
 
   }
 
+  //load selected columns and level limits for selected template
   loadTemplate(): void {
     this.selTempSub.add(
       this._findITNTemplate
         .fetch(
           { _id: this.templateId },
-          { fetchPolicy: 'network-only'}
+          { fetchPolicy: 'network-only' }
         )
         .subscribe(
           (res) => {
             if (res.data.findITNTemplate.length > 0) {
-              const template: Template = 
+              const template: Template =
               {
                 name: res.data.findITNTemplate[0].TemplateName,
                 id: res.data.findITNTemplate[0]._id,
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
               }
-    
-              if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length >0) {
-                let limits = []; //: LevelLimit[];
+
+              if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {
+                let limits = [];
                 this.levelLimits = [];
 
-                for (let i=0; i<res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
-                    let limit: LevelLimit = { 
-                      id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
-                      templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
-                      eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,
-                      eventId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventID,
-                      lowLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].LowLevelLimit,
-                      mediumLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].MediumLevelLimit
-                    };
-    
-                    limits.push(limit);
-                    this.levelLimits.push(
-                      {
-                        eventName: limit.eventName,
-                        eventId: limit.eventId,
-                        lowLimit: limit.lowLevelLimit,
-                        mediumLimit: limit.mediumLevelLimit
-                      }
-                    )
-    
-                    //template["limits"] = limits;
-                } 
-                
-                //template["limits"] = limits;
-                this.limits = limits;
-                
-                //this.value = !this.value;
+                for (let i = 0; i < res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
+                  let limit: LevelLimit = {
+                    id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
+                    templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
+                    eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,
+                    eventId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventID,
+                    lowLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].LowLevelLimit,
+                    mediumLevelLimit: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].MediumLevelLimit
+                  };
 
-                //this.limits = testL;
+                  limits.push(limit);
+                  this.levelLimits.push(
+                    {
+                      eventName: limit.eventName,
+                      eventId: limit.eventId,
+                      lowLimit: limit.lowLevelLimit,
+                      mediumLimit: limit.mediumLevelLimit
+                    }
+                  )
+                }
+
+                this.limits = limits;
+
                 this.limitsNotifier.next(this.limits);
               }
-                this.selectedTemplate = template;
+              this.selectedTemplate = template;
             }
             this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
             this.tempSelectedColumns = this.selectedColumns;

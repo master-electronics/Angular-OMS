@@ -5,31 +5,19 @@
         <nz-form-label nzRequired> Date </nz-form-label>
         <nz-form-control>
           <nz-date-picker formControlName="timeRange"></nz-date-picker>
-          <nz-select class="templateSelect"
-            [ngModel]=""
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="onTemplateChange($event)"
-            nzPlaceHolder="Select Template">
-            <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}" nzLabel="{{ template.name }}"></nz-option>
+          <nz-select class="templateSelect" [ngModel]="" [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
+            <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"
+              nzLabel="{{ template.name }}"></nz-option>
           </nz-select>
-          <template-settings
-            (modalClosed)="onModalClose()"
-            [templates]="templates"
-            [columns]="columns"
-            [selectedColumns]="[]"
-            [templateNameValue]="templateNameValue"></template-settings>
+          <template-settings (modalClosed)="onModalClose()" [templates]="templates" [columns]="columns"
+            [selectedColumns]="[]" [templateNameValue]="templateNameValue"></template-settings>
         </nz-form-control>
 
       </nz-form-item>
 
       <div nz-col nzSpan="10">
-        <button
-          nz-button
-          [nzType]="'primary'"
-          (click)="onSubmit()"
-          [disabled]="isLoading"
-          class="mr-4"
-        >
+        <button nz-button [nzType]="'primary'" (click)="onSubmit()" [disabled]="isLoading" class="mr-4">
           Search
         </button>
         <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
@@ -39,14 +27,7 @@
   </form>
   <!-- Event log table -->
   <div *ngIf="fetchTable$ | async"></div>
-  <nz-table
-    id="excel-table"
-    #table
-    [nzPageSize]="50"
-    nzShowSizeChanger
-    [nzData]="tableData"
-    nzBordered
-  >
+  <nz-table id="excel-table" #table [nzPageSize]="50" nzShowSizeChanger [nzData]="tableData" nzBordered>
     <thead>
       <tr>
         <th *ngIf="preColSpan>0" colspan="{{ preColSpan }}"></th>
@@ -103,21 +84,32 @@
         <td *ngIf="columnsVisible.includes('WMSPriority')">{{ data.WMSPriority }}</td>
         <td *ngIf="columnsVisible.includes('Priority')">{{ data.Priority }}</td>
         <td *ngIf="columnsVisible.includes('Drop')">{{ data.release }}</td>
-        <td *ngIf="columnsVisible.includes('PickStart')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickStart }}</td>
-        <td *ngIf="columnsVisible.includes('PickEnd')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickDone }}</td>
-        <td *ngIf="columnsVisible.includes('PickElapsed')" [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('QCStart')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcStart }}</td>
-        <td *ngIf="columnsVisible.includes('QCEnd')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcDone }}</td>
-        <td *ngIf="columnsVisible.includes('QCElapsed')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{ data.qcElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('AGStart')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agStart }}</td>
-        <td *ngIf="columnsVisible.includes('AGEnd')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agDone }}</td>
-        <td *ngIf="columnsVisible.includes('AGElapsed')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{ data.agElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('PickStart')"
+          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickStart }}</td>
+        <td *ngIf="columnsVisible.includes('PickEnd')"
+          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickDone }}</td>
+        <td *ngIf="columnsVisible.includes('PickElapsed')"
+          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('QCStart')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
+          data.qcStart }}</td>
+        <td *ngIf="columnsVisible.includes('QCEnd')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
+          data.qcDone }}</td>
+        <td *ngIf="columnsVisible.includes('QCElapsed')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
+          data.qcElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('AGStart')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
+          data.agStart }}</td>
+        <td *ngIf="columnsVisible.includes('AGEnd')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
+          data.agDone }}</td>
+        <td *ngIf="columnsVisible.includes('AGElapsed')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
+          data.agElapsed }}</td>
         <td *ngIf="columnsVisible.includes('PullingStart')" [ngClass]="data.pullingLevel">{{ data.pullingStart }}</td>
         <td *ngIf="columnsVisible.includes('PullingEnd')" [ngClass]="data.pullingLevel">{{ data.pullingDone }}</td>
-        <td *ngIf="columnsVisible.includes('PullingElapsed')" [ngClass]="data.pullingLevel">{{ data.pullingElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('PullingElapsed')" [ngClass]="data.pullingLevel">{{ data.pullingElapsed }}
+        </td>
         <td *ngIf="columnsVisible.includes('DropOffStart')" [ngClass]="data.dropoffLevel">{{ data.dropoffStart }}</td>
         <td *ngIf="columnsVisible.includes('DropOffEnd')" [ngClass]="data.dropoffLevel">{{ data.dropoffEnd }}</td>
-        <td *ngIf="columnsVisible.includes('DropOffElapsed')" [ngClass]="data.dropoffLevel">{{ data.dropoffElapsed }}</td>
+        <td *ngIf="columnsVisible.includes('DropOffElapsed')" [ngClass]="data.dropoffLevel">{{ data.dropoffElapsed }}
+        </td>
         <td *ngIf="columnsVisible.includes('Notes')">{{ data.notes }}</td>
         <td *ngIf="columnsVisible.includes('TrackingNumber')">{{ data.TrackingNumber }}</td>
       </tr>

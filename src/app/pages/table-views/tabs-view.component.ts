@@ -195,9 +195,7 @@ export class TabsViewComponent {
   @Input('columns') columns: Column[];
   @Input('selectedColumns') selectedColumns: string[];
   @Input('allColumns') allColumnsSelected: boolean;
-  //@Input('limits') limits;
   @Input() limitsNotifier: Subject<any>;
-  //limits;
   pickLow;
   pickMedium;
   qcLow;
@@ -209,9 +207,7 @@ export class TabsViewComponent {
   dropoffLow;
   dropoffMedium;
   levelLimits = [];
-  //test;
   value: string;
-
   pickLowNotifier: Subject<any> = new Subject<any>();
   pickMediumNotifier: Subject<any> = new Subject<any>();
   qcLowNotifier: Subject<any> = new Subject<any>();
@@ -223,146 +219,120 @@ export class TabsViewComponent {
   dropoffLowNotifier: Subject<any> = new Subject<any>();
   dropoffMediumNotifier: Subject<any> = new Subject<any>();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.value = "";
     const l = this.value.length;
 
+    //subscribe to template-settings limitsNotifier Subject to receive level limits when template changed
     this.limitsNotifier.subscribe((data) => {
-      for(let i=0;i<data.length;i++) {
-         this[data[i].eventName.toString().toLowerCase()+"LowNotifier"].next(data[i].lowLevelLimit);
-         this[data[i].eventName.toString().toLowerCase()+"MediumNotifier"].next(data[i].mediumLevelLimit);
+      for (let i = 0; i < data.length; i++) {
+        this[data[i].eventName.toString().toLowerCase() + "LowNotifier"].next(data[i].lowLevelLimit);
+        this[data[i].eventName.toString().toLowerCase() + "MediumNotifier"].next(data[i].mediumLevelLimit);
 
-         this[data[i].eventName.toString().toLowerCase()+"Low"] = data[i].lowLevelLimit;
-         this[data[i].eventName.toString().toLowerCase()+"Medium"] = data[i].mediumLevelLimit;
+        this[data[i].eventName.toString().toLowerCase() + "Low"] = data[i].lowLevelLimit;
+        this[data[i].eventName.toString().toLowerCase() + "Medium"] = data[i].mediumLevelLimit;
       }
     });
 
-    //const test = "a";
   }
 
-  // testA(): void {
-  //   this.pickLow = 1000;
-  //   alert(this.pickLow);
-  // }
-  
-  // testC(): void {
-  //   this.testN.subscribe((data) => {
-  //     //alert("B-"+JSON.stringify(data));
-  //     try {
-  //     for(let i=0;i<data.length;i++) {
-  //       //alert(JSON.stringify(data[i]));
-  //        //this[data[i].eventName.toString().toLowerCase()+"Low"] = data[i].lowLevelLimit;
-  //        //this[data[i].eventName.toString().toLowerCase()+"Medium"] = data[i].mediumLevelLimit;
-
-  //        this[data[i].eventName.toString().toLowerCase()+"LowNotifier"] = data[i].lowLevelLimit;
-  //        this[data[i].eventName.toString().toLowerCase()+"MediumNotifier"] = data[i].mediumLevelLimit;
-  //     }
-  //     }
-  //     catch(error) {
-  //       alert(error);
-  //     }
-
-  //     // this.pickLowNotifier.next(this.pickLow);
-  //     // this.pickMediumNotifier.next(this.pickMedium);
-  //     // this.qcLowNotifier.next(this.qcLow);
-  //     // this.qcMediumNotifier.next(this.qcMedium);
-  //     // this.agLowNotifier.next(this.agLow);
-  //   });
-  //   //alert("C-"+JSON.stringify(this.limits));
-  // }
-
+  //receive data from columns-selector when column checkbox is selected
   onColumnSelected(e): void {
     this.checked.emit(e);
-    // const i = this.columnsVisible.indexOf(e);if (i == -1) {
-    //   this.columnsVisible.push(e);
-    // }
-  
-    //this.setColSpans();
-  }
-  
-  onColumnUnselected(e): void {
-    this.unchecked.emit(e);
-    // const i = this.columnsVisible.indexOf(e);
-  
-    // if (i > -1) {
-    //   this.columnsVisible.splice(i, 1);
-    // }
-  
-    // this.setColSpans();
   }
 
+  //receive data from columns-selector when column checkbox is unselected
+  onColumnUnselected(e): void {
+    this.unchecked.emit(e);
+  }
+
+  //receive data from columns-selector when all checkbox is selected
   onAllColumnsSelected(e): void {
     this.allChecked.emit(e);
   }
 
+  //receive data from columns-selector when column all is unselected
   onAllColumnsUnselected(e): void {
     this.allUnchecked.emit(e);
   }
 
+  //send new limit levels to template-settings when a level is changed
   onLevelChange(): void {
+    //create array of new event limits
     this.levelLimits = [];
     this.levelLimits.push({ eventName: "Pick", eventId: 301, lowLimit: (this.pickLow) ? this.pickLow : 0, mediumLimit: (this.pickMedium) ? this.pickMedium : 0 });
-    this.levelLimits.push({ eventName: "QC", eventId: 200,  lowLimit: (this.qcLow) ? this.qcLow : 0, mediumLimit: (this.qcMedium) ? this.qcMedium : 0 });
+    this.levelLimits.push({ eventName: "QC", eventId: 200, lowLimit: (this.qcLow) ? this.qcLow : 0, mediumLimit: (this.qcMedium) ? this.qcMedium : 0 });
     this.levelLimits.push({ eventName: "Ag", eventId: 1, lowLimit: (this.agLow) ? this.agLow : 0, mediumLimit: (this.agMedium) ? this.agMedium : 0 });
     this.levelLimits.push({ eventName: "Pulling", eventId: 400, lowLimit: (this.pullingLow) ? this.pullingLow : 0, mediumLimit: (this.pullingMedium) ? this.pullingMedium : 0 });
     this.levelLimits.push({ eventName: "DropOff", eventId: 500, lowLimit: (this.dropoffLow) ? this.dropoffLow : 0, mediumLimit: (this.dropoffMedium) ? this.dropoffMedium : 0 });
 
+    //emit limits array to template-settings
     this.levelsUpdated.emit(this.levelLimits);
   }
 
+  //handle pick low limit change
   pickLowEvent(e): void {
     this.pickLow = e;
     this.onLevelChange();
   }
 
+  //handle pick medium limit change
   pickMediumEvent(e): void {
     this.pickMedium = e;
     this.onLevelChange();
   }
 
+  //handle qc low limit change
   qcLowEvent(e): void {
     this.qcLow = e;
     this.onLevelChange();
   }
 
+  //handle qc medium limit change
   qcMediumEvent(e): void {
     this.qcMedium = e;
     this.onLevelChange();
   }
 
+  //handle ag low limit change
   agLowEvent(e): void {
     this.agLow = e;
     this.onLevelChange();
   }
 
+  //handle ag medium limit change
   agMediumEvent(e): void {
     this.agMedium = e;
     this.onLevelChange();
   }
 
+  //handle pulling low limit change
   pullLowEvent(e): void {
     this.pullingLow = e;
     this.onLevelChange();
   }
 
+  //handle pulling medium limit change
   pullMediumEvent(e): void {
     this.pullingMedium = e;
     this.onLevelChange();
   }
 
+  //handle dropOff low limit change
   dropOffLowEvent(e): void {
     this.dropoffLow = e;
     this.onLevelChange();
   }
 
+  //handle dropOff medium limit change
   dropOffMediumEvent(e): void {
     this.dropoffMedium = e;
     this.onLevelChange();
   }
 
-  ngOnDestroy() : void {
-    //this.testN.unsubscribe();
+  ngOnDestroy(): void {
+
   }
 }

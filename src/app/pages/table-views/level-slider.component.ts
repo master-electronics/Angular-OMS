@@ -1,5 +1,4 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-//import { Form, FormBuilder } from '@angular/forms';
 
 import { NzMarks } from 'ng-zorro-antd/slider';
 import { Subject } from 'rxjs';
@@ -58,55 +57,43 @@ import { Subject } from 'rxjs';
   ],
 })
 export class LevelSliderComponent {
-  //@Input('lowLevel') lowLevel: Number;
-  //@Input('mediumLevel') mediumLevel: Number;
   @Input() levelSubject: Subject<any>
   @Output() levelEvent = new EventEmitter<number>();
   hourValue;
   minuteValue;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
-    // const hrs = Math.trunc(Number(this.lowLevel)/60000);
-    // const mins = Math.trunc((Number(this.lowLevel)-(hrs*60000))/1000);
-
-    // this.hourValue = hrs;
-    // this.minuteValue = mins;
-    //this.testC();
-
+    //subscribe to tabs-view Subject to receive level limit changes
     this.levelSubject.subscribe((data) => {
-      const hrs = Math.trunc(Number(data)/3600000);
-      const mins = Math.trunc((Number(data)-(hrs*3600000))/60000);
+      //convert milliseconds to hours and minutes
+      const hrs = Math.trunc(Number(data) / 3600000);
+      const mins = Math.trunc((Number(data) - (hrs * 3600000)) / 60000);
 
+      //set hourValue and minuteValue, used to adjust slider value
       this.hourValue = hrs;
       this.minuteValue = mins;
     })
   }
 
-  // testC() {
-  //   this.levelSubject.subscribe((data) => {
-  //     const hrs = Math.trunc(Number(data)/60000);
-  //     const mins = Math.trunc((Number(data)-(hrs*60000))/1000);
-
-  //     this.hourValue = hrs;
-  //     this.minuteValue = mins;
-  //   })
-  // }
-
+  //format tip displayed for hour slider
   hourFormatter(value: number): string {
     return `${value}hrs`;
   }
 
+  //format tip displayed for minute slider
   minuteFormatter(value: number): string {
     return `${value}mins`;
   }
 
+  //when limit level changed convert hours and minutes to milliseconds
+  //emit milliseconds to tabs-view
   levelChange() {
     let hours = Number(this.hourValue);
     let minutes = Number(this.minuteValue);
-      
-    
+
+
     if (Number.isNaN(hours)) {
       hours = 0;
     }
@@ -115,7 +102,7 @@ export class LevelSliderComponent {
       minutes = 0;
     }
 
-    const limit = (hours*60*60*1000) + (minutes*60*1000);
+    const limit = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
 
     this.levelEvent.emit(limit);
   }
