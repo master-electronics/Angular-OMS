@@ -11,7 +11,8 @@
               nzLabel="{{ template.name }}"></nz-option>
           </nz-select>
           <template-settings (modalClosed)="onModalClose()" [templates]="templates" [columns]="columns"
-            [selectedColumns]="[]" [templateNameValue]="templateNameValue"></template-settings>
+            [selectedColumns]="[]" [templateNameValue]="templateNameValue"
+            [activeTemplateId]="templateId"></template-settings>
         </nz-form-control>
 
       </nz-form-item>

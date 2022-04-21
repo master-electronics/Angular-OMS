@@ -47,7 +47,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                         [(ngModel)]="templateNameValue"
                         value="{{ templateNameValue }}" formControlName="templateName" />
                 </form>
-                <button nz-button nzDanger *ngIf="templateId"
+                <button nz-button nzDanger *ngIf="templateId && (templateId != activeTemplateId)"
                   (click)="deleteTemplate()">
                   <i nz-icon nzType="delete" nzTheme="outline"></i>
                 </button>                            
@@ -77,6 +77,7 @@ export class TemplateSettings {
   @Input('columns') columns: Column[];
   @Input('selectedColumns') selectedColumns: string[];
   @Input('templateNameValue') templateNameValue: string;
+  @Input('activeTemplateId') activeTemplateId: number;
 
   columnSelector: ColumnSelectorComponent = new ColumnSelectorComponent();
   private selTempSub = new Subscription();
