@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { CommonService } from '../../../shared/services/common.service';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -54,9 +54,11 @@ export class ITNLifecycleComponent implements OnInit {
     private fb: FormBuilder,
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _findITNTemplates: FindItnTemplatesGQL,
-    private _findITNTemplate: FindItnTemplateGQL
+    private _findITNTemplate: FindItnTemplateGQL,
+    private titleService: Title
   ) {
     this.commonService.changeNavbar('ITN Lifecycle');
+    this.titleService.setTitle('ITN Lifecycle');
   }
 
   filterForm = this.fb.group({
