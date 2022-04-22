@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { CommonService } from '../../../shared/services/common.service';
 import { FormBuilder, Validators } from '@angular/forms';
-import { FetchItnLifecycleGQL, FetchItnUserColumnsGQL, FindItnTemplateGQL } from 'src/app/graphql/tableViews.graphql-gen';
+import { FetchItnLifecycleGQL, FetchItnUserColumnsGQL, FindItnTemplateGQL, FindItnColumnsGQL } from 'src/app/graphql/tableViews.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
 import { ColumnSelectorComponent } from '../column-selector.component';
 import { Column } from '../../../column';
@@ -33,6 +33,7 @@ export class ITNLifecycleComponent implements OnInit {
   private subscription = new Subscription();
   private templateList = new Subscription();
   private selTempSub = new Subscription()
+  private columnsSubscription = new Subscription();
   columnsVisible = [];
   columnsVisibleId = "";
   preColSpan = 0;
@@ -55,6 +56,7 @@ export class ITNLifecycleComponent implements OnInit {
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _findITNTemplates: FindItnTemplatesGQL,
     private _findITNTemplate: FindItnTemplateGQL,
+    private _findITNColumns: FindItnColumnsGQL,
     private titleService: Title
   ) {
     this.commonService.changeNavbar('ITN Lifecycle');
@@ -72,6 +74,34 @@ export class ITNLifecycleComponent implements OnInit {
     this.userId = userId.toString();
     this.templateNames = [];
     this.templates = [];
+    this.columns = [];
+
+    //Set up array of avaialbe columns
+    //Get columns from ITNCOLUMNS db table
+    this.columnsSubscription.add(
+      this._findITNColumns
+        .fetch(
+          {
+            userId: Number(this.userId)
+          }
+        )
+        .subscribe((res) => {
+          for (let i = 0; i < res.data.findITNColumns.length; i++) {
+            const column: Column =
+            {
+              name: res.data.findITNColumns[i].name,
+              title: res.data.findITNColumns[i].title,
+              colSpan: res.data.findITNColumns[i].colSpan,
+              position: res.data.findITNColumns[i].position
+            }
+
+            this.columns.push(column);
+          }
+        },
+        (error) => {
+          const err = error;
+        })
+    );
 
     //Get templates for user
     this.templateList.add(
@@ -105,40 +135,42 @@ export class ITNLifecycleComponent implements OnInit {
             const err = error;
           }
         )
-    )
+    );
+
+
 
     //Set up array of available columns
-    this.columns = [
-      { name: "Order", title: "Order", colSpan: "pre", position: 1 },
-      { name: "Line", title: "Line", colSpan: "pre", position: 2 },
-      { name: "ITN", title: "ITN", colSpan: "pre", position: 3 },
-      { name: "SplitITN", title: "Split ITN", colSpan: "pre", position: 4 },
-      { name: "Cust", title: "Cust", colSpan: "pre", position: 5 },
-      { name: "CustTier", title: "Cust Tier", colSpan: "pre", position: 6 },
-      { name: "Part", title: "Part", colSpan: "pre", position: 7 },
-      { name: "PartTier", title: "Part Tier", colSpan: "pre", position: 8 },
-      { name: "Zone", title: "Zone", colSpan: "pre", position: 9 },
-      { name: "WMSPriority", title: "WMSPriority", colSpan: "pre", position: 10 },
-      { name: "Priority", title: "Priority", colSpan: "pre", position: 11 },
-      { name: "Drop", title: "Drop", colSpan: "pre", position: 12 },
-      { name: "PickStart", title: "Pick Start", colSpan: "pick", position: 13 },
-      { name: "PickEnd", title: "Pick End", colSpan: "pick", position: 14 },
-      { name: "PickElapsed", title: "Pick Elapsed", colSpan: "pick", position: 15 },
-      { name: "QCStart", title: "QC Start", colSpan: "qc", position: 16 },
-      { name: "QCEnd", title: "QC End", colSpan: "qc", position: 17 },
-      { name: "QCElapsed", title: "QC Elapsed", colSpan: "qc", position: 18 },
-      { name: "AGStart", title: "Aggregation Start", colSpan: "ag", position: 19 },
-      { name: "AGEnd", title: "Aggregation End", colSpan: "ag", position: 20 },
-      { name: "AGElapsed", title: "Aggregation Elapsed", colSpan: "ag", position: 21 },
-      { name: "PullingStart", title: "Pulling Start", colSpan: "pulling", position: 22 },
-      { name: "PullingEnd", title: "Pulling End", colSpan: "pulling", position: 23 },
-      { name: "PullingElapsed", title: "Pulling Elapsed", colSpan: "pulling", position: 24 },
-      { name: "DropOffStart", title: "Drop Off Start", colSpan: "dropoff", position: 25 },
-      { name: "DropOffEnd", title: "Drop Off End", colSpan: "dropoff", position: 26 },
-      { name: "DropOffElapsed", title: "Drop Off Elapsed", colSpan: "dropoff", position: 27 },
-      { name: "Notes", title: "Notes", colSpan: "post", position: 28 },
-      { name: "TrackingNumber", title: "Tracking Number", colSpan: "post", position: 29 }
-    ];
+    // this.columns = [
+    //   { name: "Order", title: "Order", colSpan: "pre", position: 1 },
+    //   { name: "Line", title: "Line", colSpan: "pre", position: 2 },
+    //   { name: "ITN", title: "ITN", colSpan: "pre", position: 3 },
+    //   { name: "SplitITN", title: "Split ITN", colSpan: "pre", position: 4 },
+    //   { name: "Cust", title: "Cust", colSpan: "pre", position: 5 },
+    //   { name: "CustTier", title: "Cust Tier", colSpan: "pre", position: 6 },
+    //   { name: "Part", title: "Part", colSpan: "pre", position: 7 },
+    //   { name: "PartTier", title: "Part Tier", colSpan: "pre", position: 8 },
+    //   { name: "Zone", title: "Zone", colSpan: "pre", position: 9 },
+    //   { name: "WMSPriority", title: "WMSPriority", colSpan: "pre", position: 10 },
+    //   { name: "Priority", title: "Priority", colSpan: "pre", position: 11 },
+    //   { name: "Drop", title: "Drop", colSpan: "pre", position: 12 },
+    //   { name: "PickStart", title: "Pick Start", colSpan: "pick", position: 13 },
+    //   { name: "PickEnd", title: "Pick End", colSpan: "pick", position: 14 },
+    //   { name: "PickElapsed", title: "Pick Elapsed", colSpan: "pick", position: 15 },
+    //   { name: "QCStart", title: "QC Start", colSpan: "qc", position: 16 },
+    //   { name: "QCEnd", title: "QC End", colSpan: "qc", position: 17 },
+    //   { name: "QCElapsed", title: "QC Elapsed", colSpan: "qc", position: 18 },
+    //   { name: "AGStart", title: "Aggregation Start", colSpan: "ag", position: 19 },
+    //   { name: "AGEnd", title: "Aggregation End", colSpan: "ag", position: 20 },
+    //   { name: "AGElapsed", title: "Aggregation Elapsed", colSpan: "ag", position: 21 },
+    //   { name: "PullingStart", title: "Pulling Start", colSpan: "pulling", position: 22 },
+    //   { name: "PullingEnd", title: "Pulling End", colSpan: "pulling", position: 23 },
+    //   { name: "PullingElapsed", title: "Pulling Elapsed", colSpan: "pulling", position: 24 },
+    //   { name: "DropOffStart", title: "Drop Off Start", colSpan: "dropoff", position: 25 },
+    //   { name: "DropOffEnd", title: "Drop Off End", colSpan: "dropoff", position: 26 },
+    //   { name: "DropOffElapsed", title: "Drop Off Elapsed", colSpan: "dropoff", position: 27 },
+    //   { name: "Notes", title: "Notes", colSpan: "post", position: 28 },
+    //   { name: "TrackingNumber", title: "Tracking Number", colSpan: "post", position: 29 }
+    // ];
 
   }
 
@@ -389,6 +421,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.subscription.unsubscribe();
     this.templateList.unsubscribe();
     this.selTempSub.unsubscribe();
+    this.columnsSubscription.unsubscribe();
   }
 
 }

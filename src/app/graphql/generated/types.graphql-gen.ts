@@ -60,6 +60,15 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnColumn = {
+  __typename?: 'ITNColumn';
+  _id?: Maybe<Scalars['Int']>;
+  colSpan?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type ItnLifeCycle = {
   __typename?: 'ITNLifeCycle';
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -488,6 +497,7 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
@@ -579,6 +589,11 @@ export type QueryFindContainerListArgs = {
   Limit?: InputMaybe<Scalars['Int']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnColumnsArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 

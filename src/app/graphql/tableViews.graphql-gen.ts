@@ -65,6 +65,15 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnColumn = {
+  __typename?: 'ITNColumn';
+  _id?: Maybe<Scalars['Int']>;
+  colSpan?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type ItnLifeCycle = {
   __typename?: 'ITNLifeCycle';
   CustomerNumber?: Maybe<Scalars['String']>;
@@ -493,6 +502,7 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
@@ -584,6 +594,11 @@ export type QueryFindContainerListArgs = {
   Limit?: InputMaybe<Scalars['Int']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnColumnsArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1102,6 +1117,13 @@ export type FindItnTemplatesQueryVariables = Types.Exact<{
 
 export type FindItnTemplatesQuery = { __typename?: 'Query', findITNTemplates?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
 
+export type FindItnColumnsQueryVariables = Types.Exact<{
+  userId?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, colSpan?: string | null, position?: number | null } | null> | null };
+
 export type Insert_ItnUserColumnsMutationVariables = Types.Exact<{
   itnUserColumns: Array<Types.InputMaybe<Types.InsertItnUserColumnsInfo>> | Types.InputMaybe<Types.InsertItnUserColumnsInfo>;
 }>;
@@ -1559,6 +1581,28 @@ export const FindItnTemplatesDocument = gql`
   })
   export class FindItnTemplatesGQL extends Apollo.Query<FindItnTemplatesQuery, FindItnTemplatesQueryVariables> {
     document = FindItnTemplatesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindItnColumnsDocument = gql`
+    query findITNColumns($userId: Int) {
+  findITNColumns(UserID: $userId) {
+    _id
+    name
+    title
+    colSpan
+    position
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindItnColumnsGQL extends Apollo.Query<FindItnColumnsQuery, FindItnColumnsQueryVariables> {
+    document = FindItnColumnsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -228,6 +228,16 @@ query findITNTemplates($userId: Int) {
   }
 }
 
+query findITNColumns($userId: Int) {
+  findITNColumns(UserID: $userId) {
+    _id
+    name
+    title
+    colSpan
+    position
+  }
+}
+
 mutation insert_ITNUserColumns($itnUserColumns: [insertITNUserColumnsInfo]!) {
   insertITNUserColumns(ITNUserColumns: $itnUserColumns) {
     UserID
