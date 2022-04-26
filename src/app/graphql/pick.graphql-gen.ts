@@ -155,6 +155,7 @@ export type Mutation = {
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateUserCart?: Maybe<Container>;
+  updateUserCartForDropOff?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
@@ -338,6 +339,12 @@ export type MutationUpdateOrderLineDetailArgs = {
 
 
 export type MutationUpdateUserCartArgs = {
+  Container: SearchContainer;
+  UserID: Scalars['Int'];
+};
+
+
+export type MutationUpdateUserCartForDropOffArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
@@ -942,6 +949,14 @@ export type VerifyCartAndUpdateMutationVariables = Types.Exact<{
 
 export type VerifyCartAndUpdateMutation = { __typename?: 'Mutation', updateUserCart?: { __typename?: 'Container', _id: number } | null };
 
+export type VerifyCartAndUpdateForDropOffMutationVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+  UserID: Types.Scalars['Int'];
+}>;
+
+
+export type VerifyCartAndUpdateForDropOffMutation = { __typename?: 'Mutation', updateUserCartForDropOff?: { __typename?: 'Container', _id: number } | null };
+
 export type VerifyPositionBarcodeForPullingQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
 }>;
@@ -1023,6 +1038,24 @@ export const VerifyCartAndUpdateDocument = gql`
   })
   export class VerifyCartAndUpdateGQL extends Apollo.Mutation<VerifyCartAndUpdateMutation, VerifyCartAndUpdateMutationVariables> {
     document = VerifyCartAndUpdateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyCartAndUpdateForDropOffDocument = gql`
+    mutation verifyCartAndUpdateForDropOff($Container: searchContainer!, $UserID: Int!) {
+  updateUserCartForDropOff(Container: $Container, UserID: $UserID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyCartAndUpdateForDropOffGQL extends Apollo.Mutation<VerifyCartAndUpdateForDropOffMutation, VerifyCartAndUpdateForDropOffMutationVariables> {
+    document = VerifyCartAndUpdateForDropOffDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

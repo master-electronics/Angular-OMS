@@ -155,6 +155,7 @@ export type Mutation = {
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateUserCart?: Maybe<Container>;
+  updateUserCartForDropOff?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
@@ -338,6 +339,12 @@ export type MutationUpdateOrderLineDetailArgs = {
 
 
 export type MutationUpdateUserCartArgs = {
+  Container: SearchContainer;
+  UserID: Scalars['Int'];
+};
+
+
+export type MutationUpdateUserCartForDropOffArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };

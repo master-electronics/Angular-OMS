@@ -22,6 +22,7 @@ import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import {
   FetchPickingSettingsGQL,
+  VerifyCartAndUpdateForDropOffGQL,
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -56,6 +57,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     private _router: Router,
     private _route: ActivatedRoute,
     private _verifyCart: VerifyCartAndUpdateGQL,
+    private _verifyCartForDropOff: VerifyCartAndUpdateForDropOffGQL,
     private _pickService: PickService,
     private _fetchSettings: FetchPickingSettingsGQL,
     private _userLog: Insert_UserEventLogsGQL
@@ -118,6 +120,10 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       return;
     }
     this.isLoading = true;
+    this.urlParams.dropoff === 'true' ? this.forDropoff() : this.forPulling();
+  }
+
+  forPulling(): void {
     this.submit$ = this._verifyCart
       .mutate(
         {
@@ -147,9 +153,49 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
         }),
         map(() => {
           this.isLoading = false;
-          this.urlParams.dropoff === 'true'
-            ? this._router.navigate(['pulltopick/dropoff'])
-            : this._router.navigate(['pulltopick/location']);
+          this._router.navigate(['pulltopick/location']);
+          return true;
+        }),
+        catchError((err) => {
+          this.alertMessage = err;
+          this.alertType = 'error';
+          this.isLoading = false;
+          return [];
+        })
+      );
+  }
+
+  forDropoff(): void {
+    this.submit$ = this._verifyCartForDropOff
+      .mutate(
+        {
+          Container: {
+            DistributionCenter: environment.DistributionCenter,
+            Barcode: this.containerForm.value.containerNumber,
+          },
+          UserID: this.userID,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        switchMap((res) => {
+          this._pickService.changeCartInfo({
+            id: res.data.updateUserCartForDropOff._id,
+            barcode: this.containerForm.value.containerNumber,
+          });
+          return this._userLog.mutate({
+            log: [
+              {
+                Message: `${this.containerForm.value.containerNumber}`,
+                UserEventID: environment.Event_DropOff_SelectCart,
+                UserID: this.userID,
+              },
+            ],
+          });
+        }),
+        map(() => {
+          this.isLoading = false;
+          this._router.navigate(['pulltopick/dropoff']);
           return true;
         }),
         catchError((err) => {

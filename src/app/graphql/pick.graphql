@@ -4,6 +4,15 @@ mutation verifyCartAndUpdate($Container: searchContainer!, $UserID: Int!) {
   }
 }
 
+mutation verifyCartAndUpdateForDropOff(
+  $Container: searchContainer!
+  $UserID: Int!
+) {
+  updateUserCartForDropOff(Container: $Container, UserID: $UserID) {
+    _id
+  }
+}
+
 query verifyPositionBarcodeForPulling($Container: searchContainer!) {
   findContainer(Container: $Container) {
     _id

@@ -40,4 +40,5 @@ export const environment = {
   Event_DropOff_Start: 500,
   Event_DropOff_SelectITN: 501,
   Event_DropOff_Done: 502,
+  Event_DropOff_SelectCart: 503,
 };
