@@ -122,6 +122,7 @@ export type Inventory = {
 export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
+  cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
@@ -161,6 +162,13 @@ export type MutationChangeQcLineInfoArgs = {
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
   ROHS: Scalars['String'];
+};
+
+
+export type MutationCleanContainerFromPrevOrderArgs = {
+  ContainerID: Scalars['Int'];
+  Inventory: UpdateInventory;
+  OrderID: Scalars['Int'];
 };
 
 

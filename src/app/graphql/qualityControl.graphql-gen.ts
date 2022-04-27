@@ -127,6 +127,7 @@ export type Inventory = {
 export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
+  cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
@@ -166,6 +167,13 @@ export type MutationChangeQcLineInfoArgs = {
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
   ROHS: Scalars['String'];
+};
+
+
+export type MutationCleanContainerFromPrevOrderArgs = {
+  ContainerID: Scalars['Int'];
+  Inventory: UpdateInventory;
+  OrderID: Scalars['Int'];
 };
 
 
@@ -1015,6 +1023,25 @@ export type VerifyQcRepackQueryVariables = Types.Exact<{
 
 export type VerifyQcRepackQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, Row?: string | null, ContainerTypeID: number, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, OrderID: number } | null> | null } | null> | null } | null> | null, findOrder?: Array<{ __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ContainerID: number } | null } | null> | null } | null> | null };
 
+export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
+  InventoryTrackingNumber: Types.Scalars['String'];
+  OrderLineDetailID: Types.Scalars['Int'];
+  Inventory: Types.UpdateInventory;
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+}>;
+
+
+export type UpdateInventoryAndDetailAfterRepackMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, updateOrderLineDetail?: Array<number | null> | null };
+
+export type CleanContainerFromPrevOrderMutationVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+  OrderID: Types.Scalars['Int'];
+  Inventory: Types.UpdateInventory;
+}>;
+
+
+export type CleanContainerFromPrevOrderMutation = { __typename?: 'Mutation', cleanContainerFromPrevOrder?: boolean | null };
+
 export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
   DateCode: Types.Scalars['String'];
@@ -1263,6 +1290,49 @@ export const VerifyQcRepackDocument = gql`
   })
   export class VerifyQcRepackGQL extends Apollo.Query<VerifyQcRepackQuery, VerifyQcRepackQueryVariables> {
     document = VerifyQcRepackDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateInventoryAndDetailAfterRepackDocument = gql`
+    mutation updateInventoryAndDetailAfterRepack($InventoryTrackingNumber: String!, $OrderLineDetailID: Int!, $Inventory: updateInventory!, $OrderLineDetail: updateOrderLineDetail!) {
+  updateInventory(
+    Inventory: $Inventory
+    InventoryTrackingNumber: $InventoryTrackingNumber
+  )
+  updateOrderLineDetail(
+    OrderLineDetail: $OrderLineDetail
+    _id: $OrderLineDetailID
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateInventoryAndDetailAfterRepackGQL extends Apollo.Mutation<UpdateInventoryAndDetailAfterRepackMutation, UpdateInventoryAndDetailAfterRepackMutationVariables> {
+    document = UpdateInventoryAndDetailAfterRepackDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CleanContainerFromPrevOrderDocument = gql`
+    mutation cleanContainerFromPrevOrder($ContainerID: Int!, $OrderID: Int!, $Inventory: updateInventory!) {
+  cleanContainerFromPrevOrder(
+    Inventory: $Inventory
+    ContainerID: $ContainerID
+    OrderID: $OrderID
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CleanContainerFromPrevOrderGQL extends Apollo.Mutation<CleanContainerFromPrevOrderMutation, CleanContainerFromPrevOrderMutationVariables> {
+    document = CleanContainerFromPrevOrderDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

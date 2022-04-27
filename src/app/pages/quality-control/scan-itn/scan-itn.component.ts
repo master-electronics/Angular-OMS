@@ -145,7 +145,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 ),
                 OrderNumber: Order.OrderNumber.trim(),
                 NOSINumber: Order.NOSINumber.trim(),
-                InternalTrackingNumber: ITN,
+                InventoryTrackingNumber: ITN,
                 UserEventID: environment.Event_QC_Start,
               },
             ];

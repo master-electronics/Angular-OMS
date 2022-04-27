@@ -17,9 +17,9 @@ import {
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
   FindNewAfterUpdateBinGQL,
+  UpdateInventoryAndDetailGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
@@ -50,11 +50,11 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateContainer: UpdateContainerGQL,
+    private updateInventoryDetail: UpdateInventoryAndDetailGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
-    private findNewID: FindNewAfterUpdateBinGQL,
-    private gtmService: GoogleTagManagerService
+    private findNewID: FindNewAfterUpdateBinGQL
   ) {
     this.titleService.setTitle('qc/repack');
   }
@@ -107,7 +107,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               this.needSearch = true;
               message = `Bin location is not qc, Click search button again!`;
             }
-            if (res.data.findOrderLineDetail.length > 1) {
+            if (res.data.findInventory.length > 1) {
               this.needSearch = true;
               message = `More than one ITN, Click search button again!`;
             }
@@ -167,16 +167,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!returnOrder.ORDERLINEDETAILs.length)
               throw 'This Order is not exist in OrderLineDetail.';
             // Search all ITN by containerID, if has ITN record != current ITN, and the status is before ag out, pop error.
-            if (targetContainer.ORDERLINEDETAILs.length) {
-              targetContainer.ORDERLINEDETAILs.forEach((itn) => {
+            if (targetContainer.INVENTORies.length) {
+              targetContainer.INVENTORies.forEach((itn) => {
                 if (
-                  itn.OrderID !== this.itemInfo.OrderID &&
-                  itn.StatusID < environment.agOutComplete_ID
+                  itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
+                  itn.ORDERLINEDETAILs[0].StatusID <
+                    environment.agOutComplete_ID
                 )
                   throw 'This tote has other order item in it.';
                 if (
-                  itn.OrderID === this.itemInfo.OrderID &&
-                  itn.StatusID !== environment.qcComplete_ID
+                  itn.ORDERLINEDETAILs[0].OrderID === this.itemInfo.OrderID &&
+                  itn.ORDERLINEDETAILs[0].StatusID !== environment.qcComplete_ID
                 )
                   throw 'This tote is not in QC area.';
               });
@@ -184,12 +185,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
               if (
-                line.InternalTrackingNumber !==
-                this.itemInfo.InternalTrackingNumber
+                line.Inventory[0].InventoryTrackingNumber !==
+                this.itemInfo.InventoryTrackingNumber
               ) {
                 line.StatusID < environment.qcComplete_ID && ++inProcess;
               } else {
-                sourceContainer = line.ContainerID;
+                sourceContainer = line.Inventory[0].ContainerID;
               }
             });
           }),
@@ -197,7 +198,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             const targetContainer = res.data.findContainer[0];
             // Setup graphql queries
             const updatQCComplete = this.updateMerp.mutate({
-              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+              InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
               DateCode: this.itemInfo.DateCode,
               CountryOfOrigin: this.itemInfo.CountryOfOrigin,
               ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
@@ -211,7 +212,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 ),
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
-                InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+                InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
                 UserEventID: environment.Event_QC_Done,
                 Message: `Repack to ${this.containerForm.value.container}`,
               },
@@ -224,23 +225,27 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
                 UserEventID: environment.Event_QC_OrderComplete,
-                InternalTrackingNumber: null,
+                InventoryTrackingNumber: null,
                 Message: null,
               });
             }
             const insertUserEventLog = this.insertUserEventLog.mutate({
               log: UserEventLog,
             });
-            this.updateDetail = this.updateOrderLineDetail.mutate({
-              InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+            this.updateDetail = this.updateInventoryDetail.mutate({
+              InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+              OrderLineDetailID: this.itemInfo.OrderLineDetailID,
               OrderLineDetail: {
                 StatusID: environment.qcComplete_ID,
+                ContainerID: targetContainer._id,
+              },
+              Inventory: {
                 ContainerID: targetContainer._id,
               },
             });
 
             const updateTargetConatiner = this.updateContainer.mutate({
-              _id: targetContainer._id,
+              ContainerID: targetContainer._id,
               Container: {
                 Warehouse: '01',
                 Row: 'QC',
@@ -251,7 +256,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               },
             });
             const updateSourceConatiner = this.updateContainer.mutate({
-              _id: sourceContainer,
+              ContainerID: sourceContainer,
               Container: {
                 Warehouse: null,
                 Row: null,
@@ -287,18 +292,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (inProcess) delete updateQueries.updateMerpLog;
             // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
-            if (targetContainer.ORDERLINEDETAILs.length) {
-              const needCleanup = targetContainer.ORDERLINEDETAILs.some(
-                (itn) => {
-                  return (
-                    itn.OrderID !== this.itemInfo.OrderID &&
-                    itn.StatusID >= environment.agOutComplete_ID
-                  );
-                }
-              );
+            if (targetContainer.INVENTORies.length) {
+              const needCleanup = targetContainer.INVENTORies.some((itn) => {
+                return (
+                  itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
+                  itn.ORDERLINEDETAILs[0].StatusID >=
+                    environment.agOutComplete_ID
+                );
+              });
               if (needCleanup)
                 updateQueries['cleanContainerFromPrevOrder'] =
-                  this.updateOrderLineDetail.mutate({
+                  this.cleanContainerFromPrevOrder.mutate({
                     ContainerID: targetContainer._id,
                     OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
                     OrderLineDetail: { ContainerID: environment.DC_PH_ID },
@@ -313,13 +317,13 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               res.updateTargetContainer &&
               !res.updateTargetContainer.data.updateContainer[0]
             ) {
-              error += `${this.itemInfo.InternalTrackingNumber} Fail to update Target Container SQL`;
+              error += `${this.itemInfo.InventoryTrackingNumber} Fail to update Target Container SQL`;
             }
             if (
               res.updateSourceContainer &&
               !res.updateSourceContainer.data.updateContainer[0]
             ) {
-              error += `${this.itemInfo.InternalTrackingNumber} Fail to update source Container SQL`;
+              error += `${this.itemInfo.InventoryTrackingNumber} Fail to update source Container SQL`;
             }
             if (error) throw error;
           }),
@@ -330,17 +334,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
           tap((res: any) => {
             if (!res.data.updateOrderLineDetail[0]) {
-              throw `${this.itemInfo.InternalTrackingNumber} Fail to update OrderLineDetail SQL`;
+              throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
             }
           })
         )
         .subscribe(
           (res: any) => {
             let type = 'info';
-            let message = `QC complete for ${this.itemInfo.InternalTrackingNumber}`;
+            let message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
             if (res.updateMerpLog) {
               type = 'success';
-              message = `QC complete for ${this.itemInfo.InternalTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
+              message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
             }
             this.sendGTM();
             this.router.navigate(['/qc'], {

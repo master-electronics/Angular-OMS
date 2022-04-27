@@ -22,7 +22,7 @@ import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'aggregation-in',
@@ -123,14 +123,14 @@ export class AggregationInComponent
           const container = res.data.findContainer[0];
           const logList = [];
           res.data.findContainer[0].ORDERLINEDETAILs.forEach((line) => {
-            if (line.InternalTrackingNumber) {
+            if (line.Inventory.InventoryTrackingNumber) {
               logList.push({
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
                 OrderNumber: container.ORDERLINEDETAILs[0].Order.OrderNumber,
                 NOSINumber: container.ORDERLINEDETAILs[0].Order.NOSINumber,
-                InternalTrackingNumber: line.InternalTrackingNumber,
+                InventoryTrackingNumber: line.Inventory.InventoryTrackingNumber,
                 UserEventID: environment.Event_AgIn_Start,
                 Message: `Start ${container.Barcode}`,
               });

@@ -1,29 +1,31 @@
-# query verifyContainerForAggregationIn($Container: searchContainer!) {
-#   findContainer(Container: $Container) {
-#     _id
-#     Barcode
-#     ContainerTypeID
-#     Warehouse
-#     Row
-#     Aisle
-#     Section
-#     Shelf
-#     ShelfDetail
-#     ContainerType {
-#       IsMobile
-#     }
-#     ORDERLINEDETAILs {
-#       _id
-#       InternalTrackingNumber
-#       StatusID
-#       OrderID
-#       Order {
-#         OrderNumber
-#         NOSINumber
-#       }
-#     }
-#   }
-# }
+query verifyContainerForAggregationIn($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    _id
+    Barcode
+    ContainerTypeID
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    ContainerType {
+      IsMobile
+    }
+    ORDERLINEDETAILs {
+      _id
+      StatusID
+      OrderID
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+      Inventory {
+        InventoryTrackingNumber
+      }
+    }
+  }
+}
 
 # query fetchLocationAndOrderDetailForAgIn(
 #   $OrderLineDetail: searchOrderLineDetail!
@@ -32,7 +34,7 @@
 #     _id
 #     Quantity
 #     StatusID
-#     InternalTrackingNumber
+#     InventoryTrackingNumber
 #     OrderLine {
 #       OrderLineNumber
 #       ProductCode
@@ -206,7 +208,7 @@
 
 # query fetchContainerForAgoutPick($OrderID: Int) {
 #   findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
-#     InternalTrackingNumber
+#     InventoryTrackingNumber
 #     OrderLine {
 #       OrderLineNumber
 #       ProductCode
