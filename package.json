@@ -18,7 +18,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~13.2.5",
-    "@angular/cdk": "^12.2.5",
+    "@angular/cdk": "~13.2.5",
     "@angular/common": "~13.2.5",
     "@angular/compiler": "~13.2.5",
     "@angular/core": "~13.2.5",
@@ -28,8 +28,7 @@
     "@angular/router": "~13.2.5",
     "@tailwindcss/forms": "^0.3.3",
     "angular-google-tag-manager": "^1.4.2",
-    "angular-user-idle": "^2.2.7",
-    "apollo-angular": "^2.6.0",
+    "apollo-angular": "~3.0.1",
     "autoprefixer": "^10.3.4",
     "file-saver": "^2.0.5",
     "ng-zorro-antd": "^13.1.1",

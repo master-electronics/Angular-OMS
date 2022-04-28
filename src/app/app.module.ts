@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { APOLLO_NAMED_OPTIONS, NamedOptions } from 'apollo-angular';
+import { ApolloModule, APOLLO_NAMED_OPTIONS, NamedOptions } from 'apollo-angular';
 import { HttpBatchLink, HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 
@@ -15,7 +15,6 @@ import { SharedComponentModule } from './components/shared-component.module';
 import { SharedUtilityModule } from './shared/shared-utility.module';
 import { GoogleTagManagerModule } from 'angular-google-tag-manager';
 import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interceptor';
-import { UserIdleModule } from 'angular-user-idle';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -57,6 +56,7 @@ import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
   ],
   imports: [
     CommonModule,
+    ApolloModule,
     HttpClientModule,
     PlatformModule,
     BrowserModule,
@@ -66,7 +66,6 @@ import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
     AppRoutingModule,
     SharedComponentModule,
     SharedUtilityModule,
-    UserIdleModule.forRoot({ idle: 900, timeout: 90, ping: 120 }),
     GoogleTagManagerModule.forRoot({
       id: environment.GTM_ID,
     }),
