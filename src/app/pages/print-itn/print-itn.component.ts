@@ -82,7 +82,7 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.printItnLabel
         .mutate({
-          InternalTrackingNumber: this.ITNForm.get('ITN').value.toUpperCase(),
+          InventoryTrackingNumber: this.ITNForm.get('ITN').value.toUpperCase(),
           Station: this.currentStation,
         })
         .pipe(

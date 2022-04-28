@@ -18,34 +18,34 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent,
       },
-      // {
-      //   path: 'agin',
-      //   loadChildren: () =>
-      //     import('./pages/aggregation-in/aggregation-in.module').then(
-      //       (m) => m.AggregationInModule
-      //     ),
-      // },
-      // {
-      //   path: 'agout',
-      //   loadChildren: () =>
-      //     import('./pages/aggregation-out/aggregation-out.module').then(
-      //       (m) => m.AggregationOutModule
-      //     ),
-      // },
-      // {
-      //   path: 'qc',
-      //   loadChildren: () =>
-      //     import('./pages/quality-control/quality-control.module').then(
-      //       (m) => m.QualityControlModule
-      //     ),
-      // },
-      // {
-      //   path: 'searchbarcode',
-      //   loadChildren: () =>
-      //     import('./pages/search-barcode/search-barcode.module').then(
-      //       (m) => m.SearchBarcodeModule
-      //     ),
-      // },
+      {
+        path: 'agin',
+        loadChildren: () =>
+          import('./pages/aggregation-in/aggregation-in.module').then(
+            (m) => m.AggregationInModule
+          ),
+      },
+      {
+        path: 'agout',
+        loadChildren: () =>
+          import('./pages/aggregation-out/aggregation-out.module').then(
+            (m) => m.AggregationOutModule
+          ),
+      },
+      {
+        path: 'qc',
+        loadChildren: () =>
+          import('./pages/quality-control/quality-control.module').then(
+            (m) => m.QualityControlModule
+          ),
+      },
+      {
+        path: 'searchbarcode',
+        loadChildren: () =>
+          import('./pages/search-barcode/search-barcode.module').then(
+            (m) => m.SearchBarcodeModule
+          ),
+      },
       {
         path: 'tableviews',
         loadChildren: () =>
@@ -53,20 +53,20 @@ const routes: Routes = [
             (m) => m.TableViewsModule
           ),
       },
-      // {
-      //   path: 'printitn',
-      //   loadChildren: () =>
-      //     import('./pages/print-itn/print-itn.module').then(
-      //       (m) => m.PrintITNModule
-      //     ),
-      // },
-      // {
-      //   path: 'shelfinventory',
-      //   loadChildren: () =>
-      //     import('./pages//shelf-inventory/shelf-inventory.module').then(
-      //       (m) => m.ShelfInventoryModule
-      //     ),
-      // },
+      {
+        path: 'printitn',
+        loadChildren: () =>
+          import('./pages/print-itn/print-itn.module').then(
+            (m) => m.PrintITNModule
+          ),
+      },
+      {
+        path: 'shelfinventory',
+        loadChildren: () =>
+          import('./pages//shelf-inventory/shelf-inventory.module').then(
+            (m) => m.ShelfInventoryModule
+          ),
+      },
       {
         path: 'pulltopick',
         loadChildren: () =>

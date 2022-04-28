@@ -1,0 +1,114 @@
+query findContainerForSearchBarcode($Container: searchContainer!) {
+  findContainer(Container: $Container) {
+    Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    INVENTORies {
+      InventoryTrackingNumber
+      Product {
+        ProductCode
+        PartNumber
+      }
+      ORDERLINEDETAILs {
+        Status {
+          Name
+        }
+        OrderLine {
+          OrderLineNumber
+        }
+        Order {
+          OrderNumber
+          NOSINumber
+          ShipmentMethod {
+            PriorityPinkPaper
+          }
+        }
+      }
+    }
+  }
+}
+
+query findITNforSearchBarcode($InventoryTrackingNumber: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $InventoryTrackingNumber }
+  ) {
+    InventoryTrackingNumber
+    Product {
+      PartNumber
+      ProductCode
+    }
+    Container {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+    }
+    ORDERLINEDETAILs {
+      Status {
+        Name
+      }
+      OrderLine {
+        OrderLineNumber
+      }
+      Order {
+        OrderNumber
+        NOSINumber
+        ShipmentMethod {
+          PriorityPinkPaper
+        }
+      }
+    }
+  }
+}j
+
+query findOrderForSearchBarcode(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  findOrder(
+    Order: {
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    }
+  ) {
+    OrderNumber
+    NOSINumber
+    ShipmentMethod {
+      PriorityPinkPaper
+    }
+    ORDERLINEs {
+      OrderLineNumber
+      ORDERLINEDETAILs {
+        Inventory {
+          InventoryTrackingNumber
+          Product {
+            ProductCode
+            PartNumber
+          }
+          Container {
+            Barcode
+            Warehouse
+            Row
+            Aisle
+            Section
+            Shelf
+            ShelfDetail
+          }
+        }
+        Status {
+          Name
+        }
+        Quantity
+      }
+    }
+  }
+}

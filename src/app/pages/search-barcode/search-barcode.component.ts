@@ -116,14 +116,14 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.search$ = this.searchITN
           .watch(
             {
-              InternalTrackingNumber: barcode,
+              InventoryTrackingNumber: barcode,
             },
             { fetchPolicy: 'network-only' }
           )
           .valueChanges.pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findOrderLineDetail;
+              return res.data.findInventory;
             })
           );
       }

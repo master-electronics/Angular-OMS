@@ -56,25 +56,28 @@
               }}
             </li>
             <div class="divide-y">
-              <ul *ngFor="let ITN of container.ORDERLINEDETAILs">
+              <ul *ngFor="let ITN of container.INVENTORies">
                 <li class="ml-3">
                   ITN:
                   <a
                     [routerLink]="['/tableviews/usereventlog']"
-                    [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                    [queryParams]="{ ITN: ITN.InventoryTrackingNumber }"
                     class="text-blue-500"
                   >
-                    {{ ITN.InternalTrackingNumber }}</a
+                    {{ ITN.InventoryTrackingNumber }}</a
                   >
-                  ({{ ITN.Status.Name }})
+                  ({{ ITN.ORDERLINEDETAILs[0].Status.Name }})
                 </li>
                 <li class="ml-3">
-                  Order: {{ ITN.Order.OrderNumber }}-{{
-                    ITN.Order.NOSINumber
+                  Order: {{ ITN.ORDERLINEDETAILs[0].Order.OrderNumber }}-{{
+                    ITN.ORDERLINEDETAILs[0].Order.NOSINumber
                   }}
-                  #{{ ITN.OrderLine.OrderLineNumber }}
+                  #{{ ITN.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber }}
                   <span>{{
-                    ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+                    ITN.ORDERLINEDETAILs[0].Order.ShipmentMethod
+                      .PriorityPinkPaper
+                      ? 'Y'
+                      : 'N'
                   }}</span>
                 </li>
               </ul>
@@ -91,12 +94,12 @@
               ITN:
               <a
                 [routerLink]="['/tableviews/usereventlog']"
-                [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                [queryParams]="{ ITN: ITN.InventoryTrackingNumber }"
                 class="text-blue-500"
               >
-                {{ ITN.InternalTrackingNumber }}</a
+                {{ ITN.InventoryTrackingNumber }}</a
               >
-              ({{ ITN.Status.Name }})
+              ({{ ITN.ORDERLINEDETAILs[0].Status.Name }})
             </li>
             <li>
               Location:
@@ -108,11 +111,14 @@
             </li>
             <li>Container: {{ ITN.Container.Barcode }}</li>
             <li>
-              Order: {{ ITN.Order.OrderNumber }}-{{ ITN.Order.NOSINumber }} #{{
-                ITN.OrderLine.OrderLineNumber
+              Order: {{ ITN.ORDERLINEDETAILs[0].Order.OrderNumber }}-{{
+                ITN.ORDERLINEDETAILs[0].Order.NOSINumber
               }}
+              #{{ ITN.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber }}
               <span>{{
-                ITN.Order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N'
+                ITN.ORDERLINEDETAILs[0].Order.ShipmentMethod.PriorityPinkPaper
+                  ? 'Y'
+                  : 'N'
               }}</span>
             </li>
           </ul>
@@ -136,21 +142,25 @@
                   ITN:
                   <a
                     [routerLink]="['/tableviews/eventlog']"
-                    [queryParams]="{ ITN: ITN.InternalTrackingNumber }"
+                    [queryParams]="{
+                      ITN: ITN.Invenotry.InventoryTrackingNumber
+                    }"
                     class="text-blue-500"
                   >
-                    {{ ITN.InternalTrackingNumber }}</a
+                    {{ ITN.Inventory.InventoryTrackingNumber }}</a
                   >
                   ({{ ITN.Status.Name }})
                 </li>
                 <li>
-                  Location: {{ ITN.Container.Warehouse }}-{{
-                    ITN.Container.Row
-                  }}-{{ ITN.Container.Aisle }}-{{ ITN.Container.Section }}-{{
-                    ITN.Container.Shelf
-                  }}-{{ ITN.Container.ShelfDetail }}
+                  Location: {{ ITN.Inventory.Container.Warehouse }}-{{
+                    ITN.Inventory.Container.Row
+                  }}-{{ ITN.Inventory.Container.Aisle }}-{{
+                    ITN.Inventory.Container.Section
+                  }}-{{ ITN.Inventory.Container.Shelf }}-{{
+                    ITN.Inventory.Container.ShelfDetail
+                  }}
                 </li>
-                <li>Container: {{ ITN.Container.Barcode }}</li>
+                <li>Container: {{ ITN.Inventory.Container.Barcode }}</li>
               </ul>
             </ul>
           </div>
