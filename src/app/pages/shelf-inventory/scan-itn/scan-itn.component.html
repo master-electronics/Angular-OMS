@@ -57,7 +57,7 @@
               <tr *ngFor="let item of invalidITN" class="text-red-500 text-lg">
                 <td>
                   <a
-                    [routerLink]="['/tableviews/usereventlog']"
+                    [routerLink]="['/tableviews/eventlog']"
                     [queryParams]="{
                       ITN: item
                     }"
@@ -71,7 +71,7 @@
             <tr *ngFor="let item of itemList" class="text-lg">
               <td>
                 <a
-                  [routerLink]="['/tableviews/usereventlog']"
+                  [routerLink]="['/tableviews/eventlog']"
                   [queryParams]="{
                     ITN: item
                   }"
