@@ -1035,6 +1035,27 @@ export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
 
 export type UpdateMerpOrderStatusMutation = { __typename?: 'Mutation', updateMerpOrderStatus: { __typename?: 'Response', success: boolean, message?: string | null } };
 
+export type PickOrderForAgOutMutationVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type PickOrderForAgOutMutation = { __typename?: 'Mutation', pickOrderForAgOut?: { __typename?: 'OrderForAgOut', OrderID: number, OrderNumber: string, NOSINumber: string } | null };
+
+export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+
+export type VerifyOrderForAgOutQuery = { __typename?: 'Query', countOrderItns: number, findOrder?: Array<{ __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null };
+
+export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
+  OrderID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null } | null> | null };
+
 export const VerifyContainerForAggregationInDocument = gql`
     query verifyContainerForAggregationIn($Container: searchContainer!) {
   findContainer(Container: $Container) {
@@ -1269,6 +1290,94 @@ export const UpdateMerpOrderStatusDocument = gql`
   })
   export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<UpdateMerpOrderStatusMutation, UpdateMerpOrderStatusMutationVariables> {
     document = UpdateMerpOrderStatusDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const PickOrderForAgOutDocument = gql`
+    mutation pickOrderForAgOut {
+  pickOrderForAgOut {
+    OrderID
+    OrderNumber
+    NOSINumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class PickOrderForAgOutGQL extends Apollo.Mutation<PickOrderForAgOutMutation, PickOrderForAgOutMutationVariables> {
+    document = PickOrderForAgOutDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyOrderForAgOutDocument = gql`
+    query verifyOrderForAgOut($DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!) {
+  findOrder(
+    Order: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
+  ) {
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+    }
+  }
+  countOrderItns(
+    LocationCode: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyOrderForAgOutGQL extends Apollo.Query<VerifyOrderForAgOutQuery, VerifyOrderForAgOutQueryVariables> {
+    document = VerifyOrderForAgOutDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchContainerForAgoutPickDocument = gql`
+    query fetchContainerForAgoutPick($OrderID: Int) {
+  findOrderLineDetail(OrderLineDetail: {OrderID: $OrderID}) {
+    OrderLine {
+      OrderLineNumber
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode
+        PartNumber
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchContainerForAgoutPickGQL extends Apollo.Query<FetchContainerForAgoutPickQuery, FetchContainerForAgoutPickQueryVariables> {
+    document = FetchContainerForAgoutPickDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

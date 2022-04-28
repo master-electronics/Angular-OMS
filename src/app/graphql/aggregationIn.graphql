@@ -181,58 +181,62 @@ mutation updateMerpOrderStatus(
   }
 }
 
-# mutation pickOrderForAgOut {
-#   pickOrderForAgOut {
-#     OrderID
-#     OrderNumber
-#     NOSINumber
-#   }
-# }
+mutation pickOrderForAgOut {
+  pickOrderForAgOut {
+    OrderID
+    OrderNumber
+    NOSINumber
+  }
+}
 
-# query verifyOrderForAgOut(
-#   $DistributionCenter: String!
-#   $OrderNumber: String!
-#   $NOSINumber: String!
-# ) {
-#   findOrder(
-#     Order: {
-#       DistributionCenter: $DistributionCenter
-#       OrderNumber: $OrderNumber
-#       NOSINumber: $NOSINumber
-#     }
-#   ) {
-#     _id
-#     ORDERLINEDETAILs {
-#       StatusID
-#     }
-#   }
-#   countOrderItns(
-#     LocationCode: $DistributionCenter
-#     OrderNumber: $OrderNumber
-#     NOSINumber: $NOSINumber
-#   )
-# }
+query verifyOrderForAgOut(
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  findOrder(
+    Order: {
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+    }
+  ) {
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+    }
+  }
+  countOrderItns(
+    LocationCode: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
 
-# query fetchContainerForAgoutPick($OrderID: Int) {
-#   findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
-#     InventoryTrackingNumber
-#     OrderLine {
-#       OrderLineNumber
-#       ProductCode
-#       PartNumber
-#     }
-#     Order {
-#       OrderNumber
-#       NOSINumber
-#     }
-#     Container {
-#       Barcode
-#       Warehouse
-#       Row
-#       Aisle
-#       Section
-#       Shelf
-#       ShelfDetail
-#     }
-#   }
-# }
+query fetchContainerForAgoutPick($OrderID: Int) {
+  findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+    OrderLine {
+      OrderLineNumber
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+    }
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode
+        PartNumber
+      }
+    }
+  }
+}

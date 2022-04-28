@@ -23,7 +23,7 @@ import { environment } from 'src/environments/environment';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'pick-tote',
@@ -95,8 +95,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             const containerSet = new Set();
             const ITNSet = new Set<string>();
             res.data.findOrderLineDetail.forEach((node) => {
-              containerSet.add(node.Container);
-              ITNSet.add(node.InternalTrackingNumber);
+              containerSet.add(node.Inventory.Container);
+              ITNSet.add(node.Inventory.InventoryTrackingNumber);
             });
             this.ITNsInOrder = [...ITNSet];
             this.agOutService.changeITNsInOrder(this.ITNsInOrder);
