@@ -17,7 +17,8 @@ import {
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
   FindNewAfterUpdateBinGQL,
-  UpdateInventoryAndDetailGQL,
+  UpdateInventoryAndDetailAfterRepackGQL,
+  CleanContainerFromPrevOrderGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -50,7 +51,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateContainer: UpdateContainerGQL,
-    private updateInventoryDetail: UpdateInventoryAndDetailGQL,
+    private updateInventoryDetail: UpdateInventoryAndDetailAfterRepackGQL,
+    private cleanContainer: CleanContainerFromPrevOrderGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
@@ -293,19 +295,21 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             if (inProcess) delete updateQueries.updateMerpLog;
             // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
             if (targetContainer.INVENTORies.length) {
+              let orderID = null;
               const needCleanup = targetContainer.INVENTORies.some((itn) => {
+                orderID = itn.ORDERLINEDETAILs[0].OrderID;
                 return (
-                  itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
+                  orderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID >=
                     environment.agOutComplete_ID
                 );
               });
               if (needCleanup)
                 updateQueries['cleanContainerFromPrevOrder'] =
-                  this.cleanContainerFromPrevOrder.mutate({
+                  this.cleanContainer.mutate({
                     ContainerID: targetContainer._id,
-                    OrderID: targetContainer.ORDERLINEDETAILs[0].OrderID,
-                    OrderLineDetail: { ContainerID: environment.DC_PH_ID },
+                    OrderID: orderID,
+                    Inventory: { ContainerID: environment.DC_PH_ID },
                   });
             }
             return forkJoin(updateQueries);
