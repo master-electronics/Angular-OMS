@@ -12,167 +12,174 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
     ContainerType {
       IsMobile
     }
-    ORDERLINEDETAILs {
+    INVENTORies {
       _id
-      StatusID
-      OrderID
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      Inventory {
-        InventoryTrackingNumber
+      InventoryTrackingNumber
+      ORDERLINEDETAILs {
+        _id
+        StatusID
+        OrderID
+        Order {
+          OrderNumber
+          NOSINumber
+        }
       }
     }
   }
 }
 
-# query fetchLocationAndOrderDetailForAgIn(
-#   $OrderLineDetail: searchOrderLineDetail!
-# ) {
-#   findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
-#     _id
-#     Quantity
-#     StatusID
-#     InventoryTrackingNumber
-#     OrderLine {
-#       OrderLineNumber
-#       ProductCode
-#       PartNumber
-#     }
-#     Order {
-#       OrderNumber
-#       NOSINumber
-#       CustomerNumber
-#       ShipmentMethod {
-#         PriorityPinkPaper
-#         ShippingMethod
-#       }
-#     }
-#     Container {
-#       Barcode
-#       Warehouse
-#       Row
-#       Aisle
-#       Section
-#       Shelf
-#       ShelfDetail
-#     }
-#   }
-# }
+query fetchLocationAndOrderDetailForAgIn(
+  $OrderLineDetail: searchOrderLineDetail!
+) {
+  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+    _id
+    Quantity
+    StatusID
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode
+        PartNumber
+      }
+    }
+    OrderLine {
+      OrderLineNumber
+    }
+    Order {
+      OrderNumber
+      NOSINumber
+      CustomerNumber
+      ShipmentMethod {
+        PriorityPinkPaper
+        ShippingMethod
+      }
+    }
+  }
+}
 
-# query countOrderItnsFromMerp(
-#   $LocationCode: String!
-#   $OrderNumber: String!
-#   $NOSINumber: String!
-# ) {
-#   countOrderItns(
-#     LocationCode: $LocationCode
-#     OrderNumber: $OrderNumber
-#     NOSINumber: $NOSINumber
-#   )
-# }
+query countOrderItnsFromMerp(
+  $LocationCode: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+) {
+  countOrderItns(
+    LocationCode: $LocationCode
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
 
-# mutation updateAfterAgOut(
-#   $OrderID: Int!
-#   $OrderLineDetail: updateOrderLineDetail!
-#   $DistributionCenter: String!
-#   $OrderNumber: String!
-#   $NOSINumber: String!
-#   $log: [insertUserEventLog]!
-#   $MerpStatus: String!
-#   $UserOrStatus: String!
-#   $FileKeyList: [String!]!
-#   $toteList: [String!]!
-#   $ActionType: String!
-#   $Action: String!
-# ) {
-#   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+query fetchHazardMaterialLevel($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    HazardMaterialLevel
+  }
+}
 
-#   updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+mutation updateAfterAgOut(
+  $OrderID: Int!
+  $OrderLineDetail: updateOrderLineDetail!
+  $DistributionCenter: String!
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $log: [insertUserEventLog]!
+  $MerpStatus: String!
+  $UserOrStatus: String!
+  $FileKeyList: [String!]!
+  $toteList: [String!]!
+  $ActionType: String!
+  $Action: String!
+) {
+  updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
 
-#   insertUserEventLogs(log: $log) {
-#     _id
-#   }
+  updateOrder(_id: $OrderID, Order: { isSelected: 0 })
 
-#   deleteAndInsertRouteTable(lpnList: $toteList)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 
-#   updateMerpOrderStatus(
-#     OrderNumber: $OrderNumber
-#     NOSINumber: $NOSINumber
-#     Status: $MerpStatus
-#     UserOrStatus: $UserOrStatus
-#   ) {
-#     success
-#     message
-#   }
+  deleteAndInsertRouteTable(lpnList: $toteList)
 
-#   updateMerpWMSLog(
-#     FileKeyList: $FileKeyList
-#     LocationCode: $DistributionCenter
-#     ActionType: $ActionType
-#     Action: $Action
-#   ) {
-#     success
-#     message
-#   }
-# }
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $MerpStatus
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
 
-# query fetchHazardMaterialLevel($ProductList: [String]!) {
-#   fetchProductInfoFromMerp(ProductList: $ProductList) {
-#     HazardMaterialLevel
-#   }
-# }
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
 
-# mutation updateSQLAfterAgIn(
-#   $ContainerID: Int!
-#   $Container: updateContainer!
-#   $OrderLineDetail: updateOrderLineDetail!
-#   $log: [insertUserEventLog]!
-# ) {
-#   updateOrderLineDetail(
-#     ContainerID: $ContainerID
-#     OrderLineDetail: $OrderLineDetail
-#   )
-#   updateContainer(_id: $ContainerID, Container: $Container)
-#   insertUserEventLogs(log: $log) {
-#     _id
-#   }
-# }
+mutation updateSQLAfterAgIn(
+  $ContainerID: Int!
+  $Container: updateContainer!
+  $OrderLineDetail: updateOrderLineDetail!
+  $Inventory: updateInventory!
+  $log: [insertUserEventLog]!
+) {
+  updateOrderLineDetail(
+    ContainerID: $ContainerID
+    OrderLineDetail: $OrderLineDetail
+  )
+  updateInventory(ContainerID: $ContainerID, Inventory: $Inventory)
+  updateContainer(_id: $ContainerID, Container: $Container)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
 
-# mutation updateMerpWMSLog(
-#   $DistributionCenter: String!
-#   $FileKeyList: [String!]!
-#   $ActionType: String!
-#   $Action: String!
-# ) {
-#   updateMerpWMSLog(
-#     FileKeyList: $FileKeyList
-#     LocationCode: $DistributionCenter
-#     ActionType: $ActionType
-#     Action: $Action
-#   ) {
-#     success
-#     message
-#   }
-# }
+mutation updateMerpWMSLog(
+  $DistributionCenter: String!
+  $FileKeyList: [String!]!
+  $ActionType: String!
+  $Action: String!
+) {
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
 
-# mutation updateMerpOrderStatus(
-#   $OrderNumber: String!
-#   $NOSINumber: String!
-#   $Status: String!
-#   $UserOrStatus: String!
-# ) {
-#   updateMerpOrderStatus(
-#     OrderNumber: $OrderNumber
-#     NOSINumber: $NOSINumber
-#     Status: $Status
-#     UserOrStatus: $UserOrStatus
-#   ) {
-#     success
-#     message
-#   }
-# }
+mutation updateMerpOrderStatus(
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $Status: String!
+  $UserOrStatus: String!
+) {
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+}
 
 # mutation pickOrderForAgOut {
 #   pickOrderForAgOut {

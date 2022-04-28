@@ -99,22 +99,24 @@ export class AggregationInComponent
           // only accepte mobile container
           if (!container[0]?.ContainerType.IsMobile)
             throw 'This container is not mobile!';
-          if (container[0].ORDERLINEDETAILs?.length === 0)
+          if (container[0].INVENTORies?.length === 0)
             throw 'No item in this container!';
           // verify all line have the same orderID and statusID in the tote
           if (
-            !container[0].ORDERLINEDETAILs?.every(
+            !container[0].INVENTORies.every(
               (line, i, arr) =>
-                line?.OrderID === arr[0]?.OrderID &&
-                line?.StatusID === arr[0]?.StatusID
+                line.ORDERLINEDETAILs[0].OrderID ===
+                  arr[0].ORDERLINEDETAILs[0].OrderID &&
+                line.ORDERLINEDETAILs[0].StatusID ===
+                  arr[0].ORDERLINEDETAILs[0].StatusID
             )
           )
             throw 'Have different order or status in the container.';
           // only allow status is agIn complete and qc complete
           if (
-            container[0].ORDERLINEDETAILs[0].StatusID <
+            container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID <
               environment.qcComplete_ID ||
-            container[0].ORDERLINEDETAILs[0].StatusID >=
+            container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID >=
               environment.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
@@ -122,15 +124,18 @@ export class AggregationInComponent
         switchMap((res) => {
           const container = res.data.findContainer[0];
           const logList = [];
-          res.data.findContainer[0].ORDERLINEDETAILs.forEach((line) => {
-            if (line.Inventory.InventoryTrackingNumber) {
+          res.data.findContainer[0].INVENTORies.forEach((line) => {
+            if (line.InventoryTrackingNumber) {
               logList.push({
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                OrderNumber: container.ORDERLINEDETAILs[0].Order.OrderNumber,
-                NOSINumber: container.ORDERLINEDETAILs[0].Order.NOSINumber,
-                InventoryTrackingNumber: line.Inventory.InventoryTrackingNumber,
+                OrderNumber:
+                  container.INVENTORies[0].ORDERLINEDETAILs[0].Order
+                    .OrderNumber,
+                NOSINumber:
+                  container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+                InventoryTrackingNumber: line.InventoryTrackingNumber,
                 UserEventID: environment.Event_AgIn_Start,
                 Message: `Start ${container.Barcode}`,
               });
@@ -140,14 +145,14 @@ export class AggregationInComponent
           const outsetContainer: outsetContainer = {
             toteID: container._id,
             Barcode: container.Barcode,
-            OrderID: container.ORDERLINEDETAILs[0].OrderID,
-            orderLineDetailID: container.ORDERLINEDETAILs[0]._id,
+            OrderID: container.INVENTORies[0].ORDERLINEDETAILs[0].OrderID,
+            orderLineDetailID: container.INVENTORies[0].ORDERLINEDETAILs[0]._id,
+            InventoryID: container.INVENTORies[0]._id,
             isRelocation:
-              container.ORDERLINEDETAILs[0].StatusID ===
+              container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
               environment.agInComplete_ID,
           };
           this._agInService.changeOutsetContainer(outsetContainer);
-
           return this._insertEventlog.mutate({
             log: logList,
           });

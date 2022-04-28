@@ -28,7 +28,6 @@ export type Container = {
   Equipment?: Maybe<Equipment>;
   EquipmentID?: Maybe<Scalars['Int']>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
-  ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
   ParentContainer?: Maybe<Container>;
   ParentContainerID?: Maybe<Scalars['Int']>;
   Row?: Maybe<Scalars['String']>;
@@ -146,6 +145,7 @@ export type Mutation = {
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateInventory?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateInventoryList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
   updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
@@ -286,6 +286,14 @@ export type MutationUpdateInventoryArgs = {
 };
 
 
+export type MutationUpdateInventoryListArgs = {
+  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  ITNList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  Inventory: UpdateInventory;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+
 export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
@@ -406,7 +414,6 @@ export type OrderLine = {
 export type OrderLineDetail = {
   __typename?: 'OrderLineDetail';
   BinLocation?: Maybe<Scalars['String']>;
-  Container: Container;
   ContainerID: Scalars['Int'];
   Inventory?: Maybe<Inventory>;
   InventoryID?: Maybe<Scalars['Int']>;
@@ -837,14 +844,14 @@ export type SearchOrderLine = {
 
 export type SearchOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID: Scalars['Int'];
+  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
-  OrderID: Scalars['Int'];
-  OrderLineID: Scalars['Int'];
-  Quantity: Scalars['Float'];
-  StatusID: Scalars['Int'];
-  WMSPriority: Scalars['Int'];
-  _id: Scalars['Int'];
+  OrderID?: InputMaybe<Scalars['Int']>;
+  OrderLineID?: InputMaybe<Scalars['Int']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  StatusID?: InputMaybe<Scalars['Int']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchUserEventLog = {

@@ -5,6 +5,7 @@ export interface outsetContainer {
   isRelocation: boolean;
   OrderID: number;
   orderLineDetailID: number;
+  InventoryID: number;
   toteID: number;
 }
 

@@ -1,9 +1,9 @@
 query findITNsByShelf($Container: searchContainer!) {
   findContainer(Container: $Container) {
-    ORDERLINEDETAILs {
-      StatusID
-      Inventory {
-        InventoryTrackingNumber
+    INVENTORies {
+      InventoryTrackingNumber
+      ORDERLINEDETAILs {
+        StatusID
       }
     }
   }

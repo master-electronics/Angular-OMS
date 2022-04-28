@@ -147,6 +147,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     const updateSqlQuery = {
       ContainerID: Number(this.outsetContainer.toteID),
       Container: sourceTote,
+      Inventory: { ContainerID: this.endContainer.containerID },
       OrderLineDetail: OrderLineDetail,
       log: log,
     };

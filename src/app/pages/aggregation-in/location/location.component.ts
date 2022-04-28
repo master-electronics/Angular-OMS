@@ -86,13 +86,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private _commonService: CommonService,
     private _titleService: Title,
     private _router: Router,
-    private fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
-    private updateAfterAgOut: UpdateAfterAgOutGQL,
-    private fetchHazard: FetchHazardMaterialLevelGQL,
-    private verifyContainer: VerifyContainerForAggregationInGQL,
-    private gtmService: GoogleTagManagerService,
-    private authService: AuthenticationService,
-    private countOrderItns: CountOrderItnsFromMerpGQL,
+    private _fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
+    private _updateAfterAgOut: UpdateAfterAgOutGQL,
+    private _fetchHazard: FetchHazardMaterialLevelGQL,
+    private _verifyContainer: VerifyContainerForAggregationInGQL,
+    private _gtmService: GoogleTagManagerService,
+    private _authService: AuthenticationService,
+    private _countOrderItns: CountOrderItnsFromMerpGQL,
     private _agInService: AggregationInService
   ) {
     this._titleService.setTitle('agin/location');
@@ -112,7 +112,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     const FileKeyListforAgOut = [];
     const ProductList = [];
     let singleITN = '';
-    this.initInfo$ = this.fetchLocation
+    this.initInfo$ = this._fetchLocation
       .fetch(
         { OrderLineDetail: { OrderID: this.outsetContainer.OrderID } },
         { fetchPolicy: 'network-only' }
@@ -126,28 +126,30 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           res.data.findOrderLineDetail.forEach((line) => {
             ++totalLines;
             // set for other queries
-            singleITN = line.InternalTrackingNumber;
+            singleITN = line.Inventory.InventoryTrackingNumber;
             this.OrderNumber = line.Order.OrderNumber;
             this.NOSINumber = line.Order.NOSINumber;
             FileKeyListforAgOut.push(
-              `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.InternalTrackingNumber}`
+              `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
             );
             // store locations in Aggregation area.
-            if (line.Container.Row === 'AG') {
+            if (line.Inventory.Container.Row === 'AG') {
               locationsSet.add(
-                line.Container.Warehouse.concat(
-                  line.Container.Row,
-                  line.Container.Aisle,
-                  line.Container.Section,
-                  line.Container.Shelf,
-                  line.Container.ShelfDetail,
-                  line.Container.Barcode
+                line.Inventory.Container.Warehouse.concat(
+                  line.Inventory.Container.Row,
+                  line.Inventory.Container.Aisle,
+                  line.Inventory.Container.Section,
+                  line.Inventory.Container.Shelf,
+                  line.Inventory.Container.ShelfDetail,
+                  line.Inventory.Container.Barcode
                 )
               );
             }
             // add ITN to list if there are in the same tote.
-            if (line.Container.Barcode === this.outsetContainer.Barcode) {
-              this.ITNsInTote.push(line.InternalTrackingNumber);
+            if (
+              line.Inventory.Container.Barcode === this.outsetContainer.Barcode
+            ) {
+              this.ITNsInTote.push(line.Inventory.InventoryTrackingNumber);
             }
             if (line._id === this.outsetContainer.orderLineDetailID) {
               this.ITNInfo = [
@@ -159,18 +161,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 ['Customer', line.Order.CustomerNumber],
                 ['Quantity', line.Quantity],
                 ['ITN Count', ''],
-                ['PRC', line.OrderLine.ProductCode],
-                ['PartNumber', line.OrderLine.PartNumber],
+                ['PRC', line.Inventory.Product.ProductCode],
+                ['PartNumber', line.Inventory.Product.PartNumber],
                 ['Shipment', line.Order.ShipmentMethod.ShippingMethod],
               ];
               // set fikekey for ag in
               this.FileKeyListforAgIn.push(
-                `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.InternalTrackingNumber}`
+                `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
               );
               // set for single line AG out.
               ProductList.push(
-                `${line.OrderLine.ProductCode.padEnd(3)}${
-                  line.OrderLine.PartNumber
+                `${line.Inventory.Product.ProductCode.padEnd(3)}${
+                  line.Inventory.Product.PartNumber
                 }`
               );
               // count currentLines without check statusID
@@ -200,7 +202,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         }),
         // fetch ITN count from Merp
         switchMap(() => {
-          return this.countOrderItns.fetch(
+          return this._countOrderItns.fetch(
             {
               LocationCode: environment.DistributionCenter,
               OrderNumber: this.OrderNumber,
@@ -221,7 +223,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // swith to ag out update observeable If this is single Line ITN
         switchMap(() => {
           return forkJoin({
-            updateOrder: this.updateAfterAgOut.mutate({
+            updateOrder: this._updateAfterAgOut.mutate({
               OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: environment.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
@@ -233,7 +235,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   ),
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
-                  InternalTrackingNumber: singleITN,
+                  InventoryTrackingNumber: singleITN,
                   UserEventID: environment.Event_AgIn_SingleITNAgOut,
                   Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
                 },
@@ -246,7 +248,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               ActionType: 'A',
               Action: 'line_aggregation_out',
             }),
-            checkHazmzd: this.fetchHazard.fetch(
+            checkHazmzd: this._fetchHazard.fetch(
               { ProductList: ProductList },
               { fetchPolicy: 'network-only' }
             ),
@@ -337,7 +339,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // if pass all verifercation jump to verify page
     this.isLoading = true;
-    this.verifyContainer$ = this.verifyContainer
+    this.verifyContainer$ = this._verifyContainer
       .fetch(
         { Container: { Barcode: Barcode } },
         { fetchPolicy: 'network-only' }
@@ -361,9 +363,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           // if target container is mobile, check all items in target container have the some order number with source tote.
           if (container[0].ContainerType.IsMobile) {
-            container[0].ORDERLINEDETAILs.forEach((line) => {
+            container[0].INVENTORies.forEach((line) => {
               // check if the item in container
-              if (line.OrderID !== this.outsetContainer.OrderID) {
+              if (
+                line.ORDERLINEDETAILs[0].OrderID !==
+                this.outsetContainer.OrderID
+              ) {
                 throw 'This container has other order in it.';
               }
             });
