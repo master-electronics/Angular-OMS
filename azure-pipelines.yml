@@ -3,6 +3,7 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+
 trigger:
 - dev
 
@@ -16,6 +17,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    export HUSKY_SKIP_INSTALL=true
     npm install -g @angular/cli
     npm install --production
     ng run build
