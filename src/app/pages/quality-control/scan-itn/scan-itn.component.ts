@@ -89,16 +89,16 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid ITN';
             }
             let error = '';
-            if (
-              !['qc'].includes(
-                res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-              ) &&
-              !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
-                .trim()
-                .match(regex)
-            ) {
-              error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
-            }
+            // if (
+            //   !['qc'].includes(
+            //     res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
+            //   ) &&
+            //   !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
+            //     .trim()
+            //     .match(regex)
+            // ) {
+            //   error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
+            // }
             if (
               ![
                 environment.droppedQC_ID,
@@ -134,9 +134,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
-              isQCDrop:
-                detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() ===
-                'qc',
+              isQCDrop: detail.ORDERLINEDETAILs[0].StatusID === 60,
             };
             const log = [
               {
@@ -160,12 +158,12 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             return forkJoin(updateQueries);
           }),
           tap((res: any) => {
-            if (
-              !this.itemInfo.isQCDrop &&
-              !res.updateMerpQCBin.data.updateMerpQCBin.success
-            ) {
-              throw new Error(`Can't update binlocation to qc`);
-            }
+            // if (
+            //   !this.itemInfo.isQCDrop &&
+            //   !res.updateMerpQCBin.data.updateMerpQCBin.success
+            // ) {
+            //   throw new Error(`Can't update binlocation to qc`);
+            // }
           })
         )
         .subscribe(

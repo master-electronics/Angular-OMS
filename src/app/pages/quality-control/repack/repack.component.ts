@@ -102,13 +102,13 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             this.isLoading = false;
             let message = '';
-            if (
-              res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.trim() !==
-              'qc'
-            ) {
-              this.needSearch = true;
-              message = `Bin location is not qc, Click search button again!`;
-            }
+            // if (
+            //   res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation !==
+            //   'qc'
+            // ) {
+            //   this.needSearch = true;
+            //   message = `Bin location is not qc, Click search button again!`;
+            // }
             if (res.data.findInventory.length > 1) {
               this.needSearch = true;
               message = `More than one ITN, Click search button again!`;
@@ -187,12 +187,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
             returnOrder.ORDERLINEDETAILs.forEach((line) => {
               if (
-                line.Inventory[0].InventoryTrackingNumber !==
+                line.Inventory.InventoryTrackingNumber !==
                 this.itemInfo.InventoryTrackingNumber
               ) {
                 line.StatusID < environment.qcComplete_ID && ++inProcess;
               } else {
-                sourceContainer = line.Inventory[0].ContainerID;
+                sourceContainer = line.Inventory.ContainerID;
               }
             });
           }),
