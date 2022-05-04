@@ -140,7 +140,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
         UserEventID: environment.Event_AgIn_Relocate,
-        InternalTrackingNumber: node,
+        InventoryTrackingNumber: node,
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
       };
     });
@@ -169,7 +169,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
           UserEventID: environment.Event_AgIn_OrderComplete,
-          InternalTrackingNumber: null,
+          InventoryTrackingNumber: null,
           Message: null,
         });
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
