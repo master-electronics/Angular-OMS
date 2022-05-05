@@ -2,7 +2,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
 import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
+import { StockingService } from '../../stocking.server';
 
 @Component({
   selector: 'scan-ITN',
@@ -16,7 +18,9 @@ export class ScanITNComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private route: ActivatedRoute,
-    private _title: Title
+    private _title: Title,
+    private _vierfyITN: VerifyItnForSortingGQL,
+    private _service: StockingService
   ) {
     this._title.setTitle('Sorting');
   }
@@ -50,6 +54,6 @@ export class ScanITNComponent implements OnInit {
     if (this.ITNForm.invalid || this.isLoading) {
       return;
     }
-    this._router.navigate(['/stocking/sorting-location']);
+    this._router.navigate(['/stocking/sorting/location']);
   }
 }

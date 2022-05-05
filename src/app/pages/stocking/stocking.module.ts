@@ -19,9 +19,10 @@ import { StockingService } from './stocking.server';
 import { StockingRoutingModule } from './stocking.routing';
 import { StockingComponent } from './stocking.component';
 import { ScanITNComponent } from './sorting/scan-ITN/scan-ITN.component';
+import { SortingLocationComponent } from './sorting/sorting-location/sorting-location.component';
 
 @NgModule({
-  declarations: [StockingComponent, ScanITNComponent],
+  declarations: [StockingComponent, ScanITNComponent, SortingLocationComponent],
   imports: [
     CommonModule,
     StockingRoutingModule,
