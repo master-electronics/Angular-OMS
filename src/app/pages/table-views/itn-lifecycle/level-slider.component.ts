@@ -62,8 +62,6 @@ export class LevelSliderComponent {
   hourValue;
   minuteValue;
 
-  constructor() { }
-
   ngOnInit(): void {
     //subscribe to tabs-view Subject to receive level limit changes
     this.levelSubject.subscribe((data) => {

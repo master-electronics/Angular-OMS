@@ -219,8 +219,6 @@ export class TabsViewComponent {
   dropoffLowNotifier: Subject<any> = new Subject<any>();
   dropoffMediumNotifier: Subject<any> = new Subject<any>();
 
-  constructor() { }
-
   ngOnInit(): void {
     this.value = "";
     const l = this.value.length;
@@ -332,7 +330,4 @@ export class TabsViewComponent {
     this.onLevelChange();
   }
 
-  ngOnDestroy(): void {
-
-  }
 }

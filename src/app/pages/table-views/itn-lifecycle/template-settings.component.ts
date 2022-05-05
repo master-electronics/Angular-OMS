@@ -1,8 +1,8 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Column } from '../../column';
+import { Column } from '../../../column';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Template } from '../../template';
+import { Template } from '../../../template';
 import { LevelLimit } from 'src/app/LevelLimit';
 import { Observable, Subscription, Subject } from 'rxjs';
 import {
@@ -454,11 +454,11 @@ export class TemplateSettings {
               }
 
               if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {
-                let limits = [];
+                const limits = [];
                 this.levelLimits = [];
 
                 for (let i = 0; i < res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
-                  let limit: LevelLimit = {
+                  const limit: LevelLimit = {
                     id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
                     templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
                     eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,

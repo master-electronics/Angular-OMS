@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { Column } from '../../column';
+import { Column } from '../../../column';
 
 @Component({
     selector: 'column-selector',
@@ -43,12 +43,6 @@ export class ColumnSelectorComponent {
     @Input('selectedColumns') selectedColumns: string[];
     @Input("allColumns") allColumnsSelected: boolean;
 
-    constructor() { }
-
-    ngOnInit(): void {
-        
-    }
-
     //handle column checkbox change
     checkboxOnChange(e) {
         if (e.target.checked) {
@@ -72,8 +66,8 @@ export class ColumnSelectorComponent {
 
     //handle all checkbox change
     allCheckboxOnChange(e) {
-        var inputs, index;
-        inputs = document.getElementById('columnsList').getElementsByTagName('input');
+        let index;
+        const inputs = document.getElementById('columnsList').getElementsByTagName('input');
 
         //loop through each column checkbox, select or unselect, emit allCheck or allUnchecked to tabs-view
         for (index = 0; index < inputs.length; ++index) {

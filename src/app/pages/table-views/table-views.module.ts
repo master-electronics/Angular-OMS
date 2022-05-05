@@ -32,11 +32,11 @@ import { OrderViewComponent } from './order-view/order-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
 import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
-import { ColumnSelectorComponent } from './column-selector.component';
+import { ColumnSelectorComponent } from './itn-lifecycle/column-selector.component';
 import { LevelSelectorComponent } from './itn-lifecycle/level-selector.component';
-import { LevelSliderComponent } from './level-slider.component';
-import { TabsViewComponent } from './tabs-view.component';
-import { TemplateSettings } from './template-settings.component';
+import { LevelSliderComponent } from './itn-lifecycle/level-slider.component';
+import { TabsViewComponent } from './itn-lifecycle/tabs-view.component';
+import { TemplateSettings } from './itn-lifecycle/template-settings.component';
 
 @NgModule({
   declarations: [

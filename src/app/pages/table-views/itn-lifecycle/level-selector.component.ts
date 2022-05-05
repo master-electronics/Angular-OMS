@@ -18,8 +18,6 @@ export class LevelSelectorComponent {
 
     isVisible = false;
 
-    constructor() {}
-
     showLevelSelector(): void {
         this.isVisible = true;
     }

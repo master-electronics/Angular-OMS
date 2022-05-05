@@ -5,7 +5,7 @@ import { CommonService } from '../../../shared/services/common.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { FetchItnLifecycleGQL, FetchItnUserColumnsGQL, FindItnTemplateGQL, FindItnColumnsGQL } from 'src/app/graphql/tableViews.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
-import { ColumnSelectorComponent } from '../column-selector.component';
+import { ColumnSelectorComponent } from './column-selector.component';
 import { Column } from '../../../column';
 import { Template } from '../../../template';
 import { LevelLimit } from 'src/app/LevelLimit';
@@ -265,10 +265,11 @@ export class ITNLifecycleComponent implements OnInit {
       const l = this.limits.find(e => e.eventName.toLocaleLowerCase() == EventName.toLocaleLowerCase());
 
       //if there's a start time but no end time high alert
-      if (Start != "" && (!Done || Done == "")) {
+      if (l) {
+              if (Start != "" && (!Done || Done == "")) {
         c = "high";
       } else {
-        let elapsed = (Number(Done) - Number(Start));
+        const elapsed = (Number(Done) - Number(Start));
 
         //if a medium level is set for the template and the elapsed time has supassed it medium alert
         if ((l.mediumLevelLimit > 0) && (elapsed > l.mediumLevelLimit)) {
@@ -278,6 +279,8 @@ export class ITNLifecycleComponent implements OnInit {
           c = "low";
         }
       }
+      }
+
     }
 
     return c;
@@ -380,11 +383,11 @@ export class ITNLifecycleComponent implements OnInit {
 
               if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {
 
-                let limits = [];
+                const limits = [];
 
                 for (let i = 0; i < res.data.findITNTemplate[0].ITNLEVELLIMITs.length; i++) {
                   try {
-                    let limit: LevelLimit = {
+                    const limit: LevelLimit = {
                       id: res.data.findITNTemplate[0].ITNLEVELLIMITs[i]._id,
                       templateId: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].TemplateID,
                       eventName: res.data.findITNTemplate[0].ITNLEVELLIMITs[i].EventName,
