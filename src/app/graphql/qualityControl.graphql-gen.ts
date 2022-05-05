@@ -966,7 +966,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, BinLocation?: string | null, StatusID: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null } } | null> | null, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null } } | null> | null, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -1020,7 +1020,7 @@ export type FindNewAfterUpdateBinQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', BinLocation?: string | null } | null> | null } | null> | null };
+export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null };
 
 export type VerifyQcRepackQueryVariables = Types.Exact<{
   Container: Types.SearchContainer;
@@ -1096,7 +1096,6 @@ export const VerifyItNforQcDocument = gql`
     CountryOfOrigin
     ORDERLINEDETAILs {
       _id
-      BinLocation
       StatusID
       OrderLine {
         OrderLineNumber
@@ -1249,7 +1248,7 @@ export const FindNewAfterUpdateBinDocument = gql`
   findInventory(Inventory: {InventoryTrackingNumber: $InventoryTrackingNumber}) {
     _id
     ORDERLINEDETAILs {
-      BinLocation
+      StatusID
     }
   }
 }

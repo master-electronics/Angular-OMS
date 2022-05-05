@@ -11,7 +11,6 @@ query verifyITNforQc($Inventory: searchInventory!) {
     CountryOfOrigin
     ORDERLINEDETAILs {
       _id
-      BinLocation
       StatusID
       OrderLine {
         OrderLineNumber
@@ -113,7 +112,7 @@ query findNewAfterUpdateBin($InventoryTrackingNumber: String!) {
   ) {
     _id
     ORDERLINEDETAILs {
-      BinLocation
+      StatusID
     }
   }
 }
