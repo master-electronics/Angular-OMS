@@ -1,0 +1,19 @@
+.high {
+    background-color: red;
+}
+
+.medium {
+    background-color: orange;
+}
+
+.low {
+    background-color: yellow;
+}
+
+.none {
+    background-color: white;
+}
+
+.templateSelect {
+    width: 150px;
+}

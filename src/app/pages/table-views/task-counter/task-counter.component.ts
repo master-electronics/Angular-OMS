@@ -52,7 +52,7 @@ export class TaskCounterComponent implements OnInit {
   resetForm(): void {
     this.filterForm.reset({
       module: '',
-      timeRanger: '',
+      timeRange: '',
     });
   }
 
