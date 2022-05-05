@@ -1,0 +1,5 @@
+query verifyITNForSorting($ITN: String!) {
+  findInventory(Invenotry: {InventoryTrackingNumber: $ITN}) {
+
+  }
+}

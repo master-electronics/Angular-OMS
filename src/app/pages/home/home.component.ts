@@ -22,6 +22,8 @@ export class HomeComponent {
       highlight: 'D',
       end: 'rop Cart',
     },
+
+    { link: '/stocking', front: '', highlight: 'S', end: 'tocking' },
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },

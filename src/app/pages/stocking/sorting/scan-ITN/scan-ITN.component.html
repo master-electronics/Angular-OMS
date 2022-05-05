@@ -1,0 +1,82 @@
+<div class="container py-6">
+  <form nz-form focusInvalidInput [formGroup]="ITNForm" (ngSubmit)="onSubmit()">
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <nz-form-item nz-row nzJustify="center">
+          <nz-form-label nzRequired> ITN </nz-form-label>
+          <nz-form-control
+            nzHasFeedback
+            nzErrorTip="The input is not valid ITN!"
+          >
+            <input
+              nz-input
+              oninput="this.value = this.value.toUpperCase()"
+              placeholder="PH03869239"
+              nzSize="large"
+              type="text"
+              id="ITN"
+              name="ITN"
+              formControlName="ITN"
+              autocomplete="off"
+              #ITN
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item nz-row nzJustify="center" nzGutter="16">
+          <button
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            Submit
+          </button>
+
+          <button
+            nz-button
+            (click)="reprint()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full mt-20"
+          >
+            Re-print
+          </button>
+
+          <div class="bg-gray-500 w-full mt-8">
+            <button
+              nz-button
+              (click)="back()"
+              [nzLoading]="isLoading"
+              nzSize="large"
+              nzGhost
+              class="w-full"
+            >
+              Back
+            </button>
+          </div>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</div>

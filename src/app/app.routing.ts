@@ -72,6 +72,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
       },
+      {
+        path: 'stocking',
+        loadChildren: () =>
+          import('./pages/stocking/stocking.module').then(
+            (m) => m.StockingModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
