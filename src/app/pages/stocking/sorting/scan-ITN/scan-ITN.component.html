@@ -3,6 +3,7 @@
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
+          <div *ngIf="verify$ | async"></div>
           <nz-form-label nzRequired> ITN </nz-form-label>
           <nz-form-control
             nzHasFeedback
@@ -36,21 +37,10 @@
             Submit
           </button>
 
-          <button
-            nz-button
-            (click)="reprint()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-            class="w-full mt-20"
-          >
-            Print ITN Label
-          </button>
-
           <div class="bg-gray-500 w-full mt-8">
             <button
               nz-button
               (click)="back()"
-              [nzLoading]="isLoading"
               nzSize="large"
               nzGhost
               class="w-full"

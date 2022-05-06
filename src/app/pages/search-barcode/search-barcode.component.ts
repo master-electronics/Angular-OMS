@@ -114,13 +114,13 @@ export class SearchBarcodeComponent implements AfterViewInit {
       if (ITNBarcodeRegex.test(barcode)) {
         this.isITN = true;
         this.search$ = this.searchITN
-          .watch(
+          .fetch(
             {
               InventoryTrackingNumber: barcode,
             },
             { fetchPolicy: 'network-only' }
           )
-          .valueChanges.pipe(
+          .pipe(
             map((res) => {
               this.isLoading = false;
               return res.data.findInventory;

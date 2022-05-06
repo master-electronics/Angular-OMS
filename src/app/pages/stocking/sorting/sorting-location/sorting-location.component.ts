@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SortingInfo } from '../../stocking.server';
+import { SortingInfo, StockingService } from '../../stocking.server';
 
 @Component({
   selector: 'sorting-location',
@@ -12,9 +12,13 @@ export class SortingLocationComponent implements OnInit {
   alertType = 'error';
   alertMessage = '';
   locationList = [];
-  itemInfo = {} as SortingInfo;
+  sortingInfo = {} as SortingInfo;
 
-  constructor(private _fb: FormBuilder, private _router: Router) {
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _service: StockingService
+  ) {
     //
   }
 
@@ -23,7 +27,10 @@ export class SortingLocationComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    //
+    this.sortingInfo = this._service.sortingInfo;
+    if (!this.sortingInfo) {
+      this._router.navigate(['/stocking/sorting']);
+    }
   }
 
   reprint(): void {

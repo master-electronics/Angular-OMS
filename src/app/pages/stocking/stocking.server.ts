@@ -13,7 +13,7 @@ export interface SortingInfo {
 
 export class StockingService {
   private _sortingInfo = new BehaviorSubject<SortingInfo>(null);
-  public resetQCStartTime(date: SortingInfo): void {
+  public changeSortingInfo(date: SortingInfo): void {
     this._sortingInfo.next(date);
   }
   public get sortingInfo(): SortingInfo {
