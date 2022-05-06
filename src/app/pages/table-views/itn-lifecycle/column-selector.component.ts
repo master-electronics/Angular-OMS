@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { Column } from '../../../column';
+import { Column } from './itn-lifecycle.server';
 
 @Component({
     selector: 'column-selector',

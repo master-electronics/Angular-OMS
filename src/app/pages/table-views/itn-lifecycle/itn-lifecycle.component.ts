@@ -6,9 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { FetchItnLifecycleGQL, FetchItnUserColumnsGQL, FindItnTemplateGQL, FindItnColumnsGQL } from 'src/app/graphql/tableViews.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Column } from '../../../column';
-import { Template } from '../../../template';
-import { LevelLimit } from 'src/app/LevelLimit';
+import { Column, Template, LevelLimit } from './itn-lifecycle.server';
 import { Observable, Subscription } from 'rxjs';
 
 import {
