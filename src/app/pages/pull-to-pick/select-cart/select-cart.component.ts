@@ -26,6 +26,7 @@ import {
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'select-cart',
@@ -68,7 +69,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
 
   @ViewChild('containerNumber') containerInput!: ElementRef;
   ngOnInit(): void {
-    this.alertType = this._route.snapshot.queryParams['result'];
+    this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this.urlParams = { ...this._route.snapshot.queryParams };
     this.userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
@@ -145,7 +146,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
             log: [
               {
                 Message: `${this.containerForm.value.containerNumber}`,
-                UserEventID: environment.Event_Pulling_SelectCart,
+                UserEventID: sqlData.Event_Pulling_SelectCart,
                 UserID: this.userID,
               },
             ],
@@ -187,7 +188,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
             log: [
               {
                 Message: `${this.containerForm.value.containerNumber}`,
-                UserEventID: environment.Event_DropOff_SelectCart,
+                UserEventID: sqlData.Event_DropOff_SelectCart,
                 UserID: this.userID,
               },
             ],

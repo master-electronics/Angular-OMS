@@ -28,6 +28,7 @@ import {
   Insert_UserEventLogsGQL,
   UpdateContainerGQL,
 } from '../../../graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'repack',
@@ -164,7 +165,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             const returnOrder = res.data.findOrder[0];
             if (!targetContainer) throw 'This barcode is not exist.';
             if (!returnOrder) throw 'This order is not exist.';
-            if (targetContainer.ContainerTypeID !== environment.toteType_ID)
+            if (targetContainer.ContainerTypeID !== sqlData.toteType_ID)
               throw 'This container is not a tote!';
             if (!returnOrder.ORDERLINEDETAILs.length)
               throw 'This Order is not exist in OrderLineDetail.';
@@ -173,13 +174,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               targetContainer.INVENTORies.forEach((itn) => {
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
-                  itn.ORDERLINEDETAILs[0].StatusID <
-                    environment.agOutComplete_ID
+                  itn.ORDERLINEDETAILs[0].StatusID < sqlData.agOutComplete_ID
                 )
                   throw 'This tote has other order item in it.';
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID === this.itemInfo.OrderID &&
-                  itn.ORDERLINEDETAILs[0].StatusID !== environment.qcComplete_ID
+                  itn.ORDERLINEDETAILs[0].StatusID !== sqlData.qcComplete_ID
                 )
                   throw 'This tote is not in QC area.';
               });
@@ -190,7 +190,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 line.Inventory.InventoryTrackingNumber !==
                 this.itemInfo.InventoryTrackingNumber
               ) {
-                line.StatusID < environment.qcComplete_ID && ++inProcess;
+                line.StatusID < sqlData.qcComplete_ID && ++inProcess;
               } else {
                 sourceContainer = line.Inventory.ContainerID;
               }
@@ -215,7 +215,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
                 InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-                UserEventID: environment.Event_QC_Done,
+                UserEventID: sqlData.Event_QC_Done,
                 Message: `Repack to ${this.containerForm.value.container}`,
               },
             ];
@@ -226,7 +226,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 ),
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
-                UserEventID: environment.Event_QC_OrderComplete,
+                UserEventID: sqlData.Event_QC_OrderComplete,
                 InventoryTrackingNumber: null,
                 Message: null,
               });
@@ -238,7 +238,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
               OrderLineDetailID: this.itemInfo.OrderLineDetailID,
               OrderLineDetail: {
-                StatusID: environment.qcComplete_ID,
+                StatusID: sqlData.qcComplete_ID,
                 ContainerID: targetContainer._id,
               },
               Inventory: {
@@ -284,8 +284,8 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               updateMerpLog,
               updatQCComplete,
             };
-            environment.qcComplete_ID;
-            if (sourceContainer === environment.DC_PH_ID) {
+            sqlData.qcComplete_ID;
+            if (sourceContainer === sqlData.DC_PH_ID) {
               delete updateQueries.updateSourceConatiner;
             }
             if (targetContainer._id === sourceContainer) {
@@ -300,8 +300,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 orderID = itn.ORDERLINEDETAILs[0].OrderID;
                 return (
                   orderID !== this.itemInfo.OrderID &&
-                  itn.ORDERLINEDETAILs[0].StatusID >=
-                    environment.agOutComplete_ID
+                  itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
                 );
               });
               if (needCleanup)
@@ -309,7 +308,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.cleanContainer.mutate({
                     ContainerID: targetContainer._id,
                     OrderID: orderID,
-                    Inventory: { ContainerID: environment.DC_PH_ID },
+                    Inventory: { ContainerID: sqlData.DC_PH_ID },
                   });
             }
             return forkJoin(updateQueries);

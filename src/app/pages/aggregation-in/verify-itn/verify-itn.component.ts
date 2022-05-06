@@ -8,6 +8,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/sqlData';
 import {
   UpdateMerpOrderStatusGQL,
   UpdateMerpWmsLogGQL,
@@ -118,7 +119,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       ShelfDetail: null,
     };
     const OrderLineDetail = {
-      StatusID: environment.agInComplete_ID,
+      StatusID: sqlData.agInComplete_ID,
       ContainerID: this.endContainer.containerID,
     };
     if (this.endContainer.type === 'shelf') {
@@ -139,7 +140,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
-        UserEventID: environment.Event_AgIn_Relocate,
+        UserEventID: sqlData.Event_AgIn_Relocate,
         InventoryTrackingNumber: node,
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
       };
@@ -155,7 +156,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     if (!this.outsetContainer.isRelocation) {
       log.forEach((node) => {
         node.Message = node.Message.substring(9);
-        node.UserEventID = environment.Event_AgIn_Done;
+        node.UserEventID = sqlData.Event_AgIn_Done;
       });
       updatequery['updateMerpLog'] = this._updateMerpLog.mutate({
         DistributionCenter: environment.DistributionCenter,
@@ -168,14 +169,14 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
-          UserEventID: environment.Event_AgIn_OrderComplete,
+          UserEventID: sqlData.Event_AgIn_OrderComplete,
           InventoryTrackingNumber: null,
           Message: null,
         });
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
-          Status: String(environment.agInComplete_ID),
+          Status: String(sqlData.agInComplete_ID),
           UserOrStatus: 'AGGREGATION-OUT',
         });
       }
@@ -211,7 +212,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         this.sendGTM();
         this._router.navigate(['agin'], {
           queryParams: {
-            result: 'info',
+            type: 'info',
             message: `${this.outsetContainer.Barcode} place in ${this.endContainer.Barcode}.`,
           },
         });

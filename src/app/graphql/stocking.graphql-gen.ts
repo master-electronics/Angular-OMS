@@ -1153,11 +1153,29 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
+
+export type VerifyContainerForSortingQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistrubutionCenter: Types.Scalars['String'];
+}>;
+
+
+export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
+
+export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+  InventoryID: Types.Scalars['Int'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type UpdateInventoryAfterSortingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export const VerifyItnForSortingDocument = gql`
     query verifyITNForSorting($ITN: String!) {
   findInventory(Inventory: {InventoryTrackingNumber: $ITN}) {
+    _id
     QuantityOnHand
     Product {
       ProductCode
@@ -1172,6 +1190,48 @@ export const VerifyItnForSortingDocument = gql`
   })
   export class VerifyItnForSortingGQL extends Apollo.Query<VerifyItnForSortingQuery, VerifyItnForSortingQueryVariables> {
     document = VerifyItnForSortingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyContainerForSortingDocument = gql`
+    query verifyContainerForSorting($Barcode: String!, $DistrubutionCenter: String!) {
+  findContainer(
+    Container: {Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+  ) {
+    _id
+    ContainerType {
+      IsMobile
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyContainerForSortingGQL extends Apollo.Query<VerifyContainerForSortingQuery, VerifyContainerForSortingQueryVariables> {
+    document = VerifyContainerForSortingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateInventoryAfterSortingDocument = gql`
+    mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!, $log: [insertUserEventLog]!) {
+  updateInventory(Inventory: {ContainerID: $ContainerID}, _id: $InventoryID)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<UpdateInventoryAfterSortingMutation, UpdateInventoryAfterSortingMutationVariables> {
+    document = UpdateInventoryAfterSortingDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

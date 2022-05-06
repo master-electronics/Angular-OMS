@@ -23,9 +23,9 @@ import {
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'verify-pack',
@@ -332,13 +332,13 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerInfo,
-      StatusID: environment.warehouseHold_ID,
+      StatusID: sqlData.warehouseHold_ID,
       log: [
         {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.itemInfo.OrderNumber,
           NOSINumber: this.itemInfo.NOSI,
-          UserEventID: environment.Event_QC_Hold,
+          UserEventID: sqlData.Event_QC_Hold,
           Message: `Hold on ${String(Status).padStart(2, '3')}`,
         },
       ],

@@ -19,6 +19,7 @@ import {
 import { environment } from 'src/environments/environment';
 import { of, throwError } from 'rxjs';
 import { AggregationOutService } from './aggregation-out.server';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'aggregation-out',
@@ -67,7 +68,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     this.agOutService.changePickedContainer(null);
     this.agOutService.changeITNsInOrder(null);
     // read info from previous page.
-    this.alertType = this.route.snapshot.queryParams['result'];
+    this.alertType = this.route.snapshot.queryParams['type'];
     this.alertMessage = this.route.snapshot.queryParams['message'];
     this.isLoading = true;
     this.pickOrder$ = this.pickOrder.mutate(null).pipe(
@@ -125,10 +126,9 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
           if (
             order[0].ORDERLINEDETAILs.some(
               (item) =>
-                ![
-                  environment.agInComplete_ID,
-                  environment.agOutComplete_ID,
-                ].includes(item.StatusID)
+                ![sqlData.agInComplete_ID, sqlData.agOutComplete_ID].includes(
+                  item.StatusID
+                )
             )
           ) {
             throw `Invalid Order Status!`;

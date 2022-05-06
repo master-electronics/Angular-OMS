@@ -21,6 +21,7 @@ import { ToteBarcodeRegex } from '../../shared/dataRegex';
 import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
@@ -65,7 +66,7 @@ export class AggregationInComponent
 
   @ViewChild('containerNumber') containerInput!: ElementRef;
   ngOnInit(): void {
-    this.alertType = this._route.snapshot.queryParams['result'];
+    this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
   }
   ngAfterViewInit(): void {
@@ -115,9 +116,9 @@ export class AggregationInComponent
           // only allow status is agIn complete and qc complete
           if (
             container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID <
-              environment.qcComplete_ID ||
+              sqlData.qcComplete_ID ||
             container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID >=
-              environment.agOutComplete_ID
+              sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
         }),
@@ -136,7 +137,7 @@ export class AggregationInComponent
                 NOSINumber:
                   container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
                 InventoryTrackingNumber: line.InventoryTrackingNumber,
-                UserEventID: environment.Event_AgIn_Start,
+                UserEventID: sqlData.Event_AgIn_Start,
                 Message: `Start ${container.Barcode}`,
               });
             }
@@ -150,7 +151,7 @@ export class AggregationInComponent
             InventoryID: container.INVENTORies[0]._id,
             isRelocation:
               container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
-              environment.agInComplete_ID,
+              sqlData.agInComplete_ID,
           };
           this._agInService.changeOutsetContainer(outsetContainer);
           return this._insertEventlog.mutate({

@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface SortingInfo {
   ITN: string;
+  InventoryID: number;
   productCode: string;
   partNumber: string;
   QuantityOnHand: number;

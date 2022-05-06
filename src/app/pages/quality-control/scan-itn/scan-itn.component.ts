@@ -19,6 +19,7 @@ import {
   Insert_UserEventLogsGQL,
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'scan-itn',
@@ -101,9 +102,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             // }
             if (
               ![
-                environment.droppedQC_ID,
-                environment.warehouseHold_ID,
-                environment.qcComplete_ID,
+                sqlData.droppedQC_ID,
+                sqlData.warehouseHold_ID,
+                sqlData.qcComplete_ID,
               ].includes(res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID)
             ) {
               error += `Invalid order line status ${res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
@@ -144,7 +145,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 OrderNumber: Order.OrderNumber.trim(),
                 NOSINumber: Order.NOSINumber.trim(),
                 InventoryTrackingNumber: ITN,
-                UserEventID: environment.Event_QC_Start,
+                UserEventID: sqlData.Event_QC_Start,
               },
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });

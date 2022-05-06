@@ -17,7 +17,7 @@ import {
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/sqlData';
 import { PickService } from '../pick.server';
 
 @Component({
@@ -88,7 +88,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       insertUserLog: this._insertLog.mutate({
         log: {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-          UserEventID: environment.Event_DropOff_Start,
+          UserEventID: sqlData.Event_DropOff_Start,
           Message: `From ${this._service.cartInfo.barcode}`,
         },
       }),
@@ -146,7 +146,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
               InventoryTrackingNumber: node.InventoryTrackingNumber,
               OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
               NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
-              UserEventID: environment.Event_DropOff_SelectITN,
+              UserEventID: sqlData.Event_DropOff_SelectITN,
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
@@ -165,7 +165,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           InventoryTrackingNumber: node.InventoryTrackingNumber,
           OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
           NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
-          UserEventID: environment.Event_DropOff_Done,
+          UserEventID: sqlData.Event_DropOff_Done,
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           Message: `From ${this._service.cartInfo.barcode}`,
         });
@@ -190,7 +190,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           map(() => {
             this._router.navigate(['pulltopick'], {
               queryParams: {
-                result: 'success',
+                type: 'success',
                 message: `Drop off in ${
                   this.containerForm.get('containerNumber').value
                 } is successful.`,

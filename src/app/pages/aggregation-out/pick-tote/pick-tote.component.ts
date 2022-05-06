@@ -24,6 +24,7 @@ import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'pick-tote',
@@ -110,7 +111,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
                 InternalTrackingNumber: ITN,
-                UserEventID: environment.Event_AgOut_Start,
+                UserEventID: sqlData.Event_AgOut_Start,
               };
             });
             return this._insertUserEvnetLog.mutate({ log });
@@ -206,14 +207,14 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         InternalTrackingNumber: node,
-        UserEventID: environment.Event_AgOut_Done,
+        UserEventID: sqlData.Event_AgOut_Done,
       };
     });
     this.updateSQL$ = forkJoin({
       updateOrder: this._updateAfterQC.mutate({
         OrderID: Number(this.urlParams.OrderID),
         OrderLineDetail: {
-          StatusID: environment.agOutComplete_ID,
+          StatusID: sqlData.agOutComplete_ID,
         },
         toteList: [...toteSet],
         log: log,
@@ -221,7 +222,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         UserOrStatus: 'Packing',
-        MerpStatus: String(environment.agOutComplete_ID),
+        MerpStatus: String(sqlData.agOutComplete_ID),
         FileKeyList,
         ActionType: 'A',
         Action: 'line_aggregation_out',
@@ -242,7 +243,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // navgate to first page if success
       map((res) => {
-        let result = 'success';
+        let type = 'success';
         let message = `Order complete: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
         if (
           res.checkHazmzd.data.fetchProductInfoFromMerp.some(
@@ -251,14 +252,14 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               node.HazardMaterialLevel.trim() !== 'N'
           )
         ) {
-          result = 'warning';
+          type = 'warning';
           message = message + `\nThis order contains hazardous materials`;
         }
 
         this.sendGTM();
         this._router.navigate(['/agout'], {
           queryParams: {
-            result,
+            type,
             message,
           },
         });

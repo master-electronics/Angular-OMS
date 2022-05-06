@@ -22,6 +22,7 @@ import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'select-location',
@@ -85,7 +86,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
     const log = [
       {
         Message: `${this.f.positionNumber.value}`,
-        UserEventID: environment.Event_Pulling_SelectLocation,
+        UserEventID: sqlData.Event_Pulling_SelectLocation,
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
       },
     ];

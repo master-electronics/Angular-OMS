@@ -25,6 +25,7 @@ import {
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'pull-itn',
@@ -167,7 +168,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
           return this._updateAfterPulling.mutate(
             {
               OrderLineDetail: {
-                StatusID: environment.pickComplete_ID,
+                StatusID: sqlData.pickComplete_ID,
               },
               Inventory: {
                 ContainerID: this._pickService.cartInfo.id,
@@ -175,7 +176,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
               InventoryID: this.inventoryID,
               log: [
                 {
-                  UserEventID: environment.Event_Pulling_PullITN,
+                  UserEventID: sqlData.Event_Pulling_PullITN,
                   InventoryTrackingNumber: this.ITN,
                   UserID,
                   OrderNumber: this.OrderNumber,
@@ -212,11 +213,11 @@ export class PullITNComponent implements OnInit, AfterViewInit {
         {
           InventoryID: this.inventoryID,
           OrderLineDetail: {
-            StatusID: environment.notFound_ID,
+            StatusID: sqlData.notFound_ID,
           },
           log: [
             {
-              UserEventID: environment.Event_Pulling_NotFound,
+              UserEventID: sqlData.Event_Pulling_NotFound,
               InventoryTrackingNumber: this.ITN,
               UserID,
               OrderNumber: this.OrderNumber,

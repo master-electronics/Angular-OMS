@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { catchError, map } from 'rxjs/operators';
 import { ShelfInventoryService } from './shelf-inventory.server';
 import { FindItNsByShelfGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
   selector: 'shelf-inventory',
@@ -77,18 +78,16 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
     this.search$ = this.searchITNList
       .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
       .pipe(
-        map((result) => {
-          if (result.data.findContainer.length === 0) {
+        map((res) => {
+          if (res.data.findContainer.length === 0) {
             this.alertMessage = 'No Container found for this barcode';
             this.alertType = 'error';
             return;
           }
           const itnList = [];
-          result.data.findContainer.forEach((container) => {
+          res.data.findContainer.forEach((container) => {
             container.INVENTORies.forEach((itn) => {
-              if (
-                itn.ORDERLINEDETAILs[0].StatusID === environment.agInComplete_ID
-              )
+              if (itn.ORDERLINEDETAILs[0].StatusID === sqlData.agInComplete_ID)
                 itnList.push(itn.InventoryTrackingNumber);
             });
           });

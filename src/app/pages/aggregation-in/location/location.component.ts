@@ -22,6 +22,7 @@ import {
 } from '../../../shared/dataRegex';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/sqlData';
 import { Title } from '@angular/platform-browser';
 import {
   CountOrderItnsFromMerpGQL,
@@ -179,7 +180,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               ++countLines;
               return;
             }
-            line.StatusID >= environment.agInComplete_ID && ++countLines;
+            line.StatusID >= sqlData.agInComplete_ID && ++countLines;
           });
           this.ITNInfo[4][1] = `${countLines} of ${totalLines}`;
           if (locationsSet.size === 0) {
@@ -225,7 +226,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           return forkJoin({
             updateOrder: this._updateAfterAgOut.mutate({
               OrderID: Number(this.outsetContainer.OrderID),
-              OrderLineDetail: { StatusID: environment.agOutComplete_ID },
+              OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
               toteList: [this.outsetContainer.Barcode],
               log: [
@@ -236,14 +237,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
                   InventoryTrackingNumber: singleITN,
-                  UserEventID: environment.Event_AgIn_SingleITNAgOut,
+                  UserEventID: sqlData.Event_AgIn_SingleITNAgOut,
                   Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
                 },
               ],
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               UserOrStatus: 'Packing',
-              MerpStatus: String(environment.agOutComplete_ID),
+              MerpStatus: String(sqlData.agOutComplete_ID),
               FileKeyList: FileKeyListforAgOut,
               ActionType: 'A',
               Action: 'line_aggregation_out',
@@ -266,7 +267,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Back to first page after ag out success
         map((res) => {
-          let result = 'success';
+          let type = 'success';
           let message = `Order complete ${this.OrderNumber}-${this.NOSINumber}`;
           if (
             res.checkHazmzd.data.fetchProductInfoFromMerp.some(
@@ -275,7 +276,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 node.HazardMaterialLevel.trim() !== 'N'
             )
           ) {
-            result = 'warning';
+            type = 'warning';
             message = message + `\nThis order contains hazardous materials`;
           }
 
@@ -283,7 +284,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sendGTM();
           this._router.navigate(['agin'], {
             queryParams: {
-              result,
+              type,
               message,
             },
           });
@@ -352,7 +353,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             throw 'Can not find this container';
           }
           if (
-            ![environment.toteType_ID, environment.shelfType_ID].includes(
+            ![sqlData.toteType_ID, sqlData.shelfType_ID].includes(
               container[0].ContainerTypeID
             )
           ) {

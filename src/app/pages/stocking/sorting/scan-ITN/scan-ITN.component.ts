@@ -3,10 +3,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { sqlData } from 'src/app/shared/sqlData';
 import { StockingService } from '../../stocking.server';
 
 @Component({
@@ -25,6 +27,7 @@ export class ScanITNComponent implements OnInit {
     private _commonService: CommonService,
     private _title: Title,
     private _vierfyITN: VerifyItnForSortingGQL,
+    private _insertLog: Insert_UserEventLogsGQL,
     private _service: StockingService
   ) {
     this._title.setTitle('Sorting');
@@ -37,6 +40,7 @@ export class ScanITNComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this._service.changeSortingInfo(null);
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
   }
@@ -58,6 +62,7 @@ export class ScanITNComponent implements OnInit {
   onSubmit(): void {
     this.alertMessage = '';
     if (this.ITNForm.invalid || this.isLoading) {
+      this.ITNInput.nativeElement.select();
       return;
     }
     this.isLoading = true;
@@ -65,14 +70,14 @@ export class ScanITNComponent implements OnInit {
       .fetch({ ITN: this.ITNForm.value.ITN }, { fetchPolicy: 'network-only' })
       .pipe(
         tap((res) => {
-          this.isLoading = false;
           if (res.data.findInventory.length === 0) {
             throw 'ITN not found';
           }
         }),
-        map((res) => {
+        switchMap((res) => {
           this._service.changeSortingInfo({
             ITN: this.ITNForm.value.ITN,
+            InventoryID: res.data.findInventory[0]._id,
             productCode: res.data.findInventory[0].Product.ProductCode,
             partNumber: res.data.findInventory[0].Product.PartNumber,
             QuantityOnHand: res.data.findInventory[0].QuantityOnHand,
@@ -81,10 +86,25 @@ export class ScanITNComponent implements OnInit {
             velocity: null,
             zone: null,
           });
+          return this._insertLog.mutate({
+            log: {
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              UserEventID: sqlData.Event_Stocking_SortingStart,
+              InventoryTrackingNumber: this.ITNForm.value.ITN,
+              Message: ``,
+            },
+          });
+        }),
+        map(() => {
+          this.isLoading = false;
           this._router.navigate(['/stocking/sorting/location']);
         }),
         catchError((error) => {
+          this.isLoading = false;
           this.alertMessage = error;
+          this.alertType = 'error';
           this.ITNInput.nativeElement.select();
           return of(null);
         })

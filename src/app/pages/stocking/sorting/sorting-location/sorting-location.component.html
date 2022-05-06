@@ -28,6 +28,7 @@
           </nz-form-control>
         </nz-form-item>
 
+        <div *ngIf="submit$ | async"></div>
         <nz-form-item nz-row nzGutter="16" nzJustify="center">
           <div nz-col class="w-full">
             <button
