@@ -897,9 +897,9 @@ export type InsertUserEventLog = {
   InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
-  NOSINumber: Scalars['String'];
+  NOSINumber?: InputMaybe<Scalars['String']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
-  OrderNumber: Scalars['String'];
+  OrderNumber?: InputMaybe<Scalars['String']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Boolean']>;

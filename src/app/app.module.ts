@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
-import { ApolloModule, APOLLO_NAMED_OPTIONS, NamedOptions } from 'apollo-angular';
+import {
+  ApolloModule,
+  APOLLO_NAMED_OPTIONS,
+  NamedOptions,
+} from 'apollo-angular';
 import { HttpBatchLink, HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 
@@ -35,7 +39,6 @@ import { IconsProviderModule } from './icons-provider.module';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
