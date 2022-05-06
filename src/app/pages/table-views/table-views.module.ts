@@ -16,6 +16,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 import { TableViewsComponent } from './table-views.component';
 import { TableViewsRoutingModule } from './table-views.routing';
@@ -28,6 +32,11 @@ import { ITNViewComponent } from './order-view/itn-view.component';
 import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
+import { ColumnSelectorComponent } from './itn-lifecycle/column-selector.component';
+import { LevelSelectorComponent } from './itn-lifecycle/level-selector.component';
+import { LevelSliderComponent } from './itn-lifecycle/level-slider.component';
+import { TabsViewComponent } from './itn-lifecycle/tabs-view.component';
+import { TemplateSettings } from './itn-lifecycle/template-settings.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +51,11 @@ import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
     OrderTasktimeComponent,
     HoldOnCounterComponent,
     ITNLifecycleComponent,
+    ColumnSelectorComponent,
+    LevelSelectorComponent,
+    LevelSliderComponent,
+    TabsViewComponent,
+    TemplateSettings,
   ],
   imports: [
     CommonModule,
@@ -61,6 +75,10 @@ import { ITNLifecycleComponent } from './itn-lifecycle/itn-lifecycle.component';
     NzDatePickerModule,
     NzSelectModule,
     NzDividerModule,
+    NzModalModule,
+    NzSliderModule,
+    NzTabsModule,
+    NzInputNumberModule,
   ],
   bootstrap: [TableViewsComponent],
 })

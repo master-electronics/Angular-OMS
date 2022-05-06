@@ -165,6 +165,7 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     OrderNumber
     NOSINumber
     InternalTrackingNumber
+    after_InternalTrackingNumber
     PartNumber
     ProductCode
     OrderLineNumber
@@ -175,11 +176,160 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     WMSPriority
     Priority
     TrackingNumber
+    release
     pickStart
     pickDone
+    splitDone
     qcStart
     qcDone
     agStart
     agDone
+    ParentITN
+    notes
+  }
+}
+
+query fetchITNUserColumns($userId: String) {
+  fetchITNUserColumns(userId: $userId) {
+    _id
+    SelectedColumns
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+
+query findITNTemplate($_id: Int) {
+  findITNTemplate(_id: $_id) {
+    _id
+    UserID
+    TemplateName
+    SelectedColumns
+    ITNLEVELLIMITs {
+      _id
+      TemplateID
+      EventName
+      EventID
+      LowLevelLimit
+      MediumLevelLimit
+    }
+  }
+}
+
+query findITNTemplates($userId: Int) {
+  findITNTemplates(UserID: $userId) {
+    _id
+    UserID
+    TemplateName
+    SelectedColumns
+    ITNLEVELLIMITs {
+      _id
+      TemplateID
+      EventName
+      EventID
+      LowLevelLimit
+      MediumLevelLimit
+    }
+  }
+}
+
+query findITNColumns($userId: Int) {
+  findITNColumns(UserID: $userId) {
+    _id
+    name
+    title
+    colSpan
+    position
+  }
+}
+
+mutation insert_ITNUserColumns($itnUserColumns: [insertITNUserColumnsInfo]!) {
+  insertITNUserColumns(ITNUserColumns: $itnUserColumns) {
+    UserID
+    SelectedColumns
+  }
+}
+
+mutation update_ITNUserColumns(
+  $itnUserColumns: [updateITNUserColumnsInfo]!
+  $_id: Int
+) {
+  updateITNUserColumns(ITNUserColumns: $itnUserColumns, _id: $_id) {
+    SelectedColumns
+  }
+}
+
+mutation insert_ITNUserLevels($itnUserLevels: [insertITNUserLevelsInfo]!) {
+  insertITNUserLevels(ITNUserLevels: $itnUserLevels) {
+    UserID
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+
+mutation update_ITNUserLevels(
+  $itnUserLevels: [updateITNUserLevelsInfo]!
+  $_id: Int
+) {
+  updateITNUserLevels(ITNUserLevels: $itnUserLevels, _id: $_id) {
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+
+mutation update_ITNUserTemplate(
+  $_id: Int!
+  $templateName: String
+  $selectedColumns: String
+) {
+  updateITNUserTemplate(
+    _id: $_id
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+  ) {
+    _id
+  }
+}
+
+mutation delete_ITNLevelLimit($templateID: Int!) {
+  deleteITNLevelLimit(TemplateID: $templateID) {
+    _id
+  }
+}
+
+mutation delete_ITNUserTemplate($_id: Int!) {
+  deleteITNUserTemplate(_id: $_id) {
+    _id
+  }
+}
+
+mutation insert_ITNLevelLimit(
+  $templateID: Int
+  $eventName: String
+  $eventID: Int
+  $lowLevelLimit: Int
+  $mediumLevelLimit: Int
+) {
+  insertITNLevelLimit(
+    TemplateID: $templateID
+    EventName: $eventName
+    EventID: $eventID
+    LowLevelLimit: $lowLevelLimit
+    MediumLevelLimit: $mediumLevelLimit
+  ) {
+    _id
+  }
+}
+
+mutation insert_ITNUserTemplate(
+  $userID: Int
+  $templateName: String
+  $selectedColumns: String
+) {
+  insertITNUserTemplate(
+    UserID: $userID
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+  ) {
+    _id
   }
 }

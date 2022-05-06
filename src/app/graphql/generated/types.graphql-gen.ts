@@ -64,6 +64,15 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnColumn = {
+  __typename?: 'ITNColumn';
+  _id?: Maybe<Scalars['Int']>;
+  colSpan?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type ItnInfoforPulling = {
   __typename?: 'ITNInfoforPulling';
   Barcode?: Maybe<Scalars['String']>;
@@ -86,6 +95,7 @@ export type ItnLifeCycle = {
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
@@ -93,12 +103,56 @@ export type ItnLifeCycle = {
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
+  after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
+  release?: Maybe<Scalars['String']>;
+  splitDone?: Maybe<Scalars['String']>;
+};
+
+export type ItnUserColumn = {
+  __typename?: 'ITNUserColumn';
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  SelectedColumns?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserColumns = {
+  __typename?: 'ITNUserColumns';
+  SelectedColumns?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserLevelLimit = {
+  __typename?: 'ITNUserLevelLimit';
+  EventID?: Maybe<Scalars['Int']>;
+  EventName?: Maybe<Scalars['String']>;
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  TemplateID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type ItnUserLevels = {
+  __typename?: 'ITNUserLevels';
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserTemplate = {
+  __typename?: 'ITNUserTemplate';
+  ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
+  SelectedColumns?: Maybe<Scalars['String']>;
+  TemplateName?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Inventory = {
@@ -124,6 +178,8 @@ export type Mutation = {
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
+  deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
+  deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -134,11 +190,18 @@ export type Mutation = {
   findOrCreateProduct: Product;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertITNLevelLimit?: Maybe<ItnUserLevelLimit>;
+  insertITNUserColumns?: Maybe<ItnUserColumns>;
+  insertITNUserLevels?: Maybe<ItnUserLevels>;
+  insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateITNUserColumns?: Maybe<ItnUserColumns>;
+  updateITNUserLevels?: Maybe<ItnUserLevels>;
+  updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   updateInventory?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateInventoryList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
@@ -180,6 +243,16 @@ export type MutationClearMerpToteArgs = {
 
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
+};
+
+
+export type MutationDeleteItnLevelLimitArgs = {
+  TemplateID: Scalars['Int'];
+};
+
+
+export type MutationDeleteItnUserTemplateArgs = {
+  _id: Scalars['Int'];
 };
 
 
@@ -247,6 +320,32 @@ export type MutationHoldQcOrderArgs = {
 };
 
 
+export type MutationInsertItnLevelLimitArgs = {
+  EventID?: InputMaybe<Scalars['Int']>;
+  EventName?: InputMaybe<Scalars['String']>;
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+  TemplateID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationInsertItnUserColumnsArgs = {
+  ITNUserColumns: Array<InputMaybe<InsertItnUserColumnsInfo>>;
+};
+
+
+export type MutationInsertItnUserLevelsArgs = {
+  ITNUserLevels: Array<InputMaybe<InsertItnUserLevelsInfo>>;
+};
+
+
+export type MutationInsertItnUserTemplateArgs = {
+  SelectedColumns?: InputMaybe<Scalars['String']>;
+  TemplateName?: InputMaybe<Scalars['String']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
 };
@@ -270,6 +369,25 @@ export type MutationUpdateContainerListArgs = {
   Container: UpdateContainer;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+
+export type MutationUpdateItnUserColumnsArgs = {
+  ITNUserColumns: Array<InputMaybe<UpdateItnUserColumnsInfo>>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateItnUserLevelsArgs = {
+  ITNUserLevels: Array<InputMaybe<UpdateItnUserLevelsInfo>>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateItnUserTemplateArgs = {
+  SelectedColumns?: InputMaybe<Scalars['String']>;
+  TemplateName?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
 };
 
 
@@ -452,6 +570,7 @@ export type Query = {
   countOrderItns: Scalars['Int'];
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
+  fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -463,6 +582,9 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
+  findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
+  findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
@@ -490,6 +612,11 @@ export type QueryFetchHoldOnCounterArgs = {
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
+};
+
+
+export type QueryFetchItnUserColumnsArgs = {
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -548,6 +675,21 @@ export type QueryFindContainerListArgs = {
   Limit?: InputMaybe<Scalars['Int']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnColumnsArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnTemplateArgs = {
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnTemplatesArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -640,6 +782,7 @@ export type UserEventLog = {
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
@@ -678,6 +821,17 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertItnUserColumnsInfo = {
+  SelectedColumns: Scalars['String'];
+  UserID: Scalars['Int'];
+};
+
+export type InsertItnUserLevelsInfo = {
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+  UserID: Scalars['Int'];
+};
+
 export type InsertInventory = {
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -704,18 +858,25 @@ export type InsertOrder = {
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
   ProductID: Scalars['Int'];
   Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type InsertOrderLineDetail = {
-  BinLocation?: InputMaybe<Scalars['String']>;
+  BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID: Scalars['Int'];
   OrderLineID: Scalars['Int'];
+  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity: Scalars['Float'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
 };
@@ -726,20 +887,33 @@ export type InsertProduct = {
 };
 
 export type InsertUserEventLog = {
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
-  NOSINumber?: InputMaybe<Scalars['String']>;
-  OrderNumber?: InputMaybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber: Scalars['String'];
+  ParentITN?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type InsertUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
-  Name?: InputMaybe<Scalars['String']>;
+  Name: Scalars['String'];
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -857,6 +1031,7 @@ export type SearchUserEventLog = {
   NOSINumber?: InputMaybe<Scalars['String']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
   OrderNumber?: InputMaybe<Scalars['String']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
@@ -900,6 +1075,15 @@ export type UpdateContainer = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
+export type UpdateItnUserColumnsInfo = {
+  SelectedColumns: Scalars['String'];
+};
+
+export type UpdateItnUserLevelsInfo = {
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+};
+
 export type UpdateInventory = {
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
@@ -927,6 +1111,8 @@ export type UpdateOrder = {
 export type UpdateOrderLine = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   Quantity?: InputMaybe<Scalars['Float']>;
 };
@@ -934,11 +1120,16 @@ export type UpdateOrderLine = {
 export type UpdateOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity?: InputMaybe<Scalars['Float']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID?: InputMaybe<Scalars['Int']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
 };
@@ -949,4 +1140,5 @@ export type UpdateUserInfo = {
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };

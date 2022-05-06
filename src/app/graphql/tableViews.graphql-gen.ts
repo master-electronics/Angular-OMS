@@ -69,6 +69,15 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnColumn = {
+  __typename?: 'ITNColumn';
+  _id?: Maybe<Scalars['Int']>;
+  colSpan?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type ItnInfoforPulling = {
   __typename?: 'ITNInfoforPulling';
   Barcode?: Maybe<Scalars['String']>;
@@ -91,6 +100,7 @@ export type ItnLifeCycle = {
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
@@ -98,12 +108,56 @@ export type ItnLifeCycle = {
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
+  after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
+  release?: Maybe<Scalars['String']>;
+  splitDone?: Maybe<Scalars['String']>;
+};
+
+export type ItnUserColumn = {
+  __typename?: 'ITNUserColumn';
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  SelectedColumns?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserColumns = {
+  __typename?: 'ITNUserColumns';
+  SelectedColumns?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserLevelLimit = {
+  __typename?: 'ITNUserLevelLimit';
+  EventID?: Maybe<Scalars['Int']>;
+  EventName?: Maybe<Scalars['String']>;
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  TemplateID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type ItnUserLevels = {
+  __typename?: 'ITNUserLevels';
+  LowLevelLimit?: Maybe<Scalars['Int']>;
+  MediumLevelLimit?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
+};
+
+export type ItnUserTemplate = {
+  __typename?: 'ITNUserTemplate';
+  ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
+  SelectedColumns?: Maybe<Scalars['String']>;
+  TemplateName?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Inventory = {
@@ -129,6 +183,8 @@ export type Mutation = {
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
+  deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
+  deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -139,11 +195,18 @@ export type Mutation = {
   findOrCreateProduct: Product;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertITNLevelLimit?: Maybe<ItnUserLevelLimit>;
+  insertITNUserColumns?: Maybe<ItnUserColumns>;
+  insertITNUserLevels?: Maybe<ItnUserLevels>;
+  insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateITNUserColumns?: Maybe<ItnUserColumns>;
+  updateITNUserLevels?: Maybe<ItnUserLevels>;
+  updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   updateInventory?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateInventoryList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateMerpOrderStatus: Response;
@@ -185,6 +248,16 @@ export type MutationClearMerpToteArgs = {
 
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
+};
+
+
+export type MutationDeleteItnLevelLimitArgs = {
+  TemplateID: Scalars['Int'];
+};
+
+
+export type MutationDeleteItnUserTemplateArgs = {
+  _id: Scalars['Int'];
 };
 
 
@@ -252,6 +325,32 @@ export type MutationHoldQcOrderArgs = {
 };
 
 
+export type MutationInsertItnLevelLimitArgs = {
+  EventID?: InputMaybe<Scalars['Int']>;
+  EventName?: InputMaybe<Scalars['String']>;
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+  TemplateID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationInsertItnUserColumnsArgs = {
+  ITNUserColumns: Array<InputMaybe<InsertItnUserColumnsInfo>>;
+};
+
+
+export type MutationInsertItnUserLevelsArgs = {
+  ITNUserLevels: Array<InputMaybe<InsertItnUserLevelsInfo>>;
+};
+
+
+export type MutationInsertItnUserTemplateArgs = {
+  SelectedColumns?: InputMaybe<Scalars['String']>;
+  TemplateName?: InputMaybe<Scalars['String']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
 };
@@ -275,6 +374,25 @@ export type MutationUpdateContainerListArgs = {
   Container: UpdateContainer;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+
+export type MutationUpdateItnUserColumnsArgs = {
+  ITNUserColumns: Array<InputMaybe<UpdateItnUserColumnsInfo>>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateItnUserLevelsArgs = {
+  ITNUserLevels: Array<InputMaybe<UpdateItnUserLevelsInfo>>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateItnUserTemplateArgs = {
+  SelectedColumns?: InputMaybe<Scalars['String']>;
+  TemplateName?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
 };
 
 
@@ -457,6 +575,7 @@ export type Query = {
   countOrderItns: Scalars['Int'];
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
+  fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -468,6 +587,9 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
+  findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
+  findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findInventory?: Maybe<Array<Maybe<Inventory>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Array<Maybe<Order>>>;
@@ -495,6 +617,11 @@ export type QueryFetchHoldOnCounterArgs = {
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
+};
+
+
+export type QueryFetchItnUserColumnsArgs = {
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -553,6 +680,21 @@ export type QueryFindContainerListArgs = {
   Limit?: InputMaybe<Scalars['Int']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnColumnsArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnTemplateArgs = {
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindItnTemplatesArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -645,6 +787,7 @@ export type UserEventLog = {
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
@@ -683,6 +826,17 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertItnUserColumnsInfo = {
+  SelectedColumns: Scalars['String'];
+  UserID: Scalars['Int'];
+};
+
+export type InsertItnUserLevelsInfo = {
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+  UserID: Scalars['Int'];
+};
+
 export type InsertInventory = {
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -709,18 +863,25 @@ export type InsertOrder = {
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
   ProductID: Scalars['Int'];
   Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type InsertOrderLineDetail = {
-  BinLocation?: InputMaybe<Scalars['String']>;
+  BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID: Scalars['Int'];
   OrderLineID: Scalars['Int'];
+  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity: Scalars['Float'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
 };
@@ -731,20 +892,33 @@ export type InsertProduct = {
 };
 
 export type InsertUserEventLog = {
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
-  NOSINumber?: InputMaybe<Scalars['String']>;
-  OrderNumber?: InputMaybe<Scalars['String']>;
+  NOSINumber: Scalars['String'];
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber: Scalars['String'];
+  ParentITN?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type InsertUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
-  Name?: InputMaybe<Scalars['String']>;
+  Name: Scalars['String'];
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -862,6 +1036,7 @@ export type SearchUserEventLog = {
   NOSINumber?: InputMaybe<Scalars['String']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
   OrderNumber?: InputMaybe<Scalars['String']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
@@ -905,6 +1080,15 @@ export type UpdateContainer = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
+export type UpdateItnUserColumnsInfo = {
+  SelectedColumns: Scalars['String'];
+};
+
+export type UpdateItnUserLevelsInfo = {
+  LowLevelLimit?: InputMaybe<Scalars['Int']>;
+  MediumLevelLimit?: InputMaybe<Scalars['Int']>;
+};
+
 export type UpdateInventory = {
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
@@ -932,6 +1116,8 @@ export type UpdateOrder = {
 export type UpdateOrderLine = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   Quantity?: InputMaybe<Scalars['Float']>;
 };
@@ -939,11 +1125,16 @@ export type UpdateOrderLine = {
 export type UpdateOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity?: InputMaybe<Scalars['Float']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID?: InputMaybe<Scalars['Int']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
 };
@@ -954,6 +1145,7 @@ export type UpdateUserInfo = {
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type FetchOrderViewQueryVariables = Types.Exact<{
@@ -1037,7 +1229,108 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, pickStart?: string | null, pickDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, release?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, ParentITN?: string | null, notes?: string | null } | null> | null };
+
+export type FetchItnUserColumnsQueryVariables = Types.Exact<{
+  userId?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FetchItnUserColumnsQuery = { __typename?: 'Query', fetchITNUserColumns?: Array<{ __typename?: 'ITNUserColumn', _id?: number | null, SelectedColumns?: string | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null };
+
+export type FindItnTemplateQueryVariables = Types.Exact<{
+  _id?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FindItnTemplateQuery = { __typename?: 'Query', findITNTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
+
+export type FindItnTemplatesQueryVariables = Types.Exact<{
+  userId?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FindItnTemplatesQuery = { __typename?: 'Query', findITNTemplates?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
+
+export type FindItnColumnsQueryVariables = Types.Exact<{
+  userId?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, colSpan?: string | null, position?: number | null } | null> | null };
+
+export type Insert_ItnUserColumnsMutationVariables = Types.Exact<{
+  itnUserColumns: Array<Types.InputMaybe<Types.InsertItnUserColumnsInfo>> | Types.InputMaybe<Types.InsertItnUserColumnsInfo>;
+}>;
+
+
+export type Insert_ItnUserColumnsMutation = { __typename?: 'Mutation', insertITNUserColumns?: { __typename?: 'ITNUserColumns', UserID?: number | null, SelectedColumns?: string | null } | null };
+
+export type Update_ItnUserColumnsMutationVariables = Types.Exact<{
+  itnUserColumns: Array<Types.InputMaybe<Types.UpdateItnUserColumnsInfo>> | Types.InputMaybe<Types.UpdateItnUserColumnsInfo>;
+  _id?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type Update_ItnUserColumnsMutation = { __typename?: 'Mutation', updateITNUserColumns?: { __typename?: 'ITNUserColumns', SelectedColumns?: string | null } | null };
+
+export type Insert_ItnUserLevelsMutationVariables = Types.Exact<{
+  itnUserLevels: Array<Types.InputMaybe<Types.InsertItnUserLevelsInfo>> | Types.InputMaybe<Types.InsertItnUserLevelsInfo>;
+}>;
+
+
+export type Insert_ItnUserLevelsMutation = { __typename?: 'Mutation', insertITNUserLevels?: { __typename?: 'ITNUserLevels', UserID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null };
+
+export type Update_ItnUserLevelsMutationVariables = Types.Exact<{
+  itnUserLevels: Array<Types.InputMaybe<Types.UpdateItnUserLevelsInfo>> | Types.InputMaybe<Types.UpdateItnUserLevelsInfo>;
+  _id?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type Update_ItnUserLevelsMutation = { __typename?: 'Mutation', updateITNUserLevels?: { __typename?: 'ITNUserLevels', LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null };
+
+export type Update_ItnUserTemplateMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  templateName?: Types.InputMaybe<Types.Scalars['String']>;
+  selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type Update_ItnUserTemplateMutation = { __typename?: 'Mutation', updateITNUserTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null } | null> | null };
+
+export type Delete_ItnLevelLimitMutationVariables = Types.Exact<{
+  templateID: Types.Scalars['Int'];
+}>;
+
+
+export type Delete_ItnLevelLimitMutation = { __typename?: 'Mutation', deleteITNLevelLimit?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number } | null> | null };
+
+export type Delete_ItnUserTemplateMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+}>;
+
+
+export type Delete_ItnUserTemplateMutation = { __typename?: 'Mutation', deleteITNUserTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null } | null> | null };
+
+export type Insert_ItnLevelLimitMutationVariables = Types.Exact<{
+  templateID?: Types.InputMaybe<Types.Scalars['Int']>;
+  eventName?: Types.InputMaybe<Types.Scalars['String']>;
+  eventID?: Types.InputMaybe<Types.Scalars['Int']>;
+  lowLevelLimit?: Types.InputMaybe<Types.Scalars['Int']>;
+  mediumLevelLimit?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type Insert_ItnLevelLimitMutation = { __typename?: 'Mutation', insertITNLevelLimit?: { __typename?: 'ITNUserLevelLimit', _id: number } | null };
+
+export type Insert_ItnUserTemplateMutationVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+  templateName?: Types.InputMaybe<Types.Scalars['String']>;
+  selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type Insert_ItnUserTemplateMutation = { __typename?: 'Mutation', insertITNUserTemplate?: { __typename?: 'ITNUserTemplate', _id?: number | null } | null };
 
 export const FetchOrderViewDocument = gql`
     query fetchOrderView($filter: orderViewFilter) {
@@ -1318,6 +1611,7 @@ export const FetchItnLifecycleDocument = gql`
     OrderNumber
     NOSINumber
     InternalTrackingNumber
+    after_InternalTrackingNumber
     PartNumber
     ProductCode
     OrderLineNumber
@@ -1328,12 +1622,16 @@ export const FetchItnLifecycleDocument = gql`
     WMSPriority
     Priority
     TrackingNumber
+    release
     pickStart
     pickDone
+    splitDone
     qcStart
     qcDone
     agStart
     agDone
+    ParentITN
+    notes
   }
 }
     `;
@@ -1343,6 +1641,287 @@ export const FetchItnLifecycleDocument = gql`
   })
   export class FetchItnLifecycleGQL extends Apollo.Query<FetchItnLifecycleQuery, FetchItnLifecycleQueryVariables> {
     document = FetchItnLifecycleDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchItnUserColumnsDocument = gql`
+    query fetchITNUserColumns($userId: String) {
+  fetchITNUserColumns(userId: $userId) {
+    _id
+    SelectedColumns
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchItnUserColumnsGQL extends Apollo.Query<FetchItnUserColumnsQuery, FetchItnUserColumnsQueryVariables> {
+    document = FetchItnUserColumnsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindItnTemplateDocument = gql`
+    query findITNTemplate($_id: Int) {
+  findITNTemplate(_id: $_id) {
+    _id
+    UserID
+    TemplateName
+    SelectedColumns
+    ITNLEVELLIMITs {
+      _id
+      TemplateID
+      EventName
+      EventID
+      LowLevelLimit
+      MediumLevelLimit
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindItnTemplateGQL extends Apollo.Query<FindItnTemplateQuery, FindItnTemplateQueryVariables> {
+    document = FindItnTemplateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindItnTemplatesDocument = gql`
+    query findITNTemplates($userId: Int) {
+  findITNTemplates(UserID: $userId) {
+    _id
+    UserID
+    TemplateName
+    SelectedColumns
+    ITNLEVELLIMITs {
+      _id
+      TemplateID
+      EventName
+      EventID
+      LowLevelLimit
+      MediumLevelLimit
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindItnTemplatesGQL extends Apollo.Query<FindItnTemplatesQuery, FindItnTemplatesQueryVariables> {
+    document = FindItnTemplatesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindItnColumnsDocument = gql`
+    query findITNColumns($userId: Int) {
+  findITNColumns(UserID: $userId) {
+    _id
+    name
+    title
+    colSpan
+    position
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindItnColumnsGQL extends Apollo.Query<FindItnColumnsQuery, FindItnColumnsQueryVariables> {
+    document = FindItnColumnsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_ItnUserColumnsDocument = gql`
+    mutation insert_ITNUserColumns($itnUserColumns: [insertITNUserColumnsInfo]!) {
+  insertITNUserColumns(ITNUserColumns: $itnUserColumns) {
+    UserID
+    SelectedColumns
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_ItnUserColumnsGQL extends Apollo.Mutation<Insert_ItnUserColumnsMutation, Insert_ItnUserColumnsMutationVariables> {
+    document = Insert_ItnUserColumnsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_ItnUserColumnsDocument = gql`
+    mutation update_ITNUserColumns($itnUserColumns: [updateITNUserColumnsInfo]!, $_id: Int) {
+  updateITNUserColumns(ITNUserColumns: $itnUserColumns, _id: $_id) {
+    SelectedColumns
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_ItnUserColumnsGQL extends Apollo.Mutation<Update_ItnUserColumnsMutation, Update_ItnUserColumnsMutationVariables> {
+    document = Update_ItnUserColumnsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_ItnUserLevelsDocument = gql`
+    mutation insert_ITNUserLevels($itnUserLevels: [insertITNUserLevelsInfo]!) {
+  insertITNUserLevels(ITNUserLevels: $itnUserLevels) {
+    UserID
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_ItnUserLevelsGQL extends Apollo.Mutation<Insert_ItnUserLevelsMutation, Insert_ItnUserLevelsMutationVariables> {
+    document = Insert_ItnUserLevelsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_ItnUserLevelsDocument = gql`
+    mutation update_ITNUserLevels($itnUserLevels: [updateITNUserLevelsInfo]!, $_id: Int) {
+  updateITNUserLevels(ITNUserLevels: $itnUserLevels, _id: $_id) {
+    LowLevelLimit
+    MediumLevelLimit
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_ItnUserLevelsGQL extends Apollo.Mutation<Update_ItnUserLevelsMutation, Update_ItnUserLevelsMutationVariables> {
+    document = Update_ItnUserLevelsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_ItnUserTemplateDocument = gql`
+    mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String) {
+  updateITNUserTemplate(
+    _id: $_id
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+  ) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_ItnUserTemplateGQL extends Apollo.Mutation<Update_ItnUserTemplateMutation, Update_ItnUserTemplateMutationVariables> {
+    document = Update_ItnUserTemplateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Delete_ItnLevelLimitDocument = gql`
+    mutation delete_ITNLevelLimit($templateID: Int!) {
+  deleteITNLevelLimit(TemplateID: $templateID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Delete_ItnLevelLimitGQL extends Apollo.Mutation<Delete_ItnLevelLimitMutation, Delete_ItnLevelLimitMutationVariables> {
+    document = Delete_ItnLevelLimitDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Delete_ItnUserTemplateDocument = gql`
+    mutation delete_ITNUserTemplate($_id: Int!) {
+  deleteITNUserTemplate(_id: $_id) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Delete_ItnUserTemplateGQL extends Apollo.Mutation<Delete_ItnUserTemplateMutation, Delete_ItnUserTemplateMutationVariables> {
+    document = Delete_ItnUserTemplateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_ItnLevelLimitDocument = gql`
+    mutation insert_ITNLevelLimit($templateID: Int, $eventName: String, $eventID: Int, $lowLevelLimit: Int, $mediumLevelLimit: Int) {
+  insertITNLevelLimit(
+    TemplateID: $templateID
+    EventName: $eventName
+    EventID: $eventID
+    LowLevelLimit: $lowLevelLimit
+    MediumLevelLimit: $mediumLevelLimit
+  ) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_ItnLevelLimitGQL extends Apollo.Mutation<Insert_ItnLevelLimitMutation, Insert_ItnLevelLimitMutationVariables> {
+    document = Insert_ItnLevelLimitDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_ItnUserTemplateDocument = gql`
+    mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String) {
+  insertITNUserTemplate(
+    UserID: $userID
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+  ) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_ItnUserTemplateGQL extends Apollo.Mutation<Insert_ItnUserTemplateMutation, Insert_ItnUserTemplateMutationVariables> {
+    document = Insert_ItnUserTemplateDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
