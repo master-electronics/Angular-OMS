@@ -1,9 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Column } from '../../../column';
+import { Column, LevelLimit, Template } from './itn-lifecycle.server';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Template } from '../../../template';
-import { LevelLimit } from 'src/app/LevelLimit';
 import { Observable, Subscription, Subject } from 'rxjs';
 import {
   FindItnTemplateGQL, Update_ItnUserTemplateGQL,

@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Column } from 'src/app/column';
+import { Column } from './itn-lifecycle.server';
 import { ASTWithSource } from '@angular/compiler';
 import { Subject } from 'rxjs';
 
