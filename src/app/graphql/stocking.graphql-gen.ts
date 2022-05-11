@@ -51,6 +51,15 @@ export type ContainerType = {
   _id: Scalars['Int'];
 };
 
+export type DcProduct = {
+  __typename?: 'DCProduct';
+  DistributionCenter: Container;
+  DistributionCenterID: Scalars['Int'];
+  Product: Product;
+  ProductID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   Name: Scalars['String'];
@@ -204,6 +213,7 @@ export type Mutation = {
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateForM1PICKRT?: Maybe<Scalars['Boolean']>;
   updateITNUserColumns?: Maybe<ItnUserColumns>;
   updateITNUserLevels?: Maybe<ItnUserLevels>;
   updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -374,6 +384,32 @@ export type MutationUpdateContainerListArgs = {
   Container: UpdateContainer;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+
+export type MutationUpdateForM1PickrtArgs = {
+  Barcode: Scalars['String'];
+  BranchID: Scalars['String'];
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  CustomerNumber: Scalars['String'];
+  DateCode?: InputMaybe<Scalars['String']>;
+  DistributionCenter: Scalars['String'];
+  ITN: Scalars['String'];
+  NOSINumber: Scalars['String'];
+  OrderLineNumber: Scalars['Int'];
+  OrderLineQuantity: Scalars['Float'];
+  OrderNumber: Scalars['String'];
+  OrderStatusCode: Scalars['String'];
+  OrderType: Scalars['String'];
+  ParentITN: Scalars['String'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  ShipmentMethodID: Scalars['String'];
+  StatusID: Scalars['Int'];
+  WMSPriority: Scalars['Int'];
+  detailQuantity: Scalars['Float'];
 };
 
 
@@ -555,9 +591,18 @@ export type OrderStatus = {
 
 export type Product = {
   __typename?: 'Product';
+  DCPRODUCTs?: Maybe<Array<Maybe<DcProduct>>>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PartNumber: Scalars['String'];
+  ProductCode: Array<Maybe<ProductCode>>;
+  ProductCodeID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type ProductCode = {
+  __typename?: 'ProductCode';
+  PRODUCTs?: Maybe<Array<Maybe<Product>>>;
   ProductCode: Scalars['String'];
   _id: Scalars['Int'];
 };
@@ -596,6 +641,7 @@ export type Query = {
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
   findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findProduct?: Maybe<Array<Maybe<Product>>>;
   findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
 };
@@ -735,6 +781,13 @@ export type QueryFindOrderLineArgs = {
 
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail: SearchOrderLineDetail;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindProductArgs = {
+  Product?: InputMaybe<SearchProduct>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 };
@@ -889,6 +942,12 @@ export type InsertOrderLineDetail = {
 export type InsertProduct = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+  ProductCodeID: Scalars['Int'];
+};
+
+export type InsertProductCode = {
+  ProductCode: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type InsertUserEventLog = {
@@ -1028,6 +1087,12 @@ export type SearchOrderLineDetail = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+export type SearchProduct = {
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCodeID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
 export type SearchUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
@@ -1153,7 +1218,7 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', ProductCode: string, PartNumber: string } } | null> | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null> } } | null> | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1162,6 +1227,13 @@ export type VerifyContainerForSortingQueryVariables = Types.Exact<{
 
 
 export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
+
+export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
+  ProductID: Types.Scalars['Int'];
+}>;
+
+
+export type FetchSuggetionLocationForSortingQuery = { __typename?: 'Query', findProduct?: Array<{ __typename?: 'Product', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Container: { __typename?: 'Container', Barcode: string, Zone?: number | null } } | null> | null } | null> | null };
 
 export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
@@ -1178,7 +1250,10 @@ export const VerifyItnForSortingDocument = gql`
     _id
     QuantityOnHand
     Product {
-      ProductCode
+      _id
+      ProductCode {
+        ProductCode
+      }
       PartNumber
     }
   }
@@ -1213,6 +1288,30 @@ export const VerifyContainerForSortingDocument = gql`
   })
   export class VerifyContainerForSortingGQL extends Apollo.Query<VerifyContainerForSortingQuery, VerifyContainerForSortingQueryVariables> {
     document = VerifyContainerForSortingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchSuggetionLocationForSortingDocument = gql`
+    query fetchSuggetionLocationForSorting($ProductID: Int!) {
+  findProduct(Product: {_id: $ProductID}) {
+    INVENTORies {
+      QuantityOnHand
+      Container {
+        Barcode
+        Zone
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<FetchSuggetionLocationForSortingQuery, FetchSuggetionLocationForSortingQueryVariables> {
+    document = FetchSuggetionLocationForSortingDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

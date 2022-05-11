@@ -128,7 +128,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               NOSI: Order.NOSINumber?.trim(),
               OrderLineNumber: OrderLine.OrderLineNumber.toString(),
               PartNumber: detail.Product.PartNumber?.trim(),
-              ProductCode: detail.Product.ProductCode?.trim(),
+              ProductCode: detail.Product.ProductCode[0].ProductCode.trim(),
               Quantity: detail.QuantityOnHand,
               ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS,

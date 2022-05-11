@@ -78,13 +78,15 @@ export class ScanITNComponent implements OnInit {
           this._service.changeSortingInfo({
             ITN: this.ITNForm.value.ITN,
             InventoryID: res.data.findInventory[0]._id,
-            productCode: res.data.findInventory[0].Product.ProductCode,
+            productCode:
+              res.data.findInventory[0].Product.ProductCode[0].ProductCode,
             partNumber: res.data.findInventory[0].Product.PartNumber,
             QuantityOnHand: res.data.findInventory[0].QuantityOnHand,
             percent: null,
             productType: null,
             velocity: null,
             zone: null,
+            suggetionLocationList: null,
           });
           return this._insertLog.mutate({
             log: {

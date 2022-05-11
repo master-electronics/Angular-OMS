@@ -56,6 +56,10 @@ export class SortingLocationComponent implements OnInit {
     //
   }
 
+  back(): void {
+    this._router.navigate(['/stocking']);
+  }
+
   onSubmit(): void {
     if (!this.locationForm.valid || this.isLoading) {
       this.locationInput.nativeElement.select();

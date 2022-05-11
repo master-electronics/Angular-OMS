@@ -10,7 +10,9 @@ query findContainerForSearchBarcode($Container: searchContainer!) {
     INVENTORies {
       InventoryTrackingNumber
       Product {
-        ProductCode
+        ProductCode {
+          ProductCode
+        }
         PartNumber
       }
       ORDERLINEDETAILs {
@@ -38,8 +40,10 @@ query findITNforSearchBarcode($InventoryTrackingNumber: String!) {
   ) {
     InventoryTrackingNumber
     Product {
+      ProductCode {
+        ProductCode
+      }
       PartNumber
-      ProductCode
     }
     Container {
       Barcode
@@ -91,7 +95,9 @@ query findOrderForSearchBarcode(
         Inventory {
           InventoryTrackingNumber
           Product {
-            ProductCode
+            ProductCode {
+              ProductCode
+            }
             PartNumber
           }
           Container {

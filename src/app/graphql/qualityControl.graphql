@@ -24,7 +24,9 @@ query verifyITNforQc($Inventory: searchInventory!) {
       }
     }
     Product {
-      ProductCode
+      ProductCode {
+        ProductCode
+      }
       PartNumber
     }
   }

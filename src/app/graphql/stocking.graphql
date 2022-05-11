@@ -3,7 +3,10 @@ query verifyITNForSorting($ITN: String!) {
     _id
     QuantityOnHand
     Product {
-      ProductCode
+      _id
+      ProductCode {
+        ProductCode
+      }
       PartNumber
     }
   }
@@ -19,6 +22,18 @@ query verifyContainerForSorting(
     _id
     ContainerType {
       IsMobile
+    }
+  }
+}
+
+query fetchSuggetionLocationForSorting($ProductID: Int!) {
+  findProduct(Product: { _id: $ProductID }) {
+    INVENTORies {
+      QuantityOnHand
+      Container {
+        Barcode
+        Zone
+      }
     }
   }
 }

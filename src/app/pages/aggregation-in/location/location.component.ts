@@ -172,9 +172,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               );
               // set for single line AG out.
               ProductList.push(
-                `${line.Inventory.Product.ProductCode.padEnd(3)}${
-                  line.Inventory.Product.PartNumber
-                }`
+                `${line.Inventory.Product.ProductCode[0].ProductCode.padEnd(
+                  3
+                )}${line.Inventory.Product.PartNumber}`
               );
               // count currentLines without check statusID
               ++countLines;

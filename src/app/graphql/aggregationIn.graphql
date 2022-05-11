@@ -47,7 +47,9 @@ query fetchLocationAndOrderDetailForAgIn(
         ShelfDetail
       }
       Product {
-        ProductCode
+        ProductCode {
+          ProductCode
+        }
         PartNumber
       }
     }
@@ -234,7 +236,9 @@ query fetchContainerForAgoutPick($OrderID: Int) {
         ShelfDetail
       }
       Product {
-        ProductCode
+        ProductCode {
+          ProductCode
+        }
         PartNumber
       }
     }
