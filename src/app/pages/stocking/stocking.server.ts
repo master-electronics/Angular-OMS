@@ -14,7 +14,7 @@ export interface SortingInfo {
   QuantityOnHand: number;
   percent: number;
   productType: string;
-  velocity: number;
+  velocity: string;
   zone: number;
   suggetionLocationList: [SuggetionLocation];
 }

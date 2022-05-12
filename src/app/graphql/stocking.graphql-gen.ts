@@ -57,6 +57,7 @@ export type DcProduct = {
   DistributionCenterID: Scalars['Int'];
   Product: Product;
   ProductID: Scalars['Int'];
+  Velocity?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -1218,7 +1219,7 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null> } } | null> | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null>, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null } } | null> | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1253,6 +1254,9 @@ export const VerifyItnForSortingDocument = gql`
       _id
       ProductCode {
         ProductCode
+      }
+      DCPRODUCTs {
+        Velocity
       }
       PartNumber
     }

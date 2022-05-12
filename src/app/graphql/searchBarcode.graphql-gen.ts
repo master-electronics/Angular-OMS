@@ -57,6 +57,7 @@ export type DcProduct = {
   DistributionCenterID: Scalars['Int'];
   Product: Product;
   ProductID: Scalars['Int'];
+  Velocity?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 

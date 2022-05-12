@@ -84,7 +84,7 @@ export class ScanITNComponent implements OnInit {
             QuantityOnHand: res.data.findInventory[0].QuantityOnHand,
             percent: null,
             productType: null,
-            velocity: null,
+            velocity: res.data.findInventory[0].Product.DCPRODUCTs[0].Velocity,
             zone: null,
             suggetionLocationList: null,
           });
