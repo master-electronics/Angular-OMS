@@ -174,6 +174,7 @@ export type Inventory = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
   ParentITN?: Maybe<Scalars['String']>;
   Product: Product;
   ProductID: Scalars['Int'];
@@ -591,7 +592,7 @@ export type Product = {
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PartNumber: Scalars['String'];
-  ProductCode: Array<Maybe<ProductCode>>;
+  ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
   _id: Scalars['Int'];
 };
@@ -875,6 +876,12 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertDcProduct = {
+  DistributionCenterID: Scalars['Int'];
+  ProductID: Scalars['Int'];
+  Velocity?: InputMaybe<Scalars['String']>;
+};
+
 export type InsertItnUserColumnsInfo = {
   SelectedColumns: Scalars['String'];
   UserID: Scalars['Int'];
@@ -1044,6 +1051,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
@@ -1156,6 +1164,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;

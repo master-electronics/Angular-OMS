@@ -179,6 +179,7 @@ export type Inventory = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
   ParentITN?: Maybe<Scalars['String']>;
   Product: Product;
   ProductID: Scalars['Int'];
@@ -596,7 +597,7 @@ export type Product = {
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PartNumber: Scalars['String'];
-  ProductCode: Array<Maybe<ProductCode>>;
+  ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
   _id: Scalars['Int'];
 };
@@ -880,6 +881,12 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertDcProduct = {
+  DistributionCenterID: Scalars['Int'];
+  ProductID: Scalars['Int'];
+  Velocity?: InputMaybe<Scalars['String']>;
+};
+
 export type InsertItnUserColumnsInfo = {
   SelectedColumns: Scalars['String'];
   UserID: Scalars['Int'];
@@ -1049,6 +1056,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
@@ -1161,6 +1169,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
@@ -1226,7 +1235,7 @@ export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchLocationAndOrderDetailForAgInQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null> } } | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } } | null> | null };
+export type FetchLocationAndOrderDetailForAgInQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } } } | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } } | null> | null };
 
 export type CountOrderItnsFromMerpQueryVariables = Types.Exact<{
   LocationCode: Types.Scalars['String'];
@@ -1312,7 +1321,7 @@ export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null> } } | null } | null> | null };
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } } } | null } | null> | null };
 
 export const VerifyContainerForAggregationInDocument = gql`
     query verifyContainerForAggregationIn($Container: searchContainer!) {

@@ -179,6 +179,7 @@ export type Inventory = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
   ParentITN?: Maybe<Scalars['String']>;
   Product: Product;
   ProductID: Scalars['Int'];
@@ -596,7 +597,7 @@ export type Product = {
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PartNumber: Scalars['String'];
-  ProductCode: Array<Maybe<ProductCode>>;
+  ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
   _id: Scalars['Int'];
 };
@@ -880,6 +881,12 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertDcProduct = {
+  DistributionCenterID: Scalars['Int'];
+  ProductID: Scalars['Int'];
+  Velocity?: InputMaybe<Scalars['String']>;
+};
+
 export type InsertItnUserColumnsInfo = {
   SelectedColumns: Scalars['String'];
   UserID: Scalars['Int'];
@@ -1049,6 +1056,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
@@ -1161,6 +1169,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
@@ -1219,7 +1228,7 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: Array<{ __typename?: 'ProductCode', ProductCode: string } | null>, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null } } | null> | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null } } | null> | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1231,6 +1240,7 @@ export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContain
 
 export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
   ProductID: Types.Scalars['Int'];
+  limit?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
@@ -1250,6 +1260,11 @@ export const VerifyItnForSortingDocument = gql`
   findInventory(Inventory: {InventoryTrackingNumber: $ITN}) {
     _id
     QuantityOnHand
+    Container {
+      ContainerType {
+        IsMobile
+      }
+    }
     Product {
       _id
       ProductCode {
@@ -1298,8 +1313,8 @@ export const VerifyContainerForSortingDocument = gql`
     }
   }
 export const FetchSuggetionLocationForSortingDocument = gql`
-    query fetchSuggetionLocationForSorting($ProductID: Int!) {
-  findProduct(Product: {_id: $ProductID}) {
+    query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
+  findProduct(Product: {_id: $ProductID}, limit: $limit) {
     INVENTORies {
       QuantityOnHand
       Container {

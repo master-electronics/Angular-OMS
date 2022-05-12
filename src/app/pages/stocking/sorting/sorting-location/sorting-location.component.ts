@@ -4,12 +4,17 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
+  FetchSuggetionLocationForSortingGQL,
   UpdateInventoryAfterSortingGQL,
   VerifyContainerForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { sqlData } from 'src/app/shared/sqlData';
 import { environment } from 'src/environments/environment';
-import { SortingInfo, StockingService } from '../../stocking.server';
+import {
+  SortingInfo,
+  StockingService,
+  SuggetionLocation,
+} from '../../stocking.server';
 
 @Component({
   selector: 'sorting-location',
@@ -21,6 +26,7 @@ export class SortingLocationComponent implements OnInit {
   alertMessage = '';
   print$ = new Observable();
   submit$ = new Observable();
+  init$ = new Observable();
   locationList = [];
   sortingInfo = {} as SortingInfo;
 
@@ -29,7 +35,8 @@ export class SortingLocationComponent implements OnInit {
     private _router: Router,
     private _service: StockingService,
     private _verifyContainer: VerifyContainerForSortingGQL,
-    private _updateInventory: UpdateInventoryAfterSortingGQL
+    private _updateInventory: UpdateInventoryAfterSortingGQL,
+    private _fetchLocation: FetchSuggetionLocationForSortingGQL
   ) {
     //
   }
@@ -43,6 +50,20 @@ export class SortingLocationComponent implements OnInit {
     if (!this.sortingInfo) {
       this._router.navigate(['/stocking/sorting']);
     }
+    this.init$ = this._fetchLocation
+      .fetch({ ProductID: this.sortingInfo.productID, limit: 5 })
+      .pipe(
+        map((res) => {
+          res.data.findProduct[0].INVENTORies.forEach((inventory) => {
+            const element: SuggetionLocation = {
+              Quantity: inventory.QuantityOnHand,
+              Zone: inventory.Container.Zone,
+              Bincode: inventory.Container.Barcode,
+            };
+            this.sortingInfo.suggetionLocationList.push(element);
+          });
+        })
+      );
   }
 
   @ViewChild('location') locationInput!: ElementRef;

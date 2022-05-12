@@ -2,6 +2,11 @@ query verifyITNForSorting($ITN: String!) {
   findInventory(Inventory: { InventoryTrackingNumber: $ITN }) {
     _id
     QuantityOnHand
+    Container {
+      ContainerType {
+        IsMobile
+      }
+    }
     Product {
       _id
       ProductCode {
@@ -29,8 +34,8 @@ query verifyContainerForSorting(
   }
 }
 
-query fetchSuggetionLocationForSorting($ProductID: Int!) {
-  findProduct(Product: { _id: $ProductID }) {
+query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
+  findProduct(Product: { _id: $ProductID }, limit: $limit) {
     INVENTORies {
       QuantityOnHand
       Container {

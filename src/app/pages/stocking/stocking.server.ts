@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 
-interface SuggetionLocation {
+export interface SuggetionLocation {
   Bincode: string;
   Zone: number;
   Quantity: number;
@@ -9,14 +9,15 @@ interface SuggetionLocation {
 export interface SortingInfo {
   ITN: string;
   InventoryID: number;
+  productID: number;
   productCode: string;
   partNumber: string;
   QuantityOnHand: number;
-  percent: number;
+  remaining: number;
   productType: string;
   velocity: string;
   zone: number;
-  suggetionLocationList: [SuggetionLocation];
+  suggetionLocationList: SuggetionLocation[];
 }
 
 export class StockingService {
