@@ -42,7 +42,10 @@ export class SortingLocationComponent implements OnInit {
   }
 
   locationForm = this._fb.group({
-    location: ['', [Validators.required]],
+    location: [
+      '',
+      [Validators.required, Validators.maxLength(20), Validators.minLength(4)],
+    ],
   });
 
   ngOnInit(): void {
@@ -101,6 +104,9 @@ export class SortingLocationComponent implements OnInit {
         tap((res) => {
           if (res.data.findContainer.length === 0) {
             throw 'Container not found';
+          }
+          if (!res.data.findContainer[0].ContainerType.IsMobile) {
+            throw new Error('This container is not a mobile container');
           }
         }),
         switchMap((res) => {

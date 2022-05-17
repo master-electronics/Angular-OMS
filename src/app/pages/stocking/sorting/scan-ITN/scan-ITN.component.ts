@@ -73,7 +73,7 @@ export class ScanITNComponent implements OnInit {
           if (res.data.findInventory.length === 0) {
             throw 'ITN not found';
           }
-          if (res.data.findInventory[0].Container.ContainerType.IsMobile) {
+          if (!res.data.findInventory[0].Container.ContainerType.IsMobile) {
             throw new Error('Must be in a mobile container');
           }
         }),
