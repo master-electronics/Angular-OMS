@@ -148,6 +148,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder?: Maybe<Order>;
   findOrCreateOrderLine?: Maybe<OrderLine>;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
@@ -158,6 +159,7 @@ export type Mutation = {
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -174,6 +176,7 @@ export type Mutation = {
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateValueMap?: Maybe<ValueMap>;
 };
 
 
@@ -239,6 +242,11 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
 };
 
 
+export type MutationDeleteValueMapArgs = {
+  _id: Scalars['Int'];
+};
+
+
 export type MutationFindOrCreateOrderArgs = {
   Order: InsertOrder;
 };
@@ -294,6 +302,18 @@ export type MutationInsertItnUserTemplateArgs = {
 
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
+};
+
+
+export type MutationInsertValueMapArgs = {
+  SourceColumnName?: InputMaybe<Scalars['String']>;
+  SourceSystemName?: InputMaybe<Scalars['String']>;
+  SourceTableName?: InputMaybe<Scalars['String']>;
+  SourceValue?: InputMaybe<Scalars['String']>;
+  TargetColumnName?: InputMaybe<Scalars['String']>;
+  TargetSystemName?: InputMaybe<Scalars['String']>;
+  TargetTableName?: InputMaybe<Scalars['String']>;
+  TargetValue?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -399,6 +419,19 @@ export type MutationUpdateUserInfoArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type MutationUpdateValueMapArgs = {
+  SourceColumnName?: InputMaybe<Scalars['String']>;
+  SourceSystemName?: InputMaybe<Scalars['String']>;
+  SourceTableName?: InputMaybe<Scalars['String']>;
+  SourceValue?: InputMaybe<Scalars['String']>;
+  TargetColumnName?: InputMaybe<Scalars['String']>;
+  TargetSystemName?: InputMaybe<Scalars['String']>;
+  TargetTableName?: InputMaybe<Scalars['String']>;
+  TargetValue?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type Order = {
   __typename?: 'Order';
   BranchID?: Maybe<Scalars['String']>;
@@ -483,6 +516,7 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
@@ -494,6 +528,7 @@ export type Query = {
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
+  fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
@@ -514,6 +549,11 @@ export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchEntityListArgs = {
+  type?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -683,6 +723,7 @@ export type UserEventLog = {
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
   DateTime: Scalars['String'];
+  DistributionCenter?: Maybe<Scalars['String']>;
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
   NOSINumber: Scalars['String'];
@@ -693,6 +734,9 @@ export type UserEventLog = {
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
   ProductTier?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  ShipmentMethod?: Maybe<Scalars['String']>;
+  ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
@@ -728,6 +772,29 @@ export type Zone = {
   DistributionCenter: Scalars['String'];
   USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
   Zone: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type Entity = {
+  __typename?: 'entity';
+  ColumnID?: Maybe<Scalars['Int']>;
+  ColumnName?: Maybe<Scalars['String']>;
+  SystemID?: Maybe<Scalars['Int']>;
+  SystemName?: Maybe<Scalars['String']>;
+  TableID?: Maybe<Scalars['Int']>;
+  TableName?: Maybe<Scalars['String']>;
+};
+
+export type EntityColumn = {
+  __typename?: 'entityColumn';
+  ColumnName?: Maybe<Scalars['String']>;
+  EntityID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type EntityTable = {
+  __typename?: 'entityTable';
+  TableName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -785,6 +852,7 @@ export type InsertProduct = {
 export type InsertUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber: Scalars['String'];
@@ -795,6 +863,9 @@ export type InsertUserEventLog = {
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ShipmentMethod?: InputMaybe<Scalars['String']>;
+  ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
@@ -908,6 +979,7 @@ export type SearchOrderLineDetail = {
 export type SearchUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
@@ -918,6 +990,9 @@ export type SearchUserEventLog = {
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ShipmentMethod?: InputMaybe<Scalars['String']>;
+  ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
@@ -1006,4 +1081,17 @@ export type UpdateOrderLineDetail = {
 export type UpdateUserInfo = {
   Name?: InputMaybe<Scalars['String']>;
   ZoneID?: InputMaybe<Scalars['Int']>;
+};
+
+export type ValueMap = {
+  __typename?: 'valueMap';
+  SourceColumnName?: Maybe<Scalars['String']>;
+  SourceSystemName?: Maybe<Scalars['String']>;
+  SourceTableName?: Maybe<Scalars['String']>;
+  SourceValue?: Maybe<Scalars['String']>;
+  TargetColumnName?: Maybe<Scalars['String']>;
+  TargetSystemName?: Maybe<Scalars['String']>;
+  TargetTableName?: Maybe<Scalars['String']>;
+  TargetValue?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
 };

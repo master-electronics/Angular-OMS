@@ -15,14 +15,7 @@
       <div class="grid grid-flow-col items-center md:ml-6">
         <div class="md:hidden">
           <button
-            class="
-              inline-flex
-              items-center
-              justify-center
-              rounded-md
-              focus:outline-none
-              mr-4
-            "
+            class="inline-flex items-center justify-center rounded-md focus:outline-none mr-4"
             (click)="toggleFullscreen()"
           >
             <i
@@ -42,13 +35,7 @@
           </button>
         </div>
         <button
-          class="
-            inline-flex
-            items-center
-            justify-center
-            rounded-md
-            focus:outline-none
-          "
+          class="inline-flex items-center justify-center rounded-md focus:outline-none"
           nz-dropdown
           nzTrigger="click"
           [nzDropdownMenu]="userMenu"
@@ -80,14 +67,7 @@
           </ul>
         </nz-dropdown-menu>
         <button
-          class="
-            ml-4
-            inline-flex
-            items-center
-            justify-center
-            rounded-md
-            focus:outline-none
-          "
+          class="ml-4 inline-flex items-center justify-center rounded-md focus:outline-none"
           (click)="openNavBar()"
         >
           <i
@@ -145,6 +125,11 @@
             <li nz-menu-item>
               <a (click)="closeNavBar()" routerLink="/searchbarcode">
                 Search Barcode
+              </a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="closeNavBar()" routerLink="/valuemap">
+                Value Mapping
               </a>
             </li>
           </ul>

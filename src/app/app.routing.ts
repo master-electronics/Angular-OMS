@@ -72,6 +72,13 @@ const routes: Routes = [
             (m) => m.ShelfInventoryModule
           ),
       },
+      {
+        path: 'valuemap',
+        loadChildren: () =>
+          import('./pages/value-mapping/value-mapping.module').then(
+            (m) => m.ValueMappingModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

@@ -26,6 +26,7 @@ export class HomeComponent {
       end: 'nventory',
     },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
+    { link: '/valuemap', front: '', highlight: 'V', end: 'alue Mapping'},
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;

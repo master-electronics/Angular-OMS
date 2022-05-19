@@ -1,0 +1,141 @@
+<div class="container px-4 py-4 mx-auto">
+  <nz-table id="excel-table" #table [nzPageSize]="20" [nzData]="viewData">
+    <thead>
+      <tr>
+        <th
+          *ngFor="let column of listOfColumn"
+          [nzSortFn]="column.compare"
+          nzWidth="23%"
+        >
+          {{ column.title }}
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data">
+        <ng-container *ngIf="!editCache[data.ID].edit; else editTemplate">
+          <td>{{ data.SourceData }}</td>
+          <td>{{ data.TargetLocation }}</td>
+          <td>{{ data.SourceValue }}</td>
+          <td>{{ data.TargetValue }}</td>
+          <td>
+            <button nz-button (click)="startEdit(data.ID)" title="Edit">
+              <i nz-icon nzType="edit" nzTheme="outline"></i>
+            </button>
+            <button
+              nz-button
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to delete this row?"
+              (nzOnConfirm)="deleteRow(data.ID)"
+              title="Delete"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+          </td>
+        </ng-container>
+        <ng-template #editTemplate>
+          <td>
+            <nz-select
+              [(ngModel)]="editCache[data.ID].data.SourceData"
+              style="width: 90%"
+              [nzOptions]="sourceOptions"
+            >
+            </nz-select>
+          </td>
+
+          <td>
+            <nz-select
+              [(ngModel)]="editCache[data.ID].data.TargetLocation"
+              style="width: 90%"
+              [nzOptions]="targetOptions"
+              [nzNotFoundContent]="'NF'"
+            >
+            </nz-select>
+          </td>
+          <td>
+            <input
+              type="text"
+              nz-input
+              [(ngModel)]="editCache[data.ID].data.SourceValue"
+            />
+          </td>
+          <td>
+            <input
+              type="text"
+              nz-input
+              [(ngModel)]="editCache[data.ID].data.TargetValue"
+            />
+          </td>
+          <td>
+            <button nz-button (click)="saveEdit(data.ID)" title="Save">
+              <i nz-icon nzType="check" nzTheme="outline"></i>
+            </button>
+            <button nz-button (click)="cancelEdit(data.ID)" title="Cancel">
+              <i nz-icon nzType="close" nzTheme="outline"></i>
+            </button>
+          </td>
+        </ng-template>
+      </tr>
+      <tr>
+        <td>
+          <nz-select
+            [(ngModel)]="newMappingSourceLocation"
+            style="width: 300px"
+          >
+            <nz-option
+              *ngFor="let option of sourceOptions"
+              nzLabel="{{ option.label }}"
+              nzValue="{{ option.label }}"
+            >
+            </nz-option>
+          </nz-select>
+        </td>
+        <td>
+          <nz-select
+            [(ngModel)]="newMappingTargetLocation"
+            style="width: 300px"
+          >
+            <nz-option
+              *ngFor="let option of targetOptions"
+              nzLabel="{{ option.label }}"
+              nzValue="{{ option.label }}"
+            >
+            </nz-option>
+          </nz-select>
+        </td>
+        <td>
+          <input nz-input type="text" [(ngModel)]="newMappingSourceValue" />
+        </td>
+        <td>
+          <input nz-input type="text" [(ngModel)]="newMappingTargetValue" />
+        </td>
+        <td>
+          <button nz-button (click)="addValueMap()" title="Add">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+          </button>
+          <button nz-button (click)="cancelAdd()" title="Cancel">
+            <i nz-icon nzType="close" nzTheme="outline"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-container nz-row nzJustify="center" *ngIf="message">
+    <nz-alert
+      [nzType]="
+        alertType === 'error'
+          ? 'error'
+          : alertType === 'success'
+          ? 'success'
+          : alertType === 'info'
+          ? 'info'
+          : 'warning'
+      "
+      [nzMessage]="message"
+      nzShowIcon
+      class="w-full"
+      style="width: 50%"
+    ></nz-alert>
+  </ng-container>
+</div>

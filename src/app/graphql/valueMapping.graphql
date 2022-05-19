@@ -1,0 +1,96 @@
+query fetchValueMapView {
+    fetchValueMapView {
+        _id
+        SourceSystemName
+        SourceTableName
+        SourceColumnName
+        TargetSystemName
+        TargetTableName
+        TargetColumnName
+        SourceValue
+        TargetValue
+    }
+}
+
+query fetchEntityList($type: String) {
+    fetchEntityList(type: $type) {
+        SystemID
+        SystemName
+        TableID
+        TableName
+        ColumnID
+        ColumnName
+    }
+}
+
+mutation insertValueMap(
+    $sourceSystemName: String
+    $sourceTableName: String
+    $sourceColumnName: String
+    $targetSystemName: String
+    $targetTableName: String
+    $targetColumnName: String
+    $sourceValue: String
+    $targetValue: String
+) {
+    insertValueMap(
+        SourceSystemName: $sourceSystemName
+        SourceTableName: $sourceTableName
+        SourceColumnName: $sourceColumnName
+        TargetSystemName: $targetSystemName
+        TargetTableName: $targetTableName
+        TargetColumnName: $targetColumnName
+        SourceValue: $sourceValue
+        TargetValue: $targetValue
+    ) {
+        _id
+        SourceSystemName
+        SourceTableName
+        SourceColumnName
+        TargetSystemName
+        TargetTableName
+        TargetColumnName
+        SourceValue
+        TargetValue
+    }
+}
+
+mutation updateValueMap(
+    $_id: Int!
+    $sourceSystemName: String
+    $sourceTableName: String
+    $sourceColumnName: String
+    $targetSystemName: String
+    $targetTableName: String
+    $targetColumnName: String
+    $sourceValue: String
+    $targetValue: String
+) {
+    updateValueMap(
+        _id: $_id
+        SourceSystemName: $sourceSystemName
+        SourceTableName: $sourceTableName
+        SourceColumnName: $sourceColumnName
+        TargetSystemName: $targetSystemName
+        TargetTableName: $targetTableName
+        TargetColumnName: $targetColumnName
+        SourceValue: $sourceValue
+        TargetValue: $targetValue
+    ) {
+        _id
+        SourceSystemName
+        SourceTableName
+        SourceColumnName
+        TargetSystemName
+        TargetTableName
+        TargetColumnName
+        SourceValue
+        TargetValue
+    }
+}
+
+mutation deleteValueMap($_id: Int!) {
+    deleteValueMap(_id: $_id) {
+        _id
+    }
+}
