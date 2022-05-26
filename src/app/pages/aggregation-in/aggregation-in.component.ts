@@ -126,7 +126,7 @@ export class AggregationInComponent
             toteID: container._id,
             Barcode: container.Barcode,
             OrderID: container.ORDERLINEDETAILs[0].OrderID,
-            ITNsInTote: null,
+            ITNsInTote: [],
             orderLineDetailID: container.ORDERLINEDETAILs[0]._id,
             isRelocation:
               container.ORDERLINEDETAILs[0].StatusID ===
