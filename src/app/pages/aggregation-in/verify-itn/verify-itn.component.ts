@@ -65,7 +65,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       this._router.navigate(['agin']);
       return;
     }
-    this.itemList = [...this.endContainer.ITNsInTote];
+    this.itemList = this.outsetContainer.ITNsInTote.map((node) => node.ITN);
     this.totalITNs = this.itemList.length;
   }
 
@@ -134,13 +134,14 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
     // set query for updateSql
-    const log = this.endContainer.ITNsInTote.map((node) => {
+    const log = this.outsetContainer.ITNsInTote.map((node) => {
       return {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
+        OrderLineNumber: node.OrderLineNumber,
         UserEventID: environment.Event_AgIn_Relocate,
-        InternalTrackingNumber: node,
+        InternalTrackingNumber: node.ITN,
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
       };
     });
@@ -167,6 +168,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
+          OrderLineNumber: null,
           UserEventID: environment.Event_AgIn_OrderComplete,
           InternalTrackingNumber: null,
           Message: null,

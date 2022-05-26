@@ -6,6 +6,7 @@ export interface outsetContainer {
   OrderID: number;
   orderLineDetailID: number;
   toteID: number;
+  ITNsInTote: { ITN: string; OrderLineNumber: number }[];
 }
 
 export interface endContainer {
@@ -23,7 +24,6 @@ export interface endContainer {
     ShelfDetail: string;
   };
   containerID: number;
-  ITNsInTote: string[];
   FileKeyListforAgIn: string[];
 }
 

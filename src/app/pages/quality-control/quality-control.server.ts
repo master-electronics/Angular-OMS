@@ -49,7 +49,7 @@ export interface itemParams {
   DistributionCenter: string;
   OrderID: number;
   OrderNumber: string;
-  OrderLineNumber: string;
+  OrderLineNumber: number;
   NOSI: string;
   ProductCode: string;
   PartNumber: string;

@@ -59,7 +59,6 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   @ViewChild('orderNumber') orderInpt: ElementRef;
   ngOnInit(): void {
     // reset
-    this.agOutService.changeOrderLine(null);
     this.agOutService.changeContainerList(null);
     this.agOutService.changeselectedList(null);
     this.agOutService.changeTotalTotes(null);

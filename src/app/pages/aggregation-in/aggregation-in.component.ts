@@ -122,30 +122,37 @@ export class AggregationInComponent
         switchMap((res) => {
           const container = res.data.findContainer[0];
           const logList = [];
+          const outsetContainer: outsetContainer = {
+            toteID: container._id,
+            Barcode: container.Barcode,
+            OrderID: container.ORDERLINEDETAILs[0].OrderID,
+            ITNsInTote: null,
+            orderLineDetailID: container.ORDERLINEDETAILs[0]._id,
+            isRelocation:
+              container.ORDERLINEDETAILs[0].StatusID ===
+              environment.agInComplete_ID,
+          };
+          // get all ITN in tote
           res.data.findContainer[0].ORDERLINEDETAILs.forEach((line) => {
             if (line.InternalTrackingNumber) {
               logList.push({
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
-                OrderNumber: container.ORDERLINEDETAILs[0].Order.OrderNumber,
-                NOSINumber: container.ORDERLINEDETAILs[0].Order.NOSINumber,
+                OrderNumber: line.Order.OrderNumber,
+                NOSINumber: line.Order.NOSINumber,
+                OrderLineNumber: line.OrderLine.OrderLineNumber,
                 InternalTrackingNumber: line.InternalTrackingNumber,
                 UserEventID: environment.Event_AgIn_Start,
                 Message: `Start ${container.Barcode}`,
               });
+              outsetContainer.ITNsInTote.push({
+                ITN: line.InternalTrackingNumber,
+                OrderLineNumber: line.OrderLine.OrderLineNumber,
+              });
             }
           });
           // if pass all naveigate to next page
-          const outsetContainer: outsetContainer = {
-            toteID: container._id,
-            Barcode: container.Barcode,
-            OrderID: container.ORDERLINEDETAILs[0].OrderID,
-            orderLineDetailID: container.ORDERLINEDETAILs[0]._id,
-            isRelocation:
-              container.ORDERLINEDETAILs[0].StatusID ===
-              environment.agInComplete_ID,
-          };
           this._agInService.changeOutsetContainer(outsetContainer);
 
           return this._insertEventlog.mutate({

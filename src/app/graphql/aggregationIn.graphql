@@ -21,6 +21,9 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
         OrderNumber
         NOSINumber
       }
+      OrderLine {
+        OrderLineNumber
+      }
     }
   }
 }

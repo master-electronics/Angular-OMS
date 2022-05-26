@@ -39,10 +39,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   alertType = 'error';
   alertMessage = '';
   totalTotes = 0;
-  orderLineDetailList = [];
   containerList = [];
   selectedList = [];
-  ITNsInOrder: string[] = [];
 
   containerForm = this._fb.group({
     containerNumber: [
@@ -77,7 +75,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     this.containerList = this.agOutService.containerList;
     this.selectedList = this.agOutService.selectedList;
-    this.orderLineDetailList = this.agOutService.orderLine;
     this.totalTotes = this.agOutService.totalTotes;
     if (this.totalTotes === null) {
       this.isLoading = true;
@@ -90,29 +87,25 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .pipe(
           switchMap((res) => {
-            this.orderLineDetailList = res.data.findOrderLineDetail;
-            this.agOutService.changeOrderLine(this.orderLineDetailList);
+            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetail);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
-            res.data.findOrderLineDetail.forEach((node) => {
+            const log = this.agOutService.ITNsInOrder.map((node) => {
               containerSet.add(node.Container);
               ITNSet.add(node.InternalTrackingNumber);
-            });
-            this.ITNsInOrder = [...ITNSet];
-            this.agOutService.changeITNsInOrder(this.ITNsInOrder);
-            this.containerList = [...containerSet];
-            this.totalTotes = this.containerList.length;
-            const log = this.ITNsInOrder.map((ITN) => {
               return {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
-                InternalTrackingNumber: ITN,
+                InternalTrackingNumber: node.InternalTrackingNumber,
+                OrderLineNumber: node.OrderLine.OrderLineNumber,
                 UserEventID: environment.Event_AgOut_Start,
               };
             });
+            this.containerList = [...containerSet];
+            this.totalTotes = this.containerList.length;
             return this._insertUserEvnetLog.mutate({ log });
           }),
           map(() => {
@@ -158,7 +151,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     const selectedITNs = [];
-    this.orderLineDetailList.forEach((node) => {
+    this.agOutService.ITNsInOrder.forEach((node) => {
       if (
         node.Container.Barcode ===
         this.containerForm.get('containerNumber').value
@@ -182,7 +175,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const FileKeyList = [];
     const productSet = new Set<string>();
     const BarcodeList = [];
-    this.orderLineDetailList.forEach((node) => {
+    this.agOutService.ITNsInOrder.forEach((node) => {
       FileKeyList.push(
         `${fileKey}${String(node.OrderLine.OrderLineNumber).padStart(
           2,
@@ -205,7 +198,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
-        InternalTrackingNumber: node,
+        OrderLineNumber: node.OrderLine.OrderLineNumber,
+        InternalTrackingNumber: node.InternalTrackingNumber,
         UserEventID: environment.Event_AgOut_Done,
       };
     });
