@@ -1,8 +1,12 @@
 export interface Column {
     name: string;
     title: string;
+    dataName?: string;
     colSpan: string;
     position: number;
+    width?: string;
+    eventGroup?: string;
+    eventName?: string;
 }
 
 export interface LevelLimit {

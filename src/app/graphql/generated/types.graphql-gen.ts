@@ -64,9 +64,13 @@ export type ItnColumn = {
   __typename?: 'ITNColumn';
   _id?: Maybe<Scalars['Int']>;
   colSpan?: Maybe<Scalars['String']>;
+  dataName?: Maybe<Scalars['String']>;
+  eventGroup?: Maybe<Scalars['String']>;
+  eventName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
+  width?: Maybe<Scalars['String']>;
 };
 
 export type ItnLifeCycle = {
@@ -76,6 +80,7 @@ export type ItnLifeCycle = {
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNOSI?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
@@ -88,12 +93,24 @@ export type ItnLifeCycle = {
   after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
+  dropoffDone?: Maybe<Scalars['String']>;
+  dropoffStart?: Maybe<Scalars['String']>;
+  lineAllocation?: Maybe<Scalars['String']>;
+  lineCancel?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  orderCancel?: Maybe<Scalars['String']>;
+  packDone?: Maybe<Scalars['String']>;
+  packLine?: Maybe<Scalars['String']>;
+  packReject?: Maybe<Scalars['String']>;
+  packStart?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
+  pullingDone?: Maybe<Scalars['String']>;
+  pullingStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
-  release?: Maybe<Scalars['String']>;
+  releaseLine?: Maybe<Scalars['String']>;
+  releaseOrder?: Maybe<Scalars['String']>;
   splitDone?: Maybe<Scalars['String']>;
 };
 
@@ -130,6 +147,7 @@ export type ItnUserLevels = {
 
 export type ItnUserTemplate = {
   __typename?: 'ITNUserTemplate';
+  DefaultPagination?: Maybe<Scalars['Int']>;
   ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   SelectedColumns?: Maybe<Scalars['String']>;
   TemplateName?: Maybe<Scalars['String']>;
@@ -351,6 +369,7 @@ export type MutationUpdateItnUserLevelsArgs = {
 
 
 export type MutationUpdateItnUserTemplateArgs = {
+  DefaultPagination?: InputMaybe<Scalars['Int']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];

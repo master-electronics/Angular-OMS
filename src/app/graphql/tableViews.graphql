@@ -160,6 +160,7 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
   fetchITNLifecycle(startDate: $startDate, endDate: $endDate) {
     OrderNumber
     NOSINumber
+    OrderNOSI
     InternalTrackingNumber
     after_InternalTrackingNumber
     PartNumber
@@ -172,7 +173,11 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     WMSPriority
     Priority
     TrackingNumber
-    release
+    releaseOrder
+    releaseLine
+    lineAllocation
+    lineCancel
+    orderCancel
     pickStart
     pickDone
     splitDone
@@ -180,6 +185,14 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     qcDone
     agStart
     agDone
+    pullingStart
+    pullingDone
+    dropoffStart
+    dropoffDone
+    packStart
+    packLine
+    packReject
+    packDone
     ParentITN
     notes
   }
@@ -200,6 +213,7 @@ query findITNTemplate($_id: Int) {
     UserID
     TemplateName
     SelectedColumns
+    DefaultPagination
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -233,8 +247,12 @@ query findITNColumns($userId: Int) {
     _id
     name
     title
+    dataName
     colSpan
     position
+    width
+    eventGroup
+    eventName
   }
 }
 
@@ -266,9 +284,11 @@ mutation update_ITNUserLevels($itnUserLevels: [updateITNUserLevelsInfo]!, $_id: 
   }
 }
 
-mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String) {
-  updateITNUserTemplate(_id: $_id, TemplateName: $templateName, SelectedColumns: $selectedColumns) {
-    _id
+mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String,
+  $defaultPagination: Int) {
+  updateITNUserTemplate(_id: $_id, TemplateName: $templateName, SelectedColumns: $selectedColumns, 
+    DefaultPagination: $defaultPagination) {
+      _id
   }
 }
 

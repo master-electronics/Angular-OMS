@@ -55,10 +55,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                     (allChecked)="onAllColumnsSelected($event)"
                     (allUnchecked)="onAllColumnsUnselected($event)"
                     (levelsUpdated)="onLevelsChanged($event)"
+                    (defaultPaginationSet)="setDefaultPagination($event)"
                     [columns]="columns"
                     [selectedColumns]="selectedColumns"
                     [allColumns]="allColumns"
-                    [limitsNotifier]="limitsNotifier"></tabs-view>
+                    [limitsNotifier]="limitsNotifier"
+                    [defaultPaginationValue]="defaultPaginationValue"
+                    [customPaginationValue]="customPaginationValue"></tabs-view>
             </ng-container>
             <ng-template #footer>
               <span style="margin-right: 10px;">{{ message }}</span>
@@ -76,6 +79,8 @@ export class TemplateSettings {
   @Input('selectedColumns') selectedColumns: string[];
   @Input('templateNameValue') templateNameValue: string;
   @Input('activeTemplateId') activeTemplateId: number;
+  //@Input('defaultPaginationValue') defaultPaginationValue: string;
+  //@Input('customPaginationValue') customPaginationValue: string;
 
   columnSelector: ColumnSelectorComponent = new ColumnSelectorComponent();
   private selTempSub = new Subscription();
@@ -95,6 +100,9 @@ export class TemplateSettings {
   limitsNotifier: Subject<any> = new Subject<any>();
   allColumns: boolean;
   message
+  paginationValues: number[];
+  defaultPaginationValue: string;
+  customPaginationValue: string;
 
   constructor(
     private _findITNTemplate: FindItnTemplateGQL,
@@ -115,6 +123,7 @@ export class TemplateSettings {
     this.selectedTemplateId = 1;
     this.columnSelector.columns = this.columns;
     this.columnSelector.selectedColumns = this.selectedColumns;
+    this.paginationValues = [100, 50, 1000, 500];
   }
 
   //display settings screen
@@ -168,7 +177,8 @@ export class TemplateSettings {
           {
             _id: this.templateId,
             templateName: this.templateForm.get('templateName').value,
-            selectedColumns: cols
+            selectedColumns: cols,
+            defaultPagination: Number(this.defaultPaginationValue)
           }).subscribe((res) => {
             //delete all ITNLEVELLIMIT records for template
             this.deleteLevelLimitSub.add(
@@ -378,6 +388,12 @@ export class TemplateSettings {
     this.levelLimits = e;
   }
 
+  //receive defaultPagination from tabs-view component when the default is changed
+  setDefaultPagination(e): void {
+    this.defaultPaginationValue = e.toString();
+    //alert(this.defaultPaginationValue);
+  }
+
   //receive event from tabs-view when a column is selected
   //and update temp columns list that will be used if the user saves the template
   onColumnSelected(e): void {
@@ -449,6 +465,14 @@ export class TemplateSettings {
                 name: res.data.findITNTemplate[0].TemplateName,
                 id: res.data.findITNTemplate[0]._id,
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
+              }
+
+              this.defaultPaginationValue = res.data.findITNTemplate[0].DefaultPagination.toString();
+
+              if (!this.paginationValues.includes(Number(this.defaultPaginationValue))) {
+                this.customPaginationValue = this.defaultPaginationValue
+              } else {
+                this.customPaginationValue = null;
               }
 
               if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {

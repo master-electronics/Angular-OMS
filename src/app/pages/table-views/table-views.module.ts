@@ -21,6 +21,8 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 import { TableViewsComponent } from './table-views.component';
 import { ITNViewComponent } from './order-view/itn-view.component';
@@ -77,7 +79,9 @@ import { TemplateSettings } from './itn-lifecycle/template-settings.component';
     NzModalModule,
     NzSliderModule,
     NzTabsModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    NzRadioModule,
+    NzSpinModule,
   ],
   bootstrap: [TableViewsComponent],
 })

@@ -1,4 +1,4 @@
-<div class="container px-4 py-4">
+<div class="container px-4 py-4" style="max-width: 200%;">
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="8">
@@ -28,91 +28,24 @@
   </form>
   <!-- Event log table -->
   <div *ngIf="fetchTable$ | async"></div>
-  <nz-table id="excel-table" #table [nzPageSize]="50" nzShowSizeChanger [nzData]="tableData" nzBordered>
+  <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+  <div class="progress" *ngIf="isLoading" >
+    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+  </div>
+  <nz-table id="excel-table" #table [nzPageSize]="pageSize" 
+    [nzFrontPagination]="paging" nzShowSizeChanger [nzData]="tableData" nzBordered
+    [nzPageSizeOptions]="paginationValues" [nzScroll]="{ y: screenHeight }">
     <thead>
       <tr>
-        <th *ngIf="preColSpan>0" colspan="{{ preColSpan }}"></th>
-        <th *ngIf="pickColSpan>0" colspan="{{ pickColSpan }}">Pick</th>
-        <th *ngIf="qcColSpan>0" colSpan="{{ qcColSpan }}">QC</th>
-        <th *ngIf="agColSpan>0" colSpan="{{ agColSpan }}">Aggregation</th>
-        <th *ngIf="pullingColSpan>0" colSpan="{{ pullingColSpan }}">Pulling</th>
-        <th *ngIf="dropoffColSpan>0" colSpan="{{ dropoffColSpan }}">Drop Off</th>
-        <th *ngIf="postColSpan>0" colSpan="{{ postColSpan }}"></th>
-      </tr>
-      <tr>
-        <th *ngIf="columnsVisible.includes('Order')">Order</th>
-        <th *ngIf="columnsVisible.includes('Line')">Line</th>
-        <th *ngIf="columnsVisible.includes('ITN')">ITN</th>
-        <th *ngIf="columnsVisible.includes('SplitITN')">Split ITN</th>
-        <th *ngIf="columnsVisible.includes('Cust')">Cust</th>
-        <th *ngIf="columnsVisible.includes('CustTier')">Cust Tier</th>
-        <th *ngIf="columnsVisible.includes('Part')">Part</th>
-        <th *ngIf="columnsVisible.includes('PartTier')">Part Tier</th>
-        <th *ngIf="columnsVisible.includes('Zone')">Zone</th>
-        <th *ngIf="columnsVisible.includes('WMSPriority')">WMSPriority</th>
-        <th *ngIf="columnsVisible.includes('Priority')">Priority</th>
-        <th *ngIf="columnsVisible.includes('Drop')">Drop</th>
-        <th *ngIf="columnsVisible.includes('PickStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('PickEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('PickElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('QCStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('QCEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('QCElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('AGStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('AGEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('AGElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('PullingStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('PullingEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('PullingElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('DropOffStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('DropOffEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('DropOffElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('Notes')">Notes</th>
-        <th *ngIf="columnsVisible.includes('TrackingNumber')">Tracking Number</th>
+        <th *ngFor="let column of columnsVisible" [nzWidth]="column.width">{{ column.title }}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of table.data; let i = index">
-        <td *ngIf="columnsVisible.includes('Order')">{{ data.OrderNumber }}-{{ data.NOSINumber }}</td>
-        <td *ngIf="columnsVisible.includes('Line')">{{ data.OrderLineNumber }}</td>
-        <td *ngIf="columnsVisible.includes('ITN')">{{ data.InternalTrackingNumber }}</td>
-        <td *ngIf="columnsVisible.includes('SplitITN')">{{ data.after_InternalTrackingNumber }}</td>
-        <td *ngIf="columnsVisible.includes('Cust')">{{ data.CustomerNumber }}</td>
-        <td *ngIf="columnsVisible.includes('CustTier')">{{ data.CustomerTier }}</td>
-        <td *ngIf="columnsVisible.includes('Part')">{{ data.PartNumber.trim() }}-{{ data.ProductCode }}</td>
-        <td *ngIf="columnsVisible.includes('PartTier')">{{ data.ProductTier }}</td>
-        <td *ngIf="columnsVisible.includes('Zone')">{{ data.Zone }}</td>
-        <td *ngIf="columnsVisible.includes('WMSPriority')">{{ data.WMSPriority }}</td>
-        <td *ngIf="columnsVisible.includes('Priority')">{{ data.Priority }}</td>
-        <td *ngIf="columnsVisible.includes('Drop')">{{ data.release }}</td>
-        <td *ngIf="columnsVisible.includes('PickStart')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickStart }}</td>
-        <td *ngIf="columnsVisible.includes('PickEnd')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickDone }}</td>
-        <td *ngIf="columnsVisible.includes('PickElapsed')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')">{{ data.pickElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('QCStart')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
-          data.qcStart }}</td>
-        <td *ngIf="columnsVisible.includes('QCEnd')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
-          data.qcDone }}</td>
-        <td *ngIf="columnsVisible.includes('QCElapsed')" [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')">{{
-          data.qcElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('AGStart')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
-          data.agStart }}</td>
-        <td *ngIf="columnsVisible.includes('AGEnd')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
-          data.agDone }}</td>
-        <td *ngIf="columnsVisible.includes('AGElapsed')" [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')">{{
-          data.agElapsed }}</td>
-        <td *ngIf="columnsVisible.includes('PullingStart')" [ngClass]="data.pullingLevel">{{ data.pullingStart }}</td>
-        <td *ngIf="columnsVisible.includes('PullingEnd')" [ngClass]="data.pullingLevel">{{ data.pullingDone }}</td>
-        <td *ngIf="columnsVisible.includes('PullingElapsed')" [ngClass]="data.pullingLevel">{{ data.pullingElapsed }}
-        </td>
-        <td *ngIf="columnsVisible.includes('DropOffStart')" [ngClass]="data.dropoffLevel">{{ data.dropoffStart }}</td>
-        <td *ngIf="columnsVisible.includes('DropOffEnd')" [ngClass]="data.dropoffLevel">{{ data.dropoffEnd }}</td>
-        <td *ngIf="columnsVisible.includes('DropOffElapsed')" [ngClass]="data.dropoffLevel">{{ data.dropoffElapsed }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Notes')">{{ data.notes }}</td>
-        <td *ngIf="columnsVisible.includes('TrackingNumber')">{{ data.TrackingNumber }}</td>
+        <td *ngFor="let column of columnsVisible"
+          [ngClass]="getClass(data[column.eventGroup+'StartNum'], 
+            data[column.eventGroup+'DoneNum'], column.eventGroup)"
+        >{{ data[column.dataName] }}</td>
       </tr>
     </tbody>
   </nz-table>

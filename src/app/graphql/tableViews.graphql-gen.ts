@@ -69,9 +69,13 @@ export type ItnColumn = {
   __typename?: 'ITNColumn';
   _id?: Maybe<Scalars['Int']>;
   colSpan?: Maybe<Scalars['String']>;
+  dataName?: Maybe<Scalars['String']>;
+  eventGroup?: Maybe<Scalars['String']>;
+  eventName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
+  width?: Maybe<Scalars['String']>;
 };
 
 export type ItnLifeCycle = {
@@ -81,6 +85,7 @@ export type ItnLifeCycle = {
   InternalTrackingNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNOSI?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
@@ -93,12 +98,24 @@ export type ItnLifeCycle = {
   after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
+  dropoffDone?: Maybe<Scalars['String']>;
+  dropoffStart?: Maybe<Scalars['String']>;
+  lineAllocation?: Maybe<Scalars['String']>;
+  lineCancel?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  orderCancel?: Maybe<Scalars['String']>;
+  packDone?: Maybe<Scalars['String']>;
+  packLine?: Maybe<Scalars['String']>;
+  packReject?: Maybe<Scalars['String']>;
+  packStart?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
+  pullingDone?: Maybe<Scalars['String']>;
+  pullingStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
-  release?: Maybe<Scalars['String']>;
+  releaseLine?: Maybe<Scalars['String']>;
+  releaseOrder?: Maybe<Scalars['String']>;
   splitDone?: Maybe<Scalars['String']>;
 };
 
@@ -135,6 +152,7 @@ export type ItnUserLevels = {
 
 export type ItnUserTemplate = {
   __typename?: 'ITNUserTemplate';
+  DefaultPagination?: Maybe<Scalars['Int']>;
   ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   SelectedColumns?: Maybe<Scalars['String']>;
   TemplateName?: Maybe<Scalars['String']>;
@@ -356,6 +374,7 @@ export type MutationUpdateItnUserLevelsArgs = {
 
 
 export type MutationUpdateItnUserTemplateArgs = {
+  DefaultPagination?: InputMaybe<Scalars['Int']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
@@ -1182,7 +1201,7 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, release?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, ParentITN?: string | null, notes?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, notes?: string | null } | null> | null };
 
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
@@ -1196,7 +1215,7 @@ export type FindItnTemplateQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItnTemplateQuery = { __typename?: 'Query', findITNTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
+export type FindItnTemplateQuery = { __typename?: 'Query', findITNTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, DefaultPagination?: number | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
 
 export type FindItnTemplatesQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -1210,7 +1229,7 @@ export type FindItnColumnsQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, colSpan?: string | null, position?: number | null } | null> | null };
+export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, dataName?: string | null, colSpan?: string | null, position?: number | null, width?: string | null, eventGroup?: string | null, eventName?: string | null } | null> | null };
 
 export type Insert_ItnUserColumnsMutationVariables = Types.Exact<{
   itnUserColumns: Array<Types.InputMaybe<Types.InsertItnUserColumnsInfo>> | Types.InputMaybe<Types.InsertItnUserColumnsInfo>;
@@ -1246,6 +1265,7 @@ export type Update_ItnUserTemplateMutationVariables = Types.Exact<{
   _id: Types.Scalars['Int'];
   templateName?: Types.InputMaybe<Types.Scalars['String']>;
   selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
+  defaultPagination?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
@@ -1559,6 +1579,7 @@ export const FetchItnLifecycleDocument = gql`
   fetchITNLifecycle(startDate: $startDate, endDate: $endDate) {
     OrderNumber
     NOSINumber
+    OrderNOSI
     InternalTrackingNumber
     after_InternalTrackingNumber
     PartNumber
@@ -1571,7 +1592,11 @@ export const FetchItnLifecycleDocument = gql`
     WMSPriority
     Priority
     TrackingNumber
-    release
+    releaseOrder
+    releaseLine
+    lineAllocation
+    lineCancel
+    orderCancel
     pickStart
     pickDone
     splitDone
@@ -1579,6 +1604,14 @@ export const FetchItnLifecycleDocument = gql`
     qcDone
     agStart
     agDone
+    pullingStart
+    pullingDone
+    dropoffStart
+    dropoffDone
+    packStart
+    packLine
+    packReject
+    packDone
     ParentITN
     notes
   }
@@ -1623,6 +1656,7 @@ export const FindItnTemplateDocument = gql`
     UserID
     TemplateName
     SelectedColumns
+    DefaultPagination
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -1680,8 +1714,12 @@ export const FindItnColumnsDocument = gql`
     _id
     name
     title
+    dataName
     colSpan
     position
+    width
+    eventGroup
+    eventName
   }
 }
     `;
@@ -1773,11 +1811,12 @@ export const Update_ItnUserLevelsDocument = gql`
     }
   }
 export const Update_ItnUserTemplateDocument = gql`
-    mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String) {
+    mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String, $defaultPagination: Int) {
   updateITNUserTemplate(
     _id: $_id
     TemplateName: $templateName
     SelectedColumns: $selectedColumns
+    DefaultPagination: $defaultPagination
   ) {
     _id
   }
