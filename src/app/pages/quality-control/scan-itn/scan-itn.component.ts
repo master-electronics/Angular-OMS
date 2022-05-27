@@ -13,7 +13,6 @@ import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { Title } from '@angular/platform-browser';
 import {
   Insert_UserEventLogsGQL,
@@ -126,7 +125,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               DistributionCenter: Order.DistributionCenter?.trim(),
               OrderNumber: Order.OrderNumber?.trim(),
               NOSI: Order.NOSINumber?.trim(),
-              OrderLineNumber: OrderLine.OrderLineNumber.toString(),
+              OrderLineNumber: OrderLine.OrderLineNumber,
               PartNumber: detail.Product.PartNumber?.trim(),
               ProductCode: detail.Product.ProductCode[0].ProductCode.trim(),
               Quantity: detail.QuantityOnHand,
@@ -144,6 +143,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 ),
                 OrderNumber: Order.OrderNumber.trim(),
                 NOSINumber: Order.NOSINumber.trim(),
+                OrderLineNumber:
+                  detail.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
                 InventoryTrackingNumber: ITN,
                 UserEventID: sqlData.Event_QC_Start,
               },

@@ -125,34 +125,39 @@ export class AggregationInComponent
         switchMap((res) => {
           const container = res.data.findContainer[0];
           const logList = [];
-          res.data.findContainer[0].INVENTORies.forEach((line) => {
-            if (line.InventoryTrackingNumber) {
-              logList.push({
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
-                OrderNumber:
-                  container.INVENTORies[0].ORDERLINEDETAILs[0].Order
-                    .OrderNumber,
-                NOSINumber:
-                  container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
-                InventoryTrackingNumber: line.InventoryTrackingNumber,
-                UserEventID: sqlData.Event_AgIn_Start,
-                Message: `Start ${container.Barcode}`,
-              });
-            }
-          });
-          // if pass all naveigate to next page
           const outsetContainer: outsetContainer = {
             toteID: container._id,
+            InventoryID: container.INVENTORies[0]._id,
             Barcode: container.Barcode,
             OrderID: container.INVENTORies[0].ORDERLINEDETAILs[0].OrderID,
+            ITNsInTote: [],
             orderLineDetailID: container.INVENTORies[0].ORDERLINEDETAILs[0]._id,
-            InventoryID: container.INVENTORies[0]._id,
             isRelocation:
               container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
               sqlData.agInComplete_ID,
           };
+          // get all ITN in tote
+          res.data.findContainer[0].INVENTORies.forEach((Inventory) => {
+            if (Inventory.InventoryTrackingNumber) {
+              const line = Inventory.ORDERLINEDETAILs[0];
+              logList.push({
+                UserID: Number(
+                  JSON.parse(sessionStorage.getItem('userInfo'))._id
+                ),
+                OrderNumber: line.Order.OrderNumber,
+                NOSINumber: line.Order.NOSINumber,
+                OrderLineNumber: line.OrderLine.OrderLineNumber,
+                InventoryTrackingNumber: Inventory.InventoryTrackingNumber,
+                UserEventID: sqlData.Event_AgIn_Start,
+                Message: `Start ${container.Barcode}`,
+              });
+              outsetContainer.ITNsInTote.push({
+                ITN: Inventory.InventoryTrackingNumber,
+                OrderLineNumber: line.OrderLine.OrderLineNumber,
+              });
+            }
+          });
+          // if pass all naveigate to next page
           this._agInService.changeOutsetContainer(outsetContainer);
           return this._insertEventlog.mutate({
             log: logList,

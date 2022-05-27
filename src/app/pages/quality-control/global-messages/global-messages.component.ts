@@ -46,7 +46,7 @@ export class GlobalMessagesComponent implements OnInit {
       CustomerNumber,
       DistributionCenter,
       OrderNumber,
-      OrderLineNumber,
+      OrderLineNumber: OrderLineNumber.toString(),
       PartNumber,
       ProductCode,
     };

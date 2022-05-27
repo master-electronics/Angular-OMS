@@ -1,20 +1,8 @@
 import { BehaviorSubject } from 'rxjs';
 
-export interface orderInfo {
-  ITN: string;
-}
-
 export class AggregationOutService {
-  private _orderLine = new BehaviorSubject<any>([]);
-  public changeOrderLine(list: any): void {
-    this._orderLine.next(list);
-  }
-  public get orderLine(): any {
-    return this._orderLine.value;
-  }
-
-  private _containerList = new BehaviorSubject<any>([]);
-  public changeContainerList(list: any): void {
+  private _containerList = new BehaviorSubject<unknown>([]);
+  public changeContainerList(list: unknown): void {
     this._containerList.next(list);
   }
   public get containerList(): any {
@@ -53,11 +41,11 @@ export class AggregationOutService {
     return this._pickedContainer.value;
   }
 
-  private _ITNsInOrder = new BehaviorSubject<string[]>(null);
-  public changeITNsInOrder(node: string[]): void {
+  private _ITNsInOrder = new BehaviorSubject<any[]>(null);
+  public changeITNsInOrder(node: any[]): void {
     this._ITNsInOrder.next(node);
   }
-  public get ITNsInOrder(): string[] {
+  public get ITNsInOrder(): any[] {
     return this._ITNsInOrder.value;
   }
 }

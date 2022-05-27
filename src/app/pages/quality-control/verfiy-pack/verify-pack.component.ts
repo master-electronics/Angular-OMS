@@ -339,6 +339,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           OrderNumber: this.itemInfo.OrderNumber,
           NOSINumber: this.itemInfo.NOSI,
           UserEventID: sqlData.Event_QC_Hold,
+          OrderLineNumber: this.itemInfo.OrderLineNumber,
+          InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
           Message: `Hold on ${String(Status).padStart(2, '3')}`,
         },
       ],

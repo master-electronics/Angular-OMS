@@ -215,7 +215,10 @@ export type Mutation = {
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateForM1PICKRT?: Maybe<Scalars['Boolean']>;
+  updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
+  updateForInventoryFromMerp?: Maybe<Scalars['Boolean']>;
+  updateForOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
+  updateForProductFromMerp?: Maybe<Scalars['Boolean']>;
   updateITNUserColumns?: Maybe<ItnUserColumns>;
   updateITNUserLevels?: Maybe<ItnUserLevels>;
   updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -389,12 +392,33 @@ export type MutationUpdateContainerListArgs = {
 };
 
 
-export type MutationUpdateForM1PickrtArgs = {
+export type MutationUpdateForContainerFromMerpArgs = {
+  BinLocation: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+  Type: Scalars['String'];
+  Zone: Scalars['String'];
+};
+
+
+export type MutationUpdateForInventoryFromMerpArgs = {
+  BinLocation: Scalars['String'];
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  DistributionCenter: Scalars['String'];
+  ITN: Scalars['String'];
+  OriginalQuantity?: InputMaybe<Scalars['Float']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  QuantityOnHand: Scalars['Float'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   Barcode: Scalars['String'];
   BranchID: Scalars['String'];
-  CountryOfOrigin?: InputMaybe<Scalars['String']>;
   CustomerNumber: Scalars['String'];
-  DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
   NOSINumber: Scalars['String'];
@@ -406,12 +430,16 @@ export type MutationUpdateForM1PickrtArgs = {
   ParentITN: Scalars['String'];
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
-  QuantityOnHand: Scalars['Float'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
   ShipmentMethodID: Scalars['String'];
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
   detailQuantity: Scalars['Float'];
+};
+
+
+export type MutationUpdateForProductFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 
@@ -837,6 +865,7 @@ export type UserEventLog = {
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
   DateTime: Scalars['String'];
+  DistributionCenter?: Maybe<Scalars['String']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
@@ -847,6 +876,9 @@ export type UserEventLog = {
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
   ProductTier?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  ShipmentMethod?: Maybe<Scalars['String']>;
+  ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   User: UserInfo;
   UserEvent: UserEvent;
@@ -961,6 +993,7 @@ export type InsertProductCode = {
 export type InsertUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
@@ -972,6 +1005,9 @@ export type InsertUserEventLog = {
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ShipmentMethod?: InputMaybe<Scalars['String']>;
+  ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserID: Scalars['Int'];
@@ -1105,6 +1141,7 @@ export type SearchProduct = {
 export type SearchUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
@@ -1115,6 +1152,9 @@ export type SearchUserEventLog = {
   Priority?: InputMaybe<Scalars['Boolean']>;
   ProductCode?: InputMaybe<Scalars['String']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  ShipmentMethod?: InputMaybe<Scalars['String']>;
+  ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
@@ -1228,7 +1268,7 @@ export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string } } | null> | null } | null> | null } | null> | null };
+export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null } | null> | null };
 
 export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
   OrderLineDetail: Types.SearchOrderLineDetail;
@@ -1348,6 +1388,9 @@ export const VerifyContainerForAggregationInDocument = gql`
         Order {
           OrderNumber
           NOSINumber
+        }
+        OrderLine {
+          OrderLineNumber
         }
       }
     }

@@ -216,6 +216,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 NOSINumber: this.itemInfo.NOSI,
                 InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
                 UserEventID: sqlData.Event_QC_Done,
+                OrderLineNumber: this.itemInfo.OrderLineNumber,
                 Message: `Repack to ${this.containerForm.value.container}`,
               },
             ];
@@ -228,6 +229,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 NOSINumber: this.itemInfo.NOSI,
                 UserEventID: sqlData.Event_QC_OrderComplete,
                 InventoryTrackingNumber: null,
+                OrderLineNumber: this.itemInfo.OrderLineNumber,
                 Message: null,
               });
             }

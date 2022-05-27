@@ -47,6 +47,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   // varable for query
   private OrderNumber: string;
   private NOSINumber: string;
+  private OrderLineNumber: number;
   private FileKeyListforAgIn = [];
   // control html element
   outsetContainer: outsetContainer;
@@ -57,7 +58,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   buttonLabel = 'Relocate';
   locationList: string[];
   ITNInfo = [];
-  ITNsInTote = [];
   alertMessage = '';
   alertType = 'error';
   isLastLine = false;
@@ -130,6 +130,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             singleITN = line.Inventory.InventoryTrackingNumber;
             this.OrderNumber = line.Order.OrderNumber;
             this.NOSINumber = line.Order.NOSINumber;
+            this.OrderLineNumber = line.OrderLine.OrderLineNumber;
             FileKeyListforAgOut.push(
               `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
             );
@@ -145,12 +146,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   line.Inventory.Container.Barcode
                 )
               );
-            }
-            // add ITN to list if there are in the same tote.
-            if (
-              line.Inventory.Container.Barcode === this.outsetContainer.Barcode
-            ) {
-              this.ITNsInTote.push(line.Inventory.InventoryTrackingNumber);
             }
             if (line._id === this.outsetContainer.orderLineDetailID) {
               this.ITNInfo = [
@@ -238,6 +233,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   NOSINumber: this.NOSINumber,
                   InventoryTrackingNumber: singleITN,
                   UserEventID: sqlData.Event_AgIn_SingleITNAgOut,
+                  OrderLineNumber: this.OrderLineNumber,
                   Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
                 },
               ],
@@ -393,7 +389,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             OrderNumber: this.OrderNumber,
             NOSINumber: this.NOSINumber,
             containerID: container._id,
-            ITNsInTote: this.ITNsInTote,
             FileKeyListforAgIn: this.FileKeyListforAgIn,
           };
           this._agInService.changeEndContainer(endContainer);

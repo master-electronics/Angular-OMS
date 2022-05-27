@@ -20,8 +20,6 @@ import {
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/sqlData';
@@ -40,10 +38,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   alertType = 'error';
   alertMessage = '';
   totalTotes = 0;
-  orderLineDetailList = [];
   containerList = [];
   selectedList = [];
-  ITNsInOrder: string[] = [];
 
   containerForm = this._fb.group({
     containerNumber: [
@@ -63,9 +59,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchLocation: FetchContainerForAgoutPickGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _insertUserEvnetLog: Insert_UserEventLogsGQL,
-    private _updateAfterQC: UpdateAfterAgOutGQL,
-    private _gtmService: GoogleTagManagerService,
-    private _authService: AuthenticationService
+    private _updateAfterQC: UpdateAfterAgOutGQL
   ) {
     this._titleService.setTitle('agout/pick');
   }
@@ -78,7 +72,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     );
     this.containerList = this.agOutService.containerList;
     this.selectedList = this.agOutService.selectedList;
-    this.orderLineDetailList = this.agOutService.orderLine;
     this.totalTotes = this.agOutService.totalTotes;
     if (this.totalTotes === null) {
       this.isLoading = true;
@@ -91,29 +84,25 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .pipe(
           switchMap((res) => {
-            this.orderLineDetailList = res.data.findOrderLineDetail;
-            this.agOutService.changeOrderLine(this.orderLineDetailList);
+            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetail);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
-            res.data.findOrderLineDetail.forEach((node) => {
-              containerSet.add(node.Inventory.Container);
-              ITNSet.add(node.Inventory.InventoryTrackingNumber);
-            });
-            this.ITNsInOrder = [...ITNSet];
-            this.agOutService.changeITNsInOrder(this.ITNsInOrder);
-            this.containerList = [...containerSet];
-            this.totalTotes = this.containerList.length;
-            const log = this.ITNsInOrder.map((ITN) => {
+            const log = this.agOutService.ITNsInOrder.map((node) => {
+              ITNSet.add(node.InternalTrackingNumber);
+              containerSet.add(node.Container);
               return {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
-                InternalTrackingNumber: ITN,
+                InventoryTrackingNumber: node.InventoryTrackingNumber,
                 UserEventID: sqlData.Event_AgOut_Start,
+                OrderLineNumber: node.OrderLine.OrderLineNumber,
               };
             });
+            this.containerList = [...containerSet];
+            this.totalTotes = this.containerList.length;
             return this._insertUserEvnetLog.mutate({ log });
           }),
           map(() => {
@@ -159,7 +148,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     const selectedITNs = [];
-    this.orderLineDetailList.forEach((node) => {
+    this.agOutService.ITNsInOrder.forEach((node) => {
       if (
         node.Container.Barcode ===
         this.containerForm.get('containerNumber').value
@@ -183,7 +172,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const FileKeyList = [];
     const productSet = new Set<string>();
     const BarcodeList = [];
-    this.orderLineDetailList.forEach((node) => {
+    this.agOutService.ITNsInOrder.forEach((node) => {
       FileKeyList.push(
         `${fileKey}${String(node.OrderLine.OrderLineNumber).padStart(
           2,
@@ -206,8 +195,9 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
-        InternalTrackingNumber: node,
+        InvenotryTrackingNumber: node.InvenotryTrackingNumber,
         UserEventID: sqlData.Event_AgOut_Done,
+        OrderLineNumber: node.OrderLine.OrderLineNumber,
       };
     });
     this.updateSQL$ = forkJoin({
