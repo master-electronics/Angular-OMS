@@ -74,6 +74,7 @@ export type ItnColumn = {
   eventName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['Int']>;
+  searchable?: Maybe<Scalars['Boolean']>;
   title?: Maybe<Scalars['String']>;
   width?: Maybe<Scalars['String']>;
 };
@@ -1229,7 +1230,7 @@ export type FindItnColumnsQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, dataName?: string | null, colSpan?: string | null, position?: number | null, width?: string | null, eventGroup?: string | null, eventName?: string | null } | null> | null };
+export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, dataName?: string | null, colSpan?: string | null, position?: number | null, width?: string | null, eventGroup?: string | null, eventName?: string | null, searchable?: boolean | null } | null> | null };
 
 export type Insert_ItnUserColumnsMutationVariables = Types.Exact<{
   itnUserColumns: Array<Types.InputMaybe<Types.InsertItnUserColumnsInfo>> | Types.InputMaybe<Types.InsertItnUserColumnsInfo>;
@@ -1720,6 +1721,7 @@ export const FindItnColumnsDocument = gql`
     width
     eventGroup
     eventName
+    searchable
   }
 }
     `;

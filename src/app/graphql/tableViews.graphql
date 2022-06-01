@@ -253,6 +253,7 @@ query findITNColumns($userId: Int) {
     width
     eventGroup
     eventName
+    searchable
   }
 }
 

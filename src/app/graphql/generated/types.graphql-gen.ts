@@ -69,6 +69,7 @@ export type ItnColumn = {
   eventName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   position?: Maybe<Scalars['Int']>;
+  searchable?: Maybe<Scalars['Boolean']>;
   title?: Maybe<Scalars['String']>;
   width?: Maybe<Scalars['String']>;
 };

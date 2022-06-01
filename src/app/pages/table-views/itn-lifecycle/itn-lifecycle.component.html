@@ -33,11 +33,47 @@
     <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
   </div>
   <nz-table id="excel-table" #table [nzPageSize]="pageSize" 
-    [nzFrontPagination]="paging" nzShowSizeChanger [nzData]="tableData" nzBordered
+    [nzFrontPagination]="paging" nzShowSizeChanger [nzData]="tableDataDisplay" nzBordered
     [nzPageSizeOptions]="paginationValues" [nzScroll]="{ y: screenHeight }">
     <thead>
       <tr>
-        <th *ngFor="let column of columnsVisible" [nzWidth]="column.width">{{ column.title }}</th>
+        <th *ngFor="let column of columnsVisible;" 
+          [nzWidth]="column.width" nzCustomFilter
+          [nzSortOrder]="null"
+          [nzSortDirections]="['ascend', 'descend']"
+          [nzSortFn]="column.sortFn">{{ column.title }}
+          <nz-filter-trigger *ngIf="column.searchable"
+            [(nzVisible)]="column.searchVisible"
+            [nzActive]="column.searchActive"
+            [nzDropdownMenu]="menu">
+            <i nz-icon nzType="search"></i>
+          </nz-filter-trigger>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div class="ant-table-filter-dropdown">
+            <div class="px-2 py-2 grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                nz-input
+                oninput="this.value = this.value.toUpperCase()"
+                placeholder="{{ column.title }}"
+                class="col-span-2"
+                #searchInput
+              />
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="setFilter(column, searchInput.value)"
+                class="search-button"
+              >
+                Search
+              </button>
+              <button nz-button nzSize="small"
+                (click)="clearFilter(column)">Reset</button>
+            </div>
+            </div>
+          </nz-dropdown-menu>
+        </th>
       </tr>
     </thead>
     <tbody>

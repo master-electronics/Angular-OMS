@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { CommonService } from '../../../shared/services/common.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { FetchItnLifecycleGQL, FetchItnUserColumnsGQL, FindItnTemplateGQL, FindItnColumnsGQL } from 'src/app/graphql/tableViews.graphql-gen';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { ColumnSelectorComponent } from './column-selector.component';
 import { Column, Template, LevelLimit } from './itn-lifecycle.server';
 import { Observable, Subscription } from 'rxjs';
@@ -14,6 +14,7 @@ import {
   Insert_ItnUserLevelsGQL, Update_ItnUserLevelsGQL, FindItnTemplatesGQL,
   FindItnTemplateDocument
 } from 'src/app/graphql/tableViews.graphql-gen';
+import { NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'itn-lifecycle',
@@ -26,6 +27,7 @@ export class ITNLifecycleComponent implements OnInit {
   userId: string;
   fetchTable$;
   tableData = [];
+  tableDataDisplay = [];
   timeformat = {};
   columns: Column[];
   private subscription = new Subscription();
@@ -55,6 +57,10 @@ export class ITNLifecycleComponent implements OnInit {
   pageSize: number;
   screenWidth: any;
   screenHeight: any;
+  searchVisible = false;
+  searchActive = true;
+  searchValue = "";
+  filters: { filterColumn: string; filterValue: string }[];
 
   constructor(
     private commonService: CommonService,
@@ -87,6 +93,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.paginationValues = [100, 50, 1000, 500];
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);
     this.pageSize = 50;
+    this.filters = [];
 
     //Set up array of avaialbe columns
     //Get columns from ITNCOLUMNS db table
@@ -109,11 +116,12 @@ export class ITNLifecycleComponent implements OnInit {
               width: res.data.findITNColumns[i].width,
               eventGroup: res.data.findITNColumns[i].eventGroup,
               eventName: res.data.findITNColumns[i].eventName,
+              searchable: res.data.findITNColumns[i].searchable,
             }
 
             this.columns.push(column);
           }
-          const test = "test";
+
         },
         (error) => {
           const err = error;
@@ -151,6 +159,11 @@ export class ITNLifecycleComponent implements OnInit {
                       width: this.columns[x].width,
                       eventGroup: this.columns[x].eventGroup,
                       eventName: this.columns[x].eventName,
+                      searchVisible: false,
+                      searchable: this.columns[x].searchable,
+                      searchActive: false,
+                      sortFn: (a: [], b: []): number => 
+                      ((a[this.columns[x].dataName])?(a[this.columns[x].dataName].toString()):'').localeCompare(((b[this.columns[x].dataName])?(b[this.columns[x].dataName].toString()):'')),
                   }
                 );
    
@@ -270,7 +283,7 @@ export class ITNLifecycleComponent implements OnInit {
             }
             if (item.packStart) {
               result.packStart = this.timeFormating(item.packStart);
-              result['packStartNum'] = Number(item.packStart);
+              result['packingStartNum'] = Number(item.packStart);
             }
             if (item.packLine) {
               result.packLine = this.timeFormating(item.packLine);
@@ -280,22 +293,77 @@ export class ITNLifecycleComponent implements OnInit {
             }
             if (item.packDone) {
               result.packDone = this.timeFormating(item.packDone);
-              result['packDoneNum'] = Number(item.packDone);
+              result['packingDoneNum'] = Number(item.packDone);
             }
             if (item.packStart && item.packDone) {
-              result['packElapsed'] =
+              result['packingElapsed'] =
                 this.elapsedFormating(Number(item.packDone) - Number(item.packStart));
-                result['packElapsedNum'] = Number(item.packDone) - Number(item.packStart);  
+                result['packingElapsedNum'] = Number(item.packDone) - Number(item.packStart);  
             }
 
             return result;
           });
+
+          this.tableDataDisplay = this.tableData;
         }),
         catchError((error) => {
           this.isLoading = false;
           return error;
-        })
+        }),
+                
       );
+
+  }
+
+  //add user entered filter info to the fitlers array
+  //the array is used in the filterResults method to allow filtring on multiple columns
+  setFilter(FilterColumn: [], FilterValue: string): void {
+    FilterColumn["searchVisible"] = false;
+    FilterColumn["searchActive"] = true;
+
+    const index = this.filters.map(filter => filter.filterColumn).indexOf(FilterColumn["dataName"]);
+
+    if (index > -1) {
+      this.filters[index] = {
+        filterColumn: FilterColumn["dataName"],
+        filterValue: FilterValue
+      }
+    } else {
+      this.filters.push({
+        filterColumn: FilterColumn["dataName"],
+        filterValue: FilterValue
+      });
+    }
+
+    this.filterResults();
+
+  }
+
+  //remove user cleared filter from the filters array
+  clearFilter(FilterColumn: []): void {
+    FilterColumn["searchVisible"] = false;
+    FilterColumn["searchActive"] = false;
+
+    const index = this.filters.map(filter => filter.filterColumn).indexOf(FilterColumn["dataName"]);
+
+    if (index > -1) {
+      this.filters.splice(index, 1);
+    }
+
+    this.filterResults();
+
+  }
+
+  //apply all filters in the filters array to the dataset
+  filterResults(): void {
+    this.tableDataDisplay = this.tableData;
+
+    for (let i = 0; i < this.filters.length; i++) {
+      this.tableDataDisplay = this.tableDataDisplay.filter(
+        item =>
+          item[this.filters[i].filterColumn].toString().indexOf(this.filters[i].filterValue) !== -1
+      );
+    }
 
   }
 
@@ -489,7 +557,7 @@ export class ITNLifecycleComponent implements OnInit {
 
             for (let i = 0; i<templateColumns.length; i++) {
               const col = this.columns.find(c => c.name == templateColumns[i]);
-              
+
               this.columnsVisible.push( 
                 {
                   name: col.name,
@@ -498,7 +566,11 @@ export class ITNLifecycleComponent implements OnInit {
                   width: col.width,
                   eventGroup: col.eventGroup,
                   eventName: col.eventName,
-                  order: col.position
+                  order: col.position,
+                  searchVisible: false,
+                  searchable: col.searchable,
+                  searchActive: false,
+                  sortFn: (a: [], b: []): number => ((a[col.dataName])?(a[col.dataName].toString()):'').localeCompare((b[col.dataName])?(b[col.dataName].toString()):'')
                 }
               )
 

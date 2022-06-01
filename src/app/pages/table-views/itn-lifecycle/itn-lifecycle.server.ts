@@ -7,6 +7,7 @@ export interface Column {
     width?: string;
     eventGroup?: string;
     eventName?: string;
+    searchable?: boolean;
 }
 
 export interface LevelLimit {
