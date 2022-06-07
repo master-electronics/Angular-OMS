@@ -194,10 +194,37 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     packReject
     packDone
     ParentITN
-    notes
   }
 
 }
+
+query fetchOrderDetailforitnView($Order: searchOrder!) {
+  findOrder(Order: $Order) {
+    OrderNumber
+    NOSINumber
+    ORDERLINEDETAILs {
+      InternalTrackingNumber
+      Status {
+        Name
+      }
+      OrderLine {
+        ProductCode
+        PartNumber
+      }
+      Quantity
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+    }
+  }
+}
+
 query fetchITNUserColumns($userId: String) {
   fetchITNUserColumns(userId: $userId) {
     _id

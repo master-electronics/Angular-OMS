@@ -70,6 +70,7 @@ export type ItnColumn = {
   _id?: Maybe<Scalars['Int']>;
   colSpan?: Maybe<Scalars['String']>;
   dataName?: Maybe<Scalars['String']>;
+  drilldown?: Maybe<Scalars['Boolean']>;
   eventGroup?: Maybe<Scalars['String']>;
   eventName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -93,6 +94,7 @@ export type ItnLifeCycle = {
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
   ProductTier?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Int']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
@@ -103,7 +105,6 @@ export type ItnLifeCycle = {
   dropoffStart?: Maybe<Scalars['String']>;
   lineAllocation?: Maybe<Scalars['String']>;
   lineCancel?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
   orderCancel?: Maybe<Scalars['String']>;
   packDone?: Maybe<Scalars['String']>;
   packLine?: Maybe<Scalars['String']>;
@@ -118,6 +119,35 @@ export type ItnLifeCycle = {
   releaseLine?: Maybe<Scalars['String']>;
   releaseOrder?: Maybe<Scalars['String']>;
   splitDone?: Maybe<Scalars['String']>;
+};
+
+export type ItnLifeCycleDrillDown = {
+  __typename?: 'ITNLifeCycleDrillDown';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
+  DateTime?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Event?: Maybe<Scalars['String']>;
+  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  Message?: Maybe<Scalars['String']>;
+  Module?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  Name?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Float']>;
+  ShipmentMethod?: Maybe<Scalars['String']>;
+  ShipmentMethodDescription?: Maybe<Scalars['String']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
+  UserEventID?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
 };
 
 export type ItnUserColumn = {
@@ -544,6 +574,7 @@ export type Query = {
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
+  fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
@@ -591,6 +622,14 @@ export type QueryFetchHoldOnCounterArgs = {
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
+};
+
+
+export type QueryFetchItnLifecycleDrillDownArgs = {
+  internalTrackingNumber?: InputMaybe<Scalars['String']>;
+  nosiNumber?: InputMaybe<Scalars['String']>;
+  orderLineNumber?: InputMaybe<Scalars['Int']>;
+  orderNumber: Scalars['String'];
 };
 
 
@@ -1202,7 +1241,7 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, notes?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null } | null> | null };
 
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
@@ -1614,7 +1653,6 @@ export const FetchItnLifecycleDocument = gql`
     packReject
     packDone
     ParentITN
-    notes
   }
 }
     `;
