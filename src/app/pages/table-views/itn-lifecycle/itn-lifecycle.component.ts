@@ -369,7 +369,9 @@ export class ITNLifecycleComponent implements OnInit {
 
   //When settings screen is closed refresh display
   onModalClose(): void {
-    this.onTemplateChange(this.templateId.toString());
+    if (this.templateId) {
+      this.onTemplateChange(this.templateId.toString()+","+this.templateNameValue);
+    }
   }
 
   //Return class to for setting the color of event cells based on template hightlight limits
@@ -487,7 +489,7 @@ export class ITNLifecycleComponent implements OnInit {
     const args = e.split(',');
 
     this.templateId = Number(args[0]);
-    this.templateNameValue = '';
+    this.templateNameValue = args[1];
 
     this.paginationValues = [100, 50, 1000, 500];
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);

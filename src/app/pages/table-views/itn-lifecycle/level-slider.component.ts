@@ -43,6 +43,25 @@ import { Subject } from 'rxjs';
         ></nz-input-number> minutes
       </div>
     </nz-row>
+    <nz-row>
+      <nz-col nzSpan="17">
+        <nz-slider [nzIncluded]="false" [(ngModel)]="secondValue"
+          [nzMin]="0" [nzMax]="60" [nzStep]="1"
+          [nzTipFormatter]="secondFormatter" (nzOnAfterChange)="levelChange()"
+        ></nz-slider>
+      </nz-col>
+      <div nz-col nzSpan="7">
+        <input style="display: none; visibility: hidden;" type="text" id="secondsTB" #secondV [(ngModel)]="secondValue" (ngModelChange)="levelChange()"/>
+        <nz-input-number
+          [ngStyle]="{
+            marginLeft: '10px',
+            display: 'inline-block',
+            width: '60px'}"
+            [nzMin]="0" [nzMax]="60"
+            [(ngModel)]="secondValue" (ngModelChange)="levelChange()"
+        ></nz-input-number> seconds
+      </div>
+    </nz-row>
   `,
   styles: [
     `
@@ -61,6 +80,7 @@ export class LevelSliderComponent {
   @Output() levelEvent = new EventEmitter<number>();
   hourValue;
   minuteValue;
+  secondValue;
 
   ngOnInit(): void {
     //subscribe to tabs-view Subject to receive level limit changes
@@ -68,10 +88,12 @@ export class LevelSliderComponent {
       //convert milliseconds to hours and minutes
       const hrs = Math.trunc(Number(data) / 3600000);
       const mins = Math.trunc((Number(data) - (hrs * 3600000)) / 60000);
+      const secs = Math.trunc((Number(data) - ((hrs * 3600000) + (mins * 60000))) / 1000);
 
-      //set hourValue and minuteValue, used to adjust slider value
+      //set hourValue, minuteValue, and secondValue, used to adjust slider value
       this.hourValue = hrs;
       this.minuteValue = mins;
+      this.secondValue = secs;
     })
   }
 
@@ -85,12 +107,17 @@ export class LevelSliderComponent {
     return `${value}mins`;
   }
 
+  //format tip displayed for second slider
+  secondFormatter(value: number): string {
+    return `${value}secs`;
+  }
+
   //when limit level changed convert hours and minutes to milliseconds
   //emit milliseconds to tabs-view
-  levelChange() {
+  levelChange(): void {
     let hours = Number(this.hourValue);
     let minutes = Number(this.minuteValue);
-
+    let seconds = Number(this.secondValue);
 
     if (Number.isNaN(hours)) {
       hours = 0;
@@ -100,12 +127,16 @@ export class LevelSliderComponent {
       minutes = 0;
     }
 
-    const limit = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+    if (Number.isNaN(seconds)) {
+      seconds = 0;
+    }
+
+    const limit = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000);
 
     this.levelEvent.emit(limit);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.levelSubject.unsubscribe();
   }
 }
