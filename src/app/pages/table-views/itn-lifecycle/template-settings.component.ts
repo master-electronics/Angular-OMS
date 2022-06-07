@@ -79,6 +79,7 @@ export class TemplateSettings {
   @Input('selectedColumns') selectedColumns: string[];
   @Input('templateNameValue') templateNameValue: string;
   @Input('activeTemplateId') activeTemplateId: number;
+  @Input('activeTemplateName') activeTemplateName: string;
   //@Input('defaultPaginationValue') defaultPaginationValue: string;
   //@Input('customPaginationValue') customPaginationValue: string;
 
@@ -120,7 +121,6 @@ export class TemplateSettings {
   });
 
   ngOnInit(): void {
-    this.selectedTemplateId = 1;
     this.columnSelector.columns = this.columns;
     this.columnSelector.selectedColumns = this.selectedColumns;
     this.paginationValues = [100, 50, 1000, 500];
@@ -129,6 +129,13 @@ export class TemplateSettings {
   //display settings screen
   showModal(): void {
     this.setMessage("");
+    if (this.activeTemplateId && this.templateNameValue) {
+      this.selectedTemplateId = this.activeTemplateId.toString() + "," + this.activeTemplateName;
+
+      this.templateId = this.activeTemplateId;
+      this.loadTemplate();
+    }
+
     if (this.templateId) {
       this.tempIdStr = this.templateId.toString();
     }
@@ -148,9 +155,9 @@ export class TemplateSettings {
 
   //clear out setting inputs and trigger page to be redisplayed when settings screen closes
   handleClose(): void {
-    this.templateId = null;
+    //this.templateId = null;
     this.selectedTemplateId = null;
-    this.templateNameValue = null;
+    //this.templateNameValue = null;
     this.selectedColumns = [];
     this.allColumns = false;
     this.modalClosed.emit();

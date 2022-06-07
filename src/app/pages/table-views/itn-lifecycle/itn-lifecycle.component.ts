@@ -536,7 +536,7 @@ export class ITNLifecycleComponent implements OnInit {
   //When settings screen is closed refresh display
   onModalClose(): void {
     if (this.templateId) {
-      this.onTemplateChange(this.templateId.toString());
+      this.onTemplateChange(this.templateId.toString()+","+this.templateNameValue);
     }
   }
 
@@ -664,7 +664,7 @@ export class ITNLifecycleComponent implements OnInit {
     const args = e.split(',');
 
     this.templateId = Number(args[0]);
-    this.templateNameValue = '';
+    this.templateNameValue = args[1];
 
     this.paginationValues = [100, 50, 1000, 500];
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);
