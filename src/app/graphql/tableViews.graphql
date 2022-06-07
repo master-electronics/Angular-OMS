@@ -194,43 +194,10 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     packReject
     packDone
     ParentITN
-    Quantity
+    notes
   }
-}
 
-query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, 
-  $orderLineNumber: Int, $internalTrackingNumber: String) {
-  fetchITNLifecycleDrillDown(orderNumber: $orderNumber, nosiNumber: $nosiNumber, 
-    orderLineNumber: $orderLineNumber,
-    internalTrackingNumber: $internalTrackingNumber) {
-    OrderNumber
-    NOSINumber
-    InternalTrackingNumber
-    Message
-    UserID
-    Name
-    UserEventID
-    Event
-    Module
-    DateTime
-    PartNumber
-    ProductCode
-    OrderLineNumber
-    CustomerNumber
-    CustomerTier
-    ProductTier
-    Zone
-    WMSPriority
-    Priority
-    TrackingNumber
-    ParentITN
-    DistributionCenter
-    Quantity
-    ShipmentMethod
-    ShipmentMethodDescription
-  }
 }
-
 query fetchITNUserColumns($userId: String) {
   fetchITNUserColumns(userId: $userId) {
     _id
@@ -287,7 +254,6 @@ query findITNColumns($userId: Int) {
     eventGroup
     eventName
     searchable
-    drilldown
   }
 }
 

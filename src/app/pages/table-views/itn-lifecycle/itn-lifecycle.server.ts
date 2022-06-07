@@ -8,7 +8,6 @@ export interface Column {
     eventGroup?: string;
     eventName?: string;
     searchable?: boolean;
-    drilldown?: boolean;
 }
 
 export interface LevelLimit {
