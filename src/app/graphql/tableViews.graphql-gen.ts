@@ -1241,7 +1241,17 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null } | null> | null };
+
+export type FetchItnLifecycleDrillDownQueryVariables = Types.Exact<{
+  orderNumber: Types.Scalars['String'];
+  nosiNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  orderLineNumber?: Types.InputMaybe<Types.Scalars['Int']>;
+  internalTrackingNumber?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FetchItnLifecycleDrillDownQuery = { __typename?: 'Query', fetchITNLifecycleDrillDown?: Array<{ __typename?: 'ITNLifeCycleDrillDown', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, Message?: string | null, UserID?: number | null, Name?: string | null, UserEventID?: number | null, Event?: string | null, Module?: string | null, DateTime?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: string | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, ParentITN?: string | null, DistributionCenter?: string | null, Quantity?: number | null, ShipmentMethod?: string | null, ShipmentMethodDescription?: string | null } | null> | null };
 
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
@@ -1269,7 +1279,7 @@ export type FindItnColumnsQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, dataName?: string | null, colSpan?: string | null, position?: number | null, width?: string | null, eventGroup?: string | null, eventName?: string | null, searchable?: boolean | null } | null> | null };
+export type FindItnColumnsQuery = { __typename?: 'Query', findITNColumns?: Array<{ __typename?: 'ITNColumn', _id?: number | null, name?: string | null, title?: string | null, dataName?: string | null, colSpan?: string | null, position?: number | null, width?: string | null, eventGroup?: string | null, eventName?: string | null, searchable?: boolean | null, drilldown?: boolean | null } | null> | null };
 
 export type Insert_ItnUserColumnsMutationVariables = Types.Exact<{
   itnUserColumns: Array<Types.InputMaybe<Types.InsertItnUserColumnsInfo>> | Types.InputMaybe<Types.InsertItnUserColumnsInfo>;
@@ -1653,6 +1663,7 @@ export const FetchItnLifecycleDocument = gql`
     packReject
     packDone
     ParentITN
+    Quantity
   }
 }
     `;
@@ -1662,6 +1673,53 @@ export const FetchItnLifecycleDocument = gql`
   })
   export class FetchItnLifecycleGQL extends Apollo.Query<FetchItnLifecycleQuery, FetchItnLifecycleQueryVariables> {
     document = FetchItnLifecycleDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchItnLifecycleDrillDownDocument = gql`
+    query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, $orderLineNumber: Int, $internalTrackingNumber: String) {
+  fetchITNLifecycleDrillDown(
+    orderNumber: $orderNumber
+    nosiNumber: $nosiNumber
+    orderLineNumber: $orderLineNumber
+    internalTrackingNumber: $internalTrackingNumber
+  ) {
+    OrderNumber
+    NOSINumber
+    InternalTrackingNumber
+    Message
+    UserID
+    Name
+    UserEventID
+    Event
+    Module
+    DateTime
+    PartNumber
+    ProductCode
+    OrderLineNumber
+    CustomerNumber
+    CustomerTier
+    ProductTier
+    Zone
+    WMSPriority
+    Priority
+    TrackingNumber
+    ParentITN
+    DistributionCenter
+    Quantity
+    ShipmentMethod
+    ShipmentMethodDescription
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchItnLifecycleDrillDownGQL extends Apollo.Query<FetchItnLifecycleDrillDownQuery, FetchItnLifecycleDrillDownQueryVariables> {
+    document = FetchItnLifecycleDrillDownDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -1760,6 +1818,7 @@ export const FindItnColumnsDocument = gql`
     eventGroup
     eventName
     searchable
+    drilldown
   }
 }
     `;

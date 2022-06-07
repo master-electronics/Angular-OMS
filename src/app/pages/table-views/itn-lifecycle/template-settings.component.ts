@@ -1,8 +1,8 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Column, LevelLimit, Template } from './itn-lifecycle.server';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import {
   FindItnTemplateGQL, Update_ItnUserTemplateGQL,
   Delete_ItnLevelLimitGQL, Insert_ItnLevelLimitGQL,
@@ -474,7 +474,7 @@ export class TemplateSettings {
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
               }
 
-              this.defaultPaginationValue = res.data.findITNTemplate[0].DefaultPagination.toString();
+              this.defaultPaginationValue = (res.data.findITNTemplate[0].DefaultPagination)?res.data.findITNTemplate[0].DefaultPagination.toString():"50";
 
               if (!this.paginationValues.includes(Number(this.defaultPaginationValue))) {
                 this.customPaginationValue = this.defaultPaginationValue

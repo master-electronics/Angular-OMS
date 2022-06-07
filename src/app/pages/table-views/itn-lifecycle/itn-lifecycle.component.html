@@ -78,12 +78,37 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of table.data; let i = index">
-        <td *ngFor="let column of columnsVisible"
-          [ngClass]="getClass(data[column.eventGroup+'StartNum'], 
+      <ng-template ngFor let-data [ngForOf]="table.data">
+        <tr>
+          <td *ngFor="let column of columnsVisible"
+            [nzShowExpand]="column.drilldown" (nzExpandChange)="expandChange(data, column.name, $event)"
+            [ngClass]="getClass(data[column.eventGroup+'StartNum'], 
             data[column.eventGroup+'DoneNum'], column.eventGroup)"
-        >{{ data[column.dataName] }}</td>
-      </tr>
+            [(nzExpand)]="data[column.title+'Expand']"
+          >{{ data[column.dataName] }}</td>
+        </tr>
+        <tr [nzExpand]="data.expand">
+          <nz-table #drillDownTable [nzData]="drilldownTableData" 
+            [nzShowPagination]="false" [nzPageSize]="100" [nzScroll]="{ y: '350px' }">
+            <thead>
+              <tr>
+                <th *ngFor="let drillColumn of drillDownColumns"
+                  [nzWidth]="drillColumn.width"
+                  style="background-color: #e6f3ff">
+                  {{ drillColumn.name }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of drillDownTable.data">
+                <td *ngFor="let drillColumn of drillDownColumns">
+                  {{ data[drillColumn.dataName] }}
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </tr>
+      </ng-template>
     </tbody>
   </nz-table>
 </div>
