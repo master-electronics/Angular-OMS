@@ -560,22 +560,23 @@ export class ITNLifecycleComponent implements OnInit {
             for (let i = 0; i<templateColumns.length; i++) {
               const col = this.columns.find(c => c.name == templateColumns[i]);
 
-              this.columnsVisible.push( 
-                {
-                  name: col.name,
-                  title: col.title,
-                  dataName: col.dataName,
-                  width: col.width,
-                  eventGroup: col.eventGroup,
-                  eventName: col.eventName,
-                  order: col.position,
-                  searchVisible: false,
-                  searchable: col.searchable,
-                  searchActive: false,
-                  sortFn: (a: [], b: []): number => ((a[col.dataName])?(a[col.dataName].toString()):'').localeCompare((b[col.dataName])?(b[col.dataName].toString()):'')
-                }
-              )
-
+              if (col) {
+                this.columnsVisible.push(
+                  {
+                    name: col.name,
+                    title: col.title,
+                    dataName: col.dataName,
+                    width: col.width,
+                    eventGroup: col.eventGroup,
+                    eventName: col.eventName,
+                    order: col.position,
+                    searchVisible: false,
+                    searchable: col.searchable,
+                    searchActive: false,
+                    sortFn: (a: [], b: []): number => ((a[col.dataName]) ? (a[col.dataName].toString()) : '').localeCompare((b[col.dataName]) ? (b[col.dataName].toString()) : '')
+                  }
+                )
+              }
 
             }
 
