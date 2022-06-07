@@ -85,7 +85,7 @@ export class LevelSliderComponent {
   ngOnInit(): void {
     //subscribe to tabs-view Subject to receive level limit changes
     this.levelSubject.subscribe((data) => {
-      //convert milliseconds to hours and minutes
+      //convert milliseconds to hours, minutes, and seconds
       const hrs = Math.trunc(Number(data) / 3600000);
       const mins = Math.trunc((Number(data) - (hrs * 3600000)) / 60000);
       const secs = Math.trunc((Number(data) - ((hrs * 3600000) + (mins * 60000))) / 1000);
