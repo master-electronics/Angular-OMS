@@ -11,7 +11,7 @@ import {
 import { sqlData } from 'src/app/shared/sqlData';
 import { environment } from 'src/environments/environment';
 import {
-  SortingInfo,
+  ITNInfo,
   StockingService,
   SuggetionLocation,
 } from '../../stocking.server';
@@ -28,7 +28,7 @@ export class SortingLocationComponent implements OnInit {
   submit$ = new Observable();
   init$ = new Observable();
   locationList = [];
-  sortingInfo = {} as SortingInfo;
+  sortingInfo = {} as ITNInfo;
 
   constructor(
     private _fb: FormBuilder,

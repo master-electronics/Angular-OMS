@@ -20,9 +20,15 @@ import { StockingRoutingModule } from './stocking.routing';
 import { StockingComponent } from './stocking.component';
 import { ScanITNComponent } from './sorting/scan-ITN/scan-ITN.component';
 import { SortingLocationComponent } from './sorting/sorting-location/sorting-location.component';
+import { StartPageComponent } from './stocking/start-page/start-page';
 
 @NgModule({
-  declarations: [StockingComponent, ScanITNComponent, SortingLocationComponent],
+  declarations: [
+    StockingComponent,
+    ScanITNComponent,
+    SortingLocationComponent,
+    StartPageComponent,
+  ],
   imports: [
     CommonModule,
     StockingRoutingModule,

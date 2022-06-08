@@ -200,6 +200,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findOrCreateContainer?: Maybe<Container>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
@@ -305,6 +306,11 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
   NOSINumber: Scalars['String'];
   OrderLineNumber: Scalars['Int'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type MutationFindOrCreateContainerArgs = {
+  Container: InsertContainer;
 };
 
 
@@ -913,6 +919,21 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type InsertContainer = {
+  Aisle?: InputMaybe<Scalars['String']>;
+  Barcode: Scalars['String'];
+  ContainerTypeID: Scalars['Int'];
+  DistributionCenter: Scalars['String'];
+  EquipmentID?: InputMaybe<Scalars['Int']>;
+  ParentContainerID?: InputMaybe<Scalars['Int']>;
+  Row?: InputMaybe<Scalars['String']>;
+  Section?: InputMaybe<Scalars['String']>;
+  Shelf?: InputMaybe<Scalars['String']>;
+  ShelfDetail?: InputMaybe<Scalars['String']>;
+  Warehouse?: InputMaybe<Scalars['String']>;
+  Zone?: InputMaybe<Scalars['Int']>;
+};
+
 export type InsertDcProduct = {
   DistributionCenterID: Scalars['Int'];
   ProductID: Scalars['Int'];
@@ -1265,10 +1286,11 @@ export type UpdateUserInfo = {
 
 export type VerifyItnForSortingQueryVariables = Types.Exact<{
   ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null } } | null> | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1295,9 +1317,36 @@ export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
 
 export type UpdateInventoryAfterSortingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
+export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+
+export type FetchItnInfoByContainerforStockingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number } } | null> | null } | null> | null };
+
+export type VerifyItnForStockingQueryVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+
+export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
+
+export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistrubutionCenter: Types.Scalars['String'];
+  ContainerTypeID: Types.Scalars['Int'];
+}>;
+
+
+export type FindorCreateUserContainerForStockingMutation = { __typename?: 'Mutation', findOrCreateContainer?: { __typename?: 'Container', _id: number } | null };
+
 export const VerifyItnForSortingDocument = gql`
-    query verifyITNForSorting($ITN: String!) {
-  findInventory(Inventory: {InventoryTrackingNumber: $ITN}) {
+    query verifyITNForSorting($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
+  ) {
     _id
     QuantityOnHand
     Container {
@@ -1314,6 +1363,15 @@ export const VerifyItnForSortingDocument = gql`
         Velocity
       }
       PartNumber
+    }
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+      OrderLine {
+        OrderLineNumber
+      }
     }
   }
 }
@@ -1390,6 +1448,88 @@ export const UpdateInventoryAfterSortingDocument = gql`
   })
   export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<UpdateInventoryAfterSortingMutation, UpdateInventoryAfterSortingMutationVariables> {
     document = UpdateInventoryAfterSortingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchItnInfoByContainerforStockingDocument = gql`
+    query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
+  findContainer(Container: {Barcode: $Barcode, DistributionCenter: $DC}) {
+    _id
+    ContainerType {
+      IsMobile
+    }
+    INVENTORies {
+      _id
+      InventoryTrackingNumber
+      QuantityOnHand
+      Product {
+        _id
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<FetchItnInfoByContainerforStockingQuery, FetchItnInfoByContainerforStockingQueryVariables> {
+    document = FetchItnInfoByContainerforStockingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyItnForStockingDocument = gql`
+    query verifyITNForStocking($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
+  ) {
+    _id
+    QuantityOnHand
+    Product {
+      _id
+    }
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+      OrderLine {
+        OrderLineNumber
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyItnForStockingGQL extends Apollo.Query<VerifyItnForStockingQuery, VerifyItnForStockingQueryVariables> {
+    document = VerifyItnForStockingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindorCreateUserContainerForStockingDocument = gql`
+    mutation findorCreateUserContainerForStocking($Barcode: String!, $DistrubutionCenter: String!, $ContainerTypeID: Int!) {
+  findOrCreateContainer(
+    Container: {ContainerTypeID: $ContainerTypeID, Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+  ) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindorCreateUserContainerForStockingGQL extends Apollo.Mutation<FindorCreateUserContainerForStockingMutation, FindorCreateUserContainerForStockingMutationVariables> {
+    document = FindorCreateUserContainerForStockingDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

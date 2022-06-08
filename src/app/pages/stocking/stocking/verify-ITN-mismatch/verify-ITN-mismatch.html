@@ -1,0 +1,125 @@
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <div nz-row nzJustify="center">
+    <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+      <h1 class="text-lg font-bold">Location ITN Verification</h1>
+      <form
+        *ngIf="stage==='verify'"
+        nz-form
+        focusInvalidInput
+        [formGroup]="inputForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <nz-form-item nz-row nzJustify="center">
+          <div *ngIf="verify$ | async"></div>
+          <nz-form-label nzRequired>Scan ITN</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
+            <input
+              nz-input
+              placeholder="ITN"
+              nzSize="large"
+              type="text"
+              id="ITNInput"
+              name="ITNInput"
+              formControlName="ITNInput"
+              autocomplete="off"
+              #ITNInput
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+          <nz-alert
+            [nzType]="
+              alertType === 'error'
+                ? 'error'
+                : alertType === 'success'
+                ? 'success'
+                : alertType === 'info'
+                ? 'info'
+                : 'warning'
+            "
+            [nzMessage]="alertMessage"
+            nzShowIcon
+            class="w-full"
+          ></nz-alert>
+        </nz-form-item>
+
+        <nz-form-item nz-row nzJustify="center" nzGutter="16">
+          <button
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            Submit
+          </button>
+
+          <div class="mt-32 w-full bg-gray-500">
+            <button
+              nz-button
+              (click)="back()"
+              nzSize="large"
+              nzGhost
+              class="w-full"
+            >
+              Done
+            </button>
+          </div>
+        </nz-form-item>
+      </form>
+      <!-- show when user click done -->
+      <div *ngIf="stage===notFound">
+        <h1 class="text-xl">
+          You are about to declare {{this.ITNList.length}} ITNs as not found?
+        </h1>
+        <div class="mt-32 w-full bg-gray-500">
+          <button
+            nz-button
+            (click)="yes()"
+            nzSize="large"
+            nzGhost
+            class="w-full"
+          >
+            Yes
+          </button>
+          <button
+            nz-button
+            (click)="no()"
+            nzSize="large"
+            nzGhost
+            class="w-full"
+          >
+            No
+          </button>
+        </div>
+      </div>
+      <!-- Show when done and all ITNs been verifyed -->
+      <div *ngIf="stage===locationEmpty">
+        <h1 class="text-xl">Is the Container Empty?</h1>
+        <div class="mt-32 w-full bg-gray-500">
+          <button
+            nz-button
+            (click)="yes()"
+            nzSize="large"
+            nzGhost
+            class="w-full"
+          >
+            Yes
+          </button>
+          <button
+            nz-button
+            (click)="no()"
+            nzSize="large"
+            nzGhost
+            class="w-full"
+          >
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

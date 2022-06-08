@@ -1,122 +1,15 @@
 <div class="container mx-auto px-2 md:mt-4">
   <div nz-row nzJustify="center" class="mt-2">
     <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
-      <!-- Input from -->
-      <form
-        nz-form
-        focusInvalidInput
-        [formGroup]="locationForm"
-        (ngSubmit)="onSubmit()"
-      >
-        <nz-form-item nz-row nzJustify="center">
-          <nz-form-control
-            nzHasFeedback
-            nzErrorTip="The input is not valid location!"
-          >
-            <input
-              nz-input
-              maxlength="20"
-              oninput="this.value = this.value.toUpperCase()"
-              placeholder="Location:"
-              nzSize="large"
-              type="text"
-              id="location"
-              formControlName="location"
-              autocomplete="off"
-              #location
-            />
-          </nz-form-control>
-        </nz-form-item>
-
-        <div *ngIf="submit$ | async"></div>
-        <nz-form-item nz-row nzJustify="center">
-          <div nz-col class="w-full">
-            <button
-              nz-button
-              type="submit"
-              nzType="primary"
-              (click)="onSubmit()"
-              [nzLoading]="isLoading"
-              [disabled]="isLoading"
-              nzSize="large"
-              class="w-full"
-            >
-              Submit
-            </button>
-          </div>
-        </nz-form-item>
-
-        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
-          <nz-alert
-            [nzType]="
-              alertType === 'error'
-                ? 'error'
-                : alertType === 'success'
-                ? 'success'
-                : alertType === 'info'
-                ? 'info'
-                : 'warning'
-            "
-            [nzMessage]="alertMessage"
-            nzShowIcon
-            class="w-full"
-          ></nz-alert>
-        </nz-form-item>
-      </form>
-
-      <!-- Item Info -->
-      <div class="grid grid-cols-2 text-black dark:text-white">
-        <span>ITN:</span>
-        <span>{{ sortingInfo.ITN }}</span>
-        <span>ProductCode:</span>
-        <span>{{ sortingInfo.productCode }}</span>
-        <span>PartNumber:</span>
-        <span>{{ sortingInfo.partNumber }}</span>
-        <span>Remaining:</span>
-        <span>{{ sortingInfo.remaining }}%</span>
-        <span>Product Type:</span>
-        <span>{{ sortingInfo.productType }}</span>
-        <span>Velocity:</span>
-        <span>{{ sortingInfo.velocity }}</span>
-      </div>
-      <!-- Suggetion location -->
-      <div *ngIf="init$ | async"></div>
-      <nz-skeleton
-        *ngIf="!sortingInfo.suggetionLocationList"
-        [nzActive]="true"
-        [nzParagraph]="{ rows: 2 }"
-      ></nz-skeleton>
-      <div nz-row *ngIf="sortingInfo.suggetionLocationList">
-        <div nz-col nzSpan="12">Locations</div>
-        <div nz-col nzSpan="6">Zone</div>
-        <div nz-col nzSpan="6">Quantity</div>
-        <ul nz-col nzSpan="24">
-          <li *ngFor="let location of sortingInfo.suggetionLocationList">
-            <div nz-row>
-              <span nz-col nzSpan="12">{{ location.Bincode }}</span>
-              <span nz-col nzSpan="6">{{ location.Zone }}</span>
-              <span nz-col nzSpan="6">{{ location.Quantity }}</span>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <h1>{{title}}</h1>
       <button
         nz-button
-        (click)="reprint()"
+        (click)="continue()"
         [nzLoading]="isLoading"
         nzSize="large"
         class="mt-2 w-full"
       >
-        Print ITN Label
-      </button>
-      <button
-        nz-button
-        (click)="back()"
-        [nzLoading]="isLoading"
-        nzSize="large"
-        class="mt-2 w-full"
-      >
-        Back
+        CONTINUE
       </button>
     </div>
   </div>

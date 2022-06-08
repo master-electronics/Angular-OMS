@@ -9,6 +9,7 @@ import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-ge
 import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { sqlData } from 'src/app/shared/sqlData';
+import { environment } from 'src/environments/environment';
 import { StockingService } from '../../stocking.server';
 
 @Component({
@@ -67,7 +68,10 @@ export class ScanITNComponent implements OnInit {
     }
     this.isLoading = true;
     this.verify$ = this._vierfyITN
-      .fetch({ ITN: this.ITNForm.value.ITN }, { fetchPolicy: 'network-only' })
+      .fetch(
+        { ITN: this.ITNForm.value.ITN, DC: environment.DistributionCenter },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         tap((res) => {
           if (res.data.findInventory.length === 0) {
@@ -92,6 +96,13 @@ export class ScanITNComponent implements OnInit {
               res.data.findInventory[0].Product.DCPRODUCTs[0]?.Velocity ?? null,
             zone: null,
             suggetionLocationList: [],
+            OrderNumber:
+              res.data.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
+            NOSINumber:
+              res.data.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+            OrderLineNumber:
+              res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine
+                .OrderLineNumber,
           });
           return this._insertLog.mutate({
             log: {
@@ -99,6 +110,13 @@ export class ScanITNComponent implements OnInit {
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
               UserEventID: sqlData.Event_Stocking_SortingStart,
+              OrderNumber:
+                res.data.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
+              NOSINumber:
+                res.data.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+              OrderLineNumber:
+                res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine
+                  .OrderLineNumber,
               InventoryTrackingNumber: this.ITNForm.value.ITN,
               Message: ``,
             },

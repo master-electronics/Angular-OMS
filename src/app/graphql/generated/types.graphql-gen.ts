@@ -195,6 +195,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findOrCreateContainer?: Maybe<Container>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
@@ -300,6 +301,11 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
   NOSINumber: Scalars['String'];
   OrderLineNumber: Scalars['Int'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type MutationFindOrCreateContainerArgs = {
+  Container: InsertContainer;
 };
 
 
@@ -906,6 +912,21 @@ export type WmsStatusView = {
   Line_Total: Scalars['Int'];
   Status: Scalars['String'];
   StatusID: Scalars['Int'];
+};
+
+export type InsertContainer = {
+  Aisle?: InputMaybe<Scalars['String']>;
+  Barcode: Scalars['String'];
+  ContainerTypeID: Scalars['Int'];
+  DistributionCenter: Scalars['String'];
+  EquipmentID?: InputMaybe<Scalars['Int']>;
+  ParentContainerID?: InputMaybe<Scalars['Int']>;
+  Row?: InputMaybe<Scalars['String']>;
+  Section?: InputMaybe<Scalars['String']>;
+  Shelf?: InputMaybe<Scalars['String']>;
+  ShelfDetail?: InputMaybe<Scalars['String']>;
+  Warehouse?: InputMaybe<Scalars['String']>;
+  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type InsertDcProduct = {

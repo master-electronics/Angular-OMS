@@ -9,46 +9,23 @@
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
           <div *ngIf="verify$ | async"></div>
-          <nz-form-label nzRequired> {{ inputLabel }} </nz-form-label>
-          <!-- ITN input -->
-          <nz-form-control
-            *ngIf="stage === 'scanBarcode'"
-            nzHasFeedback
-            nzErrorTip="The input is not valid!"
-          >
+          <h1>ITN Scan # {{ScanedITNNumber}}</h1>
+          <nz-form-label nzRequired>Scan ITN</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
-              maxlength="15"
-              oninput="this.value = this.value.toUpperCase()"
-              placeholder="Location or ITN"
+              placeholder="ITN"
               nzSize="large"
               type="text"
-              id="barcode"
-              name="barcode"
-              formControlName="barcode"
+              id="ITNInput"
+              name="ITNInput"
+              formControlName="ITNInput"
               autocomplete="off"
-              #barcode
-            />
-          </nz-form-control>
-          <!-- Count number input -->
-          <nz-form-control
-            *ngIf="stage==='ITNCount'"
-            nzHasFeedback
-            nzErrorTip="The input is not valid!"
-          >
-            <input
-              nz-input
-              placeholder="Location or ITN"
-              nzSize="large"
-              type="number"
-              id="countNumber"
-              name="countNumber"
-              formControlName="countNumber"
-              autocomplete="off"
-              #countNumber
+              #ITNInput
             />
           </nz-form-control>
         </nz-form-item>
+
         <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
           <nz-alert
             [nzType]="
@@ -79,6 +56,10 @@
             Submit
           </button>
 
+          <a routerLink="['/stocking/stocking/itnlist','ITNList']"
+            >ITN Count: {{ITNCount}}</a
+          >
+
           <div class="mt-32 w-full bg-gray-500">
             <button
               nz-button
@@ -87,7 +68,7 @@
               nzGhost
               class="w-full"
             >
-              Back
+              Done
             </button>
           </div>
         </nz-form-item>

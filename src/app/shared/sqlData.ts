@@ -13,6 +13,7 @@ export const sqlData = {
   //WMS ContainerType table
   shelfType_ID: 2,
   toteType_ID: 3,
+  userType_ID: 9,
   // User Event ID
   Event_AgIn_Start: 1,
   Event_AgIn_SingleITNAgOut: 2,
@@ -37,4 +38,8 @@ export const sqlData = {
   Event_Release_Done: 600,
   Event_Stocking_SortingStart: 700,
   Event_Stocking_SortingDone: 701,
+
+  Event_Stocking_StockingITNSelect: 720,
+  Event_Stocking_StockingLocation_Start: 710,
+  Event_Stocking_StockingLocation_Done: 711,
 };

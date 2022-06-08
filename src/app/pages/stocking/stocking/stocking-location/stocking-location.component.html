@@ -65,33 +65,33 @@
       </form>
 
       <!-- Item Info -->
-      <div class="grid grid-cols-2 text-black dark:text-white">
+      <div class="text-black grid grid-cols-2 dark:text-white">
         <span>ITN:</span>
-        <span>{{ sortingInfo.ITN }}</span>
+        <span>{{ ITNInfo.ITN }}</span>
         <span>ProductCode:</span>
-        <span>{{ sortingInfo.productCode }}</span>
+        <span>{{ ITNInfo.productCode }}</span>
         <span>PartNumber:</span>
-        <span>{{ sortingInfo.partNumber }}</span>
+        <span>{{ ITNInfo.partNumber }}</span>
         <span>Remaining:</span>
-        <span>{{ sortingInfo.remaining }}%</span>
+        <span>{{ ITNInfo.remaining }}%</span>
         <span>Product Type:</span>
-        <span>{{ sortingInfo.productType }}</span>
+        <span>{{ ITNInfo.productType }}</span>
         <span>Velocity:</span>
-        <span>{{ sortingInfo.velocity }}</span>
+        <span>{{ ITNInfo.velocity }}</span>
       </div>
       <!-- Suggetion location -->
       <div *ngIf="init$ | async"></div>
       <nz-skeleton
-        *ngIf="!sortingInfo.suggetionLocationList"
+        *ngIf="!ITNInfo.suggetionLocationList"
         [nzActive]="true"
         [nzParagraph]="{ rows: 2 }"
       ></nz-skeleton>
-      <div nz-row *ngIf="sortingInfo.suggetionLocationList">
+      <div nz-row *ngIf="ITNInfo.suggetionLocationList">
         <div nz-col nzSpan="12">Locations</div>
         <div nz-col nzSpan="6">Zone</div>
         <div nz-col nzSpan="6">Quantity</div>
         <ul nz-col nzSpan="24">
-          <li *ngFor="let location of sortingInfo.suggetionLocationList">
+          <li *ngFor="let location of ITNInfo.suggetionLocationList">
             <div nz-row>
               <span nz-col nzSpan="12">{{ location.Bincode }}</span>
               <span nz-col nzSpan="6">{{ location.Zone }}</span>
@@ -100,21 +100,13 @@
           </li>
         </ul>
       </div>
-      <button
-        nz-button
-        (click)="reprint()"
-        [nzLoading]="isLoading"
-        nzSize="large"
-        class="mt-2 w-full"
-      >
-        Print ITN Label
-      </button>
+
       <button
         nz-button
         (click)="back()"
         [nzLoading]="isLoading"
         nzSize="large"
-        class="mt-2 w-full"
+        class="w-full mt-2"
       >
         Back
       </button>

@@ -1,5 +1,8 @@
-query verifyITNForSorting($ITN: String!) {
-  findInventory(Inventory: { InventoryTrackingNumber: $ITN }) {
+# pull to pick
+query verifyITNForSorting($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+  ) {
     _id
     QuantityOnHand
     Container {
@@ -16,6 +19,15 @@ query verifyITNForSorting($ITN: String!) {
         Velocity
       }
       PartNumber
+    }
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+      OrderLine {
+        OrderLineNumber
+      }
     }
   }
 }
@@ -53,6 +65,61 @@ mutation updateInventoryAfterSorting(
 ) {
   updateInventory(Inventory: { ContainerID: $ContainerID }, _id: $InventoryID)
   insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+
+# stocking
+query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
+  findContainer(Container: { Barcode: $Barcode, DistributionCenter: $DC }) {
+    _id
+    ContainerType {
+      IsMobile
+    }
+    INVENTORies {
+      _id
+      InventoryTrackingNumber
+      QuantityOnHand
+      Product {
+        _id
+      }
+    }
+  }
+}
+
+query verifyITNForStocking($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+  ) {
+    _id
+    QuantityOnHand
+    Product {
+      _id
+    }
+    ORDERLINEDETAILs {
+      Order {
+        OrderNumber
+        NOSINumber
+      }
+      OrderLine {
+        OrderLineNumber
+      }
+    }
+  }
+}
+
+mutation findorCreateUserContainerForStocking(
+  $Barcode: String!
+  $DistrubutionCenter: String!
+  $ContainerTypeID: Int!
+) {
+  findOrCreateContainer(
+    Container: {
+      ContainerTypeID: $ContainerTypeID
+      Barcode: $Barcode
+      DistributionCenter: $DistrubutionCenter
+    }
+  ) {
     _id
   }
 }
