@@ -51,7 +51,7 @@ export class VerifyITNMatchComponent implements OnInit {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.inputForm.get('barcode').valid || this.isLoading) {
+    if (!this.inputForm.get('ITNInput').valid || this.isLoading) {
       this.ITNInput.nativeElement.select();
       return;
     }

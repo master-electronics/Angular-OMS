@@ -13,6 +13,9 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+
+import { AutoFocus } from 'src/app/shared/directives/auto-focus..directive';
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { StockingService } from './stocking.server';
@@ -28,6 +31,7 @@ import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verif
 
 @NgModule({
   declarations: [
+    AutoFocus,
     StockingComponent,
     ScanITNComponent,
     SortingLocationComponent,
@@ -53,6 +57,7 @@ import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verif
     NzSkeletonModule,
     NzDividerModule,
     IconsProviderModule,
+    NzInputNumberModule,
   ],
   providers: [StockingService],
   bootstrap: [StockingComponent],

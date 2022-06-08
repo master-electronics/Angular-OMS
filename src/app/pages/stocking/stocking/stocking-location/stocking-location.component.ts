@@ -134,11 +134,6 @@ export class StockingLocationComponent implements OnInit {
   }
 
   @ViewChild('location') locationInput!: ElementRef;
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.locationInput.nativeElement.select();
-    }, 10);
-  }
 
   back(): void {
     this._router.navigate(['/stocking/stocking']);

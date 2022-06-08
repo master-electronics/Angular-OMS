@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'sorting', component: ScanITNComponent },
   { path: 'sorting/location', component: SortingLocationComponent },
   { path: 'stocking', component: StartPageComponent },
-  { path: 'stocking/verifiy', component: VerifyITNMatchComponent },
+  { path: 'stocking/verify', component: VerifyITNMatchComponent },
   { path: 'stocking/mismatch', component: VerifyITNMismatchComponent },
   { path: 'stocking/location', component: StockingLocationComponent },
   { path: 'stocking/itnlist', component: ITNListComponent },

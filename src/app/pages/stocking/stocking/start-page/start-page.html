@@ -1,3 +1,5 @@
+<div *ngIf="verify$ | async"></div>
+<div *ngIf="init$ | async"></div>
 <div class="container mx-auto px-2 py-2 md:mt-4">
   <form
     nz-form
@@ -8,7 +10,6 @@
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
         <nz-form-item nz-row nzJustify="center">
-          <div *ngIf="verify$ | async"></div>
           <nz-form-label nzRequired> {{ inputLabel }} </nz-form-label>
           <!-- ITN input -->
           <nz-form-control
@@ -18,7 +19,7 @@
           >
             <input
               nz-input
-              maxlength="15"
+              maxlength="20"
               oninput="this.value = this.value.toUpperCase()"
               placeholder="Location or ITN"
               nzSize="large"
@@ -32,13 +33,12 @@
           </nz-form-control>
           <!-- Count number input -->
           <nz-form-control
-            *ngIf="stage==='ITNCount'"
+            [hidden]="stage !== 'ITNCount'"
             nzHasFeedback
             nzErrorTip="The input is not valid!"
           >
             <input
-              nz-input
-              placeholder="Location or ITN"
+              nz-input-number
               nzSize="large"
               type="number"
               id="countNumber"

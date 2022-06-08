@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,7 +26,7 @@ import { StockingService } from '../../stocking.server';
   selector: 'start-page',
   templateUrl: './start-page.html',
 })
-export class StartPageComponent implements OnInit {
+export class StartPageComponent implements OnInit, AfterViewInit {
   stage = '';
   inputLabel = '';
   isLoading = false;
@@ -45,7 +51,7 @@ export class StartPageComponent implements OnInit {
   }
 
   @ViewChild('barcode') barcodeInput!: ElementRef;
-  @ViewChild('countNumber') countNumberInput!: ElementRef;
+  @ViewChild('countNumber') countNumberEle: ElementRef;
   inputForm = this._fb.group({
     barcode: ['', [Validators.required]],
     countNumber: [0],
@@ -57,12 +63,11 @@ export class StartPageComponent implements OnInit {
     this._service.changeITNListInContainer([]);
     this._service.changeScanedITNList([]);
     this._service.changeCurrentITN(null);
-    this._service.changeUserContainerID(null);
     this.stage = 'scanBarcode';
     this.inputLabel = 'Scan Location or ITN';
     // fetch user's container ID, and save it to service
-    this.isLoading = true;
     if (!this._service.userContainerID) {
+      this.isLoading = true;
       this.init$ = this._userContainer
         .mutate({
           DistrubutionCenter: environment.DistributionCenter,
@@ -93,7 +98,7 @@ export class StartPageComponent implements OnInit {
         this.barcodeInput.nativeElement.select();
       }
       if (this.stage === 'ITNCount') {
-        this.countNumberInput.nativeElement.select();
+        this.countNumberEle.nativeElement.select();
       }
     }, 10);
   }
@@ -110,9 +115,11 @@ export class StartPageComponent implements OnInit {
     }
     if (this.stage === 'scanBarcode') {
       this.scanBarcode();
+      return;
     }
     if (this.stage === 'ITNCount') {
       this.ITNCount();
+      return;
     }
   }
 
@@ -221,7 +228,7 @@ export class StartPageComponent implements OnInit {
           this.isLoading = false;
           this.stage = 'ITNCount';
           this.inputLabel = 'Enter ITN Count';
-          this.countNumberInput.nativeElement.select();
+          this.countNumberEle.nativeElement.select();
         }),
         catchError((err) => {
           this.alertType = 'error';
@@ -234,6 +241,10 @@ export class StartPageComponent implements OnInit {
   }
 
   ITNCount(): void {
+    if (this.inputForm.value.countNumber.trim() === '') {
+      this.countNumberEle.nativeElement.select();
+      return;
+    }
     if (this._service.ITNListInContainer.length === 0) {
       this.alertType = 'error';
       this.alertMessage = 'No ITN in container';
@@ -243,10 +254,10 @@ export class StartPageComponent implements OnInit {
       this.inputForm.value.countNumber ===
       this._service.ITNListInContainer.length
     ) {
-      this._router.navigate(['/stocking/stocking/verify-itn-match']);
+      this._router.navigate(['/stocking/stocking/verify']);
       return;
     } else {
-      this._router.navigate(['/stocking/stocking/verify-itn-mismatch']);
+      this._router.navigate(['/stocking/stocking/mismatch']);
       return;
     }
   }
