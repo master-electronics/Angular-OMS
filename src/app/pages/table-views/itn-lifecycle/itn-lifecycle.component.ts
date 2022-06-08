@@ -612,6 +612,7 @@ export class ITNLifecycleComponent implements OnInit {
     setTimeout(() => {
     /* table id is passed over here */
     const element = document.getElementById('excel-table');
+
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
 
     /* generate workbook and add the worksheet */
