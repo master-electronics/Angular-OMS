@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   FetchItnInfoByContainerforStockingGQL,
@@ -27,6 +27,7 @@ export class StartPageComponent implements OnInit {
   alertType = 'error';
   alertMessage = '';
   verify$ = new Observable();
+  init$ = new Observable();
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -59,6 +60,31 @@ export class StartPageComponent implements OnInit {
     this._service.changeUserContainerID(null);
     this.stage = 'scanBarcode';
     this.inputLabel = 'Scan Location or ITN';
+    // fetch user's container ID, and save it to service
+    this.isLoading = true;
+    if (!this._service.userContainerID) {
+      this.init$ = this._userContainer
+        .mutate({
+          DistrubutionCenter: environment.DistributionCenter,
+          Barcode: String(JSON.parse(sessionStorage.getItem('userInfo')).name),
+          ContainerTypeID: sqlData.userType_ID,
+        })
+        .pipe(
+          map((res) => {
+            this.isLoading = false;
+            this._service.changeUserContainerID(
+              res.data.findOrCreateContainer._id
+            );
+          }),
+          catchError((err) => {
+            this.alertType = 'error';
+            this.alertMessage = err.message;
+            this.isLoading = false;
+            this.barcodeInput.nativeElement.select();
+            return of(err);
+          })
+        );
+    }
   }
 
   ngAfterViewInit(): void {
@@ -100,67 +126,62 @@ export class StartPageComponent implements OnInit {
 
   verifyITN(): void {
     this.isLoading = true;
-    this.verify$ = forkJoin({
-      verifyITN: this._verifyITN.fetch({
+    this.verify$ = this._verifyITN
+      .fetch({
         ITN: this.inputForm.value.barcode.trim(),
         DC: environment.DistributionCenter,
-      }),
-      userContainer: this._userContainer.mutate({
-        DistrubutionCenter: environment.DistributionCenter,
-        Barcode: String(JSON.parse(sessionStorage.getItem('userInfo')).name),
-        ContainerTypeID: sqlData.userType_ID,
-      }),
-    }).pipe(
-      tap((res: any) => {
-        if (res.verifyITN.data.findInventory.length === 0) {
-          this.alertType = 'error';
-          this.alertMessage = 'ITN not found';
-          this.isLoading = false;
-          return;
-        }
-        if (res.userContainer.data.findOrCreateContainer._id) {
-          this.alertType = 'error';
-          this.alertMessage = 'Container not found';
-          this.isLoading = false;
-          return;
-        }
-      }),
-      switchMap((res) => {
-        const item = res.verifyITN.data.findInventory[0];
-        this._service.changeUserContainerID(
-          res.userContainer.data.findOrCreateContainer._id
-        );
-        const ITNInfo = {
-          _id: item.verifyITN._id,
-          ITN: item.InventoryTrackingNumber,
-          Quantity: item.QuantityOnHand,
-          productID: item.Product._id,
-        };
-        this._service.changeITNListInContainer([ITNInfo]);
-        this._service.changeCurrentITN(ITNInfo);
-        return this._insertLog.mutate({
-          log: {
-            UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-            UserEventID: sqlData.Event_Stocking_StockingITNSelect,
-            OrderNumber: item.Order.OrderNumber,
-            NOSINumber: item.Order.NOSINumber,
-            OrderLineNumber: item.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
-            InventoryTrackingNumber: this.inputForm.value.barcode.trim(),
-            Message: ``,
-          },
-        });
-      }),
-      map(() => {
-        this._router.navigate(['/stocking/stocking/location']);
-      }),
-      catchError((err) => {
-        this.alertType = 'error';
-        this.alertMessage = err.message;
-        this.isLoading = false;
-        this.barcodeInput.nativeElement.select();
-        return of(err);
       })
-    );
+      .pipe(
+        tap((res) => {
+          if (res.data.findInventory.length === 0) {
+            this.alertType = 'error';
+            this.alertMessage = 'ITN not found';
+            this.isLoading = false;
+            return;
+          }
+          if (!this._service.userContainerID) {
+            this.alertType = 'error';
+            this.alertMessage = 'Container not found';
+            this.isLoading = false;
+            return;
+          }
+        }),
+        switchMap((res) => {
+          const item = res.data.findInventory[0];
+          const ITNInfo = {
+            _id: item._id,
+            ITN: this.inputForm.value.barcode.trim(),
+            Quantity: item.QuantityOnHand,
+            productID: item.Product._id,
+          };
+          this._service.changeITNListInContainer([ITNInfo]);
+          this._service.changeCurrentITN(ITNInfo);
+          return this._insertLog.mutate({
+            log: {
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              UserEventID: sqlData.Event_Stocking_StockingITNSelect,
+              OrderNumber: item.ORDERLINEDETAILs[0].Order.OrderNumber,
+              NOSINumber: item.ORDERLINEDETAILs[0].Order.NOSINumber,
+              OrderLineNumber:
+                item.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+              InventoryTrackingNumber: this.inputForm.value.barcode.trim(),
+              Message: ``,
+            },
+          });
+        }),
+        map(() => {
+          this._router.navigate(['/stocking/stocking/location']);
+        }),
+        catchError((err) => {
+          this.alertType = 'error';
+          this.alertMessage = err.message;
+          this.isLoading = false;
+          this.barcodeInput.nativeElement.select();
+          return of(err);
+        })
+      );
   }
 
   verifyBarcode(): void {

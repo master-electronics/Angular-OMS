@@ -21,6 +21,10 @@ import { StockingComponent } from './stocking.component';
 import { ScanITNComponent } from './sorting/scan-ITN/scan-ITN.component';
 import { SortingLocationComponent } from './sorting/sorting-location/sorting-location.component';
 import { StartPageComponent } from './stocking/start-page/start-page';
+import { StockingLocationComponent } from './stocking/stocking-location/stocking-location.component';
+import { ITNListComponent } from './stocking/ITN-list/ITN-list';
+import { VerifyITNMatchComponent } from './stocking/verify-ITN-match/verify-ITN';
+import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verify-ITN-mismatch';
 
 @NgModule({
   declarations: [
@@ -28,6 +32,10 @@ import { StartPageComponent } from './stocking/start-page/start-page';
     ScanITNComponent,
     SortingLocationComponent,
     StartPageComponent,
+    StockingLocationComponent,
+    ITNListComponent,
+    VerifyITNMatchComponent,
+    VerifyITNMismatchComponent,
   ],
   imports: [
     CommonModule,

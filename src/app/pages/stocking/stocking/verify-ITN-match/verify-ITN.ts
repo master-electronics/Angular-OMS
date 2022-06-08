@@ -7,8 +7,8 @@ import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
 import { StockingService } from '../../stocking.server';
 
 @Component({
-  selector: 'verify-ITN-match',
-  templateUrl: './verify-ITN-match.html',
+  selector: 'verify-ITN',
+  templateUrl: './verify-ITN.html',
 })
 export class VerifyITNMatchComponent implements OnInit {
   stage = '';
@@ -45,7 +45,7 @@ export class VerifyITNMatchComponent implements OnInit {
     }, 10);
   }
 
-  Done(): void {
+  done(): void {
     this._router.navigate(['/stocking']);
   }
 

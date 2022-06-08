@@ -36,10 +36,13 @@ export const sqlData = {
   Event_DropOff_Done: 502,
   Event_DropOff_SelectCart: 503,
   Event_Release_Done: 600,
+  // sorting
   Event_Stocking_SortingStart: 700,
   Event_Stocking_SortingDone: 701,
-
-  Event_Stocking_StockingITNSelect: 720,
-  Event_Stocking_StockingLocation_Start: 710,
-  Event_Stocking_StockingLocation_Done: 711,
+  // stocking
+  Event_Stocking_Start: 710,
+  Event_Stocking_StockingITNSelect: 711,
+  Event_Stocking_StockingLocation_Start: 730,
+  Event_Stocking_StockingLocation_Done: 731,
+  Event_Stocking_Stocking_MoveITNToUser: 741,
 };

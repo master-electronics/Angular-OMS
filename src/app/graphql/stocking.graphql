@@ -123,3 +123,23 @@ mutation findorCreateUserContainerForStocking(
     _id
   }
 }
+
+mutation moveInventoryToContainerForStocking(
+  $ITN: String!
+  $DC: String!
+  $ContainerID: Int!
+) {
+  updateInventory(
+    Inventory: { ContainerID: $ContainerID }
+    DistributionCenter: $DC
+    InventoryTrackingNumber: $ITN
+  )
+}
+
+mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
+  updateInventoryList(
+    ITNList: $ITNList
+    DistributionCenter: $DC
+    Inventory: { NotFound: true }
+  )
+}

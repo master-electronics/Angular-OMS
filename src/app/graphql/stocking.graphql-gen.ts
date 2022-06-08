@@ -178,6 +178,7 @@ export type Inventory = {
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+  NotFound: Scalars['Boolean'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
   OriginalQuantity?: Maybe<Scalars['Float']>;
   ParentITN?: Maybe<Scalars['String']>;
@@ -470,6 +471,7 @@ export type MutationUpdateItnUserTemplateArgs = {
 
 export type MutationUpdateInventoryArgs = {
   ContainerID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   Inventory: UpdateInventory;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -478,6 +480,7 @@ export type MutationUpdateInventoryArgs = {
 
 export type MutationUpdateInventoryListArgs = {
   ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ITNList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   Inventory: UpdateInventory;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -1113,6 +1116,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
@@ -1230,6 +1234,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
@@ -1341,6 +1346,23 @@ export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<
 
 
 export type FindorCreateUserContainerForStockingMutation = { __typename?: 'Mutation', findOrCreateContainer?: { __typename?: 'Container', _id: number } | null };
+
+export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type MoveInventoryToContainerForStockingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+
+export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
+  ITNList?: Types.InputMaybe<Array<Types.Scalars['String']> | Types.Scalars['String']>;
+  DC: Types.Scalars['String'];
+}>;
+
+
+export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null };
 
 export const VerifyItnForSortingDocument = gql`
     query verifyITNForSorting($ITN: String!, $DC: String!) {
@@ -1530,6 +1552,46 @@ export const FindorCreateUserContainerForStockingDocument = gql`
   })
   export class FindorCreateUserContainerForStockingGQL extends Apollo.Mutation<FindorCreateUserContainerForStockingMutation, FindorCreateUserContainerForStockingMutationVariables> {
     document = FindorCreateUserContainerForStockingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const MoveInventoryToContainerForStockingDocument = gql`
+    mutation moveInventoryToContainerForStocking($ITN: String!, $DC: String!, $ContainerID: Int!) {
+  updateInventory(
+    Inventory: {ContainerID: $ContainerID}
+    DistributionCenter: $DC
+    InventoryTrackingNumber: $ITN
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<MoveInventoryToContainerForStockingMutation, MoveInventoryToContainerForStockingMutationVariables> {
+    document = MoveInventoryToContainerForStockingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateNotFoundForStockingDocument = gql`
+    mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
+  updateInventoryList(
+    ITNList: $ITNList
+    DistributionCenter: $DC
+    Inventory: {NotFound: true}
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<UpdateNotFoundForStockingMutation, UpdateNotFoundForStockingMutationVariables> {
+    document = UpdateNotFoundForStockingDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

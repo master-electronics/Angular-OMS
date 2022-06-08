@@ -173,6 +173,7 @@ export type Inventory = {
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+  NotFound: Scalars['Boolean'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
   OriginalQuantity?: Maybe<Scalars['Float']>;
   ParentITN?: Maybe<Scalars['String']>;
@@ -465,6 +466,7 @@ export type MutationUpdateItnUserTemplateArgs = {
 
 export type MutationUpdateInventoryArgs = {
   ContainerID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   Inventory: UpdateInventory;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -473,6 +475,7 @@ export type MutationUpdateInventoryArgs = {
 
 export type MutationUpdateInventoryListArgs = {
   ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ITNList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   Inventory: UpdateInventory;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -1108,6 +1111,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
@@ -1225,6 +1229,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;

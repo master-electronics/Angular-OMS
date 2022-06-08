@@ -13,8 +13,8 @@ import { environment } from 'src/environments/environment';
 import { StockingService } from '../../stocking.server';
 
 @Component({
-  selector: 'sorting-location',
-  templateUrl: './sorting-location.component.html',
+  selector: 'ITN-list',
+  templateUrl: './ITN-list.html',
 })
 export class ITNListComponent implements OnInit {
   isLoading = false;
