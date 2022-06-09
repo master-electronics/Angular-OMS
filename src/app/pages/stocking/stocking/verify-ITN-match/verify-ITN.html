@@ -7,13 +7,14 @@
   >
     <div nz-row nzJustify="center">
       <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+        <h1>ITN Scan # {{ScanedITNNumber}}</h1>
         <nz-form-item nz-row nzJustify="center">
           <div *ngIf="verify$ | async"></div>
-          <h1>ITN Scan # {{ScanedITNNumber}}</h1>
           <nz-form-label nzRequired>Scan ITN</nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="The input is not valid!">
             <input
               nz-input
+              autofocus
               placeholder="ITN"
               nzSize="large"
               type="text"

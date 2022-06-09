@@ -54,7 +54,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   @ViewChild('countNumber') countNumberEle: ElementRef;
   inputForm = this._fb.group({
     barcode: ['', [Validators.required]],
-    countNumber: [0],
+    countNumber: ['', [Validators.required]],
   });
 
   ngOnInit(): void {
@@ -113,17 +113,6 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this.barcodeInput.nativeElement.select();
       return;
     }
-    if (this.stage === 'scanBarcode') {
-      this.scanBarcode();
-      return;
-    }
-    if (this.stage === 'ITNCount') {
-      this.ITNCount();
-      return;
-    }
-  }
-
-  scanBarcode(): void {
     if (ITNBarcodeRegex.test(this.inputForm.value.barcode.trim())) {
       this.verifyITN();
       return;
@@ -228,7 +217,9 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           this.isLoading = false;
           this.stage = 'ITNCount';
           this.inputLabel = 'Enter ITN Count';
-          this.countNumberEle.nativeElement.select();
+          setTimeout(() => {
+            this.countNumberEle.nativeElement.select();
+          }, 10);
         }),
         catchError((err) => {
           this.alertType = 'error';
@@ -241,7 +232,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   }
 
   ITNCount(): void {
-    if (this.inputForm.value.countNumber.trim() === '') {
+    if (!this.inputForm.value.countNumber) {
       this.countNumberEle.nativeElement.select();
       return;
     }

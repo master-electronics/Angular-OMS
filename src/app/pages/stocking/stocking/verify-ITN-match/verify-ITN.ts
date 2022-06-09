@@ -39,12 +39,6 @@ export class VerifyITNMatchComponent implements OnInit {
     this.ScanedITNNumber = this._service.ScanedITNList.length + 1;
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
-  }
-
   done(): void {
     this._router.navigate(['/stocking']);
   }

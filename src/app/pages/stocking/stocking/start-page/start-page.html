@@ -68,10 +68,23 @@
 
         <nz-form-item nz-row nzJustify="center" nzGutter="16">
           <button
+            *ngIf="stage === 'scanBarcode'"
             nz-button
             type="submit"
             nzType="primary"
             (click)="onSubmit()"
+            [nzLoading]="isLoading"
+            nzSize="large"
+            class="w-full"
+          >
+            Submit
+          </button>
+          <button
+            *ngIf="stage === 'ITNCount'"
+            nz-button
+            type="submit"
+            nzType="primary"
+            (click)="ITNCount()"
             [nzLoading]="isLoading"
             nzSize="large"
             class="w-full"
