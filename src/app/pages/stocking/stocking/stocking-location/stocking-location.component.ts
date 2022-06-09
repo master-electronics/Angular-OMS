@@ -88,12 +88,14 @@ export class StockingLocationComponent implements OnInit {
           zone: null,
           suggetionLocationList: [],
           OrderNumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
+            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.OrderNumber ??
+            null,
           NOSINumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.NOSINumber ??
+            null,
           OrderLineNumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0].OrderLine
-              .OrderLineNumber,
+            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.OrderLine
+              .OrderLineNumber ?? null,
         };
         suggetionList.findProduct[0].INVENTORies.forEach((inventory) => {
           const element: SuggetionLocation = {
@@ -107,13 +109,12 @@ export class StockingLocationComponent implements OnInit {
           log: {
             UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
             UserEventID: sqlData.Event_Stocking_StockingLocation_Start,
-            OrderNumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
-            NOSINumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
-            OrderLineNumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0].OrderLine
-                .OrderLineNumber,
+            // OrderNumber:
+            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].Order?.OrderNumber,
+            // NOSINumber:
+            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].Order?.NOSINumber,
+            // OrderLineNumber:
+            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].OrderLine?.OrderLineNumber,
             InventoryTrackingNumber: this.currentITN.ITN,
             Message: ``,
           },
@@ -181,7 +182,7 @@ export class StockingLocationComponent implements OnInit {
         map(() => {
           this.isLoading = false;
           const ScanedITNList = this._service.ScanedITNList;
-          ScanedITNList.some((ITN) => {
+          this._service.ITNListInContainer.some((ITN) => {
             if (ITN.ITN === this.ITNInfo.ITN) {
               ScanedITNList.push(ITN);
               return true;
@@ -189,6 +190,14 @@ export class StockingLocationComponent implements OnInit {
             return false;
           });
           this._service.changeScanedITNList(ScanedITNList);
+          if (
+            this._service.ITNListInContainer.length === ScanedITNList.length
+          ) {
+            this._router.navigate(['/stocking/itnlist'], {
+              queryParams: { userLocation: true },
+            });
+            return;
+          }
           this._router.navigate(['/stocking/stocking/verify'], {
             queryParams: {
               type: 'success',

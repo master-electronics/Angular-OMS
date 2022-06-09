@@ -1364,6 +1364,13 @@ export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
 
 export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null };
 
+export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type FetchInventoryInUserContainerQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, InventoryTrackingNumber: string } | null> | null } | null> | null };
+
 export const VerifyItnForSortingDocument = gql`
     query verifyITNForSorting($ITN: String!, $DC: String!) {
   findInventory(
@@ -1592,6 +1599,27 @@ export const UpdateNotFoundForStockingDocument = gql`
   })
   export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<UpdateNotFoundForStockingMutation, UpdateNotFoundForStockingMutationVariables> {
     document = UpdateNotFoundForStockingDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchInventoryInUserContainerDocument = gql`
+    query fetchInventoryInUserContainer($ContainerID: Int!) {
+  findContainer(Container: {_id: $ContainerID}) {
+    INVENTORies {
+      QuantityOnHand
+      InventoryTrackingNumber
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchInventoryInUserContainerGQL extends Apollo.Query<FetchInventoryInUserContainerQuery, FetchInventoryInUserContainerQueryVariables> {
+    document = FetchInventoryInUserContainerDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

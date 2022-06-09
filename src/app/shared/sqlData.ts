@@ -44,5 +44,6 @@ export const sqlData = {
   Event_Stocking_StockingITNSelect: 711,
   Event_Stocking_StockingLocation_Start: 730,
   Event_Stocking_StockingLocation_Done: 731,
+  Event_Stocking_Stocking_Mismatch: 740,
   Event_Stocking_Stocking_MoveITNToUser: 741,
 };

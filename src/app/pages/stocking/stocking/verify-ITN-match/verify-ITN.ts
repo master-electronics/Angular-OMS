@@ -40,7 +40,7 @@ export class VerifyITNMatchComponent implements OnInit {
   }
 
   done(): void {
-    this._router.navigate(['/stocking']);
+    this._router.navigate(['/stocking/stocking']);
   }
 
   onSubmit(): void {

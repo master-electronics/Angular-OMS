@@ -143,3 +143,12 @@ mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
     Inventory: { NotFound: true }
   )
 }
+
+query fetchInventoryInUserContainer($ContainerID: Int!) {
+  findContainer(Container: { _id: $ContainerID }) {
+    INVENTORies {
+      QuantityOnHand
+      InventoryTrackingNumber
+    }
+  }
+}
