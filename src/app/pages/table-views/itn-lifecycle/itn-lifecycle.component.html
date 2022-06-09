@@ -80,35 +80,56 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="table.data">
         <tr>
-          <td *ngFor="let column of columnsVisible"
-            [nzShowExpand]="column.drilldown" (nzExpandChange)="expandChange(data, column.name, $event)"
-            [ngClass]="getClass(data[column.eventGroup+'StartNum'], 
-            data[column.eventGroup+'DoneNum'], column.eventGroup)"
-            [(nzExpand)]="data[column.title+'Expand']"
-          >{{ data[column.dataName] }}</td>
-        </tr>
-        <tr [nzExpand]="data.expand">
-          <nz-table #drillDownTable [nzData]="drilldownTableData" 
-            [nzShowPagination]="false" [nzPageSize]="100" [nzScroll]="{ y: '350px' }">
-            <thead>
-              <tr>
-                <th *ngFor="let drillColumn of drillDownColumns"
-                  [nzWidth]="drillColumn.width"
-                  style="background-color: #e6f3ff">
-                  {{ drillColumn.name }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let data of drillDownTable.data">
-                <td *ngFor="let drillColumn of drillDownColumns">
-                  {{ data[drillColumn.dataName] }}
-                </td>
-              </tr>
-            </tbody>
-          </nz-table>
+          <ng-template ngFor let-column [ngForOf]="columnsVisible">
+            <td *ngIf="column.drilldown" (click)="onDrilldown(data, column.name)"
+              [ngClass]="'drilldown'" title="Drill down for {{ (column.name == 'Order')?'Order '+data[column.dataName]+' ':'' }}{{ (column.name == 'Line')?'Order '+data.OrderNOSI+', Line '+data[column.dataName]+' ':'' }}{{ (column.name == 'ITN')?'Order '+data.OrderNOSI+', Line '+data.OrderLineNumber+', ITN '+data[column.dataName]+' ': '' }}"
+              style="cursor: pointer"
+            >{{ data[column.dataName] }}</td>
+            <td *ngIf="!column.drilldown" 
+              [ngClass]="getClass(data[column.eventGroup+'StartNum'],
+              data[column.eventGroup+'DoneNum'], column.eventGroup)"
+            >{{ data[column.dataName] }}</td>
+          </ng-template>
         </tr>
       </ng-template>
     </tbody>
   </nz-table>
+  <nz-modal 
+    [(nzVisible)]="drilldownVisible" 
+    [nzTitle]="drilldownTitle"
+    (nzOnCancel)="drilldownVisible=false"
+    [nzContent]="drilldownBody"
+    [nzFooter]="drilldownFooter"
+    [nzWidth]="'90%'"
+    [nzBodyStyle]="drilldownBodyStyle">
+
+    <ng-template #drilldownBody>
+      <nz-table id="excel-drilldown-table" #drilldownTable [nzData]="drilldownTableData"
+        [nzShowPagination]="false" [nzPageSize]="1000"
+        [nzScroll]="{ x: '90%', y: drilldownHeight }"
+      >
+        <thead>
+          <tr>
+            <th *ngFor="let drillColumn of drillDownColumns"
+              [nzWidth]="drillColumn.width"
+            >
+              {{ drillColumn.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of drilldownTable.data">
+            <td *ngFor="let drillColumn of drillDownColumns">
+              {{ data[drillColumn.dataName ]}}
+            </td>
+          </tr>          
+        </tbody>
+      </nz-table>
+    </ng-template>
+    <ng-template #drilldownFooter>
+      <div style="width: 100%; text-align: center;">
+        <button nz-button (click)="exportDrilldown()">Export to Excel</button>
+      </div>
+    </ng-template>
+  </nz-modal>
 </div>

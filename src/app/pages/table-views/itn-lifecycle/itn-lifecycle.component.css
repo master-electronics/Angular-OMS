@@ -35,3 +35,15 @@ body {
     top: 50%;
     z-index: 1000;
 }
+
+.drilldown {
+    text-decoration: underline !important;
+    color: #66b5f6 !important;
+}
+
+.drilldown:hover {
+    border-top: solid 1px #66b5f6 !important;
+    border-left: solid 1px #66b5f6 !important;
+    border-right: solid 1px #66b5f6 !important;
+    border-bottom: solid 1px #66b5f6 !important;
+}

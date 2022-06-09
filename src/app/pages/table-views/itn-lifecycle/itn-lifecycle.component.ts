@@ -59,10 +59,14 @@ export class ITNLifecycleComponent implements OnInit {
   pageSize: number;
   screenWidth: any;
   screenHeight: any;
+  drilldownHeight: any;
   searchVisible = false;
   searchActive = true;
   searchValue = "";
   filters: { filterColumn: string; filterValue: string }[];
+  drilldownVisible: boolean;
+  drilldownTitle: string;
+  drilldownBodyStyle;
 
   constructor(
     private commonService: CommonService,
@@ -91,7 +95,7 @@ export class ITNLifecycleComponent implements OnInit {
       },
       {
         name: "NOSI",
-        dataName: "OrderNumber",
+        dataName: "NOSINumber",
         width: "100px"
       },
       {
@@ -180,8 +184,8 @@ export class ITNLifecycleComponent implements OnInit {
         width: "300px",
       },
       {
-        name: "ShipmentMethod",
-        dataName: "Shipment Method",
+        name: "Shipment Method",
+        dataName: "ShipmentMethod",
         width: "200px",
       },
       {
@@ -198,6 +202,7 @@ export class ITNLifecycleComponent implements OnInit {
 
     this.screenWidth = window.innerWidth+"px";
     this.screenHeight = (window.innerHeight-300)+"px";
+    this.drilldownHeight = (window.innerHeight-300-100)+"px";
     this.selectedTemplate = {};
     const UserInfo = sessionStorage.getItem('userInfo');
     const userId = JSON.parse(UserInfo)._id;
@@ -210,6 +215,8 @@ export class ITNLifecycleComponent implements OnInit {
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);
     this.pageSize = 50;
     this.filters = [];
+
+    this.drilldownBodyStyle = { height: this.screenHeight };
 
     //Set up array of avaialbe columns
     //Get columns from ITNCOLUMNS db table
@@ -304,6 +311,7 @@ export class ITNLifecycleComponent implements OnInit {
   onResize(): void {
     this.screenWidth = window.innerWidth+"px";
     this.screenHeight = (window.innerHeight-300)+"px";
+    this.drilldownHeight = (window.innerHeight-300-100)+"px";
   }
 
   //Clear search date
@@ -341,6 +349,8 @@ export class ITNLifecycleComponent implements OnInit {
             result.CustomerTier = (result.CustomerTier)?result.CustomerTier.trim().toUpperCase():"";
             result.TrackingNumber = (result.TrackingNumber)?result.TrackingNumber.trim().toUpperCase():"";
             result.ParentITN = (result.ParentITN)?result.ParentITN.trim().toUpperCase():"";
+            result.PartNumber = (result.PartNumber)?result.PartNumber.trim().toUpperCase():"";
+            result.ProductCode = (result.ProductCode)?result.ProductCode.trim().toUpperCase():"";
 
             if (item.lineAllocation) {
               result.lineAllocation = this.timeFormating(item.lineAllocation);
@@ -397,6 +407,9 @@ export class ITNLifecycleComponent implements OnInit {
               result['pullingElapsed'] =
                 this.elapsedFormating(Number(item.pullingDone) - Number(item.pullingStart));
                 result['pullingElapsedNum'] = Number(item.pullingDone) - Number(item.pullingStart);
+            }
+            if (item.dropoffLine) {
+              result.dropoffLine = this.timeFormating(item.dropoffLine);
             }
             if (item.dropoffStart) {
               result.dropoffStart = this.timeFormating(item.dropoffStart);
@@ -533,6 +546,25 @@ export class ITNLifecycleComponent implements OnInit {
     DataRow[column+"Expand"] = checked;
   }
 
+  onDrilldown(DataRow: [], column: string): void {
+    this.drilldownTitle
+    this.drilldownTableData = [];
+    this.drilldownTableData2 = [];
+
+    if (column == "Order") {
+      this.drilldownTitle = "Order " + DataRow["OrderNOSI"];
+      this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"]);
+    } else if (column == "Line") {
+      this.drilldownTitle = "Order " + DataRow["OrderNOSI"] + ", Line " + DataRow["OrderLineNumber"];
+      this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]));
+    } else if (column == "ITN") {
+      this.drilldownTitle = "Order " + DataRow["OrderNOSI"] + ", Line " + DataRow["OrderLineNumber"] + ", ITN " + DataRow["InternalTrackingNumber"];
+      this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]), DataRow["InternalTrackingNumber"]);
+    }
+
+    this.drilldownVisible = true;
+  }
+
   //When settings screen is closed refresh display
   onModalClose(): void {
     if (this.templateId) {
@@ -620,10 +652,36 @@ export class ITNLifecycleComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
     /* save to file */
-    XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}.xlsx`);
+    const date = new Date;
+    const hours = '' + date.getHours();
+    const minutes = '' + date.getMinutes();
+    const seconds = '' + date.getSeconds();
+    const timeStamp = hours+":"+minutes+":"+seconds;
+    XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}-${timeStamp}.xlsx`);
     }, 2000);
 
     setTimeout(() => {this.paging = true}, 2000);
+  }
+
+  //Export drilldown results to Excel
+  exportDrilldown(): void {
+    //table element used as data source
+    const element = document.getElementById('excel-drilldown-table');
+
+    //Create worksheet
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    //Generate workbook
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    //Save to file
+    const date = new Date;
+    const hours = '' + date.getHours();
+    const minutes = '' + date.getMinutes();
+    const seconds = '' + date.getSeconds();
+    const timeStamp = hours+":"+minutes+":"+seconds;
+    XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}-${timeStamp}.xlsx`);
   }
 
   //Because the event name headers are in a separate row col spans need to be
@@ -813,6 +871,7 @@ export class ITNLifecycleComponent implements OnInit {
                   DateTime: (row.DateTime)?this.timeFormating(row.DateTime):"",
                   PartNumber: (row.PartNumber)?row.PartNumber.trim():"",
                   ProductCode: (row.ProductCode)?row.ProductCode.trim():"",
+                  PrcNumber: ((row.ProductCode)?row.ProductCode.trim():"")+((row.ProductCode)?"-":"")+((row.PartNumber)?row.PartNumber.trim():""),
                   OrderLineNumber: (row.OrderLineNumber)?row.OrderLineNumber.trim():"",
                   CustomerNumber: (row.CustomerNumber)?row.CustomerNumber.trim():"",
                   CustomerTier: (row.CustomerTier)?row.CustomerTier.trim():"",

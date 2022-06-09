@@ -97,6 +97,7 @@ export type ItnLifeCycle = {
   agDone?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
   dropoffDone?: Maybe<Scalars['String']>;
+  dropoffLine?: Maybe<Scalars['String']>;
   dropoffStart?: Maybe<Scalars['String']>;
   lineAllocation?: Maybe<Scalars['String']>;
   lineCancel?: Maybe<Scalars['String']>;
@@ -113,6 +114,7 @@ export type ItnLifeCycle = {
   qcStart?: Maybe<Scalars['String']>;
   releaseLine?: Maybe<Scalars['String']>;
   releaseOrder?: Maybe<Scalars['String']>;
+  shippingManifest?: Maybe<Scalars['String']>;
   splitDone?: Maybe<Scalars['String']>;
 };
 

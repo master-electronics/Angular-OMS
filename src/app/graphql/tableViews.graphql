@@ -188,6 +188,7 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     pullingStart
     pullingDone
     dropoffStart
+    dropoffLine
     dropoffDone
     packStart
     packLine
@@ -195,6 +196,7 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     packDone
     ParentITN
     Quantity
+    shippingManifest
   }
 }
 
