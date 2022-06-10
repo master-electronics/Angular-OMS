@@ -1,14 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import {
-  FetchInventoryInUserContainerGQL,
-  VerifyContainerForSortingGQL,
-} from 'src/app/graphql/stocking.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
-import { environment } from 'src/environments/environment';
+import { catchError, map } from 'rxjs/operators';
+import { FetchInventoryInUserContainerGQL } from 'src/app/graphql/stocking.graphql-gen';
 import { StockingService } from '../../stocking.server';
 
 @Component({
@@ -34,8 +29,12 @@ export class ITNListComponent implements OnInit {
 
   ngOnInit(): void {
     this.userLocation = this._route.snapshot.queryParams['userLocation'];
+    if (!this._service.userContainerID) {
+      this._router.navigate(['/stocking/stocking']);
+    }
     if (this.userLocation) {
       this.isLoading = true;
+      this.title = `Personal Location Contents`;
       this.init$ = this._fetchITNList
         .fetch(
           {
@@ -52,6 +51,9 @@ export class ITNListComponent implements OnInit {
                 Quantity: item.QuantityOnHand,
               };
             });
+            if (!this.ITNList.length) {
+              this._router.navigate(['/stocking/stocking']);
+            }
           }),
           catchError((err) => {
             this.isLoading = false;

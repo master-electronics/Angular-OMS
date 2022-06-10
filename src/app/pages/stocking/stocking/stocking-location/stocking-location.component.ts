@@ -182,18 +182,17 @@ export class StockingLocationComponent implements OnInit {
         map(() => {
           this.isLoading = false;
           const ScanedITNList = this._service.ScanedITNList;
-          this._service.ITNListInContainer.some((ITN) => {
+          const ITNList = this._service.ITNListInContainer.filter((ITN) => {
             if (ITN.ITN === this.ITNInfo.ITN) {
               ScanedITNList.push(ITN);
-              return true;
+              return false;
             }
-            return false;
+            return true;
           });
+          this._service.changeITNListInContainer(ITNList);
           this._service.changeScanedITNList(ScanedITNList);
-          if (
-            this._service.ITNListInContainer.length === ScanedITNList.length
-          ) {
-            this._router.navigate(['/stocking/itnlist'], {
+          if (this._service.ITNListInContainer.length === 0) {
+            this._router.navigate(['/stocking/stocking/itnlist'], {
               queryParams: { userLocation: true },
             });
             return;

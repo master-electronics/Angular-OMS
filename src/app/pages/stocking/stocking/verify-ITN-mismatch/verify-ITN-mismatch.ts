@@ -26,7 +26,7 @@ export class VerifyITNMismatchComponent implements OnInit {
   ITNList: ITNinfoForStocking[] = [];
   verifiedList: ITNinfoForStocking[] = [];
   submit$ = new Observable();
-  noFound$ = new Observable();
+  notFound$ = new Observable();
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -38,7 +38,7 @@ export class VerifyITNMismatchComponent implements OnInit {
     //
   }
 
-  @ViewChild('ITNinput') ITNInput!: ElementRef;
+  @ViewChild('ITNInput') ITNInput!: ElementRef;
   inputForm = this._fb.group({
     ITNInput: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
@@ -48,13 +48,7 @@ export class VerifyITNMismatchComponent implements OnInit {
     if (!this._service.ITNListInContainer.length) {
       this._router.navigate(['/stocking/stocking']);
     }
-    this.ITNList = this._service.ITNListInContainer;
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
+    this.ITNList = [...this._service.ITNListInContainer];
   }
 
   done(): void {
@@ -63,13 +57,13 @@ export class VerifyITNMismatchComponent implements OnInit {
       this.message = `You are about to declare ${this.ITNList.length} ITNs as not found?`;
       return;
     }
-    this._router.navigate(['/stocking/stocking/verify-itn-match']);
+    this._router.navigate(['/stocking/stocking/verify']);
   }
 
   yes(): void {
     this.isLoading = true;
     const ITNList = this.ITNList.map((iterator) => iterator.ITN);
-    this.submit$ = this._noFound
+    this.notFound$ = this._noFound
       .mutate({
         ITNList,
         DC: environment.DistributionCenter,
@@ -86,7 +80,7 @@ export class VerifyITNMismatchComponent implements OnInit {
           });
           // If still ITN in the contianer continue to verify, otherwise go to starter stage
           if (this._service.ITNListInContainer.length) {
-            this._router.navigate(['/stocking/stocking/verify-itn-match']);
+            this._router.navigate(['/stocking/stocking/verify']);
             return;
           }
           this._router.navigate(['/stocking/stocking']);
@@ -106,8 +100,7 @@ export class VerifyITNMismatchComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.alertMessage = '';
-    if (!this.inputForm.get('barcode').valid || this.isLoading) {
+    if (!this.inputForm.get('ITNInput').valid || this.isLoading) {
       this.ITNInput.nativeElement.select();
       return;
     }
@@ -122,7 +115,7 @@ export class VerifyITNMismatchComponent implements OnInit {
         return false;
       })
     ) {
-      delete this.ITNList[target];
+      this.ITNList.splice(target, 1);
       this.alertType = 'success';
       this.alertMessage = `ITN ${this.inputForm.value.ITNInput} is found.`;
       this.inputForm.reset();
@@ -130,6 +123,16 @@ export class VerifyITNMismatchComponent implements OnInit {
       return;
     } else {
       // if ITN is not found, move this ITN to the user's contianer
+      if (
+        this._service.ITNListInContainer.some(
+          (iterator) => iterator.ITN === this.inputForm.value.ITNInput
+        )
+      ) {
+        this.alertType = 'success';
+        this.alertMessage = `ITN ${this.inputForm.value.ITNInput} is found.`;
+        this.inputForm.reset();
+        return;
+      }
       this.isLoading = true;
       this.submit$ = this._moveITN
         .mutate({
