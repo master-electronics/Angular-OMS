@@ -128,7 +128,8 @@ export class TemplateSettings {
 
   //display settings screen
   showModal(): void {
-    this.setMessage("");
+    this.templateNameValue = this.activeTemplateName;
+
     if (this.activeTemplateId && this.templateNameValue) {
       this.selectedTemplateId = this.activeTemplateId.toString() + "," + this.activeTemplateName;
 
@@ -167,6 +168,7 @@ export class TemplateSettings {
   handleOk(): void {
     if (this.templateNameValue === "") {
       this.setMessage("Template Name Required");
+      setTimeout(() => { this.setMessage(""), 4000 });
     }
     else {
       let cols = "";
@@ -227,6 +229,7 @@ export class TemplateSettings {
             }
           )
       );
+
     }
   }
 
@@ -513,14 +516,28 @@ export class TemplateSettings {
               }
               this.selectedTemplate = template;
             }
-            this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
+
+            this.selectedColumns = [];
+            const selectedColumns = this.selectedTemplate.selectedColumns.split(',');
+
+            for (let i = 0; i<selectedColumns.length; i++) {
+              const selectedCol = this.columns.find(c => c.name == selectedColumns[i])
+
+              if (selectedCol) {
+                this.selectedColumns.push(selectedCol.name);
+              }
+
+            }
+
+            //this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
             this.tempSelectedColumns = this.selectedColumns;
 
-            if (this.columns.length == this.selectedColumns.length) {
+            if (this.columns.length <= this.selectedColumns.length) {
               this.allColumns = true;
             } else {
               this.allColumns = false;
             }
+
           }
         )
     )

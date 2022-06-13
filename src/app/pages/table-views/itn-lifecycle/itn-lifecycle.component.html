@@ -1,10 +1,14 @@
 <div class="container px-4 py-4" style="max-width: 200%;">
+            
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="8">
         <nz-form-label nzRequired> Date </nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="timeRange"></nz-date-picker>
+          <nz-date-picker formControlName="startDatePicker" nzPlaceHolder="Start Date"
+            nzId="startDatePicker" (nzOnOpenChange)="onStartDateChange($event)" notvalid="false"></nz-date-picker>
+          <nz-date-picker formControlName="endDatePicker" nzPlaceHolder="End Date"
+            nzId="endDatePicker" (nzOnOpenChange)="onEndDateChange($event)"></nz-date-picker>
           <nz-select class="templateSelect" [ngModel]="" [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
             <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"
@@ -15,9 +19,7 @@
             [activeTemplateId]="templateId"
             [activeTemplateName]="templateNameValue"></template-settings>
         </nz-form-control>
-
       </nz-form-item>
-
       <div nz-col nzSpan="10">
         <button nz-button [nzType]="'primary'" (click)="onSubmit()" [disabled]="isLoading" class="mr-4">
           Search
@@ -30,12 +32,14 @@
   <!-- Event log table -->
   <div *ngIf="fetchTable$ | async"></div>
   <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+  <!--<div class="progress2"><span>overlay</span></div>-->
   <div class="progress" *ngIf="isLoading" >
-    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+    <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
   </div>
   <nz-table id="excel-table" #table [nzPageSize]="pageSize" 
     [nzFrontPagination]="paging" nzShowSizeChanger [nzData]="tableDataDisplay" nzBordered
-    [nzPageSizeOptions]="paginationValues" [nzScroll]="{ y: screenHeight }">
+    [nzPageSizeOptions]="paginationValues" [nzScroll]="{ y: screenHeight }"
+    (nzPageIndexChange)="scrollToTop()">
     <thead>
       <tr>
         <th *ngFor="let column of columnsVisible;" 
@@ -70,7 +74,7 @@
                 Search
               </button>
               <button nz-button nzSize="small"
-                (click)="clearFilter(column)">Reset</button>
+                (click)="searchInput.value = ''; clearFilter(column)">Reset</button>
             </div>
             </div>
           </nz-dropdown-menu>

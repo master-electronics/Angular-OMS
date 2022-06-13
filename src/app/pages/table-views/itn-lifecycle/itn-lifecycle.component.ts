@@ -20,6 +20,7 @@ import {
 })
 export class ITNLifecycleComponent implements OnInit {
   isLoading = false;
+  dateRange: [];
   startDate: string;
   endDate: string;
   userId: string;
@@ -67,6 +68,8 @@ export class ITNLifecycleComponent implements OnInit {
   drilldownVisible: boolean;
   drilldownTitle: string;
   drilldownBodyStyle;
+  singleDate;
+  testValue;
 
   constructor(
     private commonService: CommonService,
@@ -83,10 +86,12 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   filterForm = this.fb.group({
-    timeRange: ['', [Validators.required]],
+    startDatePicker: ['', [Validators.required]],
+    endDatePicker: ['', [Validators.required]],
   });
 
   ngOnInit(): void {
+    this.dateRange = [];
     this.drillDownColumns = [
       {
         name: "Order",
@@ -317,20 +322,91 @@ export class ITNLifecycleComponent implements OnInit {
   //Clear search date
   resetForm(): void {
     this.filterForm.reset({
-      timeRange: '',
+      dateRange: '',
     });
+  }
+
+  //On user changed Start Date update style based on valid/invalid entries
+  //also set End Date to the same value and update End Date style to valid
+  onStartDateChange(e): void {
+    if (!e) {
+      const startDateElement = <HTMLInputElement>document.getElementById('startDatePicker');
+      const endDateElement = <HTMLInputElement>document.getElementById('endDatePicker');
+      const startDateFormField = this.filterForm.get('startDatePicker');
+      const endDateFormField = this.filterForm.get('endDatePicker');
+
+      if (startDateFormField.invalid) {
+        startDateElement.parentElement.parentElement.setAttribute("notvalid", "true");
+      } else {
+        startDateElement.parentElement.parentElement.setAttribute("notvalid", "false");
+        endDateElement.parentElement.parentElement.setAttribute("notvalid", "false");
+
+        setTimeout(() => {
+          endDateFormField.setValue(startDateFormField.value);
+        }, 100);
+      }
+
+    }
+  }
+
+  //On user changed End Date update style based on valid/invalid entries
+  //also check if entry is before Start Date, if so change End Date value to Start Date value
+  onEndDateChange(e): void {
+    if (!e) {
+      const startDateElement = <HTMLInputElement>document.getElementById('startDatePicker');
+      const endDateElement = <HTMLInputElement>document.getElementById('endDatePicker');
+      const startDateFormField = this.filterForm.get('startDatePicker');
+      const endDateFormField = this.filterForm.get('endDatePicker');
+
+      if (endDateFormField.invalid) {
+        endDateElement.parentElement.parentElement.setAttribute("notvalid", "true");
+      } else {
+        if (startDateElement.value) {
+          startDateElement.parentElement.parentElement.setAttribute("notvalid", "false");
+        } else {
+          startDateElement.parentElement.parentElement.setAttribute("notvalid", "true");
+        }
+
+        endDateElement.parentElement.parentElement.setAttribute("notvalid", "false");
+
+        setTimeout(() => {
+          const sDate = new Date(startDateElement.value);
+          const eDate = new Date(endDateElement.value);
+
+          if (eDate < sDate) {
+            endDateFormField.setValue(startDateFormField.value);
+          }
+        })
+      }
+
+    }
   }
 
   //Get records for search date
   onSubmit(): void {
+    //format start and end dates
+    if (this.filterForm.get('startDatePicker').invalid) {
+      const sDate = <HTMLInputElement>document.getElementById('startDatePicker');
+      sDate.parentElement.parentElement.setAttribute("notvalid", "true");
+    } else {
+      const sDate = <HTMLInputElement>document.getElementById('startDatePicker');
+      sDate.parentElement.parentElement.setAttribute("notvalid", "false");
+    }
+
+    if (this.filterForm.get('endDatePicker').invalid) {
+      const eDate = <HTMLInputElement>document.getElementById('endDatePicker');
+      eDate.parentElement.parentElement.setAttribute("notvalid", "true");
+    } else {
+      const eDate = <HTMLInputElement>document.getElementById('endDatePicker');
+      eDate.parentElement.parentElement.setAttribute("notvalid", "false");
+    }
+
     if (this.filterForm.invalid || this.isLoading) return;
-    const selectedDate = this.filterForm.get('timeRange').value;
-    const startDate = new Date((selectedDate.setHours(0, 0, 0, 0))).toISOString();
+    const startDate = new Date(new Date(this.filterForm.get('startDatePicker').value.toString()).setHours(0, 0, 0, 0)).toISOString();
+    const endDate = new Date(new Date(this.filterForm.get('endDatePicker').value.toString()).setHours(23, 59, 59, 999)).toISOString();
     this.startDate = startDate;
-    const endDate = new Date(
-      selectedDate.setHours(23, 59, 59, 999)
-    ).toISOString();
     this.endDate = endDate;
+
     // prepare query data then send
     this.isLoading = true;
     this.fetchTable$ = this._fetchITNLife
@@ -581,10 +657,16 @@ export class ITNLifecycleComponent implements OnInit {
         //find limits for current event
         const l = this.limits.find(e => e.eventName.toLocaleLowerCase() == EventName.toLocaleLowerCase());
 
-        //if there's a start time but no end time high alert
+        //if there's a start time but no end time and time between
+        //start time and now is greater than the medium limit then set as High
         if (l) {
           if (Start && (!Done || Done == "")) {
-            c = "high";
+            if (l.mediumLevelLimit > 0) {
+              if ((Math.round(Date.now()) - Number(Start)) > Number(l.mediumLevelLimit)) {
+                c = "high";
+              }
+            }
+
           } else {
             const elapsed = (Number(Done) - Number(Start));
 
@@ -640,7 +722,8 @@ export class ITNLifecycleComponent implements OnInit {
 
   //Export results to Excel
   exportexcel(): void {
-    this.paging = false;
+    this.isLoading = true;
+    setTimeout(() => {this.paging = false}, 1000);
     setTimeout(() => {
     /* table id is passed over here */
     const element = document.getElementById('excel-table');
@@ -660,28 +743,41 @@ export class ITNLifecycleComponent implements OnInit {
     XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}-${timeStamp}.xlsx`);
     }, 2000);
 
-    setTimeout(() => {this.paging = true}, 2000);
+    setTimeout(() => {this.paging = true; this.isLoading = false}, 2000);
+  }
+
+  //scroll data table to the top when changing pages
+  scrollToTop(): void {
+    const element = document.getElementById("excel-table");
+    element.children[0].children[0].children[0].children[0].children[1].scrollTop = 0;
+    
   }
 
   //Export drilldown results to Excel
   exportDrilldown(): void {
-    //table element used as data source
-    const element = document.getElementById('excel-drilldown-table');
+    this.isLoading = true;
 
-    //Create worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    setTimeout(() => {
+      //table element used as data source
+      const element = document.getElementById('excel-drilldown-table');
 
-    //Generate workbook
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      //Create worksheet
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
 
-    //Save to file
-    const date = new Date;
-    const hours = '' + date.getHours();
-    const minutes = '' + date.getMinutes();
-    const seconds = '' + date.getSeconds();
-    const timeStamp = hours+":"+minutes+":"+seconds;
-    XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}-${timeStamp}.xlsx`);
+      //Generate workbook
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+      //Save to file
+      const date = new Date;
+      const hours = '' + date.getHours();
+      const minutes = '' + date.getMinutes();
+      const seconds = '' + date.getSeconds();
+      const timeStamp = hours + ":" + minutes + ":" + seconds;
+      XLSX.writeFile(wb, `${this.startDate.substring(0, 10)}-${timeStamp}.xlsx`);
+    }, 2000);
+
+    setTimeout(() => {this.isLoading = false}, 2000);
   }
 
   //Because the event name headers are in a separate row col spans need to be
