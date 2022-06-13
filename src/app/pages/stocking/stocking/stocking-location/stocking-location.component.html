@@ -1,6 +1,10 @@
+<div *ngIf="verifyLocation$ | async"></div>
+<div *ngIf="verifyITN$ | async"></div>
+<div *ngIf="init$ | async"></div>
 <div class="container mx-auto px-2 md:mt-4">
   <div nz-row nzJustify="center" class="mt-2">
     <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="10" nzXl="8" nzXXl="6">
+      <h1>{{ title }}</h1>
       <!-- Input from -->
       <form
         nz-form
@@ -18,7 +22,7 @@
               nz-input
               maxlength="20"
               oninput="this.value = this.value.toUpperCase()"
-              placeholder="Location:"
+              placeholder="Barcode"
               nzSize="large"
               type="text"
               id="location"
@@ -29,7 +33,6 @@
           </nz-form-control>
         </nz-form-item>
 
-        <div *ngIf="submit$ | async"></div>
         <nz-form-item nz-row nzJustify="center">
           <div nz-col class="w-full">
             <button
@@ -81,7 +84,6 @@
         <span>{{ ITNInfo.velocity }}</span>
       </div>
       <!-- Suggetion location -->
-      <div *ngIf="init$ | async"></div>
       <nz-skeleton
         *ngIf="!ITNInfo.suggetionLocationList"
         [nzActive]="true"

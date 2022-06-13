@@ -46,14 +46,18 @@ export const sqlData = {
   Event_DropOff_Done: 502,
   Event_DropOff_SelectCart: 503,
   Event_Release_Done: 600,
-  // sorting
-  Event_Stocking_SortingStart: 700,
-  Event_Stocking_SortingDone: 701,
   // stocking
-  Event_Stocking_Start: 710,
-  Event_Stocking_StockingITNSelect: 711,
-  Event_Stocking_StockingLocation_Start: 730,
-  Event_Stocking_StockingLocation_Done: 731,
-  Event_Stocking_Stocking_Mismatch: 740,
-  Event_Stocking_Stocking_MoveITNToUser: 741,
+  Event_Stocking_ScanLocation: 710,
+  Event_Stocking_ScanITN: 711,
+  Event_Stocking_StockingRelocation_Start: 720,
+  Event_Stocking_StockingRelocation_Location: 721,
+  Event_Stocking_StockingReLocation_Done: 722,
+  Event_Stocking_StockingMismatch_Start: 730,
+  Event_Stocking_StockingMismatch_Done: 731,
+  Event_Stocking_Stocking_MoveITNToUser: 732,
+  Event_Stocking_Stocking_verifyITN: 733,
+  Event_Stocking_NotFound: 734,
+  // sorting
+  Event_Stocking_SortingStart: 900,
+  Event_Stocking_SortingDone: 901,
 };

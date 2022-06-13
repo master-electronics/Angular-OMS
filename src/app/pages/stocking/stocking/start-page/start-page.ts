@@ -35,6 +35,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   alertMessage = '';
   verify$ = new Observable();
   init$ = new Observable();
+  log$ = new Observable();
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -73,7 +74,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this.init$ = this._userContainer
         .mutate({
           DistrubutionCenter: environment.DistributionCenter,
-          Barcode: String(JSON.parse(sessionStorage.getItem('userInfo')).name),
+          Barcode: String(JSON.parse(sessionStorage.getItem('userInfo')).Name),
           ContainerTypeID: sqlData.userType_ID,
         })
         .pipe(
@@ -162,7 +163,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
-              UserEventID: sqlData.Event_Stocking_StockingITNSelect,
+              UserEventID: sqlData.Event_Stocking_ScanITN,
               OrderNumber: item.ORDERLINEDETAILs[0]?.Order.OrderNumber,
               NOSINumber: item.ORDERLINEDETAILs[0]?.Order.NOSINumber,
               OrderLineNumber:
@@ -263,6 +264,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       return;
     } else {
       this._router.navigate(['/stocking/stocking/mismatch']);
+
       return;
     }
   }

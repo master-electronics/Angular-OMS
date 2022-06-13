@@ -10,6 +10,7 @@ import {
   VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
 import { sqlData } from 'src/app/shared/sqlData';
 import { environment } from 'src/environments/environment';
 import {
@@ -27,7 +28,10 @@ export class StockingLocationComponent implements OnInit {
   isLoading = false;
   alertType = 'error';
   alertMessage = '';
-  submit$ = new Observable();
+  title = '';
+  containerID: number;
+  verifyLocation$ = new Observable();
+  verifyITN$ = new Observable();
   init$ = new Observable();
   locationList = [];
   ITNInfo = {} as ITNInfo;
@@ -59,6 +63,7 @@ export class StockingLocationComponent implements OnInit {
       this._router.navigate(['/stocking/stocking']);
     }
     this.isLoading = true;
+    this.title = 'Location Scan';
     this.init$ = forkJoin({
       ITNInfo: this._fetchITN.fetch(
         { ITN: this.currentITN.ITN, DC: environment.DistributionCenter },
@@ -108,13 +113,14 @@ export class StockingLocationComponent implements OnInit {
         return this._insertLog.mutate({
           log: {
             UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-            UserEventID: sqlData.Event_Stocking_StockingLocation_Start,
-            // OrderNumber:
-            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].Order?.OrderNumber,
-            // NOSINumber:
-            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].Order?.NOSINumber,
-            // OrderLineNumber:
-            //   returnITN.findInventory[0].ORDERLINEDETAILs[0].OrderLine?.OrderLineNumber,
+            UserEventID: sqlData.Event_Stocking_StockingRelocation_Start,
+            OrderNumber:
+              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.OrderNumber,
+            NOSINumber:
+              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.NOSINumber,
+            OrderLineNumber:
+              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.OrderLine
+                .OrderLineNumber,
             InventoryTrackingNumber: this.currentITN.ITN,
             Message: ``,
           },
@@ -141,17 +147,22 @@ export class StockingLocationComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.alertMessage = '';
     if (!this.locationForm.valid || this.isLoading) {
       this.locationInput.nativeElement.select();
       return;
     }
+    this.title === 'Location Scan' ? this.verifyLocation() : this.verifyITN2();
+  }
+
+  verifyLocation(): void {
     const barcodeInput = this.locationForm.value.location;
     const Barcode =
       barcodeInput.trim().length === 16
         ? barcodeInput.trim().replace(/-/g, '')
         : barcodeInput.trim();
     this.isLoading = true;
-    this.submit$ = this._verifyContainer
+    this.verifyLocation$ = this._verifyContainer
       .fetch(
         { Barcode, DistrubutionCenter: environment.DistributionCenter },
         { fetchPolicy: 'network-only' }
@@ -169,19 +180,57 @@ export class StockingLocationComponent implements OnInit {
           }
         }),
         switchMap((res) => {
-          return this._updateInventory.mutate({
-            InventoryID: this.ITNInfo.InventoryID,
-            ContainerID: res.data.findContainer[0]._id,
+          this.containerID = res.data.findContainer[0]._id;
+          return this._insertLog.mutate({
             log: {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
-              UserEventID: sqlData.Event_Stocking_StockingLocation_Done,
-              InventoryTrackingNumber: this.ITNInfo.ITN,
-              Message: `${this.locationForm.value.location.trim()}`,
+              UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
+              InventoryTrackingNumber: this.currentITN.ITN,
+              Message: `Location: ${Barcode}`,
             },
           });
         }),
+        map(() => {
+          this.isLoading = false;
+          this.title = 'ITN Scan #2';
+          this.locationForm.reset();
+          this.locationInput.nativeElement.select();
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          this.alertMessage = error;
+          this.locationInput.nativeElement.select();
+          return error;
+        })
+      );
+  }
+
+  verifyITN2(): void {
+    if (!ITNBarcodeRegex.test(this.locationForm.value.location.trim())) {
+      this.alertMessage = 'Invalid ITN Barcode';
+      this.locationInput.nativeElement.select();
+      return;
+    }
+    if (this.locationForm.value.location.trim() !== this.currentITN.ITN) {
+      this.alertMessage = 'Mismatch ITN Barcode';
+      this.locationInput.nativeElement.select();
+      return;
+    }
+    this.isLoading = true;
+    this.verifyITN$ = this._updateInventory
+      .mutate({
+        InventoryID: this.ITNInfo.InventoryID,
+        ContainerID: this.containerID,
+        log: {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserEventID: sqlData.Event_Stocking_StockingReLocation_Done,
+          InventoryTrackingNumber: this.ITNInfo.ITN,
+          Message: `${this.locationForm.value.location.trim()}`,
+        },
+      })
+      .pipe(
         map(() => {
           this.isLoading = false;
           const ScanedITNList = this._service.ScanedITNList;
