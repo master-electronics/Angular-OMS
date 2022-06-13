@@ -219,8 +219,17 @@ export class StartPageComponent implements OnInit, AfterViewInit {
             throw new Error(`${barcodeInput} has no ITN`);
           }
         }),
-        map((res) => {
+        switchMap((res) => {
+          const log = [];
           const ITNList = res.data.findContainer[0].INVENTORies.map((item) => {
+            log.push({
+              UserID: Number(
+                JSON.parse(sessionStorage.getItem('userInfo'))._id
+              ),
+              UserEventID: sqlData.Event_Stocking_ScanLocation,
+              InventoryTrackingNumber: item.InventoryTrackingNumber,
+              Message: ``,
+            });
             return {
               _id: item._id,
               ITN: item.InventoryTrackingNumber,
@@ -229,9 +238,14 @@ export class StartPageComponent implements OnInit, AfterViewInit {
             };
           });
           this._service.changeITNListInContainer(ITNList);
-          this.isLoading = false;
           this.stage = 'ITNCount';
           this.inputLabel = 'Enter ITN Count';
+          return this._insertLog.mutate({
+            log,
+          });
+        }),
+        map(() => {
+          this.isLoading = false;
           setTimeout(() => {
             this.countNumberEle.nativeElement.select();
           }, 10);
@@ -256,6 +270,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this.alertMessage = 'No ITN in container';
       return;
     }
+
     if (
       this.inputForm.value.countNumber ===
       this._service.ITNListInContainer.length
@@ -263,8 +278,32 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this._router.navigate(['/stocking/stocking/verify']);
       return;
     } else {
-      this._router.navigate(['/stocking/stocking/mismatch']);
-
+      const log = this._service.ITNListInContainer.map((item) => {
+        return {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserEventID: sqlData.Event_Stocking_StockingMismatch_Start,
+          InventoryTrackingNumber: item.ITN,
+          Message: ``,
+        };
+      });
+      this.isLoading = true;
+      this.log$ = this._insertLog
+        .mutate({
+          log,
+        })
+        .pipe(
+          map(() => {
+            this.isLoading = false;
+            this._router.navigate(['/stocking/stocking/mismatch']);
+          }),
+          catchError((err) => {
+            this.alertType = 'error';
+            this.alertMessage = err.message;
+            this.isLoading = false;
+            this.barcodeInput.nativeElement.select();
+            return of(err);
+          })
+        );
       return;
     }
   }

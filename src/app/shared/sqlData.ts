@@ -53,9 +53,9 @@ export const sqlData = {
   Event_Stocking_StockingRelocation_Location: 721,
   Event_Stocking_StockingReLocation_Done: 722,
   Event_Stocking_StockingMismatch_Start: 730,
+  Event_Stocking_Stocking_verifyITN: 733,
   Event_Stocking_StockingMismatch_Done: 731,
   Event_Stocking_Stocking_MoveITNToUser: 732,
-  Event_Stocking_Stocking_verifyITN: 733,
   Event_Stocking_NotFound: 734,
   // sorting
   Event_Stocking_SortingStart: 900,
