@@ -1,6 +1,16 @@
 export const sqlData = {
   // PH DistributionCenter ContainerID
   DC_PH_ID: 1,
+  //ContainerTypeID
+  Container_DC: 1,
+  Container_Shelf: 2,
+  Container_Tote: 3,
+  Container_Pallet: 4,
+  Container_Cart: 5,
+  Container_PalletRack: 6,
+  Container_Overflow: 7,
+  Container_Drop: 8,
+  Container_User: 9,
   //WMS Status table
   pickComplete_ID: 10,
   notFound_ID: 15,

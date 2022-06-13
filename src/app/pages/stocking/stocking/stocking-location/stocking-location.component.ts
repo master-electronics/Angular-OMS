@@ -161,8 +161,11 @@ export class StockingLocationComponent implements OnInit {
           if (res.data.findContainer.length === 0) {
             throw 'Container not found';
           }
-          if (!res.data.findContainer[0].ContainerType.IsMobile) {
-            throw new Error('This container is not a mobile container');
+          if (
+            res.data.findContainer[0].ContainerTypeID !==
+            sqlData.Container_Shelf
+          ) {
+            throw new Error(`Not a valid stock location`);
           }
         }),
         switchMap((res) => {

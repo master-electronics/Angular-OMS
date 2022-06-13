@@ -8,11 +8,12 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   FetchItnInfoByContainerforStockingGQL,
   FindorCreateUserContainerForStockingGQL,
+  MoveInventoryToContainerForStockingGQL,
   VerifyItnForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -44,6 +45,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
     private _verifyITN: VerifyItnForStockingGQL,
     private _userContainer: FindorCreateUserContainerForStockingGQL,
     private _insertLog: Insert_UserEventLogsGQL,
+    private _move: MoveInventoryToContainerForStockingGQL,
     private _service: StockingService
   ) {
     this._title.setTitle('Stock');
@@ -123,10 +125,13 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   verifyITN(): void {
     this.isLoading = true;
     this.verify$ = this._verifyITN
-      .fetch({
-        ITN: this.inputForm.value.barcode.trim(),
-        DC: environment.DistributionCenter,
-      })
+      .fetch(
+        {
+          ITN: this.inputForm.value.barcode.trim(),
+          DC: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         tap((res) => {
           if (res.data.findInventory.length === 0) {
@@ -152,20 +157,26 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           };
           this._service.changeITNListInContainer([ITNInfo]);
           this._service.changeCurrentITN(ITNInfo);
-          return this._insertLog.mutate({
+          const log = this._insertLog.mutate({
             log: {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
               UserEventID: sqlData.Event_Stocking_StockingITNSelect,
-              OrderNumber: item.ORDERLINEDETAILs[0].Order.OrderNumber,
-              NOSINumber: item.ORDERLINEDETAILs[0].Order.NOSINumber,
+              OrderNumber: item.ORDERLINEDETAILs[0]?.Order.OrderNumber,
+              NOSINumber: item.ORDERLINEDETAILs[0]?.Order.NOSINumber,
               OrderLineNumber:
-                item.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+                item.ORDERLINEDETAILs[0]?.OrderLine.OrderLineNumber,
               InventoryTrackingNumber: this.inputForm.value.barcode.trim(),
               Message: ``,
             },
           });
+          const moveToUser = this._move.mutate({
+            ContainerID: this._service.userContainerID,
+            ITN: this.inputForm.value.barcode.trim(),
+            DC: environment.DistributionCenter,
+          });
+          return forkJoin({ log, moveToUser });
         }),
         map(() => {
           this._router.navigate(['/stocking/stocking/location']);
@@ -188,10 +199,13 @@ export class StartPageComponent implements OnInit, AfterViewInit {
         : barcodeInput.trim();
     this.isLoading = true;
     this.verify$ = this._verifyBarcode
-      .fetch({
-        Barcode,
-        DC: environment.DistributionCenter,
-      })
+      .fetch(
+        {
+          Barcode,
+          DC: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         tap((res) => {
           if (res.data.findContainer.length === 0) {

@@ -1303,7 +1303,7 @@ export type VerifyContainerForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
+export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
 
 export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
   ProductID: Types.Scalars['Int'];
@@ -1422,6 +1422,7 @@ export const VerifyContainerForSortingDocument = gql`
     Container: {Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
   ) {
     _id
+    ContainerTypeID
     ContainerType {
       IsMobile
     }

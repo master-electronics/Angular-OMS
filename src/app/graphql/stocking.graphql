@@ -40,6 +40,7 @@ query verifyContainerForSorting(
     Container: { Barcode: $Barcode, DistributionCenter: $DistrubutionCenter }
   ) {
     _id
+    ContainerTypeID
     ContainerType {
       IsMobile
     }
