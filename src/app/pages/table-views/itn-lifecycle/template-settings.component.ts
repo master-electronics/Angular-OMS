@@ -1,8 +1,8 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Column, LevelLimit, Template } from './itn-lifecycle.server';
 import { ColumnSelectorComponent } from './column-selector.component';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import {
   FindItnTemplateGQL, Update_ItnUserTemplateGQL,
   Delete_ItnLevelLimitGQL, Insert_ItnLevelLimitGQL,
@@ -55,10 +55,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                     (allChecked)="onAllColumnsSelected($event)"
                     (allUnchecked)="onAllColumnsUnselected($event)"
                     (levelsUpdated)="onLevelsChanged($event)"
+                    (defaultPaginationSet)="setDefaultPagination($event)"
                     [columns]="columns"
                     [selectedColumns]="selectedColumns"
                     [allColumns]="allColumns"
-                    [limitsNotifier]="limitsNotifier"></tabs-view>
+                    [limitsNotifier]="limitsNotifier"
+                    [defaultPaginationValue]="defaultPaginationValue"
+                    [customPaginationValue]="customPaginationValue"></tabs-view>
             </ng-container>
             <ng-template #footer>
               <span style="margin-right: 10px;">{{ message }}</span>
@@ -76,6 +79,9 @@ export class TemplateSettings {
   @Input('selectedColumns') selectedColumns: string[];
   @Input('templateNameValue') templateNameValue: string;
   @Input('activeTemplateId') activeTemplateId: number;
+  @Input('activeTemplateName') activeTemplateName: string;
+  //@Input('defaultPaginationValue') defaultPaginationValue: string;
+  //@Input('customPaginationValue') customPaginationValue: string;
 
   columnSelector: ColumnSelectorComponent = new ColumnSelectorComponent();
   private selTempSub = new Subscription();
@@ -95,6 +101,9 @@ export class TemplateSettings {
   limitsNotifier: Subject<any> = new Subject<any>();
   allColumns: boolean;
   message
+  paginationValues: number[];
+  defaultPaginationValue: string;
+  customPaginationValue: string;
 
   constructor(
     private _findITNTemplate: FindItnTemplateGQL,
@@ -112,14 +121,22 @@ export class TemplateSettings {
   });
 
   ngOnInit(): void {
-    this.selectedTemplateId = 1;
     this.columnSelector.columns = this.columns;
     this.columnSelector.selectedColumns = this.selectedColumns;
+    this.paginationValues = [100, 50, 1000, 500];
   }
 
   //display settings screen
   showModal(): void {
-    this.setMessage("");
+    this.templateNameValue = this.activeTemplateName;
+
+    if (this.activeTemplateId && this.templateNameValue) {
+      this.selectedTemplateId = this.activeTemplateId.toString() + "," + this.activeTemplateName;
+
+      this.templateId = this.activeTemplateId;
+      this.loadTemplate();
+    }
+
     if (this.templateId) {
       this.tempIdStr = this.templateId.toString();
     }
@@ -139,9 +156,9 @@ export class TemplateSettings {
 
   //clear out setting inputs and trigger page to be redisplayed when settings screen closes
   handleClose(): void {
-    this.templateId = null;
+    //this.templateId = null;
     this.selectedTemplateId = null;
-    this.templateNameValue = null;
+    //this.templateNameValue = null;
     this.selectedColumns = [];
     this.allColumns = false;
     this.modalClosed.emit();
@@ -151,6 +168,7 @@ export class TemplateSettings {
   handleOk(): void {
     if (this.templateNameValue === "") {
       this.setMessage("Template Name Required");
+      setTimeout(() => { this.setMessage(""), 4000 });
     }
     else {
       let cols = "";
@@ -168,7 +186,8 @@ export class TemplateSettings {
           {
             _id: this.templateId,
             templateName: this.templateForm.get('templateName').value,
-            selectedColumns: cols
+            selectedColumns: cols,
+            defaultPagination: Number(this.defaultPaginationValue)
           }).subscribe((res) => {
             //delete all ITNLEVELLIMIT records for template
             this.deleteLevelLimitSub.add(
@@ -210,6 +229,7 @@ export class TemplateSettings {
             }
           )
       );
+
     }
   }
 
@@ -378,6 +398,12 @@ export class TemplateSettings {
     this.levelLimits = e;
   }
 
+  //receive defaultPagination from tabs-view component when the default is changed
+  setDefaultPagination(e): void {
+    this.defaultPaginationValue = e.toString();
+    //alert(this.defaultPaginationValue);
+  }
+
   //receive event from tabs-view when a column is selected
   //and update temp columns list that will be used if the user saves the template
   onColumnSelected(e): void {
@@ -451,6 +477,14 @@ export class TemplateSettings {
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
               }
 
+              this.defaultPaginationValue = (res.data.findITNTemplate[0].DefaultPagination)?res.data.findITNTemplate[0].DefaultPagination.toString():"50";
+
+              if (!this.paginationValues.includes(Number(this.defaultPaginationValue))) {
+                this.customPaginationValue = this.defaultPaginationValue
+              } else {
+                this.customPaginationValue = null;
+              }
+
               if (res.data.findITNTemplate[0].ITNLEVELLIMITs.length > 0) {
                 const limits = [];
                 this.levelLimits = [];
@@ -482,14 +516,28 @@ export class TemplateSettings {
               }
               this.selectedTemplate = template;
             }
-            this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
+
+            this.selectedColumns = [];
+            const selectedColumns = this.selectedTemplate.selectedColumns.split(',');
+
+            for (let i = 0; i<selectedColumns.length; i++) {
+              const selectedCol = this.columns.find(c => c.name == selectedColumns[i])
+
+              if (selectedCol) {
+                this.selectedColumns.push(selectedCol.name);
+              }
+
+            }
+
+            //this.selectedColumns = this.selectedTemplate.selectedColumns.split(',');
             this.tempSelectedColumns = this.selectedColumns;
 
-            if (this.columns.length == this.selectedColumns.length) {
+            if (this.columns.length <= this.selectedColumns.length) {
               this.allColumns = true;
             } else {
               this.allColumns = false;
             }
+
           }
         )
     )

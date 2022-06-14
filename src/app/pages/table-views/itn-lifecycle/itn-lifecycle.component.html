@@ -1,10 +1,22 @@
-<div class="container px-4 py-4">
+<div class="container px-4 py-4" style="max-width: 200%">
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="8">
         <nz-form-label nzRequired> Date </nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="timeRange"></nz-date-picker>
+          <nz-date-picker
+            formControlName="startDatePicker"
+            nzPlaceHolder="Start Date"
+            nzId="startDatePicker"
+            (nzOnOpenChange)="onStartDateChange($event)"
+            notvalid="false"
+          ></nz-date-picker>
+          <nz-date-picker
+            formControlName="endDatePicker"
+            nzPlaceHolder="End Date"
+            nzId="endDatePicker"
+            (nzOnOpenChange)="onEndDateChange($event)"
+          ></nz-date-picker>
           <nz-select
             class="templateSelect"
             [ngModel]=""
@@ -25,10 +37,10 @@
             [selectedColumns]="[]"
             [templateNameValue]="templateNameValue"
             [activeTemplateId]="templateId"
+            [activeTemplateName]="templateNameValue"
           ></template-settings>
         </nz-form-control>
       </nz-form-item>
-
       <div nz-col nzSpan="10">
         <button
           nz-button
@@ -46,189 +58,168 @@
   </form>
   <!-- Event log table -->
   <div *ngIf="fetchTable$ | async"></div>
+  <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+  <!--<div class="progress2"><span>overlay</span></div>-->
+  <div class="progress" *ngIf="isLoading">
+    <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
+  </div>
   <nz-table
     id="excel-table"
     #table
-    [nzPageSize]="50"
+    [nzPageSize]="pageSize"
+    [nzFrontPagination]="paging"
     nzShowSizeChanger
-    [nzData]="tableData"
+    [nzData]="tableDataDisplay"
     nzBordered
+    [nzPageSizeOptions]="paginationValues"
+    [nzScroll]="{ y: screenHeight }"
+    (nzPageIndexChange)="scrollToTop()"
   >
     <thead>
       <tr>
-        <th *ngIf="preColSpan > 0" colspan="{{ preColSpan }}"></th>
-        <th *ngIf="pickColSpan > 0" colspan="{{ pickColSpan }}">Pick</th>
-        <th *ngIf="qcColSpan > 0" colSpan="{{ qcColSpan }}">QC</th>
-        <th *ngIf="agColSpan > 0" colSpan="{{ agColSpan }}">Aggregation</th>
-        <th *ngIf="pullingColSpan > 0" colSpan="{{ pullingColSpan }}">
-          Pulling
-        </th>
-        <th *ngIf="dropoffColSpan > 0" colSpan="{{ dropoffColSpan }}">
-          Drop Off
-        </th>
-        <th *ngIf="postColSpan > 0" colSpan="{{ postColSpan }}"></th>
-      </tr>
-      <tr>
-        <th *ngIf="columnsVisible.includes('Order')">Order</th>
-        <th *ngIf="columnsVisible.includes('Line')">Line</th>
-        <th *ngIf="columnsVisible.includes('ITN')">ITN</th>
-        <th *ngIf="columnsVisible.includes('SplitITN')">Split ITN</th>
-        <th *ngIf="columnsVisible.includes('Cust')">Cust</th>
-        <th *ngIf="columnsVisible.includes('CustTier')">Cust Tier</th>
-        <th *ngIf="columnsVisible.includes('Part')">Part</th>
-        <th *ngIf="columnsVisible.includes('PartTier')">Part Tier</th>
-        <th *ngIf="columnsVisible.includes('Zone')">Zone</th>
-        <th *ngIf="columnsVisible.includes('WMSPriority')">WMSPriority</th>
-        <th *ngIf="columnsVisible.includes('Priority')">Priority</th>
-        <th *ngIf="columnsVisible.includes('Drop')">Drop</th>
-        <th *ngIf="columnsVisible.includes('PickStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('PickEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('PickElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('QCStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('QCEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('QCElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('AGStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('AGEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('AGElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('PullingStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('PullingEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('PullingElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('DropOffStart')">Start</th>
-        <th *ngIf="columnsVisible.includes('DropOffEnd')">End</th>
-        <th *ngIf="columnsVisible.includes('DropOffElapsed')">Elapsed</th>
-        <th *ngIf="columnsVisible.includes('Notes')">Notes</th>
-        <th *ngIf="columnsVisible.includes('TrackingNumber')">
-          Tracking Number
+        <th
+          *ngFor="let column of columnsVisible"
+          [nzWidth]="column.width"
+          nzCustomFilter
+          [nzSortOrder]="null"
+          [nzSortDirections]="['ascend', 'descend']"
+          [nzSortFn]="column.sortFn"
+        >
+          {{ column.title }}
+          <nz-filter-trigger
+            *ngIf="column.searchable"
+            [(nzVisible)]="column.searchVisible"
+            [nzActive]="column.searchActive"
+            [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="search"></i>
+          </nz-filter-trigger>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div class="ant-table-filter-dropdown">
+              <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  nz-input
+                  oninput="this.value = this.value.toUpperCase()"
+                  placeholder="{{ column.title }}"
+                  class="col-span-2"
+                  #searchInput
+                />
+                <button
+                  nz-button
+                  nzSize="small"
+                  nzType="primary"
+                  (click)="setFilter(column, searchInput.value)"
+                  class="search-button"
+                >
+                  Search
+                </button>
+                <button
+                  nz-button
+                  nzSize="small"
+                  (click)="searchInput.value = ''; clearFilter(column)"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </nz-dropdown-menu>
         </th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of table.data; let i = index">
-        <td *ngIf="columnsVisible.includes('Order')">
-          {{ data.OrderNumber }}-{{ data.NOSINumber }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Line')">
-          {{ data.OrderLineNumber }}
-        </td>
-        <td *ngIf="columnsVisible.includes('ITN')">
-          {{ data.InternalTrackingNumber }}
-        </td>
-        <td *ngIf="columnsVisible.includes('SplitITN')">
-          {{ data.after_InternalTrackingNumber }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Cust')">
-          {{ data.CustomerNumber }}
-        </td>
-        <td *ngIf="columnsVisible.includes('CustTier')">
-          {{ data.CustomerTier }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Part')">
-          {{ data.PartNumber.trim() }}-{{ data.ProductCode }}
-        </td>
-        <td *ngIf="columnsVisible.includes('PartTier')">
-          {{ data.ProductTier }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Zone')">{{ data.Zone }}</td>
-        <td *ngIf="columnsVisible.includes('WMSPriority')">
-          {{ data.WMSPriority }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Priority')">{{ data.Priority }}</td>
-        <td *ngIf="columnsVisible.includes('Drop')">{{ data.release }}</td>
-        <td
-          *ngIf="columnsVisible.includes('PickStart')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')"
-        >
-          {{ data.pickStart }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('PickEnd')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')"
-        >
-          {{ data.pickDone }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('PickElapsed')"
-          [ngClass]="getClass(data.pickStartNum, data.pickDoneNum, 'pick')"
-        >
-          {{ data.pickElapsed }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('QCStart')"
-          [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')"
-        >
-          {{ data.qcStart }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('QCEnd')"
-          [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')"
-        >
-          {{ data.qcDone }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('QCElapsed')"
-          [ngClass]="getClass(data.qcStartNum, data.qcDoneNum, 'qc')"
-        >
-          {{ data.qcElapsed }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('AGStart')"
-          [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')"
-        >
-          {{ data.agStart }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('AGEnd')"
-          [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')"
-        >
-          {{ data.agDone }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('AGElapsed')"
-          [ngClass]="getClass(data.agStartNum, data.agDoneNum, 'ag')"
-        >
-          {{ data.agElapsed }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('PullingStart')"
-          [ngClass]="data.pullingLevel"
-        >
-          {{ data.pullingStart }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('PullingEnd')"
-          [ngClass]="data.pullingLevel"
-        >
-          {{ data.pullingDone }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('PullingElapsed')"
-          [ngClass]="data.pullingLevel"
-        >
-          {{ data.pullingElapsed }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('DropOffStart')"
-          [ngClass]="data.dropoffLevel"
-        >
-          {{ data.dropoffStart }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('DropOffEnd')"
-          [ngClass]="data.dropoffLevel"
-        >
-          {{ data.dropoffEnd }}
-        </td>
-        <td
-          *ngIf="columnsVisible.includes('DropOffElapsed')"
-          [ngClass]="data.dropoffLevel"
-        >
-          {{ data.dropoffElapsed }}
-        </td>
-        <td *ngIf="columnsVisible.includes('Notes')">{{ data.notes }}</td>
-        <td *ngIf="columnsVisible.includes('TrackingNumber')">
-          {{ data.TrackingNumber }}
-        </td>
-      </tr>
+      <ng-template ngFor let-data [ngForOf]="table.data">
+        <tr>
+          <ng-template ngFor let-column [ngForOf]="columnsVisible">
+            <td
+              *ngIf="column.drilldown"
+              (click)="onDrilldown(data, column.name)"
+              [ngClass]="'drilldown'"
+              title="Drill down for {{
+                column.name == 'Order'
+                  ? 'Order ' + data[column.dataName] + ' '
+                  : ''
+              }}{{
+                column.name == 'Line'
+                  ? 'Order ' +
+                    data.OrderNOSI +
+                    ', Line ' +
+                    data[column.dataName] +
+                    ' '
+                  : ''
+              }}{{
+                column.name == 'ITN'
+                  ? 'Order ' +
+                    data.OrderNOSI +
+                    ', Line ' +
+                    data.OrderLineNumber +
+                    ', ITN ' +
+                    data[column.dataName] +
+                    ' '
+                  : ''
+              }}"
+              style="cursor: pointer"
+            >
+              {{ data[column.dataName] }}
+            </td>
+            <td
+              *ngIf="!column.drilldown"
+              [ngClass]="
+                getClass(
+                  data[column.eventGroup + 'StartNum'],
+                  data[column.eventGroup + 'DoneNum'],
+                  column.eventGroup
+                )
+              "
+            >
+              {{ data[column.dataName] }}
+            </td>
+          </ng-template>
+        </tr>
+      </ng-template>
     </tbody>
   </nz-table>
+  <nz-modal
+    [(nzVisible)]="drilldownVisible"
+    [nzTitle]="drilldownTitle"
+    (nzOnCancel)="drilldownVisible = false"
+    [nzContent]="drilldownBody"
+    [nzFooter]="drilldownFooter"
+    [nzWidth]="'90%'"
+    [nzBodyStyle]="drilldownBodyStyle"
+  >
+    <ng-template #drilldownBody>
+      <nz-table
+        id="excel-drilldown-table"
+        #drilldownTable
+        [nzData]="drilldownTableData"
+        [nzShowPagination]="false"
+        [nzPageSize]="1000"
+        [nzScroll]="{ x: '90%', y: drilldownHeight }"
+      >
+        <thead>
+          <tr>
+            <th
+              *ngFor="let drillColumn of drillDownColumns"
+              [nzWidth]="drillColumn.width"
+            >
+              {{ drillColumn.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of drilldownTable.data">
+            <td *ngFor="let drillColumn of drillDownColumns">
+              {{ data[drillColumn.dataName] }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </ng-template>
+    <ng-template #drilldownFooter>
+      <div style="width: 100%; text-align: center">
+        <button nz-button (click)="exportDrilldown()">Export to Excel</button>
+      </div>
+    </ng-template>
+  </nz-modal>
 </div>

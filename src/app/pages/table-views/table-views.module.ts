@@ -20,6 +20,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 import { TableViewsComponent } from './table-views.component';
 import { TableViewsRoutingModule } from './table-views.routing';
@@ -79,6 +81,8 @@ import { TemplateSettings } from './itn-lifecycle/template-settings.component';
     NzSliderModule,
     NzTabsModule,
     NzInputNumberModule,
+    NzRadioModule,
+    NzSpinModule,
   ],
   bootstrap: [TableViewsComponent],
 })
