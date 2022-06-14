@@ -34,9 +34,7 @@ export class VerifyITNMismatchComponent implements OnInit {
     private _insertLog: Insert_UserEventLogsGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
     private _service: StockingService
-  ) {
-    //
-  }
+  ) {}
 
   @ViewChild('ITNInput') ITNInput!: ElementRef;
   inputForm = this._fb.group({
@@ -63,8 +61,15 @@ export class VerifyITNMismatchComponent implements OnInit {
   yes(): void {
     this.isLoading = true;
     const ITNList = this.ITNList.map((iterator) => iterator.ITN);
+    const log = ITNList.map((iterator) => ({
+      UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+      UserEventID: sqlData.Event_Stocking_NotFound,
+      InventoryTrackingNumber: iterator,
+      Message: ``,
+    }));
     this.notFound$ = this._noFound
       .mutate({
+        log,
         ITNList,
         DC: environment.DistributionCenter,
       })
@@ -116,6 +121,14 @@ export class VerifyITNMismatchComponent implements OnInit {
       })
     ) {
       this.ITNList.splice(target, 1);
+      this.submit$ = this._insertLog.mutate({
+        log: {
+          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserEventID: sqlData.Event_Stocking_Stocking_verifyITN,
+          InventoryTrackingNumber: this.inputForm.value.ITNInput,
+          Message: ``,
+        },
+      });
       this.alertType = 'success';
       this.alertMessage = `ITN ${this.inputForm.value.ITNInput} is found.`;
       this.inputForm.reset();

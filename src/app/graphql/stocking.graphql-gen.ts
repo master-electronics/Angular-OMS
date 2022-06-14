@@ -1359,10 +1359,11 @@ export type MoveInventoryToContainerForStockingMutation = { __typename?: 'Mutati
 export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
   ITNList?: Types.InputMaybe<Array<Types.Scalars['String']> | Types.Scalars['String']>;
   DC: Types.Scalars['String'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 
-export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null };
+export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
@@ -1586,12 +1587,15 @@ export const MoveInventoryToContainerForStockingDocument = gql`
     }
   }
 export const UpdateNotFoundForStockingDocument = gql`
-    mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
+    mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!, $log: [insertUserEventLog]!) {
   updateInventoryList(
     ITNList: $ITNList
     DistributionCenter: $DC
     Inventory: {NotFound: true}
   )
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
     `;
 

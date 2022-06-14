@@ -137,12 +137,19 @@ mutation moveInventoryToContainerForStocking(
   )
 }
 
-mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
+mutation updateNotFoundForStocking(
+  $ITNList: [String!]
+  $DC: String!
+  $log: [insertUserEventLog]!
+) {
   updateInventoryList(
     ITNList: $ITNList
     DistributionCenter: $DC
     Inventory: { NotFound: true }
   )
+  insertUserEventLogs(log: $log) {
+    _id
+  }
 }
 
 query fetchInventoryInUserContainer($ContainerID: Int!) {

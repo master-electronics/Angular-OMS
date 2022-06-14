@@ -30,6 +30,7 @@ export class StockingLocationComponent implements OnInit {
   alertMessage = '';
   title = '';
   containerID: number;
+  targetLocation: string;
   verifyLocation$ = new Observable();
   verifyITN$ = new Observable();
   init$ = new Observable();
@@ -181,6 +182,7 @@ export class StockingLocationComponent implements OnInit {
         }),
         switchMap((res) => {
           this.containerID = res.data.findContainer[0]._id;
+          this.targetLocation = Barcode;
           return this._insertLog.mutate({
             log: {
               UserID: Number(
@@ -188,7 +190,7 @@ export class StockingLocationComponent implements OnInit {
               ),
               UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
               InventoryTrackingNumber: this.currentITN.ITN,
-              Message: `Location: ${Barcode}`,
+              Message: `${Barcode}`,
             },
           });
         }),
@@ -227,7 +229,7 @@ export class StockingLocationComponent implements OnInit {
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           UserEventID: sqlData.Event_Stocking_StockingReLocation_Done,
           InventoryTrackingNumber: this.ITNInfo.ITN,
-          Message: `${this.locationForm.value.location.trim()}`,
+          Message: `${this.targetLocation}`,
         },
       })
       .pipe(
