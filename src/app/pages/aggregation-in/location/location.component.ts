@@ -31,8 +31,6 @@ import {
   UpdateAfterAgOutGQL,
   VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import {
   AggregationInService,
   endContainer,
@@ -91,8 +89,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private _updateAfterAgOut: UpdateAfterAgOutGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _verifyContainer: VerifyContainerForAggregationInGQL,
-    private _gtmService: GoogleTagManagerService,
-    private _authService: AuthenticationService,
     private _countOrderItns: CountOrderItnsFromMerpGQL,
     private _agInService: AggregationInService
   ) {

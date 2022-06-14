@@ -23,8 +23,6 @@ import {
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, tap } from 'rxjs/operators';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
@@ -109,9 +107,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateAfterQc: UpdateAfterQcVerifyGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
-    private holdQCOrder: HoldQcOrderGQL,
-    private gtmService: GoogleTagManagerService,
-    private authService: AuthenticationService
+    private holdQCOrder: HoldQcOrderGQL
   ) {
     this.titleService.setTitle('qc/verifypack');
   }

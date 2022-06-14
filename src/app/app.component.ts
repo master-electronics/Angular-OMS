@@ -8,7 +8,6 @@ import {
   RouterEvent,
 } from '@angular/router';
 
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { filter, map } from 'rxjs/operators';
 import { AuthenticationService } from './shared/services/authentication.service';
 
@@ -19,11 +18,7 @@ import { AuthenticationService } from './shared/services/authentication.service'
 export class AppComponent implements OnInit {
   isLoading = false;
 
-  constructor(
-    private router: Router,
-    private gtmService: GoogleTagManagerService,
-    private auth: AuthenticationService
-  ) {
+  constructor(private router: Router, private auth: AuthenticationService) {
     this.router.events
       .pipe(
         filter(
@@ -40,11 +35,6 @@ export class AppComponent implements OnInit {
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         map((event) => {
-          const gtmTag = {
-            event: 'pageNav',
-            userID: this.auth.userName,
-          };
-          this.gtmService.pushTag(gtmTag);
           return event;
         })
       )

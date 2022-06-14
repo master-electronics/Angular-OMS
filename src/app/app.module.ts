@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import {
   ApolloModule,
   APOLLO_NAMED_OPTIONS,
@@ -17,7 +17,6 @@ import { PlatformModule } from '@angular/cdk/platform';
 import { AppRoutingModule } from './app.routing';
 import { SharedComponentModule } from './components/shared-component.module';
 import { SharedUtilityModule } from './shared/shared-utility.module';
-import { GoogleTagManagerModule } from 'angular-google-tag-manager';
 import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interceptor';
 
 import { AppComponent } from './app.component';
@@ -47,6 +46,7 @@ registerLocaleData(en);
 
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
+import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
   declarations: [
@@ -70,9 +70,6 @@ import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
     AppRoutingModule,
     SharedComponentModule,
     SharedUtilityModule,
-    GoogleTagManagerModule.forRoot({
-      id: environment.GTM_ID,
-    }),
     IconsProviderModule,
     NzButtonModule,
     NzInputModule,
@@ -114,6 +111,7 @@ import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
       },
       deps: [HttpLink],
     },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: NZ_I18N, useValue: en_US },
   ],
   bootstrap: [AppComponent],

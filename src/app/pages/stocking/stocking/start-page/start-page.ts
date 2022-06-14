@@ -1,3 +1,4 @@
+import { Howl } from 'howler';
 import {
   AfterViewInit,
   Component,
@@ -36,6 +37,9 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   verify$ = new Observable();
   init$ = new Observable();
   log$ = new Observable();
+  sound = new Howl({
+    src: ['../../../../../assets/audio/warning.wav'],
+  });
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -112,8 +116,8 @@ export class StartPageComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.alertMessage = '';
-    if (!this.inputForm.get('barcode').valid || this.isLoading) {
-      this.barcodeInput.nativeElement.select();
+    if (this.inputForm.get('barcode').invalid || this.isLoading) {
+      this.barcodeInput?.nativeElement.select();
       return;
     }
     if (ITNBarcodeRegex.test(this.inputForm.value.barcode.trim())) {
@@ -278,14 +282,12 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this._router.navigate(['/stocking/stocking/verify']);
       return;
     } else {
-      const log = this._service.ITNListInContainer.map((item) => {
-        return {
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
-          UserEventID: sqlData.Event_Stocking_StockingMismatch_Start,
-          InventoryTrackingNumber: item.ITN,
-          Message: ``,
-        };
-      });
+      const log = this._service.ITNListInContainer.map((item) => ({
+        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        UserEventID: sqlData.Event_Stocking_StockingMismatch_Start,
+        InventoryTrackingNumber: item.ITN,
+        Message: ``,
+      }));
       this.isLoading = true;
       this.log$ = this._insertLog
         .mutate({
@@ -294,6 +296,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
         .pipe(
           map(() => {
             this.isLoading = false;
+            this.sound.play();
             this._router.navigate(['/stocking/stocking/mismatch']);
           }),
           catchError((err) => {

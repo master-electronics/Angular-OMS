@@ -22,8 +22,6 @@ import {
 } from '../aggregation-in.server';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
   selector: 'verify-itn',
@@ -53,9 +51,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _agInService: AggregationInService,
     private _updateSql: UpdateSqlAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,
-    private _updateMerpOrder: UpdateMerpOrderStatusGQL,
-    private _gtmService: GoogleTagManagerService,
-    private _authService: AuthenticationService
+    private _updateMerpOrder: UpdateMerpOrderStatusGQL
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
