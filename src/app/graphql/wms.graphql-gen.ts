@@ -195,6 +195,7 @@ export type ItnUserLevels = {
 export type ItnUserTemplate = {
   __typename?: 'ITNUserTemplate';
   DefaultPagination?: Maybe<Scalars['Int']>;
+  DefaultTemplate?: Maybe<Scalars['Boolean']>;
   ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   SelectedColumns?: Maybe<Scalars['String']>;
   TemplateName?: Maybe<Scalars['String']>;
@@ -205,6 +206,7 @@ export type ItnUserTemplate = {
 export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
+  clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
@@ -251,6 +253,11 @@ export type MutationChangeQcLineInfoArgs = {
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
   ROHS: Scalars['String'];
+};
+
+
+export type MutationClearItnUserDefaultTemplateArgs = {
+  UserID: Scalars['Int'];
 };
 
 
@@ -359,6 +366,7 @@ export type MutationInsertItnUserLevelsArgs = {
 
 
 export type MutationInsertItnUserTemplateArgs = {
+  DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
@@ -417,6 +425,7 @@ export type MutationUpdateItnUserLevelsArgs = {
 
 export type MutationUpdateItnUserTemplateArgs = {
   DefaultPagination?: InputMaybe<Scalars['Int']>;
+  DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];

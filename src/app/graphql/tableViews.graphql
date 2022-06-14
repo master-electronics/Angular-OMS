@@ -285,6 +285,7 @@ query findITNTemplate($_id: Int) {
     TemplateName
     SelectedColumns
     DefaultPagination
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -302,6 +303,7 @@ query findITNTemplates($userId: Int) {
     UserID
     TemplateName
     SelectedColumns
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -358,10 +360,16 @@ mutation update_ITNUserLevels($itnUserLevels: [updateITNUserLevelsInfo]!, $_id: 
 }
 
 mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String,
-  $defaultPagination: Int) {
+  $defaultPagination: Int, $defaultTemplate: Boolean) {
   updateITNUserTemplate(_id: $_id, TemplateName: $templateName, SelectedColumns: $selectedColumns, 
-    DefaultPagination: $defaultPagination) {
+    DefaultPagination: $defaultPagination, DefaultTemplate: $defaultTemplate) {
       _id
+  }
+}
+
+mutation clear_ITNUserDefaultTemplate($userID: Int!) {
+  clearITNUserDefaultTemplate(UserID: $userID) {
+    _id
   }
 }
 
@@ -383,8 +391,10 @@ mutation insert_ITNLevelLimit($templateID: Int, $eventName: String, $eventID: In
   }
 }
 
-mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String) {
-  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName, SelectedColumns: $selectedColumns) {
+mutation insert_ITNUserTemplate($userID: Int, $templateName: String, 
+  $selectedColumns: String, $defaultTemplate: Boolean) {
+  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName, 
+  SelectedColumns: $selectedColumns, DefaultTemplate: $defaultTemplate) {
     _id
   }
 }

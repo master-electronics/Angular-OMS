@@ -52,12 +52,14 @@ export class ITNLifecycleComponent implements OnInit {
   selectedTemplate: Template;
   templateId: number;
   templateNameValue: string;
+  templateIdName: string;
   limits: LevelLimit[];
   defaultPaginationValue: string;
   customPaginationValue: string;
   paging: boolean;
   paginationValues: number[];
   pageSize: number;
+  pageNumber: number;
   screenWidth: any;
   screenHeight: any;
   drilldownHeight: any;
@@ -219,6 +221,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.paginationValues = [100, 50, 1000, 500];
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);
     this.pageSize = 50;
+    this.pageNumber = 1;
     this.filters = [];
 
     this.drilldownBodyStyle = { height: this.screenHeight };
@@ -274,6 +277,13 @@ export class ITNLifecycleComponent implements OnInit {
               this.templates.push(template);
 
               this.templateNames.push(res.data.findITNTemplates[i].TemplateName);
+  
+              if (res.data.findITNTemplates[i].DefaultTemplate) {
+                this.templateIdName = res.data.findITNTemplates[i]._id.toString()+","+res.data.findITNTemplates[i].TemplateName;
+                this.templateId = res.data.findITNTemplates[i]._id;
+                this.templateNameValue = res.data.findITNTemplates[i].TemplateName;
+                this.onTemplateChange(this.templateId.toString()+","+this.templateNameValue);
+              }
             }
 
             if (!this.templateId || this.templates.length < 1) {
@@ -427,15 +437,15 @@ export class ITNLifecycleComponent implements OnInit {
             result.ParentITN = (result.ParentITN)?result.ParentITN.trim().toUpperCase():"";
             result.PartNumber = (result.PartNumber)?result.PartNumber.trim().toUpperCase():"";
             result.ProductCode = (result.ProductCode)?result.ProductCode.trim().toUpperCase():"";
-            result.lineAllocationUser = (result.lineAllocationUser)?result.lineAllocationUser.trim().toUpperCase():"";
-            result.pickStartUser = (result.pickStartUser)?result.pickStartUser.trim().toUpperCase():"";
-            result.pickDoneUser = (result.pickDoneUser)?result.pickDoneUser.trim().toUpperCase():"";
-            result.dropoffUser = (result.dropoffUser)?result.dropoffUser.trim().toUpperCase():"";
-            result.qcStartUser = (result.qcStartUser)?result.qcStartUser.trim().toUpperCase():"";
-            result.qcDoneUser = (result.qcDoneUser)?result.qcDoneUser.trim().toUpperCase():"";
-            result.agStartUser = (result.agStartUser)?result.agStartUser.trim().toUpperCase():"";
-            result.agDoneUser = (result.agDoneUser)?result.agDoneUser.trim().toUpperCase():"";
-            result.packLineUser = (result.packLineUser)?result.packLineUser.trim().toUpperCase():"";
+            result.lineAllocationUser = (result.lineAllocationUser)?result.lineAllocationUser.trim():"";
+            result.pickStartUser = (result.pickStartUser)?result.pickStartUser.trim():"";
+            result.pickDoneUser = (result.pickDoneUser)?result.pickDoneUser.trim():"";
+            result.dropoffUser = (result.dropoffUser)?result.dropoffUser.trim():"";
+            result.qcStartUser = (result.qcStartUser)?result.qcStartUser.trim():"";
+            result.qcDoneUser = (result.qcDoneUser)?result.qcDoneUser.trim():"";
+            result.agStartUser = (result.agStartUser)?result.agStartUser.trim():"";
+            result.agDoneUser = (result.agDoneUser)?result.agDoneUser.trim():"";
+            result.packLineUser = (result.packLineUser)?result.packLineUser.trim():"";
 
             if (item.lineAllocation) {
               result.lineAllocation = this.timeFormating(item.lineAllocation);
@@ -537,6 +547,7 @@ export class ITNLifecycleComponent implements OnInit {
           });
 
           this.tableDataDisplay = this.tableData;
+          this.pageNumber = 1;
         }),
         catchError((error) => {
           this.isLoading = false;
@@ -545,6 +556,11 @@ export class ITNLifecycleComponent implements OnInit {
                 
       );
 
+  }
+
+  test(): void {
+    this.pageNumber = 1;
+    alert(this.pageNumber);
   }
 
   //add user entered filter info to the fitlers array
@@ -568,6 +584,7 @@ export class ITNLifecycleComponent implements OnInit {
     }
 
     this.filterResults();
+    this.pageNumber = 1;
 
   }
 
@@ -583,6 +600,7 @@ export class ITNLifecycleComponent implements OnInit {
     }
 
     this.filterResults();
+    this.pageNumber = 1;
 
   }
 
@@ -593,7 +611,7 @@ export class ITNLifecycleComponent implements OnInit {
     for (let i = 0; i < this.filters.length; i++) {
       this.tableDataDisplay = this.tableDataDisplay.filter(
         item =>
-          item[this.filters[i].filterColumn].toString().indexOf(this.filters[i].filterValue) !== -1
+          item[this.filters[i].filterColumn].toString().toUpperCase().indexOf(this.filters[i].filterValue.toUpperCase()) !== -1
       );
     }
 
@@ -830,6 +848,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.templateId = Number(args[0]);
     this.templateNameValue = args[1];
 
+    this.templateIdName = this.templateId.toString()+","+this.templateNameValue
     this.paginationValues = [100, 50, 1000, 500];
     this.paginationValues = this.paginationValues.sort((n1,n2) => n1 - n2);
 

@@ -9,7 +9,7 @@
             nzId="startDatePicker" (nzOnOpenChange)="onStartDateChange($event)" notvalid="false"></nz-date-picker>
           <nz-date-picker formControlName="endDatePicker" nzPlaceHolder="End Date"
             nzId="endDatePicker" (nzOnOpenChange)="onEndDateChange($event)"></nz-date-picker>
-          <nz-select class="templateSelect" [ngModel]="" [ngModelOptions]="{ standalone: true }"
+          <nz-select class="templateSelect" [(ngModel)]="templateIdName" [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
             <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"
               nzLabel="{{ template.name }}"></nz-option>
@@ -36,7 +36,7 @@
   <div class="progress" *ngIf="isLoading" >
     <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
   </div>
-  <nz-table id="excel-table" #table [nzPageSize]="pageSize" 
+  <nz-table id="excel-table" #table [nzPageSize]="pageSize" [(nzPageIndex)]="pageNumber"
     [nzFrontPagination]="paging" nzShowSizeChanger [nzData]="tableDataDisplay" nzBordered
     [nzPageSizeOptions]="paginationValues" [nzScroll]="{ y: screenHeight }"
     (nzPageIndexChange)="scrollToTop()">
@@ -59,7 +59,7 @@
               <input
                 type="text"
                 nz-input
-                oninput="this.value = this.value.toUpperCase()"
+                oninput="this.value = this.value"
                 placeholder="{{ column.title }}"
                 class="col-span-2"
                 #searchInput
