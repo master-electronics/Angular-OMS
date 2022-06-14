@@ -176,22 +176,31 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     releaseOrder
     releaseLine
     lineAllocation
+    lineAllocationUser
     lineCancel
     orderCancel
     pickStart
+    pickStartUser
     pickDone
+    pickDoneUser
     splitDone
     qcStart
+    qcStartUser
     qcDone
+    qcDoneUser
     agStart
+    agStartUser
     agDone
+    agDoneUser
     pullingStart
     pullingDone
     dropoffStart
     dropoffLine
+    dropoffUser
     dropoffDone
     packStart
     packLine
+    packLineUser
     packReject
     packDone
     ParentITN

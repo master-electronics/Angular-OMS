@@ -427,6 +427,15 @@ export class ITNLifecycleComponent implements OnInit {
             result.ParentITN = (result.ParentITN)?result.ParentITN.trim().toUpperCase():"";
             result.PartNumber = (result.PartNumber)?result.PartNumber.trim().toUpperCase():"";
             result.ProductCode = (result.ProductCode)?result.ProductCode.trim().toUpperCase():"";
+            result.lineAllocationUser = (result.lineAllocationUser)?result.lineAllocationUser.trim().toUpperCase():"";
+            result.pickStartUser = (result.pickStartUser)?result.pickStartUser.trim().toUpperCase():"";
+            result.pickDoneUser = (result.pickDoneUser)?result.pickDoneUser.trim().toUpperCase():"";
+            result.dropoffUser = (result.dropoffUser)?result.dropoffUser.trim().toUpperCase():"";
+            result.qcStartUser = (result.qcStartUser)?result.qcStartUser.trim().toUpperCase():"";
+            result.qcDoneUser = (result.qcDoneUser)?result.qcDoneUser.trim().toUpperCase():"";
+            result.agStartUser = (result.agStartUser)?result.agStartUser.trim().toUpperCase():"";
+            result.agDoneUser = (result.agDoneUser)?result.agDoneUser.trim().toUpperCase():"";
+            result.packLineUser = (result.packLineUser)?result.packLineUser.trim().toUpperCase():"";
 
             if (item.lineAllocation) {
               result.lineAllocation = this.timeFormating(item.lineAllocation);
