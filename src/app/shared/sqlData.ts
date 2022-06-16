@@ -41,11 +41,14 @@ export const sqlData = {
   Event_Pulling_PullITN: 402,
   Event_Pulling_SelectLocation: 403,
   Event_Pulling_NotFound: 404,
+  // drop off
   Event_DropOff_Start: 500,
   Event_DropOff_SelectITN: 501,
   Event_DropOff_Done: 502,
   Event_DropOff_SelectCart: 503,
-  Event_Release_Done: 600,
+  Event_DropOff_ITN_Skipped: 504,
+  // release
+  Event_Release_Order: 600,
   // stocking
   Event_Stocking_ScanLocation: 710,
   Event_Stocking_ScanITN: 711,
