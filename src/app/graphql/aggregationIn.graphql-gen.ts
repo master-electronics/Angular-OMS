@@ -215,6 +215,7 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deletePrinter?: Maybe<Printer>;
   deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder?: Maybe<Order>;
   findOrCreateOrderLine?: Maybe<OrderLine>;
@@ -225,6 +226,7 @@ export type Mutation = {
   insertITNUserColumns?: Maybe<ItnUserColumns>;
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
+  insertPrinter?: Maybe<Printer>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
@@ -242,6 +244,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updatePrinter?: Maybe<Printer>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateValueMap?: Maybe<ValueMap>;
 };
@@ -314,6 +317,11 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
 };
 
 
+export type MutationDeletePrinterArgs = {
+  _id: Scalars['Int'];
+};
+
+
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
@@ -370,6 +378,14 @@ export type MutationInsertItnUserTemplateArgs = {
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationInsertPrinterArgs = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Orientation?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -487,6 +503,15 @@ export type MutationUpdateOrderLineDetailArgs = {
 };
 
 
+export type MutationUpdatePrinterArgs = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Orientation?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+
 export type MutationUpdateUserInfoArgs = {
   Name?: InputMaybe<Scalars['String']>;
   UserInfo: UpdateUserInfo;
@@ -573,6 +598,15 @@ export type OrderStatus = {
   _id: Scalars['Int'];
 };
 
+export type Printer = {
+  __typename?: 'Printer';
+  Active?: Maybe<Scalars['Boolean']>;
+  Description?: Maybe<Scalars['String']>;
+  Name?: Maybe<Scalars['String']>;
+  Orientation?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Product = {
   __typename?: 'Product';
   PartNumber: Scalars['String'];
@@ -601,6 +635,7 @@ export type Query = {
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
@@ -685,6 +720,11 @@ export type QueryFetchOrderViewArgs = {
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+};
+
+
+export type QueryFetchPrinterListArgs = {
+  includeInactive?: InputMaybe<Scalars['Boolean']>;
 };
 
 

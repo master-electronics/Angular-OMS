@@ -79,6 +79,13 @@ const routes: Routes = [
             (m) => m.ValueMappingModule
           ),
       },
+      {
+        path: 'printermaintenance',
+        loadChildren: () =>
+          import('./pages/printer-maintenance/printer-maintenance.module').then(
+            (m) => m.PrinterMaintenanceModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

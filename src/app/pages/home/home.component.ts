@@ -27,6 +27,7 @@ export class HomeComponent {
     },
     { link: '/printitn', front: '', highlight: 'P', end: 'rint ITN' },
     { link: '/valuemap', front: '', highlight: 'V', end: 'alue Mapping'},
+    { link: '/printermaintenance', front: 'Printer ', highlight: 'M', end: 'aintenance'},
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;
