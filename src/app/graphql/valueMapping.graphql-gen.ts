@@ -1496,120 +1496,124 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type VerifyItnForSortingQueryVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
+export type FetchValueMapViewQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchValueMapViewQuery = { __typename?: 'Query', fetchValueMapView?: Array<{ __typename?: 'valueMap', _id?: number | null, SourceSystemName?: string | null, SourceTableName?: string | null, SourceColumnName?: string | null, TargetSystemName?: string | null, TargetTableName?: string | null, TargetColumnName?: string | null, SourceValue?: string | null, TargetValue?: string | null } | null> | null };
+
+export type FetchEntityListQueryVariables = Types.Exact<{
+  type?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
+export type FetchEntityListQuery = { __typename?: 'Query', fetchEntityList?: Array<{ __typename?: 'entity', SystemID?: number | null, SystemName?: string | null, TableID?: number | null, TableName?: string | null, ColumnID?: number | null, ColumnName?: string | null } | null> | null };
 
-export type VerifyContainerForSortingQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
+export type InsertValueMapMutationVariables = Types.Exact<{
+  sourceSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceValue?: Types.InputMaybe<Types.Scalars['String']>;
+  targetValue?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
+export type InsertValueMapMutation = { __typename?: 'Mutation', insertValueMap?: { __typename?: 'valueMap', _id?: number | null, SourceSystemName?: string | null, SourceTableName?: string | null, SourceColumnName?: string | null, TargetSystemName?: string | null, TargetTableName?: string | null, TargetColumnName?: string | null, SourceValue?: string | null, TargetValue?: string | null } | null };
 
-export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
-  ProductID: Types.Scalars['Int'];
-  limit?: Types.InputMaybe<Types.Scalars['Int']>;
+export type UpdateValueMapMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  sourceSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceValue?: Types.InputMaybe<Types.Scalars['String']>;
+  targetValue?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type FetchSuggetionLocationForSortingQuery = { __typename?: 'Query', findProduct?: Array<{ __typename?: 'Product', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Container: { __typename?: 'Container', Barcode: string, Zone?: number | null } } | null> | null } | null> | null };
+export type UpdateValueMapMutation = { __typename?: 'Mutation', updateValueMap?: { __typename?: 'valueMap', _id?: number | null, SourceSystemName?: string | null, SourceTableName?: string | null, SourceColumnName?: string | null, TargetSystemName?: string | null, TargetTableName?: string | null, TargetColumnName?: string | null, SourceValue?: string | null, TargetValue?: string | null } | null };
 
-export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-  InventoryID: Types.Scalars['Int'];
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+export type DeleteValueMapMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
 }>;
 
 
-export type UpdateInventoryAfterSortingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+export type DeleteValueMapMutation = { __typename?: 'Mutation', deleteValueMap?: { __typename?: 'valueMap', _id?: number | null } | null };
 
-export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-}>;
+export const FetchValueMapViewDocument = gql`
+    query fetchValueMapView {
+  fetchValueMapView {
+    _id
+    SourceSystemName
+    SourceTableName
+    SourceColumnName
+    TargetSystemName
+    TargetTableName
+    TargetColumnName
+    SourceValue
+    TargetValue
+  }
+}
+    `;
 
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchValueMapViewGQL extends Apollo.Query<FetchValueMapViewQuery, FetchValueMapViewQueryVariables> {
+    document = FetchValueMapViewDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchEntityListDocument = gql`
+    query fetchEntityList($type: String) {
+  fetchEntityList(type: $type) {
+    SystemID
+    SystemName
+    TableID
+    TableName
+    ColumnID
+    ColumnName
+  }
+}
+    `;
 
-export type FetchItnInfoByContainerforStockingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number } } | null> | null } | null> | null };
-
-export type VerifyItnForStockingQueryVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-}>;
-
-
-export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
-
-export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
-  ContainerTypeID: Types.Scalars['Int'];
-}>;
-
-
-export type FindorCreateUserContainerForStockingMutation = { __typename?: 'Mutation', findOrCreateContainer?: { __typename?: 'Container', _id: number } | null };
-
-export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type MoveInventoryToContainerForStockingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
-
-export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
-  ITNList?: Types.InputMaybe<Array<Types.Scalars['String']> | Types.Scalars['String']>;
-  DC: Types.Scalars['String'];
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
-}>;
-
-
-export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
-
-export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type FetchInventoryInUserContainerQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, InventoryTrackingNumber: string } | null> | null } | null> | null };
-
-export const VerifyItnForSortingDocument = gql`
-    query verifyITNForSorting($ITN: String!, $DC: String!) {
-  findInventory(
-    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchEntityListGQL extends Apollo.Query<FetchEntityListQuery, FetchEntityListQueryVariables> {
+    document = FetchEntityListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertValueMapDocument = gql`
+    mutation insertValueMap($sourceSystemName: String, $sourceTableName: String, $sourceColumnName: String, $targetSystemName: String, $targetTableName: String, $targetColumnName: String, $sourceValue: String, $targetValue: String) {
+  insertValueMap(
+    SourceSystemName: $sourceSystemName
+    SourceTableName: $sourceTableName
+    SourceColumnName: $sourceColumnName
+    TargetSystemName: $targetSystemName
+    TargetTableName: $targetTableName
+    TargetColumnName: $targetColumnName
+    SourceValue: $sourceValue
+    TargetValue: $targetValue
   ) {
     _id
-    QuantityOnHand
-    Container {
-      ContainerType {
-        IsMobile
-      }
-    }
-    Product {
-      _id
-      ProductCode {
-        ProductCode
-      }
-      DCPRODUCTs {
-        Velocity
-      }
-      PartNumber
-    }
-    ORDERLINEDETAILs {
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      OrderLine {
-        OrderLineNumber
-      }
-    }
+    SourceSystemName
+    SourceTableName
+    SourceColumnName
+    TargetSystemName
+    TargetTableName
+    TargetColumnName
+    SourceValue
+    TargetValue
   }
 }
     `;
@@ -1617,23 +1621,35 @@ export const VerifyItnForSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyItnForSortingGQL extends Apollo.Query<VerifyItnForSortingQuery, VerifyItnForSortingQueryVariables> {
-    document = VerifyItnForSortingDocument;
+  export class InsertValueMapGQL extends Apollo.Mutation<InsertValueMapMutation, InsertValueMapMutationVariables> {
+    document = InsertValueMapDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const VerifyContainerForSortingDocument = gql`
-    query verifyContainerForSorting($Barcode: String!, $DistrubutionCenter: String!) {
-  findContainer(
-    Container: {Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+export const UpdateValueMapDocument = gql`
+    mutation updateValueMap($_id: Int!, $sourceSystemName: String, $sourceTableName: String, $sourceColumnName: String, $targetSystemName: String, $targetTableName: String, $targetColumnName: String, $sourceValue: String, $targetValue: String) {
+  updateValueMap(
+    _id: $_id
+    SourceSystemName: $sourceSystemName
+    SourceTableName: $sourceTableName
+    SourceColumnName: $sourceColumnName
+    TargetSystemName: $targetSystemName
+    TargetTableName: $targetTableName
+    TargetColumnName: $targetColumnName
+    SourceValue: $sourceValue
+    TargetValue: $targetValue
   ) {
     _id
-    ContainerTypeID
-    ContainerType {
-      IsMobile
-    }
+    SourceSystemName
+    SourceTableName
+    SourceColumnName
+    TargetSystemName
+    TargetTableName
+    TargetColumnName
+    SourceValue
+    TargetValue
   }
 }
     `;
@@ -1641,41 +1657,16 @@ export const VerifyContainerForSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyContainerForSortingGQL extends Apollo.Query<VerifyContainerForSortingQuery, VerifyContainerForSortingQueryVariables> {
-    document = VerifyContainerForSortingDocument;
+  export class UpdateValueMapGQL extends Apollo.Mutation<UpdateValueMapMutation, UpdateValueMapMutationVariables> {
+    document = UpdateValueMapDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchSuggetionLocationForSortingDocument = gql`
-    query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
-  findProduct(Product: {_id: $ProductID}, limit: $limit) {
-    INVENTORies {
-      QuantityOnHand
-      Container {
-        Barcode
-        Zone
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<FetchSuggetionLocationForSortingQuery, FetchSuggetionLocationForSortingQueryVariables> {
-    document = FetchSuggetionLocationForSortingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateInventoryAfterSortingDocument = gql`
-    mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!, $log: [insertUserEventLog]!) {
-  updateInventory(Inventory: {ContainerID: $ContainerID}, _id: $InventoryID)
-  insertUserEventLogs(log: $log) {
+export const DeleteValueMapDocument = gql`
+    mutation deleteValueMap($_id: Int!) {
+  deleteValueMap(_id: $_id) {
     _id
   }
 }
@@ -1684,154 +1675,8 @@ export const UpdateInventoryAfterSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<UpdateInventoryAfterSortingMutation, UpdateInventoryAfterSortingMutationVariables> {
-    document = UpdateInventoryAfterSortingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchItnInfoByContainerforStockingDocument = gql`
-    query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
-  findContainer(Container: {Barcode: $Barcode, DistributionCenter: $DC}) {
-    _id
-    ContainerType {
-      IsMobile
-    }
-    INVENTORies {
-      _id
-      InventoryTrackingNumber
-      QuantityOnHand
-      Product {
-        _id
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<FetchItnInfoByContainerforStockingQuery, FetchItnInfoByContainerforStockingQueryVariables> {
-    document = FetchItnInfoByContainerforStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const VerifyItnForStockingDocument = gql`
-    query verifyITNForStocking($ITN: String!, $DC: String!) {
-  findInventory(
-    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
-  ) {
-    _id
-    QuantityOnHand
-    Product {
-      _id
-    }
-    ORDERLINEDETAILs {
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      OrderLine {
-        OrderLineNumber
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class VerifyItnForStockingGQL extends Apollo.Query<VerifyItnForStockingQuery, VerifyItnForStockingQueryVariables> {
-    document = VerifyItnForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FindorCreateUserContainerForStockingDocument = gql`
-    mutation findorCreateUserContainerForStocking($Barcode: String!, $DistrubutionCenter: String!, $ContainerTypeID: Int!) {
-  findOrCreateContainer(
-    Container: {ContainerTypeID: $ContainerTypeID, Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
-  ) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindorCreateUserContainerForStockingGQL extends Apollo.Mutation<FindorCreateUserContainerForStockingMutation, FindorCreateUserContainerForStockingMutationVariables> {
-    document = FindorCreateUserContainerForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const MoveInventoryToContainerForStockingDocument = gql`
-    mutation moveInventoryToContainerForStocking($ITN: String!, $DC: String!, $ContainerID: Int!) {
-  updateInventory(
-    Inventory: {ContainerID: $ContainerID}
-    DistributionCenter: $DC
-    InventoryTrackingNumber: $ITN
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<MoveInventoryToContainerForStockingMutation, MoveInventoryToContainerForStockingMutationVariables> {
-    document = MoveInventoryToContainerForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateNotFoundForStockingDocument = gql`
-    mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!, $log: [insertUserEventLog]!) {
-  updateInventoryList(
-    ITNList: $ITNList
-    DistributionCenter: $DC
-    Inventory: {NotFound: true}
-  )
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<UpdateNotFoundForStockingMutation, UpdateNotFoundForStockingMutationVariables> {
-    document = UpdateNotFoundForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchInventoryInUserContainerDocument = gql`
-    query fetchInventoryInUserContainer($ContainerID: Int!) {
-  findContainer(Container: {_id: $ContainerID}) {
-    INVENTORies {
-      QuantityOnHand
-      InventoryTrackingNumber
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchInventoryInUserContainerGQL extends Apollo.Query<FetchInventoryInUserContainerQuery, FetchInventoryInUserContainerQueryVariables> {
-    document = FetchInventoryInUserContainerDocument;
+  export class DeleteValueMapGQL extends Apollo.Mutation<DeleteValueMapMutation, DeleteValueMapMutationVariables> {
+    document = DeleteValueMapDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

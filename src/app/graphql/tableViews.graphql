@@ -156,7 +156,9 @@ query findOrderByStatus($PriorityPinkPaper: Boolean, $StatusID: Int!) {
   ) {
     OrderNumber
     NOSINumber
-    CustomerNumber
+    Customer {
+      CustomerNumber
+    }
     ShipmentMethod {
       PriorityPinkPaper
       ShippingMethod
@@ -184,22 +186,31 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     releaseOrder
     releaseLine
     lineAllocation
+    lineAllocationUser
     lineCancel
     orderCancel
     pickStart
+    pickStartUser
     pickDone
+    pickDoneUser
     splitDone
     qcStart
+    qcStartUser
     qcDone
+    qcDoneUser
     agStart
+    agStartUser
     agDone
+    agDoneUser
     pullingStart
     pullingDone
     dropoffStart
     dropoffLine
+    dropoffUser
     dropoffDone
     packStart
     packLine
+    packLineUser
     packReject
     packDone
     ParentITN
@@ -208,11 +219,18 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
   }
 }
 
-query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, 
-  $orderLineNumber: Int, $internalTrackingNumber: String) {
-  fetchITNLifecycleDrillDown(orderNumber: $orderNumber, nosiNumber: $nosiNumber, 
-    orderLineNumber: $orderLineNumber,
-    internalTrackingNumber: $internalTrackingNumber) {
+query fetchITNLifecycleDrillDown(
+  $orderNumber: String!
+  $nosiNumber: String
+  $orderLineNumber: Int
+  $internalTrackingNumber: String
+) {
+  fetchITNLifecycleDrillDown(
+    orderNumber: $orderNumber
+    nosiNumber: $nosiNumber
+    orderLineNumber: $orderLineNumber
+    internalTrackingNumber: $internalTrackingNumber
+  ) {
     OrderNumber
     NOSINumber
     InternalTrackingNumber
@@ -241,33 +259,6 @@ query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String,
   }
 }
 
-query fetchOrderDetailforitnView($Order: searchOrder!) {
-  findOrder(Order: $Order) {
-    OrderNumber
-    NOSINumber
-    ORDERLINEDETAILs {
-      InternalTrackingNumber
-      Status {
-        Name
-      }
-      OrderLine {
-        ProductCode
-        PartNumber
-      }
-      Quantity
-      Container {
-        Barcode
-        Warehouse
-        Row
-        Aisle
-        Section
-        Shelf
-        ShelfDetail
-      }
-    }
-  }
-}
-
 query fetchITNUserColumns($userId: String) {
   fetchITNUserColumns(userId: $userId) {
     _id
@@ -284,6 +275,7 @@ query findITNTemplate($_id: Int) {
     TemplateName
     SelectedColumns
     DefaultPagination
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -301,6 +293,7 @@ query findITNTemplates($userId: Int) {
     UserID
     TemplateName
     SelectedColumns
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -362,25 +355,27 @@ mutation update_ITNUserLevels(
   }
 }
 
-<<<<<<< HEAD
 mutation update_ITNUserTemplate(
   $_id: Int!
   $templateName: String
   $selectedColumns: String
+  $defaultPagination: Int
+  $defaultTemplate: Boolean
 ) {
   updateITNUserTemplate(
     _id: $_id
     TemplateName: $templateName
     SelectedColumns: $selectedColumns
+    DefaultPagination: $defaultPagination
+    DefaultTemplate: $defaultTemplate
   ) {
     _id
-=======
-mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String,
-  $defaultPagination: Int) {
-  updateITNUserTemplate(_id: $_id, TemplateName: $templateName, SelectedColumns: $selectedColumns, 
-    DefaultPagination: $defaultPagination) {
-      _id
->>>>>>> main
+  }
+}
+
+mutation clear_ITNUserDefaultTemplate($userID: Int!) {
+  clearITNUserDefaultTemplate(UserID: $userID) {
+    _id
   }
 }
 
@@ -418,11 +413,13 @@ mutation insert_ITNUserTemplate(
   $userID: Int
   $templateName: String
   $selectedColumns: String
+  $defaultTemplate: Boolean
 ) {
   insertITNUserTemplate(
     UserID: $userID
     TemplateName: $templateName
     SelectedColumns: $selectedColumns
+    DefaultTemplate: $defaultTemplate
   ) {
     _id
   }

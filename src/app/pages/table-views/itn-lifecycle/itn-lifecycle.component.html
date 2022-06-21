@@ -19,7 +19,7 @@
           ></nz-date-picker>
           <nz-select
             class="templateSelect"
-            [ngModel]=""
+            [(ngModel)]="templateIdName"
             [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onTemplateChange($event)"
             nzPlaceHolder="Select Template"
@@ -67,6 +67,7 @@
     id="excel-table"
     #table
     [nzPageSize]="pageSize"
+    [(nzPageIndex)]="pageNumber"
     [nzFrontPagination]="paging"
     nzShowSizeChanger
     [nzData]="tableDataDisplay"
@@ -100,7 +101,7 @@
                 <input
                   type="text"
                   nz-input
-                  oninput="this.value = this.value.toUpperCase()"
+                  oninput="this.value = this.value"
                   placeholder="{{ column.title }}"
                   class="col-span-2"
                   #searchInput

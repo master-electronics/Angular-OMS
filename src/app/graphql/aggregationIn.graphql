@@ -62,7 +62,9 @@ query fetchLocationAndOrderDetailForAgIn(
     Order {
       OrderNumber
       NOSINumber
-      CustomerNumber
+      Customer {
+        CustomerNumber
+      }
       ShipmentMethod {
         PriorityPinkPaper
         ShippingMethod

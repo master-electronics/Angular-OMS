@@ -1,0 +1,61 @@
+query fetchPrinterList($includeInactive: Boolean) {
+    fetchPrinterList(includeInactive: $includeInactive) {
+        _id
+        Name
+        Description
+        Orientation
+        Active
+    }
+}
+
+mutation insertPrinter(
+    $name: String
+    $description: String
+    $orientation: String
+    $active: Boolean
+) {
+    insertPrinter(
+        Name: $name
+        Description: $description
+        Orientation: $orientation
+        Active: $active
+    ) {
+        _id
+        Name
+        Description
+        Orientation
+        Active
+    }
+}
+
+mutation updatePrinter(
+    $_id: Int!
+    $name: String
+    $description: String
+    $orientation: String
+    $active: Boolean
+) {
+    updatePrinter(
+        _id: $_id
+        Name: $name
+        Description: $description
+        Orientation: $orientation
+        Active: $active
+    ) {
+        _id
+        Name
+        Description
+        Orientation
+        Active
+    }
+}
+
+mutation deletePrinter(
+    $_id: Int!
+) {
+    deletePrinter(
+        _id: $_id
+    ) {
+        _id
+    }
+}

@@ -1496,120 +1496,76 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type VerifyItnForSortingQueryVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
+export type FetchPrinterListQueryVariables = Types.Exact<{
+  includeInactive?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
+export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null> | null };
 
-export type VerifyContainerForSortingQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
+export type InsertPrinterMutationVariables = Types.Exact<{
+  name?: Types.InputMaybe<Types.Scalars['String']>;
+  description?: Types.InputMaybe<Types.Scalars['String']>;
+  orientation?: Types.InputMaybe<Types.Scalars['String']>;
+  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
-export type VerifyContainerForSortingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } } | null> | null };
+export type InsertPrinterMutation = { __typename?: 'Mutation', insertPrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
 
-export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
-  ProductID: Types.Scalars['Int'];
-  limit?: Types.InputMaybe<Types.Scalars['Int']>;
+export type UpdatePrinterMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  name?: Types.InputMaybe<Types.Scalars['String']>;
+  description?: Types.InputMaybe<Types.Scalars['String']>;
+  orientation?: Types.InputMaybe<Types.Scalars['String']>;
+  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
-export type FetchSuggetionLocationForSortingQuery = { __typename?: 'Query', findProduct?: Array<{ __typename?: 'Product', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Container: { __typename?: 'Container', Barcode: string, Zone?: number | null } } | null> | null } | null> | null };
+export type UpdatePrinterMutation = { __typename?: 'Mutation', updatePrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
 
-export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-  InventoryID: Types.Scalars['Int'];
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+export type DeletePrinterMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
 }>;
 
 
-export type UpdateInventoryAfterSortingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+export type DeletePrinterMutation = { __typename?: 'Mutation', deletePrinter?: { __typename?: 'Printer', _id?: number | null } | null };
 
-export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-}>;
+export const FetchPrinterListDocument = gql`
+    query fetchPrinterList($includeInactive: Boolean) {
+  fetchPrinterList(includeInactive: $includeInactive) {
+    _id
+    Name
+    Description
+    Orientation
+    Active
+  }
+}
+    `;
 
-
-export type FetchItnInfoByContainerforStockingQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number } } | null> | null } | null> | null };
-
-export type VerifyItnForStockingQueryVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-}>;
-
-
-export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: Array<{ __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
-
-export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
-  ContainerTypeID: Types.Scalars['Int'];
-}>;
-
-
-export type FindorCreateUserContainerForStockingMutation = { __typename?: 'Mutation', findOrCreateContainer?: { __typename?: 'Container', _id: number } | null };
-
-export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type MoveInventoryToContainerForStockingMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
-
-export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
-  ITNList?: Types.InputMaybe<Array<Types.Scalars['String']> | Types.Scalars['String']>;
-  DC: Types.Scalars['String'];
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
-}>;
-
-
-export type UpdateNotFoundForStockingMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
-
-export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type FetchInventoryInUserContainerQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, InventoryTrackingNumber: string } | null> | null } | null> | null };
-
-export const VerifyItnForSortingDocument = gql`
-    query verifyITNForSorting($ITN: String!, $DC: String!) {
-  findInventory(
-    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchPrinterListGQL extends Apollo.Query<FetchPrinterListQuery, FetchPrinterListQueryVariables> {
+    document = FetchPrinterListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertPrinterDocument = gql`
+    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean) {
+  insertPrinter(
+    Name: $name
+    Description: $description
+    Orientation: $orientation
+    Active: $active
   ) {
     _id
-    QuantityOnHand
-    Container {
-      ContainerType {
-        IsMobile
-      }
-    }
-    Product {
-      _id
-      ProductCode {
-        ProductCode
-      }
-      DCPRODUCTs {
-        Velocity
-      }
-      PartNumber
-    }
-    ORDERLINEDETAILs {
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      OrderLine {
-        OrderLineNumber
-      }
-    }
+    Name
+    Description
+    Orientation
+    Active
   }
 }
     `;
@@ -1617,23 +1573,27 @@ export const VerifyItnForSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyItnForSortingGQL extends Apollo.Query<VerifyItnForSortingQuery, VerifyItnForSortingQueryVariables> {
-    document = VerifyItnForSortingDocument;
+  export class InsertPrinterGQL extends Apollo.Mutation<InsertPrinterMutation, InsertPrinterMutationVariables> {
+    document = InsertPrinterDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const VerifyContainerForSortingDocument = gql`
-    query verifyContainerForSorting($Barcode: String!, $DistrubutionCenter: String!) {
-  findContainer(
-    Container: {Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+export const UpdatePrinterDocument = gql`
+    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean) {
+  updatePrinter(
+    _id: $_id
+    Name: $name
+    Description: $description
+    Orientation: $orientation
+    Active: $active
   ) {
     _id
-    ContainerTypeID
-    ContainerType {
-      IsMobile
-    }
+    Name
+    Description
+    Orientation
+    Active
   }
 }
     `;
@@ -1641,41 +1601,16 @@ export const VerifyContainerForSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class VerifyContainerForSortingGQL extends Apollo.Query<VerifyContainerForSortingQuery, VerifyContainerForSortingQueryVariables> {
-    document = VerifyContainerForSortingDocument;
+  export class UpdatePrinterGQL extends Apollo.Mutation<UpdatePrinterMutation, UpdatePrinterMutationVariables> {
+    document = UpdatePrinterDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchSuggetionLocationForSortingDocument = gql`
-    query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
-  findProduct(Product: {_id: $ProductID}, limit: $limit) {
-    INVENTORies {
-      QuantityOnHand
-      Container {
-        Barcode
-        Zone
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<FetchSuggetionLocationForSortingQuery, FetchSuggetionLocationForSortingQueryVariables> {
-    document = FetchSuggetionLocationForSortingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateInventoryAfterSortingDocument = gql`
-    mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!, $log: [insertUserEventLog]!) {
-  updateInventory(Inventory: {ContainerID: $ContainerID}, _id: $InventoryID)
-  insertUserEventLogs(log: $log) {
+export const DeletePrinterDocument = gql`
+    mutation deletePrinter($_id: Int!) {
+  deletePrinter(_id: $_id) {
     _id
   }
 }
@@ -1684,154 +1619,8 @@ export const UpdateInventoryAfterSortingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<UpdateInventoryAfterSortingMutation, UpdateInventoryAfterSortingMutationVariables> {
-    document = UpdateInventoryAfterSortingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchItnInfoByContainerforStockingDocument = gql`
-    query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
-  findContainer(Container: {Barcode: $Barcode, DistributionCenter: $DC}) {
-    _id
-    ContainerType {
-      IsMobile
-    }
-    INVENTORies {
-      _id
-      InventoryTrackingNumber
-      QuantityOnHand
-      Product {
-        _id
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<FetchItnInfoByContainerforStockingQuery, FetchItnInfoByContainerforStockingQueryVariables> {
-    document = FetchItnInfoByContainerforStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const VerifyItnForStockingDocument = gql`
-    query verifyITNForStocking($ITN: String!, $DC: String!) {
-  findInventory(
-    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
-  ) {
-    _id
-    QuantityOnHand
-    Product {
-      _id
-    }
-    ORDERLINEDETAILs {
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      OrderLine {
-        OrderLineNumber
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class VerifyItnForStockingGQL extends Apollo.Query<VerifyItnForStockingQuery, VerifyItnForStockingQueryVariables> {
-    document = VerifyItnForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FindorCreateUserContainerForStockingDocument = gql`
-    mutation findorCreateUserContainerForStocking($Barcode: String!, $DistrubutionCenter: String!, $ContainerTypeID: Int!) {
-  findOrCreateContainer(
-    Container: {ContainerTypeID: $ContainerTypeID, Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
-  ) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindorCreateUserContainerForStockingGQL extends Apollo.Mutation<FindorCreateUserContainerForStockingMutation, FindorCreateUserContainerForStockingMutationVariables> {
-    document = FindorCreateUserContainerForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const MoveInventoryToContainerForStockingDocument = gql`
-    mutation moveInventoryToContainerForStocking($ITN: String!, $DC: String!, $ContainerID: Int!) {
-  updateInventory(
-    Inventory: {ContainerID: $ContainerID}
-    DistributionCenter: $DC
-    InventoryTrackingNumber: $ITN
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<MoveInventoryToContainerForStockingMutation, MoveInventoryToContainerForStockingMutationVariables> {
-    document = MoveInventoryToContainerForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateNotFoundForStockingDocument = gql`
-    mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!, $log: [insertUserEventLog]!) {
-  updateInventoryList(
-    ITNList: $ITNList
-    DistributionCenter: $DC
-    Inventory: {NotFound: true}
-  )
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<UpdateNotFoundForStockingMutation, UpdateNotFoundForStockingMutationVariables> {
-    document = UpdateNotFoundForStockingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchInventoryInUserContainerDocument = gql`
-    query fetchInventoryInUserContainer($ContainerID: Int!) {
-  findContainer(Container: {_id: $ContainerID}) {
-    INVENTORies {
-      QuantityOnHand
-      InventoryTrackingNumber
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchInventoryInUserContainerGQL extends Apollo.Query<FetchInventoryInUserContainerQuery, FetchInventoryInUserContainerQueryVariables> {
-    document = FetchInventoryInUserContainerDocument;
+  export class DeletePrinterGQL extends Apollo.Mutation<DeletePrinterMutation, DeletePrinterMutationVariables> {
+    document = DeletePrinterDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -20,7 +20,9 @@ query verifyITNforQc($Inventory: searchInventory!) {
         DistributionCenter
         OrderNumber
         NOSINumber
-        CustomerNumber
+        Customer {
+          CustomerNumber
+        }
       }
     }
     Product {

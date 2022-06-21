@@ -51,6 +51,14 @@ export type ContainerType = {
   _id: Scalars['Int'];
 };
 
+export type Customer = {
+  __typename?: 'Customer';
+  CustomerNumber: Scalars['String'];
+  CustomerTier: Scalars['String'];
+  ORDERHEADERs?: Maybe<Array<Maybe<Order>>>;
+  _id: Scalars['Int'];
+};
+
 export type DcProduct = {
   __typename?: 'DCProduct';
   DistributionCenter: Container;
@@ -128,23 +136,32 @@ export type ItnLifeCycle = {
   Zone?: Maybe<Scalars['Int']>;
   after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
+  agDoneUser?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
+  agStartUser?: Maybe<Scalars['String']>;
   dropoffDone?: Maybe<Scalars['String']>;
   dropoffLine?: Maybe<Scalars['String']>;
   dropoffStart?: Maybe<Scalars['String']>;
+  dropoffUser?: Maybe<Scalars['String']>;
   lineAllocation?: Maybe<Scalars['String']>;
+  lineAllocationUser?: Maybe<Scalars['String']>;
   lineCancel?: Maybe<Scalars['String']>;
   orderCancel?: Maybe<Scalars['String']>;
   packDone?: Maybe<Scalars['String']>;
   packLine?: Maybe<Scalars['String']>;
+  packLineUser?: Maybe<Scalars['String']>;
   packReject?: Maybe<Scalars['String']>;
   packStart?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
+  pickDoneUser?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
+  pickStartUser?: Maybe<Scalars['String']>;
   pullingDone?: Maybe<Scalars['String']>;
   pullingStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
+  qcDoneUser?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
+  qcStartUser?: Maybe<Scalars['String']>;
   releaseLine?: Maybe<Scalars['String']>;
   releaseOrder?: Maybe<Scalars['String']>;
   shippingManifest?: Maybe<Scalars['String']>;
@@ -214,6 +231,7 @@ export type ItnUserLevels = {
 export type ItnUserTemplate = {
   __typename?: 'ITNUserTemplate';
   DefaultPagination?: Maybe<Scalars['Int']>;
+  DefaultTemplate?: Maybe<Scalars['Boolean']>;
   ITNLEVELLIMITs?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   SelectedColumns?: Maybe<Scalars['String']>;
   TemplateName?: Maybe<Scalars['String']>;
@@ -244,6 +262,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
+  clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
@@ -252,6 +271,8 @@ export type Mutation = {
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deletePrinter?: Maybe<Printer>;
+  deleteValueMap?: Maybe<ValueMap>;
   findOrCreateContainer?: Maybe<Container>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
@@ -263,7 +284,9 @@ export type Mutation = {
   insertITNUserColumns?: Maybe<ItnUserColumns>;
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
+  insertPrinter?: Maybe<Printer>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -286,9 +309,11 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateValueMap?: Maybe<ValueMap>;
 };
 
 
@@ -305,6 +330,11 @@ export type MutationCleanContainerFromPrevOrderArgs = {
   ContainerID: Scalars['Int'];
   Inventory: UpdateInventory;
   OrderID: Scalars['Int'];
+};
+
+
+export type MutationClearItnUserDefaultTemplateArgs = {
+  UserID: Scalars['Int'];
 };
 
 
@@ -358,6 +388,16 @@ export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
   NOSINumber: Scalars['String'];
   OrderLineNumber: Scalars['Int'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type MutationDeletePrinterArgs = {
+  _id: Scalars['Int'];
+};
+
+
+export type MutationDeleteValueMapArgs = {
+  _id: Scalars['Int'];
 };
 
 
@@ -418,14 +458,35 @@ export type MutationInsertItnUserLevelsArgs = {
 
 
 export type MutationInsertItnUserTemplateArgs = {
+  DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
+export type MutationInsertPrinterArgs = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Orientation?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
+};
+
+
+export type MutationInsertValueMapArgs = {
+  SourceColumnName?: InputMaybe<Scalars['String']>;
+  SourceSystemName?: InputMaybe<Scalars['String']>;
+  SourceTableName?: InputMaybe<Scalars['String']>;
+  SourceValue?: InputMaybe<Scalars['String']>;
+  TargetColumnName?: InputMaybe<Scalars['String']>;
+  TargetSystemName?: InputMaybe<Scalars['String']>;
+  TargetTableName?: InputMaybe<Scalars['String']>;
+  TargetValue?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -515,6 +576,7 @@ export type MutationUpdateItnUserLevelsArgs = {
 
 export type MutationUpdateItnUserTemplateArgs = {
   DefaultPagination?: InputMaybe<Scalars['Int']>;
+  DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
   SelectedColumns?: InputMaybe<Scalars['String']>;
   TemplateName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
@@ -599,6 +661,15 @@ export type MutationUpdateOrderLineDetailArgs = {
 };
 
 
+export type MutationUpdatePrinterArgs = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Orientation?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+
 export type MutationUpdateUserCartArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
@@ -618,10 +689,24 @@ export type MutationUpdateUserInfoArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type MutationUpdateValueMapArgs = {
+  SourceColumnName?: InputMaybe<Scalars['String']>;
+  SourceSystemName?: InputMaybe<Scalars['String']>;
+  SourceTableName?: InputMaybe<Scalars['String']>;
+  SourceValue?: InputMaybe<Scalars['String']>;
+  TargetColumnName?: InputMaybe<Scalars['String']>;
+  TargetSystemName?: InputMaybe<Scalars['String']>;
+  TargetTableName?: InputMaybe<Scalars['String']>;
+  TargetValue?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type Order = {
   __typename?: 'Order';
   BranchID?: Maybe<Scalars['String']>;
-  CustomerNumber?: Maybe<Scalars['String']>;
+  Customer?: Maybe<Customer>;
+  CustomerID?: Maybe<Scalars['Int']>;
   DistributionCenter: Scalars['String'];
   LastUpdated?: Maybe<Scalars['String']>;
   NOSINumber: Scalars['String'];
@@ -680,6 +765,15 @@ export type OrderStatus = {
   _id: Scalars['Int'];
 };
 
+export type Printer = {
+  __typename?: 'Printer';
+  Active?: Maybe<Scalars['Boolean']>;
+  Description?: Maybe<Scalars['String']>;
+  Name?: Maybe<Scalars['String']>;
+  Orientation?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Product = {
   __typename?: 'Product';
   DCPRODUCTs?: Maybe<Array<Maybe<DcProduct>>>;
@@ -688,6 +782,7 @@ export type Product = {
   PartNumber: Scalars['String'];
   ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
+  ProductTier?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -709,6 +804,7 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
@@ -718,9 +814,11 @@ export type Query = {
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
+  fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   findContainer?: Maybe<Array<Maybe<Container>>>;
   findContainerList?: Maybe<Array<Maybe<Container>>>;
@@ -743,6 +841,11 @@ export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchEntityListArgs = {
+  type?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -798,6 +901,11 @@ export type QueryFetchOrderViewArgs = {
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+};
+
+
+export type QueryFetchPrinterListArgs = {
+  includeInactive?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -983,6 +1091,29 @@ export type WmsStatusView = {
   StatusID: Scalars['Int'];
 };
 
+export type Entity = {
+  __typename?: 'entity';
+  ColumnID?: Maybe<Scalars['Int']>;
+  ColumnName?: Maybe<Scalars['String']>;
+  SystemID?: Maybe<Scalars['Int']>;
+  SystemName?: Maybe<Scalars['String']>;
+  TableID?: Maybe<Scalars['Int']>;
+  TableName?: Maybe<Scalars['String']>;
+};
+
+export type EntityColumn = {
+  __typename?: 'entityColumn';
+  ColumnName?: Maybe<Scalars['String']>;
+  EntityID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type EntityTable = {
+  __typename?: 'entityTable';
+  TableName?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type InsertContainer = {
   Aisle?: InputMaybe<Scalars['String']>;
   Barcode: Scalars['String'];
@@ -1068,6 +1199,7 @@ export type InsertProduct = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
   ProductCodeID: Scalars['Int'];
+  ProductTier?: InputMaybe<Scalars['String']>;
 };
 
 export type InsertProductCode = {
@@ -1221,6 +1353,7 @@ export type SearchOrderLineDetail = {
 export type SearchProduct = {
   PartNumber?: InputMaybe<Scalars['String']>;
   ProductCodeID?: InputMaybe<Scalars['Int']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -1350,6 +1483,19 @@ export type UpdateUserInfo = {
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
+export type ValueMap = {
+  __typename?: 'valueMap';
+  SourceColumnName?: Maybe<Scalars['String']>;
+  SourceSystemName?: Maybe<Scalars['String']>;
+  SourceTableName?: Maybe<Scalars['String']>;
+  SourceValue?: Maybe<Scalars['String']>;
+  TargetColumnName?: Maybe<Scalars['String']>;
+  TargetSystemName?: Maybe<Scalars['String']>;
+  TargetTableName?: Maybe<Scalars['String']>;
+  TargetValue?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type FetchOrderViewQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.OrderViewFilter>;
 }>;
@@ -1423,7 +1569,7 @@ export type FindOrderByStatusQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindOrderByStatusQuery = { __typename?: 'Query', findOrderByStatus?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, CustomerNumber?: string | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } | null> | null };
+export type FindOrderByStatusQuery = { __typename?: 'Query', findOrderByStatus?: Array<{ __typename?: 'Order', OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } | null> | null };
 
 export type FetchItnLifecycleQueryVariables = Types.Exact<{
   startDate: Types.Scalars['String'];
@@ -1431,7 +1577,7 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickDone?: string | null, splitDone?: string | null, qcStart?: string | null, qcDone?: string | null, agStart?: string | null, agDone?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineAllocationUser?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickStartUser?: string | null, pickDone?: string | null, pickDoneUser?: string | null, splitDone?: string | null, qcStart?: string | null, qcStartUser?: string | null, qcDone?: string | null, qcDoneUser?: string | null, agStart?: string | null, agStartUser?: string | null, agDone?: string | null, agDoneUser?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffUser?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packLineUser?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
 
 export type FetchItnLifecycleDrillDownQueryVariables = Types.Exact<{
   orderNumber: Types.Scalars['String'];
@@ -1455,14 +1601,14 @@ export type FindItnTemplateQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItnTemplateQuery = { __typename?: 'Query', findITNTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, DefaultPagination?: number | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
+export type FindItnTemplateQuery = { __typename?: 'Query', findITNTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, DefaultPagination?: number | null, DefaultTemplate?: boolean | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
 
 export type FindItnTemplatesQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
-export type FindItnTemplatesQuery = { __typename?: 'Query', findITNTemplates?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
+export type FindItnTemplatesQuery = { __typename?: 'Query', findITNTemplates?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null, UserID?: number | null, TemplateName?: string | null, SelectedColumns?: string | null, DefaultTemplate?: boolean | null, ITNLEVELLIMITs?: Array<{ __typename?: 'ITNUserLevelLimit', _id: number, TemplateID?: number | null, EventName?: string | null, EventID?: number | null, LowLevelLimit?: number | null, MediumLevelLimit?: number | null } | null> | null } | null> | null };
 
 export type FindItnColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -1506,10 +1652,18 @@ export type Update_ItnUserTemplateMutationVariables = Types.Exact<{
   templateName?: Types.InputMaybe<Types.Scalars['String']>;
   selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
   defaultPagination?: Types.InputMaybe<Types.Scalars['Int']>;
+  defaultTemplate?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
 export type Update_ItnUserTemplateMutation = { __typename?: 'Mutation', updateITNUserTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null } | null> | null };
+
+export type Clear_ItnUserDefaultTemplateMutationVariables = Types.Exact<{
+  userID: Types.Scalars['Int'];
+}>;
+
+
+export type Clear_ItnUserDefaultTemplateMutation = { __typename?: 'Mutation', clearITNUserDefaultTemplate?: Array<{ __typename?: 'ITNUserTemplate', _id?: number | null } | null> | null };
 
 export type Delete_ItnLevelLimitMutationVariables = Types.Exact<{
   templateID: Types.Scalars['Int'];
@@ -1540,6 +1694,7 @@ export type Insert_ItnUserTemplateMutationVariables = Types.Exact<{
   userID?: Types.InputMaybe<Types.Scalars['Int']>;
   templateName?: Types.InputMaybe<Types.Scalars['String']>;
   selectedColumns?: Types.InputMaybe<Types.Scalars['String']>;
+  defaultTemplate?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
@@ -1803,7 +1958,9 @@ export const FindOrderByStatusDocument = gql`
   findOrderByStatus(PriorityPinkPaper: $PriorityPinkPaper, StatusID: $StatusID) {
     OrderNumber
     NOSINumber
-    CustomerNumber
+    Customer {
+      CustomerNumber
+    }
     ShipmentMethod {
       PriorityPinkPaper
       ShippingMethod
@@ -1843,22 +2000,31 @@ export const FetchItnLifecycleDocument = gql`
     releaseOrder
     releaseLine
     lineAllocation
+    lineAllocationUser
     lineCancel
     orderCancel
     pickStart
+    pickStartUser
     pickDone
+    pickDoneUser
     splitDone
     qcStart
+    qcStartUser
     qcDone
+    qcDoneUser
     agStart
+    agStartUser
     agDone
+    agDoneUser
     pullingStart
     pullingDone
     dropoffStart
     dropoffLine
+    dropoffUser
     dropoffDone
     packStart
     packLine
+    packLineUser
     packReject
     packDone
     ParentITN
@@ -1954,6 +2120,7 @@ export const FindItnTemplateDocument = gql`
     TemplateName
     SelectedColumns
     DefaultPagination
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -1983,6 +2150,7 @@ export const FindItnTemplatesDocument = gql`
     UserID
     TemplateName
     SelectedColumns
+    DefaultTemplate
     ITNLEVELLIMITs {
       _id
       TemplateID
@@ -2110,12 +2278,13 @@ export const Update_ItnUserLevelsDocument = gql`
     }
   }
 export const Update_ItnUserTemplateDocument = gql`
-    mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String, $defaultPagination: Int) {
+    mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String, $defaultPagination: Int, $defaultTemplate: Boolean) {
   updateITNUserTemplate(
     _id: $_id
     TemplateName: $templateName
     SelectedColumns: $selectedColumns
     DefaultPagination: $defaultPagination
+    DefaultTemplate: $defaultTemplate
   ) {
     _id
   }
@@ -2127,6 +2296,24 @@ export const Update_ItnUserTemplateDocument = gql`
   })
   export class Update_ItnUserTemplateGQL extends Apollo.Mutation<Update_ItnUserTemplateMutation, Update_ItnUserTemplateMutationVariables> {
     document = Update_ItnUserTemplateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Clear_ItnUserDefaultTemplateDocument = gql`
+    mutation clear_ITNUserDefaultTemplate($userID: Int!) {
+  clearITNUserDefaultTemplate(UserID: $userID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Clear_ItnUserDefaultTemplateGQL extends Apollo.Mutation<Clear_ItnUserDefaultTemplateMutation, Clear_ItnUserDefaultTemplateMutationVariables> {
+    document = Clear_ItnUserDefaultTemplateDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -2193,11 +2380,12 @@ export const Insert_ItnLevelLimitDocument = gql`
     }
   }
 export const Insert_ItnUserTemplateDocument = gql`
-    mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String) {
+    mutation insert_ITNUserTemplate($userID: Int, $templateName: String, $selectedColumns: String, $defaultTemplate: Boolean) {
   insertITNUserTemplate(
     UserID: $userID
     TemplateName: $templateName
     SelectedColumns: $selectedColumns
+    DefaultTemplate: $defaultTemplate
   ) {
     _id
   }

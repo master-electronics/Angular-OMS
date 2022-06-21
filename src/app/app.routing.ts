@@ -79,13 +79,20 @@ const routes: Routes = [
             (m) => m.StockingModule
           ),
       },
-      // {
-      //   path: 'valuemap',
-      //   loadChildren: () =>
-      //     import('./pages/value-mapping/value-mapping.module').then(
-      //       (m) => m.ValueMappingModule
-      //     ),
-      // },
+      {
+        path: 'valuemap',
+        loadChildren: () =>
+          import('./pages/value-mapping/value-mapping.module').then(
+            (m) => m.ValueMappingModule
+          ),
+      },
+      {
+        path: 'printermaintenance',
+        loadChildren: () =>
+          import('./pages/printer-maintenance/printer-maintenance.module').then(
+            (m) => m.PrinterMaintenanceModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

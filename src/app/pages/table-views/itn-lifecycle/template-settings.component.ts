@@ -6,7 +6,8 @@ import { Subscription, Subject } from 'rxjs';
 import {
   FindItnTemplateGQL, Update_ItnUserTemplateGQL,
   Delete_ItnLevelLimitGQL, Insert_ItnLevelLimitGQL,
-  Insert_ItnUserTemplateGQL, Delete_ItnUserTemplateGQL
+  Insert_ItnUserTemplateGQL, Delete_ItnUserTemplateGQL,
+  Clear_ItnUserDefaultTemplateGQL
 } from 'src/app/graphql/tableViews.graphql-gen';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
@@ -48,7 +49,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                 <button nz-button nzDanger *ngIf="templateId && (templateId != activeTemplateId)"
                   (click)="deleteTemplate()">
                   <i nz-icon nzType="delete" nzTheme="outline"></i>
-                </button>                            
+                </button>  
+                <div>
+                  <input type="checkbox" name="defaultTemplateCB"
+                    [(ngModel)]="defaultTemplate"/>
+                  <label style="position: relative; top: 2px;" for="defaultTemplateCB"> Default Template</label>
+                </div>                          
                 <tabs-view
                     (checked)="onColumnSelected($event)"
                     (unchecked)="onColumnUnselected($event)"
@@ -90,6 +96,7 @@ export class TemplateSettings {
   private insertLevelLimitSub = new Subscription();
   private insertTemplateSub = new Subscription();
   private deleteTemplateSub = new Subscription();
+  private clearDefaultTemplateSub = new Subscription();
   templateId: number;
   selectedTemplate: Template;
   limits = [];
@@ -104,6 +111,7 @@ export class TemplateSettings {
   paginationValues: number[];
   defaultPaginationValue: string;
   customPaginationValue: string;
+  defaultTemplate: boolean;
 
   constructor(
     private _findITNTemplate: FindItnTemplateGQL,
@@ -112,6 +120,7 @@ export class TemplateSettings {
     private _insertITNLevelLimit: Insert_ItnLevelLimitGQL,
     private _insertITNTemplate: Insert_ItnUserTemplateGQL,
     private _deleteITNTemplate: Delete_ItnUserTemplateGQL,
+    private _clearITNDefaultTemplate: Clear_ItnUserDefaultTemplateGQL,
     private fb: FormBuilder,
     private modal: NzModalService
   ) { }
@@ -124,6 +133,7 @@ export class TemplateSettings {
     this.columnSelector.columns = this.columns;
     this.columnSelector.selectedColumns = this.selectedColumns;
     this.paginationValues = [100, 50, 1000, 500];
+    this.defaultTemplate = false;
   }
 
   //display settings screen
@@ -161,6 +171,7 @@ export class TemplateSettings {
     //this.templateNameValue = null;
     this.selectedColumns = [];
     this.allColumns = false;
+    this.defaultTemplate = false;
     this.modalClosed.emit();
   }
 
@@ -180,6 +191,27 @@ export class TemplateSettings {
         sep = ",";
       }
 
+      //If Default Template is checked clear the DefaultTemplate flag
+      //for all of this users existing templates
+      if (this.defaultTemplate) {
+        const UserInfo = sessionStorage.getItem('userInfo');
+        const userId = JSON.parse(UserInfo)._id;
+
+        this.clearDefaultTemplateSub.add(
+          this._clearITNDefaultTemplate.mutate(
+            {
+              userID: userId
+            }
+          ).subscribe((res) => {
+            //
+          },
+          (error) => {
+            err = error;
+            this.setMessage("Error Saving Template");
+          })
+        )
+      }
+
       this.updateTempSub.add(
         //update ITNUSERTEMPLATE record
         this._updateITNTemplate.mutate(
@@ -187,7 +219,8 @@ export class TemplateSettings {
             _id: this.templateId,
             templateName: this.templateForm.get('templateName').value,
             selectedColumns: cols,
-            defaultPagination: Number(this.defaultPaginationValue)
+            defaultPagination: Number(this.defaultPaginationValue),
+            defaultTemplate: this.defaultTemplate,
           }).subscribe((res) => {
             //delete all ITNLEVELLIMIT records for template
             this.deleteLevelLimitSub.add(
@@ -250,6 +283,21 @@ export class TemplateSettings {
       cols += sep + this.columns[i].name;
       sep = ",";
     }
+
+    if (this.defaultTemplate) {
+      this.clearDefaultTemplateSub.add(
+        this._clearITNDefaultTemplate.mutate(
+          {
+            userID: userId
+          }
+        ).subscribe((res) => {
+          //
+        },
+        (error) => {
+          this.setMessage("Error Adding Template");
+        })
+      );
+    };
 
     this.insertTemplateSub.add(
       this._insertITNTemplate.mutate(
@@ -477,6 +525,7 @@ export class TemplateSettings {
                 selectedColumns: res.data.findITNTemplate[0].SelectedColumns,
               }
 
+              this.defaultTemplate = (res.data.findITNTemplate[0].DefaultTemplate)?res.data.findITNTemplate[0].DefaultTemplate:false;
               this.defaultPaginationValue = (res.data.findITNTemplate[0].DefaultPagination)?res.data.findITNTemplate[0].DefaultPagination.toString():"50";
 
               if (!this.paginationValues.includes(Number(this.defaultPaginationValue))) {
@@ -551,5 +600,6 @@ export class TemplateSettings {
     this.insertTemplateSub.unsubscribe();
     this.deleteTemplateSub.unsubscribe();
     this.limitsNotifier.unsubscribe();
+    this.clearDefaultTemplateSub.unsubscribe();
   }
 }
