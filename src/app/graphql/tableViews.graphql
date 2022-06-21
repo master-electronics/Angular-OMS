@@ -182,7 +182,7 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     pickStart
     pickStartUser
     pickLocationScan
-    pickLocationScan
+    pickITNScan
     pickQuantityEntered
     pickITNPrint
     pickDone
