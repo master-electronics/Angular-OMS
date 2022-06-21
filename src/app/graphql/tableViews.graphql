@@ -181,26 +181,55 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     orderCancel
     pickStart
     pickStartUser
+    pickLocationScan
+    pickITNScan
+    pickQuantityEntered
+    pickITNPrint
     pickDone
     pickDoneUser
     splitDone
+    pickITNNF
+    pickCartAssigned
+    pickUserExit
+    pickLabelCount
+    pickLabelQuantity
+    pickOverPick
+    pickToteAssignment
+    pickStatus15
+    pickShortPick
     qcStart
     qcStartUser
+    qcHold
     qcDone
     qcDoneUser
+    qcOrderComplete
+    qcStatus40
+    qcStatus41
     agStart
     agStartUser
     agDone
     agDoneUser
+    agRelocate
+    agOrderComplete
+    agInDone
+    agOutStart
     pullingStart
+    pullingCartSelected
     pullingDone
+    pullingLocationSelected
+    pullingNotFound
     dropoffStart
     dropoffLine
     dropoffUser
     dropoffDone
+    dropoffCartSelected
+    dropoffITNSkipped
+    dropoffLocationSelected
     packStart
     packLine
     packLineUser
+    packNewPackage
+    packSupervisorCheck
     packReject
     packDone
     ParentITN
