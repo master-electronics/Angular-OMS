@@ -503,6 +503,15 @@ export class ITNLifecycleComponent implements OnInit {
                 this.elapsedFormating(Number(item.pullingDone) - Number(item.pullingStart));
                 result['pullingElapsedNum'] = Number(item.pullingDone) - Number(item.pullingStart);
             }
+            if (item.pickStatus15) {
+              result.pickStatus15 = this.timeFormating(item.pickStatus15);
+            }
+            if (item.qcStatus40) {
+              result.qcStatus40 = this.timeFormating(item.qcStatus40);
+            }
+            if (item.qcStatus41) {
+              result.qcStatus41 = this.timeFormating(item.qcStatus41);
+            }
             if (item.dropoffLine) {
               result.dropoffLine = this.timeFormating(item.dropoffLine);
             }
