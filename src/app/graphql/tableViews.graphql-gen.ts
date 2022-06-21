@@ -101,10 +101,17 @@ export type ItnLifeCycle = {
   after_InternalTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agDoneUser?: Maybe<Scalars['String']>;
+  agInDone?: Maybe<Scalars['String']>;
+  agOrderComplete?: Maybe<Scalars['String']>;
+  agOutStart?: Maybe<Scalars['String']>;
+  agRelocate?: Maybe<Scalars['String']>;
   agStart?: Maybe<Scalars['String']>;
   agStartUser?: Maybe<Scalars['String']>;
+  dropoffCartSelected?: Maybe<Scalars['String']>;
   dropoffDone?: Maybe<Scalars['String']>;
+  dropoffITNSkipped?: Maybe<Scalars['String']>;
   dropoffLine?: Maybe<Scalars['String']>;
+  dropoffLocationSelected?: Maybe<Scalars['String']>;
   dropoffStart?: Maybe<Scalars['String']>;
   dropoffUser?: Maybe<Scalars['String']>;
   lineAllocation?: Maybe<Scalars['String']>;
@@ -114,18 +121,40 @@ export type ItnLifeCycle = {
   packDone?: Maybe<Scalars['String']>;
   packLine?: Maybe<Scalars['String']>;
   packLineUser?: Maybe<Scalars['String']>;
+  packNewPackage?: Maybe<Scalars['String']>;
   packReject?: Maybe<Scalars['String']>;
   packStart?: Maybe<Scalars['String']>;
+  packSupervisorCheck?: Maybe<Scalars['String']>;
+  pickCartAssigned?: Maybe<Scalars['String']>;
   pickDone?: Maybe<Scalars['String']>;
   pickDoneUser?: Maybe<Scalars['String']>;
+  pickITNNF?: Maybe<Scalars['String']>;
+  pickITNPrint?: Maybe<Scalars['String']>;
+  pickITNScan?: Maybe<Scalars['String']>;
+  pickLabelCount?: Maybe<Scalars['String']>;
+  pickLabelQuantity?: Maybe<Scalars['String']>;
+  pickLocationScan?: Maybe<Scalars['String']>;
+  pickOverPick?: Maybe<Scalars['String']>;
+  pickQuantityEntered?: Maybe<Scalars['String']>;
+  pickShortPick?: Maybe<Scalars['String']>;
   pickStart?: Maybe<Scalars['String']>;
   pickStartUser?: Maybe<Scalars['String']>;
+  pickStatus15?: Maybe<Scalars['String']>;
+  pickToteAssignment?: Maybe<Scalars['String']>;
+  pickUserExit?: Maybe<Scalars['String']>;
+  pullingCartSelected?: Maybe<Scalars['String']>;
   pullingDone?: Maybe<Scalars['String']>;
+  pullingLocationSelected?: Maybe<Scalars['String']>;
+  pullingNotFound?: Maybe<Scalars['String']>;
   pullingStart?: Maybe<Scalars['String']>;
   qcDone?: Maybe<Scalars['String']>;
   qcDoneUser?: Maybe<Scalars['String']>;
+  qcHold?: Maybe<Scalars['String']>;
+  qcOrderComplete?: Maybe<Scalars['String']>;
   qcStart?: Maybe<Scalars['String']>;
   qcStartUser?: Maybe<Scalars['String']>;
+  qcStatus40?: Maybe<Scalars['String']>;
+  qcStatus41?: Maybe<Scalars['String']>;
   releaseLine?: Maybe<Scalars['String']>;
   releaseOrder?: Maybe<Scalars['String']>;
   shippingManifest?: Maybe<Scalars['String']>;
@@ -1261,7 +1290,7 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineAllocationUser?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickStartUser?: string | null, pickDone?: string | null, pickDoneUser?: string | null, splitDone?: string | null, qcStart?: string | null, qcStartUser?: string | null, qcDone?: string | null, qcDoneUser?: string | null, agStart?: string | null, agStartUser?: string | null, agDone?: string | null, agDoneUser?: string | null, pullingStart?: string | null, pullingDone?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffUser?: string | null, dropoffDone?: string | null, packStart?: string | null, packLine?: string | null, packLineUser?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineAllocationUser?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickStartUser?: string | null, pickLocationScan?: string | null, pickQuantityEntered?: string | null, pickITNPrint?: string | null, pickDone?: string | null, pickDoneUser?: string | null, splitDone?: string | null, pickITNNF?: string | null, pickCartAssigned?: string | null, pickUserExit?: string | null, pickLabelCount?: string | null, pickLabelQuantity?: string | null, pickOverPick?: string | null, pickToteAssignment?: string | null, pickStatus15?: string | null, pickShortPick?: string | null, qcStart?: string | null, qcStartUser?: string | null, qcHold?: string | null, qcDone?: string | null, qcDoneUser?: string | null, qcOrderComplete?: string | null, qcStatus40?: string | null, qcStatus41?: string | null, agStart?: string | null, agStartUser?: string | null, agDone?: string | null, agDoneUser?: string | null, agRelocate?: string | null, agOrderComplete?: string | null, agInDone?: string | null, agOutStart?: string | null, pullingStart?: string | null, pullingCartSelected?: string | null, pullingDone?: string | null, pullingLocationSelected?: string | null, pullingNotFound?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffUser?: string | null, dropoffDone?: string | null, dropoffCartSelected?: string | null, dropoffITNSkipped?: string | null, dropoffLocationSelected?: string | null, packStart?: string | null, packLine?: string | null, packLineUser?: string | null, packNewPackage?: string | null, packSupervisorCheck?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
 
 export type FetchItnLifecycleDrillDownQueryVariables = Types.Exact<{
   orderNumber: Types.Scalars['String'];
@@ -1679,26 +1708,55 @@ export const FetchItnLifecycleDocument = gql`
     orderCancel
     pickStart
     pickStartUser
+    pickLocationScan
+    pickLocationScan
+    pickQuantityEntered
+    pickITNPrint
     pickDone
     pickDoneUser
     splitDone
+    pickITNNF
+    pickCartAssigned
+    pickUserExit
+    pickLabelCount
+    pickLabelQuantity
+    pickOverPick
+    pickToteAssignment
+    pickStatus15
+    pickShortPick
     qcStart
     qcStartUser
+    qcHold
     qcDone
     qcDoneUser
+    qcOrderComplete
+    qcStatus40
+    qcStatus41
     agStart
     agStartUser
     agDone
     agDoneUser
+    agRelocate
+    agOrderComplete
+    agInDone
+    agOutStart
     pullingStart
+    pullingCartSelected
     pullingDone
+    pullingLocationSelected
+    pullingNotFound
     dropoffStart
     dropoffLine
     dropoffUser
     dropoffDone
+    dropoffCartSelected
+    dropoffITNSkipped
+    dropoffLocationSelected
     packStart
     packLine
     packLineUser
+    packNewPackage
+    packSupervisorCheck
     packReject
     packDone
     ParentITN
