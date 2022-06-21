@@ -150,7 +150,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   'Priority',
                   !line.Order.ShipmentMethod.PriorityPinkPaper ? 'Yes' : 'No',
                 ],
-                ['Customer', line.Order.CustomerNumber],
+                ['Customer', line.Order.Customer.CustomerNumber],
                 ['Quantity', line.Quantity],
                 ['ITN Count', ''],
                 ['PRC', line.Inventory.Product.ProductCode],
