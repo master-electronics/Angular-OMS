@@ -137,6 +137,6 @@ export class LevelSliderComponent {
   }
 
   ngOnDestroy(): void {
-    this.levelSubject.unsubscribe();
+    //this.levelSubject.unsubscribe();
   }
 }

@@ -112,7 +112,7 @@ export class ITNLifecycleComponent implements OnInit {
       },
       {
         name: "ITN",
-        dataName: "InternalTrackingNumber",
+        dataName: "InventoryTrackingNumber",
         width: "200px",
       },
       {
@@ -429,8 +429,8 @@ export class ITNLifecycleComponent implements OnInit {
             result["PriorityDisplay"] = (result.Priority)?"Y":"N";
             result.ProductTier = (result.ProductTier)?result.ProductTier.trim().toUpperCase():"";
             result['OrderNOSI'] = ((item.OrderNumber)?item.OrderNumber.trim().toUpperCase()+"-":"")+((item.NOSINumber)?item.NOSINumber.trim().toUpperCase():"");
-            result.InternalTrackingNumber = (result.InternalTrackingNumber)?result.InternalTrackingNumber.trim().toUpperCase():"";
-            result.after_InternalTrackingNumber = (result.after_InternalTrackingNumber)?result.after_InternalTrackingNumber.trim().toUpperCase():"";
+            result.InventoryTrackingNumber = (result.InventoryTrackingNumber)?result.InventoryTrackingNumber.trim().toUpperCase():"";
+            result.after_InventoryTrackingNumber = (result.after_InventoryTrackingNumber)?result.after_InventoryTrackingNumber.trim().toUpperCase():"";
             result.CustomerNumber = (result.CustomerNumber)?result.CustomerNumber.trim().toUpperCase():"";
             result.CustomerTier = (result.CustomerTier)?result.CustomerTier.trim().toUpperCase():"";
             result.TrackingNumber = (result.TrackingNumber)?result.TrackingNumber.trim().toUpperCase():"";
@@ -627,36 +627,36 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   //handle when user open or closes a drilldown
-  expandChange(DataRow: [], column: string, checked: boolean): void {
+  // expandChange(DataRow: [], column: string, checked: boolean): void {
 
-    //close any open drilldowns
-    for (let i = 0; i<this.tableDataDisplay.length; i++) {
-      this.tableDataDisplay[i].expand = false;
-      this.tableDataDisplay[i].OrderExpand = false;
-      this.tableDataDisplay[i].LineExpand = false;
-      this.tableDataDisplay[i].ITNExpand = false;
-    }
+  //   //close any open drilldowns
+  //   for (let i = 0; i<this.tableDataDisplay.length; i++) {
+  //     this.tableDataDisplay[i].expand = false;
+  //     this.tableDataDisplay[i].OrderExpand = false;
+  //     this.tableDataDisplay[i].LineExpand = false;
+  //     this.tableDataDisplay[i].ITNExpand = false;
+  //   }
 
-    this.drilldownTableData = [];
+  //   this.drilldownTableData = [];
 
-    //if the user is opening a drilldown load data else clear data from arrays
-    if (checked) {
-      if (column == "Order") {
-        this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"]);
-      } else if (column == "Line") {
-          this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]));
-      } else if (column == "ITN") {
-          this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]), DataRow["InternalTrackingNumber"]);
-      }
+  //   //if the user is opening a drilldown load data else clear data from arrays
+  //   if (checked) {
+  //     if (column == "Order") {
+  //       this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"]);
+  //     } else if (column == "Line") {
+  //         this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]));
+  //     } else if (column == "ITN") {
+  //         this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]), DataRow["InventoryTrackingNumber"]);
+  //     }
 
-    } else {
-      this.drilldownTableData = [];
-      this.drilldownTableData2 = [];
-    }
+  //   } else {
+  //     this.drilldownTableData = [];
+  //     this.drilldownTableData2 = [];
+  //   }
 
-    DataRow["expand"] = checked;
-    DataRow[column+"Expand"] = checked;
-  }
+  //   DataRow["expand"] = checked;
+  //   DataRow[column+"Expand"] = checked;
+  // }
 
   onDrilldown(DataRow: [], column: string): void {
     this.drilldownTitle
@@ -670,8 +670,8 @@ export class ITNLifecycleComponent implements OnInit {
       this.drilldownTitle = "Order " + DataRow["OrderNOSI"] + ", Line " + DataRow["OrderLineNumber"];
       this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]));
     } else if (column == "ITN") {
-      this.drilldownTitle = "Order " + DataRow["OrderNOSI"] + ", Line " + DataRow["OrderLineNumber"] + ", ITN " + DataRow["InternalTrackingNumber"];
-      this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]), DataRow["InternalTrackingNumber"]);
+      this.drilldownTitle = "Order " + DataRow["OrderNOSI"] + ", Line " + DataRow["OrderLineNumber"] + ", ITN " + DataRow["InventoryTrackingNumber"];
+      this.loadDrillDown(DataRow["OrderNumber"], DataRow["NOSINumber"], Number(DataRow["OrderLineNumber"]), DataRow["InventoryTrackingNumber"]);
     }
 
     this.drilldownVisible = true;
@@ -946,7 +946,7 @@ export class ITNLifecycleComponent implements OnInit {
                 )
               }
 
-
+              const test = "test";
 
             }
 
@@ -968,7 +968,7 @@ export class ITNLifecycleComponent implements OnInit {
 
   //pull drilldown data from db and load into arrays
   loadDrillDown(orderNumber?: string, nosiNumber?: string, 
-    orderLineNumber?: number, internalTrackingNumber?: string): void {
+    orderLineNumber?: number, inventoryTrackingNumber?: string): void {
       this.isLoading = true;
       this.drilldownTableData2 = [];
 
@@ -979,7 +979,7 @@ export class ITNLifecycleComponent implements OnInit {
             orderNumber: orderNumber,
             nosiNumber: nosiNumber,
             orderLineNumber: orderLineNumber,
-            internalTrackingNumber: internalTrackingNumber,
+            inventoryTrackingNumber: inventoryTrackingNumber,
           },
           {
             fetchPolicy: 'network-only'
@@ -994,7 +994,7 @@ export class ITNLifecycleComponent implements OnInit {
                 {
                   OrderNumber: (row.OrderNumber)?row.OrderNumber.trim():"",
                   NOSINumber: (row.NOSINumber)?row.NOSINumber.trim():"",
-                  InternalTrackingNumber: (row.InternalTrackingNumber)?row.InternalTrackingNumber.trim():"",
+                  InventoryTrackingNumber: (row.InventoryTrackingNumber)?row.InventoryTrackingNumber.trim():"",
                   Message: (row.Message)?row.Message.trim():"",
                   UserID: (row.UserID)?row.UserID:null,
                   Name: (row.Name)?row.Name.trim():"",
@@ -1030,11 +1030,17 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    try {
     this.subscription.unsubscribe();
     this.templateList.unsubscribe();
     this.selTempSub.unsubscribe();
     this.columnsSubscription.unsubscribe();
     this.drillDownSubscription.unsubscribe();
+    }
+    catch(ex) {
+      console.log("Error1: " + ex);
+    }
+
   }
 
 }

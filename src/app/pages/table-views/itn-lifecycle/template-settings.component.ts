@@ -593,13 +593,19 @@ export class TemplateSettings {
   }
 
   ngOnDestroy(): void {
-    this.selTempSub.unsubscribe();
-    this.updateTempSub.unsubscribe();
-    this.deleteLevelLimitSub.unsubscribe();
-    this.insertLevelLimitSub.unsubscribe();
-    this.insertTemplateSub.unsubscribe();
-    this.deleteTemplateSub.unsubscribe();
-    this.limitsNotifier.unsubscribe();
-    this.clearDefaultTemplateSub.unsubscribe();
+    try {
+      // this.selTempSub.unsubscribe();
+      // this.updateTempSub.unsubscribe();
+      // this.deleteLevelLimitSub.unsubscribe();
+      // this.insertLevelLimitSub.unsubscribe();
+      // this.insertTemplateSub.unsubscribe();
+      // this.deleteTemplateSub.unsubscribe();
+      // this.limitsNotifier.unsubscribe();
+      // this.clearDefaultTemplateSub.unsubscribe();
+    }
+    catch (exception) {
+      console.log("Error: " + exception);
+    }
+
   }
 }

@@ -88,7 +88,7 @@ export class PrinterMaintenance implements OnInit {
 
     //scroll data table to the top when changing pages
     scrollToTop(): void {
-        const element = document.getElementById("excel-table");
+        const element = document.getElementById("printer-table");
         element.children[0].children[0].children[0].children[0].children[1].scrollTop = 0;
 
     }

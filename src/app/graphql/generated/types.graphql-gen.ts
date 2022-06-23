@@ -115,7 +115,7 @@ export type ItnLifeCycle = {
   __typename?: 'ITNLifeCycle';
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNOSI?: Maybe<Scalars['String']>;
@@ -129,7 +129,7 @@ export type ItnLifeCycle = {
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
-  after_InternalTrackingNumber?: Maybe<Scalars['String']>;
+  after_InventoryTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agDoneUser?: Maybe<Scalars['String']>;
   agInDone?: Maybe<Scalars['String']>;
@@ -199,7 +199,7 @@ export type ItnLifeCycleDrillDown = {
   DateTime?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Event?: Maybe<Scalars['String']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
   Module?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
@@ -886,7 +886,7 @@ export type QueryFetchItnLifecycleArgs = {
 
 
 export type QueryFetchItnLifecycleDrillDownArgs = {
-  internalTrackingNumber?: InputMaybe<Scalars['String']>;
+  inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   nosiNumber?: InputMaybe<Scalars['String']>;
   orderLineNumber?: InputMaybe<Scalars['Int']>;
   orderNumber: Scalars['String'];

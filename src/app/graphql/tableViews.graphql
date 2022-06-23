@@ -171,8 +171,8 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
     OrderNumber
     NOSINumber
     OrderNOSI
-    InternalTrackingNumber
-    after_InternalTrackingNumber
+    InventoryTrackingNumber
+    after_InventoryTrackingNumber
     PartNumber
     ProductCode
     OrderLineNumber
@@ -252,17 +252,17 @@ query fetchITNLifecycleDrillDown(
   $orderNumber: String!
   $nosiNumber: String
   $orderLineNumber: Int
-  $internalTrackingNumber: String
+  $inventoryTrackingNumber: String
 ) {
   fetchITNLifecycleDrillDown(
     orderNumber: $orderNumber
     nosiNumber: $nosiNumber
     orderLineNumber: $orderLineNumber
-    internalTrackingNumber: $internalTrackingNumber
+    inventoryTrackingNumber: $inventoryTrackingNumber
   ) {
     OrderNumber
     NOSINumber
-    InternalTrackingNumber
+    InventoryTrackingNumber
     Message
     UserID
     Name

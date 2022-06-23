@@ -120,7 +120,7 @@ export type ItnLifeCycle = {
   __typename?: 'ITNLifeCycle';
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderNOSI?: Maybe<Scalars['String']>;
@@ -134,7 +134,7 @@ export type ItnLifeCycle = {
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
-  after_InternalTrackingNumber?: Maybe<Scalars['String']>;
+  after_InventoryTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agDoneUser?: Maybe<Scalars['String']>;
   agInDone?: Maybe<Scalars['String']>;
@@ -204,7 +204,7 @@ export type ItnLifeCycleDrillDown = {
   DateTime?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   Event?: Maybe<Scalars['String']>;
-  InternalTrackingNumber?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
   Module?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
@@ -891,7 +891,7 @@ export type QueryFetchItnLifecycleArgs = {
 
 
 export type QueryFetchItnLifecycleDrillDownArgs = {
-  internalTrackingNumber?: InputMaybe<Scalars['String']>;
+  inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   nosiNumber?: InputMaybe<Scalars['String']>;
   orderLineNumber?: InputMaybe<Scalars['Int']>;
   orderNumber: Scalars['String'];
@@ -1606,17 +1606,17 @@ export type FetchItnLifecycleQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InternalTrackingNumber?: string | null, after_InternalTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineAllocationUser?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickStartUser?: string | null, pickLocationScan?: string | null, pickITNScan?: string | null, pickQuantityEntered?: string | null, pickITNPrint?: string | null, pickDone?: string | null, pickDoneUser?: string | null, splitDone?: string | null, pickITNNF?: string | null, pickCartAssigned?: string | null, pickUserExit?: string | null, pickLabelCount?: string | null, pickLabelQuantity?: string | null, pickOverPick?: string | null, pickToteAssignment?: string | null, pickStatus15?: string | null, pickShortPick?: string | null, qcStart?: string | null, qcStartUser?: string | null, qcHold?: string | null, qcDone?: string | null, qcDoneUser?: string | null, qcOrderComplete?: string | null, qcStatus40?: string | null, qcStatus41?: string | null, agStart?: string | null, agStartUser?: string | null, agDone?: string | null, agDoneUser?: string | null, agRelocate?: string | null, agOrderComplete?: string | null, agInDone?: string | null, agOutStart?: string | null, pullingStart?: string | null, pullingCartSelected?: string | null, pullingDone?: string | null, pullingLocationSelected?: string | null, pullingNotFound?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffUser?: string | null, dropoffDone?: string | null, dropoffCartSelected?: string | null, dropoffITNSkipped?: string | null, dropoffLocationSelected?: string | null, packStart?: string | null, packLine?: string | null, packLineUser?: string | null, packNewPackage?: string | null, packSupervisorCheck?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
+export type FetchItnLifecycleQuery = { __typename?: 'Query', fetchITNLifecycle?: Array<{ __typename?: 'ITNLifeCycle', OrderNumber?: string | null, NOSINumber?: string | null, OrderNOSI?: string | null, InventoryTrackingNumber?: string | null, after_InventoryTrackingNumber?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: number | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, releaseOrder?: string | null, releaseLine?: string | null, lineAllocation?: string | null, lineAllocationUser?: string | null, lineCancel?: string | null, orderCancel?: string | null, pickStart?: string | null, pickStartUser?: string | null, pickLocationScan?: string | null, pickITNScan?: string | null, pickQuantityEntered?: string | null, pickITNPrint?: string | null, pickDone?: string | null, pickDoneUser?: string | null, splitDone?: string | null, pickITNNF?: string | null, pickCartAssigned?: string | null, pickUserExit?: string | null, pickLabelCount?: string | null, pickLabelQuantity?: string | null, pickOverPick?: string | null, pickToteAssignment?: string | null, pickStatus15?: string | null, pickShortPick?: string | null, qcStart?: string | null, qcStartUser?: string | null, qcHold?: string | null, qcDone?: string | null, qcDoneUser?: string | null, qcOrderComplete?: string | null, qcStatus40?: string | null, qcStatus41?: string | null, agStart?: string | null, agStartUser?: string | null, agDone?: string | null, agDoneUser?: string | null, agRelocate?: string | null, agOrderComplete?: string | null, agInDone?: string | null, agOutStart?: string | null, pullingStart?: string | null, pullingCartSelected?: string | null, pullingDone?: string | null, pullingLocationSelected?: string | null, pullingNotFound?: string | null, dropoffStart?: string | null, dropoffLine?: string | null, dropoffUser?: string | null, dropoffDone?: string | null, dropoffCartSelected?: string | null, dropoffITNSkipped?: string | null, dropoffLocationSelected?: string | null, packStart?: string | null, packLine?: string | null, packLineUser?: string | null, packNewPackage?: string | null, packSupervisorCheck?: string | null, packReject?: string | null, packDone?: string | null, ParentITN?: string | null, Quantity?: number | null, shippingManifest?: string | null } | null> | null };
 
 export type FetchItnLifecycleDrillDownQueryVariables = Types.Exact<{
   orderNumber: Types.Scalars['String'];
   nosiNumber?: Types.InputMaybe<Types.Scalars['String']>;
   orderLineNumber?: Types.InputMaybe<Types.Scalars['Int']>;
-  internalTrackingNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  inventoryTrackingNumber?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type FetchItnLifecycleDrillDownQuery = { __typename?: 'Query', fetchITNLifecycleDrillDown?: Array<{ __typename?: 'ITNLifeCycleDrillDown', OrderNumber?: string | null, NOSINumber?: string | null, InternalTrackingNumber?: string | null, Message?: string | null, UserID?: number | null, Name?: string | null, UserEventID?: number | null, Event?: string | null, Module?: string | null, DateTime?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: string | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, ParentITN?: string | null, DistributionCenter?: string | null, Quantity?: number | null, ShipmentMethod?: string | null, ShipmentMethodDescription?: string | null } | null> | null };
+export type FetchItnLifecycleDrillDownQuery = { __typename?: 'Query', fetchITNLifecycleDrillDown?: Array<{ __typename?: 'ITNLifeCycleDrillDown', OrderNumber?: string | null, NOSINumber?: string | null, InventoryTrackingNumber?: string | null, Message?: string | null, UserID?: number | null, Name?: string | null, UserEventID?: number | null, Event?: string | null, Module?: string | null, DateTime?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: string | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, ParentITN?: string | null, DistributionCenter?: string | null, Quantity?: number | null, ShipmentMethod?: string | null, ShipmentMethodDescription?: string | null } | null> | null };
 
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
@@ -2014,8 +2014,8 @@ export const FetchItnLifecycleDocument = gql`
     OrderNumber
     NOSINumber
     OrderNOSI
-    InternalTrackingNumber
-    after_InternalTrackingNumber
+    InventoryTrackingNumber
+    after_InventoryTrackingNumber
     PartNumber
     ProductCode
     OrderLineNumber
@@ -2103,16 +2103,16 @@ export const FetchItnLifecycleDocument = gql`
     }
   }
 export const FetchItnLifecycleDrillDownDocument = gql`
-    query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, $orderLineNumber: Int, $internalTrackingNumber: String) {
+    query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, $orderLineNumber: Int, $inventoryTrackingNumber: String) {
   fetchITNLifecycleDrillDown(
     orderNumber: $orderNumber
     nosiNumber: $nosiNumber
     orderLineNumber: $orderLineNumber
-    internalTrackingNumber: $internalTrackingNumber
+    inventoryTrackingNumber: $inventoryTrackingNumber
   ) {
     OrderNumber
     NOSINumber
-    InternalTrackingNumber
+    InventoryTrackingNumber
     Message
     UserID
     Name
