@@ -270,7 +270,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.printITN$ = this.printITN
       .mutate({
         InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-        Station: this.commonService.printerInfo,
+        Station: this.commonService.printerStation,
       })
       .pipe(
         tap((res) => {
@@ -327,7 +327,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       OrderLineDetailID: this.itemInfo.OrderLineDetailID,
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Status: String(Status).padStart(2, '3'),
-      Station: this.commonService.printerInfo,
+      Station: this.commonService.printerStation,
       StatusID: sqlData.warehouseHold_ID,
       log: [
         {

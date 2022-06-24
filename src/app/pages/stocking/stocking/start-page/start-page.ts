@@ -85,7 +85,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           map((res) => {
             this.isLoading = false;
             this._service.changeUserContainerID(
-              res.data.findOrCreateContainer._id
+              res.data.findOrCreateUserContainer._id
             );
           }),
           catchError((err) => {

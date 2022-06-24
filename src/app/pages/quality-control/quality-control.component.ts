@@ -25,12 +25,12 @@ export class QualityControlComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const station = this.commonService.printerInfo;
+    const station = this.commonService.printerStation;
     if (!this.qcService.qcStart) this.qcService.resetQCStartTime(Date.now());
     if (station) return;
     this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
       map((res) => {
-        this.commonService.changeStation(res.data.fetchPrinterStation);
+        this.commonService.changePrinterStation(res.data.fetchPrinterStation);
       }),
       catchError((error) => {
         this.modalMessage = error.error;
