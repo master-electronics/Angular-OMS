@@ -66,6 +66,7 @@ export class HoldOnCounterComponent implements OnInit {
           // iterate each user record
           const tableData: tableData[] = res.data.fetchHoldOnCounter.map(
             (element) => {
+              sumForAll[0] += element.detail[0];
               const total = element.detail.reduce((acc, curr, index) => {
                 sumForAll[index] += curr;
                 return acc + curr;
