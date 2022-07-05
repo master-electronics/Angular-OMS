@@ -51,12 +51,12 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.currentStation = this.commonService.printerInfo;
+    this.currentStation = this.commonService.printerStation;
     if (this.currentStation) return;
     this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
       map((res) => {
         this.currentStation = res.data.fetchPrinterStation;
-        this.commonService.changeStation(this.currentStation);
+        this.commonService.changePrinterStation(this.currentStation);
       }),
       catchError((error) => {
         this.modalMessage = error.error;

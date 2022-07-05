@@ -294,14 +294,14 @@ export type Mutation = {
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  deleteOrderLineDetailByOrderNumber?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deleteOrderLineDetailFromMerp?: Maybe<Array<Maybe<OrderLineDetail>>>;
   deletePrinter?: Maybe<Printer>;
   deleteValueMap?: Maybe<ValueMap>;
-  findOrCreateContainer?: Maybe<Container>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
   findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateProduct: Product;
+  findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
   insertITNLevelLimit?: Maybe<ItnUserLevelLimit>;
@@ -316,6 +316,7 @@ export type Mutation = {
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
+  updateForCustomerFromMerp?: Maybe<Scalars['Boolean']>;
   updateForInventoryFromMerp?: Maybe<Scalars['Boolean']>;
   updateForOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   updateForProductFromMerp?: Maybe<Scalars['Boolean']>;
@@ -405,10 +406,10 @@ export type MutationDeleteOrderLineDetailArgs = {
 };
 
 
-export type MutationDeleteOrderLineDetailByOrderNumberArgs = {
+export type MutationDeleteOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
-  InternalTrackingNumber: Scalars['String'];
+  InventoryTrackingNumber: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderLineNumber: Scalars['Int'];
   OrderNumber: Scalars['String'];
@@ -422,11 +423,6 @@ export type MutationDeletePrinterArgs = {
 
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
-};
-
-
-export type MutationFindOrCreateContainerArgs = {
-  Container: InsertContainer;
 };
 
 
@@ -447,6 +443,11 @@ export type MutationFindOrCreateOrderLineDetailArgs = {
 
 export type MutationFindOrCreateProductArgs = {
   Product: InsertProduct;
+};
+
+
+export type MutationFindOrCreateUserContainerArgs = {
+  Container: InsertContainer;
 };
 
 
@@ -539,7 +540,13 @@ export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   Type: Scalars['String'];
-  Zone: Scalars['String'];
+  Zone?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateForCustomerFromMerpArgs = {
+  CustomerNumber: Scalars['String'];
+  CustomerTier?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -562,6 +569,7 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   Barcode: Scalars['String'];
   BranchID: Scalars['String'];
   CustomerNumber: Scalars['String'];
+  CustomerTier: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
   NOSINumber: Scalars['String'];
@@ -583,6 +591,7 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
 export type MutationUpdateForProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+  ProductTier?: InputMaybe<Scalars['String']>;
 };
 
 

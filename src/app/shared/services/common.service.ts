@@ -14,13 +14,12 @@ export class CommonService {
   }
 
   // Printer Station
-  private printerStation = new BehaviorSubject<string>('');
-  public printerStation$ = this.printerStation.asObservable();
-  public changeStation(station: string): void {
-    this.printerStation.next(station);
+  private _printerStation = new BehaviorSubject<string>('');
+  public changePrinterStation(station: string): void {
+    this._printerStation.next(station);
   }
-  public get printerInfo(): string {
-    return this.printerStation.value;
+  public get printerStation(): string {
+    return this._printerStation.value;
   }
 
   constructor(public platform: Platform) {

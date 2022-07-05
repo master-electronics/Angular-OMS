@@ -114,7 +114,7 @@ mutation findorCreateUserContainerForStocking(
   $DistrubutionCenter: String!
   $ContainerTypeID: Int!
 ) {
-  findOrCreateContainer(
+  findOrCreateUserContainer(
     Container: {
       ContainerTypeID: $ContainerTypeID
       Barcode: $Barcode
