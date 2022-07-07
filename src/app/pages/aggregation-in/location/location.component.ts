@@ -222,7 +222,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: environment.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
-              toteList: [this.outsetContainer.Barcode],
+              // toteList: [this.outsetContainer.Barcode],
               log: [
                 {
                   UserID: Number(
