@@ -109,7 +109,7 @@ export class EventLogComponent implements OnInit {
       .pipe(
         map((res) => {
           this.isLoading = false;
-          this.tableData = res.data.findUserEventLog.map((log) => {
+          this.tableData = res.data.findUserEventLogs.map((log) => {
             const result = { ...log };
             const tmp = new Date(Number(log.DateTime));
             result.DateTime = tmp.toLocaleString();

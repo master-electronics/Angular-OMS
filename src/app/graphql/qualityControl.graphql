@@ -12,6 +12,7 @@ query verifyITNforQc(
       InventoryTrackingNumber: $InventoryTrackingNumber
     }
   ) {
+    _id
     ParentITN
     QuantityOnHand
     ROHS
@@ -20,6 +21,9 @@ query verifyITNforQc(
     ORDERLINEDETAILs {
       _id
       StatusID
+      Container {
+        Barcode
+      }
       OrderLine {
         OrderLineNumber
       }
@@ -130,6 +134,7 @@ query findNewAfterUpdateBin(
   ) {
     _id
     ORDERLINEDETAILs {
+      _id
       StatusID
       Container {
         Barcode
@@ -138,8 +143,14 @@ query findNewAfterUpdateBin(
   }
 }
 
-query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
-  findContainer(Container: $Container) {
+query verifyQCRepack(
+  $DistributionCenter: String!
+  $Barcode: String!
+  $OrderID: Int!
+) {
+  findContainer(
+    Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+  ) {
     _id
     Row
     ContainerTypeID
@@ -151,7 +162,7 @@ query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
       }
     }
   }
-  findOrder(Order: $Order) {
+  findOrder(Order: { _id: $OrderID }) {
     _id
     ORDERLINEDETAILs {
       StatusID
@@ -164,15 +175,12 @@ query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
 }
 
 mutation updateInventoryAndDetailAfterRepack(
-  $InventoryTrackingNumber: String!
+  $InventoryID: Int!
   $OrderLineDetailID: Int!
   $Inventory: updateInventory!
   $OrderLineDetail: updateOrderLineDetail!
 ) {
-  updateInventory(
-    Inventory: $Inventory
-    InventoryTrackingNumber: $InventoryTrackingNumber
-  )
+  updateInventory(_id: $InventoryID, Inventory: $Inventory)
   updateOrderLineDetail(
     OrderLineDetail: $OrderLineDetail
     _id: $OrderLineDetailID

@@ -78,8 +78,8 @@ mutation updatePullingNotFound(
   }
 }
 
-query findITNsInCartForDropOff($Inventory: searchInventory!) {
-  findInventory(Inventory: $Inventory) {
+query findITNsInCartForDropOff($ContainerID: Int!) {
+  findInventorys(Inventory: { ContainerID: $ContainerID }) {
     ORDERLINEDETAILs {
       Order {
         OrderNumber

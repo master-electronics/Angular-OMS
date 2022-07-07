@@ -45,10 +45,11 @@ export class QualityControlService {
 
 export interface itemParams {
   InventoryTrackingNumber: string;
+  InventoryID: number;
   OrderLineDetailID: number;
+  OrderID: number;
   CustomerNumber: string;
   DistributionCenter: string;
-  OrderID: number;
   OrderNumber: string;
   OrderLineNumber: number;
   NOSI: string;

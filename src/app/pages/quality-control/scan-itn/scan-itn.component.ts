@@ -73,6 +73,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   verfiyITN(ITN: string): void {
     this.isLoading = true;
+    const regex = /^hld*/g;
     this.subscription.add(
       this.verifyITNQC
         .fetch(
@@ -85,10 +86,24 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         .pipe(
           // check vaild
           tap((res) => {
-            if (!res.data.findInventory) {
-              throw 'Can not find this ITN';
+            if (!res.data.findInventory.ORDERLINEDETAILs?.length) {
+              throw 'Can not find this order';
+            }
+
+            if (res.data.findInventory.ORDERLINEDETAILs?.length > 1) {
+              throw 'Invalid Order Line Detail';
             }
             let error = '';
+            if (
+              !['qc'].includes(
+                res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase().trim()
+              ) &&
+              !res.data.findInventory[0].ORDERLINEDETAILs[0].Container.Barcode.toLowerCase()
+                .trim()
+                .match(regex)
+            ) {
+              error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].Container.Barcode} must be QC or hold\n`;
+            }
             if (
               ![
                 sqlData.droppedQC_ID,
@@ -109,6 +124,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               res.data.findInventory.ORDERLINEDETAILs[0].OrderLine;
             this.itemInfo = {
               InventoryTrackingNumber: ITN,
+              InventoryID: detail._id,
               OrderLineDetailID: detail.ORDERLINEDETAILs[0]._id,
               OrderID: Order._id,
               CustomerNumber: Order.Customer?.CustomerNumber.trim() || '',

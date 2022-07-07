@@ -1,5 +1,5 @@
 query findContainerForSearchBarcode($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+  findContainers(Container: $Container) {
     Barcode
     Warehouse
     Row

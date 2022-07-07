@@ -1577,7 +1577,7 @@ export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchSuggetionLocationForSortingQuery = { __typename?: 'Query', findProducts?: Array<{ __typename?: 'Product', INVENTORies?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Container: { __typename?: 'Container', Barcode: string, Zone?: number | null } } | null> | null } | null> | null };
+export type FetchSuggetionLocationForSortingQuery = { __typename?: 'Query', findInventorys?: Array<{ __typename?: 'Inventory', QuantityOnHand: number, Container: { __typename?: 'Container', Barcode: string, Zone?: number | null } } | null> | null };
 
 export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
@@ -1709,13 +1709,11 @@ export const VerifyContainerForSortingDocument = gql`
   }
 export const FetchSuggetionLocationForSortingDocument = gql`
     query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
-  findProducts(Product: {_id: $ProductID}, limit: $limit) {
-    INVENTORies {
-      QuantityOnHand
-      Container {
-        Barcode
-        Zone
-      }
+  findInventorys(Inventory: {ProductID: $ProductID}, limit: $limit) {
+    QuantityOnHand
+    Container {
+      Barcode
+      Zone
     }
   }
 }

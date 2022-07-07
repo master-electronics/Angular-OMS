@@ -139,7 +139,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findInventory.length === 0) {
+          if (!res.data.findInventory._id) {
             this.alertType = 'error';
             this.alertMessage = 'ITN not found';
             this.isLoading = false;
@@ -153,7 +153,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           }
         }),
         switchMap((res) => {
-          const item = res.data.findInventory[0];
+          const item = res.data.findInventory;
           const ITNInfo = {
             _id: item._id,
             ITN: this.inputForm.value.barcode.trim(),
@@ -213,7 +213,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findContainer.length === 0) {
+          if (!res.data.findContainer._id) {
             throw new Error('Barcode not found');
           }
           if (!res.data.findContainer[0].ContainerType.IsMobile) {

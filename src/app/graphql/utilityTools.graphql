@@ -1,5 +1,5 @@
 query findITNsByShelf($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+  findContainers(Container: $Container) {
     INVENTORies {
       InventoryTrackingNumber
       ORDERLINEDETAILs {

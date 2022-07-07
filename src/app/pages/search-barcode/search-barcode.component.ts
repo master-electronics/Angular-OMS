@@ -79,13 +79,16 @@ export class SearchBarcodeComponent implements AfterViewInit {
       this.isLoading = true;
       if (ToteBarcodeRegex.test(barcode)) {
         this.isContainer = true;
-        const containerInfo = { Barcode: barcode };
+        const containerInfo = {
+          Barcode: barcode,
+          DistrubutionCenter: environment.DistributionCenter,
+        };
         this.search$ = this.searchContainer
-          .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
-          .valueChanges.pipe(
+          .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
+          .pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findContainer;
+              return res.data.findContainers;
             })
           );
       }
@@ -105,7 +108,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
           .valueChanges.pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findContainer.filter(
+              return res.data.findContainers.filter(
                 (res) => res.Barcode.length === 8
               );
             })

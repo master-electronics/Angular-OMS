@@ -224,7 +224,7 @@ query verifyOrderForAgOut(
 }
 
 query fetchContainerForAgoutPick($OrderID: Int) {
-  findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+  findOrderLineDetails(OrderLineDetail: { OrderID: $OrderID }) {
     OrderLine {
       OrderLineNumber
     }

@@ -105,7 +105,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
     }).pipe(
       tap((res) => {
         const position = res.verifyPosition.data.findContainer;
-        if (!position?.length) throw 'Cart not found!';
+        if (!position?._id) throw 'Cart not found!';
       }),
       map(() => {
         this.isLoading = false;

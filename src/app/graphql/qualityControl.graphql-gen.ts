@@ -1566,7 +1566,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Container: { __typename?: 'Container', Barcode: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -1621,18 +1621,19 @@ export type FindNewAfterUpdateBinQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Container: { __typename?: 'Container', Barcode: string } } | null> | null } | null };
+export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Container: { __typename?: 'Container', Barcode: string } } | null> | null } | null };
 
 export type VerifyQcRepackQueryVariables = Types.Exact<{
-  Container: Types.SearchContainer;
-  Order: Types.SearchOrder;
+  DistributionCenter: Types.Scalars['String'];
+  Barcode: Types.Scalars['String'];
+  OrderID: Types.Scalars['Int'];
 }>;
 
 
 export type VerifyQcRepackQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Row?: string | null, ContainerTypeID: number, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, OrderID: number } | null> | null } | null> | null } | null, findOrder?: { __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ContainerID: number } | null } | null> | null } | null };
 
 export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
-  InventoryTrackingNumber: Types.Scalars['String'];
+  InventoryID: Types.Scalars['Int'];
   OrderLineDetailID: Types.Scalars['Int'];
   Inventory: Types.UpdateInventory;
   OrderLineDetail: Types.UpdateOrderLineDetail;
@@ -1692,6 +1693,7 @@ export const VerifyItNforQcDocument = gql`
   findInventory(
     Inventory: {DistributionCenter: $DistributionCenter, InventoryTrackingNumber: $InventoryTrackingNumber}
   ) {
+    _id
     ParentITN
     QuantityOnHand
     ROHS
@@ -1700,6 +1702,9 @@ export const VerifyItNforQcDocument = gql`
     ORDERLINEDETAILs {
       _id
       StatusID
+      Container {
+        Barcode
+      }
       OrderLine {
         OrderLineNumber
       }
@@ -1857,6 +1862,7 @@ export const FindNewAfterUpdateBinDocument = gql`
   ) {
     _id
     ORDERLINEDETAILs {
+      _id
       StatusID
       Container {
         Barcode
@@ -1877,8 +1883,10 @@ export const FindNewAfterUpdateBinDocument = gql`
     }
   }
 export const VerifyQcRepackDocument = gql`
-    query verifyQCRepack($Container: searchContainer!, $Order: searchOrder!) {
-  findContainer(Container: $Container) {
+    query verifyQCRepack($DistributionCenter: String!, $Barcode: String!, $OrderID: Int!) {
+  findContainer(
+    Container: {DistributionCenter: $DistributionCenter, Barcode: $Barcode}
+  ) {
     _id
     Row
     ContainerTypeID
@@ -1890,7 +1898,7 @@ export const VerifyQcRepackDocument = gql`
       }
     }
   }
-  findOrder(Order: $Order) {
+  findOrder(Order: {_id: $OrderID}) {
     _id
     ORDERLINEDETAILs {
       StatusID
@@ -1914,11 +1922,8 @@ export const VerifyQcRepackDocument = gql`
     }
   }
 export const UpdateInventoryAndDetailAfterRepackDocument = gql`
-    mutation updateInventoryAndDetailAfterRepack($InventoryTrackingNumber: String!, $OrderLineDetailID: Int!, $Inventory: updateInventory!, $OrderLineDetail: updateOrderLineDetail!) {
-  updateInventory(
-    Inventory: $Inventory
-    InventoryTrackingNumber: $InventoryTrackingNumber
-  )
+    mutation updateInventoryAndDetailAfterRepack($InventoryID: Int!, $OrderLineDetailID: Int!, $Inventory: updateInventory!, $OrderLineDetail: updateOrderLineDetail!) {
+  updateInventory(_id: $InventoryID, Inventory: $Inventory)
   updateOrderLineDetail(
     OrderLineDetail: $OrderLineDetail
     _id: $OrderLineDetailID

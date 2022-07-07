@@ -1615,11 +1615,11 @@ export type UpdatePullingNotFoundMutationVariables = Types.Exact<{
 export type UpdatePullingNotFoundMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type FindItNsInCartForDropOffQueryVariables = Types.Exact<{
-  Inventory: Types.SearchInventory;
+  ContainerID: Types.Scalars['Int'];
 }>;
 
 
-export type FindItNsInCartForDropOffQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string } } | null> | null } | null };
+export type FindItNsInCartForDropOffQuery = { __typename?: 'Query', findInventorys?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string } } | null> | null } | null> | null };
 
 export type UpdateAfterDropOffMutationVariables = Types.Exact<{
   Inventory: Types.UpdateInventory;
@@ -1787,8 +1787,8 @@ export const UpdatePullingNotFoundDocument = gql`
     }
   }
 export const FindItNsInCartForDropOffDocument = gql`
-    query findITNsInCartForDropOff($Inventory: searchInventory!) {
-  findInventory(Inventory: $Inventory) {
+    query findITNsInCartForDropOff($ContainerID: Int!) {
+  findInventorys(Inventory: {ContainerID: $ContainerID}) {
     ORDERLINEDETAILs {
       Order {
         OrderNumber

@@ -1560,7 +1560,7 @@ export type FindItNsByShelfQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItNsByShelfQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null } | null };
+export type FindItNsByShelfQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null } | null> | null };
 
 export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
   UserInfo: Types.InsertUserInfo;
@@ -1593,7 +1593,7 @@ export type UpdateContainerMutation = { __typename?: 'Mutation', updateContainer
 
 export const FindItNsByShelfDocument = gql`
     query findITNsByShelf($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+  findContainers(Container: $Container) {
     INVENTORies {
       InventoryTrackingNumber
       ORDERLINEDETAILs {

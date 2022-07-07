@@ -102,12 +102,12 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         )
         .pipe(
           map((res) => {
-            if (res.data.findOrder.length) {
-              return res.data.findOrder[0].ORDERLINEDETAILs.map((item) => ({
+            if (res.data.findOrder.OrderNumber) {
+              return res.data.findOrder.ORDERLINEDETAILs.map((item) => ({
                 ...item,
                 Order: {
-                  OrderNumber: res.data.findOrder[0].OrderNumber,
-                  NOSINumber: res.data.findOrder[0].NOSINumber,
+                  OrderNumber: res.data.findOrder.OrderNumber,
+                  NOSINumber: res.data.findOrder.NOSINumber,
                 },
               }));
             }

@@ -1560,7 +1560,7 @@ export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null };
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
 
 export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
@@ -1580,7 +1580,7 @@ export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?:
 
 export const FindContainerForSearchBarcodeDocument = gql`
     query findContainerForSearchBarcode($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+  findContainers(Container: $Container) {
     Barcode
     Warehouse
     Row

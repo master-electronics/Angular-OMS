@@ -84,7 +84,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .pipe(
           switchMap((res) => {
-            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetail);
+            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetails);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
             const log = this.agOutService.ITNsInOrder.map((node) => {

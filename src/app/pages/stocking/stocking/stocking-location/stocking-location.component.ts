@@ -78,7 +78,7 @@ export class StockingLocationComponent implements OnInit {
       pipe(),
       switchMap((res) => {
         const returnITN = res.ITNInfo.data;
-        const suggetionList = res.locationList.data;
+        const suggetionList = res.locationList.data.findInventorys;
         this.ITNInfo = {
           ITN: this.currentITN.ITN,
           productID: returnITN.findInventory[0].Product._id,
@@ -103,7 +103,7 @@ export class StockingLocationComponent implements OnInit {
             returnITN.findInventory[0].ORDERLINEDETAILs[0]?.OrderLine
               .OrderLineNumber ?? null,
         };
-        suggetionList.findProduct[0].INVENTORies.forEach((inventory) => {
+        suggetionList.forEach((inventory) => {
           const element: SuggetionLocation = {
             Quantity: inventory.QuantityOnHand,
             Zone: inventory.Container.Zone,
@@ -170,7 +170,7 @@ export class StockingLocationComponent implements OnInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findContainer.length === 0) {
+          if (!res.data.findContainer) {
             throw 'Container not found';
           }
           if (
