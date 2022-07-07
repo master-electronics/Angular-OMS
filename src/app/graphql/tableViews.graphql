@@ -100,7 +100,7 @@ query fetchUserEventLog(
   $endDate: String
   $limit: Int
 ) {
-  findUserEventLog(
+  findUserEventLogs(
     UserEventLog: $UserEventLog
     Module: $Module
     startDate: $startDate

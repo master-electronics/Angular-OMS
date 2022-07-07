@@ -48,7 +48,7 @@ query verifyContainerForSorting(
 }
 
 query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
-  findProduct(Product: { _id: $ProductID }, limit: $limit) {
+  findProducts(Product: { _id: $ProductID }, limit: $limit) {
     INVENTORies {
       QuantityOnHand
       Container {

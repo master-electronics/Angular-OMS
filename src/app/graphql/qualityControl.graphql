@@ -2,8 +2,16 @@ query fetchPrinterStation {
   fetchPrinterStation
 }
 
-query verifyITNforQc($Inventory: searchInventory!) {
-  findInventory(Inventory: $Inventory) {
+query verifyITNforQc(
+  $DistributionCenter: String!
+  $InventoryTrackingNumber: String!
+) {
+  findInventory(
+    Inventory: {
+      DistributionCenter: $DistributionCenter
+      InventoryTrackingNumber: $InventoryTrackingNumber
+    }
+  ) {
     ParentITN
     QuantityOnHand
     ROHS
@@ -110,13 +118,22 @@ mutation updateAfterQcVerify(
   )
 }
 
-query findNewAfterUpdateBin($InventoryTrackingNumber: String!) {
+query findNewAfterUpdateBin(
+  $InventoryTrackingNumber: String!
+  $DistributionCenter: String!
+) {
   findInventory(
-    Inventory: { InventoryTrackingNumber: $InventoryTrackingNumber }
+    Inventory: {
+      DistributionCenter: $DistributionCenter
+      InventoryTrackingNumber: $InventoryTrackingNumber
+    }
   ) {
     _id
     ORDERLINEDETAILs {
       StatusID
+      Container {
+        Barcode
+      }
     }
   }
 }

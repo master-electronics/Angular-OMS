@@ -114,8 +114,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       Shelf: null,
       ShelfDetail: null,
     };
-    const OrderLineDetail = {
-      StatusID: sqlData.agInComplete_ID,
+    const inventoryInfo = {
       ContainerID: this.endContainer.containerID,
     };
     if (this.endContainer.type === 'shelf') {
@@ -127,7 +126,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Shelf: this.endContainer.location.Shelf,
         ShelfDetail: this.endContainer.location.ShelfDetail,
       };
-      delete OrderLineDetail.ContainerID;
+      inventoryInfo.ContainerID = this.outsetContainer.toteID;
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
     // set query for updateSql
@@ -146,7 +145,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       ContainerID: Number(this.outsetContainer.toteID),
       Container: sourceTote,
       Inventory: { ContainerID: this.endContainer.containerID },
-      OrderLineDetail: OrderLineDetail,
+      OrderLineDetail: { StatusID: sqlData.agInComplete_ID },
       log: log,
     };
     // set query for merp update.

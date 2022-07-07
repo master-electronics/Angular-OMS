@@ -95,6 +95,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.findNewID
         .fetch(
           {
+            DistributionCenter: environment.DistributionCenter,
             InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
           },
           { fetchPolicy: 'network-only' }
@@ -103,16 +104,12 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             this.isLoading = false;
             let message = '';
-            // if (
-            //   res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation !==
-            //   'qc'
-            // ) {
-            //   this.needSearch = true;
-            //   message = `Bin location is not qc, Click search button again!`;
-            // }
-            if (res.data.findInventory.length > 1) {
+            if (
+              res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase() !==
+              'qc'
+            ) {
               this.needSearch = true;
-              message = `More than one ITN, Click search button again!`;
+              message = `Bin location is not qc, Click search button again!`;
             }
             if (this.needSearch) {
               this.needSearch = true;

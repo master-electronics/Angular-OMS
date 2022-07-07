@@ -85,10 +85,8 @@ export class AggregationInComponent
     this.query$ = this._verifyContainer
       .fetch(
         {
-          Container: {
-            DistributionCenter: environment.DistributionCenter,
-            Barcode: this.containerForm.value.containerNumber,
-          },
+          DistributionCenter: environment.DistributionCenter,
+          Barcode: this.containerForm.value.containerNumber,
         },
         { fetchPolicy: 'network-only' }
       )
@@ -96,7 +94,7 @@ export class AggregationInComponent
       .pipe(
         tap((res) => {
           const container = res.data.findContainer;
-          if (!container?.length) throw 'Container not found!';
+          if (!container._id) throw 'Container not found!';
           // only accepte mobile container
           if (!container[0]?.ContainerType.IsMobile)
             throw 'This container is not mobile!';
@@ -104,7 +102,7 @@ export class AggregationInComponent
             throw 'No item in this container!';
           // verify all line have the same orderID and statusID in the tote
           if (
-            !container[0].INVENTORies.every(
+            !container.INVENTORies.every(
               (line, i, arr) =>
                 line.ORDERLINEDETAILs[0].OrderID ===
                   arr[0].ORDERLINEDETAILs[0].OrderID &&
@@ -115,15 +113,15 @@ export class AggregationInComponent
             throw 'Have different order or status in the container.';
           // only allow status is agIn complete and qc complete
           if (
-            container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID <
+            container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID <
               sqlData.qcComplete_ID ||
-            container[0].INVENTORies[0].ORDERLINEDETAILs[0].StatusID >=
+            container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID >=
               sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
         }),
         switchMap((res) => {
-          const container = res.data.findContainer[0];
+          const container = res.data.findContainer;
           const logList = [];
           const outsetContainer: outsetContainer = {
             toteID: container._id,
@@ -137,7 +135,7 @@ export class AggregationInComponent
               sqlData.agInComplete_ID,
           };
           // get all ITN in tote
-          res.data.findContainer[0].INVENTORies.forEach((Inventory) => {
+          res.data.findContainer.INVENTORies.forEach((Inventory) => {
             if (Inventory.InventoryTrackingNumber) {
               const line = Inventory.ORDERLINEDETAILs[0];
               logList.push({

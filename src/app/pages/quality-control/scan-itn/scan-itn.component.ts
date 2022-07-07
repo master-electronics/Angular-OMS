@@ -19,6 +19,7 @@ import {
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/sqlData';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'scan-itn',
@@ -72,39 +73,28 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   verfiyITN(ITN: string): void {
     this.isLoading = true;
-    const regex = /^hld*/g;
     this.subscription.add(
       this.verifyITNQC
         .fetch(
-          { Inventory: { InventoryTrackingNumber: ITN } },
+          {
+            InventoryTrackingNumber: ITN,
+            DistributionCenter: environment.DistributionCenter,
+          },
           { fetchPolicy: 'network-only' }
         )
         .pipe(
           // check vaild
           tap((res) => {
-            if (!res.data.findInventory?.length) {
+            if (!res.data.findInventory) {
               throw 'Can not find this ITN';
             }
-            if (res.data.findInventory.length > 1) {
-              throw 'Invalid ITN';
-            }
             let error = '';
-            // if (
-            //   !['qc'].includes(
-            //     res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-            //   ) &&
-            //   !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
-            //     .trim()
-            //     .match(regex)
-            // ) {
-            //   error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
-            // }
             if (
               ![
                 sqlData.droppedQC_ID,
                 sqlData.warehouseHold_ID,
                 sqlData.qcComplete_ID,
-              ].includes(res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID)
+              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID)
             ) {
               error += `Invalid order line status ${res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
@@ -113,10 +103,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }),
           switchMap((res) => {
-            const detail = res.data.findInventory[0];
-            const Order = res.data.findInventory[0].ORDERLINEDETAILs[0].Order;
+            const detail = res.data.findInventory;
+            const Order = res.data.findInventory.ORDERLINEDETAILs[0].Order;
             const OrderLine =
-              res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine;
+              res.data.findInventory.ORDERLINEDETAILs[0].OrderLine;
             this.itemInfo = {
               InventoryTrackingNumber: ITN,
               OrderLineDetailID: detail.ORDERLINEDETAILs[0]._id,
@@ -151,21 +141,13 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });
             const updateMerpQCBin = this.updateQCBin.mutate({
-              InternalTrackingNumber: ITN,
+              InventoryTrackingNumber: ITN,
             });
             // update QCBin when bin is hold
             const updateQueries = this.itemInfo.isQCDrop
               ? { updateLog }
               : { updateLog, updateMerpQCBin };
             return forkJoin(updateQueries);
-          }),
-          tap((res: any) => {
-            // if (
-            //   !this.itemInfo.isQCDrop &&
-            //   !res.updateMerpQCBin.data.updateMerpQCBin.success
-            // ) {
-            //   throw new Error(`Can't update binlocation to qc`);
-            // }
           })
         )
         .subscribe(

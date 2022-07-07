@@ -1,5 +1,10 @@
-query verifyContainerForAggregationIn($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+query verifyContainerForAggregationIn(
+  $DistributionCenter: String!
+  $Barcode: String!
+) {
+  findContainer(
+    Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+  ) {
     _id
     Barcode
     ContainerTypeID
@@ -31,10 +36,8 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
   }
 }
 
-query fetchLocationAndOrderDetailForAgIn(
-  $OrderLineDetail: searchOrderLineDetail!
-) {
-  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+query fetchLocationAndOrderDetailForAgIn($OrderID: Int!) {
+  findOrderLineDetails(OrderLineDetail: { OrderID: $OrderID }) {
     _id
     Quantity
     StatusID
