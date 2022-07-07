@@ -206,7 +206,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderLineDetail: {
           StatusID: sqlData.agOutComplete_ID,
         },
-        toteList: [...toteSet],
+        // toteList: [...toteSet],
         log: log,
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
