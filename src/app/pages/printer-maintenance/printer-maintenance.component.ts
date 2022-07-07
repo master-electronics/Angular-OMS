@@ -101,6 +101,7 @@ export class PrinterMaintenance implements OnInit {
     loadView(): void {
         this.isLoading = true;
         this.viewData = [];
+        this.viewDataDisplay = [];
 
         this.printerViewSubscription.add(
             this._fetchPrinterList.fetch(
@@ -133,8 +134,10 @@ export class PrinterMaintenance implements OnInit {
                     this.viewData = printerData;
                     this.viewDataDisplay = this.viewData;
                     this.pageNumber = 1;
-                    this.isLoading = false;
-                }
+                    
+                };
+
+                this.isLoading = false;
             },
             catchError((error) => {
                 this.isLoading = false;
