@@ -839,7 +839,7 @@ export type Product = {
 export type ProductCode = {
   __typename?: 'ProductCode';
   PRODUCTs?: Maybe<Array<Maybe<Product>>>;
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1271,7 +1271,7 @@ export type InsertProduct = {
 };
 
 export type InsertProductCode = {
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1560,14 +1560,14 @@ export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
 
 export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
 }>;
 
 
-export type FindItNforSearchBarcodeQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null };
+export type FindItNforSearchBarcodeQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null };
 
 export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -1576,7 +1576,7 @@ export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null, ORDERLINEs?: Array<{ __typename?: 'OrderLine', OrderLineNumber: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null> | null } | null };
+export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null, ORDERLINEs?: Array<{ __typename?: 'OrderLine', OrderLineNumber: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null> | null } | null };
 
 export const FindContainerForSearchBarcodeDocument = gql`
     query findContainerForSearchBarcode($Container: searchContainer!) {
@@ -1592,7 +1592,7 @@ export const FindContainerForSearchBarcodeDocument = gql`
       InventoryTrackingNumber
       Product {
         ProductCode {
-          ProductCode
+          ProductCodeNumber
         }
         PartNumber
       }
@@ -1632,7 +1632,7 @@ export const FindItNforSearchBarcodeDocument = gql`
     InventoryTrackingNumber
     Product {
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       PartNumber
     }
@@ -1691,7 +1691,7 @@ export const FindOrderForSearchBarcodeDocument = gql`
           InventoryTrackingNumber
           Product {
             ProductCode {
-              ProductCode
+              ProductCodeNumber
             }
             PartNumber
           }

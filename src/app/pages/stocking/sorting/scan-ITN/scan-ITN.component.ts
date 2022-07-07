@@ -87,7 +87,7 @@ export class ScanITNComponent implements OnInit {
             ITN: this.ITNForm.value.ITN,
             productID: inventory.Product._id,
             InventoryID: inventory._id,
-            productCode: inventory.Product.ProductCode.ProductCode,
+            productCode: inventory.Product.ProductCode.ProductCodeNumber,
             partNumber: inventory.Product.PartNumber,
             QuantityOnHand: inventory.QuantityOnHand ?? null,
             remaining: null,

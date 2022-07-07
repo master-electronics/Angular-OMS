@@ -834,7 +834,7 @@ export type Product = {
 export type ProductCode = {
   __typename?: 'ProductCode';
   PRODUCTs?: Maybe<Array<Maybe<Product>>>;
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1266,7 +1266,7 @@ export type InsertProduct = {
 };
 
 export type InsertProductCode = {
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 

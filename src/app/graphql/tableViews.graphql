@@ -26,7 +26,7 @@ query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
       }
       Product {
         ProductCode {
-          ProductCode
+          ProductCodeNumber
         }
         PartNumber
       }
@@ -60,7 +60,7 @@ query fetchOrderDetailforitnView($Order: searchOrder!) {
         }
         Product {
           ProductCode {
-            ProductCode
+            ProductCodeNumber
           }
           PartNumber
         }

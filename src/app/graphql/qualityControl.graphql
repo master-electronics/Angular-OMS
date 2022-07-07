@@ -21,6 +21,7 @@ query verifyITNforQc(
     ORDERLINEDETAILs {
       _id
       StatusID
+      Quantity
       Container {
         Barcode
       }
@@ -39,7 +40,7 @@ query verifyITNforQc(
     }
     Product {
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       PartNumber
     }

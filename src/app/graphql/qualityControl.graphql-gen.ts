@@ -839,7 +839,7 @@ export type Product = {
 export type ProductCode = {
   __typename?: 'ProductCode';
   PRODUCTs?: Maybe<Array<Maybe<Product>>>;
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1271,7 +1271,7 @@ export type InsertProduct = {
 };
 
 export type InsertProductCode = {
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1566,7 +1566,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Container: { __typename?: 'Container', Barcode: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, Container: { __typename?: 'Container', Barcode: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -1702,6 +1702,7 @@ export const VerifyItNforQcDocument = gql`
     ORDERLINEDETAILs {
       _id
       StatusID
+      Quantity
       Container {
         Barcode
       }
@@ -1720,7 +1721,7 @@ export const VerifyItNforQcDocument = gql`
     }
     Product {
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       PartNumber
     }

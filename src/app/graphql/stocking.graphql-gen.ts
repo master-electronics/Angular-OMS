@@ -839,7 +839,7 @@ export type Product = {
 export type ProductCode = {
   __typename?: 'ProductCode';
   PRODUCTs?: Maybe<Array<Maybe<Product>>>;
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1271,7 +1271,7 @@ export type InsertProduct = {
 };
 
 export type InsertProductCode = {
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1561,7 +1561,7 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCode: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1653,7 +1653,7 @@ export const VerifyItnForSortingDocument = gql`
     Product {
       _id
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       DCPRODUCTs {
         Velocity

@@ -103,7 +103,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             this.isLoading = false;
             let message = '';
             if (
-              res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase() !==
+              res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase().trim() !==
               'qc'
             ) {
               this.needSearch = true;
@@ -173,13 +173,17 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID < sqlData.agOutComplete_ID
-                )
+                ) {
                   throw 'This tote has other order item in it.';
+                }
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID === this.itemInfo.OrderID &&
-                  itn.ORDERLINEDETAILs[0].StatusID !== sqlData.qcComplete_ID
-                )
+                  ![sqlData.warehouseHold_ID, sqlData.qcComplete_ID].includes(
+                    itn.ORDERLINEDETAILs[0].StatusID
+                  )
+                ) {
                   throw 'This tote is not in QC area.';
+                }
               });
             }
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.

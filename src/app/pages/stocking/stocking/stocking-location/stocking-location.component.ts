@@ -84,7 +84,7 @@ export class StockingLocationComponent implements OnInit {
           productID: returnITN.findInventory[0].Product._id,
           InventoryID: returnITN.findInventory[0]._id,
           productCode:
-            returnITN.findInventory[0].Product.ProductCode.ProductCode,
+            returnITN.findInventory[0].Product.ProductCode.ProductCodeNumber,
           partNumber: returnITN.findInventory[0].Product.PartNumber,
           QuantityOnHand: returnITN.findInventory[0].QuantityOnHand ?? null,
           remaining: null,

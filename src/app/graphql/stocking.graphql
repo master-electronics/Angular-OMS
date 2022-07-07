@@ -13,7 +13,7 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
     Product {
       _id
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       DCPRODUCTs {
         Velocity
