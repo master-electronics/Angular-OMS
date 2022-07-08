@@ -96,9 +96,9 @@ export class AggregationInComponent
           const container = res.data.findContainer;
           if (!container._id) throw 'Container not found!';
           // only accepte mobile container
-          if (!container[0]?.ContainerType.IsMobile)
+          if (!container.ContainerType.IsMobile)
             throw 'This container is not mobile!';
-          if (container[0].INVENTORies?.length === 0)
+          if (container.INVENTORies?.length === 0)
             throw 'No item in this container!';
           // verify all line have the same orderID and statusID in the tote
           if (
@@ -125,7 +125,6 @@ export class AggregationInComponent
           const logList = [];
           const outsetContainer: outsetContainer = {
             toteID: container._id,
-            InventoryID: container.INVENTORies[0]._id,
             Barcode: container.Barcode,
             OrderID: container.INVENTORies[0].ORDERLINEDETAILs[0].OrderID,
             ITNsInTote: [],
@@ -150,6 +149,7 @@ export class AggregationInComponent
                 Message: `Start ${container.Barcode}`,
               });
               outsetContainer.ITNsInTote.push({
+                InventoryID: Inventory._id,
                 ITN: Inventory.InventoryTrackingNumber,
                 OrderLineNumber: line.OrderLine.OrderLineNumber,
               });

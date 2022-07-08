@@ -336,7 +336,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateOrderLineDetailByContainerID?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -704,9 +704,11 @@ export type MutationUpdateOrderLineDetailArgs = {
 };
 
 
-export type MutationUpdateOrderLineDetailByContainerIdArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
+export type MutationUpdateOrderLineDetailListArgs = {
+  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 
@@ -1603,16 +1605,30 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
 
 export type UpdateAfterAgOutMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateOrder?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null, updateMerpOrderStatus: { __typename?: 'Response', success: boolean, message?: string | null }, updateMerpWMSLog: { __typename?: 'Response', success: boolean, message?: string | null } };
 
-export type UpdateSqlAfterAgInMutationVariables = Types.Exact<{
+export type UpdateContainerAfterAgInMutationVariables = Types.Exact<{
+  sourceContainerID: Types.Scalars['Int'];
+  endContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateContainerAfterAgInMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+
+export type UpdateStatusAfterAgInMutationVariables = Types.Exact<{
+  InventoryIDList: Array<Types.InputMaybe<Types.Scalars['Int']>> | Types.InputMaybe<Types.Scalars['Int']>;
+  StatusID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateStatusAfterAgInMutation = { __typename?: 'Mutation', updateOrderLineDetailList?: Array<number | null> | null };
+
+export type UpdateLocationAndLogAfterAgInMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
   Container: Types.UpdateContainer;
-  OrderLineDetail: Types.UpdateOrderLineDetail;
-  Inventory: Types.UpdateInventory;
   log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 
-export type UpdateSqlAfterAgInMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateInventory?: Array<number | null> | null, updateContainer?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+export type UpdateLocationAndLogAfterAgInMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -1830,13 +1846,46 @@ export const UpdateAfterAgOutDocument = gql`
       super(apollo);
     }
   }
-export const UpdateSqlAfterAgInDocument = gql`
-    mutation updateSQLAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $OrderLineDetail: updateOrderLineDetail!, $Inventory: updateInventory!, $log: [insertUserEventLog]!) {
-  updateOrderLineDetail(
-    ContainerID: $ContainerID
-    OrderLineDetail: $OrderLineDetail
+export const UpdateContainerAfterAgInDocument = gql`
+    mutation updateContainerAfterAgIn($sourceContainerID: Int!, $endContainerID: Int!) {
+  updateInventory(
+    ContainerID: $sourceContainerID
+    Inventory: {ContainerID: $endContainerID}
   )
-  updateInventory(ContainerID: $ContainerID, Inventory: $Inventory)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateContainerAfterAgInGQL extends Apollo.Mutation<UpdateContainerAfterAgInMutation, UpdateContainerAfterAgInMutationVariables> {
+    document = UpdateContainerAfterAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateStatusAfterAgInDocument = gql`
+    mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
+  updateOrderLineDetailList(
+    InventoryIDList: $InventoryIDList
+    OrderLineDetail: {StatusID: $StatusID}
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateStatusAfterAgInGQL extends Apollo.Mutation<UpdateStatusAfterAgInMutation, UpdateStatusAfterAgInMutationVariables> {
+    document = UpdateStatusAfterAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateLocationAndLogAfterAgInDocument = gql`
+    mutation updateLocationAndLogAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $log: [insertUserEventLog]!) {
   updateContainer(_id: $ContainerID, Container: $Container)
   insertUserEventLogs(log: $log) {
     _id
@@ -1847,8 +1896,8 @@ export const UpdateSqlAfterAgInDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateSqlAfterAgInGQL extends Apollo.Mutation<UpdateSqlAfterAgInMutation, UpdateSqlAfterAgInMutationVariables> {
-    document = UpdateSqlAfterAgInDocument;
+  export class UpdateLocationAndLogAfterAgInGQL extends Apollo.Mutation<UpdateLocationAndLogAfterAgInMutation, UpdateLocationAndLogAfterAgInMutationVariables> {
+    document = UpdateLocationAndLogAfterAgInDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

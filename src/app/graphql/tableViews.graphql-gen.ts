@@ -336,7 +336,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateOrderLineDetailByContainerID?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -704,9 +704,11 @@ export type MutationUpdateOrderLineDetailArgs = {
 };
 
 
-export type MutationUpdateOrderLineDetailByContainerIdArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
+export type MutationUpdateOrderLineDetailListArgs = {
+  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 
@@ -1584,7 +1586,7 @@ export type FetchWmsStatusViewQuery = { __typename?: 'Query', fetchWMSStatusView
 export type FetchUserInfoQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type FetchUserInfoQuery = { __typename?: 'Query', findUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string } | null };
+export type FetchUserInfoQuery = { __typename?: 'Query', findUserInfos?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null };
 
 export type FetchUserEventLogQueryVariables = Types.Exact<{
   UserEventLog: Types.SearchUserEventLog;
@@ -1897,7 +1899,7 @@ export const FetchWmsStatusViewDocument = gql`
   }
 export const FetchUserInfoDocument = gql`
     query fetchUserInfo {
-  findUserInfo {
+  findUserInfos {
     _id
     Name
   }

@@ -153,7 +153,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 ['Customer', line.Order.Customer.CustomerNumber],
                 ['Quantity', line.Quantity],
                 ['ITN Count', ''],
-                ['PRC', line.Inventory.Product.ProductCode],
+                ['PRC', line.Inventory.Product.ProductCode.ProductCodeNumber],
                 ['PartNumber', line.Inventory.Product.PartNumber],
                 ['Shipment', line.Order.ShipmentMethod.ShippingMethod],
               ];
@@ -163,7 +163,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               );
               // set for single line AG out.
               ProductList.push(
-                `${line.Inventory.Product.ProductCode[0].ProductCode.padEnd(
+                `${line.Inventory.Product.ProductCode.ProductCodeNumber.padEnd(
                   3
                 )}${line.Inventory.Product.PartNumber}`
               );
@@ -273,7 +273,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
 
           // return the first step
-          this.sendGTM();
           this._router.navigate(['agin'], {
             queryParams: {
               type,
@@ -401,17 +400,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           return of(false);
         })
       );
-  }
-
-  sendGTM(): void {
-    // this.gtmService.pushTag({
-    //   event: 'AggregationOut',
-    //   userID: this.authService.userName,
-    // });
-    // this.gtmService.pushTag({
-    //   event: 'AggregationIn',
-    //   userID: this.authService.userName,
-    // });
   }
 
   ngOnDestroy(): void {

@@ -139,18 +139,28 @@ mutation updateAfterAgOut(
   }
 }
 
-mutation updateSQLAfterAgIn(
+mutation updateContainerAfterAgIn(
+  $sourceContainerID: Int!
+  $endContainerID: Int!
+) {
+  updateInventory(
+    ContainerID: $sourceContainerID
+    Inventory: { ContainerID: $endContainerID }
+  )
+}
+
+mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
+  updateOrderLineDetailList(
+    InventoryIDList: $InventoryIDList
+    OrderLineDetail: { StatusID: $StatusID }
+  )
+}
+
+mutation updateLocationAndLogAfterAgIn(
   $ContainerID: Int!
   $Container: updateContainer!
-  $OrderLineDetail: updateOrderLineDetail!
-  $Inventory: updateInventory!
   $log: [insertUserEventLog]!
 ) {
-  updateOrderLineDetail(
-    ContainerID: $ContainerID
-    OrderLineDetail: $OrderLineDetail
-  )
-  updateInventory(ContainerID: $ContainerID, Inventory: $Inventory)
   updateContainer(_id: $ContainerID, Container: $Container)
   insertUserEventLogs(log: $log) {
     _id

@@ -87,7 +87,7 @@ query fetchWMSStatusView {
 }
 
 query fetchUserInfo {
-  findUserInfo {
+  findUserInfos {
     _id
     Name
   }

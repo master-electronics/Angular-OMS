@@ -331,7 +331,7 @@ export type Mutation = {
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  updateOrderLineDetailByContainerID?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -699,9 +699,11 @@ export type MutationUpdateOrderLineDetailArgs = {
 };
 
 
-export type MutationUpdateOrderLineDetailByContainerIdArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
+export type MutationUpdateOrderLineDetailListArgs = {
+  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 

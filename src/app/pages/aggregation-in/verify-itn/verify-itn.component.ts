@@ -10,9 +10,11 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/sqlData';
 import {
+  UpdateContainerAfterAgInGQL,
+  UpdateLocationAndLogAfterAgInGQL,
   UpdateMerpOrderStatusGQL,
   UpdateMerpWmsLogGQL,
-  UpdateSqlAfterAgInGQL,
+  UpdateStatusAfterAgInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
 import {
@@ -49,7 +51,9 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _agInService: AggregationInService,
-    private _updateSql: UpdateSqlAfterAgInGQL,
+    private _updateLog: UpdateLocationAndLogAfterAgInGQL,
+    private _updateContainer: UpdateContainerAfterAgInGQL,
+    private _updateStatus: UpdateStatusAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,
     private _updateMerpOrder: UpdateMerpOrderStatusGQL
   ) {}
@@ -104,7 +108,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
 
   updateForAgIn(): void {
     // preper query for update info to sql and merp
-    const updatequery = {};
+    const updatequery = {
+      updateContainer: this._updateContainer.mutate({
+        sourceContainerID: this.outsetContainer.toteID,
+        endContainerID: this.endContainer.containerID,
+      }),
+    };
     // if target container is shelf, update source container's location with new location, else release tote to dc.
     let sourceTote = {
       Warehouse: null,
@@ -113,9 +122,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       Section: null,
       Shelf: null,
       ShelfDetail: null,
-    };
-    const inventoryInfo = {
-      ContainerID: this.endContainer.containerID,
     };
     if (this.endContainer.type === 'shelf') {
       sourceTote = {
@@ -126,7 +132,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Shelf: this.endContainer.location.Shelf,
         ShelfDetail: this.endContainer.location.ShelfDetail,
       };
-      inventoryInfo.ContainerID = this.outsetContainer.toteID;
+      delete updatequery.updateContainer;
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
     // set query for updateSql
@@ -144,8 +150,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     const updateSqlQuery = {
       ContainerID: Number(this.outsetContainer.toteID),
       Container: sourceTote,
-      Inventory: { ContainerID: this.endContainer.containerID },
-      OrderLineDetail: { StatusID: sqlData.agInComplete_ID },
       log: log,
     };
     // set query for merp update.
@@ -159,6 +163,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         FileKeyList: this.endContainer.FileKeyListforAgIn,
         ActionType: 'A',
         Action: 'line_aggregation_in',
+      });
+      updatequery['updateStatus'] = this._updateStatus.mutate({
+        StatusID: sqlData.agInComplete_ID,
+        InventoryIDList: this._agInService.outsetContainer.ITNsInTote.map(
+          (node) => node.InventoryID
+        ),
       });
       if (this.endContainer.isLastLine) {
         log.push({
@@ -178,7 +188,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         });
       }
     }
-    updatequery['updateSql'] = this._updateSql.mutate(updateSqlQuery);
+    updatequery['updateSql'] = this._updateLog.mutate(updateSqlQuery);
     // update infor to sql and merp
     this.isLoading = true;
     this.updateAfterAgIn$ = forkJoin(updatequery).pipe(
@@ -186,7 +196,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tap((res: any) => {
         let error: string;
-        if (!res.updateSql.data.updateOrderLineDetail.length) {
+        if (!res.updateStatus.data.updateOrderLineDetailList.length) {
           error += `\nFail to update SQL OrderLineDetail.`;
         }
         if (!res.updateSql.data.updateContainer.length) {

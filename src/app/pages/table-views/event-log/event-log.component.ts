@@ -41,7 +41,7 @@ export class EventLogComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUser$ = this.fetchUser
       .fetch()
-      .pipe(map((res) => res.data.findUserInfo));
+      .pipe(map((res) => res.data.findUserInfos));
     this.urlParams = { ...this.route.snapshot.queryParams };
     if (this.urlParams.ITN) {
       this.filterForm.get('ITN').setValue(this.urlParams.ITN);
