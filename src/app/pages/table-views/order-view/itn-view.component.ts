@@ -71,7 +71,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         StatusID: Number(urlParams.statusID),
         Priority: urlParams.priority === '1' ? true : null,
       };
-      this.fetchData(detail);
+      // this.fetchData(detail);
     }
   }
 
@@ -103,6 +103,12 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         .pipe(
           map((res) => {
             if (res.data.findOrder.OrderNumber) {
+              if (!res.data.findOrder.ORDERLINEDETAILs.length) {
+                return null;
+              }
+              if (!res.data.findOrder.ORDERLINEDETAILs[0].Inventory) {
+                return null;
+              }
               return res.data.findOrder.ORDERLINEDETAILs.map((item) => ({
                 ...item,
                 Order: {

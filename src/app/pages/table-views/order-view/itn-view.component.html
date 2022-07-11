@@ -62,7 +62,7 @@
           <a
             [routerLink]="['/tableviews/eventlog']"
             [queryParams]="{
-              ITN: detail.InternalTrackingNumber
+              ITN: detail.Inventory.InventoryTrackingNumber
             }"
           >
             {{ detail.Inventory.InventoryTrackingNumber }}</a
@@ -80,7 +80,7 @@
             detail.Inventory.Container.ShelfDetail
           }}
         </td>
-        <td>{{ detail.Inventory.Product.ProductCode[0].ProductCode }}</td>
+        <td>{{ detail.Inventory.Product.ProductCode.ProductCodeNumber }}</td>
         <td>{{ detail.Inventory.Product.PartNumber }}</td>
         <td>{{ detail.Quantity }}</td>
       </tr>
