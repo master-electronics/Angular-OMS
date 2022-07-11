@@ -266,6 +266,7 @@ export type ItnUserTemplate = {
 
 export type Inventory = {
   __typename?: 'Inventory';
+  BinLocation?: Maybe<Scalars['String']>;
   Container: Container;
   ContainerID: Scalars['Int'];
   CountryOfOrigin?: Maybe<Scalars['String']>;
@@ -399,6 +400,7 @@ export type MutationDeleteItnUserTemplateArgs = {
 
 
 export type MutationDeleteInventoryFromMerpArgs = {
+  BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
 };
@@ -592,7 +594,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
 
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
-  Barcode: Scalars['String'];
+  BinLocation: Scalars['String'];
   BranchID?: InputMaybe<Scalars['String']>;
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
@@ -695,7 +697,6 @@ export type MutationUpdateOrderLineArgs = {
 
 
 export type MutationUpdateOrderLineDetailArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetail: UpdateOrderLineDetail;
@@ -705,7 +706,6 @@ export type MutationUpdateOrderLineDetailArgs = {
 
 
 export type MutationUpdateOrderLineDetailListArgs = {
-  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -795,8 +795,6 @@ export type OrderLine = {
 export type OrderLineDetail = {
   __typename?: 'OrderLineDetail';
   BinLocation?: Maybe<Scalars['String']>;
-  Container: Container;
-  ContainerID: Scalars['Int'];
   Inventory?: Maybe<Inventory>;
   InventoryID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
@@ -1255,7 +1253,6 @@ export type InsertOrderLine = {
 
 export type InsertOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID: Scalars['Int'];
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID: Scalars['Int'];
@@ -1373,6 +1370,7 @@ export type SearchIntForWmsCount = {
 };
 
 export type SearchInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1409,7 +1407,6 @@ export type SearchOrderLine = {
 
 export type SearchOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
@@ -1492,6 +1489,7 @@ export type UpdateItnUserLevelsInfo = {
 };
 
 export type UpdateInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1526,7 +1524,6 @@ export type UpdateOrderLine = {
 
 export type UpdateOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;

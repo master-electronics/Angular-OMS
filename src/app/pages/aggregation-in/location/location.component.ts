@@ -343,7 +343,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // Emite Errors
         tap((res) => {
           const container = res.data.findContainer;
-          if (!container._id) {
+          if (!container) {
             throw 'Can not find this container';
           }
           if (

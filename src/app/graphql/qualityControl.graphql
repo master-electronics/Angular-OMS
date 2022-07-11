@@ -22,9 +22,7 @@ query verifyITNforQc(
       _id
       StatusID
       Quantity
-      Container {
-        Barcode
-      }
+      BinLocation
       OrderLine {
         OrderLineNumber
       }
@@ -137,9 +135,7 @@ query findNewAfterUpdateBin(
     ORDERLINEDETAILs {
       _id
       StatusID
-      Container {
-        Barcode
-      }
+      BinLocation
     }
   }
 }
@@ -156,6 +152,7 @@ query verifyQCRepack(
     Row
     ContainerTypeID
     INVENTORies {
+      _id
       InventoryTrackingNumber
       ORDERLINEDETAILs {
         StatusID
@@ -189,15 +186,10 @@ mutation updateInventoryAndDetailAfterRepack(
 }
 
 mutation cleanContainerFromPrevOrder(
-  $ContainerID: Int!
-  $OrderID: Int!
+  $idList: [Int!]!
   $Inventory: updateInventory!
 ) {
-  cleanContainerFromPrevOrder(
-    Inventory: $Inventory
-    ContainerID: $ContainerID
-    OrderID: $OrderID
-  )
+  updateInventoryList(Inventory: $Inventory, idList: $idList)
 }
 
 mutation updateMerpAfterQcRepack(

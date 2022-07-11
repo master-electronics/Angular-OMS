@@ -96,9 +96,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             let error = '';
             if (
               !['qc'].includes(
-                res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase().trim()
+                res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
               ) &&
-              !res.data.findInventory[0].ORDERLINEDETAILs[0].Container.Barcode.toLowerCase()
+              !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
                 .match(regex)
             ) {

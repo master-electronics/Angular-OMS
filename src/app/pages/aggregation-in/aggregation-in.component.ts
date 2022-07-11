@@ -94,7 +94,7 @@ export class AggregationInComponent
       .pipe(
         tap((res) => {
           const container = res.data.findContainer;
-          if (!container._id) throw 'Container not found!';
+          if (!container) throw 'Container not found!';
           // only accepte mobile container
           if (!container.ContainerType.IsMobile)
             throw 'This container is not mobile!';

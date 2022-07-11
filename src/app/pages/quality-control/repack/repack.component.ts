@@ -103,7 +103,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             this.isLoading = false;
             let message = '';
             if (
-              res.data.findInventory.ORDERLINEDETAILs[0].Container.Barcode.toLowerCase().trim() !==
+              res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() !==
               'qc'
             ) {
               this.needSearch = true;
@@ -146,6 +146,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     let inProcess = 0;
     let sourceContainer: number;
+    let updateQueries;
     this.subscription.add(
       this.verifyQCRepack
         .fetch(
@@ -170,6 +171,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Search all ITN by containerID, if has ITN record != current ITN, and the status is before ag out, pop error.
             if (targetContainer.INVENTORies.length) {
               targetContainer.INVENTORies.forEach((itn) => {
+                if (!itn.ORDERLINEDETAILs.length) return;
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID < sqlData.agOutComplete_ID
@@ -280,7 +282,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             // Send different query combination
-            const updateQueries = {
+            updateQueries = {
               insertUserEventLog,
               updateTargetConatiner,
               updateSourceConatiner,
@@ -294,23 +296,31 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (inProcess) delete updateQueries.updateMerpLog;
             // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            const cleanupInventoryList = [];
             if (targetContainer.INVENTORies.length) {
-              let orderID = null;
-              const needCleanup = targetContainer.INVENTORies.some((itn) => {
-                orderID = itn.ORDERLINEDETAILs[0].OrderID;
-                return (
-                  orderID !== this.itemInfo.OrderID &&
+              targetContainer.INVENTORies.forEach((itn) => {
+                if (!itn.ORDERLINEDETAILs[0]) {
+                  cleanupInventoryList.push(itn._id);
+                  return;
+                }
+                if (
+                  itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
-                );
+                ) {
+                  cleanupInventoryList.push(itn._id);
+                }
               });
-              if (needCleanup)
+              if (cleanupInventoryList.length) {
                 updateQueries['cleanContainerFromPrevOrder'] =
                   this.cleanContainer.mutate({
-                    ContainerID: targetContainer._id,
-                    OrderID: orderID,
+                    idList: cleanupInventoryList,
                     Inventory: { ContainerID: sqlData.DC_PH_ID },
                   });
+              }
             }
+            return forkJoin(updateQueries);
+          }),
+          switchMap((res) => {
             return forkJoin(updateQueries);
           }),
 

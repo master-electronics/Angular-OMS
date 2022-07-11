@@ -266,6 +266,7 @@ export type ItnUserTemplate = {
 
 export type Inventory = {
   __typename?: 'Inventory';
+  BinLocation?: Maybe<Scalars['String']>;
   Container: Container;
   ContainerID: Scalars['Int'];
   CountryOfOrigin?: Maybe<Scalars['String']>;
@@ -399,6 +400,7 @@ export type MutationDeleteItnUserTemplateArgs = {
 
 
 export type MutationDeleteInventoryFromMerpArgs = {
+  BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
 };
@@ -592,7 +594,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
 
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
-  Barcode: Scalars['String'];
+  BinLocation: Scalars['String'];
   BranchID?: InputMaybe<Scalars['String']>;
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
@@ -695,7 +697,6 @@ export type MutationUpdateOrderLineArgs = {
 
 
 export type MutationUpdateOrderLineDetailArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetail: UpdateOrderLineDetail;
@@ -705,7 +706,6 @@ export type MutationUpdateOrderLineDetailArgs = {
 
 
 export type MutationUpdateOrderLineDetailListArgs = {
-  ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -795,8 +795,6 @@ export type OrderLine = {
 export type OrderLineDetail = {
   __typename?: 'OrderLineDetail';
   BinLocation?: Maybe<Scalars['String']>;
-  Container: Container;
-  ContainerID: Scalars['Int'];
   Inventory?: Maybe<Inventory>;
   InventoryID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
@@ -1255,7 +1253,6 @@ export type InsertOrderLine = {
 
 export type InsertOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID: Scalars['Int'];
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID: Scalars['Int'];
@@ -1373,6 +1370,7 @@ export type SearchIntForWmsCount = {
 };
 
 export type SearchInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1409,7 +1407,6 @@ export type SearchOrderLine = {
 
 export type SearchOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
@@ -1492,6 +1489,7 @@ export type UpdateItnUserLevelsInfo = {
 };
 
 export type UpdateInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1526,7 +1524,6 @@ export type UpdateOrderLine = {
 
 export type UpdateOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
@@ -1568,7 +1565,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, Container: { __typename?: 'Container', Barcode: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -1623,7 +1620,7 @@ export type FindNewAfterUpdateBinQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Container: { __typename?: 'Container', Barcode: string } } | null> | null } | null };
+export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, BinLocation?: string | null } | null> | null } | null };
 
 export type VerifyQcRepackQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -1632,7 +1629,7 @@ export type VerifyQcRepackQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyQcRepackQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Row?: string | null, ContainerTypeID: number, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, OrderID: number } | null> | null } | null> | null } | null, findOrder?: { __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ContainerID: number } | null } | null> | null } | null };
+export type VerifyQcRepackQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Row?: string | null, ContainerTypeID: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, OrderID: number } | null> | null } | null> | null } | null, findOrder?: { __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ContainerID: number } | null } | null> | null } | null };
 
 export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
   InventoryID: Types.Scalars['Int'];
@@ -1645,13 +1642,12 @@ export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
 export type UpdateInventoryAndDetailAfterRepackMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, updateOrderLineDetail?: Array<number | null> | null };
 
 export type CleanContainerFromPrevOrderMutationVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-  OrderID: Types.Scalars['Int'];
+  idList: Array<Types.Scalars['Int']> | Types.Scalars['Int'];
   Inventory: Types.UpdateInventory;
 }>;
 
 
-export type CleanContainerFromPrevOrderMutation = { __typename?: 'Mutation', cleanContainerFromPrevOrder?: boolean | null };
+export type CleanContainerFromPrevOrderMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null };
 
 export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
@@ -1705,9 +1701,7 @@ export const VerifyItNforQcDocument = gql`
       _id
       StatusID
       Quantity
-      Container {
-        Barcode
-      }
+      BinLocation
       OrderLine {
         OrderLineNumber
       }
@@ -1867,9 +1861,7 @@ export const FindNewAfterUpdateBinDocument = gql`
     ORDERLINEDETAILs {
       _id
       StatusID
-      Container {
-        Barcode
-      }
+      BinLocation
     }
   }
 }
@@ -1894,6 +1886,7 @@ export const VerifyQcRepackDocument = gql`
     Row
     ContainerTypeID
     INVENTORies {
+      _id
       InventoryTrackingNumber
       ORDERLINEDETAILs {
         StatusID
@@ -1945,12 +1938,8 @@ export const UpdateInventoryAndDetailAfterRepackDocument = gql`
     }
   }
 export const CleanContainerFromPrevOrderDocument = gql`
-    mutation cleanContainerFromPrevOrder($ContainerID: Int!, $OrderID: Int!, $Inventory: updateInventory!) {
-  cleanContainerFromPrevOrder(
-    Inventory: $Inventory
-    ContainerID: $ContainerID
-    OrderID: $OrderID
-  )
+    mutation cleanContainerFromPrevOrder($idList: [Int!]!, $Inventory: updateInventory!) {
+  updateInventoryList(Inventory: $Inventory, idList: $idList)
 }
     `;
 

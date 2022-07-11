@@ -141,7 +141,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
             queryParams: {
               OrderNumber,
               NOSINumber,
-              OrderID: res.data.findOrder[0]._id,
+              OrderID: res.data.findOrder._id,
             },
           });
         }),
