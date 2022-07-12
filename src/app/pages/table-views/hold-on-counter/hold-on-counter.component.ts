@@ -64,8 +64,10 @@ export class HoldOnCounterComponent implements OnInit {
           let totalForAll = 0;
           const sumForAll = new Array(9).fill(0);
           // iterate each user record
-          const tableData: tableData[] = res.data.fetchHoldOnCounter.map(
-            (element) => {
+          const tableData: tableData[] = res.data.fetchHoldOnCounter
+            .filter((element) => element !== null)
+            .map((element) => {
+              sumForAll[0] += element.detail[0];
               const total = element.detail.reduce((acc, curr, index) => {
                 sumForAll[index] += curr;
                 return acc + curr;
@@ -77,8 +79,7 @@ export class HoldOnCounterComponent implements OnInit {
                 total,
                 detail: element.detail,
               };
-            }
-          );
+            });
           // Insert Total record at the end.
           tableData.push({
             User: 'Total',
