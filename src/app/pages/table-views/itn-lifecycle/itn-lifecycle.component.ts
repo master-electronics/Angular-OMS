@@ -177,7 +177,7 @@ export class ITNLifecycleComponent implements OnInit {
       },
       {
         name: "WMSPriority",
-        dataName: "WMS Priority",
+        dataName: "WMSPriority",
         width: "150px",
       },
       {
@@ -1010,7 +1010,7 @@ export class ITNLifecycleComponent implements OnInit {
                   CustomerTier: (row.CustomerTier)?row.CustomerTier.trim():"",
                   ProductTier: (row.ProductTier)?row.ProductTier.trim():"",
                   Zone: (row.Zone)?row.Zone:null,
-                  WMSProperty: (row.WMSPriority)?row.WMSPriority:null,
+                  WMSPriority: (row.WMSPriority)?row.WMSPriority:null,
                   Priority: (row.Priority)?"Y":"N",
                   TrackingNumber: (row.TrackingNumber)?row.TrackingNumber:"",
                   ParentITN: (row.ParentITN)?row.ParentITN:"",
