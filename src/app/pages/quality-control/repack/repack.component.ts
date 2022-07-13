@@ -21,7 +21,6 @@ import {
   CleanContainerFromPrevOrderGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
@@ -48,7 +47,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private titleService: Title,
-    private authService: AuthenticationService,
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateContainer: UpdateContainerGQL,
@@ -95,6 +93,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.findNewID
         .fetch(
           {
+            DistributionCenter: environment.DistributionCenter,
             InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
           },
           { fetchPolicy: 'network-only' }
@@ -103,16 +102,16 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           (res) => {
             this.isLoading = false;
             let message = '';
-            // if (
-            //   res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation !==
-            //   'qc'
-            // ) {
-            //   this.needSearch = true;
-            //   message = `Bin location is not qc, Click search button again!`;
-            // }
-            if (res.data.findInventory.length > 1) {
+            if (
+              res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() !==
+              'qc'
+            ) {
               this.needSearch = true;
-              message = `More than one ITN, Click search button again!`;
+              message = `Bin location is not qc, Click search button again!`;
+            }
+            if (res.data.findInventory.ORDERLINEDETAILs.length > 1) {
+              this.needSearch = true;
+              message = `More than one record, Click search button again!`;
             }
             if (this.needSearch) {
               this.needSearch = true;
@@ -120,6 +119,9 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               this.alertMessage = message;
               this.containerInput.nativeElement.select();
             }
+            this.itemInfo.OrderLineDetailID =
+              res.data.findInventory.ORDERLINEDETAILs[0]._id;
+            this.itemInfo.InventoryID = res.data.findInventory._id;
           },
           (error) => {
             this.isLoading = false;
@@ -144,25 +146,22 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     let inProcess = 0;
     let sourceContainer: number;
+    let updateQueries;
     this.subscription.add(
       this.verifyQCRepack
         .fetch(
           {
-            Container: {
-              DistributionCenter: environment.DistributionCenter,
-              Barcode: this.containerForm.value.container,
-            },
-            Order: {
-              _id: this.itemInfo.OrderID,
-            },
+            DistributionCenter: environment.DistributionCenter,
+            Barcode: this.containerForm.value.container,
+            OrderID: this.itemInfo.OrderID,
           },
           { fetchPolicy: 'no-cache' }
         )
 
         .pipe(
           tap((res) => {
-            const targetContainer = res.data.findContainer[0];
-            const returnOrder = res.data.findOrder[0];
+            const targetContainer = res.data.findContainer;
+            const returnOrder = res.data.findOrder;
             if (!targetContainer) throw 'This barcode is not exist.';
             if (!returnOrder) throw 'This order is not exist.';
             if (targetContainer.ContainerTypeID !== sqlData.toteType_ID)
@@ -172,16 +171,21 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             // Search all ITN by containerID, if has ITN record != current ITN, and the status is before ag out, pop error.
             if (targetContainer.INVENTORies.length) {
               targetContainer.INVENTORies.forEach((itn) => {
+                if (!itn.ORDERLINEDETAILs.length) return;
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID < sqlData.agOutComplete_ID
-                )
+                ) {
                   throw 'This tote has other order item in it.';
+                }
                 if (
                   itn.ORDERLINEDETAILs[0].OrderID === this.itemInfo.OrderID &&
-                  itn.ORDERLINEDETAILs[0].StatusID !== sqlData.qcComplete_ID
-                )
+                  ![sqlData.warehouseHold_ID, sqlData.qcComplete_ID].includes(
+                    itn.ORDERLINEDETAILs[0].StatusID
+                  )
+                ) {
                   throw 'This tote is not in QC area.';
+                }
               });
             }
             // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
@@ -197,7 +201,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           }),
           switchMap((res) => {
-            const targetContainer = res.data.findContainer[0];
+            const targetContainer = res.data.findContainer;
             // Setup graphql queries
             const updatQCComplete = this.updateMerp.mutate({
               InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
@@ -237,11 +241,10 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               log: UserEventLog,
             });
             this.updateDetail = this.updateInventoryDetail.mutate({
-              InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+              InventoryID: this.itemInfo.InventoryID,
               OrderLineDetailID: this.itemInfo.OrderLineDetailID,
               OrderLineDetail: {
                 StatusID: sqlData.qcComplete_ID,
-                ContainerID: targetContainer._id,
               },
               Inventory: {
                 ContainerID: targetContainer._id,
@@ -279,7 +282,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
             // Send different query combination
-            const updateQueries = {
+            updateQueries = {
               insertUserEventLog,
               updateTargetConatiner,
               updateSourceConatiner,
@@ -287,32 +290,37 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               updatQCComplete,
             };
             sqlData.qcComplete_ID;
-            if (sourceContainer === sqlData.DC_PH_ID) {
-              delete updateQueries.updateSourceConatiner;
-            }
             if (targetContainer._id === sourceContainer) {
               delete updateQueries.updateTargetConatiner;
               delete updateQueries.updateSourceConatiner;
             }
             if (inProcess) delete updateQueries.updateMerpLog;
             // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
+            const cleanupInventoryList = [];
             if (targetContainer.INVENTORies.length) {
-              let orderID = null;
-              const needCleanup = targetContainer.INVENTORies.some((itn) => {
-                orderID = itn.ORDERLINEDETAILs[0].OrderID;
-                return (
-                  orderID !== this.itemInfo.OrderID &&
+              targetContainer.INVENTORies.forEach((itn) => {
+                if (!itn.ORDERLINEDETAILs[0]) {
+                  cleanupInventoryList.push(itn._id);
+                  return;
+                }
+                if (
+                  itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                   itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
-                );
+                ) {
+                  cleanupInventoryList.push(itn._id);
+                }
               });
-              if (needCleanup)
+              if (cleanupInventoryList.length) {
                 updateQueries['cleanContainerFromPrevOrder'] =
                   this.cleanContainer.mutate({
-                    ContainerID: targetContainer._id,
-                    OrderID: orderID,
+                    idList: cleanupInventoryList,
                     Inventory: { ContainerID: sqlData.DC_PH_ID },
                   });
+              }
             }
+            return forkJoin(updateQueries);
+          }),
+          switchMap((res) => {
             return forkJoin(updateQueries);
           }),
 
@@ -351,7 +359,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               type = 'success';
               message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
             }
-            this.sendGTM();
             this.router.navigate(['/qc'], {
               queryParams: {
                 type,
@@ -367,16 +374,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         )
     );
-  }
-
-  sendGTM(): void {
-    // const taskTime = Date.now() - this.qcService.qcStart;
-    // this.qcService.resetQCStartTime(Date.now());
-    // this.gtmService.pushTag({
-    //   event: 'QualityControlDone',
-    //   userID: this.authService.userName,
-    //   taskTime: taskTime,
-    // });
   }
 
   ngOnDestroy(): void {

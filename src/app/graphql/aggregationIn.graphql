@@ -1,5 +1,10 @@
-query verifyContainerForAggregationIn($Container: searchContainer!) {
-  findContainer(Container: $Container) {
+query verifyContainerForAggregationIn(
+  $DistributionCenter: String!
+  $Barcode: String!
+) {
+  findContainer(
+    Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+  ) {
     _id
     Barcode
     ContainerTypeID
@@ -31,10 +36,8 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
   }
 }
 
-query fetchLocationAndOrderDetailForAgIn(
-  $OrderLineDetail: searchOrderLineDetail!
-) {
-  findOrderLineDetail(OrderLineDetail: $OrderLineDetail) {
+query fetchLocationAndOrderDetailForAgIn($OrderID: Int!) {
+  findOrderLineDetails(OrderLineDetail: { OrderID: $OrderID }) {
     _id
     Quantity
     StatusID
@@ -51,7 +54,7 @@ query fetchLocationAndOrderDetailForAgIn(
       }
       Product {
         ProductCode {
-          ProductCode
+          ProductCodeNumber
         }
         PartNumber
       }
@@ -101,7 +104,7 @@ mutation updateAfterAgOut(
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
-  $toteList: [String!]!
+  # $toteList: [String!]!
   $ActionType: String!
   $Action: String!
 ) {
@@ -113,7 +116,7 @@ mutation updateAfterAgOut(
     _id
   }
 
-  deleteAndInsertRouteTable(lpnList: $toteList)
+  # deleteAndInsertRouteTable(lpnList: $toteList)
 
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
@@ -136,18 +139,28 @@ mutation updateAfterAgOut(
   }
 }
 
-mutation updateSQLAfterAgIn(
+mutation updateContainerAfterAgIn(
+  $sourceContainerID: Int!
+  $endContainerID: Int!
+) {
+  updateInventory(
+    ContainerID: $sourceContainerID
+    Inventory: { ContainerID: $endContainerID }
+  )
+}
+
+mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
+  updateOrderLineDetailList(
+    InventoryIDList: $InventoryIDList
+    OrderLineDetail: { StatusID: $StatusID }
+  )
+}
+
+mutation updateLocationAndLogAfterAgIn(
   $ContainerID: Int!
   $Container: updateContainer!
-  $OrderLineDetail: updateOrderLineDetail!
-  $Inventory: updateInventory!
   $log: [insertUserEventLog]!
 ) {
-  updateOrderLineDetail(
-    ContainerID: $ContainerID
-    OrderLineDetail: $OrderLineDetail
-  )
-  updateInventory(ContainerID: $ContainerID, Inventory: $Inventory)
   updateContainer(_id: $ContainerID, Container: $Container)
   insertUserEventLogs(log: $log) {
     _id
@@ -221,7 +234,7 @@ query verifyOrderForAgOut(
 }
 
 query fetchContainerForAgoutPick($OrderID: Int) {
-  findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
+  findOrderLineDetails(OrderLineDetail: { OrderID: $OrderID }) {
     OrderLine {
       OrderLineNumber
     }
@@ -242,7 +255,7 @@ query fetchContainerForAgoutPick($OrderID: Int) {
       }
       Product {
         ProductCode {
-          ProductCode
+          ProductCodeNumber
         }
         PartNumber
       }

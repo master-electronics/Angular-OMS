@@ -19,6 +19,7 @@ import {
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/sqlData';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'scan-itn',
@@ -76,35 +77,39 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.verifyITNQC
         .fetch(
-          { Inventory: { InventoryTrackingNumber: ITN } },
+          {
+            InventoryTrackingNumber: ITN,
+            DistributionCenter: environment.DistributionCenter,
+          },
           { fetchPolicy: 'network-only' }
         )
         .pipe(
           // check vaild
           tap((res) => {
-            if (!res.data.findInventory?.length) {
-              throw 'Can not find this ITN';
+            if (!res.data.findInventory.ORDERLINEDETAILs?.length) {
+              throw 'Can not find this order';
             }
-            if (res.data.findInventory.length > 1) {
-              throw 'Invalid ITN';
+
+            if (res.data.findInventory.ORDERLINEDETAILs?.length > 1) {
+              throw 'Invalid Order Line Detail';
             }
             let error = '';
-            // if (
-            //   !['qc'].includes(
-            //     res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-            //   ) &&
-            //   !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
-            //     .trim()
-            //     .match(regex)
-            // ) {
-            //   error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
-            // }
+            if (
+              !['qc'].includes(
+                res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
+              ) &&
+              !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
+                .trim()
+                .match(regex)
+            ) {
+              error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].Container.Barcode} must be QC or hold\n`;
+            }
             if (
               ![
                 sqlData.droppedQC_ID,
                 sqlData.warehouseHold_ID,
                 sqlData.qcComplete_ID,
-              ].includes(res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID)
+              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID)
             ) {
               error += `Invalid order line status ${res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
@@ -113,12 +118,13 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }),
           switchMap((res) => {
-            const detail = res.data.findInventory[0];
-            const Order = res.data.findInventory[0].ORDERLINEDETAILs[0].Order;
+            const detail = res.data.findInventory;
+            const Order = res.data.findInventory.ORDERLINEDETAILs[0].Order;
             const OrderLine =
-              res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine;
+              res.data.findInventory.ORDERLINEDETAILs[0].OrderLine;
             this.itemInfo = {
               InventoryTrackingNumber: ITN,
+              InventoryID: detail._id,
               OrderLineDetailID: detail.ORDERLINEDETAILs[0]._id,
               OrderID: Order._id,
               CustomerNumber: Order.Customer?.CustomerNumber.trim() || '',
@@ -127,8 +133,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               NOSI: Order.NOSINumber?.trim(),
               OrderLineNumber: OrderLine.OrderLineNumber,
               PartNumber: detail.Product.PartNumber?.trim(),
-              ProductCode: detail.Product.ProductCode[0].ProductCode.trim(),
-              Quantity: detail.QuantityOnHand,
+              ProductCode: detail.Product.ProductCode.ProductCodeNumber.trim(),
+              Quantity: detail.ORDERLINEDETAILs[0].Quantity,
               ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
@@ -151,21 +157,13 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });
             const updateMerpQCBin = this.updateQCBin.mutate({
-              InternalTrackingNumber: ITN,
+              InventoryTrackingNumber: ITN,
             });
             // update QCBin when bin is hold
             const updateQueries = this.itemInfo.isQCDrop
               ? { updateLog }
               : { updateLog, updateMerpQCBin };
             return forkJoin(updateQueries);
-          }),
-          tap((res: any) => {
-            // if (
-            //   !this.itemInfo.isQCDrop &&
-            //   !res.updateMerpQCBin.data.updateMerpQCBin.success
-            // ) {
-            //   throw new Error(`Can't update binlocation to qc`);
-            // }
           })
         )
         .subscribe(

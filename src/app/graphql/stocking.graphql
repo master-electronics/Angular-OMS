@@ -13,7 +13,7 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
     Product {
       _id
       ProductCode {
-        ProductCode
+        ProductCodeNumber
       }
       DCPRODUCTs {
         Velocity
@@ -48,13 +48,11 @@ query verifyContainerForSorting(
 }
 
 query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
-  findProduct(Product: { _id: $ProductID }, limit: $limit) {
-    INVENTORies {
-      QuantityOnHand
-      Container {
-        Barcode
-        Zone
-      }
+  findInventorys(Inventory: { ProductID: $ProductID }, limit: $limit) {
+    QuantityOnHand
+    Container {
+      Barcode
+      Zone
     }
   }
 }

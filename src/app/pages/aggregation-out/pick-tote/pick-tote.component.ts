@@ -84,19 +84,19 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         )
         .pipe(
           switchMap((res) => {
-            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetail);
+            this.agOutService.changeITNsInOrder(res.data.findOrderLineDetails);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
             const log = this.agOutService.ITNsInOrder.map((node) => {
-              ITNSet.add(node.InternalTrackingNumber);
-              containerSet.add(node.Container);
+              ITNSet.add(node.Inventory.InvenotryTrackingNumber);
+              containerSet.add(node.Inventory.Container);
               return {
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
-                InventoryTrackingNumber: node.InventoryTrackingNumber,
+                InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
                 UserEventID: sqlData.Event_AgOut_Start,
                 OrderLineNumber: node.OrderLine.OrderLineNumber,
               };
@@ -150,10 +150,10 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const selectedITNs = [];
     this.agOutService.ITNsInOrder.forEach((node) => {
       if (
-        node.Container.Barcode ===
+        node.Inventory.Container.Barcode ===
         this.containerForm.get('containerNumber').value
       ) {
-        selectedITNs.push(node.InternalTrackingNumber);
+        selectedITNs.push(node.Inventory.InventoryTrackingNumber);
       }
     });
     this.agOutService.changeContainerList(this.containerList);
@@ -177,11 +177,13 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         `${fileKey}${String(node.OrderLine.OrderLineNumber).padStart(
           2,
           '0'
-        )}packing        ${node.InternalTrackingNumber}`
+        )}packing        ${node.Inventory.InventoryTrackingNumber}`
       );
-      BarcodeList.push(node.Container.Barcode);
+      BarcodeList.push(node.Inventory.Container.Barcode);
       productSet.add(
-        `${node.OrderLine.ProductCode.padEnd(3)}${node.OrderLine.PartNumber}`
+        `${node.Inventory.Product.ProductCode.ProductCodeNumber.padEnd(3)}${
+          node.Inventory.Product.PartNumber
+        }`
       );
     });
     const productList = [...productSet];
@@ -195,7 +197,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
-        InvenotryTrackingNumber: node.InvenotryTrackingNumber,
+        InvenotryTrackingNumber: node.Inventory.InvenotryTrackingNumber,
         UserEventID: sqlData.Event_AgOut_Done,
         OrderLineNumber: node.OrderLine.OrderLineNumber,
       };
@@ -206,7 +208,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderLineDetail: {
           StatusID: sqlData.agOutComplete_ID,
         },
-        toteList: [...toteSet],
+        // toteList: [...toteSet],
         log: log,
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,

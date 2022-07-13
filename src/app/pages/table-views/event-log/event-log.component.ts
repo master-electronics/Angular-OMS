@@ -41,7 +41,7 @@ export class EventLogComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUser$ = this.fetchUser
       .fetch()
-      .pipe(map((res) => res.data.findUserInfo));
+      .pipe(map((res) => res.data.findUserInfos));
     this.urlParams = { ...this.route.snapshot.queryParams };
     if (this.urlParams.ITN) {
       this.filterForm.get('ITN').setValue(this.urlParams.ITN);
@@ -109,7 +109,7 @@ export class EventLogComponent implements OnInit {
       .pipe(
         map((res) => {
           this.isLoading = false;
-          this.tableData = res.data.findUserEventLog.map((log) => {
+          this.tableData = res.data.findUserEventLogs.map((log) => {
             const result = { ...log };
             const tmp = new Date(Number(log.DateTime));
             result.DateTime = tmp.toLocaleString();

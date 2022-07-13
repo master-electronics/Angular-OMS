@@ -119,11 +119,11 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
       .pipe(
         tap((res) => {
           const order = res.data.findOrder;
-          if (!order.length) {
+          if (!order) {
             throw `Can not find this order!`;
           }
           if (
-            order[0].ORDERLINEDETAILs.some(
+            order.ORDERLINEDETAILs.some(
               (item) =>
                 ![sqlData.agInComplete_ID, sqlData.agOutComplete_ID].includes(
                   item.StatusID
@@ -132,7 +132,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
           ) {
             throw `Invalid Order Status!`;
           }
-          if (order[0].ORDERLINEDETAILs.length !== res.data.countOrderItns) {
+          if (order.ORDERLINEDETAILs.length !== res.data.countOrderItns) {
             throw `ITNs in SQL are not equal to ITNs in Merp.`;
           }
         }),
@@ -141,7 +141,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
             queryParams: {
               OrderNumber,
               NOSINumber,
-              OrderID: res.data.findOrder[0]._id,
+              OrderID: res.data.findOrder._id,
             },
           });
         }),

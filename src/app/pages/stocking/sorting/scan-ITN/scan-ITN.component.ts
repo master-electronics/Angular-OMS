@@ -74,35 +74,31 @@ export class ScanITNComponent implements OnInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findInventory.length === 0) {
+          if (!res.data.findInventory._id) {
             throw 'ITN not found';
           }
-          if (!res.data.findInventory[0].Container.ContainerType.IsMobile) {
+          if (!res.data.findInventory.Container.ContainerType.IsMobile) {
             throw new Error('Must be in a mobile container');
           }
         }),
         switchMap((res) => {
+          const inventory = res.data.findInventory;
           this._service.changeSortingInfo({
             ITN: this.ITNForm.value.ITN,
-            productID: res.data.findInventory[0].Product._id,
-            InventoryID: res.data.findInventory[0]._id,
-            productCode:
-              res.data.findInventory[0].Product.ProductCode.ProductCode,
-            partNumber: res.data.findInventory[0].Product.PartNumber,
-            QuantityOnHand: res.data.findInventory[0].QuantityOnHand ?? null,
+            productID: inventory.Product._id,
+            InventoryID: inventory._id,
+            productCode: inventory.Product.ProductCode.ProductCodeNumber,
+            partNumber: inventory.Product.PartNumber,
+            QuantityOnHand: inventory.QuantityOnHand ?? null,
             remaining: null,
             productType: null,
-            velocity:
-              res.data.findInventory[0].Product.DCPRODUCTs[0]?.Velocity ?? null,
+            velocity: inventory.Product.DCPRODUCTs[0]?.Velocity ?? null,
             zone: null,
             suggetionLocationList: [],
-            OrderNumber:
-              res.data.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
-            NOSINumber:
-              res.data.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+            OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
+            NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,
             OrderLineNumber:
-              res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine
-                .OrderLineNumber,
+              inventory.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
           });
           return this._insertLog.mutate({
             log: {
@@ -110,13 +106,10 @@ export class ScanITNComponent implements OnInit {
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
               UserEventID: sqlData.Event_Stocking_SortingStart,
-              OrderNumber:
-                res.data.findInventory[0].ORDERLINEDETAILs[0].Order.OrderNumber,
-              NOSINumber:
-                res.data.findInventory[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+              OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
+              NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,
               OrderLineNumber:
-                res.data.findInventory[0].ORDERLINEDETAILs[0].OrderLine
-                  .OrderLineNumber,
+                inventory.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
               InventoryTrackingNumber: this.ITNForm.value.ITN,
               Message: ``,
             },

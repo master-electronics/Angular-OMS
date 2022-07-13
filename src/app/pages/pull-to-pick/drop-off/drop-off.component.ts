@@ -18,6 +18,7 @@ import {
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { sqlData } from 'src/app/shared/sqlData';
+import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 
 @Component({
@@ -79,9 +80,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
     this.init$ = forkJoin({
       findITNs: this._findITNs.fetch(
         {
-          Inventory: {
-            ContainerID: this._service.cartInfo.id,
-          },
+          ContainerID: this._service.cartInfo.id,
         },
         { fetchPolicy: 'network-only' }
       ),
@@ -94,11 +93,11 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       }),
     }).pipe(
       tap((res) => {
-        if (!res.findITNs.data.findInventory)
+        if (res.findITNs.data.findInventorys.length === 0)
           throw 'Not found any ITN in the cart';
       }),
       map((res) => {
-        res.findITNs.data.findInventory.forEach((node) => {
+        res.findITNs.data.findInventorys.forEach((node) => {
           this.itemList.push(node);
           this.totalITNs += 1;
         });
@@ -220,6 +219,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       .fetch(
         {
           Container: {
+            DistributionCenter: environment.DistributionCenter,
             Barcode: this.containerForm
               .get('containerNumber')
               .value.replace(/-/g, '')
@@ -230,7 +230,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findContainer.length === 0) {
+          if (!res.data.findContainer._id) {
             throw 'Drop off location not found';
           }
         }),

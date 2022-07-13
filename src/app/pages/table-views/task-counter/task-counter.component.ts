@@ -81,8 +81,9 @@ export class TaskCounterComponent implements OnInit {
           let totalForAll = 0;
           const taskCounterForAll = new Array(24).fill(0);
           // iterate each user record
-          const tableData: tableData[] = res.data.fetchTaskCounter.map(
-            (element) => {
+          const tableData: tableData[] = res.data.fetchTaskCounter
+            .filter((element) => element !== null)
+            .map((element) => {
               const total = element.taskCounter.reduce((acc, curr, index) => {
                 taskCounterForAll[index] += curr;
                 return acc + curr;
@@ -94,8 +95,7 @@ export class TaskCounterComponent implements OnInit {
                 total,
                 taskCounter: element.taskCounter,
               };
-            }
-          );
+            });
           // Insert Total record at the end.
           tableData.push({
             User: 'Total',

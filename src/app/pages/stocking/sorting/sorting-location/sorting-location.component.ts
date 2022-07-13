@@ -57,7 +57,7 @@ export class SortingLocationComponent implements OnInit {
       .fetch({ ProductID: this.sortingInfo.productID, limit: 5 })
       .pipe(
         map((res) => {
-          res.data.findProduct[0].INVENTORies.forEach((inventory) => {
+          res.data.findInventorys.forEach((inventory) => {
             const element: SuggetionLocation = {
               Quantity: inventory.QuantityOnHand,
               Zone: inventory.Container.Zone,
@@ -102,7 +102,7 @@ export class SortingLocationComponent implements OnInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findContainer.length === 0) {
+          if (!res.data.findContainer._id) {
             throw 'Container not found';
           }
           if (!res.data.findContainer[0].ContainerType.IsMobile) {

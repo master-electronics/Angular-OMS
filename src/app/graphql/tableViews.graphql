@@ -26,7 +26,7 @@ query fetchOrderLineDetailforWMSCount($filter: searchINTForWMSCount) {
       }
       Product {
         ProductCode {
-          ProductCode
+          ProductCodeNumber
         }
         PartNumber
       }
@@ -60,7 +60,7 @@ query fetchOrderDetailforitnView($Order: searchOrder!) {
         }
         Product {
           ProductCode {
-            ProductCode
+            ProductCodeNumber
           }
           PartNumber
         }
@@ -87,7 +87,7 @@ query fetchWMSStatusView {
 }
 
 query fetchUserInfo {
-  findUserInfo {
+  findUserInfos {
     _id
     Name
   }
@@ -100,7 +100,7 @@ query fetchUserEventLog(
   $endDate: String
   $limit: Int
 ) {
-  findUserEventLog(
+  findUserEventLogs(
     UserEventLog: $UserEventLog
     Module: $Module
     startDate: $startDate

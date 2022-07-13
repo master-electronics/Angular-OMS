@@ -5,9 +5,8 @@ export interface outsetContainer {
   isRelocation: boolean;
   OrderID: number;
   orderLineDetailID: number;
-  InventoryID: number;
   toteID: number;
-  ITNsInTote: { ITN: string; OrderLineNumber: number }[];
+  ITNsInTote: { ITN: string; OrderLineNumber: number; InventoryID: number }[];
 }
 
 export interface endContainer {

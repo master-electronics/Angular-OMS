@@ -79,13 +79,13 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
       .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
-          if (res.data.findContainer.length === 0) {
+          if (res.data.findContainers.length === 0) {
             this.alertMessage = 'No Container found for this barcode';
             this.alertType = 'error';
             return;
           }
           const itnList = [];
-          res.data.findContainer.forEach((container) => {
+          res.data.findContainers.forEach((container) => {
             container.INVENTORies.forEach((itn) => {
               if (itn.ORDERLINEDETAILs[0].StatusID === sqlData.agInComplete_ID)
                 itnList.push(itn.InventoryTrackingNumber);

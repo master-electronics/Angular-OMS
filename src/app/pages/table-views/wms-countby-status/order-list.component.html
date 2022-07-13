@@ -27,7 +27,7 @@
             >{{ order.OrderNumber }}-{{ order.NOSINumber }}</a
           >
         </td>
-        <td>{{ order.CustomerNumber }}</td>
+        <td>{{ order.Customer?.CustomerNumber || null }}</td>
         <td>{{ order.ShipmentMethod.PriorityPinkPaper ? 'Y' : 'N' }}</td>
         <td>{{ order.ShipmentMethod.ShippingMethod }}</td>
       </tr>

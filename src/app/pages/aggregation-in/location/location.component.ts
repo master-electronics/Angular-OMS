@@ -111,7 +111,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     let singleITN = '';
     this.initInfo$ = this._fetchLocation
       .fetch(
-        { OrderLineDetail: { OrderID: this.outsetContainer.OrderID } },
+        { OrderID: this.outsetContainer.OrderID },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -120,7 +120,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           const locationsSet: Set<string> = new Set();
           let totalLines = 0;
           let countLines = 0;
-          res.data.findOrderLineDetail.forEach((line) => {
+          res.data.findOrderLineDetails.forEach((line) => {
             ++totalLines;
             // set for other queries
             singleITN = line.Inventory.InventoryTrackingNumber;
@@ -153,7 +153,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 ['Customer', line.Order.Customer.CustomerNumber],
                 ['Quantity', line.Quantity],
                 ['ITN Count', ''],
-                ['PRC', line.Inventory.Product.ProductCode],
+                ['PRC', line.Inventory.Product.ProductCode.ProductCodeNumber],
                 ['PartNumber', line.Inventory.Product.PartNumber],
                 ['Shipment', line.Order.ShipmentMethod.ShippingMethod],
               ];
@@ -163,7 +163,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               );
               // set for single line AG out.
               ProductList.push(
-                `${line.Inventory.Product.ProductCode[0].ProductCode.padEnd(
+                `${line.Inventory.Product.ProductCode.ProductCodeNumber.padEnd(
                   3
                 )}${line.Inventory.Product.PartNumber}`
               );
@@ -219,7 +219,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
-              toteList: [this.outsetContainer.Barcode],
+              // toteList: [this.outsetContainer.Barcode],
               log: [
                 {
                   UserID: Number(
@@ -273,7 +273,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
 
           // return the first step
-          this.sendGTM();
           this._router.navigate(['agin'], {
             queryParams: {
               type,
@@ -334,29 +333,32 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     this.verifyContainer$ = this._verifyContainer
       .fetch(
-        { Container: { Barcode: Barcode } },
+        {
+          Barcode: Barcode,
+          DistributionCenter: environment.DistributionCenter,
+        },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
         // Emite Errors
         tap((res) => {
           const container = res.data.findContainer;
-          if (!container.length) {
+          if (!container) {
             throw 'Can not find this container';
           }
           if (
             ![sqlData.toteType_ID, sqlData.shelfType_ID].includes(
-              container[0].ContainerTypeID
+              container.ContainerTypeID
             )
           ) {
             throw 'This container should be tote or shelf';
           }
-          if (container[0].Row !== 'AG') {
+          if (container.Row !== 'AG') {
             throw 'This container is not in Aggregation area';
           }
           // if target container is mobile, check all items in target container have the some order number with source tote.
-          if (container[0].ContainerType.IsMobile) {
-            container[0].INVENTORies.forEach((line) => {
+          if (container.ContainerType.IsMobile) {
+            container.INVENTORies.forEach((line) => {
               // check if the item in container
               if (
                 line.ORDERLINEDETAILs[0].OrderID !==
@@ -367,9 +369,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           }
         }),
-
         map((res) => {
-          const container = res.data.findContainer[0];
+          const container = res.data.findContainer;
           const endContainer: endContainer = {
             Barcode: barcodeInput,
             type,
@@ -399,17 +400,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           return of(false);
         })
       );
-  }
-
-  sendGTM(): void {
-    // this.gtmService.pushTag({
-    //   event: 'AggregationOut',
-    //   userID: this.authService.userName,
-    // });
-    // this.gtmService.pushTag({
-    //   event: 'AggregationIn',
-    //   userID: this.authService.userName,
-    // });
   }
 
   ngOnDestroy(): void {

@@ -32,10 +32,6 @@ export type Container = {
   USERINFOs?: Maybe<Array<Maybe<UserInfo>>>;
   Warehouse?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
-  /**
-   * Related tables:
-   * one to many ORDERLINEDETAILs
-   */
   _id: Scalars['Int'];
 };
 
@@ -265,6 +261,7 @@ export type ItnUserTemplate = {
 
 export type Inventory = {
   __typename?: 'Inventory';
+  BinLocation?: Maybe<Scalars['String']>;
   Container: Container;
   ContainerID: Scalars['Int'];
   CountryOfOrigin?: Maybe<Scalars['String']>;
@@ -289,13 +286,17 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   deleteAndInsertRouteTable: Scalars['Boolean'];
+  deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteCustomerFromMerp?: Maybe<Scalars['Boolean']>;
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
+  deleteInventoryFromMerp?: Maybe<Scalars['Boolean']>;
   deleteOrder?: Maybe<Array<Maybe<Order>>>;
   deleteOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
   deleteOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  deleteOrderLineDetailFromMerp?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  deleteOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   deletePrinter?: Maybe<Printer>;
+  deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
   deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
@@ -328,12 +329,10 @@ export type Mutation = {
   updateMerpOrderStatus: Response;
   updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
-  updateOrCreateInventory?: Maybe<Inventory>;
-  updateOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
-  updateOrCreateProduct: Product;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -374,6 +373,17 @@ export type MutationDeleteAndInsertRouteTableArgs = {
 };
 
 
+export type MutationDeleteContainerFromMerpArgs = {
+  BinLocation: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+};
+
+
+export type MutationDeleteCustomerFromMerpArgs = {
+  CustomerNumber: Scalars['String'];
+};
+
+
 export type MutationDeleteItnLevelLimitArgs = {
   TemplateID: Scalars['Int'];
 };
@@ -381,6 +391,13 @@ export type MutationDeleteItnLevelLimitArgs = {
 
 export type MutationDeleteItnUserTemplateArgs = {
   _id: Scalars['Int'];
+};
+
+
+export type MutationDeleteInventoryFromMerpArgs = {
+  BinLocation: Scalars['String'];
+  DistributionCenter: Scalars['String'];
+  ITN: Scalars['String'];
 };
 
 
@@ -418,6 +435,12 @@ export type MutationDeleteOrderLineDetailFromMerpArgs = {
 
 export type MutationDeletePrinterArgs = {
   _id: Scalars['Int'];
+};
+
+
+export type MutationDeleteProductFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 
@@ -566,22 +589,21 @@ export type MutationUpdateForInventoryFromMerpArgs = {
 
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
-  Barcode: Scalars['String'];
-  BranchID: Scalars['String'];
-  CustomerNumber: Scalars['String'];
-  CustomerTier: Scalars['String'];
+  BinLocation: Scalars['String'];
+  BranchID?: InputMaybe<Scalars['String']>;
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderLineNumber: Scalars['Int'];
-  OrderLineQuantity: Scalars['Float'];
+  OrderLineQuantity?: InputMaybe<Scalars['Float']>;
   OrderNumber: Scalars['String'];
-  OrderStatusCode: Scalars['String'];
-  OrderType: Scalars['String'];
-  ParentITN: Scalars['String'];
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
-  ShipmentMethodID: Scalars['String'];
+  OrderStatusCode?: InputMaybe<Scalars['String']>;
+  OrderType?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ShipmentMethodID?: InputMaybe<Scalars['String']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
   detailQuantity: Scalars['Float'];
@@ -655,21 +677,6 @@ export type MutationUpdateMerpWmsLogArgs = {
 };
 
 
-export type MutationUpdateOrCreateInventoryArgs = {
-  Inventory: InsertInventory;
-};
-
-
-export type MutationUpdateOrCreateOrderLineDetailArgs = {
-  OrderLineDetail: InsertOrderLineDetail;
-};
-
-
-export type MutationUpdateOrCreateProductArgs = {
-  Product: InsertProduct;
-};
-
-
 export type MutationUpdateOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
@@ -685,12 +692,18 @@ export type MutationUpdateOrderLineArgs = {
 
 
 export type MutationUpdateOrderLineDetailArgs = {
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetail: UpdateOrderLineDetail;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateOrderLineDetailListArgs = {
+  InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  OrderLineDetail: UpdateOrderLineDetail;
+  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 
@@ -777,7 +790,6 @@ export type OrderLine = {
 export type OrderLineDetail = {
   __typename?: 'OrderLineDetail';
   BinLocation?: Maybe<Scalars['String']>;
-  ContainerID: Scalars['Int'];
   Inventory?: Maybe<Inventory>;
   InventoryID?: Maybe<Scalars['Int']>;
   LastUpdated?: Maybe<Scalars['String']>;
@@ -822,7 +834,7 @@ export type Product = {
 export type ProductCode = {
   __typename?: 'ProductCode';
   PRODUCTs?: Maybe<Array<Maybe<Product>>>;
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -853,20 +865,26 @@ export type Query = {
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
-  findContainer?: Maybe<Array<Maybe<Container>>>;
-  findContainerList?: Maybe<Array<Maybe<Container>>>;
+  findContainer?: Maybe<Container>;
+  findContainers?: Maybe<Array<Maybe<Container>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
-  findInventory?: Maybe<Array<Maybe<Inventory>>>;
+  findInventory?: Maybe<Inventory>;
+  findInventorys?: Maybe<Array<Maybe<Inventory>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
-  findOrder?: Maybe<Array<Maybe<Order>>>;
+  findOrder?: Maybe<Order>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
-  findOrderLine?: Maybe<Array<Maybe<OrderLine>>>;
-  findOrderLineDetail?: Maybe<Array<Maybe<OrderLineDetail>>>;
-  findProduct?: Maybe<Array<Maybe<Product>>>;
-  findUserEventLog?: Maybe<Array<Maybe<UserEventLog>>>;
-  findUserInfo?: Maybe<Array<Maybe<UserInfo>>>;
+  findOrderLine?: Maybe<OrderLine>;
+  findOrderLineDetail?: Maybe<OrderLineDetail>;
+  findOrderLineDetails?: Maybe<Array<Maybe<OrderLineDetail>>>;
+  findOrderLines?: Maybe<Array<Maybe<OrderLine>>>;
+  findOrders?: Maybe<Array<Maybe<Order>>>;
+  findProduct?: Maybe<Product>;
+  findProducts?: Maybe<Array<Maybe<Product>>>;
+  findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  findUserInfo?: Maybe<UserInfo>;
+  findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
 };
 
 
@@ -955,18 +973,13 @@ export type QueryFetchTaskCounterArgs = {
 
 
 export type QueryFindContainerArgs = {
-  Container: SearchContainer;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+  Container?: InputMaybe<SearchContainer>;
 };
 
 
-export type QueryFindContainerListArgs = {
-  BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  DistributionCenter?: InputMaybe<Scalars['String']>;
-  Limit?: InputMaybe<Scalars['Int']>;
-  idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
-  offset?: InputMaybe<Scalars['Int']>;
+export type QueryFindContainersArgs = {
+  Container?: InputMaybe<SearchContainer>;
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -986,9 +999,13 @@ export type QueryFindItnTemplatesArgs = {
 
 
 export type QueryFindInventoryArgs = {
-  Inventory: SearchInventory;
+  Inventory?: InputMaybe<SearchInventory>;
+};
+
+
+export type QueryFindInventorysArgs = {
+  Inventory?: InputMaybe<SearchInventory>;
   limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1001,9 +1018,7 @@ export type QueryFindNextItnForPullingArgs = {
 
 
 export type QueryFindOrderArgs = {
-  Order: SearchOrder;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+  Order?: InputMaybe<SearchOrder>;
 };
 
 
@@ -1014,27 +1029,45 @@ export type QueryFindOrderByStatusArgs = {
 
 
 export type QueryFindOrderLineArgs = {
-  OrderLine: SearchOrderLine;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+  OrderLine?: InputMaybe<SearchOrderLine>;
 };
 
 
 export type QueryFindOrderLineDetailArgs = {
-  OrderLineDetail: SearchOrderLineDetail;
+  OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
+};
+
+
+export type QueryFindOrderLineDetailsArgs = {
+  OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
   limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindOrderLinesArgs = {
+  OrderLine?: InputMaybe<SearchOrderLine>;
+  limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindOrdersArgs = {
+  Order?: InputMaybe<SearchOrder>;
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryFindProductArgs = {
   Product?: InputMaybe<SearchProduct>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
-export type QueryFindUserEventLogArgs = {
+export type QueryFindProductsArgs = {
+  Product?: InputMaybe<SearchProduct>;
+  limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindUserEventLogsArgs = {
   Module?: InputMaybe<Scalars['Int']>;
   UserEventLog: SearchUserEventLog;
   endDate?: InputMaybe<Scalars['String']>;
@@ -1046,8 +1079,12 @@ export type QueryFindUserEventLogArgs = {
 
 export type QueryFindUserInfoArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
+};
+
+
+export type QueryFindUserInfosArgs = {
+  UserInfo?: InputMaybe<SearchUserInfo>;
   limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type Response = {
@@ -1205,25 +1242,17 @@ export type InsertOrder = {
 export type InsertOrderLine = {
   OrderID: Scalars['Int'];
   OrderLineNumber: Scalars['Int'];
-  PartNumber: Scalars['String'];
-  ProductCode: Scalars['String'];
   ProductID: Scalars['Int'];
   Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type InsertOrderLineDetail = {
-  BinLocation: Scalars['String'];
-  ContainerID: Scalars['Int'];
-  CountryOfOrigin?: InputMaybe<Scalars['String']>;
-  DateCode?: InputMaybe<Scalars['String']>;
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
+  BinLocation?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID: Scalars['Int'];
   OrderLineID: Scalars['Int'];
-  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity: Scalars['Float'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
 };
@@ -1236,7 +1265,7 @@ export type InsertProduct = {
 };
 
 export type InsertProductCode = {
-  ProductCode: Scalars['String'];
+  ProductCodeNumber: Scalars['String'];
   _id: Scalars['Int'];
 };
 
@@ -1267,11 +1296,10 @@ export type InsertUserEventLog = {
 
 export type InsertUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
-  Name: Scalars['String'];
+  Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
-  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -1337,6 +1365,7 @@ export type SearchIntForWmsCount = {
 };
 
 export type SearchInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1373,7 +1402,6 @@ export type SearchOrderLine = {
 
 export type SearchOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
@@ -1456,6 +1484,7 @@ export type UpdateItnUserLevelsInfo = {
 };
 
 export type UpdateInventory = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
@@ -1484,25 +1513,17 @@ export type UpdateOrder = {
 export type UpdateOrderLine = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
-  PartNumber?: InputMaybe<Scalars['String']>;
-  ProductCode?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   Quantity?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateOrderLineDetail = {
   BinLocation?: InputMaybe<Scalars['String']>;
-  ContainerID?: InputMaybe<Scalars['Int']>;
-  CountryOfOrigin?: InputMaybe<Scalars['String']>;
-  DateCode?: InputMaybe<Scalars['String']>;
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
-  ParentITN?: InputMaybe<Scalars['String']>;
   Quantity?: InputMaybe<Scalars['Float']>;
-  ROHS?: InputMaybe<Scalars['Boolean']>;
   StatusID?: InputMaybe<Scalars['Int']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
 };
@@ -1513,7 +1534,6 @@ export type UpdateUserInfo = {
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
   Zone?: InputMaybe<Scalars['Int']>;
-  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 export type ValueMap = {
