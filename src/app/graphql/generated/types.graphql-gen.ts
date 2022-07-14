@@ -665,7 +665,7 @@ export type MutationUpdateMerpOrderStatusArgs = {
 
 
 export type MutationUpdateMerpQcBinArgs = {
-  InternalTrackingNumber: Scalars['String'];
+  ITN: Scalars['String'];
 };
 
 

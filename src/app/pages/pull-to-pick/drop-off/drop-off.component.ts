@@ -236,7 +236,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
         }),
         map((res) => {
           this.isLoading = false;
-          this.dropOffID = res.data.findContainer[0]._id;
+          this.dropOffID = res.data.findContainer._id;
           this.process = 'Scan ITN';
           this.hint = 'Scan ITNs in the cart';
           this.locationBarcode = this.containerForm.value.containerNumber;

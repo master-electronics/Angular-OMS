@@ -45,7 +45,7 @@ export class ITNListComponent implements OnInit {
         .pipe(
           map((res) => {
             this.isLoading = false;
-            this.ITNList = res.data.findContainer[0].INVENTORies.map((item) => {
+            this.ITNList = res.data.findContainer.INVENTORies.map((item) => {
               return {
                 ITN: item.InventoryTrackingNumber,
                 Quantity: item.QuantityOnHand,

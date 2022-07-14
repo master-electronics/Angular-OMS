@@ -670,7 +670,7 @@ export type MutationUpdateMerpOrderStatusArgs = {
 
 
 export type MutationUpdateMerpQcBinArgs = {
-  InternalTrackingNumber: Scalars['String'];
+  ITN: Scalars['String'];
 };
 
 
@@ -1576,7 +1576,7 @@ export type Insert_UserEventLogsMutationVariables = Types.Exact<{
 export type Insert_UserEventLogsMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
 
 export type Update_Merp_QcBinMutationVariables = Types.Exact<{
-  InventoryTrackingNumber: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
 }>;
 
 
@@ -1651,8 +1651,8 @@ export const Insert_UserEventLogsDocument = gql`
     }
   }
 export const Update_Merp_QcBinDocument = gql`
-    mutation update_Merp_QCBin($InventoryTrackingNumber: String!) {
-  updateMerpQCBin(InternalTrackingNumber: $InventoryTrackingNumber) {
+    mutation update_Merp_QCBin($ITN: String!) {
+  updateMerpQCBin(ITN: $ITN) {
     success
   }
 }

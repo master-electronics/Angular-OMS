@@ -105,14 +105,14 @@ export class SortingLocationComponent implements OnInit {
           if (!res.data.findContainer._id) {
             throw 'Container not found';
           }
-          if (!res.data.findContainer[0].ContainerType.IsMobile) {
+          if (!res.data.findContainer.ContainerType.IsMobile) {
             throw new Error('This container is not a mobile container');
           }
         }),
         switchMap((res) => {
           return this._updateInventory.mutate({
             InventoryID: this.sortingInfo.InventoryID,
-            ContainerID: res.data.findContainer[0]._id,
+            ContainerID: res.data.findContainer._id,
             log: {
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id

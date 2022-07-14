@@ -81,26 +81,26 @@ export class StockingLocationComponent implements OnInit {
         const suggetionList = res.locationList.data.findInventorys;
         this.ITNInfo = {
           ITN: this.currentITN.ITN,
-          productID: returnITN.findInventory[0].Product._id,
-          InventoryID: returnITN.findInventory[0]._id,
+          productID: returnITN.findInventory.Product._id,
+          InventoryID: returnITN.findInventory._id,
           productCode:
-            returnITN.findInventory[0].Product.ProductCode.ProductCodeNumber,
-          partNumber: returnITN.findInventory[0].Product.PartNumber,
-          QuantityOnHand: returnITN.findInventory[0].QuantityOnHand ?? null,
+            returnITN.findInventory.Product.ProductCode.ProductCodeNumber,
+          partNumber: returnITN.findInventory.Product.PartNumber,
+          QuantityOnHand: returnITN.findInventory.QuantityOnHand ?? null,
           remaining: null,
           productType: null,
           velocity:
-            returnITN.findInventory[0].Product.DCPRODUCTs[0]?.Velocity ?? null,
+            returnITN.findInventory.Product.DCPRODUCTs[0]?.Velocity ?? null,
           zone: null,
           suggetionLocationList: [],
           OrderNumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.OrderNumber ??
+            returnITN.findInventory.ORDERLINEDETAILs[0]?.Order.OrderNumber ??
             null,
           NOSINumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.NOSINumber ??
+            returnITN.findInventory.ORDERLINEDETAILs[0]?.Order.NOSINumber ??
             null,
           OrderLineNumber:
-            returnITN.findInventory[0].ORDERLINEDETAILs[0]?.OrderLine
+            returnITN.findInventory.ORDERLINEDETAILs[0]?.OrderLine
               .OrderLineNumber ?? null,
         };
         suggetionList.forEach((inventory) => {
@@ -116,11 +116,11 @@ export class StockingLocationComponent implements OnInit {
             UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
             UserEventID: sqlData.Event_Stocking_StockingRelocation_Start,
             OrderNumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.OrderNumber,
+              returnITN.findInventory.ORDERLINEDETAILs[0]?.Order.OrderNumber,
             NOSINumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.Order.NOSINumber,
+              returnITN.findInventory.ORDERLINEDETAILs[0]?.Order.NOSINumber,
             OrderLineNumber:
-              returnITN.findInventory[0].ORDERLINEDETAILs[0]?.OrderLine
+              returnITN.findInventory.ORDERLINEDETAILs[0]?.OrderLine
                 .OrderLineNumber,
             InventoryTrackingNumber: this.currentITN.ITN,
             Message: ``,
@@ -174,14 +174,13 @@ export class StockingLocationComponent implements OnInit {
             throw 'Container not found';
           }
           if (
-            res.data.findContainer[0].ContainerTypeID !==
-            sqlData.Container_Shelf
+            res.data.findContainer.ContainerTypeID !== sqlData.Container_Shelf
           ) {
             throw new Error(`Not a valid stock location`);
           }
         }),
         switchMap((res) => {
-          this.containerID = res.data.findContainer[0]._id;
+          this.containerID = res.data.findContainer._id;
           this.targetLocation = Barcode;
           return this._insertLog.mutate({
             log: {

@@ -216,16 +216,16 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           if (!res.data.findContainer._id) {
             throw new Error('Barcode not found');
           }
-          if (!res.data.findContainer[0].ContainerType.IsMobile) {
+          if (!res.data.findContainer.ContainerType.IsMobile) {
             throw new Error(`${barcodeInput} is not a mobile container`);
           }
-          if (res.data.findContainer[0].INVENTORies.length === 0) {
+          if (res.data.findContainer.INVENTORies.length === 0) {
             throw new Error(`${barcodeInput} has no ITN`);
           }
         }),
         switchMap((res) => {
           const log = [];
-          const ITNList = res.data.findContainer[0].INVENTORies.map((item) => {
+          const ITNList = res.data.findContainer.INVENTORies.map((item) => {
             log.push({
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id

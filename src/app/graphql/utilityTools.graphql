@@ -22,8 +22,8 @@ mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
   }
 }
 
-mutation update_Merp_QCBin($InventoryTrackingNumber: String!) {
-  updateMerpQCBin(InternalTrackingNumber: $InventoryTrackingNumber) {
+mutation update_Merp_QCBin($ITN: String!) {
+  updateMerpQCBin(ITN: $ITN) {
     success
   }
 }

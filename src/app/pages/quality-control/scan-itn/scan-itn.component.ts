@@ -98,11 +98,11 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               !['qc'].includes(
                 res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
               ) &&
-              !res.data.findInventory[0].ORDERLINEDETAILs[0].BinLocation.toLowerCase()
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
                 .match(regex)
             ) {
-              error = `The Binlocation ${res.data.findInventory[0].ORDERLINEDETAILs[0].Container.Barcode} must be QC or hold\n`;
+              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
             }
             if (
               ![
@@ -111,7 +111,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 sqlData.qcComplete_ID,
               ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID)
             ) {
-              error += `Invalid order line status ${res.data.findInventory[0].ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
+              error += `Invalid order line status ${res.data.findInventory.ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
             if (error) {
               throw error;
@@ -140,7 +140,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
-              isQCDrop: detail.ORDERLINEDETAILs[0].StatusID === 60,
+              isQCDrop: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
+                .trim()
+                .match(regex),
             };
             const log = [
               {
@@ -156,9 +158,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               },
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });
-            const updateMerpQCBin = this.updateQCBin.mutate({
-              InventoryTrackingNumber: ITN,
-            });
+            const updateMerpQCBin = this.updateQCBin.mutate({ ITN });
             // update QCBin when bin is hold
             const updateQueries = this.itemInfo.isQCDrop
               ? { updateLog }
