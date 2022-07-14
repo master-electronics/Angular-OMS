@@ -40,6 +40,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   selectedList = [];
   isShowDetail = false;
   submit$ = new Observable();
+  scanLocation$ = new Observable();
   inputRegex = /^(QADROP[0-9]{2})|(\w{2}\d{8})$/;
   init$ = new Observable();
   insertLog$ = new Observable();
@@ -95,6 +96,12 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       tap((res) => {
         if (res.findITNs.data.findInventorys.length === 0)
           throw 'Not found any ITN in the cart';
+        if (
+          res.findITNs.data.findInventorys.some(
+            (item) => !item.ORDERLINEDETAILs
+          )
+        )
+          throw 'Not found Order in the cart';
       }),
       map((res) => {
         res.findITNs.data.findInventorys.forEach((node) => {
@@ -145,7 +152,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
               InventoryTrackingNumber: node.InventoryTrackingNumber,
               OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
               NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
-              UserEventID: sqlData.Event_DropOff_SelectITN,
+              UserEventID: sqlData.Event_DropOff_ITN_Drop,
               UserID: Number(
                 JSON.parse(sessionStorage.getItem('userInfo'))._id
               ),
@@ -215,7 +222,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
 
   scanLocation(): void {
     this.isLoading = true;
-    this.submit$ = this._findContainer
+    this.scanLocation$ = this._findContainer
       .fetch(
         {
           Container: {

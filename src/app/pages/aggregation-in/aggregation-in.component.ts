@@ -102,6 +102,13 @@ export class AggregationInComponent
             throw 'No item in this container!';
           // verify all line have the same orderID and statusID in the tote
           if (
+            container.INVENTORies.some((item) => {
+              return item.ORDERLINEDETAILs.length === 0;
+            })
+          ) {
+            throw new Error('No order in this container!');
+          }
+          if (
             !container.INVENTORies.every(
               (line, i, arr) =>
                 line.ORDERLINEDETAILs[0].OrderID ===

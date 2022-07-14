@@ -74,7 +74,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['qc']);
       return;
     }
-    if (!this.itemInfo.isQCDrop) {
+    if (this.itemInfo.isHold) {
       this.findDetailID();
     }
   }

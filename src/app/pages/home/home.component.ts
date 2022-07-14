@@ -13,17 +13,27 @@ export class HomeComponent {
   WMSList = [
     { link: '/agin', front: 'Aggregation ', highlight: 'I', end: 'n' },
     { link: '/agout', front: 'Aggregation ', highlight: 'O', end: 'ut' },
-    { link: '/qc', front: '', highlight: 'Q', end: 'uality Control' },
-    { link: '/pulltopick', front: '', highlight: 'P', end: 'ull to Pick' },
     {
-      link: '/pulltopick',
-      params: { dropoff: true },
+      link: '/qc',
       front: '',
-      highlight: 'D',
-      end: 'rop Cart',
+      highlight: 'Q',
+      end: 'uality Control',
+      params: null,
     },
-
-    { link: '/stocking', front: '', highlight: 'S', end: 'tocking' },
+    // {
+    //   link: '/pulltopick',
+    //   front: '',
+    //   highlight: 'P',
+    //   end: 'ull to Pick',
+    // },
+    // {
+    //   link: '/pulltopick',
+    //   params: { dropoff: true },
+    //   front: '',
+    //   highlight: 'D',
+    //   end: 'rop Cart',
+    // },
+    // { link: '/stocking', front: '', highlight: 'S', end: 'tocking' },
   ];
   toolList = [
     { link: '/tableviews', front: '', highlight: 'T', end: 'able Views' },

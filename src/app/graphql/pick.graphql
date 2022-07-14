@@ -80,13 +80,14 @@ mutation updatePullingNotFound(
 
 query findITNsInCartForDropOff($ContainerID: Int!) {
   findInventorys(Inventory: { ContainerID: $ContainerID }) {
+    InventoryTrackingNumber
     ORDERLINEDETAILs {
+      _id
       Order {
         OrderNumber
         NOSINumber
       }
     }
-    InventoryTrackingNumber
   }
 }
 

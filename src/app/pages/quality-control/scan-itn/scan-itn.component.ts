@@ -140,7 +140,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               DateCode: detail.DateCode?.trim() || '',
               CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
               CountMethod: '',
-              isQCDrop: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
+              isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
                 .match(regex),
             };
@@ -160,9 +160,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             const updateLog = this.insertUserEventLog.mutate({ log });
             const updateMerpQCBin = this.updateQCBin.mutate({ ITN });
             // update QCBin when bin is hold
-            const updateQueries = this.itemInfo.isQCDrop
-              ? { updateLog }
-              : { updateLog, updateMerpQCBin };
+            const updateQueries = this.itemInfo.isHold
+              ? { updateLog, updateMerpQCBin }
+              : { updateLog };
             return forkJoin(updateQueries);
           })
         )

@@ -61,5 +61,5 @@ export interface itemParams {
   CountryOfOrigin: string;
   DateCode: string;
   CountMethod: string;
-  isQCDrop: boolean;
+  isHold: boolean;
 }

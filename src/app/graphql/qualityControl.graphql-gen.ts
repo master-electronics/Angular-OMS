@@ -1004,12 +1004,12 @@ export type QueryFindItnTemplatesArgs = {
 
 
 export type QueryFindInventoryArgs = {
-  Inventory?: InputMaybe<SearchInventory>;
+  Inventory: SearchInventory;
 };
 
 
 export type QueryFindInventorysArgs = {
-  Inventory?: InputMaybe<SearchInventory>;
+  Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
 };
 

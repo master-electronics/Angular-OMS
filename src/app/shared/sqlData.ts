@@ -36,6 +36,7 @@ export const sqlData = {
   Event_QC_Hold: 201,
   Event_QC_Done: 202,
   Event_QC_OrderComplete: 203,
+  // pulling
   Event_Pulling_Start: 400,
   Event_Pulling_SelectCart: 401,
   Event_Pulling_PullITN: 402,
@@ -43,10 +44,11 @@ export const sqlData = {
   Event_Pulling_NotFound: 404,
   // drop off
   Event_DropOff_Start: 500,
-  Event_DropOff_SelectITN: 501,
+  Event_DropOff_ITN_Drop: 501,
   Event_DropOff_Done: 502,
   Event_DropOff_SelectCart: 503,
   Event_DropOff_ITN_Skipped: 504,
+  Event_DropOff_Selectlocation: 505,
   // release
   Event_Release_Order: 600,
   // stocking
@@ -56,9 +58,9 @@ export const sqlData = {
   Event_Stocking_StockingRelocation_Location: 721,
   Event_Stocking_StockingReLocation_Done: 722,
   Event_Stocking_StockingMismatch_Start: 730,
-  Event_Stocking_Stocking_verifyITN: 733,
   Event_Stocking_StockingMismatch_Done: 731,
   Event_Stocking_Stocking_MoveITNToUser: 732,
+  Event_Stocking_Stocking_verifyITN: 733,
   Event_Stocking_NotFound: 734,
   // sorting
   Event_Stocking_SortingStart: 900,
