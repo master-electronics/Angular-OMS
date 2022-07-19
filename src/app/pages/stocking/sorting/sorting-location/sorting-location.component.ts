@@ -97,7 +97,7 @@ export class SortingLocationComponent implements OnInit {
     this.isLoading = true;
     this.submit$ = this._verifyContainer
       .fetch(
-        { Barcode, DistrubutionCenter: environment.DistributionCenter },
+        { Barcode, DistributionCenter: environment.DistributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(

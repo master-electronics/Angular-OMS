@@ -64,7 +64,7 @@
                     [queryParams]="{ ITN: ITN.InventoryTrackingNumber }"
                     class="text-blue-500"
                   >
-                    {{ ITN.InventoryTrackingNumber }}</a
+                    {{ ITN.InventoryTrackingNumber || '' }}</a
                   >
                   ({{ ITN.ORDERLINEDETAILs[0].Status.Name }})
                 </li>
@@ -94,29 +94,29 @@
               ITN:
               <a
                 [routerLink]="['/tableviews/eventlog']"
-                [queryParams]="{ ITN: ITN.InventoryTrackingNumber }"
+                [queryParams]="{ ITN: ITN?.InventoryTrackingNumber || '' }"
                 class="text-blue-500"
               >
-                {{ ITN.InventoryTrackingNumber }}</a
+                {{ ITN?.InventoryTrackingNumber || '' }}</a
               >
-              ({{ ITN.ORDERLINEDETAILs[0].Status.Name }})
+              ({{ ITN?.ORDERLINEDETAILs[0].Status.Name }})
             </li>
             <li>
               Location:
-              {{ ITN.Container.Warehouse }}-{{ ITN.Container.Row }}-{{
-                ITN.Container.Aisle
-              }}-{{ ITN.Container.Section }}-{{ ITN.Container.Shelf }}-{{
-                ITN.Container.ShelfDetail
+              {{ ITN?.Container.Warehouse }}-{{ ITN?.Container.Row }}-{{
+                ITN?.Container.Aisle
+              }}-{{ ITN?.Container.Section }}-{{ ITN?.Container.Shelf }}-{{
+                ITN?.Container.ShelfDetail
               }}
             </li>
-            <li>Container: {{ ITN.Container.Barcode }}</li>
+            <li>Container: {{ ITN?.Container.Barcode }}</li>
             <li>
-              Order: {{ ITN.ORDERLINEDETAILs[0].Order.OrderNumber }}-{{
-                ITN.ORDERLINEDETAILs[0].Order.NOSINumber
+              Order: {{ ITN?.ORDERLINEDETAILs[0].Order.OrderNumber }}-{{
+                ITN?.ORDERLINEDETAILs[0].Order.NOSINumber
               }}
-              #{{ ITN.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber }}
+              #{{ ITN?.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber }}
               <span>{{
-                ITN.ORDERLINEDETAILs[0].Order.ShipmentMethod.PriorityPinkPaper
+                ITN?.ORDERLINEDETAILs[0].Order.ShipmentMethod.PriorityPinkPaper
                   ? 'Y'
                   : 'N'
               }}</span>
@@ -143,24 +143,24 @@
                   <a
                     [routerLink]="['/tableviews/eventlog']"
                     [queryParams]="{
-                      ITN: ITN.Invenotry.InventoryTrackingNumber
+                      ITN: ITN.Invenotry?.InventoryTrackingNumber || ''
                     }"
                     class="text-blue-500"
                   >
-                    {{ ITN.Inventory.InventoryTrackingNumber }}</a
+                    {{ ITN.Inventory?.InventoryTrackingNumber || '' }}</a
                   >
                   ({{ ITN.Status.Name }})
                 </li>
                 <li>
-                  Location: {{ ITN.Inventory.Container.Warehouse }}-{{
-                    ITN.Inventory.Container.Row
-                  }}-{{ ITN.Inventory.Container.Aisle }}-{{
-                    ITN.Inventory.Container.Section
-                  }}-{{ ITN.Inventory.Container.Shelf }}-{{
-                    ITN.Inventory.Container.ShelfDetail
+                  Location: {{ ITN.Inventory?.Container.Warehouse }}-{{
+                    ITN.Inventory?.Container.Row
+                  }}-{{ ITN.Inventory?.Container.Aisle }}-{{
+                    ITN.Inventory?.Container.Section
+                  }}-{{ ITN.Inventory?.Container.Shelf }}-{{
+                    ITN.Inventory?.Container.ShelfDetail
                   }}
                 </li>
-                <li>Container: {{ ITN.Inventory.Container.Barcode }}</li>
+                <li>Container: {{ ITN.Inventory?.Container.Barcode }}</li>
               </ul>
             </ul>
           </div>

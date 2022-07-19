@@ -1575,7 +1575,7 @@ export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null, ORDERLINEs?: Array<{ __typename?: 'OrderLine', OrderLineNumber: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null> | null } | null };
+export type FindOrderForSearchBarcodeQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null, ORDERLINEs?: Array<{ __typename?: 'OrderLine', OrderLineNumber: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null> | null } | null };
 
 export const FindContainerForSearchBarcodeDocument = gql`
     query findContainerForSearchBarcode($Container: searchContainer!) {
@@ -1687,6 +1687,7 @@ export const FindOrderForSearchBarcodeDocument = gql`
     ORDERLINEs {
       OrderLineNumber
       ORDERLINEDETAILs {
+        _id
         Inventory {
           InventoryTrackingNumber
           Product {

@@ -77,7 +77,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       this.isLoading = true;
       this.init$ = this._userContainer
         .mutate({
-          DistrubutionCenter: environment.DistributionCenter,
+          DistributionCenter: environment.DistributionCenter,
           Barcode: String(JSON.parse(sessionStorage.getItem('userInfo')).Name),
           ContainerTypeID: sqlData.userType_ID,
         })

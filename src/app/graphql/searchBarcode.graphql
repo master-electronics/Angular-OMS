@@ -8,6 +8,7 @@ query findContainerForSearchBarcode($Container: searchContainer!) {
     Shelf
     ShelfDetail
     INVENTORies {
+      _id
       InventoryTrackingNumber
       Product {
         ProductCode {
@@ -93,6 +94,7 @@ query findOrderForSearchBarcode(
     ORDERLINEs {
       OrderLineNumber
       ORDERLINEDETAILs {
+        _id
         Inventory {
           InventoryTrackingNumber
           Product {

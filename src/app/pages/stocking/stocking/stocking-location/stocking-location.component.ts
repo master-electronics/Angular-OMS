@@ -165,7 +165,7 @@ export class StockingLocationComponent implements OnInit {
     this.isLoading = true;
     this.verifyLocation$ = this._verifyContainer
       .fetch(
-        { Barcode, DistrubutionCenter: environment.DistributionCenter },
+        { Barcode, DistributionCenter: environment.DistributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(

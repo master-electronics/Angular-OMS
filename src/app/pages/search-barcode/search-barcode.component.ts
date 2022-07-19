@@ -81,14 +81,14 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.isContainer = true;
         const containerInfo = {
           Barcode: barcode,
-          DistrubutionCenter: environment.DistributionCenter,
+          DistributionCenter: environment.DistributionCenter,
         };
         this.search$ = this.searchContainer
           .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
           .pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findContainers;
+              res.data.findContainers;
             })
           );
       }
@@ -104,8 +104,8 @@ export class SearchBarcodeComponent implements AfterViewInit {
           ShelfDetail: barcode.substring(14),
         };
         this.search$ = this.searchContainer
-          .watch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
-          .valueChanges.pipe(
+          .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
+          .pipe(
             map((res) => {
               this.isLoading = false;
               return res.data.findContainers.filter(
@@ -126,7 +126,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
           .pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findInventory;
+              return [res.data.findInventory];
             })
           );
       }
@@ -134,7 +134,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.isOrder = true;
         const barcodeSplit = barcode.split('-');
         this.search$ = this.searchOrder
-          .watch(
+          .fetch(
             {
               DistributionCenter: environment.DistributionCenter,
               OrderNumber: barcodeSplit[0],
@@ -142,10 +142,10 @@ export class SearchBarcodeComponent implements AfterViewInit {
             },
             { fetchPolicy: 'network-only' }
           )
-          .valueChanges.pipe(
+          .pipe(
             map((res) => {
               this.isLoading = false;
-              return res.data.findOrder;
+              return [res.data.findOrder];
             })
           );
       }

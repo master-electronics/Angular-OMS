@@ -36,10 +36,10 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
 
 query verifyContainerForSorting(
   $Barcode: String!
-  $DistrubutionCenter: String!
+  $DistributionCenter: String!
 ) {
   findContainer(
-    Container: { Barcode: $Barcode, DistributionCenter: $DistrubutionCenter }
+    Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
   ) {
     _id
     ContainerTypeID
@@ -112,14 +112,14 @@ query verifyITNForStocking($ITN: String!, $DC: String!) {
 
 mutation findorCreateUserContainerForStocking(
   $Barcode: String!
-  $DistrubutionCenter: String!
+  $DistributionCenter: String!
   $ContainerTypeID: Int!
 ) {
   findOrCreateUserContainer(
     Container: {
       ContainerTypeID: $ContainerTypeID
       Barcode: $Barcode
-      DistributionCenter: $DistrubutionCenter
+      DistributionCenter: $DistributionCenter
     }
   ) {
     _id

@@ -1564,7 +1564,7 @@ export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: {
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
 }>;
 
 
@@ -1605,7 +1605,7 @@ export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: 
 
 export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
-  DistrubutionCenter: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
   ContainerTypeID: Types.Scalars['Int'];
 }>;
 
@@ -1685,9 +1685,9 @@ export const VerifyItnForSortingDocument = gql`
     }
   }
 export const VerifyContainerForSortingDocument = gql`
-    query verifyContainerForSorting($Barcode: String!, $DistrubutionCenter: String!) {
+    query verifyContainerForSorting($Barcode: String!, $DistributionCenter: String!) {
   findContainer(
-    Container: {Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+    Container: {Barcode: $Barcode, DistributionCenter: $DistributionCenter}
   ) {
     _id
     ContainerTypeID
@@ -1813,9 +1813,9 @@ export const VerifyItnForStockingDocument = gql`
     }
   }
 export const FindorCreateUserContainerForStockingDocument = gql`
-    mutation findorCreateUserContainerForStocking($Barcode: String!, $DistrubutionCenter: String!, $ContainerTypeID: Int!) {
+    mutation findorCreateUserContainerForStocking($Barcode: String!, $DistributionCenter: String!, $ContainerTypeID: Int!) {
   findOrCreateUserContainer(
-    Container: {ContainerTypeID: $ContainerTypeID, Barcode: $Barcode, DistributionCenter: $DistrubutionCenter}
+    Container: {ContainerTypeID: $ContainerTypeID, Barcode: $Barcode, DistributionCenter: $DistributionCenter}
   ) {
     _id
   }
