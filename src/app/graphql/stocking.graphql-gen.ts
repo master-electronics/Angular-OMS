@@ -1560,7 +1560,7 @@ export type VerifyItnForSortingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
+export type VerifyItnForSortingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Container: { __typename?: 'Container', _id: number, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean } }, Product: { __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string }, DCPRODUCTs?: Array<{ __typename?: 'DCProduct', Velocity?: string | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
 
 export type VerifyContainerForSortingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1601,7 +1601,7 @@ export type VerifyItnForStockingQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
+export type VerifyItnForStockingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null };
 
 export type FindorCreateUserContainerForStockingMutationVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
@@ -1645,6 +1645,7 @@ export const VerifyItnForSortingDocument = gql`
     _id
     QuantityOnHand
     Container {
+      _id
       ContainerType {
         IsMobile
       }
@@ -1660,6 +1661,7 @@ export const VerifyItnForSortingDocument = gql`
       PartNumber
     }
     ORDERLINEDETAILs {
+      _id
       Order {
         OrderNumber
         NOSINumber
@@ -1787,6 +1789,7 @@ export const VerifyItnForStockingDocument = gql`
       _id
     }
     ORDERLINEDETAILs {
+      _id
       Order {
         OrderNumber
         NOSINumber

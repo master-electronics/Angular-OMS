@@ -1566,7 +1566,7 @@ export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindItNforSearchBarcodeQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null };
+export type FindItNforSearchBarcodeQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null };
 
 export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -1645,6 +1645,7 @@ export const FindItNforSearchBarcodeDocument = gql`
       ShelfDetail
     }
     ORDERLINEDETAILs {
+      _id
       Status {
         Name
       }

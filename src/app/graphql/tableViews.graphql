@@ -47,6 +47,7 @@ query fetchOrderDetailforitnView($Order: searchOrder!) {
     OrderNumber
     NOSINumber
     ORDERLINEDETAILs {
+      _id
       Inventory {
         InventoryTrackingNumber
         Container {

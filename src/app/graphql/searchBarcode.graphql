@@ -55,6 +55,7 @@ query findITNforSearchBarcode($InventoryTrackingNumber: String!) {
       ShelfDetail
     }
     ORDERLINEDETAILs {
+      _id
       Status {
         Name
       }

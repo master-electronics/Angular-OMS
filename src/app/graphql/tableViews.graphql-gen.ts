@@ -1573,7 +1573,7 @@ export type FetchOrderDetailforitnViewQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchOrderDetailforitnViewQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null };
+export type FetchOrderDetailforitnViewQuery = { __typename?: 'Query', findOrder?: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null, Status: { __typename?: 'OrderStatus', Name: string } } | null> | null } | null };
 
 export type FetchWmsStatusViewQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
@@ -1832,6 +1832,7 @@ export const FetchOrderDetailforitnViewDocument = gql`
     OrderNumber
     NOSINumber
     ORDERLINEDETAILs {
+      _id
       Inventory {
         InventoryTrackingNumber
         Container {

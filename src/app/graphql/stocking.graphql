@@ -6,6 +6,7 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
     _id
     QuantityOnHand
     Container {
+      _id
       ContainerType {
         IsMobile
       }
@@ -21,6 +22,7 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
       PartNumber
     }
     ORDERLINEDETAILs {
+      _id
       Order {
         OrderNumber
         NOSINumber
@@ -96,6 +98,7 @@ query verifyITNForStocking($ITN: String!, $DC: String!) {
       _id
     }
     ORDERLINEDETAILs {
+      _id
       Order {
         OrderNumber
         NOSINumber

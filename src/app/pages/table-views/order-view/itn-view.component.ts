@@ -71,7 +71,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         StatusID: Number(urlParams.statusID),
         Priority: urlParams.priority === '1' ? true : null,
       };
-      // this.fetchData(detail);
+      this.fetchData(detail);
     }
   }
 
@@ -80,7 +80,13 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
       .fetch({ filter: filter }, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
-          return res.data.fetchOrderLineDetailforWMSCount;
+          const result = res.data.fetchOrderLineDetailforWMSCount;
+          if (result.length) {
+            return res.data.fetchOrderLineDetailforWMSCount.map(
+              (item) => item.Inventory !== null
+            );
+          }
+          return null;
         })
       );
   }
