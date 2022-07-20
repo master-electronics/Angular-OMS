@@ -62,26 +62,26 @@
           <a
             [routerLink]="['/tableviews/eventlog']"
             [queryParams]="{
-              ITN: detail.Inventory.InventoryTrackingNumber
+              ITN: detail.Inventory?.InventoryTrackingNumber
             }"
           >
-            {{ detail.Inventory.InventoryTrackingNumber }}</a
+            {{ detail.Inventory?.InventoryTrackingNumber }}</a
           >
         </td>
         <td>{{ detail.Order.OrderNumber }}-{{ detail.Order.NOSINumber }}</td>
         <td>{{ detail.Status.Name }}</td>
-        <td>{{ detail.Inventory.Container.Barcode }}</td>
+        <td>{{ detail.Inventory?.Container.Barcode }}</td>
         <td>
-          {{ detail.Inventory.Container.Warehouse }}-{{
-            detail.Inventory.Container.Row
-          }}-{{ detail.Inventory.Container.Aisle }}-{{
-            detail.Inventory.Container.Section
-          }}-{{ detail.Inventory.Container.Shelf }}-{{
-            detail.Inventory.Container.ShelfDetail
+          {{ detail.Inventory?.Container.Warehouse }}-{{
+            detail.Inventory?.Container.Row
+          }}-{{ detail.Inventory?.Container.Aisle }}-{{
+            detail.Inventory?.Container.Section
+          }}-{{ detail.Inventory?.Container.Shelf }}-{{
+            detail.Inventory?.Container.ShelfDetail
           }}
         </td>
-        <td>{{ detail.Inventory.Product.ProductCode.ProductCodeNumber }}</td>
-        <td>{{ detail.Inventory.Product.PartNumber }}</td>
+        <td>{{ detail.Inventory?.Product.ProductCode.ProductCodeNumber }}</td>
+        <td>{{ detail.Inventory?.Product.PartNumber }}</td>
         <td>{{ detail.Quantity }}</td>
       </tr>
     </tbody>

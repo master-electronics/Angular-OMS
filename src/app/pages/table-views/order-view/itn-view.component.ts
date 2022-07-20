@@ -78,17 +78,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
   fetchData(filter: SearchIntForWmsCount): void {
     this.OrderInfo$ = this.findDetail
       .fetch({ filter: filter }, { fetchPolicy: 'network-only' })
-      .pipe(
-        map((res) => {
-          const result = res.data.fetchOrderLineDetailforWMSCount;
-          if (result.length) {
-            return res.data.fetchOrderLineDetailforWMSCount.map(
-              (item) => item.Inventory !== null
-            );
-          }
-          return null;
-        })
-      );
+      .pipe(map((res) => res.data.fetchOrderLineDetailforWMSCount));
   }
 
   onSubmit(): void {
