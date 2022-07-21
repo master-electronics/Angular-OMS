@@ -73,7 +73,6 @@ export class HoldOnCounterComponent implements OnInit {
               });
               totalForAll += total;
               return {
-                ID: element.ID,
                 User: element.User,
                 total,
                 detail: element.detail,

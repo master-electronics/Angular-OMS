@@ -1602,7 +1602,7 @@ export type FetchTaskCounterQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchTaskCounterQuery = { __typename?: 'Query', fetchTaskCounter?: Array<{ __typename?: 'taskCounter', ID: number, User: string, taskCounter: Array<number | null> } | null> | null };
+export type FetchTaskCounterQuery = { __typename?: 'Query', fetchTaskCounter?: Array<{ __typename?: 'taskCounter', User: string, taskCounter: Array<number | null> } | null> | null };
 
 export type FetchHoldOnCounterQueryVariables = Types.Exact<{
   startDate: Types.Scalars['String'];
@@ -1610,7 +1610,7 @@ export type FetchHoldOnCounterQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchHoldOnCounterQuery = { __typename?: 'Query', fetchHoldOnCounter?: Array<{ __typename?: 'HoldOnCounter', ID: number, User: string, detail: Array<number | null> } | null> | null };
+export type FetchHoldOnCounterQuery = { __typename?: 'Query', fetchHoldOnCounter?: Array<{ __typename?: 'HoldOnCounter', User: string, detail: Array<number | null> } | null> | null };
 
 export type FetchOrderTasktimeQueryVariables = Types.Exact<{
   target?: Types.InputMaybe<Types.Scalars['String']>;
@@ -1950,7 +1950,6 @@ export const FetchUserEventLogDocument = gql`
 export const FetchTaskCounterDocument = gql`
     query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
   fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
-    ID
     User
     taskCounter
   }
@@ -1970,7 +1969,6 @@ export const FetchTaskCounterDocument = gql`
 export const FetchHoldOnCounterDocument = gql`
     query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
-    ID
     User
     detail
   }
