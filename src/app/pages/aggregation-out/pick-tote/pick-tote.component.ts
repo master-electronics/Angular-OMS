@@ -91,9 +91,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               ITNSet.add(node.Inventory.InvenotryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
                 InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
@@ -194,7 +192,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const log = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         InvenotryTrackingNumber: node.Inventory.InvenotryTrackingNumber,
@@ -248,7 +246,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           message = message + `\nThis order contains hazardous materials`;
         }
 
-        this.sendGTM();
         this._router.navigate(['/agout'], {
           queryParams: {
             type,
@@ -266,13 +263,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         return of(false);
       })
     );
-  }
-
-  sendGTM(): void {
-    // this._gtmService.pushTag({
-    //   event: 'AggregationOut',
-    //   userID: this._authService.userName,
-    // });
   }
 
   ngOnDestroy(): void {

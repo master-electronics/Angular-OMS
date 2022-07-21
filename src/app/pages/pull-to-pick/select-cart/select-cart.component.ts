@@ -147,7 +147,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
               {
                 Message: `${this.containerForm.value.containerNumber}`,
                 UserEventID: sqlData.Event_Pulling_SelectCart,
-                UserID: this.userID,
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               },
             ],
           });
@@ -189,7 +189,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
               {
                 Message: `${this.containerForm.value.containerNumber}`,
                 UserEventID: sqlData.Event_DropOff_SelectCart,
-                UserID: this.userID,
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               },
             ],
           });

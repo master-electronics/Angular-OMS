@@ -87,7 +87,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       ),
       insertUserLog: this._insertLog.mutate({
         log: {
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           UserEventID: sqlData.Event_DropOff_Start,
           Message: `From ${this._service.cartInfo.barcode}`,
         },
@@ -153,9 +153,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
               OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
               NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
               UserEventID: sqlData.Event_DropOff_ITN_Drop,
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               Message: `From ${this._service.cartInfo.barcode}`,
             },
           })
@@ -172,7 +170,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
           NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
           UserEventID: sqlData.Event_DropOff_Done,
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           Message: `From ${this._service.cartInfo.barcode}`,
         });
       });

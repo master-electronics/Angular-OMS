@@ -213,9 +213,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const UserEventLog = [
               {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
                 InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
@@ -226,9 +224,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
             ];
             if (!inProcess) {
               UserEventLog.push({
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
                 UserEventID: sqlData.Event_QC_OrderComplete,

@@ -164,9 +164,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
           this._service.changeCurrentITN(ITNInfo);
           const log = this._insertLog.mutate({
             log: {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_ScanITN,
               OrderNumber: item.ORDERLINEDETAILs[0]?.Order.OrderNumber,
               NOSINumber: item.ORDERLINEDETAILs[0]?.Order.NOSINumber,
@@ -283,7 +281,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
       return;
     } else {
       const log = this._service.ITNListInContainer.map((item) => ({
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         UserEventID: sqlData.Event_Stocking_StockingMismatch_Start,
         InventoryTrackingNumber: item.ITN,
         Message: ``,

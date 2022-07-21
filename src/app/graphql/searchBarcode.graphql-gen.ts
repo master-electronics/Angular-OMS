@@ -1133,10 +1133,9 @@ export type UserEventLog = {
   ShipmentMethod?: Maybe<Scalars['String']>;
   ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
-  User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
@@ -1294,7 +1293,7 @@ export type InsertUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
@@ -1442,7 +1441,7 @@ export type SearchUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
-  UserID?: InputMaybe<Scalars['Int']>;
+  UserName?: InputMaybe<Scalars['String']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -1559,7 +1558,7 @@ export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
 
 export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
@@ -1588,6 +1587,7 @@ export const FindContainerForSearchBarcodeDocument = gql`
     Shelf
     ShelfDetail
     INVENTORies {
+      _id
       InventoryTrackingNumber
       Product {
         ProductCode {

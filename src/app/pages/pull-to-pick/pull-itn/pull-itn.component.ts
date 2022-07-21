@@ -178,7 +178,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
                 {
                   UserEventID: sqlData.Event_Pulling_PullITN,
                   InventoryTrackingNumber: this.ITN,
-                  UserID,
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
                 },
@@ -207,7 +207,6 @@ export class PullITNComponent implements OnInit, AfterViewInit {
 
   notFound(): void {
     this.isLoading = true;
-    const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
     this.notFound$ = this._updateNotFound
       .mutate(
         {
@@ -219,7 +218,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
             {
               UserEventID: sqlData.Event_Pulling_NotFound,
               InventoryTrackingNumber: this.ITN,
-              UserID,
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
             },

@@ -12,7 +12,7 @@
             <nz-option
               *ngFor="let user of fetchUser$ | async"
               [nzLabel]="user.Name"
-              [nzValue]="user._id"
+              [nzValue]="user.Name"
             ></nz-option>
           </nz-select>
         </nz-form-control>
@@ -109,7 +109,7 @@
     <tbody>
       <ng-container *ngFor="let data of table.data">
         <tr>
-          <td>{{ data.User.Name }}</td>
+          <td>{{ data.UserName }}</td>
           <td>{{ data.UserEvent.Module }}</td>
           <td>{{ data.UserEvent.Event }}</td>
           <td>{{ data.InventoryTrackingNumber }}</td>

@@ -87,7 +87,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
       {
         Message: `${this.f.positionNumber.value}`,
         UserEventID: sqlData.Event_Pulling_SelectLocation,
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
       },
     ];
     this.isLoading = true;

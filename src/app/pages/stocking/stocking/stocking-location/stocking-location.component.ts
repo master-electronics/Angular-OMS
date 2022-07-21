@@ -113,7 +113,7 @@ export class StockingLocationComponent implements OnInit {
         });
         return this._insertLog.mutate({
           log: {
-            UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
             UserEventID: sqlData.Event_Stocking_StockingRelocation_Start,
             OrderNumber:
               returnITN.findInventory.ORDERLINEDETAILs[0]?.Order.OrderNumber,
@@ -184,9 +184,7 @@ export class StockingLocationComponent implements OnInit {
           this.targetLocation = Barcode;
           return this._insertLog.mutate({
             log: {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
               InventoryTrackingNumber: this.currentITN.ITN,
               Message: `${Barcode}`,
@@ -225,7 +223,7 @@ export class StockingLocationComponent implements OnInit {
         InventoryID: this.ITNInfo.InventoryID,
         ContainerID: this.containerID,
         log: {
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           UserEventID: sqlData.Event_Stocking_StockingReLocation_Done,
           InventoryTrackingNumber: this.ITNInfo.ITN,
           Message: `${this.targetLocation}`,

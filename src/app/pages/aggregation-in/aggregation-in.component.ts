@@ -145,9 +145,7 @@ export class AggregationInComponent
             if (Inventory.InventoryTrackingNumber) {
               const line = Inventory.ORDERLINEDETAILs[0];
               logList.push({
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: line.Order.OrderNumber,
                 NOSINumber: line.Order.NOSINumber,
                 OrderLineNumber: line.OrderLine.OrderLineNumber,

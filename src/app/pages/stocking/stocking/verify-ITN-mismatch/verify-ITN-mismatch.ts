@@ -62,7 +62,7 @@ export class VerifyITNMismatchComponent implements OnInit {
     this.isLoading = true;
     const ITNList = this.ITNList.map((iterator) => iterator.ITN);
     const log = ITNList.map((iterator) => ({
-      UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
       UserEventID: sqlData.Event_Stocking_NotFound,
       InventoryTrackingNumber: iterator,
       Message: ``,
@@ -123,7 +123,7 @@ export class VerifyITNMismatchComponent implements OnInit {
       this.ITNList.splice(target, 1);
       this.submit$ = this._insertLog.mutate({
         log: {
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           UserEventID: sqlData.Event_Stocking_Stocking_verifyITN,
           InventoryTrackingNumber: this.inputForm.value.ITNInput,
           Message: ``,
@@ -157,9 +157,7 @@ export class VerifyITNMismatchComponent implements OnInit {
           switchMap(() => {
             return this._insertLog.mutate({
               log: {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
                 InventoryTrackingNumber: this.inputForm.value.ITNInput,
                 Message: ``,

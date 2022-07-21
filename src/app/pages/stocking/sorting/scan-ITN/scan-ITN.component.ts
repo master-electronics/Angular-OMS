@@ -102,9 +102,7 @@ export class ScanITNComponent implements OnInit {
           });
           return this._insertLog.mutate({
             log: {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_SortingStart,
               OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
               NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,

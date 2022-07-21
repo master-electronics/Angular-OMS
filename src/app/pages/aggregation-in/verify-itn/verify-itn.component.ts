@@ -138,7 +138,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     // set query for updateSql
     const log = this.outsetContainer.ITNsInTote.map((node) => {
       return {
-        UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
         UserEventID: sqlData.Event_AgIn_Relocate,
@@ -172,7 +172,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       });
       if (this.endContainer.isLastLine) {
         log.push({
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
           UserEventID: sqlData.Event_AgIn_OrderComplete,
@@ -216,7 +216,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
 
       // Navgate to first after update success
       map(() => {
-        this.sendGTM();
         this._router.navigate(['agin'], {
           queryParams: {
             type: 'info',
@@ -234,12 +233,5 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         return of(0);
       })
     );
-  }
-
-  sendGTM(): void {
-    // this._gtmService.pushTag({
-    //   event: 'AggregationIn',
-    //   userID: this._authService.userName,
-    // });
   }
 }

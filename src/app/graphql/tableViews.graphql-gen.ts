@@ -1133,10 +1133,9 @@ export type UserEventLog = {
   ShipmentMethod?: Maybe<Scalars['String']>;
   ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
-  User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
@@ -1294,7 +1293,7 @@ export type InsertUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
@@ -1442,7 +1441,7 @@ export type SearchUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
-  UserID?: InputMaybe<Scalars['Int']>;
+  UserName?: InputMaybe<Scalars['String']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -1594,7 +1593,7 @@ export type FetchUserEventLogQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber?: string | null, NOSINumber?: string | null, Message?: string | null, InventoryTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
+export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number, UserName: string, OrderNumber?: string | null, NOSINumber?: string | null, Message?: string | null, InventoryTrackingNumber?: string | null, DateTime: string, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
 
 export type FetchTaskCounterQueryVariables = Types.Exact<{
   Module: Types.Scalars['Int'];
@@ -1924,9 +1923,7 @@ export const FetchUserEventLogDocument = gql`
     limit: $limit
   ) {
     _id
-    User {
-      Name
-    }
+    UserName
     UserEvent {
       Event
       Module

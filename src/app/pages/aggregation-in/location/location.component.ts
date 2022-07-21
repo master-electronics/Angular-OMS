@@ -222,9 +222,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               // toteList: [this.outsetContainer.Barcode],
               log: [
                 {
-                  UserID: Number(
-                    JSON.parse(sessionStorage.getItem('userInfo'))._id
-                  ),
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
                   InventoryTrackingNumber: singleITN,

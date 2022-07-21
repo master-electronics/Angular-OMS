@@ -1128,10 +1128,9 @@ export type UserEventLog = {
   ShipmentMethod?: Maybe<Scalars['String']>;
   ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
-  User: UserInfo;
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
@@ -1289,7 +1288,7 @@ export type InsertUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
-  UserID: Scalars['Int'];
+  UserName: Scalars['String'];
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
@@ -1437,7 +1436,7 @@ export type SearchUserEventLog = {
   ShipmentMethodDescription?: InputMaybe<Scalars['String']>;
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
-  UserID?: InputMaybe<Scalars['Int']>;
+  UserName?: InputMaybe<Scalars['String']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;

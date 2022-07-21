@@ -47,8 +47,8 @@ export class EventLogComponent implements OnInit {
       this.filterForm.get('ITN').setValue(this.urlParams.ITN);
       this.onSubmit();
     }
-    if (this.urlParams.UserID) {
-      this.onSubmit();
+    if (this.urlParams.UserName) {
+      this.filterForm.get('user').setValue(this.urlParams.UserName);
     }
   }
 
@@ -69,14 +69,14 @@ export class EventLogComponent implements OnInit {
       return;
     }
     const eventLog = {};
-    const user =
-      Number(this.urlParams.UserID) || this.filterForm.get('user').value;
+    const userName =
+      this.urlParams.UserName || this.filterForm.get('user').value;
     const module = Number(this.filterForm.get('module').value);
     const order = this.filterForm.get('order').value.toUpperCase();
     const ITN = this.filterForm.get('ITN').value.toUpperCase();
     let limit = 200;
-    if (user) {
-      eventLog['UserID'] = user;
+    if (userName) {
+      eventLog['UserName'] = userName;
       limit = 500;
     }
     if (module) {

@@ -114,9 +114,7 @@ export class SortingLocationComponent implements OnInit {
             InventoryID: this.sortingInfo.InventoryID,
             ContainerID: res.data.findContainer._id,
             log: {
-              UserID: Number(
-                JSON.parse(sessionStorage.getItem('userInfo'))._id
-              ),
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_SortingDone,
               InventoryTrackingNumber: this.sortingInfo.ITN,
               Message: `${this.locationForm.value.location.trim()}`,

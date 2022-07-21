@@ -331,7 +331,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       StatusID: sqlData.warehouseHold_ID,
       log: [
         {
-          UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           OrderNumber: this.itemInfo.OrderNumber,
           NOSINumber: this.itemInfo.NOSI,
           UserEventID: sqlData.Event_QC_Hold,
@@ -368,7 +368,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = `warning`;
             message = `${this.itemInfo.InventoryTrackingNumber} is on hold.`;
           }
-          this.sendGTM();
           this.router.navigate(['qc'], {
             queryParams: { type, message },
           });
@@ -384,16 +383,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       )
     );
-  }
-
-  sendGTM(): void {
-    // const taskTime = Date.now() - this.qcService.qcStart;
-    // this.qcService.resetQCStartTime(Date.now());
-    // this.gtmService.pushTag({
-    //   event: 'QCHoldOn',
-    //   userID: this.authService.userName,
-    //   taskTime: taskTime,
-    // });
   }
 
   ngOnDestroy(): void {

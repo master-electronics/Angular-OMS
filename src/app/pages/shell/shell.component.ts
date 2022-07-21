@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-// import { UserIdleService } from 'angular-user-idle';
 import { Subscription } from 'rxjs';
 
 import { AuthenticationService } from '../../shared/services/authentication.service';
@@ -10,10 +9,7 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 })
 export class ShellComponent implements OnDestroy, OnInit {
   private subscription = new Subscription();
-  constructor(
-    private auth: AuthenticationService,
-    // private userIdle: UserIdleService
-  ) {}
+  constructor(private auth: AuthenticationService) {}
 
   ngOnInit(): void {
     // this.userIdle.startWatching();

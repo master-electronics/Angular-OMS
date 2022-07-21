@@ -146,9 +146,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             const log = [
               {
-                UserID: Number(
-                  JSON.parse(sessionStorage.getItem('userInfo'))._id
-                ),
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: Order.OrderNumber.trim(),
                 NOSINumber: Order.NOSINumber.trim(),
                 OrderLineNumber:

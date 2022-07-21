@@ -109,9 +109,7 @@ query fetchUserEventLog(
     limit: $limit
   ) {
     _id
-    User {
-      Name
-    }
+    UserName
     UserEvent {
       Event
       Module
