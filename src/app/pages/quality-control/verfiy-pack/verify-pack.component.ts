@@ -261,7 +261,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateCodeInput.nativeElement.select();
   }
   ngAfterViewInit(): void {
-    this.quantityInput.nativeElement.select();
+    setTimeout(() => {
+      this.quantityInput.nativeElement.select();
+    }, 10);
   }
 
   print(): void {

@@ -88,7 +88,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             const containerSet = new Set();
             const ITNSet = new Set<string>();
             const log = this.agOutService.ITNsInOrder.map((node) => {
-              ITNSet.add(node.Inventory.InvenotryTrackingNumber);
+              ITNSet.add(node.Inventory.InventoryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
                 UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
@@ -195,7 +195,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
-        InvenotryTrackingNumber: node.Inventory.InvenotryTrackingNumber,
+        InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
         UserEventID: sqlData.Event_AgOut_Done,
         OrderLineNumber: node.OrderLine.OrderLineNumber,
       };
