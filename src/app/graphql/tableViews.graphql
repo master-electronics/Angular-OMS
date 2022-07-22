@@ -261,8 +261,7 @@ query fetchITNLifecycleDrillDown(
     NOSINumber
     InventoryTrackingNumber
     Message
-    UserID
-    Name
+    UserName
     UserEventID
     Event
     Module

@@ -78,7 +78,6 @@ export type GlobalMessage = {
 
 export type HoldOnCounter = {
   __typename?: 'HoldOnCounter';
-  ID: Scalars['Int'];
   User: Scalars['String'];
   detail: Array<Maybe<Scalars['Int']>>;
 };
@@ -204,7 +203,6 @@ export type ItnLifeCycleDrillDown = {
   Message?: Maybe<Scalars['String']>;
   Module?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
-  Name?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
@@ -217,7 +215,7 @@ export type ItnLifeCycleDrillDown = {
   ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   UserEventID?: Maybe<Scalars['Int']>;
-  UserID?: Maybe<Scalars['Int']>;
+  UserName?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
 };
@@ -1458,7 +1456,6 @@ export type SearchUserInfo = {
 
 export type TaskCounter = {
   __typename?: 'taskCounter';
-  ID: Scalars['Int'];
   User: Scalars['String'];
   taskCounter: Array<Maybe<Scalars['Int']>>;
 };
@@ -1644,7 +1641,7 @@ export type FetchItnLifecycleDrillDownQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchItnLifecycleDrillDownQuery = { __typename?: 'Query', fetchITNLifecycleDrillDown?: Array<{ __typename?: 'ITNLifeCycleDrillDown', OrderNumber?: string | null, NOSINumber?: string | null, InventoryTrackingNumber?: string | null, Message?: string | null, UserID?: number | null, Name?: string | null, UserEventID?: number | null, Event?: string | null, Module?: string | null, DateTime?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: string | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, ParentITN?: string | null, DistributionCenter?: string | null, Quantity?: number | null, ShipmentMethod?: string | null, ShipmentMethodDescription?: string | null } | null> | null };
+export type FetchItnLifecycleDrillDownQuery = { __typename?: 'Query', fetchITNLifecycleDrillDown?: Array<{ __typename?: 'ITNLifeCycleDrillDown', OrderNumber?: string | null, NOSINumber?: string | null, InventoryTrackingNumber?: string | null, Message?: string | null, UserName?: string | null, UserEventID?: number | null, Event?: string | null, Module?: string | null, DateTime?: string | null, PartNumber?: string | null, ProductCode?: string | null, OrderLineNumber?: string | null, CustomerNumber?: string | null, CustomerTier?: string | null, ProductTier?: string | null, Zone?: number | null, WMSPriority?: number | null, Priority?: boolean | null, TrackingNumber?: string | null, ParentITN?: string | null, DistributionCenter?: string | null, Quantity?: number | null, ShipmentMethod?: string | null, ShipmentMethodDescription?: string | null } | null> | null };
 
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
@@ -2139,8 +2136,7 @@ export const FetchItnLifecycleDrillDownDocument = gql`
     NOSINumber
     InventoryTrackingNumber
     Message
-    UserID
-    Name
+    UserName
     UserEventID
     Event
     Module

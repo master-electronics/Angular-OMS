@@ -73,7 +73,6 @@ export type GlobalMessage = {
 
 export type HoldOnCounter = {
   __typename?: 'HoldOnCounter';
-  ID: Scalars['Int'];
   User: Scalars['String'];
   detail: Array<Maybe<Scalars['Int']>>;
 };
@@ -199,7 +198,6 @@ export type ItnLifeCycleDrillDown = {
   Message?: Maybe<Scalars['String']>;
   Module?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
-  Name?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
@@ -212,7 +210,7 @@ export type ItnLifeCycleDrillDown = {
   ShipmentMethodDescription?: Maybe<Scalars['String']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   UserEventID?: Maybe<Scalars['Int']>;
-  UserID?: Maybe<Scalars['Int']>;
+  UserName?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
 };
@@ -1453,7 +1451,6 @@ export type SearchUserInfo = {
 
 export type TaskCounter = {
   __typename?: 'taskCounter';
-  ID: Scalars['Int'];
   User: Scalars['String'];
   taskCounter: Array<Maybe<Scalars['Int']>>;
 };
