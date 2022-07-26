@@ -16,6 +16,7 @@ interface printerData {
     Description: string;
     Orientation: string;
     Active: boolean;
+    DPI: number;
 }
 
 @Component({
@@ -33,6 +34,7 @@ export class PrinterMaintenance implements OnInit {
     addPrinterName;
     addPrinterDescription;
     addPrinterOrientation;
+    addPrinterDPI;
     message: string;
     alertType = 'error';
     sortNameFn = (a: printerData, b: printerData): number => {
@@ -44,6 +46,14 @@ export class PrinterMaintenance implements OnInit {
     sortOrientationFn = (a: printerData, b: printerData): number => {
         return ((a.Orientation)?a.Orientation:'').localeCompare((b.Orientation)?b.Orientation:'');
     };
+    sortDPIFn = (a: printerData, b: printerData): number => {
+        const dpiA = (a.DPI)?a.DPI:null;
+        const dpiB = (b.DPI)?b.DPI:null;
+
+        if (dpiA < dpiB) return -1;
+        if (dpiA == dpiB) return 0;
+        return 1;
+    }
     sortActiveFn = (a: printerData, b: printerData): number => {
         return ((a.Active)?'Y':'N').localeCompare((b.Active)?'Y':'N');
     }
@@ -55,6 +65,7 @@ export class PrinterMaintenance implements OnInit {
     includeInactive;
     screenWidth: any;
     screenHeight: any;
+    dpiOptions: { label: string; value: number}[];
     
     private printerViewSubscription = new Subscription();
     private insertPrinterSubscription = new Subscription();
@@ -74,6 +85,20 @@ export class PrinterMaintenance implements OnInit {
     }
 
     ngOnInit(): void {
+        this.dpiOptions = [
+            {
+                label: "",
+                value: null
+            },
+            {
+                label: "203 dpi (zebra8)",
+                value: 203
+            },
+            {
+                label: "300 dpi (zebra12)",
+                value: 300
+            }
+        ];
         this.includeInactive = false;
         this.screenWidth = window.innerWidth+"px";
         this.screenHeight = (window.innerHeight-300)+"px";
@@ -118,6 +143,7 @@ export class PrinterMaintenance implements OnInit {
                                     Description: printer.Description,
                                     Orientation: printer.Orientation,
                                     Active: printer.Active,
+                                    DPI: printer.DPI,
                                 }
                             }
 
@@ -126,7 +152,8 @@ export class PrinterMaintenance implements OnInit {
                                 Name: printer.Name,
                                 Description: printer.Description,
                                 Orientation: printer.Orientation,
-                                Active: printer.Active
+                                Active: printer.Active,
+                                DPI: printer.DPI,
                             }
                         }
                     );
@@ -178,7 +205,8 @@ export class PrinterMaintenance implements OnInit {
                         name: this.editCache[id].data.Name,
                         description: this.editCache[id].data.Description,
                         orientation: this.editCache[id].data.Orientation,
-                        active: this.editCache[id].data.Active
+                        active: this.editCache[id].data.Active,
+                        dpi: this.editCache[id].data.DPI,
                     }
                 ).subscribe(() => {
                     const index = this.viewDataDisplay.findIndex(item => item.ID === id);
@@ -186,6 +214,7 @@ export class PrinterMaintenance implements OnInit {
                     this.viewDataDisplay[index].Description = this.editCache[id].data.Description;
                     this.viewDataDisplay[index].Orientation = this.editCache[id].data.Orientation;
                     this.viewDataDisplay[index].Active = this.editCache[id].data.Active;
+                    this.viewDataDisplay[index].DPI = this.editCache[id].data.DPI;
                     this.editCache[id].edit = false;
                     this.isLoading = false;
                 },
@@ -281,6 +310,8 @@ export class PrinterMaintenance implements OnInit {
 
         if (valid) {
             this.isLoading = true;
+            //const dpi: string = this.addPrinterDPI.toString();
+            //alert(typeof dpi);
             this.insertPrinterSubscription.add(
                 this._insertPrinter.mutate(
                     {
@@ -288,12 +319,14 @@ export class PrinterMaintenance implements OnInit {
                         description: this.addPrinterDescription,
                         orientation: this.addPrinterOrientation,
                         active: true,
+                        dpi: (this.addPrinterDPI) ? (this.addPrinterDPI.toString().trim() == "") ? null : Number(this.addPrinterDPI) : null,
                     }
                 ).subscribe(() => {
                     this.loadView();
                     this.addPrinterName = "";
                     this.addPrinterDescription = "";
                     this.addPrinterOrientation = "";
+                    this.addPrinterDPI = null;
                     this.isLoading = false;
                 },
                 (error) => {
@@ -317,6 +350,7 @@ export class PrinterMaintenance implements OnInit {
         this.addPrinterName = "";
         this.addPrinterDescription = "";
         this.addPrinterOrientation = "";
+        this.addPrinterDPI = "";
         nameTB.style.border = "";
         descriptionTB.style.border = "";
     }

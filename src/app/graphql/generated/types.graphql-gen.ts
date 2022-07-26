@@ -513,6 +513,7 @@ export type MutationInsertItnUserTemplateArgs = {
 
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
+  DPI?: InputMaybe<Scalars['Int']>;
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
@@ -707,6 +708,7 @@ export type MutationUpdateOrderLineDetailListArgs = {
 
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
+  DPI?: InputMaybe<Scalars['Int']>;
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
@@ -811,6 +813,7 @@ export type OrderStatus = {
 export type Printer = {
   __typename?: 'Printer';
   Active?: Maybe<Scalars['Boolean']>;
+  DPI?: Maybe<Scalars['Int']>;
   Description?: Maybe<Scalars['String']>;
   Name?: Maybe<Scalars['String']>;
   Orientation?: Maybe<Scalars['String']>;

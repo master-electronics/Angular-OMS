@@ -518,6 +518,7 @@ export type MutationInsertItnUserTemplateArgs = {
 
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
+  DPI?: InputMaybe<Scalars['Int']>;
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
@@ -712,6 +713,7 @@ export type MutationUpdateOrderLineDetailListArgs = {
 
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
+  DPI?: InputMaybe<Scalars['Int']>;
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
@@ -816,6 +818,7 @@ export type OrderStatus = {
 export type Printer = {
   __typename?: 'Printer';
   Active?: Maybe<Scalars['Boolean']>;
+  DPI?: Maybe<Scalars['Int']>;
   Description?: Maybe<Scalars['String']>;
   Name?: Maybe<Scalars['String']>;
   Orientation?: Maybe<Scalars['String']>;
@@ -1555,13 +1558,14 @@ export type FetchPrinterListQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null> | null };
+export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, DPI?: number | null } | null> | null };
 
 export type InsertPrinterMutationVariables = Types.Exact<{
   name?: Types.InputMaybe<Types.Scalars['String']>;
   description?: Types.InputMaybe<Types.Scalars['String']>;
   orientation?: Types.InputMaybe<Types.Scalars['String']>;
   active?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
@@ -1573,6 +1577,7 @@ export type UpdatePrinterMutationVariables = Types.Exact<{
   description?: Types.InputMaybe<Types.Scalars['String']>;
   orientation?: Types.InputMaybe<Types.Scalars['String']>;
   active?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
@@ -1593,6 +1598,7 @@ export const FetchPrinterListDocument = gql`
     Description
     Orientation
     Active
+    DPI
   }
 }
     `;
@@ -1608,12 +1614,13 @@ export const FetchPrinterListDocument = gql`
     }
   }
 export const InsertPrinterDocument = gql`
-    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean) {
+    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
   insertPrinter(
     Name: $name
     Description: $description
     Orientation: $orientation
     Active: $active
+    DPI: $dpi
   ) {
     _id
     Name
@@ -1635,13 +1642,14 @@ export const InsertPrinterDocument = gql`
     }
   }
 export const UpdatePrinterDocument = gql`
-    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean) {
+    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
   updatePrinter(
     _id: $_id
     Name: $name
     Description: $description
     Orientation: $orientation
     Active: $active
+    DPI: $dpi
   ) {
     _id
     Name

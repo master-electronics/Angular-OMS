@@ -16,7 +16,7 @@
     <thead>
       <tr>
         <th
-          nzWidth="26%"
+          nzWidth="24%"
           nzCustomFilter
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
@@ -32,7 +32,7 @@
           </nz-filter-trigger>
         </th>
         <th
-          nzWidth="40%"
+          nzWidth="30%"
           nzCustomFilter
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
@@ -56,8 +56,16 @@
           Orientation
         </th>
         <th
+          nzWidth="12%"
+          [nzSortOrder]="null"
+          [nzSortDirections]="['ascend', 'descend']"
+          [nzSortFn]="sortDPIFn"
+        >
+          DPI
+        </th>
+        <th
           *ngIf="includeInactive"
-          nzWidth="7%"
+          nzWidth="10%"
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
           [nzSortFn]="sortActiveFn"
@@ -88,6 +96,7 @@
               />
             </div>
           </td>
+          <td>{{ data.DPI }}</td>
           <td *ngIf="includeInactive">{{ data.Active ? 'Y' : 'N' }}</td>
           <td>
             <button
@@ -168,6 +177,14 @@
             </nz-radio-group>
           </td>
           <td>
+            <nz-select
+              [(ngModel)]="editCache[data.ID].data.DPI"
+              [nzDropdownMatchSelectWidth]="false"
+              style="width: 100%" nzPlaceHolder="DPI"
+              [nzOptions]="dpiOptions">
+            </nz-select>
+          </td>
+          <td>
             <button
               nz-button
               (click)="saveEdit(data.ID, editName, editDescription)"
@@ -233,6 +250,13 @@
               />
             </label>
           </nz-radio-group>
+        </td>
+        <td>
+          <nz-select
+            [(ngModel)]="addPrinterDPI"
+            [nzOptions]="dpiOptions"
+            [nzDropdownMatchSelectWidth]="false"
+            style="width: 100%" nzPlaceHolder="DPI"></nz-select>
         </td>
         <td>
           <button

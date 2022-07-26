@@ -17,6 +17,7 @@ import { NzRadioModule } from "ng-zorro-antd/radio";
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 import { NzSpinModule } from "ng-zorro-antd/spin";
+import { NzSelectModule } from "ng-zorro-antd/select";
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { NzSpinModule } from "ng-zorro-antd/spin";
         NzAlertModule,
         NzCheckboxModule,
         NzSpinModule,
+        NzSelectModule,
     ]
 })
 export class PrinterMaintenanceModule {}
