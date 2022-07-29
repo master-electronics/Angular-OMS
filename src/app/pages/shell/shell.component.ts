@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { IdleService } from 'src/app/shared/services/idle.service';
+import { environment } from 'src/environments/environment';
 
 import { AuthenticationService } from '../../shared/services/authentication.service';
 
@@ -9,14 +11,25 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 })
 export class ShellComponent implements OnDestroy, OnInit {
   private subscription = new Subscription();
-  constructor(private auth: AuthenticationService) {}
+  constructor(
+    private auth: AuthenticationService,
+    private idleService: IdleService
+  ) {}
 
   ngOnInit(): void {
-    // this.userIdle.startWatching();
-    // this.subscription.add(this.userIdle.onTimerStart().subscribe());
-    // this.subscription.add(
-    //   this.userIdle.onTimeout().subscribe(() => this.auth.logout())
-    // );
+    this.initialIdleSettings();
+  }
+
+  private initialIdleSettings(): void {
+    const idleTimeoutInSeconds: number = environment.idleTimeInMinutes;
+    this.idleService
+      .startWatching(idleTimeoutInSeconds)
+      .subscribe((isTimeOut: boolean) => {
+        if (isTimeOut) {
+          this.auth.logout();
+          alert('Session timeout. It will redirect to login page.');
+        }
+      });
   }
 
   ngOnDestroy(): void {
