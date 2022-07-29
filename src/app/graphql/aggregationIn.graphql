@@ -213,6 +213,7 @@ query verifyOrderForAgOut(
 query fetchContainerForAgoutPick($OrderID: Int) {
   findOrderLineDetail(OrderLineDetail: { OrderID: $OrderID }) {
     InternalTrackingNumber
+    Quantity
     OrderLine {
       OrderLineNumber
       ProductCode

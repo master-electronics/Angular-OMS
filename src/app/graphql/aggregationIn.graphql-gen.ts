@@ -1345,7 +1345,7 @@ export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', InternalTrackingNumber?: string | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number, ProductCode: string, PartNumber: string }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null> | null };
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetail?: Array<{ __typename?: 'OrderLineDetail', InternalTrackingNumber?: string | null, Quantity: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number, ProductCode: string, PartNumber: string }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null> | null };
 
 export const VerifyContainerForAggregationInDocument = gql`
     query verifyContainerForAggregationIn($Container: searchContainer!) {
@@ -1635,6 +1635,7 @@ export const FetchContainerForAgoutPickDocument = gql`
     query fetchContainerForAgoutPick($OrderID: Int) {
   findOrderLineDetail(OrderLineDetail: {OrderID: $OrderID}) {
     InternalTrackingNumber
+    Quantity
     OrderLine {
       OrderLineNumber
       ProductCode
