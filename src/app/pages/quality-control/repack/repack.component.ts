@@ -19,7 +19,6 @@ import {
   FindNewOrderLineDetailAfterUpdateBinGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
@@ -55,8 +54,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Insert_UserEventLogsGQL,
-    private findNewID: FindNewOrderLineDetailAfterUpdateBinGQL,
-    private gtmService: GoogleTagManagerService
+    private findNewID: FindNewOrderLineDetailAfterUpdateBinGQL
   ) {
     this.titleService.setTitle('qc/repack');
   }
@@ -207,6 +205,7 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const UserEventLog = [
               {
+                DistributionCenter: environment.DistributionCenter,
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
@@ -214,19 +213,26 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 NOSINumber: this.itemInfo.NOSI,
                 InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
                 OrderLineNumber: this.itemInfo.OrderLineNumber,
+                PartNumber: this.itemInfo.PartNumber,
+                ProductCode: this.itemInfo.ProductCode,
+                Quantity: this.itemInfo.Quantity,
                 UserEventID: environment.Event_QC_Done,
                 Message: `Repack to ${this.containerForm.value.container}`,
               },
             ];
             if (!inProcess) {
               UserEventLog.push({
+                DistributionCenter: environment.DistributionCenter,
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
-                OrderLineNumber: this.itemInfo.OrderLineNumber,
                 UserEventID: environment.Event_QC_OrderComplete,
+                OrderLineNumber: null,
+                PartNumber: null,
+                ProductCode: null,
+                Quantity: null,
                 InternalTrackingNumber: null,
                 Message: null,
               });
@@ -345,7 +351,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
               type = 'success';
               message = `QC complete for ${this.itemInfo.InternalTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
             }
-            this.sendGTM();
             this.router.navigate(['/qc'], {
               queryParams: {
                 type,
@@ -361,16 +366,6 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         )
     );
-  }
-
-  sendGTM(): void {
-    const taskTime = Date.now() - this.qcService.qcStart;
-    this.qcService.resetQCStartTime(Date.now());
-    this.gtmService.pushTag({
-      event: 'QualityControlDone',
-      userID: this.authService.userName,
-      taskTime: taskTime,
-    });
   }
 
   ngOnDestroy(): void {

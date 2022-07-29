@@ -136,6 +136,7 @@ export class AggregationInComponent
           res.data.findContainer[0].ORDERLINEDETAILs.forEach((line) => {
             if (line.InternalTrackingNumber) {
               logList.push({
+                DistributionCenter: environment.DistributionCenter,
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
@@ -143,12 +144,18 @@ export class AggregationInComponent
                 NOSINumber: line.Order.NOSINumber,
                 OrderLineNumber: line.OrderLine.OrderLineNumber,
                 InternalTrackingNumber: line.InternalTrackingNumber,
+                Quantity: line.Quantity,
+                PartNumber: line.OrderLine.PartNumber,
+                ProductCode: line.OrderLine.ProductCode,
                 UserEventID: environment.Event_AgIn_Start,
                 Message: `Start ${container.Barcode}`,
               });
               outsetContainer.ITNsInTote.push({
                 ITN: line.InternalTrackingNumber,
                 OrderLineNumber: line.OrderLine.OrderLineNumber,
+                PartNumber: line.OrderLine.PartNumber,
+                ProductCode: line.OrderLine.ProductCode,
+                Quantity: line.Quantity,
               });
             }
           });

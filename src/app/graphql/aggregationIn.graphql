@@ -17,12 +17,15 @@ query verifyContainerForAggregationIn($Container: searchContainer!) {
       InternalTrackingNumber
       StatusID
       OrderID
+      Quantity
       Order {
         OrderNumber
         NOSINumber
       }
       OrderLine {
         OrderLineNumber
+        PartNumber
+        ProductCode
       }
     }
   }

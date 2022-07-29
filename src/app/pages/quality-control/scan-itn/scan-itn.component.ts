@@ -134,6 +134,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             const log = [
               {
+                DistributionCenter: environment.DistributionCenter,
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
@@ -142,6 +143,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 OrderLineNumber: detail.OrderLine.OrderLineNumber,
                 InternalTrackingNumber: ITN,
                 UserEventID: environment.Event_QC_Start,
+                PartNumber: detail.OrderLine.PartNumber?.trim(),
+                ProductCode: detail.OrderLine.ProductCode?.trim(),
+                Quantity: detail.Quantity,
               },
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });

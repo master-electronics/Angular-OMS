@@ -21,7 +21,6 @@ import {
 } from '../aggregation-in.server';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
@@ -53,7 +52,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _updateSql: UpdateSqlAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,
     private _updateMerpOrder: UpdateMerpOrderStatusGQL,
-    private _gtmService: GoogleTagManagerService,
     private _authService: AuthenticationService
   ) {}
 
@@ -136,10 +134,14 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     // set query for updateSql
     const log = this.outsetContainer.ITNsInTote.map((node) => {
       return {
+        DistributionCenter: environment.DistributionCenter,
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
         OrderLineNumber: node.OrderLineNumber,
+        PartNumber: node.PartNumber,
+        ProductCode: node.ProductCode,
+        Quantity: node.Quantity,
         UserEventID: environment.Event_AgIn_Relocate,
         InternalTrackingNumber: node.ITN,
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
@@ -165,11 +167,15 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       });
       if (this.endContainer.isLastLine) {
         log.push({
+          DistributionCenter: environment.DistributionCenter,
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
           OrderLineNumber: null,
           UserEventID: environment.Event_AgIn_OrderComplete,
+          PartNumber: null,
+          ProductCode: null,
+          Quantity: null,
           InternalTrackingNumber: null,
           Message: null,
         });
@@ -209,7 +215,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
 
       // Navgate to first after update success
       map(() => {
-        this.sendGTM();
         this._router.navigate(['agin'], {
           queryParams: {
             result: 'info',
@@ -227,12 +232,5 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         return of(0);
       })
     );
-  }
-
-  sendGTM(): void {
-    this._gtmService.pushTag({
-      event: 'AggregationIn',
-      userID: this._authService.userName,
-    });
   }
 }

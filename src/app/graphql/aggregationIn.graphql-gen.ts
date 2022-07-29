@@ -1254,7 +1254,7 @@ export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, InternalTrackingNumber?: string | null, StatusID: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null };
+export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: Array<{ __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, InternalTrackingNumber?: string | null, StatusID: number, OrderID: number, Quantity: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number, PartNumber: string, ProductCode: string } } | null> | null } | null> | null };
 
 export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
   OrderLineDetail: Types.SearchOrderLineDetail;
@@ -1367,12 +1367,15 @@ export const VerifyContainerForAggregationInDocument = gql`
       InternalTrackingNumber
       StatusID
       OrderID
+      Quantity
       Order {
         OrderNumber
         NOSINumber
       }
       OrderLine {
         OrderLineNumber
+        PartNumber
+        ProductCode
       }
     }
   }

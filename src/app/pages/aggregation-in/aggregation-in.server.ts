@@ -6,7 +6,13 @@ export interface outsetContainer {
   OrderID: number;
   orderLineDetailID: number;
   toteID: number;
-  ITNsInTote: { ITN: string; OrderLineNumber: number }[];
+  ITNsInTote: {
+    ITN: string;
+    OrderLineNumber: number;
+    PartNumber: string;
+    ProductCode: string;
+    Quantity: number;
+  }[];
 }
 
 export interface endContainer {

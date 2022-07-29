@@ -31,7 +31,6 @@ import {
   VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import {
   AggregationInService,
   endContainer,
@@ -90,7 +89,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private updateAfterAgOut: UpdateAfterAgOutGQL,
     private fetchHazard: FetchHazardMaterialLevelGQL,
     private verifyContainer: VerifyContainerForAggregationInGQL,
-    private gtmService: GoogleTagManagerService,
     private authService: AuthenticationService,
     private countOrderItns: CountOrderItnsFromMerpGQL,
     private _agInService: AggregationInService
@@ -225,6 +223,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               // toteList: [this.outsetContainer.Barcode],
               log: [
                 {
+                  DistributionCenter: environment.DistributionCenter,
                   UserID: Number(
                     JSON.parse(sessionStorage.getItem('userInfo'))._id
                   ),
@@ -232,6 +231,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   NOSINumber: this.NOSINumber,
                   OrderLineNumber: this.OrderLineNumber,
                   InternalTrackingNumber: singleITN,
+                  PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
+                  ProductCode: this.outsetContainer.ITNsInTote[0].ProductCode,
+                  Quantity: this.outsetContainer.ITNsInTote[0].Quantity,
                   UserEventID: environment.Event_AgIn_SingleITNAgOut,
                   Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
                 },
@@ -276,7 +278,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
 
           // return the first step
-          this.sendGTM();
           this._router.navigate(['agin'], {
             queryParams: {
               result,
@@ -399,17 +400,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           return of(false);
         })
       );
-  }
-
-  sendGTM(): void {
-    this.gtmService.pushTag({
-      event: 'AggregationOut',
-      userID: this.authService.userName,
-    });
-    this.gtmService.pushTag({
-      event: 'AggregationIn',
-      userID: this.authService.userName,
-    });
   }
 
   ngOnDestroy(): void {

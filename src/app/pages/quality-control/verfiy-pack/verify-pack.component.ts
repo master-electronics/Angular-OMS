@@ -24,7 +24,6 @@ import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
@@ -110,7 +109,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
     private holdQCOrder: HoldQcOrderGQL,
-    private gtmService: GoogleTagManagerService,
     private authService: AuthenticationService
   ) {
     this.titleService.setTitle('qc/verifypack');
@@ -334,11 +332,15 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       StatusID: environment.warehouseHold_ID,
       log: [
         {
+          DistributionCenter: environment.DistributionCenter,
           UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
           OrderNumber: this.itemInfo.OrderNumber,
           NOSINumber: this.itemInfo.NOSI,
           OrderLineNumber: this.itemInfo.OrderLineNumber,
           InternalTrackingNumber: this.itemInfo.InternalTrackingNumber,
+          PartNumber: this.itemInfo.PartNumber,
+          ProductCode: this.itemInfo.ProductCode,
+          Quantity: this.itemInfo.Quantity,
           UserEventID: environment.Event_QC_Hold,
           Message: `Hold on ${String(Status).padStart(2, '3')}`,
         },
@@ -371,7 +373,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = `warning`;
             message = `${this.itemInfo.InternalTrackingNumber} is on hold.`;
           }
-          this.sendGTM();
           this.router.navigate(['qc'], {
             queryParams: { type, message },
           });
@@ -387,16 +388,6 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       )
     );
-  }
-
-  sendGTM(): void {
-    const taskTime = Date.now() - this.qcService.qcStart;
-    this.qcService.resetQCStartTime(Date.now());
-    this.gtmService.pushTag({
-      event: 'QCHoldOn',
-      userID: this.authService.userName,
-      taskTime: taskTime,
-    });
   }
 
   ngOnDestroy(): void {

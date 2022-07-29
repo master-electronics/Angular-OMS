@@ -20,7 +20,6 @@ import {
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
-import { GoogleTagManagerService } from 'angular-google-tag-manager';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { AggregationOutService } from '../aggregation-out.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/wms.graphql-gen';
@@ -61,7 +60,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _insertUserEvnetLog: Insert_UserEventLogsGQL,
     private _updateAfterQC: UpdateAfterAgOutGQL,
-    private _gtmService: GoogleTagManagerService,
     private _authService: AuthenticationService
   ) {
     this._titleService.setTitle('agout/pick');
@@ -94,6 +92,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               containerSet.add(node.Container);
               ITNSet.add(node.InternalTrackingNumber);
               return {
+                DistributionCenter: environment.DistributionCenter,
                 UserID: Number(
                   JSON.parse(sessionStorage.getItem('userInfo'))._id
                 ),
@@ -101,6 +100,9 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 NOSINumber: this.urlParams.NOSINumber,
                 InternalTrackingNumber: node.InternalTrackingNumber,
                 OrderLineNumber: node.OrderLine.OrderLineNumber,
+                PartNumber: node.OrderLine.PartNumber,
+                ProductCode: node.OrderLine.ProductCode,
+                Quantity: node.OrderLine.Quantity,
                 UserEventID: environment.Event_AgOut_Start,
               };
             });
@@ -195,11 +197,15 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const log = this.agOutService.ITNsInOrder.map((node) => {
       return {
+        DistributionCenter: environment.DistributionCenter,
         UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         OrderLineNumber: node.OrderLine.OrderLineNumber,
         InternalTrackingNumber: node.InternalTrackingNumber,
+        PartNumber: node.OrderLine.PartNumber,
+        ProductCode: node.OrderLine.ProductCode,
+        Quantity: node.OrderLine.Quantity,
         UserEventID: environment.Event_AgOut_Done,
       };
     });
@@ -249,7 +255,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           message = message + `\nThis order contains hazardous materials`;
         }
 
-        this.sendGTM();
         this._router.navigate(['/agout'], {
           queryParams: {
             result,
@@ -267,13 +272,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         return of(false);
       })
     );
-  }
-
-  sendGTM(): void {
-    this._gtmService.pushTag({
-      event: 'AggregationOut',
-      userID: this._authService.userName,
-    });
   }
 
   ngOnDestroy(): void {
