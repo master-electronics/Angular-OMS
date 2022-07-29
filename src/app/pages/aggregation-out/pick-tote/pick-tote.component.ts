@@ -102,7 +102,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 OrderLineNumber: node.OrderLine.OrderLineNumber,
                 PartNumber: node.OrderLine.PartNumber,
                 ProductCode: node.OrderLine.ProductCode,
-                Quantity: node.OrderLine.Quantity,
+                Quantity: node.Quantity,
                 UserEventID: environment.Event_AgOut_Start,
               };
             });
@@ -205,7 +205,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         InternalTrackingNumber: node.InternalTrackingNumber,
         PartNumber: node.OrderLine.PartNumber,
         ProductCode: node.OrderLine.ProductCode,
-        Quantity: node.OrderLine.Quantity,
+        Quantity: node.Quantity,
         UserEventID: environment.Event_AgOut_Done,
       };
     });
