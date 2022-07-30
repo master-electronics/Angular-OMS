@@ -1289,7 +1289,7 @@ export type FetchUserEventLogQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLog?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber: string, NOSINumber: string, Message?: string | null, InternalTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
+export type FetchUserEventLogQuery = { __typename?: 'Query', findUserEventLog?: Array<{ __typename?: 'UserEventLog', _id: number, OrderNumber: string, OrderLineNumber?: number | null, NOSINumber: string, Message?: string | null, PartNumber?: string | null, ProductCode?: string | null, Quantity?: number | null, InternalTrackingNumber?: string | null, DateTime: string, User: { __typename?: 'UserInfo', Name: string }, UserEvent: { __typename?: 'UserEvent', Event: string, Module: string } } | null> | null };
 
 export type FetchTaskCounterQueryVariables = Types.Exact<{
   Module: Types.Scalars['Int'];
@@ -1618,8 +1618,12 @@ export const FetchUserEventLogDocument = gql`
       Module
     }
     OrderNumber
+    OrderLineNumber
     NOSINumber
     Message
+    PartNumber
+    ProductCode
+    Quantity
     InternalTrackingNumber
     DateTime
   }

@@ -108,8 +108,12 @@ query fetchUserEventLog(
       Module
     }
     OrderNumber
+    OrderLineNumber
     NOSINumber
     Message
+    PartNumber
+    ProductCode
+    Quantity
     InternalTrackingNumber
     DateTime
   }
@@ -238,11 +242,18 @@ query fetchITNLifecycle($startDate: String!, $endDate: String!) {
   }
 }
 
-query fetchITNLifecycleDrillDown($orderNumber: String!, $nosiNumber: String, 
-  $orderLineNumber: Int, $internalTrackingNumber: String) {
-  fetchITNLifecycleDrillDown(orderNumber: $orderNumber, nosiNumber: $nosiNumber, 
-    orderLineNumber: $orderLineNumber,
-    internalTrackingNumber: $internalTrackingNumber) {
+query fetchITNLifecycleDrillDown(
+  $orderNumber: String!
+  $nosiNumber: String
+  $orderLineNumber: Int
+  $internalTrackingNumber: String
+) {
+  fetchITNLifecycleDrillDown(
+    orderNumber: $orderNumber
+    nosiNumber: $nosiNumber
+    orderLineNumber: $orderLineNumber
+    internalTrackingNumber: $internalTrackingNumber
+  ) {
     OrderNumber
     NOSINumber
     InternalTrackingNumber
@@ -367,7 +378,10 @@ mutation insert_ITNUserColumns($itnUserColumns: [insertITNUserColumnsInfo]!) {
   }
 }
 
-mutation update_ITNUserColumns($itnUserColumns: [updateITNUserColumnsInfo]!, $_id: Int) {
+mutation update_ITNUserColumns(
+  $itnUserColumns: [updateITNUserColumnsInfo]!
+  $_id: Int
+) {
   updateITNUserColumns(ITNUserColumns: $itnUserColumns, _id: $_id) {
     SelectedColumns
   }
@@ -381,18 +395,31 @@ mutation insert_ITNUserLevels($itnUserLevels: [insertITNUserLevelsInfo]!) {
   }
 }
 
-mutation update_ITNUserLevels($itnUserLevels: [updateITNUserLevelsInfo]!, $_id: Int) {
+mutation update_ITNUserLevels(
+  $itnUserLevels: [updateITNUserLevelsInfo]!
+  $_id: Int
+) {
   updateITNUserLevels(ITNUserLevels: $itnUserLevels, _id: $_id) {
     LowLevelLimit
     MediumLevelLimit
   }
 }
 
-mutation update_ITNUserTemplate($_id: Int!, $templateName: String, $selectedColumns: String,
-  $defaultPagination: Int, $defaultTemplate: Boolean) {
-  updateITNUserTemplate(_id: $_id, TemplateName: $templateName, SelectedColumns: $selectedColumns, 
-    DefaultPagination: $defaultPagination, DefaultTemplate: $defaultTemplate) {
-      _id
+mutation update_ITNUserTemplate(
+  $_id: Int!
+  $templateName: String
+  $selectedColumns: String
+  $defaultPagination: Int
+  $defaultTemplate: Boolean
+) {
+  updateITNUserTemplate(
+    _id: $_id
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+    DefaultPagination: $defaultPagination
+    DefaultTemplate: $defaultTemplate
+  ) {
+    _id
   }
 }
 
@@ -414,16 +441,36 @@ mutation delete_ITNUserTemplate($_id: Int!) {
   }
 }
 
-mutation insert_ITNLevelLimit($templateID: Int, $eventName: String, $eventID: Int, $lowLevelLimit: Int, $mediumLevelLimit: Int) {
-  insertITNLevelLimit(TemplateID: $templateID, EventName: $eventName, EventID: $eventID, LowLevelLimit: $lowLevelLimit, MediumLevelLimit: $mediumLevelLimit) {
+mutation insert_ITNLevelLimit(
+  $templateID: Int
+  $eventName: String
+  $eventID: Int
+  $lowLevelLimit: Int
+  $mediumLevelLimit: Int
+) {
+  insertITNLevelLimit(
+    TemplateID: $templateID
+    EventName: $eventName
+    EventID: $eventID
+    LowLevelLimit: $lowLevelLimit
+    MediumLevelLimit: $mediumLevelLimit
+  ) {
     _id
   }
 }
 
-mutation insert_ITNUserTemplate($userID: Int, $templateName: String, 
-  $selectedColumns: String, $defaultTemplate: Boolean) {
-  insertITNUserTemplate(UserID: $userID, TemplateName: $templateName, 
-  SelectedColumns: $selectedColumns, DefaultTemplate: $defaultTemplate) {
+mutation insert_ITNUserTemplate(
+  $userID: Int
+  $templateName: String
+  $selectedColumns: String
+  $defaultTemplate: Boolean
+) {
+  insertITNUserTemplate(
+    UserID: $userID
+    TemplateName: $templateName
+    SelectedColumns: $selectedColumns
+    DefaultTemplate: $defaultTemplate
+  ) {
     _id
   }
 }
