@@ -115,8 +115,12 @@ query fetchUserEventLog(
       Module
     }
     OrderNumber
+    OrderLineNumber
     NOSINumber
     Message
+    PartNumber
+    ProductCode
+    Quantity
     InventoryTrackingNumber
     DateTime
   }
