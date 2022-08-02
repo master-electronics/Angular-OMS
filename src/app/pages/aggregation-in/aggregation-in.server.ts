@@ -4,9 +4,26 @@ export interface outsetContainer {
   Barcode: string;
   isRelocation: boolean;
   OrderID: number;
-  orderLineDetailID: number;
   toteID: number;
-  ITNsInTote: { ITN: string; OrderLineNumber: number; InventoryID: number }[];
+  OrderNumber: string;
+  NOSINumber: string;
+  CustomerNumber: string;
+  CustomerTier: string;
+  ShipmentMethod: string;
+  ShipmentMethodDescription: string;
+  Priority: boolean;
+  ITNsInTote: {
+    detaileID: number;
+    ITN: string;
+    OrderLineNumber: number;
+    InventoryID: number;
+    PartNumber: string;
+    ProductCode: string;
+    ProductTier: string;
+    WMSPriority: number;
+    ParentITN: string;
+    Quantity: number;
+  }[];
 }
 
 export interface endContainer {

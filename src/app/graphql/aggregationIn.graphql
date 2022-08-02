@@ -20,13 +20,33 @@ query verifyContainerForAggregationIn(
     INVENTORies {
       _id
       InventoryTrackingNumber
+      ParentITN
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+        ProductTier
+      }
       ORDERLINEDETAILs {
         _id
         StatusID
+        WMSPriority
+        Quantity
         OrderID
         Order {
           OrderNumber
           NOSINumber
+          DistributionCenter
+          ShipmentMethod {
+            _id
+            ShippingMethod
+            PriorityPinkPaper
+          }
+          Customer {
+            CustomerNumber
+            CustomerTier
+          }
         }
         OrderLine {
           OrderLineNumber
@@ -51,26 +71,6 @@ query fetchLocationAndOrderDetailForAgIn($OrderID: Int!) {
         Section
         Shelf
         ShelfDetail
-      }
-      Product {
-        ProductCode {
-          ProductCodeNumber
-        }
-        PartNumber
-      }
-    }
-    OrderLine {
-      OrderLineNumber
-    }
-    Order {
-      OrderNumber
-      NOSINumber
-      Customer {
-        CustomerNumber
-      }
-      ShipmentMethod {
-        PriorityPinkPaper
-        ShippingMethod
       }
     }
   }
@@ -235,15 +235,28 @@ query verifyOrderForAgOut(
 
 query fetchContainerForAgoutPick($OrderID: Int) {
   findOrderLineDetails(OrderLineDetail: { OrderID: $OrderID }) {
-    OrderLine {
-      OrderLineNumber
-    }
+    WMSPriority
+    Quantity
     Order {
       OrderNumber
       NOSINumber
+      DistributionCenter
+      ShipmentMethod {
+        _id
+        ShippingMethod
+        PriorityPinkPaper
+      }
+      Customer {
+        CustomerNumber
+        CustomerTier
+      }
+    }
+    OrderLine {
+      OrderLineNumber
     }
     Inventory {
       InventoryTrackingNumber
+      ParentITN
       Container {
         Barcode
         Warehouse
@@ -258,6 +271,7 @@ query fetchContainerForAgoutPick($OrderID: Int) {
           ProductCodeNumber
         }
         PartNumber
+        ProductTier
       }
     }
   }

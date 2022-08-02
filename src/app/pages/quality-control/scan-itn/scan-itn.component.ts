@@ -143,6 +143,12 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
                 .match(regex),
+              CustomerTier: Order.Customer?.CustomerTier,
+              ProductTier: detail.Product?.ProductTier,
+              ShipmentMethod: Order.ShipmentMethod._id,
+              ShipmentMethodDescription: Order.ShipmentMethod.ShippingMethod,
+              WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
+              Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
             const log = [
               {
@@ -153,6 +159,19 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                   detail.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
                 InventoryTrackingNumber: ITN,
                 UserEventID: sqlData.Event_QC_Start,
+                CustomerNumber: this.itemInfo.CustomerNumber,
+                CustomerTier: this.itemInfo.CustomerTier,
+                DistributionCenter: this.itemInfo.DistributionCenter,
+                PartNumber: this.itemInfo.PartNumber,
+                ProductCode: this.itemInfo.ProductCode,
+                ProductTier: this.itemInfo.ProductTier,
+                Quantity: this.itemInfo.Quantity,
+                ParentITN: this.itemInfo.ParentITN,
+                ShipmentMethod: this.itemInfo.ShipmentMethod,
+                ShipementMethodDescription:
+                  this.itemInfo.ShipmentMethodDescription,
+                WMSPriority: this.itemInfo.WMSPriority,
+                Priority: this.itemInfo.Priority,
               },
             ];
             const updateLog = this.insertUserEventLog.mutate({ log });

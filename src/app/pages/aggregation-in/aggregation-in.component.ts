@@ -134,8 +134,26 @@ export class AggregationInComponent
             toteID: container._id,
             Barcode: container.Barcode,
             OrderID: container.INVENTORies[0].ORDERLINEDETAILs[0].OrderID,
+            OrderNumber:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.OrderNumber,
+            NOSINumber:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+            CustomerNumber:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
+                .CustomerNumber,
+            CustomerTier:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
+                .CustomerTier,
+            ShipmentMethod:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
+                ._id,
+            ShipmentMethodDescription:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
+                .ShippingMethod,
+            Priority:
+              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
+                .PriorityPinkPaper,
             ITNsInTote: [],
-            orderLineDetailID: container.INVENTORies[0].ORDERLINEDETAILs[0]._id,
             isRelocation:
               container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
               sqlData.agInComplete_ID,
@@ -143,22 +161,44 @@ export class AggregationInComponent
           // get all ITN in tote
           res.data.findContainer.INVENTORies.forEach((Inventory) => {
             if (Inventory.InventoryTrackingNumber) {
-              const line = Inventory.ORDERLINEDETAILs[0];
-              logList.push({
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                OrderNumber: line.Order.OrderNumber,
-                NOSINumber: line.Order.NOSINumber,
-                OrderLineNumber: line.OrderLine.OrderLineNumber,
-                InventoryTrackingNumber: Inventory.InventoryTrackingNumber,
-                UserEventID: sqlData.Event_AgIn_Start,
-                Message: `Start ${container.Barcode}`,
-              });
+              const detail = Inventory.ORDERLINEDETAILs[0];
               outsetContainer.ITNsInTote.push({
+                detaileID: Inventory.ORDERLINEDETAILs[0]._id,
                 InventoryID: Inventory._id,
                 ITN: Inventory.InventoryTrackingNumber,
-                OrderLineNumber: line.OrderLine.OrderLineNumber,
+                OrderLineNumber: detail.OrderLine.OrderLineNumber,
+                PartNumber: Inventory.Product.PartNumber,
+                ProductCode: Inventory.Product.ProductCode.ProductCodeNumber,
+                ProductTier: Inventory.Product.ProductTier,
+                WMSPriority: detail.WMSPriority,
+                ParentITN: Inventory.ParentITN,
+                Quantity: detail.Quantity,
               });
             }
+          });
+          outsetContainer.ITNsInTote.forEach((item) => {
+            logList.push({
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              OrderNumber: outsetContainer.OrderNumber,
+              NOSINumber: outsetContainer.NOSINumber,
+              OrderLineNumber: item.OrderLineNumber,
+              InventoryTrackingNumber: item.ITN,
+              UserEventID: sqlData.Event_AgIn_Start,
+              Message: `Start ${container.Barcode}`,
+              CustomerNumber: outsetContainer.CustomerNumber,
+              CustomerTier: outsetContainer.CustomerTier,
+              DistributionCenter: environment.DistributionCenter,
+              PartNumber: item.PartNumber,
+              ProductCode: item.ProductCode,
+              ProductTier: item.ProductTier,
+              Quantity: item.Quantity,
+              ParentITN: item.ParentITN,
+              ShipmentMethod: outsetContainer.ShipmentMethod,
+              ShipmentMethodDescription:
+                outsetContainer.ShipmentMethodDescription,
+              Priority: outsetContainer.Priority,
+              WMSPriority: item.WMSPriority,
+            });
           });
           // if pass all naveigate to next page
           this._agInService.changeOutsetContainer(outsetContainer);

@@ -124,11 +124,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             ++totalLines;
             // set for other queries
             singleITN = line.Inventory.InventoryTrackingNumber;
-            this.OrderNumber = line.Order.OrderNumber;
-            this.NOSINumber = line.Order.NOSINumber;
-            this.OrderLineNumber = line.OrderLine.OrderLineNumber;
+            this.OrderNumber = this.outsetContainer.OrderNumber;
+            this.NOSINumber = this.outsetContainer.NOSINumber;
             FileKeyListforAgOut.push(
-              `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+              `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[0].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
             );
             // store locations in Aggregation area.
             if (line.Inventory.Container.Row === 'AG') {
@@ -143,29 +142,35 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 )
               );
             }
-            if (line._id === this.outsetContainer.orderLineDetailID) {
+
+            const toteIndex = this.outsetContainer.ITNsInTote.findIndex(
+              (element) => line._id === element.detaileID
+            );
+            if (toteIndex >= 0) {
               this.ITNInfo = [
-                ['Order#', line.Order.OrderNumber],
-                [
-                  'Priority',
-                  !line.Order.ShipmentMethod.PriorityPinkPaper ? 'Yes' : 'No',
-                ],
-                ['Customer', line.Order.Customer.CustomerNumber],
+                ['Order#', this.OrderNumber],
+                ['Priority', !this.outsetContainer.Priority ? 'Yes' : 'No'],
+                ['Customer', this.outsetContainer.CustomerNumber],
                 ['Quantity', line.Quantity],
                 ['ITN Count', ''],
-                ['PRC', line.Inventory.Product.ProductCode.ProductCodeNumber],
-                ['PartNumber', line.Inventory.Product.PartNumber],
-                ['Shipment', line.Order.ShipmentMethod.ShippingMethod],
+                ['PRC', this.outsetContainer.ITNsInTote[toteIndex].ProductCode],
+                [
+                  'PartNumber',
+                  this.outsetContainer.ITNsInTote[toteIndex].PartNumber,
+                ],
+                ['Shipment', this.outsetContainer.ShipmentMethodDescription],
               ];
               // set fikekey for ag in
               this.FileKeyListforAgIn.push(
-                `${environment.DistributionCenter}${line.Order.OrderNumber}${line.Order.NOSINumber}${line.OrderLine.OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+                `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[toteIndex].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
               );
               // set for single line AG out.
               ProductList.push(
-                `${line.Inventory.Product.ProductCode.ProductCodeNumber.padEnd(
-                  3
-                )}${line.Inventory.Product.PartNumber}`
+                `${this.outsetContainer.ITNsInTote[
+                  toteIndex
+                ].ProductCode.padEnd(3)}${
+                  this.outsetContainer.ITNsInTote[toteIndex].PartNumber
+                }`
               );
               // count currentLines without check statusID
               ++countLines;
@@ -227,8 +232,22 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   NOSINumber: this.NOSINumber,
                   InventoryTrackingNumber: singleITN,
                   UserEventID: sqlData.Event_AgIn_SingleITNAgOut,
-                  OrderLineNumber: this.OrderLineNumber,
                   Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
+                  CustomerNumber: this.outsetContainer.CustomerNumber,
+                  CustomerTier: this.outsetContainer.CustomerTier,
+                  DistributionCenter: environment.DistributionCenter,
+                  OrderLineNumber:
+                    this.outsetContainer.ITNsInTote[0].OrderLineNumber,
+                  PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
+                  ProductCode: this.outsetContainer.ITNsInTote[0].ProductCode,
+                  ProductTier: this.outsetContainer.ITNsInTote[0].ProductTier,
+                  Quantity: this.outsetContainer.ITNsInTote[0].Quantity,
+                  ParentITN: this.outsetContainer.ITNsInTote[0].ParentITN,
+                  ShipmentMethod: this.outsetContainer.ShipmentMethod,
+                  ShipmentMethodDescription:
+                    this.outsetContainer.ShipmentMethodDescription,
+                  Priority: this.outsetContainer.Priority,
+                  WMSPriority: this.outsetContainer.ITNsInTote[0].WMSPriority,
                 },
               ],
               OrderNumber: this.OrderNumber,

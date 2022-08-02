@@ -220,6 +220,19 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 UserEventID: sqlData.Event_QC_Done,
                 OrderLineNumber: this.itemInfo.OrderLineNumber,
                 Message: `Repack to ${this.containerForm.value.container}`,
+                CustomerNumber: this.itemInfo.CustomerNumber,
+                CustomerTier: this.itemInfo.CustomerTier,
+                DistributionCenter: this.itemInfo.DistributionCenter,
+                PartNumber: this.itemInfo.PartNumber,
+                ProductCode: this.itemInfo.ProductCode,
+                ProductTier: this.itemInfo.ProductTier,
+                Quantity: this.itemInfo.Quantity,
+                ParentITN: this.itemInfo.ParentITN,
+                ShipmentMethod: this.itemInfo.ShipmentMethod,
+                ShipementMethodDescription:
+                  this.itemInfo.ShipmentMethodDescription,
+                WMSPriority: this.itemInfo.WMSPriority,
+                Priority: this.itemInfo.Priority,
               },
             ];
             if (!inProcess) {
@@ -231,6 +244,19 @@ export class RepackComponent implements OnInit, AfterViewInit, OnDestroy {
                 InventoryTrackingNumber: null,
                 OrderLineNumber: this.itemInfo.OrderLineNumber,
                 Message: null,
+                CustomerNumber: this.itemInfo.CustomerNumber,
+                CustomerTier: this.itemInfo.CustomerTier,
+                DistributionCenter: this.itemInfo.DistributionCenter,
+                PartNumber: null,
+                ProductCode: null,
+                ProductTier: null,
+                Quantity: null,
+                ParentITN: null,
+                ShipmentMethod: this.itemInfo.ShipmentMethod,
+                ShipementMethodDescription:
+                  this.itemInfo.ShipmentMethodDescription,
+                Priority: this.itemInfo.Priority,
+                WMSPriority: null,
               });
             }
             const insertUserEventLog = this.insertUserEventLog.mutate({

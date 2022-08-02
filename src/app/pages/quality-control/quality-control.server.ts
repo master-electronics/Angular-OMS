@@ -62,4 +62,10 @@ export interface itemParams {
   DateCode: string;
   CountMethod: string;
   isHold: boolean;
+  CustomerTier: string;
+  ProductTier: string;
+  ShipmentMethod: string;
+  ShipmentMethodDescription: string;
+  WMSPriority: number;
+  Priority: boolean;
 }

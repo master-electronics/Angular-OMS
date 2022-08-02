@@ -14,7 +14,6 @@ query verifyITNforQc(
   ) {
     _id
     ParentITN
-    QuantityOnHand
     ROHS
     DateCode
     CountryOfOrigin
@@ -23,6 +22,7 @@ query verifyITNforQc(
       StatusID
       Quantity
       BinLocation
+      WMSPriority
       OrderLine {
         OrderLineNumber
       }
@@ -31,8 +31,14 @@ query verifyITNforQc(
         DistributionCenter
         OrderNumber
         NOSINumber
+        ShipmentMethod {
+          _id
+          ShippingMethod
+          PriorityPinkPaper
+        }
         Customer {
           CustomerNumber
+          CustomerTier
         }
       }
     }
@@ -40,6 +46,7 @@ query verifyITNforQc(
       ProductCode {
         ProductCodeNumber
       }
+      ProductTier
       PartNumber
     }
   }

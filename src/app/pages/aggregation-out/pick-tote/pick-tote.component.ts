@@ -87,7 +87,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             this.agOutService.changeITNsInOrder(res.data.findOrderLineDetails);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
-            const log = this.agOutService.ITNsInOrder.map((node) => {
+            const log = res.data.findOrderLineDetails.map((node) => {
               ITNSet.add(node.Inventory.InventoryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
@@ -97,6 +97,20 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
                 UserEventID: sqlData.Event_AgOut_Start,
                 OrderLineNumber: node.OrderLine.OrderLineNumber,
+                CustomerNumber: node.Order.Customer.CustomerNumber,
+                CustomerTier: node.Order.Customer.CustomerTier,
+                DistributionCenter: environment.DistributionCenter,
+                PartNumber: node.Inventory.Product.PartNumber,
+                ProductCode:
+                  node.Inventory.Product.ProductCode.ProductCodeNumber,
+                ProductTier: node.Inventory.Product.ProductTier,
+                Quantity: node.Quantity,
+                ParentITN: node.Inventory.ParentITN,
+                ShipmentMethod: node.Order.ShipmentMethod._id,
+                ShipmentMethodDescription:
+                  node.Order.ShipmentMethod.ShippingMethod,
+                Priority: node.Order.ShipmentMethod.PriorityPinkPaper,
+                WMSPriority: node.WMSPriority,
               };
             });
             this.containerList = [...containerSet];
@@ -198,6 +212,18 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
         UserEventID: sqlData.Event_AgOut_Done,
         OrderLineNumber: node.OrderLine.OrderLineNumber,
+        CustomerNumber: node.Order.Customer.CustomerNumber,
+        CustomerTier: node.Order.Customer.CustomerTier,
+        DistributionCenter: environment.DistributionCenter,
+        PartNumber: node.Inventory.Product.PartNumber,
+        ProductCode: node.Inventory.Product.ProductCode.ProductCodeNumber,
+        ProductTier: node.Inventory.Product.ProductTier,
+        Quantity: node.Quantity,
+        ParentITN: node.Inventory.ParentITN,
+        ShipmentMethod: node.Order.ShipmentMethod._id,
+        ShipmentMethodDescription: node.Order.ShipmentMethod.ShippingMethod,
+        Priority: node.Order.ShipmentMethod.PriorityPinkPaper,
+        WMSPriority: node.WMSPriority,
       };
     });
     this.updateSQL$ = forkJoin({

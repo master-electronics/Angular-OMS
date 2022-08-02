@@ -1559,14 +1559,14 @@ export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null } | null };
+export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ParentITN?: string | null, Product: { __typename?: 'Product', PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, WMSPriority: number, Quantity: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, DistributionCenter: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null } | null };
 
 export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
   OrderID: Types.Scalars['Int'];
 }>;
 
 
-export type FetchLocationAndOrderDetailForAgInQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean, ShippingMethod: string } | null } } | null> | null };
+export type FetchLocationAndOrderDetailForAgInQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null } | null> | null };
 
 export type CountOrderItnsFromMerpQueryVariables = Types.Exact<{
   LocationCode: Types.Scalars['String'];
@@ -1665,7 +1665,7 @@ export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null } | null> | null };
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', WMSPriority: number, Quantity: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, DistributionCenter: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ParentITN?: string | null, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null } | null> | null };
 
 export const VerifyContainerForAggregationInDocument = gql`
     query verifyContainerForAggregationIn($DistributionCenter: String!, $Barcode: String!) {
@@ -1687,13 +1687,33 @@ export const VerifyContainerForAggregationInDocument = gql`
     INVENTORies {
       _id
       InventoryTrackingNumber
+      ParentITN
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+        ProductTier
+      }
       ORDERLINEDETAILs {
         _id
         StatusID
+        WMSPriority
+        Quantity
         OrderID
         Order {
           OrderNumber
           NOSINumber
+          DistributionCenter
+          ShipmentMethod {
+            _id
+            ShippingMethod
+            PriorityPinkPaper
+          }
+          Customer {
+            CustomerNumber
+            CustomerTier
+          }
         }
         OrderLine {
           OrderLineNumber
@@ -1730,26 +1750,6 @@ export const FetchLocationAndOrderDetailForAgInDocument = gql`
         Section
         Shelf
         ShelfDetail
-      }
-      Product {
-        ProductCode {
-          ProductCodeNumber
-        }
-        PartNumber
-      }
-    }
-    OrderLine {
-      OrderLineNumber
-    }
-    Order {
-      OrderNumber
-      NOSINumber
-      Customer {
-        CustomerNumber
-      }
-      ShipmentMethod {
-        PriorityPinkPaper
-        ShippingMethod
       }
     }
   }
@@ -1998,15 +1998,28 @@ export const VerifyOrderForAgOutDocument = gql`
 export const FetchContainerForAgoutPickDocument = gql`
     query fetchContainerForAgoutPick($OrderID: Int) {
   findOrderLineDetails(OrderLineDetail: {OrderID: $OrderID}) {
-    OrderLine {
-      OrderLineNumber
-    }
+    WMSPriority
+    Quantity
     Order {
       OrderNumber
       NOSINumber
+      DistributionCenter
+      ShipmentMethod {
+        _id
+        ShippingMethod
+        PriorityPinkPaper
+      }
+      Customer {
+        CustomerNumber
+        CustomerTier
+      }
+    }
+    OrderLine {
+      OrderLineNumber
     }
     Inventory {
       InventoryTrackingNumber
+      ParentITN
       Container {
         Barcode
         Warehouse
@@ -2021,6 +2034,7 @@ export const FetchContainerForAgoutPickDocument = gql`
           ProductCodeNumber
         }
         PartNumber
+        ProductTier
       }
     }
   }

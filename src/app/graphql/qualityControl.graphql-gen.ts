@@ -1564,7 +1564,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, QuantityOnHand: number, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, Customer?: { __typename?: 'Customer', CustomerNumber: string } | null } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -1692,7 +1692,6 @@ export const VerifyItNforQcDocument = gql`
   ) {
     _id
     ParentITN
-    QuantityOnHand
     ROHS
     DateCode
     CountryOfOrigin
@@ -1701,6 +1700,7 @@ export const VerifyItNforQcDocument = gql`
       StatusID
       Quantity
       BinLocation
+      WMSPriority
       OrderLine {
         OrderLineNumber
       }
@@ -1709,8 +1709,14 @@ export const VerifyItNforQcDocument = gql`
         DistributionCenter
         OrderNumber
         NOSINumber
+        ShipmentMethod {
+          _id
+          ShippingMethod
+          PriorityPinkPaper
+        }
         Customer {
           CustomerNumber
+          CustomerTier
         }
       }
     }
@@ -1718,6 +1724,7 @@ export const VerifyItNforQcDocument = gql`
       ProductCode {
         ProductCodeNumber
       }
+      ProductTier
       PartNumber
     }
   }

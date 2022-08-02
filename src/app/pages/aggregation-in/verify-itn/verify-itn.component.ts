@@ -145,6 +145,19 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         InventoryTrackingNumber: node.ITN,
         OrderLineNumber: node.OrderLineNumber,
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
+        CustomerNumber: this.outsetContainer.CustomerNumber,
+        CustomerTier: this.outsetContainer.CustomerTier,
+        DistributionCenter: environment.DistributionCenter,
+        PartNumber: node.PartNumber,
+        ProductCode: node.ProductCode,
+        ProductTier: node.ProductTier,
+        Quantity: node.Quantity,
+        ParentITN: node.ParentITN,
+        ShipmentMethod: this.outsetContainer.ShipmentMethod,
+        ShipmentMethodDescription:
+          this.outsetContainer.ShipmentMethodDescription,
+        Priority: this.outsetContainer.Priority,
+        WMSPriority: node.WMSPriority,
       };
     });
     const updateSqlQuery = {
@@ -179,6 +192,19 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           InventoryTrackingNumber: null,
           OrderLineNumber: null,
           Message: null,
+          CustomerNumber: this.outsetContainer.CustomerNumber,
+          CustomerTier: this.outsetContainer.CustomerTier,
+          DistributionCenter: environment.DistributionCenter,
+          PartNumber: null,
+          ProductCode: null,
+          ProductTier: null,
+          Quantity: null,
+          ParentITN: null,
+          ShipmentMethod: this.outsetContainer.ShipmentMethod,
+          ShipmentMethodDescription:
+            this.outsetContainer.ShipmentMethodDescription,
+          WMSPriority: null,
+          Priority: this.outsetContainer.Priority,
         });
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
           OrderNumber: this.endContainer.OrderNumber,
