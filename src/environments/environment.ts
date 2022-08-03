@@ -9,7 +9,7 @@ export const environment = {
   GTM_ID: 'GTM-KS8744D',
   changelogurl: 'https://rarm18.gitbook.io/wms/changelog',
   DistributionCenter: 'PH',
-  idleTimeInMinutes: 15 * 60,
+  idleTimeInMinutes: 20,
 };
 
 /*

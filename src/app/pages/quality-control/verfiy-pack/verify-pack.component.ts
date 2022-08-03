@@ -349,7 +349,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           Quantity: this.itemInfo.Quantity,
           ParentITN: this.itemInfo.ParentITN,
           ShipmentMethod: this.itemInfo.ShipmentMethod,
-          ShipementMethodDescription: this.itemInfo.ShipmentMethodDescription,
+          ShipmentMethodDescription: this.itemInfo.ShipmentMethodDescription,
           WMSPriority: this.itemInfo.WMSPriority,
           Priority: this.itemInfo.Priority,
         },
@@ -370,7 +370,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
             type = 'error';
             message = `HOLDORDER api: ${res.data.holdQCOrder.message}\n`;
           }
-          if (!res.data.updateOrderLineDetail[0]) {
+          if (!res.data.updateOrderLineDetail) {
             type = 'error';
             message = message.concat(`Fail to update SQL`);
           }

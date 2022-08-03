@@ -168,7 +168,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 Quantity: this.itemInfo.Quantity,
                 ParentITN: this.itemInfo.ParentITN,
                 ShipmentMethod: this.itemInfo.ShipmentMethod,
-                ShipementMethodDescription:
+                ShipmentMethodDescription:
                   this.itemInfo.ShipmentMethodDescription,
                 WMSPriority: this.itemInfo.WMSPriority,
                 Priority: this.itemInfo.Priority,

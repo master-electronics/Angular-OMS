@@ -140,19 +140,19 @@ export class AggregationInComponent
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
             CustomerNumber:
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
-                .CustomerNumber,
+                ?.CustomerNumber,
             CustomerTier:
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
-                .CustomerTier,
+                ?.CustomerTier,
             ShipmentMethod:
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
-                ._id,
+                ?._id,
             ShipmentMethodDescription:
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
-                .ShippingMethod,
+                ?.ShippingMethod,
             Priority:
               container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
-                .PriorityPinkPaper,
+                ?.PriorityPinkPaper,
             ITNsInTote: [],
             isRelocation:
               container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
@@ -167,9 +167,9 @@ export class AggregationInComponent
                 InventoryID: Inventory._id,
                 ITN: Inventory.InventoryTrackingNumber,
                 OrderLineNumber: detail.OrderLine.OrderLineNumber,
-                PartNumber: Inventory.Product.PartNumber,
-                ProductCode: Inventory.Product.ProductCode.ProductCodeNumber,
-                ProductTier: Inventory.Product.ProductTier,
+                PartNumber: Inventory.Product?.PartNumber,
+                ProductCode: Inventory.Product?.ProductCode.ProductCodeNumber,
+                ProductTier: Inventory.Product?.ProductTier,
                 WMSPriority: detail.WMSPriority,
                 ParentITN: Inventory.ParentITN,
                 Quantity: detail.Quantity,

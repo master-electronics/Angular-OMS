@@ -1,4 +1,6 @@
 <div class="flex flex-col">
+  <div *ngIf="fetchID$ | async"></div>
+  <div *ngIf="submit$ | async"></div>
   <nz-descriptions
     nzBordered
     [nzColumn]="{ xxl: 3, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"

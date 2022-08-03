@@ -21,17 +21,18 @@ export class ShellComponent implements OnDestroy, OnInit {
   }
 
   private initialIdleSettings(): void {
-    const idleTimeoutInSeconds: number = environment.idleTimeInMinutes;
-    this.subscription.add(
-      this.idleService
-        .startWatching(idleTimeoutInSeconds)
-        .subscribe((isTimeOut: boolean) => {
-          if (isTimeOut) {
-            this.auth.logout();
-            alert('Session timeout. It will redirect to login page.');
-          }
-        })
-    );
+    const idleTimeoutInSeconds: number = environment.idleTimeInMinutes * 60;
+    this.subscription
+      .add
+      // this.idleService
+      //   .startWatching(idleTimeoutInSeconds)
+      //   .subscribe((isTimeOut: boolean) => {
+      //     if (isTimeOut) {
+      //       this.auth.logout();
+      //       alert('Session timeout. It will redirect to login page.');
+      //     }
+      //   })
+      ();
   }
 
   ngOnDestroy(): void {
