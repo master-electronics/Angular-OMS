@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { IdleService } from 'src/app/shared/services/idle.service';
 import { environment } from 'src/environments/environment';
 
@@ -9,8 +9,8 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
   selector: 'app-shell',
   templateUrl: './shell.component.html',
 })
-export class ShellComponent implements OnDestroy, OnInit {
-  private subscription = new Subscription();
+export class ShellComponent implements OnInit {
+  idle$;
   constructor(
     private auth: AuthenticationService,
     private idleService: IdleService
@@ -22,21 +22,13 @@ export class ShellComponent implements OnDestroy, OnInit {
 
   private initialIdleSettings(): void {
     const idleTimeoutInSeconds: number = environment.idleTimeInMinutes * 60;
-    this.subscription
-      .add
-      // this.idleService
-      //   .startWatching(idleTimeoutInSeconds)
-      //   .subscribe((isTimeOut: boolean) => {
-      //     if (isTimeOut) {
-      //       this.auth.logout();
-      //       alert('Session timeout. It will redirect to login page.');
-      //     }
-      //   })
-      ();
-  }
-
-  ngOnDestroy(): void {
-    // this.userIdle.stopWatching();
-    this.subscription.unsubscribe();
+    this.idle$ = this.idleService.startWatching(idleTimeoutInSeconds).pipe(
+      map((isTimeOut: boolean) => {
+        if (isTimeOut) {
+          this.auth.logout();
+          alert('Session timeout. It will redirect to login page.');
+        }
+      })
+    );
   }
 }
