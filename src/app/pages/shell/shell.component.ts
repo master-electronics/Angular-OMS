@@ -17,7 +17,7 @@ export class ShellComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.initialIdleSettings();
+    // this.initialIdleSettings();
   }
 
   private initialIdleSettings(): void {
