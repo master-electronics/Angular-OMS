@@ -587,6 +587,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+  ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
@@ -607,6 +608,7 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   OrderType?: InputMaybe<Scalars['String']>;
   PartNumber?: InputMaybe<Scalars['String']>;
   ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
   ShipmentMethodID?: InputMaybe<Scalars['String']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
@@ -1118,7 +1120,7 @@ export type UserEventLog = {
   __typename?: 'UserEventLog';
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
-  DateTime: Scalars['String'];
+  DateTime?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;
@@ -1558,7 +1560,7 @@ export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
+export type FindContainerForSearchBarcodeQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, Status: { __typename?: 'OrderStatus', Name: string }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', PriorityPinkPaper: boolean } | null } } | null> | null } | null> | null } | null> | null };
 
 export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
@@ -1596,6 +1598,7 @@ export const FindContainerForSearchBarcodeDocument = gql`
         PartNumber
       }
       ORDERLINEDETAILs {
+        _id
         Status {
           Name
         }

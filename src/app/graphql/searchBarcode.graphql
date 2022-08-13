@@ -17,6 +17,7 @@ query findContainerForSearchBarcode($Container: searchContainer!) {
         PartNumber
       }
       ORDERLINEDETAILs {
+        _id
         Status {
           Name
         }

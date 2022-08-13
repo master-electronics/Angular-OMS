@@ -587,6 +587,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+  ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
@@ -607,6 +608,7 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   OrderType?: InputMaybe<Scalars['String']>;
   PartNumber?: InputMaybe<Scalars['String']>;
   ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
   ShipmentMethodID?: InputMaybe<Scalars['String']>;
   StatusID: Scalars['Int'];
   WMSPriority: Scalars['Int'];
@@ -1118,7 +1120,7 @@ export type UserEventLog = {
   __typename?: 'UserEventLog';
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
-  DateTime: Scalars['String'];
+  DateTime?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   Message?: Maybe<Scalars['String']>;

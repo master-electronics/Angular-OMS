@@ -66,15 +66,15 @@
                   >
                     {{ ITN.InventoryTrackingNumber || '' }}</a
                   >
-                  ({{ ITN.ORDERLINEDETAILs[0].Status.Name }})
+                  ({{ ITN.ORDERLINEDETAILs[0]?.Status.Name }})
                 </li>
                 <li class="ml-3">
-                  Order: {{ ITN.ORDERLINEDETAILs[0].Order.OrderNumber }}-{{
-                    ITN.ORDERLINEDETAILs[0].Order.NOSINumber
+                  Order: {{ ITN.ORDERLINEDETAILs[0]?.Order.OrderNumber }}-{{
+                    ITN.ORDERLINEDETAILs[0]?.Order.NOSINumber
                   }}
-                  #{{ ITN.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber }}
+                  #{{ ITN.ORDERLINEDETAILs[0]?.OrderLine.OrderLineNumber }}
                   <span>{{
-                    ITN.ORDERLINEDETAILs[0].Order.ShipmentMethod
+                    ITN.ORDERLINEDETAILs[0]?.Order.ShipmentMethod
                       .PriorityPinkPaper
                       ? 'Y'
                       : 'N'

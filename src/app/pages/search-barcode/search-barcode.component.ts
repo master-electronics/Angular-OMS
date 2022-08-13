@@ -88,7 +88,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
           .pipe(
             map((res) => {
               this.isLoading = false;
-              res.data.findContainers;
+              return res.data.findContainers;
             })
           );
       }
