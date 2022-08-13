@@ -121,62 +121,67 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           let totalLines = 0;
           let countLines = 0;
           res.data.findOrderLineDetails.forEach((line) => {
-            ++totalLines;
-            // set for other queries
-            singleITN = line.Inventory.InventoryTrackingNumber;
-            this.OrderNumber = this.outsetContainer.OrderNumber;
-            this.NOSINumber = this.outsetContainer.NOSINumber;
-            FileKeyListforAgOut.push(
-              `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[0].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
-            );
-            // store locations in Aggregation area.
-            if (line.Inventory.Container.Row === 'AG') {
-              locationsSet.add(
-                line.Inventory.Container.Warehouse.concat(
-                  line.Inventory.Container.Row,
-                  line.Inventory.Container.Aisle,
-                  line.Inventory.Container.Section,
-                  line.Inventory.Container.Shelf,
-                  line.Inventory.Container.ShelfDetail,
-                  line.Inventory.Container.Barcode
-                )
+            if (line.Inventory) {
+              ++totalLines;
+              // set for other queries
+              singleITN = line.Inventory.InventoryTrackingNumber;
+              this.OrderNumber = this.outsetContainer.OrderNumber;
+              this.NOSINumber = this.outsetContainer.NOSINumber;
+              FileKeyListforAgOut.push(
+                `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[0].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
               );
-            }
+              // store locations in Aggregation area.
+              if (line.Inventory.Container.Row === 'AG') {
+                locationsSet.add(
+                  line.Inventory.Container.Warehouse.concat(
+                    line.Inventory.Container.Row,
+                    line.Inventory.Container.Aisle,
+                    line.Inventory.Container.Section,
+                    line.Inventory.Container.Shelf,
+                    line.Inventory.Container.ShelfDetail,
+                    line.Inventory.Container.Barcode
+                  )
+                );
+              }
 
-            const toteIndex = this.outsetContainer.ITNsInTote.findIndex(
-              (element) => line._id === element.detaileID
-            );
-            if (toteIndex >= 0) {
-              this.ITNInfo = [
-                ['Order#', this.OrderNumber],
-                ['Priority', !this.outsetContainer.Priority ? 'Yes' : 'No'],
-                ['Customer', this.outsetContainer.CustomerNumber],
-                ['Quantity', line.Quantity],
-                ['ITN Count', ''],
-                ['PRC', this.outsetContainer.ITNsInTote[toteIndex].ProductCode],
-                [
-                  'PartNumber',
-                  this.outsetContainer.ITNsInTote[toteIndex].PartNumber,
-                ],
-                ['Shipment', this.outsetContainer.ShipmentMethodDescription],
-              ];
-              // set fikekey for ag in
-              this.FileKeyListforAgIn.push(
-                `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[toteIndex].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+              const toteIndex = this.outsetContainer.ITNsInTote.findIndex(
+                (element) => line._id === element.detaileID
               );
-              // set for single line AG out.
-              ProductList.push(
-                `${this.outsetContainer.ITNsInTote[
-                  toteIndex
-                ].ProductCode.padEnd(3)}${
-                  this.outsetContainer.ITNsInTote[toteIndex].PartNumber
-                }`
-              );
-              // count currentLines without check statusID
-              ++countLines;
-              return;
+              if (toteIndex >= 0) {
+                this.ITNInfo = [
+                  ['Order#', this.OrderNumber],
+                  ['Priority', !this.outsetContainer.Priority ? 'Yes' : 'No'],
+                  ['Customer', this.outsetContainer.CustomerNumber],
+                  ['Quantity', line.Quantity],
+                  ['ITN Count', ''],
+                  [
+                    'PRC',
+                    this.outsetContainer.ITNsInTote[toteIndex].ProductCode,
+                  ],
+                  [
+                    'PartNumber',
+                    this.outsetContainer.ITNsInTote[toteIndex].PartNumber,
+                  ],
+                  ['Shipment', this.outsetContainer.ShipmentMethodDescription],
+                ];
+                // set fikekey for ag in
+                this.FileKeyListforAgIn.push(
+                  `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[toteIndex].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+                );
+                // set for single line AG out.
+                ProductList.push(
+                  `${this.outsetContainer.ITNsInTote[
+                    toteIndex
+                  ].ProductCode.padEnd(3)}${
+                    this.outsetContainer.ITNsInTote[toteIndex].PartNumber
+                  }`
+                );
+                // count currentLines without check statusID
+                ++countLines;
+                return;
+              }
+              line.StatusID >= sqlData.agInComplete_ID && ++countLines;
             }
-            line.StatusID >= sqlData.agInComplete_ID && ++countLines;
           });
           this.ITNInfo[4][1] = `${countLines} of ${totalLines}`;
           if (locationsSet.size === 0) {

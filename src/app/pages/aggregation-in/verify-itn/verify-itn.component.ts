@@ -222,12 +222,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tap((res: any) => {
         let error: string;
-        if (!res.updateStatus.data.updateOrderLineDetailList.length) {
-          error += `\nFail to update SQL OrderLineDetail.`;
-        }
-        if (!res.updateSql.data.updateContainer.length) {
-          error += `\nFail to update SQL Container.`;
-        }
+        // if (!res.updateStatus.data.updateOrderLineDetailList.length) {
+        //   error += `\nFail to update SQL OrderLineDetail.`;
+        // }
+        // if (!res.updateSql.data.updateContainer.length) {
+        //   error += `\nFail to update SQL Container.`;
+        // }
         // if (
         //   res.updateMerpOrder &&
         //   !res.updateMerpOrder.data.updateMerpOrderStatus.success
