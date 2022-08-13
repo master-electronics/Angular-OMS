@@ -46,7 +46,7 @@ registerLocaleData(en);
 
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
-import { GlobalErrorHandler } from './shared/global-error-handler';
+// import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
   declarations: [
@@ -111,7 +111,7 @@ import { GlobalErrorHandler } from './shared/global-error-handler';
       },
       deps: [HttpLink],
     },
-    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    // { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: NZ_I18N, useValue: en_US },
   ],
   bootstrap: [AppComponent],
