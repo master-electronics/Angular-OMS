@@ -188,7 +188,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
           // Search all ITN by orderID, if statusID is not qc done,  ++inventoryInProcess. If inventoryInProces == 0, current ITN is the last ITN.
           returnOrder.ORDERLINEDETAILs.forEach((line) => {
             if (
-              line.Inventory.InventoryTrackingNumber !==
+              line.Inventory?.InventoryTrackingNumber !==
               this.itemInfo.InventoryTrackingNumber
             ) {
               line.StatusID < sqlData.qcComplete_ID && ++inProcess;
