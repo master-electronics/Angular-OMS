@@ -121,8 +121,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           let totalLines = 0;
           let countLines = 0;
           res.data.findOrderLineDetails.forEach((line) => {
+            ++totalLines;
             if (line.Inventory) {
-              ++totalLines;
               // set for other queries
               singleITN = line.Inventory.InventoryTrackingNumber;
               this.OrderNumber = this.outsetContainer.OrderNumber;
