@@ -106,7 +106,13 @@
 
   <!-- Event log table -->
   <div *ngIf="fetchTable$ | async"></div>
-  <nz-table #table [nzData]="tableData" [nzPageSize]="20" nzShowSizeChanger>
+  <nz-table
+    #table
+    [nzData]="tableData"
+    [nzPageSize]="20"
+    [nzPageSizeOptions]="[20, 50, 100]"
+    nzShowSizeChanger
+  >
     <thead>
       <tr>
         <th>User</th>
