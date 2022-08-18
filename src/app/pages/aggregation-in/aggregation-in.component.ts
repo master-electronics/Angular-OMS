@@ -82,6 +82,7 @@ export class AggregationInComponent
       return;
     }
     this.isLoading = true;
+    let ITNList = [];
     this.query$ = this._verifyContainer
       .fetch(
         {
@@ -93,29 +94,27 @@ export class AggregationInComponent
 
       .pipe(
         map((res) => {
-          const container = JSON.parse(JSON.stringify(res.data.findContainer));
+          // const container = JSON.parse(JSON.stringify(res.data.findContainer));
+          const container = res.data.findContainer;
           if (!container) throw 'Container not found!';
           // only accepte mobile container
           if (!container.ContainerType.IsMobile)
             throw 'This container is not mobile!';
-          if (container.INVENTORies?.length === 0)
-            throw 'No item in this container!';
+          // When the order is hold, the record still exist in Invenotry table, but the OrderLineDetail will be deleted. Need to exclude this situation.
+          ITNList = res.data.findContainer.INVENTORies.filter((item) => {
+            return item.ORDERLINEDETAILs.length !== 0;
+          });
+          if (ITNList?.length === 0) throw 'No item in this container!';
           // Check if container has OrderLineDetail in it
           if (
-            !container.INVENTORies.some((item) => {
+            !ITNList.some((item) => {
               return item.ORDERLINEDETAILs.length !== 0;
             })
           ) {
             throw new Error('No order in this container!');
           }
-          // When the order is hold, the record still in Invenotry table, but the record in the OrderLineDetail is deleted. Need to exclude this situation.
-          container.INVENTORies = res.data.findContainer.INVENTORies.filter(
-            (item) => {
-              return item.ORDERLINEDETAILs.length !== 0;
-            }
-          );
           if (
-            !container.INVENTORies.every((line, i, arr) => {
+            !ITNList.every((line, i, arr) => {
               // verify all line have the same orderID and statusID in the tote
               return (
                 line.ORDERLINEDETAILs[0].OrderID ===
@@ -128,10 +127,8 @@ export class AggregationInComponent
             throw 'Have different order or status in the container.';
           // only allow status is agIn complete and qc complete
           if (
-            container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID <
-              sqlData.qcComplete_ID ||
-            container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID >=
-              sqlData.agOutComplete_ID
+            ITNList[0].ORDERLINEDETAILs[0]?.StatusID < sqlData.qcComplete_ID ||
+            ITNList[0].ORDERLINEDETAILs[0]?.StatusID >= sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
           return container;
@@ -141,33 +138,28 @@ export class AggregationInComponent
           const outsetContainer: outsetContainer = {
             toteID: container._id,
             Barcode: container.Barcode,
-            OrderID: container.INVENTORies[0].ORDERLINEDETAILs[0].OrderID,
-            OrderNumber:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.OrderNumber,
-            NOSINumber:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.NOSINumber,
+            OrderID: ITNList[0].ORDERLINEDETAILs[0].OrderID,
+            OrderNumber: ITNList[0].ORDERLINEDETAILs[0].Order.OrderNumber,
+            NOSINumber: ITNList[0].ORDERLINEDETAILs[0].Order.NOSINumber,
             CustomerNumber:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
-                ?.CustomerNumber,
+              ITNList[0].ORDERLINEDETAILs[0].Order.Customer?.CustomerNumber,
             CustomerTier:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.Customer
-                ?.CustomerTier,
+              ITNList[0].ORDERLINEDETAILs[0].Order.Customer?.CustomerTier,
             ShipmentMethod:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
-                ?._id,
+              ITNList[0].ORDERLINEDETAILs[0].Order.ShipmentMethod?._id,
             ShipmentMethodDescription:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
+              ITNList[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
                 ?.ShippingMethod,
             Priority:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
+              ITNList[0].ORDERLINEDETAILs[0].Order.ShipmentMethod
                 ?.PriorityPinkPaper,
             ITNsInTote: [],
             isRelocation:
-              container.INVENTORies[0].ORDERLINEDETAILs[0].StatusID ===
+              ITNList[0].ORDERLINEDETAILs[0].StatusID ===
               sqlData.agInComplete_ID,
           };
           // get all ITN in tote
-          container.INVENTORies.forEach((Inventory) => {
+          ITNList.forEach((Inventory) => {
             if (Inventory.InventoryTrackingNumber) {
               const detail = Inventory.ORDERLINEDETAILs[0];
               outsetContainer.ITNsInTote.push({
