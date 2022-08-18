@@ -363,8 +363,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       )
       .pipe(
         // Emite Errors
-        tap((res) => {
-          const container = res.data.findContainer;
+        map((res) => {
+          const container = JSON.parse(JSON.stringify(res.data.findContainer));
           if (!container) {
             throw 'Can not find this container';
           }
@@ -378,6 +378,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           if (container.Row !== 'AG') {
             throw 'This container is not in Aggregation area';
           }
+          // When the order is hold, the record still in Invenotry table, but the record in the OrderLineDetail is deleted. Need to exclude this situation.
+          container.INVENTORies = res.data.findContainer.INVENTORies.filter(
+            (item) => {
+              return item.ORDERLINEDETAILs.length !== 0;
+            }
+          );
           // if target container is mobile, check all items in target container have the some order number with source tote.
           if (container.ContainerType.IsMobile) {
             container.INVENTORies.forEach((line) => {
@@ -390,9 +396,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             });
           }
+          return container;
         }),
-        map((res) => {
-          const container = res.data.findContainer;
+        map((container) => {
           const endContainer: endContainer = {
             Barcode: barcodeInput,
             type,

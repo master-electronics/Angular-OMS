@@ -92,30 +92,38 @@ export class AggregationInComponent
       )
 
       .pipe(
-        tap((res) => {
-          const container = res.data.findContainer;
+        map((res) => {
+          const container = JSON.parse(JSON.stringify(res.data.findContainer));
           if (!container) throw 'Container not found!';
           // only accepte mobile container
           if (!container.ContainerType.IsMobile)
             throw 'This container is not mobile!';
           if (container.INVENTORies?.length === 0)
             throw 'No item in this container!';
-          // verify all line have the same orderID and statusID in the tote
+          // Check if container has OrderLineDetail in it
           if (
-            container.INVENTORies.some((item) => {
-              return item.ORDERLINEDETAILs.length === 0;
+            !container.INVENTORies.some((item) => {
+              return item.ORDERLINEDETAILs.length !== 0;
             })
           ) {
             throw new Error('No order in this container!');
           }
+          // When the order is hold, the record still in Invenotry table, but the record in the OrderLineDetail is deleted. Need to exclude this situation.
+          container.INVENTORies = res.data.findContainer.INVENTORies.filter(
+            (item) => {
+              return item.ORDERLINEDETAILs.length !== 0;
+            }
+          );
           if (
-            !container.INVENTORies.every(
-              (line, i, arr) =>
+            !container.INVENTORies.every((line, i, arr) => {
+              // verify all line have the same orderID and statusID in the tote
+              return (
                 line.ORDERLINEDETAILs[0].OrderID ===
                   arr[0].ORDERLINEDETAILs[0].OrderID &&
                 line.ORDERLINEDETAILs[0].StatusID ===
                   arr[0].ORDERLINEDETAILs[0].StatusID
-            )
+              );
+            })
           )
             throw 'Have different order or status in the container.';
           // only allow status is agIn complete and qc complete
@@ -126,9 +134,9 @@ export class AggregationInComponent
               sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
+          return container;
         }),
-        switchMap((res) => {
-          const container = res.data.findContainer;
+        switchMap((container) => {
           const logList = [];
           const outsetContainer: outsetContainer = {
             toteID: container._id,
@@ -159,7 +167,7 @@ export class AggregationInComponent
               sqlData.agInComplete_ID,
           };
           // get all ITN in tote
-          res.data.findContainer.INVENTORies.forEach((Inventory) => {
+          container.INVENTORies.forEach((Inventory) => {
             if (Inventory.InventoryTrackingNumber) {
               const detail = Inventory.ORDERLINEDETAILs[0];
               outsetContainer.ITNsInTote.push({
