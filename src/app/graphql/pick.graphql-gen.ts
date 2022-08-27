@@ -738,7 +738,6 @@ export type MutationUpdateUserCartForDropOffArgs = {
 export type MutationUpdateUserInfoArgs = {
   Name?: InputMaybe<Scalars['String']>;
   UserInfo: UpdateUserInfo;
-  Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -880,6 +879,7 @@ export type Query = {
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findInventory?: Maybe<Inventory>;
   findInventorys?: Maybe<Array<Maybe<Inventory>>>;
+  findLocalErrorLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Order>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
@@ -1017,6 +1017,13 @@ export type QueryFindInventorysArgs = {
 };
 
 
+export type QueryFindLocalErrorLogsArgs = {
+  Date: Scalars['String'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryFindNextItnForPullingArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
@@ -1151,8 +1158,8 @@ export type UserInfo = {
   CartLastUpdated?: Maybe<Scalars['String']>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
+  PullerLevel?: Maybe<Scalars['Int']>;
   StrictPriority?: Maybe<Scalars['Boolean']>;
-  Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
 };
 
@@ -1305,8 +1312,8 @@ export type InsertUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
+  PullerLevel?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
-  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type OrderTasktime = {
@@ -1454,8 +1461,8 @@ export type SearchUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
+  PullerLevel?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
-  Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -1538,8 +1545,8 @@ export type UpdateUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
+  PullerLevel?: InputMaybe<Scalars['Int']>;
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
-  Zone?: InputMaybe<Scalars['Int']>;
 };
 
 export type ValueMap = {
@@ -1583,7 +1590,7 @@ export type FetchPickingSettingsQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchPickingSettingsQuery = { __typename?: 'Query', findUserInfo?: { __typename?: 'UserInfo', Zone?: number | null, StrictPriority?: boolean | null, PriorityCutoff?: number | null, CartID?: number | null } | null };
+export type FetchPickingSettingsQuery = { __typename?: 'Query', findUserInfo?: { __typename?: 'UserInfo', StrictPriority?: boolean | null, PriorityCutoff?: number | null, CartID?: number | null } | null };
 
 export type FindNextItnForPullingQueryVariables = Types.Exact<{
   Zone: Types.Scalars['Int'];
@@ -1696,7 +1703,6 @@ export const VerifyPositionBarcodeForPullingDocument = gql`
 export const FetchPickingSettingsDocument = gql`
     query fetchPickingSettings($UserInfo: searchUserInfo!) {
   findUserInfo(UserInfo: $UserInfo) {
-    Zone
     StrictPriority
     PriorityCutoff
     CartID

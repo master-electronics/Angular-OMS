@@ -67,18 +67,18 @@ const routes: Routes = [
             (m) => m.ShelfInventoryModule
           ),
       },
-      {
-        path: 'pulltopick',
-        loadChildren: () =>
-          import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
-      },
-      {
-        path: 'stocking',
-        loadChildren: () =>
-          import('./pages/stocking/stocking.module').then(
-            (m) => m.StockingModule
-          ),
-      },
+      // {
+      //   path: 'pulltopick',
+      //   loadChildren: () =>
+      //     import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
+      // },
+      // {
+      //   path: 'stocking',
+      //   loadChildren: () =>
+      //     import('./pages/stocking/stocking.module').then(
+      //       (m) => m.StockingModule
+      //     ),
+      // },
       {
         path: 'valuemap',
         loadChildren: () =>
@@ -91,6 +91,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/printer-maintenance/printer-maintenance.module').then(
             (m) => m.PrinterMaintenanceModule
+          ),
+      },
+      {
+        path: 'logviewer',
+        loadChildren: () =>
+          import('./pages/log-viewer/log-viewer.module').then(
+            (m) => m.LogViewerModule
           ),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },

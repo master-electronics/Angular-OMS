@@ -92,7 +92,7 @@ export class EventLogComponent implements OnInit {
       limit = null;
     }
     if (this.startDate) {
-      limit = null;
+      limit = 500;
     }
     this.isLoading = true;
     this.fetchTable$ = this.fetchEventLog

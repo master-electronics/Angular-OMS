@@ -1,0 +1,3 @@
+query fetchLocalLogs($Date: String!) {
+  findLocalErrorLogs(Date: $Date)
+}

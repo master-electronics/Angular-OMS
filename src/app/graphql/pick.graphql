@@ -21,7 +21,6 @@ query verifyPositionBarcodeForPulling($Container: searchContainer!) {
 
 query fetchPickingSettings($UserInfo: searchUserInfo!) {
   findUserInfo(UserInfo: $UserInfo) {
-    Zone
     StrictPriority
     PriorityCutoff
     CartID
