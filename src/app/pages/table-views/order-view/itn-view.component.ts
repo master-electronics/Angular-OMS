@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormBuilder,
-  FormControl,
+  UntypedFormBuilder,
+  UntypedFormControl,
   Validators,
 } from '@angular/forms';
 import { OrderBarcodeRegex } from '../../../shared/dataRegex';
@@ -29,7 +29,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
   OrderInfo$;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private fetchOrderDetail: FetchOrderDetailforitnViewGQL,
@@ -43,7 +43,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
     return this.barcodeForm.controls;
   }
 
-  regex(input: FormControl): { regex: { valid: boolean } } {
+  regex(input: UntypedFormControl): { regex: { valid: boolean } } {
     return OrderBarcodeRegex.test(input.value) || input.value === ''
       ? null
       : {

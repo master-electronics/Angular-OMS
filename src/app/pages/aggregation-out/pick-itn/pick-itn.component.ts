@@ -5,7 +5,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ITNBarcodeRegex } from '../../../shared/dataRegex';
@@ -30,7 +30,7 @@ export class PickITNComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _router: Router,
     private _route: ActivatedRoute,
     private _agOutService: AggregationOutService

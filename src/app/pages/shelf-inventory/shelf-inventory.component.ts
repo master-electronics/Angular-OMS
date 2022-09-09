@@ -5,7 +5,7 @@ import {
   ElementRef,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 
 import { CommonService } from '../../shared/services/common.service';
@@ -33,7 +33,7 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
   constructor(
     private commonService: CommonService,
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private titleService: Title,
     private searchITNList: FindItNsByShelfGQL,
     private shelfInventory: ShelfInventoryService

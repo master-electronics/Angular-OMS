@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map } from 'rxjs/operators';
@@ -16,7 +16,7 @@ export class LogViewerComponent {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private titleService: Title,
     private fetchLogs: FetchLocalLogsGQL
   ) {

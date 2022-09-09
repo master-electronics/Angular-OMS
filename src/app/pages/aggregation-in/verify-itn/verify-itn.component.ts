@@ -5,7 +5,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/sqlData';
@@ -48,7 +48,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _router: Router,
     private _agInService: AggregationInService,
     private _updateLog: UpdateLocationAndLogAfterAgInGQL,

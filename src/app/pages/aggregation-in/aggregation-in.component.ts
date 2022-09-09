@@ -9,8 +9,8 @@ import {
 import { Title } from '@angular/platform-browser';
 import {
   AbstractControl,
-  FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -38,8 +38,8 @@ export class AggregationInComponent
   alertMessage = '';
   query$ = new Observable();
 
-  containerForm = new FormGroup({
-    containerNumber: new FormControl('', [
+  containerForm = new UntypedFormGroup({
+    containerNumber: new UntypedFormControl('', [
       Validators.required,
       Validators.pattern(ToteBarcodeRegex),
     ]),

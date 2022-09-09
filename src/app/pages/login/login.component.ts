@@ -5,7 +5,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, throwError } from 'rxjs';
@@ -36,7 +40,7 @@ export class LoginComponent implements OnDestroy, OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private authenticationService: AuthenticationService,
     private userInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,

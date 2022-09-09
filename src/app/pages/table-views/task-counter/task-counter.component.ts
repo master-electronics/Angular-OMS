@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 
 interface tableData {
   User: string;
@@ -23,7 +23,7 @@ export class TaskCounterComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private fetchTaskCounter: FetchTaskCounterGQL
   ) {
     this.commonService.changeNavbar('Task Counting');

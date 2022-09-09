@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { catchError, map } from 'rxjs/operators';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { FetchHoldOnCounterGQL } from 'src/app/graphql/tableViews.graphql-gen';
 
 interface tableData {
@@ -23,7 +23,7 @@ export class HoldOnCounterComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private fetchHoldOnCounter: FetchHoldOnCounterGQL
   ) {
     this.commonService.changeNavbar('Hold On Counting');

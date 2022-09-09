@@ -6,7 +6,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
@@ -50,7 +50,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _commonService: CommonService,
     private _router: Router,
     private _route: ActivatedRoute,

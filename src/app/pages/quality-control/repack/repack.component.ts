@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -44,7 +44,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
   submit$;
   fetchID$;
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private titleService: Title,
     private qcService: QualityControlService,

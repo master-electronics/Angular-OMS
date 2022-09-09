@@ -116,5 +116,7 @@
       }
     }
   },
-  "defaultProject": "ag-wms"
+  "cli": {
+    "analytics": "85abb0bb-6a8a-4af8-8646-f74c63f80d36"
+  }
 }
