@@ -33,7 +33,7 @@
     "file-saver": "^2.0.5",
     "howler": "^2.2.3",
     "husky": "^7.0.4",
-    "ng-zorro-antd": "^13.1.1",
+    "ng-zorro-antd": "^14.0.0",
     "postcss": "^8.3.6",
     "rxjs": "~6.6.0",
     "tailwindcss": "^2.2.15",
