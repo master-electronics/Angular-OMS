@@ -100,6 +100,13 @@ const routes: Routes = [
             (m) => m.LogViewerModule
           ),
       },
+      {
+        path: 'demo',
+        loadChildren: () =>
+          import('./pages/picker-manage/picker-manage.module').then(
+            (m) => m.PickerManageModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

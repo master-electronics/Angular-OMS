@@ -46,16 +46,6 @@
         class="cal-day-column"
         *ngFor="let column of view.hourColumns; trackBy: trackByHourColumn"
       >
-        <mwl-calendar-week-view-current-time-marker
-          [columnDate]="column.date"
-          [dayStartHour]="dayStartHour"
-          [dayStartMinute]="dayStartMinute"
-          [dayEndHour]="dayEndHour"
-          [dayEndMinute]="dayEndMinute"
-          [hourSegments]="hourSegments"
-          [hourSegmentHeight]="hourSegmentHeight"
-          [customTemplate]="currentTimeMarkerTemplate"
-        ></mwl-calendar-week-view-current-time-marker>
         <div
           *ngFor="let timeEvent of column.events; trackBy: trackByWeekTimeEvent"
           #event
@@ -180,7 +170,6 @@
 </div>
 
 <br /><br /><br />
-
 <h3>
   Edit events
   <button class="btn btn-primary float-end" (click)="addEvent()">
@@ -188,14 +177,12 @@
   </button>
   <div class="clearfix"></div>
 </h3>
-
 <div class="table-responsive">
   <table class="table table-bordered">
     <thead>
       <tr>
         <th>Title</th>
-        <th>Primary color</th>
-        <th>Secondary + text color</th>
+        <th>Point</th>
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
@@ -214,22 +201,10 @@
         </td>
         <td>
           <input
-            type="color"
-            [(ngModel)]="event.color.primary"
-            (change)="refresh.next()"
-          />
-        </td>
-        <td>
-          <input
-            type="color"
-            [(ngModel)]="event.color.secondary"
-            (change)="refresh.next()"
-          />
-          <input
-            type="color"
-            [ngModel]="event.color.secondaryText ?? '#1e90ff'"
-            (ngModelChange)="event.color.secondaryText = $event"
-            (change)="refresh.next()"
+            type="text"
+            class="form-control"
+            [(ngModel)]="event.meta.Point"
+            (keyup)="refresh.next()"
           />
         </td>
         <td>
@@ -265,27 +240,3 @@
     </tbody>
   </table>
 </div>
-
-<ng-template #modalContent let-close="close">
-  <div class="modal-header">
-    <h5 class="modal-title">Event action occurred</h5>
-    <button type="button" class="close" (click)="close()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div>
-      Action:
-      <pre>{{ modalData?.action }}</pre>
-    </div>
-    <div>
-      Event:
-      <pre>{{ modalData?.event | json }}</pre>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="close()">
-      OK
-    </button>
-  </div>
-</ng-template>

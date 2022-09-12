@@ -1,22 +1,26 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedComponentModule } from '../../components/shared-component.module';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { PickerManageRoutingModule } from './picker-manage.routing';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { PickerManageComponent } from './picker-manage.component';
-import { PickerManageRoutingModule } from './picker-manage.routing';
+import { DayViewSchedulerComponent } from './day-view-scheduler.component';
 
 @NgModule({
-  declarations: [PickerManageComponent],
+  declarations: [PickerManageComponent, DayViewSchedulerComponent],
   imports: [
     CommonModule,
     FormsModule,
+    NgbModalModule,
     PickerManageRoutingModule,
-    ReactiveFormsModule,
-    SharedUtilityModule,
-    SharedComponentModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
   ],
   bootstrap: [PickerManageComponent],
 })
-export class LogViewerModule {}
+export class PickerManageModule {}
