@@ -1,0 +1,89 @@
+query fetchUserList {
+    fetchUserList {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query findUser($userInfo: searchUser) {
+    findUser(User: $userInfo) {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartID
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query findUsers($name: String) {
+    findUsers(Name: $name) {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query fetchZoneList($distributionCenter: String) {
+    fetchZoneList(DistributionCenter: $distributionCenter) {
+        _id
+        DistributionCenter
+        Zone
+        Type
+        Description
+        Equipment
+        PullCount
+        PullsStarted
+        PriorityPulls
+        CustAPulls
+    }
+}
+
+query fetchUsersForZone($zoneID: Int) {
+    fetchUsersForZone(ZoneID: $zoneID) {
+        _id
+        Name
+    }
+}
+
+query fetchZonesForUser($userID: Int) {
+    fetchZonesForUser(UserID: $userID) {
+        _id
+        DistributionCenter
+        Zone
+        Description
+        Equipment
+    }
+}
+
+mutation insertUserZone($userID: Int, $zoneID: Int) {
+    insertUserZone(UserID: $userID, ZoneID: $zoneID) {
+        _id
+    }
+}
+
+mutation deleteUserZone($userID: Int, $zoneID: Int) {
+    deleteUserZone(UserID: $userID, ZoneID: $zoneID) {
+        _id
+    }
+}
