@@ -119,8 +119,7 @@ export class AggregationInComponent
               return (
                 line.ORDERLINEDETAILs[0].OrderID ===
                   arr[0].ORDERLINEDETAILs[0].OrderID &&
-                line.ORDERLINEDETAILs[0].StatusID ===
-                  arr[0].ORDERLINEDETAILs[0].StatusID
+                [60, 63].includes(line.ORDERLINEDETAILs[0].StatusID)
               );
             })
           )
