@@ -13,7 +13,7 @@
       <div nz-col nzSpan="24" style="height: 30px"></div>
     </div>
     <div nz-row nzGutter="8" nzJustify="start">
-        <div nz-col nzSpan="5">
+        <div nz-col nzSpan="6">
             <nz-input-group [nzPrefix]="prefixIconSearch">
                 <input type="text" nz-input 
                   [(ngModel)]="nameSearchTxt"
@@ -29,13 +29,20 @@
             <nz-select
                 nzPlaceHolder="Type"
                 style="width: 100%"
-                [nzOptions]="typeOptions"></nz-select>
+                [(ngModel)]="selectedZoneType"
+                (ngModelChange)="filterTypeChange()">
+              <nz-option *ngFor="let option of typeOptions"
+                nzValue="{{ option.value }}"
+                nzLabel="{{ option.label }}"></nz-option>
+            </nz-select>
         </div>
         <div nz-col nzSpan="2">
             <nz-select
                 nzPlaceHolder="Priority"
                 style="width: 100%"
-                [nzOptions]="priorityOptions"></nz-select>
+                [nzOptions]="priorityOptions"
+                [(ngModel)]="selectedZonePriority"
+                (ngModelChange)="filterPriorityChange()"></nz-select>
         </div>
     </div>
     <div nz-row nzGutter="8" nzJustify="start">
@@ -49,41 +56,70 @@
                 [nzData]="userTableData"
                 nzBordered cdkDropList
                 [cdkDropListConnectedTo]="[zoneDropList]"
+                [nzShowPagination]="false"
+                [nzFrontPagination]="false"
+                [nzScroll]="{ y: screenHeight }"
             >
                 <thead>
                     <tr>
-                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          [nzSortFn]="userNameSortFn" [nzWidth]="'140px'">
                             User Name
                         </th>
-                        <th style="width: 100px"
-                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
+                        <th
+                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          [nzSortFn]="userZonesSortFn" [nzWidth]="'60px'">
                             # Zones
                         </th>
-                        <th style="width: 100px"
-                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
+                        <th
+                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          [nzSortFn]="userEquipmentSortFn" [nzWidth]="'80px'">
                             Equipment
                         </th>
-                        <th style="width: 65px"
-                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
+                        <th
+                          [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          [nzSortFn]="userLevelSortFn" [nzWidth]="'60px'">
                             Level
                         </th>
+                        <th [nzWidth]="'24px'"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let data of userListTable.data" 
                       cdkDrag  (cdkDragStarted)="test2()"
                       (mousedown)="selectUser(data.userID, data.equipment)"
-                      >
-                        <td [ngClass]="data.class">{{ data.userName }}</td>
-                        <td [ngClass]="data.class">{{ data.zoneCount }}</td>
-                        <td [ngClass]="data.class">{{ data.equipment }}</td>
-                        <td [ngClass]="data.class">{{ data.level }}</td>
+                    >
+                        <td [ngClass]="data.class"
+                          >
+                          {{ data.userName }}
+                        </td>
+                        <td [ngClass]="data.class"
+                        >
+                          {{ data.zoneCount }}
+                        </td>
+                        <td [ngClass]="data.class"
+                        >
+                          {{ data.equipment }}
+                        </td>
+                        <td [ngClass]="data.class"
+                        >
+                          {{ data.level }}
+                        </td>
+                        <td style="padding: 5px;" [nzAlign]="'left'"
+                          [ngClass]="data.class">
+                          <div cdkDragHandle>
+                            <svg width="24px" fill="#a6a6a6" viewBox="0 0 24 24">
+                              <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                              <path d="M0 0h24v24H0z" fill="none"></path>
+                            </svg>
+                          </div>
+                        </td>
                     </tr>
                 </tbody>
             </nz-table>
           </div>
           <div nz-col nzSpan="1"></div>
-          <div nz-col nzSpan="9">
+          <div nz-col nzSpan="13">
             <nz-table
                 id="zoneList-table"
                 #zoneListTable
@@ -95,21 +131,83 @@
             >
                 <thead>
                     <tr>
-                        <th nzWidth="55px"></th>
-                        <th nzWidth="65px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          [nzFilters]="zoneFilters" [nzFilterFn]="zoneNumberFilter">
+                        <th style="width: 55px"></th>
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          nzCustomFilter style="width: 65px" [nzSortFn]="zoneNumberSortFn"
+                        >
                             Zone
+                            <nz-filter-trigger [nzDropdownMenu]="zoneNumberFilterTemplate"
+                              [nzActive]="(selectedZoneFilters.length > 0)"
+                              [(nzVisible)]="zoneNumberFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>
+                            </nz-filter-trigger>
+                            <nz-dropdown-menu #zoneNumberFilterTemplate="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneNumberFilterSelected($event)">
+                                    <div *ngFor="let option of zoneFilters" nz-row>
+                                      <div nz-col nzSpan="2">
+                                        <label nz-checkbox nzValue="{{ option.value }}"
+                                          [ngModel]="option.checked"
+                                        >{{ option.text }}</label>
+                                      </div>
+                                    </div>
+                                  </nz-checkbox-wrapper>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(selectedZoneFilters.length > 0)"
+                                    (click)="zoneNumberFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
                         </th>
-                        <th nzWidth="65px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          [nzFilters]="zoneTypeFilters" [nzFilterFn]="zoneTypeFilter">
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          nzCustomFilter style="width: 65px" [nzSortFn]="zoneTypeSortFn"
+                        >
                             Type
+                            <nz-filter-trigger [nzDropdownMenu]="zoneTypeFilterTemplate"
+                              [nzActive]="(selectedZoneTypeFilters.length > 0)"
+                              [(nzVisible)]="zoneTypeFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>
+                            </nz-filter-trigger>
+                            <nz-dropdown-menu #zoneTypeFilterTemplate="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneTypeFilterSelected($event)">
+                                    <div *ngFor="let option of zoneTypeFilters" nz-row>
+                                      <div nz-col nzSpan="2">
+                                        <label nz-checkbox nzValue="{{ option.value }}"
+                                          [ngModel]="option.checked"
+                                        >{{ option.text }}</label>
+                                      </div>
+                                    </div>
+                                  </nz-checkbox-wrapper>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(selectedZoneTypeFilters.length > 0)"
+                                    (click)="zoneTypeFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
                         </th>
-                        <th nzWidth="110px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                         nzCustomFilter>
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                         nzCustomFilter style="width: 110px" [nzSortFn]="zoneNumPullsSortFn">
                             # Pulls
                             <nz-filter-trigger [nzDropdownMenu]="numPullsFilter"
                               [nzActive]="(numPullsFilterOptions[0] > 0 || numPullsFilterOptions[1] < 100)"
-                              [(nzVisible)]="zoneNumPullsFilterVisible"
+                              [(nzVisible)]="zoneNumPullsFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
                             >
                             <span nz-icon nzType="filter" nzTheme="fill"></span>
                           </nz-filter-trigger>
@@ -124,31 +222,127 @@
                                   (click)="zoneNumPullsFilterReset()">Reset</a>
                                 <button nz-button
                                   nzSize="small" nzType="primary"
-                                  (click)="zoneNumPullsFilter()">
+                                  (click)="filterZones()">
                                   OK
                                 </button>
                               </div>
                             </div>
                           </nz-dropdown-menu>
                         </th>
-                        <th nzWidth="160px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter>
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          nzCustomFilter style="width: 175px" [nzSortFn]="zonePullsStartedSortFn">
                             # w/Pulls Started
                             <nz-filter-trigger [nzDropdownMenu]="pullsStartedFilter"
-                              [nzActive]="!(zonePullsStartedFilterOptions[0] > 0 || zonePullsStartedFilterOptions[1] < 100)">
-
+                              [nzActive]="(zonePullsStartedFilterOptions[0] > 0 || zonePullsStartedFilterOptions[1] < 100)"
+                              [(nzVisible)]="zonePullsStartedFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>
                             </nz-filter-trigger>
-                            <nz-dropdown-menu #pullsStartedFilter="nzDropdownMenu"></nz-dropdown-menu>
-                        </th>
-                        <th nzWidth="150px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
-                            # Priority Pulls
-                        </th>
-                        <th nzWidth="140px" [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']">
-                            # Pulls A Cust
+                            <nz-dropdown-menu #pullsStartedFilter="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown" style="width: 200px">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                  <nz-slider nzRange [(ngModel)]="zonePullsStartedFilterOptions"
+                                    [nzMarks]="marks" class="col-span-2"></nz-slider>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(zonePullsStartedFilterOptions[0] > 0 || zonePullsStartedFilterOptions[1] < 100)"
+                                    (click)="zonePullsStartedFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          [nzFilters]="zoneEquipmentFilters">
+                          nzCustomFilter style="width: 165px" [nzSortFn]="zonePriorityPullsSortFn">
+                            # Priority Pulls
+                            <nz-filter-trigger [nzDropdownMenu]="priorityPullsFilter"
+                              [nzActive]="(zonePriorityPullsFilterOptions[0] > 0 || zonePriorityPullsFilterOptions[1] < 100)"
+                              [(nzVisible)]="zonePriorityPullsFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>  
+                            </nz-filter-trigger>
+                            <nz-dropdown-menu #priorityPullsFilter="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown" style="width: 200px">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                  <nz-slider nzRange [(ngModel)]="zonePriorityPullsFilterOptions"
+                                    [nzMarks]="marks" class="col-span-2"></nz-slider>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(zonePriorityPullsFilterOptions[0] > 0 || zonePriorityPullsFilterOptions[1] < 100)"
+                                    (click)="zonePriorityPullsFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
+                        </th>
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          nzCustomFilter style="width: 155px" [nzSortFn]="zoneCustAPullsSortFn">
+                            # Pulls A Cust
+                            <nz-filter-trigger [nzDropdownMenu]="pullsACustFilter"
+                              [nzActive]="(zonePullsACustFilterOptions[0] > 0 || zonePullsACustFilterOptions[1] < 100)"
+                              [(nzVisible)]="zonePullsACustFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>
+                            </nz-filter-trigger>
+                            <nz-dropdown-menu #pullsACustFilter="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown" style="width: 200px">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-y">
+                                  <nz-slider nzRange [(ngModel)]="zonePullsACustFilterOptions"
+                                    [nzMarks]="marks" class="col-span-2"></nz-slider>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(zonePullsACustFilterOptions[0] > 0 || zonePullsACustFilterOptions[1] < 100)"
+                                    (click)="zonePullsACustFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
+                        </th>
+                        <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
+                          nzCustomFilter [nzSortFn]="zoneEquipmentSortFn">
                             Equipment
+                            <nz-filter-trigger [nzDropdownMenu]="zoneEquipmentFilterTemplate"
+                              [nzActive]="(selectedZoneEquipmentFilters.length > 0)"
+                              [(nzVisible)]="zoneEquipmentFilterVisible" (nzVisibleChange)="closeFilterDropdown($event)"
+                            >
+                              <span nz-icon nzType="filter" nzTheme="fill"></span>
+                            </nz-filter-trigger>
+                            <nz-dropdown-menu #zoneEquipmentFilterTemplate="nzDropdownMenu">
+                              <div class="ant-table-filter-dropdown">
+                                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneEquipmentFilterSelected($event)">
+                                    <div *ngFor="let option of zoneEquipmentFilters" nz-row>
+                                      <div nz-col nzSpan="2">
+                                        <label nz-checkbox nzValue="{{ option.value }}"
+                                          [ngModel]="option.checked"
+                                        >{{ option.text }}</label>
+                                      </div>
+                                    </div>
+                                  </nz-checkbox-wrapper>
+                                  <nz-divider class="col-span-2" style="padding: 0; margin: 0"></nz-divider>
+                                  <a nz-button nzType="link"
+                                    [disabled]="!(selectedZoneEquipmentFilters.length > 0)"
+                                    (click)="zoneEquipmentFilterReset()">Reset</a>
+                                  <button nz-button
+                                    nzSize="small" nzType="primary"
+                                    (click)="filterZones()">
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            </nz-dropdown-menu>
                         </th>
                     </tr>
                 </thead>
@@ -181,66 +375,5 @@
             </nz-table>
           </div>
     </div>
-  <nz-dropdown-menu #nameFilterMenu="nzDropdownMenu">
-    <div class="ant-table-filter-dropdown">
-      <div class="px-2 py-2 grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          nz-input
-          oninput="this.value = this.value"
-          placeholder="Name"
-          class="col-span-2"
-          #nameFilterInput
-        />
-        <button
-          nz-button
-          nzSize="small"
-          nzType="primary"
-          class="search-button"
-        >
-          Search
-        </button>
-        <button
-          nz-button
-          nzSize="small"
-        >
-          Reset
-        </button>
-      </div>
-    </div>
-  </nz-dropdown-menu>
-  <nz-dropdown-menu #descriptionFilterMenu="nzDropdownMenu">
-    <div class="ant-table-filter-dropdown">
-      <div class="px-2 py-2 grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          nz-input
-          oninput="this.value = this.value"
-          placeholder="Name"
-          class="col-span-2"
-          #descriptionFilterInput
-        />
-        <button
-          nz-button
-          nzSize="small"
-          nzType="primary"
-          class="search-button"
-        >
-          Search
-        </button>
-        <button
-          nz-button
-          nzSize="small"
-        >
-          Reset
-        </button>
-      </div>
-    </div>
-  </nz-dropdown-menu>
-  <ng-template #footer>
-    <label
-      nz-checkbox
-      >Include Inactive</label
-    >
-  </ng-template>
+  <button nz-button (click)="temp()">Test</button>
 </div>

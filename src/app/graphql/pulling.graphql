@@ -1,3 +1,10 @@
+query fetchProductTypes {
+    fetchProductTypes {
+        _id
+        ProductType
+        Description
+    }
+}
 query fetchUserList {
     fetchUserList {
         _id

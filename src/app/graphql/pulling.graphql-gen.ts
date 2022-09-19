@@ -859,6 +859,13 @@ export type ProductCode = {
   _id: Scalars['Int'];
 };
 
+export type ProductType = {
+  __typename?: 'ProductType';
+  Description?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ProdunctInfoFromMerp = {
   __typename?: 'ProdunctInfoFromMerp';
   ExternalKey?: Maybe<Scalars['String']>;
@@ -883,6 +890,7 @@ export type Query = {
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserList?: Maybe<Array<Maybe<User>>>;
   fetchUsersForZone?: Maybe<Array<Maybe<User>>>;
@@ -1633,6 +1641,11 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type FetchProductTypesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchProductTypesQuery = { __typename?: 'Query', fetchProductTypes?: Array<{ __typename?: 'ProductType', _id?: number | null, ProductType?: string | null, Description?: string | null } | null> | null };
+
 export type FetchUserListQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
@@ -1689,6 +1702,26 @@ export type DeleteUserZoneMutationVariables = Types.Exact<{
 
 export type DeleteUserZoneMutation = { __typename?: 'Mutation', deleteUserZone?: { __typename?: 'Zone', _id?: number | null } | null };
 
+export const FetchProductTypesDocument = gql`
+    query fetchProductTypes {
+  fetchProductTypes {
+    _id
+    ProductType
+    Description
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchProductTypesGQL extends Apollo.Query<FetchProductTypesQuery, FetchProductTypesQueryVariables> {
+    document = FetchProductTypesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const FetchUserListDocument = gql`
     query fetchUserList {
   fetchUserList {

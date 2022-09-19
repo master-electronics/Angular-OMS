@@ -859,6 +859,13 @@ export type ProductCode = {
   _id: Scalars['Int'];
 };
 
+export type ProductType = {
+  __typename?: 'ProductType';
+  Description?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ProdunctInfoFromMerp = {
   __typename?: 'ProdunctInfoFromMerp';
   ExternalKey?: Maybe<Scalars['String']>;
@@ -883,6 +890,7 @@ export type Query = {
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserList?: Maybe<Array<Maybe<User>>>;
   fetchUsersForZone?: Maybe<Array<Maybe<User>>>;

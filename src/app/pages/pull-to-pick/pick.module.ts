@@ -19,6 +19,7 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzRadioModule } from "ng-zorro-antd/radio";
+import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
@@ -61,6 +62,7 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     NzDropDownModule,
     NzRadioModule,
     DragDropModule,
+    NzCheckboxModule,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],
