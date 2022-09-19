@@ -6,7 +6,7 @@ import {
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 import { ActivatedRoute } from '@angular/router';
 
@@ -20,7 +20,7 @@ export class EventLogComponent implements OnInit {
   startDate;
   endDate;
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private commonService: CommonService,
     private route: ActivatedRoute,
     private fetchUser: FetchUserInfoGQL,
@@ -92,7 +92,7 @@ export class EventLogComponent implements OnInit {
       limit = null;
     }
     if (this.startDate) {
-      limit = null;
+      limit = 500;
     }
     this.isLoading = true;
     this.fetchTable$ = this.fetchEventLog

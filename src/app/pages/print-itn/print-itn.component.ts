@@ -7,7 +7,11 @@ import {
   ElementRef,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { of, Subscription, throwError } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
@@ -32,8 +36,8 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
   alertMessage = '';
   currentStation: string;
 
-  ITNForm = new FormGroup({
-    ITN: new FormControl('', [
+  ITNForm = new UntypedFormGroup({
+    ITN: new UntypedFormControl('', [
       Validators.required,
       Validators.pattern(ITNBarcodeRegex),
     ]),

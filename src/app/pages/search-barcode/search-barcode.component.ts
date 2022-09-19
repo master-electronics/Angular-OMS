@@ -1,5 +1,9 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormControl,
+  Validators,
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 
 import { CommonService } from '../../shared/services/common.service';
@@ -35,7 +39,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private titleService: Title,
     private searchContainer: FindContainerForSearchBarcodeGQL,
     private searchITN: FindItNforSearchBarcodeGQL,
@@ -49,7 +53,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
     barcode: ['', [Validators.required, this.regex]],
   });
 
-  regex(input: FormControl): { regex: { valid: boolean } } {
+  regex(input: UntypedFormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
       ToteBarcodeRegex.test(input.value) ||
       OrderBarcodeRegex.test(input.value) ||

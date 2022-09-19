@@ -905,6 +905,7 @@ export type Query = {
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findInventory?: Maybe<Inventory>;
   findInventorys?: Maybe<Array<Maybe<Inventory>>>;
+  findLocalErrorLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Order>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
@@ -1056,6 +1057,13 @@ export type QueryFindInventoryArgs = {
 export type QueryFindInventorysArgs = {
   Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindLocalErrorLogsArgs = {
+  Date: Scalars['String'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 

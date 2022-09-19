@@ -9,8 +9,8 @@ import {
 import { Title } from '@angular/platform-browser';
 import {
   AbstractControl,
-  FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -38,8 +38,8 @@ export class AggregationInComponent
   alertMessage = '';
   query$ = new Observable();
 
-  containerForm = new FormGroup({
-    containerNumber: new FormControl('', [
+  containerForm = new UntypedFormGroup({
+    containerNumber: new UntypedFormControl('', [
       Validators.required,
       Validators.pattern(ToteBarcodeRegex),
     ]),
@@ -119,8 +119,7 @@ export class AggregationInComponent
               return (
                 line.ORDERLINEDETAILs[0].OrderID ===
                   arr[0].ORDERLINEDETAILs[0].OrderID &&
-                line.ORDERLINEDETAILs[0].StatusID ===
-                  arr[0].ORDERLINEDETAILs[0].StatusID
+                [60, 63].includes(line.ORDERLINEDETAILs[0].StatusID)
               );
             })
           )

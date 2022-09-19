@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-md-6"></div>
+</div>
+<br />
+
+<mwl-day-view-scheduler
+  [viewDate]="viewDate"
+  [events]="events"
+  [users]="users"
+  (eventTimesChanged)="eventTimesChanged($event)"
+  (userChanged)="userChanged($event)"
+>
+</mwl-day-view-scheduler>

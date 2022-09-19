@@ -5,7 +5,11 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  UntypedFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -45,7 +49,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,

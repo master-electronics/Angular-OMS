@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchOrderTasktimeGQL } from '../../../graphql/tableViews.graphql-gen';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 import { map } from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ export class OrderTasktimeComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private fetchTable: FetchOrderTasktimeGQL
   ) {
     this.commonService.changeNavbar('Task Counting');

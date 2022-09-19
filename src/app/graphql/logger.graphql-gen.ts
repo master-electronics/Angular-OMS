@@ -300,7 +300,6 @@ export type Mutation = {
   deleteOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
-  deleteUserZone?: Maybe<Zone>;
   deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
@@ -315,7 +314,6 @@ export type Mutation = {
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
-  insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
@@ -449,12 +447,6 @@ export type MutationDeleteProductFromMerpArgs = {
 };
 
 
-export type MutationDeleteUserZoneArgs = {
-  UserID?: InputMaybe<Scalars['Int']>;
-  ZoneID?: InputMaybe<Scalars['Int']>;
-};
-
-
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
@@ -535,12 +527,6 @@ export type MutationInsertPrinterArgs = {
 
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
-};
-
-
-export type MutationInsertUserZoneArgs = {
-  UserID?: InputMaybe<Scalars['Int']>;
-  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -859,13 +845,6 @@ export type ProductCode = {
   _id: Scalars['Int'];
 };
 
-export type ProductType = {
-  __typename?: 'ProductType';
-  Description?: Maybe<Scalars['String']>;
-  ProductType?: Maybe<Scalars['String']>;
-  _id?: Maybe<Scalars['Int']>;
-};
-
 export type ProdunctInfoFromMerp = {
   __typename?: 'ProdunctInfoFromMerp';
   ExternalKey?: Maybe<Scalars['String']>;
@@ -890,14 +869,9 @@ export type Query = {
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
-  fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
-  fetchUserList?: Maybe<Array<Maybe<User>>>;
-  fetchUsersForZone?: Maybe<Array<Maybe<User>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
-  fetchZoneList?: Maybe<Array<Maybe<Zone>>>;
-  fetchZonesForUser?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
@@ -916,11 +890,9 @@ export type Query = {
   findOrders?: Maybe<Array<Maybe<Order>>>;
   findProduct?: Maybe<Product>;
   findProducts?: Maybe<Array<Maybe<Product>>>;
-  findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<UserInfo>;
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
-  findUsers?: Maybe<Array<Maybe<User>>>;
 };
 
 
@@ -1005,21 +977,6 @@ export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
-};
-
-
-export type QueryFetchUsersForZoneArgs = {
-  ZoneID?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryFetchZoneListArgs = {
-  DistributionCenter?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryFetchZonesForUserArgs = {
-  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1125,11 +1082,6 @@ export type QueryFindProductsArgs = {
 };
 
 
-export type QueryFindUserArgs = {
-  User?: InputMaybe<SearchUser>;
-};
-
-
 export type QueryFindUserEventLogsArgs = {
   Module?: InputMaybe<Scalars['Int']>;
   UserEventLog: SearchUserEventLog;
@@ -1150,11 +1102,6 @@ export type QueryFindUserInfosArgs = {
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
-export type QueryFindUsersArgs = {
-  Name?: InputMaybe<Scalars['String']>;
-};
-
 export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
@@ -1166,21 +1113,6 @@ export type ShipmentMethod = {
   PriorityPinkPaper: Scalars['Boolean'];
   ShippingMethod: Scalars['String'];
   _id: Scalars['String'];
-};
-
-export type User = {
-  __typename?: 'User';
-  CartID?: Maybe<Scalars['Int']>;
-  CartLastUpdated?: Maybe<Scalars['String']>;
-  DateCreated?: Maybe<Scalars['String']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Equipment?: Maybe<Scalars['String']>;
-  Name?: Maybe<Scalars['String']>;
-  PriorityCutoff?: Maybe<Scalars['Int']>;
-  PullerLevel?: Maybe<Scalars['Int']>;
-  StrictPriority?: Maybe<Scalars['Int']>;
-  ZoneCount?: Maybe<Scalars['Int']>;
-  _id?: Maybe<Scalars['Int']>;
 };
 
 export type UserEvent = {
@@ -1241,20 +1173,6 @@ export type WmsStatusView = {
   Line_Total: Scalars['Int'];
   Status: Scalars['String'];
   StatusID: Scalars['Int'];
-};
-
-export type Zone = {
-  __typename?: 'Zone';
-  CustAPulls?: Maybe<Scalars['Int']>;
-  Description?: Maybe<Scalars['String']>;
-  DistributionCenter?: Maybe<Scalars['String']>;
-  Equipment?: Maybe<Scalars['String']>;
-  PriorityPulls?: Maybe<Scalars['Int']>;
-  PullCount?: Maybe<Scalars['Int']>;
-  PullsStarted?: Maybe<Scalars['Int']>;
-  Type?: Maybe<Scalars['String']>;
-  Zone?: Maybe<Scalars['Int']>;
-  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Entity = {
@@ -1514,11 +1432,6 @@ export type SearchProduct = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-export type SearchUser = {
-  Name?: InputMaybe<Scalars['String']>;
-  _id?: InputMaybe<Scalars['Int']>;
-};
-
 export type SearchUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
@@ -1649,136 +1562,24 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchPrinterListQueryVariables = Types.Exact<{
-  includeInactive?: Types.InputMaybe<Types.Scalars['Boolean']>;
+export type FetchLocalLogsQueryVariables = Types.Exact<{
+  Date: Types.Scalars['String'];
 }>;
 
 
-export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, DPI?: number | null } | null> | null };
+export type FetchLocalLogsQuery = { __typename?: 'Query', findLocalErrorLogs?: Array<string | null> | null };
 
-export type InsertPrinterMutationVariables = Types.Exact<{
-  name?: Types.InputMaybe<Types.Scalars['String']>;
-  description?: Types.InputMaybe<Types.Scalars['String']>;
-  orientation?: Types.InputMaybe<Types.Scalars['String']>;
-  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
-  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
-}>;
-
-
-export type InsertPrinterMutation = { __typename?: 'Mutation', insertPrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
-
-export type UpdatePrinterMutationVariables = Types.Exact<{
-  _id: Types.Scalars['Int'];
-  name?: Types.InputMaybe<Types.Scalars['String']>;
-  description?: Types.InputMaybe<Types.Scalars['String']>;
-  orientation?: Types.InputMaybe<Types.Scalars['String']>;
-  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
-  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
-}>;
-
-
-export type UpdatePrinterMutation = { __typename?: 'Mutation', updatePrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
-
-export type DeletePrinterMutationVariables = Types.Exact<{
-  _id: Types.Scalars['Int'];
-}>;
-
-
-export type DeletePrinterMutation = { __typename?: 'Mutation', deletePrinter?: { __typename?: 'Printer', _id?: number | null } | null };
-
-export const FetchPrinterListDocument = gql`
-    query fetchPrinterList($includeInactive: Boolean) {
-  fetchPrinterList(includeInactive: $includeInactive) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-    DPI
-  }
+export const FetchLocalLogsDocument = gql`
+    query fetchLocalLogs($Date: String!) {
+  findLocalErrorLogs(Date: $Date)
 }
     `;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchPrinterListGQL extends Apollo.Query<FetchPrinterListQuery, FetchPrinterListQueryVariables> {
-    document = FetchPrinterListDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const InsertPrinterDocument = gql`
-    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
-  insertPrinter(
-    Name: $name
-    Description: $description
-    Orientation: $orientation
-    Active: $active
-    DPI: $dpi
-  ) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class InsertPrinterGQL extends Apollo.Mutation<InsertPrinterMutation, InsertPrinterMutationVariables> {
-    document = InsertPrinterDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdatePrinterDocument = gql`
-    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
-  updatePrinter(
-    _id: $_id
-    Name: $name
-    Description: $description
-    Orientation: $orientation
-    Active: $active
-    DPI: $dpi
-  ) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdatePrinterGQL extends Apollo.Mutation<UpdatePrinterMutation, UpdatePrinterMutationVariables> {
-    document = UpdatePrinterDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const DeletePrinterDocument = gql`
-    mutation deletePrinter($_id: Int!) {
-  deletePrinter(_id: $_id) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class DeletePrinterGQL extends Apollo.Mutation<DeletePrinterMutation, DeletePrinterMutationVariables> {
-    document = DeletePrinterDocument;
+  export class FetchLocalLogsGQL extends Apollo.Query<FetchLocalLogsQuery, FetchLocalLogsQueryVariables> {
+    document = FetchLocalLogsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

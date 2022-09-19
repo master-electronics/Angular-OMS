@@ -1,0 +1,291 @@
+<div class="cal-week-view" role="grid">
+  <div class="cal-day-headers" role="row">
+    <div
+      class="cal-header"
+      *ngFor="let user of users; trackBy: trackByUserId"
+      tabindex="0"
+      role="columnheader"
+    >
+      <b>{{ user.name }}</b>
+    </div>
+  </div>
+  <div
+    class="cal-time-events"
+    mwlDroppable
+    (dragEnter)="dragEnter('time')"
+    (dragLeave)="dragLeave('time')"
+  >
+    <div class="cal-time-label-column" *ngIf="view.hourColumns.length > 0">
+      <div
+        *ngFor="
+          let hour of view.hourColumns[0].hours;
+          trackBy: trackByHour;
+          let odd = odd
+        "
+        class="cal-hour"
+        [class.cal-hour-odd]="odd"
+      >
+        <mwl-calendar-week-view-hour-segment
+          *ngFor="let segment of hour.segments; trackBy: trackByHourSegment"
+          [style.height.px]="hourSegmentHeight"
+          [segment]="segment"
+          [segmentHeight]="hourSegmentHeight"
+          [locale]="locale"
+          [customTemplate]="hourSegmentTemplate"
+          [isTimeLabel]="true"
+        >
+        </mwl-calendar-week-view-hour-segment>
+      </div>
+    </div>
+    <div
+      class="cal-day-columns"
+      [class.cal-resize-active]="timeEventResizes.size > 0"
+      #dayColumns
+    >
+      <div
+        class="cal-day-column"
+        *ngFor="let column of view.hourColumns; trackBy: trackByHourColumn"
+      >
+        <mwl-calendar-week-view-current-time-marker
+          [columnDate]="column.date"
+          [dayStartHour]="dayStartHour"
+          [dayStartMinute]="dayStartMinute"
+          [dayEndHour]="dayEndHour"
+          [dayEndMinute]="dayEndMinute"
+          [hourSegments]="hourSegments"
+          [hourSegmentHeight]="hourSegmentHeight"
+          [customTemplate]="currentTimeMarkerTemplate"
+        ></mwl-calendar-week-view-current-time-marker>
+        <div
+          *ngFor="let timeEvent of column.events; trackBy: trackByWeekTimeEvent"
+          #event
+          class="cal-event-container"
+          [class.cal-draggable]="
+            timeEvent.event.draggable && timeEventResizes.size === 0
+          "
+          [class.cal-starts-within-day]="!timeEvent.startsBeforeDay"
+          [class.cal-ends-within-day]="!timeEvent.endsAfterDay"
+          [ngClass]="timeEvent.event.cssClass"
+          [hidden]="timeEvent.height === 0 && timeEvent.width === 0"
+          [style.top.px]="timeEvent.top"
+          [style.height.px]="timeEvent.height"
+          [style.left.%]="timeEvent.left"
+          [style.width.%]="timeEvent.width"
+          mwlResizable
+          [resizeSnapGrid]="{
+            left: dayColumnWidth,
+            right: dayColumnWidth,
+            top: eventSnapSize || hourSegmentHeight,
+            bottom: eventSnapSize || hourSegmentHeight
+          }"
+          [validateResize]="validateResize"
+          [allowNegativeResizes]="true"
+          (resizeStart)="timeEventResizeStarted(dayColumns, timeEvent, $event)"
+          (resizing)="timeEventResizing(timeEvent, $event)"
+          (resizeEnd)="timeEventResizeEnded(timeEvent)"
+          mwlDraggable
+          dragActiveClass="cal-drag-active"
+          [dropData]="{ event: timeEvent.event, calendarId: calendarId }"
+          [dragAxis]="{
+            x: timeEvent.event.draggable && timeEventResizes.size === 0,
+            y: timeEvent.event.draggable && timeEventResizes.size === 0
+          }"
+          [dragSnapGrid]="
+            snapDraggedEvents
+              ? { x: dayColumnWidth, y: eventSnapSize || hourSegmentHeight }
+              : {}
+          "
+          [ghostDragEnabled]="!snapDraggedEvents"
+          [validateDrag]="validateDrag"
+          (dragStart)="dragStarted(dayColumns, event, timeEvent, true)"
+          (dragging)="dragMove(timeEvent, $event)"
+          (dragEnd)="dragEnded(timeEvent, $event, dayColumnWidth, true)"
+        >
+          <div
+            class="cal-resize-handle cal-resize-handle-before-start"
+            *ngIf="
+              timeEvent.event?.resizable?.beforeStart &&
+              !timeEvent.startsBeforeDay
+            "
+            mwlResizeHandle
+            [resizeEdges]="{
+              left: true,
+              top: true
+            }"
+          ></div>
+          <mwl-calendar-week-view-event
+            [locale]="locale"
+            [weekEvent]="timeEvent"
+            [tooltipPlacement]="tooltipPlacement"
+            [tooltipTemplate]="tooltipTemplate"
+            [tooltipAppendToBody]="tooltipAppendToBody"
+            [tooltipDisabled]="dragActive || timeEventResizes.size > 0"
+            [tooltipDelay]="tooltipDelay"
+            [customTemplate]="eventTemplate"
+            [eventTitleTemplate]="eventTitleTemplate"
+            [eventActionsTemplate]="eventActionsTemplate"
+            [column]="column"
+            (eventClicked)="
+              eventClicked.emit({
+                event: timeEvent.event,
+                sourceEvent: $event.sourceEvent
+              })
+            "
+          >
+          </mwl-calendar-week-view-event>
+          <div
+            class="cal-resize-handle cal-resize-handle-after-end"
+            *ngIf="
+              timeEvent.event?.resizable?.afterEnd && !timeEvent.endsAfterDay
+            "
+            mwlResizeHandle
+            [resizeEdges]="{
+              right: true,
+              bottom: true
+            }"
+          ></div>
+        </div>
+
+        <div
+          *ngFor="let hour of column.hours; trackBy: trackByHour; let odd = odd"
+          class="cal-hour"
+          [class.cal-hour-odd]="odd"
+        >
+          <mwl-calendar-week-view-hour-segment
+            *ngFor="let segment of hour.segments; trackBy: trackByHourSegment"
+            [style.height.px]="hourSegmentHeight"
+            [segment]="segment"
+            [segmentHeight]="hourSegmentHeight"
+            [locale]="locale"
+            [customTemplate]="hourSegmentTemplate"
+            (mwlClick)="
+              hourSegmentClicked.emit({
+                date: segment.date,
+                sourceEvent: $event
+              })
+            "
+            [clickListenerDisabled]="hourSegmentClicked.observers.length === 0"
+            mwlDroppable
+            [dragOverClass]="
+              !dragActive || !snapDraggedEvents ? 'cal-drag-over' : null
+            "
+            dragActiveClass="cal-drag-active"
+            (drop)="eventDropped($event, segment.date, false)"
+          >
+          </mwl-calendar-week-view-hour-segment>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br /><br /><br />
+
+<h3>
+  Edit events
+  <button class="btn btn-primary float-end" (click)="addEvent()">
+    Add new
+  </button>
+  <div class="clearfix"></div>
+</h3>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Primary color</th>
+        <th>Secondary + text color</th>
+        <th>Starts at</th>
+        <th>Ends at</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let event of events">
+        <td>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="event.title"
+            (keyup)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.primary"
+            (change)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.secondary"
+            (change)="refresh.next()"
+          />
+          <input
+            type="color"
+            [ngModel]="event.color.secondaryText ?? '#1e90ff'"
+            (ngModelChange)="event.color.secondaryText = $event"
+            (change)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="text"
+            mwlFlatpickr
+            [(ngModel)]="event.start"
+            (ngModelChange)="refresh.next()"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="text"
+            mwlFlatpickr
+            [(ngModel)]="event.end"
+            (ngModelChange)="refresh.next()"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+          />
+        </td>
+        <td>
+          <button class="btn btn-danger" (click)="deleteEvent(event)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title">Event action occurred</h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      Action:
+      <pre>{{ modalData?.action }}</pre>
+    </div>
+    <div>
+      Event:
+      <pre>{{ modalData?.event | json }}</pre>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      OK
+    </button>
+  </div>
+</ng-template>

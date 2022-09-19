@@ -2,21 +2,16 @@
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="6">
-        <nz-form-label nzRequired> Module </nz-form-label>
-        <nz-form-control>
+        <nz-form-label nzRequired> Log Level </nz-form-label>
+        <nz-form-control nzHasFeedback>
           <nz-select
             nzShowSearch
             nzAllowClear
-            nzPlaceHolder="Select a module"
-            formControlName="module"
+            nzPlaceHolder=""
+            formControlName="errorLevel"
           >
-            <nz-option nzLabel="Ag In" nzValue="1"></nz-option>
-            <nz-option nzLabel="Ag Out" nzValue="100"></nz-option>
-            <nz-option nzLabel="QC" nzValue="200"></nz-option>
-            <nz-option nzLabel="Pick" nzValue="300"></nz-option>
-            <nz-option nzLabel="Drop Off" nzValue="500"></nz-option>
-            <nz-option nzLabel="Release" nzValue="600"></nz-option>
-            <nz-option nzLabel="Packing" nzValue="800"></nz-option>
+            <nz-option nzLabel="Error" nzValue="Error"></nz-option>
+            <nz-option nzLabel="Info" nzValue="Info"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -38,7 +33,6 @@
           Search
         </button>
         <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
-        <button nz-button (click)="exportexcel()">Save</button>
       </div>
     </div>
   </form>
@@ -46,33 +40,32 @@
   <nz-table
     id="excel-table"
     #table
-    [nzPageSize]="50"
+    [nzFrontPagination]="false"
+    [nzLoading]="isLoading"
     [nzPageSizeOptions]="[50, 100, 200]"
     nzShowSizeChanger
-    [nzData]="fetchTable$ | async"
+    [nzData]="fetchData$ | async"
   >
     <thead>
       <tr>
-        <th *ngFor="let column of listOfColumn" [nzSortFn]="column.compare">
-          {{ column.title }}
-        </th>
+        <th nzColumnKey="query">Query</th>
+        <th nzColumnKey="variables">Variables</th>
+        <th nzColumnKey="response">Response</th>
+        <th nzColumnKey="timestamp">Timestamp</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of table.data">
         <td>
-          <a
-            [routerLink]="['/tableviews/eventlog']"
-            [queryParams]="{
-              UserName: data.User
-            }"
-            >{{ data.User }}</a
-          >
+          {{ data.message.query }}
         </td>
         <td>
-          {{ data.total }}
+          {{ data.message.variables }}
         </td>
-        <td *ngFor="let task of data.taskCounter">{{ task }}</td>
+        <td>
+          {{ data.message.response[0].message }}
+        </td>
+        <td>{{ data.timestamp }}</td>
       </tr>
     </tbody>
   </nz-table>

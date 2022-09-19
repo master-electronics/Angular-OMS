@@ -5,7 +5,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ToteBarcodeRegex } from '../../../shared/dataRegex';
@@ -35,7 +35,7 @@ export class VerifyToteComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _router: Router,
     private _titleService: Title,
     private _commonService: CommonService,

@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription, throwError } from 'rxjs';
 
@@ -99,7 +99,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription = new Subscription();
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private commonService: CommonService,
     private titleService: Title,

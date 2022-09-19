@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormBuilder,
-  FormControl,
+  UntypedFormBuilder,
+  UntypedFormControl,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -60,7 +60,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   alertType = 'error';
   isLastLine = false;
 
-  regex(input: FormControl): { regex: { valid: boolean } } {
+  regex(input: UntypedFormControl): { regex: { valid: boolean } } {
     return AggregationShelfBarcodeRegex.test(input.value) ||
       ToteBarcodeRegex.test(input.value) ||
       input.value === ''
@@ -81,7 +81,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _commonService: CommonService,
     private _titleService: Title,
     private _router: Router,

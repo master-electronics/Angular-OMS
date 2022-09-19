@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import {
   ApolloModule,
   APOLLO_NAMED_OPTIONS,
@@ -46,6 +46,7 @@ registerLocaleData(en);
 
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
@@ -81,6 +82,7 @@ import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
     NzAlertModule,
     NzFormModule,
     NzCardModule,
+    NgbModule,
   ],
 
   providers: [

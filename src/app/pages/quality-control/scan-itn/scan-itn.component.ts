@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
@@ -32,7 +32,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   itemInfo: itemParams;
   private subscription = new Subscription();
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
