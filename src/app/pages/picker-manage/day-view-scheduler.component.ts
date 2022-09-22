@@ -17,22 +17,27 @@ import {
   DateAdapter,
   getWeekViewPeriod,
 } from 'angular-calendar';
+import { WeekViewHourSegment } from 'calendar-utils';
+
+import { startOfDay, addDays, addHours, addMinutes, endOfWeek } from 'date-fns';
 import {
   WeekView,
   GetWeekViewArgs,
   WeekViewTimeEvent,
   EventColor,
   CalendarEvent,
-  WeekViewAllDayEventRow,
   WeekViewAllDayEvent,
 } from 'calendar-utils';
 import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
-import { Subject } from 'rxjs';
+import { finalize, fromEvent, Subject, takeUntil } from 'rxjs';
+import { User, users } from './picker-manage.server';
 
-export interface User {
-  id: number;
-  name: string;
-  color: EventColor;
+function ceilToNearest(amount: number, precision: number) {
+  return Math.ceil(amount / precision) * precision;
+}
+
+function floorToNearest(amount: number, precision: number) {
+  return Math.floor(amount / precision) * precision;
 }
 
 interface DayViewScheduler extends WeekView {
@@ -91,6 +96,8 @@ export class DayViewSchedulerComponent
   @Input() users: User[] = [];
 
   @Output() userChanged = new EventEmitter();
+
+  dragToCreateActive = false;
 
   view: DayViewScheduler;
 
@@ -173,8 +180,33 @@ export class DayViewSchedulerComponent
 
   refresh = new Subject<void>();
 
+  private refreshPage() {
+    this.events = [...this.events];
+    this.cdr.detectChanges();
+  }
+
   addEvent(): void {
-    //
+    this.events = [
+      ...this.events,
+      {
+        title: 'New event',
+        start: addHours(startOfDay(new Date()), 1),
+        end: startOfDay(new Date()),
+        color: {
+          primary: '#ad2121',
+          secondary: '#FAE3E3',
+        },
+        meta: {
+          user: users[0],
+          Point: 3,
+        },
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
+        },
+      },
+    ];
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
