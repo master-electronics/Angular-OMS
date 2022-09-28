@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { CommonService } from '../../../shared/services/common.service';
+import { CommonService } from '../../shared/services/common.service';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import {
   FetchItnLifecycleGQL,
