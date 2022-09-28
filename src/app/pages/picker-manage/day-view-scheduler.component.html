@@ -172,71 +172,61 @@
 <br /><br /><br />
 <h3>
   Edit events
-  <button class="btn btn-primary float-end" (click)="addEvent()">
-    Add new
+  <button nz-button type="submit" nzType="primary" (click)="addEvent()">
+    Update
   </button>
-  <div class="clearfix"></div>
+  <button nz-button type="submit" (click)="addEvent()">Add new</button>
+  <div></div>
 </h3>
-<div class="table-responsive">
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Point</th>
-        <th>Starts at</th>
-        <th>Ends at</th>
-        <th>Remove</th>
-      </tr>
-    </thead>
 
-    <tbody>
-      <tr *ngFor="let event of events">
-        <td>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="event.title"
-            (keyup)="refresh.next()"
-          />
-        </td>
-        <td>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="event.meta.Point"
-            (keyup)="refresh.next()"
-          />
-        </td>
-        <td>
-          <input
-            class="form-control"
-            type="text"
-            mwlFlatpickr
-            [(ngModel)]="event.start"
-            (ngModelChange)="refresh.next()"
-            dateFormat="Y-m-dTH:i"
-            altFormat="F j, Y H:i"
-            placeholder="Not set"
-          />
-        </td>
-        <td>
-          <input
-            class="form-control"
-            type="text"
-            mwlFlatpickr
-            [(ngModel)]="event.end"
-            (ngModelChange)="refresh.next()"
-            dateFormat="Y-m-dTH:i"
-            altFormat="F j, Y H:i"
-            placeholder="Not set"
-          />
-        </td>
-        <td>
-          <button class="btn btn-danger" (click)="deleteEvent(event)">
-            Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<nz-table #table [nzData]="events">
+  <thead>
+    <tr>
+      <th>Points</th>
+      <th>Type</th>
+      <th>Starts at</th>
+      <th>Ends at</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let event of table.data">
+      <td>
+        <input type="text" [(ngModel)]="event.title" (keyup)="refresh.next()" />
+      </td>
+      <td>
+        <input
+          type="text"
+          [(ngModel)]="event.meta.Type"
+          (keyup)="refresh.next()"
+        />
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.start"
+          (ngModelChange)="refresh.next()"
+          dateFormat="Y-m-dTH:i"
+          altFormat="F j, Y H:i"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.end"
+          (ngModelChange)="refresh.next()"
+          dateFormat="Y-m-dTH:i"
+          altFormat="F j, Y H:i"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <button (click)="deleteEvent(event)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

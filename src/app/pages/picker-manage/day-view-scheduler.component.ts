@@ -198,7 +198,7 @@ export class DayViewSchedulerComponent
         },
         meta: {
           user: users[0],
-          Point: 3,
+          Type: 'Test 1',
         },
         draggable: true,
         resizable: {

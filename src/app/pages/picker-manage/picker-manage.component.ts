@@ -24,7 +24,7 @@ export class PickerManageComponent {
       end: addHours(startOfDay(new Date()), 7),
       meta: {
         user: users[0],
-        Point: 3,
+        Type: 'Test 2',
       },
       resizable: {
         beforeStart: true,
@@ -38,7 +38,7 @@ export class PickerManageComponent {
       start: addHours(startOfDay(new Date()), 2),
       meta: {
         user: users[1],
-        Point: 4,
+        Type: 'Test 1',
       },
       resizable: {
         beforeStart: true,
@@ -52,7 +52,7 @@ export class PickerManageComponent {
       start: addHours(startOfDay(new Date()), 7),
       meta: {
         user: users[0],
-        Point: 3,
+        Type: 'Test 2',
       },
       resizable: {
         beforeStart: true,
