@@ -46,7 +46,6 @@ registerLocaleData(en);
 
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
@@ -82,7 +81,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NzAlertModule,
     NzFormModule,
     NzCardModule,
-    NgbModule,
   ],
 
   providers: [
