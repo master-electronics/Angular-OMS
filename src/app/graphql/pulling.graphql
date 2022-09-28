@@ -5,8 +5,8 @@ query fetchProductTypes {
         Description
     }
 }
-query fetchUserList {
-    fetchUserList {
+query fetchUserList($distributionCenter: String) {
+    fetchUserList(DistributionCenter: $distributionCenter) {
         _id
         Name
         DateCreated
@@ -20,8 +20,8 @@ query fetchUserList {
     }
 }
 
-query findUser($userInfo: searchUser) {
-    findUser(User: $userInfo) {
+query findUser($userInfo: searchUser, $distributionCenter: String) {
+    findUser(User: $userInfo, DistributionCenter: $distributionCenter) {
         _id
         Name
         DateCreated
@@ -36,8 +36,8 @@ query findUser($userInfo: searchUser) {
     }
 }
 
-query findUsers($name: String) {
-    findUsers(Name: $name) {
+query findUsers($name: String, $distributionCenter: String) {
+    findUsers(Name: $name, DistributionCenter: $distributionCenter) {
         _id
         Name
         DateCreated
@@ -80,6 +80,12 @@ query fetchZonesForUser($userID: Int) {
         Zone
         Description
         Equipment
+    }
+}
+
+query fetchDistributionCenterList {
+    fetchDistributionCenterList {
+        DistributionCenter
     }
 }
 

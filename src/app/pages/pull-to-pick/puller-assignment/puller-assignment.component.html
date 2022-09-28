@@ -1,11 +1,12 @@
 <div class="px-4 py-4">
     <div nz-row nzGutter="8" nzJustify="start">
-      <div nz-col nzSpan="7">
+      <div nz-col nzSpan="2">
         <nz-select
           nzPlaceHolder="Warehouse"
+          style="width: 100%"
           [nzOptions]="dcOptions"
           [(ngModel)]="selectedDistributionCenter"
-          (ngModelChange)="loadZones()"
+          (ngModelChange)="distributionCenterOnChange()"
           ></nz-select>
       </div>
     </div>
@@ -55,7 +56,6 @@
                 #userListTable
                 [nzData]="userTableData"
                 nzBordered cdkDropList
-                [cdkDropListConnectedTo]="[zoneDropList]"
                 [nzShowPagination]="false"
                 [nzFrontPagination]="false"
                 [nzScroll]="{ y: screenHeight }"
@@ -86,8 +86,10 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let data of userListTable.data" 
-                      cdkDrag  (cdkDragStarted)="test2()"
-                      (mousedown)="selectUser(data.userID, data.equipment)"
+                      cdkDrag
+                      (mousedown)="selectUser(data.userID, data.userName, data.equipment)"
+                      (cdkDragMoved)="dragMove($event)"
+                      style="cursor: pointer;" (cdkDragEnded)="dragEnd($event)"
                     >
                         <td [ngClass]="data.class"
                           >
@@ -126,14 +128,16 @@
                 [nzData]="zoneTableData"
                 nzBordered cdkDropList
                 #zoneDropList="cdkDropList"
-                cdkDropList
-                (cdkDropListDropped)="test($event)"
+                (cdkDropListDropped)="onDrop($event)"
+                [nzShowPagination]="false"
+                [nzFrontPagination]="false"
+                [nzScroll]="{ y: screenHeight }"
             >
                 <thead>
                     <tr>
-                        <th style="width: 55px"></th>
+                        <th [nzWidth]="'55px'"></th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter style="width: 65px" [nzSortFn]="zoneNumberSortFn"
+                          nzCustomFilter [nzWidth]="'95px'" [nzSortFn]="zoneNumberSortFn"
                         >
                             Zone
                             <nz-filter-trigger [nzDropdownMenu]="zoneNumberFilterTemplate"
@@ -145,11 +149,11 @@
                             <nz-dropdown-menu #zoneNumberFilterTemplate="nzDropdownMenu">
                               <div class="ant-table-filter-dropdown">
                                 <div class="px-2 py-2 grid grid-cols-2 gap-2">
-                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneNumberFilterSelected($event)">
+                                  <nz-checkbox-wrapper class="col-span-2">
                                     <div *ngFor="let option of zoneFilters" nz-row>
                                       <div nz-col nzSpan="2">
                                         <label nz-checkbox nzValue="{{ option.value }}"
-                                          [ngModel]="option.checked"
+                                          [ngModel]="option.checked" (ngModelChange)="zoneNumberFilterChange($event, option.value)"
                                         >{{ option.text }}</label>
                                       </div>
                                     </div>
@@ -168,7 +172,7 @@
                             </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter style="width: 65px" [nzSortFn]="zoneTypeSortFn"
+                          nzCustomFilter [nzWidth]="'125px'" [nzSortFn]="zoneTypeSortFn"
                         >
                             Type
                             <nz-filter-trigger [nzDropdownMenu]="zoneTypeFilterTemplate"
@@ -180,11 +184,11 @@
                             <nz-dropdown-menu #zoneTypeFilterTemplate="nzDropdownMenu">
                               <div class="ant-table-filter-dropdown">
                                 <div class="px-2 py-2 grid grid-cols-2 gap-2">
-                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneTypeFilterSelected($event)">
+                                  <nz-checkbox-wrapper class="col-span-2">
                                     <div *ngFor="let option of zoneTypeFilters" nz-row>
                                       <div nz-col nzSpan="2">
                                         <label nz-checkbox nzValue="{{ option.value }}"
-                                          [ngModel]="option.checked"
+                                          [ngModel]="option.checked" (ngModelChange)="zoneTypeFilterChange($event, option.value)"
                                         >{{ option.text }}</label>
                                       </div>
                                     </div>
@@ -203,7 +207,7 @@
                             </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                         nzCustomFilter style="width: 110px" [nzSortFn]="zoneNumPullsSortFn">
+                         nzCustomFilter [nzWidth]="'110px'" [nzSortFn]="zoneNumPullsSortFn">
                             # Pulls
                             <nz-filter-trigger [nzDropdownMenu]="numPullsFilter"
                               [nzActive]="(numPullsFilterOptions[0] > 0 || numPullsFilterOptions[1] < 100)"
@@ -230,7 +234,7 @@
                           </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter style="width: 175px" [nzSortFn]="zonePullsStartedSortFn">
+                          nzCustomFilter [nzWidth]="'175px'" [nzSortFn]="zonePullsStartedSortFn">
                             # w/Pulls Started
                             <nz-filter-trigger [nzDropdownMenu]="pullsStartedFilter"
                               [nzActive]="(zonePullsStartedFilterOptions[0] > 0 || zonePullsStartedFilterOptions[1] < 100)"
@@ -257,7 +261,7 @@
                             </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter style="width: 165px" [nzSortFn]="zonePriorityPullsSortFn">
+                          nzCustomFilter [nzWidth]="'165px'" [nzSortFn]="zonePriorityPullsSortFn">
                             # Priority Pulls
                             <nz-filter-trigger [nzDropdownMenu]="priorityPullsFilter"
                               [nzActive]="(zonePriorityPullsFilterOptions[0] > 0 || zonePriorityPullsFilterOptions[1] < 100)"
@@ -284,7 +288,7 @@
                             </nz-dropdown-menu>
                         </th>
                         <th [nzSortOrder]="null" [nzSortDirections]="['ascend', 'descend']"
-                          nzCustomFilter style="width: 155px" [nzSortFn]="zoneCustAPullsSortFn">
+                          nzCustomFilter [nzWidth]="'155px'" [nzSortFn]="zoneCustAPullsSortFn">
                             # Pulls A Cust
                             <nz-filter-trigger [nzDropdownMenu]="pullsACustFilter"
                               [nzActive]="(zonePullsACustFilterOptions[0] > 0 || zonePullsACustFilterOptions[1] < 100)"
@@ -322,11 +326,11 @@
                             <nz-dropdown-menu #zoneEquipmentFilterTemplate="nzDropdownMenu">
                               <div class="ant-table-filter-dropdown">
                                 <div class="px-2 py-2 grid grid-cols-2 gap-2">
-                                  <nz-checkbox-wrapper class="col-span-2" (nzOnChange)="zoneEquipmentFilterSelected($event)">
+                                  <nz-checkbox-wrapper class="col-span-2">
                                     <div *ngFor="let option of zoneEquipmentFilters" nz-row>
                                       <div nz-col nzSpan="2">
                                         <label nz-checkbox nzValue="{{ option.value }}"
-                                          [ngModel]="option.checked"
+                                          [ngModel]="option.checked" (ngModelChange)="zoneEquipmentFilterChange($event, option.value)"
                                         >{{ option.text }}</label>
                                       </div>
                                     </div>
@@ -348,15 +352,15 @@
                 </thead>
                 <tbody>
                   <ng-container *ngFor="let data of zoneListTable.data">
-                      <tr cdkDrag cdkDragDisabled>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''" [nzExpand]="expandSet.has(data._id)" (nzExpandChange)="onExpandChange(data._id, $event)"></td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.zone }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.type }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.pullCount }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.pullsStarted }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.priorityPulls }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.custAPulls }}</td>
-                          <td [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.equipment }}</td>
+                      <tr cdkDrag cdkDragDisabled dropzone="true" id="{{ data._id + 'tr' }}">
+                          <td id="{{ data._id + 'td1' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''" [nzExpand]="expandSet.has(data._id)" (nzExpandChange)="onExpandChange(data._id, $event)"></td>
+                          <td id="{{ data._id + 'td2' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.zone }}</td>
+                          <td id="{{ data._id + 'td3' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.type }}</td>
+                          <td id="{{ data._id + 'td4' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.pullCount }}</td>
+                          <td id="{{ data._id + 'td5' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.pullsStarted }}</td>
+                          <td id="{{ data._id + 'td6' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.priorityPulls }}</td>
+                          <td id="{{ data._id + 'td7' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.custAPulls }}</td>
+                          <td id="{{ data._id + 'td8' }}" dropzone="true" [ngClass]="(selectedUserZones.has(data._id))?'assigned':''">{{ data.equipment }}</td>
                       </tr>
                       <tr [nzExpand]="expandSet.has(data._id)">
                         <td style="width: 20px"></td>
@@ -375,5 +379,4 @@
             </nz-table>
           </div>
     </div>
-  <button nz-button (click)="temp()">Test</button>
 </div>

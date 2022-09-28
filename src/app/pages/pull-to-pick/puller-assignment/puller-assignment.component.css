@@ -54,9 +54,13 @@
   }
 
   .selected {
-    background-color: yellow !important;
+    background-color: #ffff99!important;
   }
 
   .assigned {
-    background-color: green !important;
+    background-color: #8cd98c !important;
+  }
+
+  .droppable {
+    background-color: #b3e6ff !important;
   }

@@ -65,6 +65,11 @@ export type DcProduct = {
   _id: Scalars['Int'];
 };
 
+export type DistributionCenter = {
+  __typename?: 'DistributionCenter';
+  DistributionCenter?: Maybe<Scalars['String']>;
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   Name: Scalars['String'];
@@ -877,6 +882,7 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
@@ -905,6 +911,7 @@ export type Query = {
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findInventory?: Maybe<Inventory>;
   findInventorys?: Maybe<Array<Maybe<Inventory>>>;
+  findLocalErrorLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Order>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
@@ -1007,6 +1014,11 @@ export type QueryFetchTaskCounterArgs = {
 };
 
 
+export type QueryFetchUserListArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFetchUsersForZoneArgs = {
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
@@ -1056,6 +1068,13 @@ export type QueryFindInventoryArgs = {
 export type QueryFindInventorysArgs = {
   Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindLocalErrorLogsArgs = {
+  Date: Scalars['String'];
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1118,6 +1137,7 @@ export type QueryFindProductsArgs = {
 
 
 export type QueryFindUserArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   User?: InputMaybe<SearchUser>;
 };
 
@@ -1144,6 +1164,7 @@ export type QueryFindUserInfosArgs = {
 
 
 export type QueryFindUsersArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
 };
 
@@ -1646,13 +1667,16 @@ export type FetchProductTypesQueryVariables = Types.Exact<{ [key: string]: never
 
 export type FetchProductTypesQuery = { __typename?: 'Query', fetchProductTypes?: Array<{ __typename?: 'ProductType', _id?: number | null, ProductType?: string | null, Description?: string | null } | null> | null };
 
-export type FetchUserListQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type FetchUserListQueryVariables = Types.Exact<{
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
 
 
 export type FetchUserListQuery = { __typename?: 'Query', fetchUserList?: Array<{ __typename?: 'User', _id?: number | null, Name?: string | null, DateCreated?: string | null, StrictPriority?: number | null, PriorityCutoff?: number | null, CartLastUpdated?: string | null, PullerLevel?: number | null, DistributionCenter?: string | null, Equipment?: string | null, ZoneCount?: number | null } | null> | null };
 
 export type FindUserQueryVariables = Types.Exact<{
   userInfo?: Types.InputMaybe<Types.SearchUser>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -1660,6 +1684,7 @@ export type FindUserQuery = { __typename?: 'Query', findUser?: { __typename?: 'U
 
 export type FindUsersQueryVariables = Types.Exact<{
   name?: Types.InputMaybe<Types.Scalars['String']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -1685,6 +1710,11 @@ export type FetchZonesForUserQueryVariables = Types.Exact<{
 
 
 export type FetchZonesForUserQuery = { __typename?: 'Query', fetchZonesForUser?: Array<{ __typename?: 'Zone', _id?: number | null, DistributionCenter?: string | null, Zone?: number | null, Description?: string | null, Equipment?: string | null } | null> | null };
+
+export type FetchDistributionCenterListQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchDistributionCenterListQuery = { __typename?: 'Query', fetchDistributionCenterList?: Array<{ __typename?: 'DistributionCenter', DistributionCenter?: string | null } | null> | null };
 
 export type InsertUserZoneMutationVariables = Types.Exact<{
   userID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -1723,8 +1753,8 @@ export const FetchProductTypesDocument = gql`
     }
   }
 export const FetchUserListDocument = gql`
-    query fetchUserList {
-  fetchUserList {
+    query fetchUserList($distributionCenter: String) {
+  fetchUserList(DistributionCenter: $distributionCenter) {
     _id
     Name
     DateCreated
@@ -1750,8 +1780,8 @@ export const FetchUserListDocument = gql`
     }
   }
 export const FindUserDocument = gql`
-    query findUser($userInfo: searchUser) {
-  findUser(User: $userInfo) {
+    query findUser($userInfo: searchUser, $distributionCenter: String) {
+  findUser(User: $userInfo, DistributionCenter: $distributionCenter) {
     _id
     Name
     DateCreated
@@ -1778,8 +1808,8 @@ export const FindUserDocument = gql`
     }
   }
 export const FindUsersDocument = gql`
-    query findUsers($name: String) {
-  findUsers(Name: $name) {
+    query findUsers($name: String, $distributionCenter: String) {
+  findUsers(Name: $name, DistributionCenter: $distributionCenter) {
     _id
     Name
     DateCreated
@@ -1867,6 +1897,24 @@ export const FetchZonesForUserDocument = gql`
   })
   export class FetchZonesForUserGQL extends Apollo.Query<FetchZonesForUserQuery, FetchZonesForUserQueryVariables> {
     document = FetchZonesForUserDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchDistributionCenterListDocument = gql`
+    query fetchDistributionCenterList {
+  fetchDistributionCenterList {
+    DistributionCenter
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchDistributionCenterListGQL extends Apollo.Query<FetchDistributionCenterListQuery, FetchDistributionCenterListQueryVariables> {
+    document = FetchDistributionCenterListDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

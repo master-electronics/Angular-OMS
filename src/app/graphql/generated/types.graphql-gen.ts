@@ -60,6 +60,11 @@ export type DcProduct = {
   _id: Scalars['Int'];
 };
 
+export type DistributionCenter = {
+  __typename?: 'DistributionCenter';
+  DistributionCenter?: Maybe<Scalars['String']>;
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   Name: Scalars['String'];
@@ -872,6 +877,7 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
@@ -1003,6 +1009,11 @@ export type QueryFetchTaskCounterArgs = {
 };
 
 
+export type QueryFetchUserListArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFetchUsersForZoneArgs = {
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
@@ -1121,6 +1132,7 @@ export type QueryFindProductsArgs = {
 
 
 export type QueryFindUserArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   User?: InputMaybe<SearchUser>;
 };
 
@@ -1147,6 +1159,7 @@ export type QueryFindUserInfosArgs = {
 
 
 export type QueryFindUsersArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
 };
 

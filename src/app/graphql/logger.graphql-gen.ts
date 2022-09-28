@@ -65,6 +65,11 @@ export type DcProduct = {
   _id: Scalars['Int'];
 };
 
+export type DistributionCenter = {
+  __typename?: 'DistributionCenter';
+  DistributionCenter?: Maybe<Scalars['String']>;
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   Name: Scalars['String'];
@@ -300,6 +305,7 @@ export type Mutation = {
   deleteOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteUserZone?: Maybe<Zone>;
   deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
@@ -314,6 +320,7 @@ export type Mutation = {
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
@@ -447,6 +454,12 @@ export type MutationDeleteProductFromMerpArgs = {
 };
 
 
+export type MutationDeleteUserZoneArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
@@ -527,6 +540,12 @@ export type MutationInsertPrinterArgs = {
 
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
+};
+
+
+export type MutationInsertUserZoneArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
+  ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -845,6 +864,13 @@ export type ProductCode = {
   _id: Scalars['Int'];
 };
 
+export type ProductType = {
+  __typename?: 'ProductType';
+  Description?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ProdunctInfoFromMerp = {
   __typename?: 'ProdunctInfoFromMerp';
   ExternalKey?: Maybe<Scalars['String']>;
@@ -856,6 +882,7 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
@@ -869,9 +896,14 @@ export type Query = {
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
+  fetchUserList?: Maybe<Array<Maybe<User>>>;
+  fetchUsersForZone?: Maybe<Array<Maybe<User>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
+  fetchZoneList?: Maybe<Array<Maybe<Zone>>>;
+  fetchZonesForUser?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
@@ -890,9 +922,11 @@ export type Query = {
   findOrders?: Maybe<Array<Maybe<Order>>>;
   findProduct?: Maybe<Product>;
   findProducts?: Maybe<Array<Maybe<Product>>>;
+  findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<UserInfo>;
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
+  findUsers?: Maybe<Array<Maybe<User>>>;
 };
 
 
@@ -977,6 +1011,26 @@ export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
+};
+
+
+export type QueryFetchUserListArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFetchUsersForZoneArgs = {
+  ZoneID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchZoneListArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFetchZonesForUserArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1082,6 +1136,12 @@ export type QueryFindProductsArgs = {
 };
 
 
+export type QueryFindUserArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  User?: InputMaybe<SearchUser>;
+};
+
+
 export type QueryFindUserEventLogsArgs = {
   Module?: InputMaybe<Scalars['Int']>;
   UserEventLog: SearchUserEventLog;
@@ -1102,6 +1162,12 @@ export type QueryFindUserInfosArgs = {
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindUsersArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+};
+
 export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
@@ -1113,6 +1179,21 @@ export type ShipmentMethod = {
   PriorityPinkPaper: Scalars['Boolean'];
   ShippingMethod: Scalars['String'];
   _id: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  CartID?: Maybe<Scalars['Int']>;
+  CartLastUpdated?: Maybe<Scalars['String']>;
+  DateCreated?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Equipment?: Maybe<Scalars['String']>;
+  Name?: Maybe<Scalars['String']>;
+  PriorityCutoff?: Maybe<Scalars['Int']>;
+  PullerLevel?: Maybe<Scalars['Int']>;
+  StrictPriority?: Maybe<Scalars['Int']>;
+  ZoneCount?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type UserEvent = {
@@ -1173,6 +1254,20 @@ export type WmsStatusView = {
   Line_Total: Scalars['Int'];
   Status: Scalars['String'];
   StatusID: Scalars['Int'];
+};
+
+export type Zone = {
+  __typename?: 'Zone';
+  CustAPulls?: Maybe<Scalars['Int']>;
+  Description?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  Equipment?: Maybe<Scalars['String']>;
+  PriorityPulls?: Maybe<Scalars['Int']>;
+  PullCount?: Maybe<Scalars['Int']>;
+  PullsStarted?: Maybe<Scalars['Int']>;
+  Type?: Maybe<Scalars['String']>;
+  Zone?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Entity = {
@@ -1429,6 +1524,11 @@ export type SearchProduct = {
   PartNumber?: InputMaybe<Scalars['String']>;
   ProductCodeID?: InputMaybe<Scalars['Int']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchUser = {
+  Name?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
