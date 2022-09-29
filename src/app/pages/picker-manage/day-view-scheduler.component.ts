@@ -24,7 +24,6 @@ import {
   WeekView,
   GetWeekViewArgs,
   WeekViewTimeEvent,
-  EventColor,
   CalendarEvent,
   WeekViewAllDayEvent,
 } from 'calendar-utils';
@@ -94,12 +93,8 @@ export class DayViewSchedulerComponent
   dragToCreateActive = false;
 
   view: DayViewScheduler;
-  fetchEvents$;
-
   daysInWeek = 1;
-
   constructor(
-    private fetchEvent: FetchPickingCalendarSettingsGQL,
     protected cdr: ChangeDetectorRef,
     protected utils: DayViewSchedulerCalendarUtils,
     @Inject(LOCALE_ID) locale: string,
@@ -174,39 +169,9 @@ export class DayViewSchedulerComponent
     }
   }
 
-  refresh = new Subject<void>();
-
   private refreshPage() {
     this.events = [...this.events];
     this.cdr.detectChanges();
-  }
-
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: addHours(startOfDay(new Date()), 1),
-        end: addHours(startOfDay(new Date()), 2),
-        color: {
-          primary: '#ad2121',
-          secondary: '#FAE3E3',
-        },
-        meta: {
-          user: users[0],
-          Type: 'Test 1',
-        },
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
-  }
-
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
   }
 
   protected getWeekView(events: CalendarEvent[]) {

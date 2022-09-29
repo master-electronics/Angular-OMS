@@ -4,7 +4,7 @@ import {
   CalendarEventTimesChangedEvent,
 } from 'angular-calendar';
 import { addHours, startOfDay } from 'date-fns';
-import { map } from 'rxjs';
+import { map, Subject } from 'rxjs';
 import { FetchPickingCalendarSettingsGQL } from 'src/app/graphql/pick.graphql-gen';
 import { users } from './picker-manage.server';
 
@@ -65,5 +65,39 @@ export class EventTemplateComponent implements OnInit {
     event.color = newUser.color;
     event.meta.user = newUser;
     this.events = [...this.events];
+  }
+
+  refresh = new Subject<void>();
+
+  refreshCalendar() {
+    this.events = [...this.events];
+  }
+
+  addEvent(): void {
+    this.events = [
+      ...this.events,
+      {
+        title: 'New event',
+        start: addHours(startOfDay(new Date()), 1),
+        end: addHours(startOfDay(new Date()), 2),
+        color: {
+          primary: '#ad2121',
+          secondary: '#FAE3E3',
+        },
+        meta: {
+          user: users[0],
+          Type: 'Test 1',
+        },
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
+        },
+      },
+    ];
+  }
+
+  deleteEvent(eventToDelete: CalendarEvent) {
+    this.events = this.events.filter((event) => event !== eventToDelete);
   }
 }

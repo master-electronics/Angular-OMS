@@ -1,3 +1,73 @@
+<h3>
+  Edit events
+  <button nz-button type="submit" nzType="primary" (click)="addEvent()">
+    Update
+  </button>
+  <button nz-button type="submit" (click)="addEvent()">Add new</button>
+  <div></div>
+</h3>
+
+<nz-table #table [nzData]="events">
+  <thead>
+    <tr>
+      <th>Points</th>
+      <th>Type</th>
+      <th>Starts at</th>
+      <th>Ends at</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let event of table.data">
+      <td>
+        <input
+          type="number"
+          min="0"
+          max="10"
+          [(ngModel)]="event.title"
+          (keyup)="refresh.next()"
+        />
+        points
+      </td>
+      <td>
+        <nz-select
+          (ngModelChange)="refreshCalendar()"
+          [(ngModel)]="event.meta.user"
+        >
+          <nz-option [nzLabel]="users[0].name" [nzValue]="users[0]"></nz-option>
+          <nz-option [nzLabel]="users[1].name" [nzValue]="users[1]"></nz-option>
+          <nz-option [nzLabel]="users[2].name" [nzValue]="users[2]"></nz-option>
+          <nz-option [nzLabel]="users[3].name" [nzValue]="users[3]"></nz-option>
+          <nz-option [nzLabel]="users[4].name" [nzValue]="users[4]"></nz-option>
+          <nz-option [nzLabel]="users[5].name" [nzValue]="users[5]"></nz-option>
+        </nz-select>
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.start"
+          (ngModelChange)="refresh.next()"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.end"
+          (ngModelChange)="refresh.next()"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <button (click)="deleteEvent(event)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
 <mwl-day-view-scheduler
   *ngIf="fetch$ | async"
   [viewDate]="viewDate"

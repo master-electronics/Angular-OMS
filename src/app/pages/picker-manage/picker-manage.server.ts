@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { CalendarEvent } from 'angular-calendar';
 import { WeekView, GetWeekViewArgs, EventColor } from 'calendar-utils';
 
 export interface User {
@@ -59,11 +60,11 @@ export const users: User[] = [
 ];
 
 export class PickerManageService {
-  private _pickerCalendarEvents = new BehaviorSubject<boolean>(null);
-  public changepickerCalendarEvents(value: boolean): void {
+  private _pickerCalendarEvents = new BehaviorSubject<CalendarEvent[]>([]);
+  public changepickerCalendarEvents(value: CalendarEvent[]): void {
     this._pickerCalendarEvents.next(value);
   }
-  public get pickerCalendarEvents(): boolean {
+  public get pickerCalendarEvents(): CalendarEvent[] {
     return this._pickerCalendarEvents.value;
   }
 }
