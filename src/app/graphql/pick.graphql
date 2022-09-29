@@ -109,3 +109,11 @@ query findContainer($Container: searchContainer!) {
     _id
   }
 }
+
+query fetchPickingCalendarSettings {
+  fetchPickingCalendarSettings
+}
+
+mutation updatePickingCalendarSettings($events: [String]) {
+  updatePickingCalendarSettings(events: $events)
+}

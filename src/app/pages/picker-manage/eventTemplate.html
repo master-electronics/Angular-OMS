@@ -1,7 +1,9 @@
 <mwl-day-view-scheduler
+  *ngIf="fetch$ | async"
   [viewDate]="viewDate"
   [events]="events"
   [users]="users"
+  [hourSegments]="2"
   (eventTimesChanged)="eventTimesChanged($event)"
   (userChanged)="userChanged($event)"
 >

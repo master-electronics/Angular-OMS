@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PickerManageComponent } from './picker-manage.component';
+import { DayViewSchedulerComponent } from './day-view-scheduler.component';
+import { EventTemplateComponent } from './eventTemplate.component';
 
-const routes: Routes = [{ path: '', component: PickerManageComponent }];
+const routes: Routes = [{ path: '', component: EventTemplateComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

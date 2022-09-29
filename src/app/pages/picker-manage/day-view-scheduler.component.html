@@ -1,3 +1,67 @@
+<h3>
+  Edit events
+  <button nz-button type="submit" nzType="primary" (click)="addEvent()">
+    Update
+  </button>
+  <button nz-button type="submit" (click)="addEvent()">Add new</button>
+  <div></div>
+</h3>
+
+<nz-table #table [nzData]="events">
+  <thead>
+    <tr>
+      <th>Points</th>
+      <th>Type</th>
+      <th>Starts at</th>
+      <th>Ends at</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let event of table.data">
+      <td>
+        <input
+          type="number"
+          min="0"
+          max="10"
+          [(ngModel)]="event.title"
+          (keyup)="refresh.next()"
+        />
+        points
+      </td>
+      <td>
+        <input
+          type="text"
+          [(ngModel)]="event.meta.user.name"
+          (keyup)="refresh.next()"
+        />
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.start"
+          (ngModelChange)="refresh.next()"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <input
+          type="text"
+          mwlFlatpickr
+          [(ngModel)]="event.end"
+          (ngModelChange)="refresh.next()"
+          placeholder="Not set"
+        />
+      </td>
+      <td>
+        <button (click)="deleteEvent(event)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
 <div class="cal-week-view" role="grid">
   <div class="cal-day-headers" role="row">
     <div
@@ -168,65 +232,3 @@
     </div>
   </div>
 </div>
-
-<br /><br /><br />
-<h3>
-  Edit events
-  <button nz-button type="submit" nzType="primary" (click)="addEvent()">
-    Update
-  </button>
-  <button nz-button type="submit" (click)="addEvent()">Add new</button>
-  <div></div>
-</h3>
-
-<nz-table #table [nzData]="events">
-  <thead>
-    <tr>
-      <th>Points</th>
-      <th>Type</th>
-      <th>Starts at</th>
-      <th>Ends at</th>
-      <th>Remove</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr *ngFor="let event of table.data">
-      <td>
-        <input type="text" [(ngModel)]="event.title" (keyup)="refresh.next()" />
-      </td>
-      <td>
-        <input
-          type="text"
-          [(ngModel)]="event.meta.Type"
-          (keyup)="refresh.next()"
-        />
-      </td>
-      <td>
-        <input
-          type="text"
-          mwlFlatpickr
-          [(ngModel)]="event.start"
-          (ngModelChange)="refresh.next()"
-          dateFormat="Y-m-dTH:i"
-          altFormat="F j, Y H:i"
-          placeholder="Not set"
-        />
-      </td>
-      <td>
-        <input
-          type="text"
-          mwlFlatpickr
-          [(ngModel)]="event.end"
-          (ngModelChange)="refresh.next()"
-          dateFormat="Y-m-dTH:i"
-          altFormat="F j, Y H:i"
-          placeholder="Not set"
-        />
-      </td>
-      <td>
-        <button (click)="deleteEvent(event)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</nz-table>

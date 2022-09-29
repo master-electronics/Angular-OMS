@@ -5,9 +5,15 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -336,13 +342,13 @@ export type Mutation = {
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateValueMap?: Maybe<ValueMap>;
 };
-
 
 export type MutationChangeQcLineInfoArgs = {
   CountMethod: Scalars['String'];
@@ -352,57 +358,47 @@ export type MutationChangeQcLineInfoArgs = {
   ROHS: Scalars['String'];
 };
 
-
 export type MutationCleanContainerFromPrevOrderArgs = {
   ContainerID: Scalars['Int'];
   Inventory: UpdateInventory;
   OrderID: Scalars['Int'];
 };
 
-
 export type MutationClearItnUserDefaultTemplateArgs = {
   UserID: Scalars['Int'];
 };
-
 
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
 };
 
-
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
 };
-
 
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
-
 export type MutationDeleteCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
 };
-
 
 export type MutationDeleteItnLevelLimitArgs = {
   TemplateID: Scalars['Int'];
 };
 
-
 export type MutationDeleteItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationDeleteInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
 };
-
 
 export type MutationDeleteOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -411,20 +407,17 @@ export type MutationDeleteOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationDeleteOrderLineArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationDeleteOrderLineDetailArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationDeleteOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -435,59 +428,48 @@ export type MutationDeleteOrderLineDetailFromMerpArgs = {
   OrderNumber: Scalars['String'];
 };
 
-
 export type MutationDeletePrinterArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationDeleteProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
 
-
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationFindOrCreateOrderArgs = {
   Order: InsertOrder;
 };
 
-
 export type MutationFindOrCreateOrderLineArgs = {
   OrderLine: InsertOrderLine;
 };
-
 
 export type MutationFindOrCreateOrderLineDetailArgs = {
   OrderLineDetail: InsertOrderLineDetail;
 };
 
-
 export type MutationFindOrCreateProductArgs = {
   Product: InsertProduct;
 };
-
 
 export type MutationFindOrCreateUserContainerArgs = {
   Container: InsertContainer;
 };
 
-
 export type MutationFindOrCreateUserInfoArgs = {
   UserInfo: InsertUserInfo;
 };
-
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
 };
-
 
 export type MutationInsertItnLevelLimitArgs = {
   EventID?: InputMaybe<Scalars['Int']>;
@@ -497,16 +479,13 @@ export type MutationInsertItnLevelLimitArgs = {
   TemplateID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationInsertItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<InsertItnUserColumnsInfo>>;
 };
 
-
 export type MutationInsertItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<InsertItnUserLevelsInfo>>;
 };
-
 
 export type MutationInsertItnUserTemplateArgs = {
   DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
@@ -514,7 +493,6 @@ export type MutationInsertItnUserTemplateArgs = {
   TemplateName?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
@@ -524,11 +502,9 @@ export type MutationInsertPrinterArgs = {
   Orientation?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
 };
-
 
 export type MutationInsertValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -541,19 +517,16 @@ export type MutationInsertValueMapArgs = {
   TargetValue?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
 };
-
 
 export type MutationUpdateContainerArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
   Container: UpdateContainer;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateContainerListArgs = {
   BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -562,7 +535,6 @@ export type MutationUpdateContainerListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
-
 export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
@@ -570,12 +542,10 @@ export type MutationUpdateForContainerFromMerpArgs = {
   Zone?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdateForCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
   CustomerTier?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationUpdateForInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -591,7 +561,6 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -615,25 +584,21 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   detailQuantity: Scalars['Float'];
 };
 
-
 export type MutationUpdateForProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdateItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<UpdateItnUserColumnsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<UpdateItnUserLevelsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateItnUserTemplateArgs = {
   DefaultPagination?: InputMaybe<Scalars['Int']>;
@@ -643,7 +608,6 @@ export type MutationUpdateItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
 
-
 export type MutationUpdateInventoryArgs = {
   ContainerID?: InputMaybe<Scalars['Int']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -651,7 +615,6 @@ export type MutationUpdateInventoryArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateInventoryListArgs = {
   ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -661,7 +624,6 @@ export type MutationUpdateInventoryListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
-
 export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
@@ -669,11 +631,9 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdateMerpQcBinArgs = {
   ITN: Scalars['String'];
 };
-
 
 export type MutationUpdateMerpWmsLogArgs = {
   Action: Scalars['String'];
@@ -681,7 +641,6 @@ export type MutationUpdateMerpWmsLogArgs = {
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
 };
-
 
 export type MutationUpdateOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -691,11 +650,9 @@ export type MutationUpdateOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateOrderLineArgs = {
   OrderLine: UpdateOrderLine;
 };
-
 
 export type MutationUpdateOrderLineDetailArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
@@ -705,13 +662,15 @@ export type MutationUpdateOrderLineDetailArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateOrderLineDetailListArgs = {
   InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+export type MutationUpdatePickingCalendarSettingsArgs = {
+  events?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
 
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
@@ -722,25 +681,21 @@ export type MutationUpdatePrinterArgs = {
   _id: Scalars['Int'];
 };
 
-
 export type MutationUpdateUserCartArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
-
 
 export type MutationUpdateUserCartForDropOffArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
 
-
 export type MutationUpdateUserInfoArgs = {
   Name?: InputMaybe<Scalars['String']>;
   UserInfo: UpdateUserInfo;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -866,6 +821,7 @@ export type Query = {
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchPickingCalendarSettings?: Maybe<Scalars['String']>;
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
@@ -895,30 +851,25 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
 };
 
-
 export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFetchHoldOnCounterArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
 
-
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
-
 
 export type QueryFetchItnLifecycleDrillDownArgs = {
   inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
@@ -927,16 +878,13 @@ export type QueryFetchItnLifecycleDrillDownArgs = {
   orderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFetchOrderLineDetailforWmsCountArgs = {
   filter?: InputMaybe<SearchIntForWmsCount>;
 };
-
 
 export type QueryFetchOrderLineMessageArgs = {
   CustomerNumber: Scalars['String'];
@@ -945,33 +893,27 @@ export type QueryFetchOrderLineMessageArgs = {
   OrderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchOrderTasktimeArgs = {
   Order?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
 
-
 export type QueryFetchOrderViewArgs = {
   filter?: InputMaybe<OrderViewFilter>;
 };
-
 
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
 
-
 export type QueryFetchPrinterListArgs = {
   includeInactive?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type QueryFetchProductInfoFromMerpArgs = {
   ProductList: Array<InputMaybe<Scalars['String']>>;
 };
-
 
 export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
@@ -979,50 +921,41 @@ export type QueryFetchTaskCounterArgs = {
   startDate: Scalars['String'];
 };
 
-
 export type QueryFindContainerArgs = {
   Container?: InputMaybe<SearchContainer>;
 };
-
 
 export type QueryFindContainersArgs = {
   Container?: InputMaybe<SearchContainer>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindItnColumnsArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindItnTemplateArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindItnTemplatesArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindInventoryArgs = {
   Inventory: SearchInventory;
 };
-
 
 export type QueryFindInventorysArgs = {
   Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindLocalErrorLogsArgs = {
   Date: Scalars['String'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindNextItnForPullingArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
@@ -1031,56 +964,46 @@ export type QueryFindNextItnForPullingArgs = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindOrderArgs = {
   Order?: InputMaybe<SearchOrder>;
 };
-
 
 export type QueryFindOrderByStatusArgs = {
   PriorityPinkPaper?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
 };
 
-
 export type QueryFindOrderLineArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
 };
 
-
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
 };
-
 
 export type QueryFindOrderLineDetailsArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindOrderLinesArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
   limit?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindOrdersArgs = {
   Order?: InputMaybe<SearchOrder>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindProductArgs = {
   Product?: InputMaybe<SearchProduct>;
 };
-
 
 export type QueryFindProductsArgs = {
   Product?: InputMaybe<SearchProduct>;
   limit?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindUserEventLogsArgs = {
   Module?: InputMaybe<Scalars['Int']>;
@@ -1091,11 +1014,9 @@ export type QueryFindUserEventLogsArgs = {
   startDate?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFindUserInfoArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
 };
-
 
 export type QueryFindUserInfosArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
@@ -1566,8 +1487,18 @@ export type FetchPrinterListQueryVariables = Types.Exact<{
   includeInactive?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
-
-export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, DPI?: number | null } | null> | null };
+export type FetchPrinterListQuery = {
+  __typename?: 'Query';
+  fetchPrinterList?: Array<{
+    __typename?: 'Printer';
+    _id?: number | null;
+    Name?: string | null;
+    Description?: string | null;
+    Orientation?: string | null;
+    Active?: boolean | null;
+    DPI?: number | null;
+  } | null> | null;
+};
 
 export type InsertPrinterMutationVariables = Types.Exact<{
   name?: Types.InputMaybe<Types.Scalars['String']>;
@@ -1577,8 +1508,17 @@ export type InsertPrinterMutationVariables = Types.Exact<{
   dpi?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
-
-export type InsertPrinterMutation = { __typename?: 'Mutation', insertPrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
+export type InsertPrinterMutation = {
+  __typename?: 'Mutation';
+  insertPrinter?: {
+    __typename?: 'Printer';
+    _id?: number | null;
+    Name?: string | null;
+    Description?: string | null;
+    Orientation?: string | null;
+    Active?: boolean | null;
+  } | null;
+};
 
 export type UpdatePrinterMutationVariables = Types.Exact<{
   _id: Types.Scalars['Int'];
@@ -1589,111 +1529,147 @@ export type UpdatePrinterMutationVariables = Types.Exact<{
   dpi?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
-
-export type UpdatePrinterMutation = { __typename?: 'Mutation', updatePrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null } | null };
+export type UpdatePrinterMutation = {
+  __typename?: 'Mutation';
+  updatePrinter?: {
+    __typename?: 'Printer';
+    _id?: number | null;
+    Name?: string | null;
+    Description?: string | null;
+    Orientation?: string | null;
+    Active?: boolean | null;
+  } | null;
+};
 
 export type DeletePrinterMutationVariables = Types.Exact<{
   _id: Types.Scalars['Int'];
 }>;
 
-
-export type DeletePrinterMutation = { __typename?: 'Mutation', deletePrinter?: { __typename?: 'Printer', _id?: number | null } | null };
+export type DeletePrinterMutation = {
+  __typename?: 'Mutation';
+  deletePrinter?: { __typename?: 'Printer'; _id?: number | null } | null;
+};
 
 export const FetchPrinterListDocument = gql`
-    query fetchPrinterList($includeInactive: Boolean) {
-  fetchPrinterList(includeInactive: $includeInactive) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-    DPI
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchPrinterListGQL extends Apollo.Query<FetchPrinterListQuery, FetchPrinterListQueryVariables> {
-    document = FetchPrinterListDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  query fetchPrinterList($includeInactive: Boolean) {
+    fetchPrinterList(includeInactive: $includeInactive) {
+      _id
+      Name
+      Description
+      Orientation
+      Active
+      DPI
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPrinterListGQL extends Apollo.Query<
+  FetchPrinterListQuery,
+  FetchPrinterListQueryVariables
+> {
+  document = FetchPrinterListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const InsertPrinterDocument = gql`
-    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
-  insertPrinter(
-    Name: $name
-    Description: $description
-    Orientation: $orientation
-    Active: $active
-    DPI: $dpi
+  mutation insertPrinter(
+    $name: String
+    $description: String
+    $orientation: String
+    $active: Boolean
+    $dpi: Int
   ) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class InsertPrinterGQL extends Apollo.Mutation<InsertPrinterMutation, InsertPrinterMutationVariables> {
-    document = InsertPrinterDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    insertPrinter(
+      Name: $name
+      Description: $description
+      Orientation: $orientation
+      Active: $active
+      DPI: $dpi
+    ) {
+      _id
+      Name
+      Description
+      Orientation
+      Active
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class InsertPrinterGQL extends Apollo.Mutation<
+  InsertPrinterMutation,
+  InsertPrinterMutationVariables
+> {
+  document = InsertPrinterDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdatePrinterDocument = gql`
-    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int) {
-  updatePrinter(
-    _id: $_id
-    Name: $name
-    Description: $description
-    Orientation: $orientation
-    Active: $active
-    DPI: $dpi
+  mutation updatePrinter(
+    $_id: Int!
+    $name: String
+    $description: String
+    $orientation: String
+    $active: Boolean
+    $dpi: Int
   ) {
-    _id
-    Name
-    Description
-    Orientation
-    Active
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdatePrinterGQL extends Apollo.Mutation<UpdatePrinterMutation, UpdatePrinterMutationVariables> {
-    document = UpdatePrinterDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    updatePrinter(
+      _id: $_id
+      Name: $name
+      Description: $description
+      Orientation: $orientation
+      Active: $active
+      DPI: $dpi
+    ) {
+      _id
+      Name
+      Description
+      Orientation
+      Active
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdatePrinterGQL extends Apollo.Mutation<
+  UpdatePrinterMutation,
+  UpdatePrinterMutationVariables
+> {
+  document = UpdatePrinterDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const DeletePrinterDocument = gql`
-    mutation deletePrinter($_id: Int!) {
-  deletePrinter(_id: $_id) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class DeletePrinterGQL extends Apollo.Mutation<DeletePrinterMutation, DeletePrinterMutationVariables> {
-    document = DeletePrinterDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  mutation deletePrinter($_id: Int!) {
+    deletePrinter(_id: $_id) {
+      _id
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeletePrinterGQL extends Apollo.Mutation<
+  DeletePrinterMutation,
+  DeletePrinterMutationVariables
+> {
+  document = DeletePrinterDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

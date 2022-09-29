@@ -4,15 +4,20 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { PickerManageRoutingModule } from './picker-manage.routing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NzTableModule } from 'ng-zorro-antd/table';
 
-import { PickerManageComponent } from './picker-manage.component';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+
+import { EventTemplateComponent } from './eventTemplate.component';
 import { DayViewSchedulerComponent } from './day-view-scheduler.component';
 
 @NgModule({
-  declarations: [PickerManageComponent, DayViewSchedulerComponent],
+  declarations: [EventTemplateComponent, DayViewSchedulerComponent],
   imports: [
     NzTableModule,
+    NzSelectModule,
+    NzInputModule,
     CommonModule,
     FormsModule,
     PickerManageRoutingModule,
@@ -21,6 +26,6 @@ import { DayViewSchedulerComponent } from './day-view-scheduler.component';
       useFactory: adapterFactory,
     }),
   ],
-  bootstrap: [PickerManageComponent],
+  bootstrap: [EventTemplateComponent],
 })
 export class PickerManageModule {}

@@ -8,6 +8,7 @@ import {
   Input,
   LOCALE_ID,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -17,9 +18,8 @@ import {
   DateAdapter,
   getWeekViewPeriod,
 } from 'angular-calendar';
-import { WeekViewHourSegment } from 'calendar-utils';
 
-import { startOfDay, addDays, addHours, addMinutes, endOfWeek } from 'date-fns';
+import { startOfDay, addDays, addHours } from 'date-fns';
 import {
   WeekView,
   GetWeekViewArgs,
@@ -29,16 +29,10 @@ import {
   WeekViewAllDayEvent,
 } from 'calendar-utils';
 import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
-import { finalize, fromEvent, Subject, takeUntil } from 'rxjs';
+import { finalize, fromEvent, map, Subject, takeUntil } from 'rxjs';
 import { User, users } from './picker-manage.server';
 
-function ceilToNearest(amount: number, precision: number) {
-  return Math.ceil(amount / precision) * precision;
-}
-
-function floorToNearest(amount: number, precision: number) {
-  return Math.floor(amount / precision) * precision;
-}
+import { FetchPickingCalendarSettingsGQL } from '../../graphql/pick.graphql-gen';
 
 interface DayViewScheduler extends WeekView {
   users: User[];
@@ -100,10 +94,12 @@ export class DayViewSchedulerComponent
   dragToCreateActive = false;
 
   view: DayViewScheduler;
+  fetchEvents$;
 
   daysInWeek = 1;
 
   constructor(
+    private fetchEvent: FetchPickingCalendarSettingsGQL,
     protected cdr: ChangeDetectorRef,
     protected utils: DayViewSchedulerCalendarUtils,
     @Inject(LOCALE_ID) locale: string,
@@ -191,7 +187,7 @@ export class DayViewSchedulerComponent
       {
         title: 'New event',
         start: addHours(startOfDay(new Date()), 1),
-        end: startOfDay(new Date()),
+        end: addHours(startOfDay(new Date()), 2),
         color: {
           primary: '#ad2121',
           secondary: '#FAE3E3',
