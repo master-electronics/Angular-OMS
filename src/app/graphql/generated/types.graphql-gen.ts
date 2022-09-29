@@ -664,7 +664,7 @@ export type MutationUpdateOrderLineDetailListArgs = {
 };
 
 export type MutationUpdatePickingCalendarSettingsArgs = {
-  events?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  events?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationUpdatePrinterArgs = {

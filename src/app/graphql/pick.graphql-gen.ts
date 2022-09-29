@@ -669,7 +669,7 @@ export type MutationUpdateOrderLineDetailListArgs = {
 };
 
 export type MutationUpdatePickingCalendarSettingsArgs = {
-  events?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  events?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationUpdatePrinterArgs = {
@@ -1637,10 +1637,7 @@ export type FetchPickingCalendarSettingsQuery = {
 };
 
 export type UpdatePickingCalendarSettingsMutationVariables = Types.Exact<{
-  events?: Types.InputMaybe<
-    | Array<Types.InputMaybe<Types.Scalars['String']>>
-    | Types.InputMaybe<Types.Scalars['String']>
-  >;
+  events?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 export type UpdatePickingCalendarSettingsMutation = {
@@ -1930,7 +1927,7 @@ export class FetchPickingCalendarSettingsGQL extends Apollo.Query<
   }
 }
 export const UpdatePickingCalendarSettingsDocument = gql`
-  mutation updatePickingCalendarSettings($events: [String]) {
+  mutation updatePickingCalendarSettings($events: String) {
     updatePickingCalendarSettings(events: $events)
   }
 `;

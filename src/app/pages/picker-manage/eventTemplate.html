@@ -1,13 +1,4 @@
-<h3>
-  Edit events
-  <button nz-button type="submit" nzType="primary" (click)="addEvent()">
-    Update
-  </button>
-  <button nz-button type="submit" (click)="addEvent()">Add new</button>
-  <div></div>
-</h3>
-
-<nz-table #table [nzData]="events">
+<nz-table [nzShowPagination]="false" #table [nzData]="events">
   <thead>
     <tr>
       <th>Points</th>
@@ -35,39 +26,62 @@
           (ngModelChange)="refreshCalendar()"
           [(ngModel)]="event.meta.user"
         >
-          <nz-option [nzLabel]="users[0].name" [nzValue]="users[0]"></nz-option>
-          <nz-option [nzLabel]="users[1].name" [nzValue]="users[1]"></nz-option>
-          <nz-option [nzLabel]="users[2].name" [nzValue]="users[2]"></nz-option>
-          <nz-option [nzLabel]="users[3].name" [nzValue]="users[3]"></nz-option>
-          <nz-option [nzLabel]="users[4].name" [nzValue]="users[4]"></nz-option>
-          <nz-option [nzLabel]="users[5].name" [nzValue]="users[5]"></nz-option>
+          <nz-option
+            *ngFor="let user of users"
+            [nzLabel]="user.name"
+            [nzValue]="user"
+          ></nz-option>
         </nz-select>
       </td>
       <td>
-        <input
-          type="text"
-          mwlFlatpickr
+        <nz-time-picker
           [(ngModel)]="event.start"
-          (ngModelChange)="refresh.next()"
-          placeholder="Not set"
-        />
+          (ngModelChange)="refreshCalendar()"
+          nzFormat="HH:mm"
+        ></nz-time-picker>
       </td>
       <td>
-        <input
-          type="text"
-          mwlFlatpickr
+        <nz-time-picker
           [(ngModel)]="event.end"
-          (ngModelChange)="refresh.next()"
-          placeholder="Not set"
-        />
+          (ngModelChange)="refreshCalendar()"
+          nzFormat="HH:mm"
+        ></nz-time-picker>
       </td>
       <td>
-        <button (click)="deleteEvent(event)">Delete</button>
+        <button
+          nz-button
+          nzType="primary"
+          nzDanger
+          (click)="deleteEvent(event)"
+        >
+          Delete
+        </button>
       </td>
     </tr>
   </tbody>
 </nz-table>
-
+<!-- Button -->
+<button
+  class="mt-3 mb-3 ml-3"
+  nz-button
+  nzShape="round"
+  nzType="primary"
+  nzSize="large"
+  (click)="addEvent()"
+>
+  <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
+</button>
+<button
+  class="mt-3 mb-3 ml-3"
+  nz-button
+  nzShape="round"
+  nzSize="large"
+  [nzLoading]="isLoading"
+  (click)="upload()"
+>
+  <span nz-icon nzType="cloud-upload" nzTheme="outline"></span>
+</button>
+<!-- Calendar -->
 <mwl-day-view-scheduler
   *ngIf="fetch$ | async"
   [viewDate]="viewDate"
@@ -78,3 +92,4 @@
   (userChanged)="userChanged($event)"
 >
 </mwl-day-view-scheduler>
+<div *ngIf="uploadSetting$ | async"></div>

@@ -10,6 +10,8 @@ import {
   LogoutOutline,
   LockOutline,
   SearchOutline,
+  AppstoreAddOutline,
+  CloudUploadOutline,
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
@@ -21,6 +23,8 @@ const icons = [
   LogoutOutline,
   LockOutline,
   SearchOutline,
+  AppstoreAddOutline,
+  CloudUploadOutline,
 ];
 
 @NgModule({

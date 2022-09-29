@@ -3,9 +3,12 @@ import {
   CalendarEvent,
   CalendarEventTimesChangedEvent,
 } from 'angular-calendar';
-import { addHours, startOfDay } from 'date-fns';
-import { map, Subject } from 'rxjs';
-import { FetchPickingCalendarSettingsGQL } from 'src/app/graphql/pick.graphql-gen';
+import { addHours, addMinutes, startOfDay } from 'date-fns';
+import { catchError, map, Subject, tap } from 'rxjs';
+import {
+  FetchPickingCalendarSettingsGQL,
+  UpdatePickingCalendarSettingsGQL,
+} from 'src/app/graphql/pick.graphql-gen';
 import { users } from './picker-manage.server';
 
 @Component({
@@ -16,8 +19,12 @@ import { users } from './picker-manage.server';
 export class EventTemplateComponent implements OnInit {
   viewDate = new Date();
   users = users;
+  isLoading = false;
 
-  constructor(private fetchEvent: FetchPickingCalendarSettingsGQL) {}
+  constructor(
+    private fetchEvent: FetchPickingCalendarSettingsGQL,
+    private uploadSetting: UpdatePickingCalendarSettingsGQL
+  ) {}
   events: CalendarEvent[] = [];
 
   fetch$;
@@ -33,8 +40,14 @@ export class EventTemplateComponent implements OnInit {
           const event = {
             title: setting.point,
             color: users[setting.type].color,
-            start: addHours(startOfDay(new Date()), setting.start),
-            end: addHours(startOfDay(new Date()), setting.end),
+            start: addMinutes(
+              addHours(startOfDay(new Date()), setting.startHour),
+              setting.startMin
+            ),
+            end: addMinutes(
+              addHours(startOfDay(new Date()), setting.endHour),
+              setting.endMin
+            ),
             meta: {
               user: users[setting.type],
             },
@@ -78,12 +91,9 @@ export class EventTemplateComponent implements OnInit {
       ...this.events,
       {
         title: 'New event',
-        start: addHours(startOfDay(new Date()), 1),
-        end: addHours(startOfDay(new Date()), 2),
-        color: {
-          primary: '#ad2121',
-          secondary: '#FAE3E3',
-        },
+        start: addMinutes(addHours(startOfDay(new Date()), 0), 0),
+        end: addMinutes(addHours(startOfDay(new Date()), 1), 0),
+        color: users[0].color,
         meta: {
           user: users[0],
           Type: 'Test 1',
@@ -95,6 +105,35 @@ export class EventTemplateComponent implements OnInit {
         },
       },
     ];
+  }
+
+  uploadSetting$;
+  upload(): void {
+    if (!this.events.length) {
+      return;
+    }
+    this.isLoading = true;
+    let events = '';
+    this.events.forEach((res) => {
+      const obj = {};
+      obj['point'] = res.title;
+      obj['type'] = res.meta.user.id;
+      obj['startHour'] = res.start.getHours();
+      obj['startMin'] = res.start.getMinutes();
+      obj['endHour'] = res.end.getHours();
+      obj['endMin'] = res.end.getMinutes();
+      const setting = JSON.stringify(obj) + '\n';
+      events += setting;
+    });
+    this.uploadSetting$ = this.uploadSetting.mutate({ events }).pipe(
+      tap(() => {
+        this.isLoading = false;
+      }),
+      catchError((err) => {
+        this.isLoading = false;
+        return err;
+      })
+    );
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
