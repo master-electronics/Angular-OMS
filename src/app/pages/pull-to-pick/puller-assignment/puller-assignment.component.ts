@@ -42,9 +42,20 @@ export class PullerAssignmentComponent implements OnInit {
   zoneTableDataUser = [];
   zoneFilters = [];
   selectedZoneFilters = [];
+  zoneFilterTxt;
   zoneTypeFilters = [];
   selectedZoneTypeFilters = [];
   selectedZoneEquipmentFilters = [];
+  numUsersMinTxt;
+  numUsersMaxTxt;
+  zoneNumPullsMinTxt;
+  zoneNumPullsMaxTxt;
+  zonePullsStartedMinTxt;
+  zonePullsStartedMaxTxt;
+  zonePriorityPullsMinTxt;
+  zonePriorityPullsMaxTxt;
+  zonePullsACustMinTxt;
+  zonePullsACustMaxTxt;
   selectedNumPullsFilters = [];
   zoneEquipmentFilters = [];
   selectedUserID: number;
@@ -54,8 +65,6 @@ export class PullerAssignmentComponent implements OnInit {
   nameSearchTxt: string;
   dcOptions: { label: string; value: string }[];
   selectedDistributionCenter: string;
-  /***check if removing selectedDistributionCenterHold breaks anything */
-  selectedDistributionCenterHold: string;
   expandSet = new Set<number>();
   typeOptions: { label: string; value: string }[];
   priorityOptions: { label: string; value: string }[];
@@ -64,13 +73,9 @@ export class PullerAssignmentComponent implements OnInit {
   zonePriorityPullsFilterOptions = [];
   zonePullsACustFilterOptions = [];
   marks;
-  /***check if removing numPullsDisabled breaks anything */
-  numPullsDisabled: boolean;
-  //filters: { filterColumn: string; filterValue: string }[];
-  /***check if removing zoneFilterFn breaks anything */
-  zoneFilterFn: (list: string[], item: []) => boolean;
   zoneNumberFilterVisible: boolean;
   zoneTypeFilterVisible: boolean;
+  numUsersFilterVisible: boolean;
   zoneNumPullsFilterVisible: boolean;
   zonePullsStartedFilterVisible: boolean;
   zonePriorityPullsFilterVisible: boolean;
@@ -83,12 +88,9 @@ export class PullerAssignmentComponent implements OnInit {
   dropArea;
   holdClass;
 
-  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
-
-  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-
   private fetchUserListSubscription = new Subscription();
   private findUsersSubscription = new Subscription();
+  private getLoggedInUserSubscription = new Subscription();
   private fetchZoneListSubscription = new Subscription();
   private fetchZoneUsersSubscription = new Subscription();
   private fetchUserZonesSubscription = new Subscription();
@@ -110,19 +112,11 @@ export class PullerAssignmentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getLoggedInUser();
     this.screenHeight = window.innerHeight - 300 + 'px';
     this.screenWidth = '700px';
     this.loadProductTypes();
     this.selectedZoneTypeFilters = [];
-    this.zoneFilterFn = function (list: string[], item: []): boolean {
-      if (list.some((zone) => item['zone'].indexOf(zone) !== -1)) {
-        return true;
-      }
-
-      return false;
-    };
-
-    this.numPullsDisabled = true;
     this.numPullsFilterOptions = [0, 100];
     this.zonePullsStartedFilterOptions = [0, 100];
     this.zonePriorityPullsFilterOptions = [0, 100];
@@ -149,11 +143,6 @@ export class PullerAssignmentComponent implements OnInit {
           this.dcOptions = DCList;
         })
     );
-
-    // this.dcOptions = [
-    //   { label: 'PH', value: 'PH' },
-    //   { label: 'WI', value: 'WI' },
-    // ];
 
     this.priorityOptions = [
       { label: 'ALL', value: 'ALL' },
@@ -283,6 +272,24 @@ export class PullerAssignmentComponent implements OnInit {
     );
   }
 
+  numUsersSortFn(a: [], b: []): number {
+    if (
+      Number(a['users'] ? a['users'].length : 0) <
+      Number(b['users'] ? b['users'].length : 0)
+    ) {
+      return -1;
+    }
+
+    if (
+      Number(a['users'] ? a['users'].length : 0) ==
+      Number(b['users'] ? b['users'].length : 0)
+    ) {
+      return 0;
+    }
+
+    return 1;
+  }
+
   zoneNumPullsSortFn(a: [], b: []): number {
     if (
       Number(a['pullCount'] ? a['pullCount'] : 0) <
@@ -402,9 +409,8 @@ export class PullerAssignmentComponent implements OnInit {
     const data = [];
 
     this.zoneTableData.map((zone) => {
-      if (this.selectedZoneFilters.length > 0) {
-        const t = 'test';
-        if (this.selectedZoneFilters.includes(zone.zone.toString())) {
+      if (this.zoneFilterTxt) {
+        if (zone.zone.toString() == this.zoneFilterTxt.toString()) {
           data.push(zone);
         }
       } else {
@@ -417,20 +423,8 @@ export class PullerAssignmentComponent implements OnInit {
 
   zoneNumberFilterReset(): void {
     this.zoneNumberFilterVisible = false;
+    this.zoneFilterTxt = null;
 
-    const zoneFilters = [];
-
-    this.zoneFilters.map((filter) => {
-      zoneFilters.push({
-        text: filter.text,
-        value: filter.value,
-        checked: false,
-      });
-    });
-
-    this.zoneFilters = zoneFilters;
-
-    this.selectedZoneFilters = [];
     this.filterZones();
   }
 
@@ -507,6 +501,51 @@ export class PullerAssignmentComponent implements OnInit {
     this.zoneTypeFilters = typeFilters;
 
     this.selectedZoneTypeFilters = [];
+    this.filterZones();
+  }
+
+  zoneNumUsersFilter(): void {
+    this.numUsersFilterVisible = false;
+
+    const data = [];
+
+    this.zoneTableData.map((zone) => {
+      if (this.numUsersMinTxt || this.numUsersMaxTxt) {
+        let minDisplay = false;
+        let maxDisplay = false;
+
+        const ul: number = zone.users ? zone.users.length : 0;
+
+        if (
+          !this.numUsersMinTxt ||
+          (this.numUsersMinTxt && ul >= Number(this.numUsersMinTxt))
+        ) {
+          minDisplay = true;
+        }
+
+        if (
+          !this.numUsersMaxTxt ||
+          (this.numUsersMaxTxt && ul <= Number(this.numUsersMaxTxt))
+        ) {
+          maxDisplay = true;
+        }
+
+        if (minDisplay && maxDisplay) {
+          data.push(zone);
+        }
+      } else {
+        data.push(zone);
+      }
+    });
+
+    this.zoneTableData = data;
+  }
+
+  zoneNumUsersFilterReset(): void {
+    this.numUsersFilterVisible = false;
+    this.numUsersMinTxt = null;
+    this.numUsersMaxTxt = null;
+
     this.filterZones();
   }
 
@@ -596,11 +635,32 @@ export class PullerAssignmentComponent implements OnInit {
     this.zoneNumPullsFilterVisible = false;
 
     const data = [];
+
     this.zoneTableData.map((zone) => {
-      if (
-        zone['pullCount'] >= this.numPullsFilterOptions[0] &&
-        zone['pullCount'] <= this.numPullsFilterOptions[1]
-      ) {
+      if (this.zoneNumPullsMinTxt || this.zoneNumPullsMaxTxt) {
+        let minDisplay = false;
+        let maxDisplay = false;
+
+        if (
+          !this.zoneNumPullsMinTxt ||
+          (this.zoneNumPullsMinTxt &&
+            Number(zone['pullCount']) >= Number(this.zoneNumPullsMinTxt))
+        ) {
+          minDisplay = true;
+        }
+
+        if (
+          !this.zoneNumPullsMaxTxt ||
+          (this.zoneNumPullsMaxTxt &&
+            Number(zone['pullCount']) <= Number(this.zoneNumPullsMaxTxt))
+        ) {
+          maxDisplay = true;
+        }
+
+        if (minDisplay && maxDisplay) {
+          data.push(zone);
+        }
+      } else {
         data.push(zone);
       }
     });
@@ -610,7 +670,9 @@ export class PullerAssignmentComponent implements OnInit {
 
   zoneNumPullsFilterReset(): void {
     this.zoneNumPullsFilterVisible = false;
-    this.numPullsFilterOptions = [0, 100];
+    this.zoneNumPullsMinTxt = null;
+    this.zoneNumPullsMaxTxt = null;
+
     this.filterZones();
   }
 
@@ -620,10 +682,30 @@ export class PullerAssignmentComponent implements OnInit {
     const data = [];
 
     this.zoneTableData.map((zone) => {
-      if (
-        zone['pullsStarted'] >= this.zonePullsStartedFilterOptions[0] &&
-        zone['pullsStarted'] <= this.zonePullsStartedFilterOptions[1]
-      ) {
+      if (this.zonePullsStartedMinTxt || this.zonePullsStartedMaxTxt) {
+        let minDisplay = false;
+        let maxDisplay = false;
+
+        if (
+          !this.zonePullsStartedMinTxt ||
+          (this.zonePullsStartedMinTxt &&
+            Number(zone['pullsStarted']) >= Number(this.zonePullsStartedMinTxt))
+        ) {
+          minDisplay = true;
+        }
+
+        if (
+          !this.zonePullsStartedMaxTxt ||
+          (this.zonePullsStartedMaxTxt &&
+            Number(zone['pullsStarted']) <= Number(this.zonePullsStartedMaxTxt))
+        ) {
+          maxDisplay = true;
+        }
+
+        if (minDisplay && maxDisplay) {
+          data.push(zone);
+        }
+      } else {
         data.push(zone);
       }
     });
@@ -633,7 +715,9 @@ export class PullerAssignmentComponent implements OnInit {
 
   zonePullsStartedFilterReset(): void {
     this.zonePullsStartedFilterVisible = false;
-    this.zonePullsStartedFilterOptions = [0, 100];
+    this.zonePullsStartedMinTxt = null;
+    this.zonePullsStartedMaxTxt = null;
+
     this.filterZones();
   }
 
@@ -643,10 +727,32 @@ export class PullerAssignmentComponent implements OnInit {
     const data = [];
 
     this.zoneTableData.map((zone) => {
-      if (
-        zone['priorityPulls'] >= this.zonePriorityPullsFilterOptions[0] &&
-        zone['priorityPulls'] <= this.zonePriorityPullsFilterOptions[1]
-      ) {
+      if (this.zonePriorityPullsMinTxt || this.zonePriorityPullsMaxTxt) {
+        let minDisplay = false;
+        let maxDisplay = false;
+
+        if (
+          !this.zonePriorityPullsMinTxt ||
+          (this.zonePriorityPullsMinTxt &&
+            Number(zone['priorityPulls']) >=
+              Number(this.zonePriorityPullsMinTxt))
+        ) {
+          minDisplay = true;
+        }
+
+        if (
+          !this.zonePriorityPullsMaxTxt ||
+          (this.zonePriorityPullsMaxTxt &&
+            Number(zone['priorityPulls']) <=
+              Number(this.zonePriorityPullsMaxTxt))
+        ) {
+          maxDisplay = true;
+        }
+
+        if (minDisplay && maxDisplay) {
+          data.push(zone);
+        }
+      } else {
         data.push(zone);
       }
     });
@@ -656,7 +762,9 @@ export class PullerAssignmentComponent implements OnInit {
 
   zonePriorityPullsFilterReset(): void {
     this.zonePriorityPullsFilterVisible = false;
-    this.zonePriorityPullsFilterOptions = [0, 100];
+    this.zonePriorityPullsMinTxt = null;
+    this.zonePriorityPullsMaxTxt = null;
+
     this.filterZones();
   }
 
@@ -666,10 +774,30 @@ export class PullerAssignmentComponent implements OnInit {
     const data = [];
 
     this.zoneTableData.map((zone) => {
-      if (
-        zone['custAPulls'] >= this.zonePullsACustFilterOptions[0] &&
-        zone['custAPulls'] <= this.zonePullsACustFilterOptions[1]
-      ) {
+      if (this.zonePullsACustMinTxt || this.zonePullsACustMaxTxt) {
+        let minDisplay = false;
+        let maxDisplay = false;
+
+        if (
+          !this.zonePullsACustMinTxt ||
+          (this.zonePullsACustMinTxt &&
+            Number(zone['custAPulls']) >= Number(this.zonePullsACustMinTxt))
+        ) {
+          minDisplay = true;
+        }
+
+        if (
+          !this.zonePullsACustMaxTxt ||
+          (this.zonePullsACustMaxTxt &&
+            Number(zone['custAPulls']) <= Number(this.zonePullsACustMaxTxt))
+        ) {
+          maxDisplay = true;
+        }
+
+        if (minDisplay && maxDisplay) {
+          data.push(zone);
+        }
+      } else {
         data.push(zone);
       }
     });
@@ -679,7 +807,9 @@ export class PullerAssignmentComponent implements OnInit {
 
   zonePullsACustFilterReset(): void {
     this.zonePullsACustFilterVisible = false;
-    this.zonePullsACustFilterOptions = [0, 100];
+    this.zonePullsACustMinTxt = null;
+    this.zonePullsACustMaxTxt = null;
+
     this.filterZones();
   }
 
@@ -705,6 +835,7 @@ export class PullerAssignmentComponent implements OnInit {
 
     this.zoneNumberFilter();
     this.zoneTypeFilter();
+    this.zoneNumUsersFilter();
     this.zoneNumPullsFilter();
     this.zonePullsStartedFilter();
     this.zonePriorityPullsFilter();
@@ -759,6 +890,33 @@ export class PullerAssignmentComponent implements OnInit {
     this.filterZones();
   }
 
+  clearUserSelection(): void {
+    this.zoneTableData = this.zoneTableDataHold;
+    this.zoneTableDataUser = [];
+
+    this.selectedUserID = null;
+    this.selectedUserName = null;
+    this.selectedUserEquipment = null;
+
+    this.userTableData.map((user) => {
+      user.class = '';
+    });
+
+    this.selectedUserZones.clear();
+    this.filterZones();
+  }
+
+  clearAllFilters(): void {
+    this.zoneNumberFilterReset();
+    this.zoneTypeFilterReset();
+    this.zoneNumUsersFilterReset();
+    this.zoneNumPullsFilterReset();
+    this.zonePullsStartedFilterReset();
+    this.zonePriorityPullsFilterReset();
+    this.zonePullsACustFilterReset();
+    this.zoneEquipmentFilterReset();
+  }
+
   distributionCenterOnChange(): void {
     this.selectedUserID = null;
     this.selectedUserName = null;
@@ -775,7 +933,7 @@ export class PullerAssignmentComponent implements OnInit {
       return;
     }
 
-    if (this.nameSearchTxt.length > 2) {
+    if (this.nameSearchTxt.length > 0) {
       this.findUsers();
     } else {
       this.fetchUserList();
@@ -915,7 +1073,6 @@ export class PullerAssignmentComponent implements OnInit {
               ? this.zoneTableDataHold
               : this.zoneTableData;
 
-          this.selectedDistributionCenterHold = this.selectedDistributionCenter;
           this.zoneFilters = zoneFilters;
           this.zoneTypeFilters = zoneTypeFilters;
           this.zoneEquipmentFilters = zoneEquipmentFilters;
@@ -963,12 +1120,37 @@ export class PullerAssignmentComponent implements OnInit {
     this.zoneTableData = data;
   }
 
+  getLoggedInUser(): void {
+    this.getLoggedInUserSubscription.add(
+      this._findUsers
+        .fetch(
+          {
+            name: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          },
+          {
+            fetchPolicy: 'network-only',
+          }
+        )
+        .subscribe((res) => {
+          this.selectedDistributionCenter =
+            res.data.findUsers[0].DistributionCenter;
+
+          this.selectedUserID = null;
+          this.selectedUserName = null;
+          this.zoneTableDataHold = [];
+          this.loadUsers();
+          this.loadZones();
+        })
+    );
+  }
+
   findUsers(): void {
     this.findUsersSubscription.add(
       this._findUsers
         .fetch(
           {
             name: this.nameSearchTxt,
+            distributionCenter: this.selectedDistributionCenter,
           },
           {
             fetchPolicy: 'network-only',
@@ -1192,6 +1374,7 @@ export class PullerAssignmentComponent implements OnInit {
   ngOnDestroy(): void {
     this.fetchUserListSubscription.unsubscribe();
     this.findUsersSubscription.unsubscribe();
+    this.fetchDistributionCenterListSubscription.unsubscribe();
     this.fetchZoneListSubscription.unsubscribe();
     this.fetchZoneUsersSubscription.unsubscribe();
     this.fetchUserZonesSubscription.unsubscribe();
