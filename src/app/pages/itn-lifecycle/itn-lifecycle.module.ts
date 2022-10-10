@@ -23,29 +23,21 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
-import { TableViewsComponent } from './table-views.component';
-import { TableViewsRoutingModule } from './table-views.routing';
-import { EventLogComponent } from './event-log/event-log.component';
-import { HoldOnCounterComponent } from './hold-on-counter/hold-on-counter.component';
-import { WmsStatusComponent } from './wms-countby-status/wms-status.component';
-import { OrderListComponent } from './wms-countby-status/order-list.component';
-import { OrderViewComponent } from './order-view/order-view.component';
-import { ITNViewComponent } from './order-view/itn-view.component';
-import { TaskCounterComponent } from './task-counter/task-counter.component';
-import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
+import { ITNLifecycleComponent } from './itn-lifecycle.component';
+import { ColumnSelectorComponent } from './column-selector.component';
+import { LevelSelectorComponent } from './level-selector.component';
+import { LevelSliderComponent } from './level-slider.component';
+import { TabsViewComponent } from './tabs-view.component';
+import { TemplateSettings } from './template-settings.component';
 
 @NgModule({
   declarations: [
-    TableViewsComponent,
-    EventLogComponent,
-    HoldOnCounterComponent,
-    WmsStatusComponent,
-    OrderListComponent,
-    OrderViewComponent,
-    ITNViewComponent,
-    TaskCounterComponent,
-    OrderTasktimeComponent,
-    HoldOnCounterComponent,
+    ITNLifecycleComponent,
+    ColumnSelectorComponent,
+    LevelSelectorComponent,
+    LevelSliderComponent,
+    TabsViewComponent,
+    TemplateSettings,
   ],
   imports: [
     CommonModule,
@@ -53,7 +45,6 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     ReactiveFormsModule,
     SharedUtilityModule,
     SharedComponentModule,
-    TableViewsRoutingModule,
     NzInputModule,
     NzTableModule,
     NzDropDownModule,
@@ -72,6 +63,5 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     NzRadioModule,
     NzSpinModule,
   ],
-  bootstrap: [TableViewsComponent],
 })
-export class TableViewsModule {}
+export class ITNLifeCycleModule {}

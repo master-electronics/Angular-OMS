@@ -84,8 +84,8 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          if (res.data.findUserInfo.Zone === null)
-            throw 'User has no zone assigned!';
+          //if (res.data.findUserInfo.Zone === null)
+            //throw 'User has no zone assigned!';
 
           if (res.data.findUserInfo.StrictPriority === null)
             throw 'User has no Strict Priority assigned!';
@@ -96,7 +96,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
         map((res) => {
           this.isLoading = false;
           this._pickService.changePickSettings({
-            Zone: res.data.findUserInfo.Zone,
+            Zone: 1, //res.data.findUserInfo.Zone,
             StrictPriority: res.data.findUserInfo.StrictPriority,
             PriorityCutoff: res.data.findUserInfo.PriorityCutoff,
           });

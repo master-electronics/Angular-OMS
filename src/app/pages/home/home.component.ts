@@ -52,6 +52,12 @@ export class HomeComponent {
       highlight: 'M',
       end: 'aintenance',
     },
+    {
+      link: '/pulltopick/pullerassignment',
+      front: 'Puller ',
+      highlight: 'A',
+      end: 'ssignment',
+    },
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;

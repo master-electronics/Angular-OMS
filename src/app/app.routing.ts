@@ -54,6 +54,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'itnlifecycle',
+        loadChildren: () =>
+          import('./pages/itn-lifecycle/itn-lifecycle.module').then(
+            (m) => m.ITNLifeCycleModule
+          ),
+      },
+      {
         path: 'printitn',
         loadChildren: () =>
           import('./pages/print-itn/print-itn.module').then(
@@ -67,11 +74,11 @@ const routes: Routes = [
             (m) => m.ShelfInventoryModule
           ),
       },
-      // {
-      //   path: 'pulltopick',
-      //   loadChildren: () =>
-      //     import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
-      // },
+      {
+        path: 'pulltopick',
+        loadChildren: () =>
+          import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
+      },
       // {
       //   path: 'stocking',
       //   loadChildren: () =>

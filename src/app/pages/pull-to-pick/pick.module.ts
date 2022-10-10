@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 // Utiltiy Module
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
@@ -13,6 +14,12 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzRadioModule } from "ng-zorro-antd/radio";
+import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
@@ -22,6 +29,7 @@ import { SelectCartComponent } from './select-cart/select-cart.component';
 import { SelectLocationComponent } from './select-location/select-location.component';
 import { DropOffComponent } from './drop-off/drop-off.component';
 import { DetailAuthComponent } from './detail-auth/detail-auth.component';
+import { PullerAssignmentComponent } from './puller-assignment/puller-assignment.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +38,7 @@ import { DetailAuthComponent } from './detail-auth/detail-auth.component';
     PullITNComponent,
     DropOffComponent,
     DetailAuthComponent,
+    PullerAssignmentComponent,
   ],
   imports: [
     CommonModule,
@@ -47,6 +56,13 @@ import { DetailAuthComponent } from './detail-auth/detail-auth.component';
     NzSkeletonModule,
     NzDividerModule,
     IconsProviderModule,
+    NzSelectModule,
+    NzSliderModule,
+    NzTableModule,
+    NzDropDownModule,
+    NzRadioModule,
+    DragDropModule,
+    NzCheckboxModule,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],
