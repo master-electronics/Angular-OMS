@@ -6,6 +6,7 @@ import { SelectCartComponent } from './select-cart/select-cart.component';
 import { SelectLocationComponent } from './select-location/select-location.component';
 import { DropOffComponent } from './drop-off/drop-off.component';
 import { DetailAuthComponent } from './detail-auth/detail-auth.component';
+import { PullerAssignmentComponent } from './puller-assignment/puller-assignment.component';
 
 const routes: Routes = [
   { path: '', component: SelectCartComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'pullitn', component: PullITNComponent },
   { path: 'dropoff', component: DropOffComponent },
   { path: 'detailauth', component: DetailAuthComponent },
+  { path: 'pullerassignment', component: PullerAssignmentComponent },
 ];
 
 @NgModule({

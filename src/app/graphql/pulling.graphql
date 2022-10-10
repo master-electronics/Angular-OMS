@@ -1,0 +1,102 @@
+query fetchProductTypes {
+    fetchProductTypes {
+        _id
+        ProductType
+        Description
+    }
+}
+query fetchUserList($distributionCenter: String) {
+    fetchUserList(DistributionCenter: $distributionCenter) {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query findUser($userInfo: searchUser, $distributionCenter: String) {
+    findUser(User: $userInfo, DistributionCenter: $distributionCenter) {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartID
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query findUsers($name: String, $distributionCenter: String) {
+    findUsers(Name: $name, DistributionCenter: $distributionCenter) {
+        _id
+        Name
+        DateCreated
+        StrictPriority
+        PriorityCutoff
+        CartLastUpdated
+        PullerLevel
+        DistributionCenter
+        Equipment
+        ZoneCount
+    }
+}
+
+query fetchZoneList($distributionCenter: String) {
+    fetchZoneList(DistributionCenter: $distributionCenter) {
+        _id
+        DistributionCenter
+        Zone
+        Type
+        Description
+        Equipment
+        PullCount
+        PullsStarted
+        PriorityPulls
+        CustAPulls
+    }
+}
+
+query fetchUsersForZone($zoneID: Int) {
+    fetchUsersForZone(ZoneID: $zoneID) {
+        _id
+        Name
+    }
+}
+
+query fetchZonesForUser($userID: Int) {
+    fetchZonesForUser(UserID: $userID) {
+        _id
+        DistributionCenter
+        Zone
+        Description
+        Equipment
+    }
+}
+
+query fetchDistributionCenterList {
+    fetchDistributionCenterList {
+        DistributionCenter
+    }
+}
+
+mutation insertUserZone($userID: Int, $zoneID: Int) {
+    insertUserZone(UserID: $userID, ZoneID: $zoneID) {
+        _id
+    }
+}
+
+mutation deleteUserZone($userID: Int, $zoneID: Int) {
+    deleteUserZone(UserID: $userID, ZoneID: $zoneID) {
+        _id
+    }
+}
