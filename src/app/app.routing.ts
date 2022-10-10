@@ -54,7 +54,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'itnlifecycle',
+        path: 'tableviews/itnlifecycle',
         loadChildren: () =>
           import('./pages/itn-lifecycle/itn-lifecycle.module').then(
             (m) => m.ITNLifeCycleModule
