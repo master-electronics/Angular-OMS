@@ -35,7 +35,7 @@ export const users: User[] = [
   },
   {
     id: 3,
-    name: 'Test 3',
+    name: 'Test 4',
     color: {
       primary: '#1e90ff',
       secondary: '#D1E8FF',

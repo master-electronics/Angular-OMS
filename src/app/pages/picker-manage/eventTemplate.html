@@ -61,26 +61,28 @@
   </tbody>
 </nz-table>
 <!-- Button -->
-<button
-  class="mt-3 mb-3 ml-3"
-  nz-button
-  nzShape="round"
-  nzType="primary"
-  nzSize="large"
-  (click)="addEvent()"
->
-  <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
-</button>
-<button
-  class="mt-3 mb-3 ml-3"
-  nz-button
-  nzShape="round"
-  nzSize="large"
-  [nzLoading]="isLoading"
-  (click)="upload()"
->
-  <span nz-icon nzType="cloud-upload" nzTheme="outline"></span>
-</button>
+<div class="flex">
+  <button
+    class="mt-3 mb-3 ml-3 flex-none"
+    nz-button
+    nzShape="round"
+    nzType="primary"
+    nzSize="large"
+    (click)="addEvent()"
+  >
+    <span nz-icon nzType="appstore-add" nzTheme="outline"></span>
+  </button>
+  <button
+    class="mt-3 mb-3 ml-3 flex-none"
+    nz-button
+    nzShape="round"
+    nzSize="large"
+    [nzLoading]="isLoading"
+    (click)="upload()"
+  >
+    <span nz-icon nzType="cloud-upload" nzTheme="outline"></span>
+  </button>
+</div>
 <!-- Calendar -->
 <mwl-day-view-scheduler
   *ngIf="fetch$ | async"
@@ -88,8 +90,8 @@
   [events]="events"
   [users]="users"
   [hourSegments]="2"
-  (eventTimesChanged)="eventTimesChanged($event)"
   (userChanged)="userChanged($event)"
+  (eventTimesChanged)="eventTimesChanged($event)"
 >
 </mwl-day-view-scheduler>
 <div *ngIf="uploadSetting$ | async"></div>

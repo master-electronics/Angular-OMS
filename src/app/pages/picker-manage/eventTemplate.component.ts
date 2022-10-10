@@ -10,6 +10,8 @@ import {
   UpdatePickingCalendarSettingsGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { users } from './picker-manage.server';
+import { v4 as uuidv4 } from 'uuid';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'event-component',
@@ -20,10 +22,12 @@ export class EventTemplateComponent implements OnInit {
   viewDate = new Date();
   users = users;
   isLoading = false;
+  isOverlap = false;
 
   constructor(
     private fetchEvent: FetchPickingCalendarSettingsGQL,
-    private uploadSetting: UpdatePickingCalendarSettingsGQL
+    private uploadSetting: UpdatePickingCalendarSettingsGQL,
+    private message: NzMessageService
   ) {}
   events: CalendarEvent[] = [];
 
@@ -50,6 +54,7 @@ export class EventTemplateComponent implements OnInit {
             ),
             meta: {
               user: users[setting.type],
+              id: uuidv4(),
             },
             resizable: {
               beforeStart: true,
@@ -64,20 +69,47 @@ export class EventTemplateComponent implements OnInit {
     );
   }
 
+  preEvents;
   eventTimesChanged({
     event,
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
+    //check if the new data is in one day
+    if (newStart.getHours() > newEnd.getHours()) {
+      return;
+    }
+    this.preEvents = this.events;
+    //check time overlap
+    this.events.some((ele) => {
+      if (ele.meta.id === event.meta.id) {
+        return false;
+      }
+      if (ele.meta.user === event.meta.user) {
+        if (ele.start < newEnd && newStart < ele.end) {
+          this.isOverlap = true;
+          return true;
+        }
+      }
+      return false;
+    });
+    if (this.isOverlap) {
+      return;
+    }
     event.start = newStart;
     event.end = newEnd;
     this.events = [...this.events];
   }
 
   userChanged({ event, newUser }) {
+    if (this.isOverlap) {
+      this.isOverlap = false;
+      return;
+    }
     event.color = newUser.color;
     event.meta.user = newUser;
     this.events = [...this.events];
+    this.isOverlap = false;
   }
 
   refresh = new Subject<void>();
@@ -90,13 +122,13 @@ export class EventTemplateComponent implements OnInit {
     this.events = [
       ...this.events,
       {
-        title: 'New event',
+        title: '1',
         start: addMinutes(addHours(startOfDay(new Date()), 0), 0),
-        end: addMinutes(addHours(startOfDay(new Date()), 1), 0),
+        end: null,
         color: users[0].color,
         meta: {
           user: users[0],
-          Type: 'Test 1',
+          id: uuidv4(),
         },
         draggable: true,
         resizable: {
@@ -110,6 +142,16 @@ export class EventTemplateComponent implements OnInit {
   uploadSetting$;
   upload(): void {
     if (!this.events.length) {
+      return;
+    }
+    const isValid = !this.events.some((event) => {
+      if (!event.title || !event.end || !event.start) {
+        this.message.error('Empty Field!');
+        return true;
+      }
+      return false;
+    });
+    if (!isValid) {
       return;
     }
     this.isLoading = true;
@@ -128,9 +170,11 @@ export class EventTemplateComponent implements OnInit {
     this.uploadSetting$ = this.uploadSetting.mutate({ events }).pipe(
       tap(() => {
         this.isLoading = false;
+        this.message.success('Upload Successful');
       }),
       catchError((err) => {
         this.isLoading = false;
+        this.message.error(err.message);
         return err;
       })
     );

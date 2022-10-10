@@ -28,10 +28,7 @@ import {
   WeekViewAllDayEvent,
 } from 'calendar-utils';
 import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
-import { finalize, fromEvent, map, Subject, takeUntil } from 'rxjs';
-import { User, users } from './picker-manage.server';
-
-import { FetchPickingCalendarSettingsGQL } from '../../graphql/pick.graphql-gen';
+import { User } from './picker-manage.server';
 
 interface DayViewScheduler extends WeekView {
   users: User[];
@@ -167,11 +164,6 @@ export class DayViewSchedulerComponent
     if (newUser && newUser !== weekEvent.event.meta.user) {
       this.userChanged.emit({ event: weekEvent.event, newUser });
     }
-  }
-
-  private refreshPage() {
-    this.events = [...this.events];
-    this.cdr.detectChanges();
   }
 
   protected getWeekView(events: CalendarEvent[]) {

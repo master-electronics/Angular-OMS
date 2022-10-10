@@ -10,6 +10,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 import { IconsProviderModule } from '../../icons-provider.module';
 
 import { EventTemplateComponent } from './eventTemplate.component';
@@ -23,6 +24,7 @@ import { DayViewSchedulerComponent } from './day-view-scheduler.component';
     NzSelectModule,
     NzInputModule,
     NzTimePickerModule,
+    NzMessageModule,
     IconsProviderModule,
     CommonModule,
     FormsModule,

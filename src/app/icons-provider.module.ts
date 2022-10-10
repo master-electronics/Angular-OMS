@@ -12,6 +12,7 @@ import {
   SearchOutline,
   AppstoreAddOutline,
   CloudUploadOutline,
+  DeleteOutline,
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
@@ -24,6 +25,7 @@ const icons = [
   LockOutline,
   SearchOutline,
   AppstoreAddOutline,
+  DeleteOutline,
   CloudUploadOutline,
 ];
 
