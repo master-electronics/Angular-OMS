@@ -1,0 +1,143 @@
+<div class="container px-4 py-4">
+    
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="3">
+            <nz-select style="width: 200px" 
+                [nzOptions]="tableOptionsList"
+                nzPlaceHolder="Data Table" nzAllowClear
+                [(ngModel)]="selectedTable"
+                (ngModelChange)="onDataTableChange()" ></nz-select>
+        </div>
+    </div>
+    <div *ngIf="tableDataDisplay">
+            <nz-table id="data-table" #table
+        nzBordered [nzData]="tableDataDisplay"
+    >
+        <thead>
+            <tr>
+                <th *ngFor="let column of columns"
+                    nzCustomFilter [nzSortOrder]="null"
+                    [nzSortDirections]="['ascend', 'descend']"
+                    [nzSortFn]="column.sortFn"
+                >
+                    {{ column.Name }}
+                    <nz-filter-trigger
+                        [(nzVisible)]="column.SearchVisible"
+                        [nzActive]="column.SearchActive"
+                        [nzDropdownMenu]="menu"
+                    >
+                        <i nz-icon nzType="search"></i>
+                        
+                    </nz-filter-trigger>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <div class="ant-table-filter-dropdown">
+                            <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                                <input
+                                    type="text"
+                                    nz-input
+                                    placeholder="{{ column.Name }}"
+                                    class="col-span-2"
+                                    #searchInput
+                                />
+                                <button
+                                    nz-button
+                                    nzSize="small"
+                                    nzType="primary"
+                                    (click)="setFilter(column, searchInput.value)"
+                                    class="search-button"
+                                >
+                                    Search
+                                </button>
+                                <button
+                                    nz-button
+                                    nzSize="small"
+                                    (click)="searchInput.value = ''; clearFilter(column)"
+                                >
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </nz-dropdown-menu>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of table.data">
+                <ng-container *ngIf="!editCache[row._id].edit; else editTemplate">
+                    <td *ngFor="let column of columns">{{ row[column.Name] }}</td>
+                    <td>
+                        <button nz-button
+                            (click)="startEdit(row[tablePrimaryKey])"
+                            title="Edit"
+                        >
+                            <i nz-icon nzType="edit" nzTheme="outline"></i>
+                        </button>
+                        <button nz-button
+                            nz-popconfirm
+                            nzPopconfirmTitle="Are you sure you want to delete this row?"
+                            (nzOnConfirm)="deleteRow(row[tablePrimaryKey])"
+                            title="Delete"
+                        >
+                            <i nz-icon nzType="delete" nzTheme="outline"></i>
+                        </button>
+                    </td>
+                </ng-container>
+                <ng-template #editTemplate>
+                    <td *ngFor="let column of columns">
+                        <input *ngIf="column.DataType == 'string' || column.DataType == 'date'" #edit{{column.Name}}
+                            [disabled]="tablePrimaryKey == column.Name"
+                            type="text" maxlength="{{ column.MaxLength }}"
+                            nz-input [(ngModel)]="editCache[row._id].data[column.Name]" />
+                        <input *ngIf="column.DataType == 'number'" #edit{{column.Name}}
+                            [disabled]="tablePrimaryKey == column.Name"
+                            type="number" maxlength="{{ column.MaxLength }}"
+                            nz-input [(ngModel)]="editCache[row._id].data[column.Name]" />
+                        <label *ngIf="column.DataType == 'boolean'" 
+                            nz-checkbox #edit{{column.Name}}
+                            [(ngModel)]="editCache[row._id].data[column.Name]"
+                            [disabled]="tablePrimaryKey == column.Name">
+                        </label>
+                    </td>
+                    <td>
+                        <button nz-button
+                            (click)="saveEdit(row[tablePrimaryKey])"
+                            title="Save"
+                        >
+                            <i nz-icon nzType="check" nzTheme="outline"></i>
+                        </button>
+                        <button nz-button
+                            (click)="cancelEdit(row[tablePrimaryKey])"
+                            title="Cancel"
+                        >
+                            <i nz-icon nzType="close" nzTheme="outline"></i>
+                        </button>
+                    </td>
+                </ng-template>
+            </tr>
+            <tr>
+                <td *ngFor="let column of columns">
+                    <input type="text" maxlength="{{ column.MaxLength }}"
+                        nz-input [(ngModel)]="addCache['0'].data[column.Name]" />
+                </td>
+                <td>
+                    <button nz-button
+                        (click)="addData()"
+                        title="Add"
+                    >
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                    </button>
+                    <button nz-button
+                        (click)="cancelAdd()"
+                        title="Cancel"
+                    >
+                        <i nz-icon nzType="close" nzTheme="outline"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    </div>
+
+    <button nz-button (click)="test()">Test</button>
+</div>

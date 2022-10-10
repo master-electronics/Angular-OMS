@@ -60,6 +60,20 @@ export type DcProduct = {
   _id: Scalars['Int'];
 };
 
+export type DataColumn = {
+  __typename?: 'DataColumn';
+  CHARACTER_MAXIMUM_LENGTH?: Maybe<Scalars['Int']>;
+  COLUMN_NAME?: Maybe<Scalars['String']>;
+  DATA_TYPE?: Maybe<Scalars['String']>;
+  IS_NULLABLE?: Maybe<Scalars['String']>;
+  IS_PRIMARY_KEY?: Maybe<Scalars['String']>;
+};
+
+export type DataTable = {
+  __typename?: 'DataTable';
+  TABLE_NAME?: Maybe<Scalars['String']>;
+};
+
 export type Equipment = {
   __typename?: 'Equipment';
   Name: Scalars['String'];
@@ -295,6 +309,7 @@ export type Mutation = {
   deleteOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteTableData?: Maybe<TableData>;
   deleteValueMap?: Maybe<ValueMap>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
@@ -308,6 +323,7 @@ export type Mutation = {
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
+  insertTableData?: Maybe<TableData>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
@@ -331,7 +347,9 @@ export type Mutation = {
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updatePickingMangeCalendar: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -442,6 +460,11 @@ export type MutationDeleteProductFromMerpArgs = {
 };
 
 
+export type MutationDeleteTableDataArgs = {
+  DeleteQuery?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
@@ -517,6 +540,11 @@ export type MutationInsertPrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationInsertTableDataArgs = {
+  InsertQuery?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -708,6 +736,11 @@ export type MutationUpdateOrderLineDetailListArgs = {
 };
 
 
+export type MutationUpdatePickingMangeCalendarArgs = {
+  events?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
   DPI?: InputMaybe<Scalars['Int']>;
@@ -715,6 +748,11 @@ export type MutationUpdatePrinterArgs = {
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+
+export type MutationUpdateTableDataArgs = {
+  UpdateQuery?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -851,6 +889,8 @@ export type ProdunctInfoFromMerp = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
+  fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
@@ -861,9 +901,11 @@ export type Query = {
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
+  fetchPickingMangeCalendar?: Maybe<Array<Maybe<Scalars['String']>>>;
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
+  fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
@@ -895,6 +937,11 @@ export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+
+export type QueryFetchDataColumnListArgs = {
+  TABLE_NAME?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -965,6 +1012,13 @@ export type QueryFetchPrinterListArgs = {
 
 export type QueryFetchProductInfoFromMerpArgs = {
   ProductList: Array<InputMaybe<Scalars['String']>>;
+};
+
+
+export type QueryFetchTableDataArgs = {
+  ColumnList?: InputMaybe<Scalars['String']>;
+  TableName?: InputMaybe<Scalars['String']>;
+  Where?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1108,6 +1162,11 @@ export type ShipmentMethod = {
   PriorityPinkPaper: Scalars['Boolean'];
   ShippingMethod: Scalars['String'];
   _id: Scalars['String'];
+};
+
+export type TableData = {
+  __typename?: 'TableData';
+  Results?: Maybe<Scalars['String']>;
 };
 
 export type UserEvent = {

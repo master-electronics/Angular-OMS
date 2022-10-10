@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PrinterMaintenance } from './printer-maintenance.component';
-import { PrinterMaintenanceRoutingModule } from './printer-maintenance.routing';
+import { DataMaintenance } from './data-maintenance.component';
+import { DataMaintenanceRoutingModule } from './data-maintenance.routing';
 
-import { SharedComponentModule } from '../../components/shared-component.module';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { SharedComponentModule } from 'src/app/components/shared-component.module';
+import { SharedUtilityModule } from 'src/app/shared/shared-utility.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -18,12 +18,13 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @NgModule({
-  declarations: [PrinterMaintenance],
+  declarations: [DataMaintenance],
   imports: [
     CommonModule,
-    PrinterMaintenanceRoutingModule,
+    DataMaintenanceRoutingModule,
     SharedComponentModule,
     SharedUtilityModule,
     NzTableModule,
@@ -39,6 +40,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzCheckboxModule,
     NzSpinModule,
     NzSelectModule,
+    NzGridModule,
   ],
 })
-export class PrinterMaintenanceModule {}
+export class DataMaintenanceModule {}

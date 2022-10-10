@@ -678,8 +678,7 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   test(): void {
-    this.pageNumber = 1;
-    alert(this.pageNumber);
+    alert(JSON.stringify(this.tableDataDisplay));
   }
 
   //add user entered filter info to the fitlers array

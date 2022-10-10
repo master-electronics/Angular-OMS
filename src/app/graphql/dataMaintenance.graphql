@@ -1,0 +1,59 @@
+query fetchDataTableList {
+    fetchDataTableList {
+        TABLE_NAME
+    }
+}
+
+query fetchDataColumnList($tableName: String) {
+    fetchDataColumnList(TABLE_NAME: $tableName) {
+        COLUMN_NAME
+        IS_NULLABLE
+        DATA_TYPE
+        CHARACTER_MAXIMUM_LENGTH
+        IS_PRIMARY_KEY
+    }
+}
+
+query fetchTableData(
+    $columnList: String
+    $tableName: String
+    $where: String
+) {
+    fetchTableData(
+        ColumnList: $columnList
+        TableName: $tableName
+        Where: $where
+    ) {
+        Results
+    }
+}
+
+mutation insertTableData(
+    $insertQuery: String
+) {
+    insertTableData(
+        InsertQuery: $insertQuery
+    ) {
+        Results
+    }
+}
+
+mutation updateTableData(
+    $updateQuery: String
+) {
+    updateTableData(
+        UpdateQuery: $updateQuery
+    ) {
+        Results
+    }
+}
+
+mutation deleteTableData(
+    $deleteQuery: String
+) {
+    deleteTableData(
+        DeleteQuery: $deleteQuery
+    ) {
+        Results
+    }
+}
