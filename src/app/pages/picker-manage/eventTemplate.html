@@ -1,26 +1,18 @@
 <nz-table [nzShowPagination]="false" #table [nzData]="events">
   <thead>
     <tr>
-      <th>Points</th>
-      <th>Type</th>
-      <th>Starts at</th>
-      <th>Ends at</th>
-      <th>Remove</th>
+      <th
+        *ngFor="let column of listOfColumn"
+        [nzSortFn]="column.compare"
+        [nzSortPriority]="column.priority"
+      >
+        {{column.title}}
+      </th>
     </tr>
   </thead>
 
   <tbody>
     <tr *ngFor="let event of table.data">
-      <td>
-        <input
-          type="number"
-          min="0"
-          max="10"
-          [(ngModel)]="event.title"
-          (keyup)="refresh.next()"
-        />
-        points
-      </td>
       <td>
         <nz-select
           (ngModelChange)="refreshCalendar()"
@@ -46,6 +38,16 @@
           (ngModelChange)="refreshCalendar()"
           nzFormat="HH:mm"
         ></nz-time-picker>
+      </td>
+      <td>
+        <input
+          type="number"
+          min="0"
+          max="10"
+          [(ngModel)]="event.title"
+          (keyup)="refresh.next()"
+        />
+        points
       </td>
       <td>
         <button

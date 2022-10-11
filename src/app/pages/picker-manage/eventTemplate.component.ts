@@ -24,6 +24,39 @@ export class EventTemplateComponent implements OnInit {
   isLoading = false;
   isOverlap = false;
 
+  listOfColumn = [
+    {
+      title: 'Type',
+      compare: (a: CalendarEvent, b: CalendarEvent) =>
+        a.meta.user.id - b.meta.user.id,
+      priority: 4,
+    },
+
+    {
+      title: 'Starts at',
+      compare: (a: CalendarEvent, b: CalendarEvent) =>
+        a.start.getTime() - b.start.getTime(),
+      priority: 3,
+    },
+
+    {
+      title: 'Ends at',
+      compare: (a: CalendarEvent, b: CalendarEvent) =>
+        a.end.getTime() - b.end.getTime(),
+      priority: 2,
+    },
+    {
+      title: 'Points',
+      compare: (a: CalendarEvent, b: CalendarEvent) =>
+        Number(a.title) - Number(b.title),
+      priority: 1,
+    },
+    {
+      title: 'Remove',
+      priority: false,
+    },
+  ];
+
   constructor(
     private fetchEvent: FetchPickingCalendarSettingsGQL,
     private uploadSetting: UpdatePickingCalendarSettingsGQL,

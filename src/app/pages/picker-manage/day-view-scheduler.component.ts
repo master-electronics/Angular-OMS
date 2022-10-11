@@ -13,6 +13,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import {
+  CalendarEventTitleFormatter,
   CalendarUtils,
   CalendarWeekViewComponent,
   DateAdapter,
@@ -29,6 +30,7 @@ import {
 } from 'calendar-utils';
 import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
 import { User } from './picker-manage.server';
+import { CustomEventTitleFormatter } from './custom-event-title.provider';
 
 interface DayViewScheduler extends WeekView {
   users: User[];
@@ -77,7 +79,13 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
 @Component({
   selector: 'mwl-day-view-scheduler',
   templateUrl: 'day-view-scheduler.component.html',
-  providers: [DayViewSchedulerCalendarUtils],
+  providers: [
+    DayViewSchedulerCalendarUtils,
+    {
+      provide: CalendarEventTitleFormatter,
+      useClass: CustomEventTitleFormatter,
+    },
+  ],
 })
 export class DayViewSchedulerComponent
   extends CalendarWeekViewComponent
