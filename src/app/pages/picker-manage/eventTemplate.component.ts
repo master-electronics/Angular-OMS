@@ -4,7 +4,7 @@ import {
   CalendarEventTimesChangedEvent,
 } from 'angular-calendar';
 import { addHours, addMinutes, startOfDay } from 'date-fns';
-import { catchError, map, Subject, tap } from 'rxjs';
+import { catchError, delay, map, Subject, tap } from 'rxjs';
 import {
   FetchPickingCalendarSettingsGQL,
   UpdatePickingCalendarSettingsGQL,
@@ -69,17 +69,17 @@ export class EventTemplateComponent implements OnInit {
     );
   }
 
-  preEvents;
-  eventTimesChanged({
+  async eventTimesChanged({
     event,
     newStart,
     newEnd,
-  }: CalendarEventTimesChangedEvent): void {
+  }: CalendarEventTimesChangedEvent) {
     //check if the new data is in one day
+    await delay(10);
+    this.isOverlap = false;
     if (newStart.getHours() > newEnd.getHours()) {
       return;
     }
-    this.preEvents = this.events;
     //check time overlap
     this.events.some((ele) => {
       if (ele.meta.id === event.meta.id) {
@@ -102,14 +102,9 @@ export class EventTemplateComponent implements OnInit {
   }
 
   userChanged({ event, newUser }) {
-    if (this.isOverlap) {
-      this.isOverlap = false;
-      return;
-    }
     event.color = newUser.color;
     event.meta.user = newUser;
     this.events = [...this.events];
-    this.isOverlap = false;
   }
 
   refresh = new Subject<void>();
@@ -139,18 +134,50 @@ export class EventTemplateComponent implements OnInit {
     ];
   }
 
+  checkTimeValid(events: CalendarEvent[]): boolean {
+    //create 2D array
+    const twoDArray = new Array(users.length);
+    for (let i = 0; i < users.length; i++) {
+      twoDArray[i] = [];
+    }
+    let isValid = true;
+    events.forEach((ele) => {
+      if (ele.start > ele.end) {
+        this.message.error('Start time After end time!');
+        isValid = false;
+      }
+      const i = ele.meta.user.id;
+      const j = twoDArray[i].length;
+      twoDArray[i][j] = ele;
+    });
+    for (let type = 0; type < users.length; type++) {
+      const events = twoDArray[type];
+      if (events.length > 1) {
+        events.sort((i1, i2) => Number(i1.start.getTime() - i2.end.getTime()));
+        for (let i = 0; i < events.length - 1; i++) {
+          if (events[i].end > events[i + 1].start) {
+            this.message.error('Time Overlap!');
+            return false;
+          }
+        }
+      }
+    }
+    return isValid;
+  }
+
   uploadSetting$;
   upload(): void {
     if (!this.events.length) {
       return;
     }
-    const isValid = !this.events.some((event) => {
+    let isValid = !this.events.some((event) => {
       if (!event.title || !event.end || !event.start) {
         this.message.error('Empty Field!');
         return true;
       }
       return false;
     });
+    isValid = this.checkTimeValid(this.events);
     if (!isValid) {
       return;
     }
