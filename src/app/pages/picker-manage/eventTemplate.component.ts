@@ -142,7 +142,7 @@ export class EventTemplateComponent implements OnInit {
 
   refresh = new Subject<void>();
 
-  refreshCalendar() {
+  refreshCalendar(event) {
     this.events = [...this.events];
   }
 
@@ -150,10 +150,9 @@ export class EventTemplateComponent implements OnInit {
     this.events = [
       ...this.events,
       {
-        title: '1',
+        title: null,
         start: addMinutes(addHours(startOfDay(new Date()), 0), 0),
         end: null,
-        color: users[0].color,
         meta: {
           user: users[0],
           id: uuidv4(),

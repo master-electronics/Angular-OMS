@@ -52,9 +52,10 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
     };
 
     view.users.forEach((user, columnIndex) => {
-      const events = args.events.filter(
-        (event) => event.meta.user.id === user.id
-      );
+      const events = args.events.filter((event) => {
+        event.color = event.meta.user.color;
+        return event.meta.user.id === user.id;
+      });
       const columnView = super.getWeekView({
         ...args,
         events,

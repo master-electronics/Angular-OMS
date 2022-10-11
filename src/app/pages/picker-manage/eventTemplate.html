@@ -15,7 +15,7 @@
     <tr *ngFor="let event of table.data">
       <td>
         <nz-select
-          (ngModelChange)="refreshCalendar()"
+          (ngModelChange)="refreshCalendar(event)"
           [(ngModel)]="event.meta.user"
         >
           <nz-option
@@ -28,14 +28,14 @@
       <td>
         <nz-time-picker
           [(ngModel)]="event.start"
-          (ngModelChange)="refreshCalendar()"
+          (ngModelChange)="refreshCalendar(event)"
           nzFormat="HH:mm"
         ></nz-time-picker>
       </td>
       <td>
         <nz-time-picker
           [(ngModel)]="event.end"
-          (ngModelChange)="refreshCalendar()"
+          (ngModelChange)="refreshCalendar(event)"
           nzFormat="HH:mm"
         ></nz-time-picker>
       </td>
