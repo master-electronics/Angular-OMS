@@ -52,6 +52,12 @@ export class HomeComponent {
       highlight: 'M',
       end: 'aintenance',
     },
+    {
+      link: '/dataMaintenance',
+      front: '',
+      highlight: 'D',
+      end: 'ata Maintenance',
+    },
   ];
   isMobile: boolean;
   changelogurl = environment.changelogurl;
