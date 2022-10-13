@@ -113,6 +113,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         sourceContainerID: this.outsetContainer.toteID,
         endContainerID: this.endContainer.containerID,
       }),
+      updateStatus: this._updateStatus.mutate({
+        StatusID: sqlData.agInComplete_ID,
+        InventoryIDList: this._agInService.outsetContainer.ITNsInTote.map(
+          (node) => node.InventoryID
+        ),
+      }),
     };
     // if target container is shelf, update source container's location with new location, else release tote to dc.
     let sourceTote = {
@@ -177,12 +183,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         ActionType: 'A',
         Action: 'line_aggregation_in',
       });
-      updatequery['updateStatus'] = this._updateStatus.mutate({
-        StatusID: sqlData.agInComplete_ID,
-        InventoryIDList: this._agInService.outsetContainer.ITNsInTote.map(
-          (node) => node.InventoryID
-        ),
-      });
       if (this.endContainer.isLastLine) {
         log.push({
           UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
@@ -222,12 +222,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tap((res: any) => {
         let error: string;
-        // if (!res.updateStatus.data.updateOrderLineDetailList.length) {
-        //   error += `\nFail to update SQL OrderLineDetail.`;
-        // }
-        // if (!res.updateSql.data.updateContainer.length) {
-        //   error += `\nFail to update SQL Container.`;
-        // }
+        if (!res.updateStatus.data.updateOrderLineDetailList.length) {
+          error += `\nFail to update order Status.`;
+        }
+        if (!res.updateSql.data.updateContainer.length) {
+          error += `\nFail to update SQL Container.`;
+        }
         // if (
         //   res.updateMerpOrder &&
         //   !res.updateMerpOrder.data.updateMerpOrderStatus.success
