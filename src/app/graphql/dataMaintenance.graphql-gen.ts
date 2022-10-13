@@ -328,7 +328,7 @@ export type Mutation = {
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
-  insertTableData?: Maybe<TableData>;
+  insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
@@ -1174,6 +1174,11 @@ export type TableData = {
   Results?: Maybe<Scalars['String']>;
 };
 
+export type TableKey = {
+  __typename?: 'TableKey';
+  ID?: Maybe<Scalars['Int']>;
+};
+
 export type UserEvent = {
   __typename?: 'UserEvent';
   Event: Scalars['String'];
@@ -1647,7 +1652,7 @@ export type InsertTableDataMutationVariables = Types.Exact<{
 }>;
 
 
-export type InsertTableDataMutation = { __typename?: 'Mutation', insertTableData?: { __typename?: 'TableData', Results?: string | null } | null };
+export type InsertTableDataMutation = { __typename?: 'Mutation', insertTableData?: Array<{ __typename?: 'TableData', Results?: string | null } | null> | null };
 
 export type UpdateTableDataMutationVariables = Types.Exact<{
   updateQuery?: Types.InputMaybe<Types.Scalars['String']>;

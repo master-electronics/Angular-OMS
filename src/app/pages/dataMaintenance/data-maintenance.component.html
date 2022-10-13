@@ -1,4 +1,4 @@
-<div class="container px-4 py-4">
+<div class="px-4 py-4">
     
     <div nz-row nzGutter="8" nzJustify="start">
         <div nz-col nzSpan="3">
@@ -9,7 +9,9 @@
                 (ngModelChange)="onDataTableChange()" ></nz-select>
         </div>
     </div>
-    <div *ngIf="tableDataDisplay">
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="24">
+<div *ngIf="tableDataDisplay">
             <nz-table id="data-table" #table
         nzBordered [nzData]="tableDataDisplay"
     >
@@ -64,7 +66,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let row of table.data">
-                <ng-container *ngIf="!editCache[row._id].edit; else editTemplate">
+                <ng-container *ngIf="!editCache[row[tablePrimaryKey]].edit; else editTemplate">
                     <td *ngFor="let column of columns">{{ row[column.Name] }}</td>
                     <td>
                         <button nz-button
@@ -85,19 +87,23 @@
                 </ng-container>
                 <ng-template #editTemplate>
                     <td *ngFor="let column of columns">
-                        <input *ngIf="column.DataType == 'string' || column.DataType == 'date'" #edit{{column.Name}}
+                        <input *ngIf="column.DataType == 'string'" #edit{{column.Name}}
                             [disabled]="tablePrimaryKey == column.Name"
                             type="text" maxlength="{{ column.MaxLength }}"
-                            nz-input [(ngModel)]="editCache[row._id].data[column.Name]" />
+                            nz-input [(ngModel)]="editCache[row[tablePrimaryKey]].data[column.Name]" />
                         <input *ngIf="column.DataType == 'number'" #edit{{column.Name}}
                             [disabled]="tablePrimaryKey == column.Name"
                             type="number" maxlength="{{ column.MaxLength }}"
-                            nz-input [(ngModel)]="editCache[row._id].data[column.Name]" />
+                            nz-input [(ngModel)]="editCache[row[tablePrimaryKey]].data[column.Name]" />
                         <label *ngIf="column.DataType == 'boolean'" 
                             nz-checkbox #edit{{column.Name}}
-                            [(ngModel)]="editCache[row._id].data[column.Name]"
+                            [(ngModel)]="editCache[row[tablePrimaryKey]].data[column.Name]"
                             [disabled]="tablePrimaryKey == column.Name">
                         </label>
+                        <nz-date-picker *ngIf="column.DataType == 'date'" nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss"
+                            [(ngModel)]="editCache[row[tablePrimaryKey]].data[column.Name]"
+                            [disabled]="tablePrimaryKey == column.Name">
+                        </nz-date-picker>
                     </td>
                     <td>
                         <button nz-button
@@ -117,8 +123,24 @@
             </tr>
             <tr>
                 <td *ngFor="let column of columns">
-                    <input type="text" maxlength="{{ column.MaxLength }}"
+                    <input *ngIf="column.DataType == 'string'" #add{{column.Name}}
+                        [disabled]="tablePrimaryKey == column.Name"
+                        type="text" maxlength="{{ column.MaxLength }}"
                         nz-input [(ngModel)]="addCache['0'].data[column.Name]" />
+                    <input *ngIf="column.DataType == 'number'" #add{{column.Name}}
+                        [disabled]="tablePrimaryKey == column.Name"
+                        type="number" maxlength="{{ column.MaxLength }}"
+                        nz-input [(ngModel)]="addCache['0'].data[column.Name]" />
+                    <label *ngIf="column.DataType == 'boolean'"
+                        nz-checkbox #add{{column.Name}}
+                        [(ngModel)]="addCache['0'].data[column.Name]"
+                        [disabled]="tablePrimaryKey == column.Name">
+                    </label>
+                    <nz-date-picker *ngIf="column.DataType == 'date'" nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss"
+                        [(ngModel)]="addCache['0'].data[column.Name]"
+                        [disabled]="tablePrimaryKey == column.Name"
+                    >
+                    </nz-date-picker>
                 </td>
                 <td>
                     <button nz-button
@@ -137,7 +159,27 @@
             </tr>
         </tbody>
     </nz-table>
+    
     </div>
 
-    <button nz-button (click)="test()">Test</button>
-</div>
+        </div>
+    </div>
+    
+<ng-container nz-row nzJustify="center" *ngIf="message">
+        <nz-alert
+          [nzType]="
+            alertType === 'error'
+              ? 'error'
+              : alertType === 'success'
+              ? 'success'
+              : alertType === 'info'
+              ? 'info'
+              : 'warning'
+          "
+          [nzMessage]="message"
+          nzShowIcon
+          class="w-full"
+          style="width: 50%"
+        ></nz-alert>
+    </ng-container>
+  </div>

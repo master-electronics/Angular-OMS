@@ -328,7 +328,7 @@ export type Mutation = {
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
-  insertTableData?: Maybe<TableData>;
+  insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
@@ -1172,6 +1172,11 @@ export type ShipmentMethod = {
 export type TableData = {
   __typename?: 'TableData';
   Results?: Maybe<Scalars['String']>;
+};
+
+export type TableKey = {
+  __typename?: 'TableKey';
+  ID?: Maybe<Scalars['Int']>;
 };
 
 export type UserEvent = {

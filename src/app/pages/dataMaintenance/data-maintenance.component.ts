@@ -63,6 +63,8 @@ export class DataMaintenance implements OnInit {
   ];
   sqlDateTypes = ['DATE', 'DATETIME', 'DATETIME2', 'TIMESTAMP', 'TIME', 'YEAR'];
   filters: { filterColumn: string; filterValue: string }[];
+  message: string;
+  alertType = 'success';
 
   private tableListSubscription = new Subscription();
   private columnListSubscription = new Subscription();
@@ -70,6 +72,7 @@ export class DataMaintenance implements OnInit {
   private insertDataSubscription = new Subscription();
   private updateDataSubscription = new Subscription();
   private deleteDataSubscription = new Subscription();
+  private fetchLastPKSubscription = new Subscription();
 
   constructor(
     private commonService: CommonService,
@@ -81,12 +84,8 @@ export class DataMaintenance implements OnInit {
     private _updateTableData: UpdateTableDataGQL,
     private _deleteTableData: DeleteTableDataGQL
   ) {
-    this.commonService.changeNavbar('Pata Maintenance');
+    this.commonService.changeNavbar('Data Maintenance');
     this.titleService.setTitle('Data Maintenance');
-  }
-
-  test(): void {
-    alert(JSON.stringify(this.addCache));
   }
 
   ngOnInit(): void {
@@ -95,9 +94,12 @@ export class DataMaintenance implements OnInit {
     this.columns = [];
     this.filters = [];
     this.getTableList();
+    this.message = '';
   }
 
   onDataTableChange(): void {
+    this.message = '';
+
     if (this.selectedTable) {
       this.getColumnList();
     } else {
@@ -116,12 +118,18 @@ export class DataMaintenance implements OnInit {
     this.tableListSubscription.add(
       this._fetchTableList
         .fetch({}, { fetchPolicy: 'network-only' })
-        .subscribe((res) => {
-          res.data.fetchDataTableList.map((table) => {
-            tables.push({ label: table.TABLE_NAME, value: table.TABLE_NAME });
-          });
+        .subscribe({
+          next: (res) => {
+            res.data.fetchDataTableList.map((table) => {
+              tables.push({ label: table.TABLE_NAME, value: table.TABLE_NAME });
+            });
 
-          this.tableOptionsList = tables;
+            this.tableOptionsList = tables;
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = error;
+          },
         })
     );
   }
@@ -135,33 +143,39 @@ export class DataMaintenance implements OnInit {
           { tableName: this.selectedTable },
           { fetchPolicy: 'network-only' }
         )
-        .subscribe((res) => {
-          res.data.fetchDataColumnList.map((col) => {
-            const column: Datacolumn = {
-              Name: col.COLUMN_NAME,
-              Nullable: col.IS_NULLABLE == 'YES' ? true : false,
-              DataType: this.parseDataType(col.DATA_TYPE),
-              MaxLength: col.CHARACTER_MAXIMUM_LENGTH,
-              PrimaryKey: col.IS_PRIMARY_KEY == 'Y' ? true : false,
-              SearchVisible: false,
-              SearchActive: false,
-              sortFn: (a: [], b: []): number =>
-                (a[col.COLUMN_NAME]
-                  ? a[col.COLUMN_NAME].toString()
-                  : ''
-                ).localeCompare(
-                  b[col.COLUMN_NAME] ? b[col.COLUMN_NAME].toString() : ''
-                ),
-            };
+        .subscribe({
+          next: (res) => {
+            res.data.fetchDataColumnList.map((col) => {
+              const column: Datacolumn = {
+                Name: col.COLUMN_NAME,
+                Nullable: col.IS_NULLABLE == 'YES' ? true : false,
+                DataType: this.parseDataType(col.DATA_TYPE),
+                MaxLength: col.CHARACTER_MAXIMUM_LENGTH,
+                PrimaryKey: col.IS_PRIMARY_KEY == 'Y' ? true : false,
+                SearchVisible: false,
+                SearchActive: false,
+                sortFn: (a: [], b: []): number =>
+                  (a[col.COLUMN_NAME]
+                    ? a[col.COLUMN_NAME].toString()
+                    : ''
+                  ).localeCompare(
+                    b[col.COLUMN_NAME] ? b[col.COLUMN_NAME].toString() : ''
+                  ),
+              };
 
-            if (column.PrimaryKey) {
-              this.tablePrimaryKey = column.Name;
-            }
+              if (column.PrimaryKey) {
+                this.tablePrimaryKey = column.Name;
+              }
 
-            this.columns.push(column);
-          });
-          this.columnSelect = this.getColumnSelectStr();
-          this.getTableData();
+              this.columns.push(column);
+            });
+            this.columnSelect = this.getColumnSelectStr();
+            this.getTableData();
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = error;
+          },
         })
     );
   }
@@ -213,9 +227,19 @@ export class DataMaintenance implements OnInit {
     this.editCache = {};
     this.addCache = {};
     const row2 = [];
+    const dataObj = {};
+
+    this.columns.map((col) => {
+      dataObj[col.Name] =
+        col.DataType == 'boolean'
+          ? false
+          : col.DataType == 'number'
+          ? null
+          : '';
+    });
 
     this.addCache['0'] = {
-      data: {},
+      data: dataObj,
     };
 
     this.tableDataSubscription.add(
@@ -224,12 +248,18 @@ export class DataMaintenance implements OnInit {
           { columnList: this.columnSelect, tableName: this.selectedTable },
           { fetchPolicy: 'network-only' }
         )
-        .subscribe((res) => {
-          res.data.fetchTableData.map((dataRow) => {
-            row2.push(dataRow.Results);
-          });
+        .subscribe({
+          next: (res) => {
+            res.data.fetchTableData.map((dataRow) => {
+              row2.push(dataRow.Results);
+            });
 
-          this.parseData(row2);
+            this.parseData(row2);
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = error;
+          },
         })
     );
   }
@@ -260,8 +290,20 @@ export class DataMaintenance implements OnInit {
           }
         }
 
+        const tcol = this.columns.find((item) => item.Name == tparts[0]);
+
+        if (tcol) {
+          if (tcol.DataType == 'boolean') {
+            if (tparts[1] == 1) {
+              tparts[1] = true;
+            } else {
+              tparts[1] = false;
+            }
+          }
+        }
+
         trow[tparts[0]] = tparts[1];
-        tableRow[colParts[0]] = value; // colParts[1];
+        tableRow[colParts[0]] = value;
       });
 
       rows.push(tableRow);
@@ -274,7 +316,7 @@ export class DataMaintenance implements OnInit {
     this.tableDataDisplay = this.tableData;
 
     this.temp.map((row) => {
-      this.editCache[row._id.toString()] = {
+      this.editCache[row[this.tablePrimaryKey].toString()] = {
         edit: false,
         data: row,
       };
@@ -282,10 +324,16 @@ export class DataMaintenance implements OnInit {
   }
 
   startEdit(id: number): void {
+    this.alertType = '';
+    this.message = '';
+
     this.editCache[id].edit = true;
   }
 
   deleteRow(id: number): void {
+    this.alertType = '';
+    this.message = '';
+
     const queryStr = `delete from ${this.selectedTable} where ${this.tablePrimaryKey} = ${id}`;
 
     this.deleteDataSubscription.add(
@@ -293,29 +341,51 @@ export class DataMaintenance implements OnInit {
         .mutate({
           deleteQuery: queryStr,
         })
-        .subscribe((res) => {
-          const rows = [];
+        .subscribe({
+          next: (res) => {
+            const rows = [];
 
-          this.tableDataDisplay.map((row) => {
-            if (row[this.tablePrimaryKey] != id) {
-              rows.push(row);
-            }
-          });
+            this.tableDataDisplay.map((row) => {
+              if (row[this.tablePrimaryKey] != id) {
+                rows.push(row);
+              }
+            });
 
-          this.tableDataDisplay = rows;
-          this.tableData = this.tableDataDisplay;
+            this.tableDataDisplay = rows;
+            this.tableData = this.tableDataDisplay;
+
+            this.alertType = 'success';
+            this.message = 'Row Deleted';
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = error;
+          },
         })
     );
   }
 
   saveEdit(id: number): void {
+    this.alertType = '';
+    this.message = '';
+
     let queryStr = 'update ' + this.selectedTable + ' set ';
     let comma = '';
 
     const cols = this.editCache[id].data;
 
-    for (const [key, value] of Object.entries(cols)) {
+    for (let [key, value] of Object.entries(cols)) {
       if (key != this.tablePrimaryKey) {
+        const column = this.columns.find((item) => item.Name == key);
+
+        if (column) {
+          if (column.DataType == 'date') {
+            value = value
+              ? this.dateTimeFormat(new Date(value.toString()))
+              : null;
+          }
+        }
+
         queryStr += comma + key + ` = '${value}'`;
         comma = ', ';
       }
@@ -328,8 +398,16 @@ export class DataMaintenance implements OnInit {
         .mutate({
           updateQuery: queryStr,
         })
-        .subscribe((res) => {
-          this.editCache[id].edit = false;
+        .subscribe({
+          next: (res) => {
+            this.editCache[id].edit = false;
+            this.alertType = 'success';
+            this.message = 'Row Saved';
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = error;
+          },
         })
     );
 
@@ -345,6 +423,9 @@ export class DataMaintenance implements OnInit {
   }
 
   cancelEdit(id: number): void {
+    this.alertType = '';
+    this.message = '';
+
     const index = this.tableData.findIndex(
       (item) => item[this.tablePrimaryKey] === id
     );
@@ -355,31 +436,179 @@ export class DataMaintenance implements OnInit {
     };
   }
 
+  dateTimeFormat(date: Date): string {
+    let month = '' + (date.getMonth() + 1);
+    let day = '' + date.getDate();
+    const year = '' + date.getFullYear();
+    let hours = '' + date.getHours();
+    let minutes = '' + date.getMinutes();
+    let seconds = '' + date.getSeconds();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    if (hours.length < 2) hours = '0' + hours;
+    if (minutes.length < 2) minutes = '0' + minutes;
+    if (seconds.length < 2) seconds = '0' + seconds;
+
+    const output =
+      year +
+      '-' +
+      month +
+      '-' +
+      day +
+      ' ' +
+      hours +
+      ':' +
+      minutes +
+      ':' +
+      seconds;
+
+    return output;
+  }
+
   addData(): void {
+    this.alertType = '';
+    this.message = '';
+
     let valid = false;
     const cols = this.addCache['0'].data;
     const keys = Object.keys(cols);
 
-    let queryStr = 'update ' + this.selectedTable + ' set ';
+    let queryStr = `insert into ${this.selectedTable} `;
     let comma = '';
+    let columnsStr = '(';
+    let valueStr = '(';
 
-    for (const [key, value] of Object.entries(cols)) {
+    for (let [key, value] of Object.entries(cols)) {
       if (key != this.tablePrimaryKey) {
+        const column = this.columns.find((item) => item.Name == key);
+
+        let quote = '';
+
+        if (column) {
+          if (column.DataType == 'date') {
+            value = value
+              ? this.dateTimeFormat(new Date(value.toString()))
+              : null;
+          }
+        }
+
         if (value) {
           valid = true;
+          quote = `'`;
         }
-        queryStr += comma + key + ` = '${value}'`;
+
+        if (value == false) {
+          quote = `'`;
+        }
+
+        columnsStr += `${comma} ${key}`;
+        valueStr += `${comma} ${quote}${value}${quote}`;
         comma = ', ';
       }
     }
 
-  alert(valid);
+    columnsStr += ')';
+    valueStr += ')';
 
+    queryStr += `${columnsStr} values ${valueStr}`;
+    queryStr += ' select @@IDENTITY as Results';
+
+    if (valid) {
+      this.insertDataSubscription.add(
+        this._insertTableData
+          .mutate({
+            insertQuery: queryStr,
+          })
+          .subscribe({
+            next: (res) => {
+              const newRow = {};
+              const newRow2 = {};
+
+              newRow[this.tablePrimaryKey] =
+                res.data.insertTableData[0].Results;
+              newRow2[this.tablePrimaryKey] =
+                res.data.insertTableData[0].Results;
+
+              for (const [key, value] of Object.entries(cols)) {
+                if (key != this.tablePrimaryKey) {
+                  newRow[key] = value;
+                  newRow2[key] = value;
+                }
+              }
+
+              const rows1 = [];
+              const rows2 = [];
+
+              this.tableDataDisplay.map((row) => {
+                rows1.push(row);
+                rows2.push(row);
+              });
+
+              this.editCache = {};
+
+              rows1.map((row) => {
+                this.editCache[row[this.tablePrimaryKey].toString()] = {
+                  edit: false,
+                  data: row,
+                };
+              });
+
+              this.editCache[newRow[this.tablePrimaryKey].toString()] = {
+                edit: false,
+                data: newRow,
+              };
+
+              rows2.push(newRow2);
+
+              this.tableData = rows2;
+              this.tableDataDisplay = this.tableData;
+
+              this.alertType = 'success';
+              this.message = 'Row Added';
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = error;
+            },
+            complete: () => {
+              const dataObj = {};
+
+              this.columns.map((col) => {
+                dataObj[col.Name] =
+                  col.DataType == 'boolean'
+                    ? false
+                    : col.DataType == 'number'
+                    ? null
+                    : '';
+              });
+
+              this.addCache['0'] = {
+                data: dataObj,
+              };
+            },
+          })
+      );
+    }
   }
 
   cancelAdd(): void {
+    this.alertType = '';
+    this.message = '';
+
+    const dataObj = {};
+
+    this.columns.map((col) => {
+      dataObj[col.Name] =
+        col.DataType == 'boolean'
+          ? false
+          : col.DataType == 'number'
+          ? null
+          : '';
+    });
+
     this.addCache['0'] = {
-      data: {},
+      data: dataObj,
     };
   }
 
@@ -442,5 +671,6 @@ export class DataMaintenance implements OnInit {
     this.insertDataSubscription.unsubscribe();
     this.updateDataSubscription.unsubscribe();
     this.deleteDataSubscription.unsubscribe();
+    this.fetchLastPKSubscription.unsubscribe();
   }
 }

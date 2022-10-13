@@ -19,6 +19,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   declarations: [DataMaintenance],
@@ -41,6 +42,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     NzSpinModule,
     NzSelectModule,
     NzGridModule,
+    NzDatePickerModule,
   ],
 })
 export class DataMaintenanceModule {}
