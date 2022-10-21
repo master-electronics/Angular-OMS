@@ -10,65 +10,25 @@
         <a [href]="changelogurl" target="_blank"> What's New</a>
       </button>
     </div>
-
-    <!-- Entery points for different model -->
-    <div nz-row nzGutter="32" class="md:mt-6">
-      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8" nzXXl="6">
-        <nz-card [nzCover]="WMS" nzBorderless>
-          <h1 class="text-xl font-semibold">
-            <span class="text-yellow-500 font-bold">W</span>
-            <span>MS</span>
-          </h1>
-          <div class="grid gap-4 text-base" *ngFor="let element of WMSList">
-            <a
-              class="mt-3"
-              routerLink="{{ element.link }}"
-              [queryParams]="element.params"
-            >
-              <span>{{ element.front }}</span>
-              <span class="text-yellow-500 font-bold">{{
-                element.highlight
-              }}</span>
-              <span>{{ element.end }}</span>
-            </a>
-          </div>
-        </nz-card>
-      </div>
-
-      <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8" nzXXl="6">
-        <nz-card [nzCover]="tools" nzBorderless>
-          <h1 class="text-xl font-semibold">
-            <span class="text-yellow-500 font-bold">U</span>
-            <span>tility Tools</span>
-          </h1>
-          <div class="grid gap-4 text-base" *ngFor="let element of toolList">
-            <a class="mt-3" [routerLink]="[element.link]">
-              <span>{{ element.front }}</span>
-              <span class="text-yellow-500 font-bold">{{
-                element.highlight
-              }}</span>
-              <span>{{ element.end }}</span>
-            </a>
-          </div>
-        </nz-card>
+    <div *ngIf="menuService.menusLoaded | async" nz-row nzGutter="32" class="md:mt-6">
+      <div *ngFor="let menuItem of menuService.rootMenuItems" nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8" nzXXl="6">
+          <nz-card [nzCover]="cover"
+            nzBorderless>
+            <h1 class="text-xl font-semibold">
+              <span>{{ menuItem.Front }}</span>
+              <span class="text-yellow-500 font-bold">{{ menuItem.Highlight }}</span>
+              <span>{{ menuItem.End }}</span>
+            </h1>
+            <menu-item [children]="menuItem.Children"></menu-item>
+          </nz-card>
+          <ng-template #cover>
+            <img
+              *ngIf="!isMobile"
+              style="width: 100px;"
+              alt="{{ menuItem.Front + menuItem.Highlight + menuItem.End }}"
+              src="{{ menuItem.CoverSrc }}" />
+          </ng-template>
       </div>
     </div>
   </div>
 </div>
-<ng-template #WMS>
-  <img
-    *ngIf="!isMobile"
-    style="width: 100px"
-    alt="wms"
-    src="../../../assets/icon/warehouse.svg"
-  />
-</ng-template>
-
-<ng-template #tools>
-  <img
-    *ngIf="!isMobile"
-    style="width: 100px"
-    alt="tools"
-    src="../../../assets/icon/utility_tools.svg"
-  />
-</ng-template>

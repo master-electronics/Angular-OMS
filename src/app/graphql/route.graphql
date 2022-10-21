@@ -1,0 +1,8 @@
+query findRoute($route: String) {
+    findRoute(route: $route) {
+        _id
+        Route
+        ADGroupProtected
+        Groups
+    }
+}

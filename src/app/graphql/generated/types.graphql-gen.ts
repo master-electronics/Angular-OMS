@@ -282,6 +282,30 @@ export type Inventory = {
   _id: Scalars['Int'];
 };
 
+export type Menu = {
+  __typename?: 'Menu';
+  ADGroupProtected?: Maybe<Scalars['Boolean']>;
+  CoverSrc?: Maybe<Scalars['String']>;
+  End?: Maybe<Scalars['String']>;
+  Front?: Maybe<Scalars['String']>;
+  Groups?: Maybe<Scalars['String']>;
+  Highlight?: Maybe<Scalars['String']>;
+  Level?: Maybe<Scalars['Int']>;
+  Order?: Maybe<Scalars['Int']>;
+  ParentID?: Maybe<Scalars['Int']>;
+  Route?: Maybe<Scalars['String']>;
+  RouteID?: Maybe<Scalars['Int']>;
+  Title?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type MenuGroup = {
+  __typename?: 'MenuGroup';
+  ADGroup?: Maybe<Scalars['String']>;
+  MenuID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   changeQCLineInfo: Response;
@@ -889,6 +913,7 @@ export type Query = {
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
+  fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
   fetchOrderTasktime?: Maybe<Array<Maybe<OrderTasktime>>>;
@@ -924,6 +949,7 @@ export type Query = {
   findOrders?: Maybe<Array<Maybe<Order>>>;
   findProduct?: Maybe<Product>;
   findProducts?: Maybe<Array<Maybe<Product>>>;
+  findRoute?: Maybe<Array<Maybe<Route>>>;
   findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserInfo?: Maybe<UserInfo>;
@@ -966,6 +992,11 @@ export type QueryFetchItnLifecycleDrillDownArgs = {
 
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFetchMenuListArgs = {
+  pageName?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1138,6 +1169,11 @@ export type QueryFindProductsArgs = {
 };
 
 
+export type QueryFindRouteArgs = {
+  route?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFindUserArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   User?: InputMaybe<SearchUser>;
@@ -1174,6 +1210,14 @@ export type Response = {
   __typename?: 'Response';
   message?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
+};
+
+export type Route = {
+  __typename?: 'Route';
+  ADGroupProtected?: Maybe<Scalars['Boolean']>;
+  Groups?: Maybe<Scalars['String']>;
+  Route?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type ShipmentMethod = {
