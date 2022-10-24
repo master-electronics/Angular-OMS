@@ -12,7 +12,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       nzOpen
     >
       <span title>
-        <a (click)="closeNavBar()" routerLink="{{ menuItem.Link }}">
+        <a (click)="closeNavBar()" routerLink="{{ menuItem.Route }}">
           <span>{{ menuItem.Title }}</span>
         </a>
       </span>
