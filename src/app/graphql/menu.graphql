@@ -1,0 +1,17 @@
+query fetchMenuList($pageName: String) {
+    fetchMenuList(pageName: $pageName) {
+        _id
+        ParentID
+        Route
+        RouteID
+        Front
+        Highlight
+        End
+        CoverSrc
+        ADGroupProtected
+        Order
+        Level
+        Groups
+        Title
+    }
+}

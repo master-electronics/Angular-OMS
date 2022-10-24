@@ -10,6 +10,7 @@ import {
 
 import { filter, map } from 'rxjs/operators';
 import { AuthenticationService } from './shared/services/authentication.service';
+import { AuthGuard } from './shared/services/auth-guard.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,11 @@ import { AuthenticationService } from './shared/services/authentication.service'
 export class AppComponent implements OnInit {
   isLoading = false;
 
-  constructor(private router: Router, private auth: AuthenticationService) {
+  constructor(
+    private router: Router,
+    private auth: AuthenticationService,
+    private authGuard: AuthGuard
+  ) {
     this.router.events
       .pipe(
         filter(
@@ -39,7 +44,7 @@ export class AppComponent implements OnInit {
         })
       )
       .subscribe(() => {
-        //
+        this.authGuard.checkRouteAuthorized(this.router.url);
       });
   }
 

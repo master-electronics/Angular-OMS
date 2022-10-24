@@ -2,12 +2,14 @@ import { Component, OnInit, HostListener, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
+import { MenuService } from 'src/app/shared/services/menu.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
+  providers: [MenuService]
 })
 export class NavbarComponent implements OnInit {
   showMenu = false;
@@ -15,6 +17,7 @@ export class NavbarComponent implements OnInit {
   title$: Observable<string>;
   isFullscreen = false;
   elem;
+  mItems;
 
   closeNavBar(): void {
     this.showMenu = false;
@@ -64,9 +67,12 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private commonService: CommonService,
+    private mService: MenuService,
     @Inject(DOCUMENT) private document: any
   ) {
     this.elem = document.documentElement;
+    this.mService.getMenu('home');
+    this.mItems = this.mService.menuItems;
   }
 
   ngOnInit(): void {

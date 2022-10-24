@@ -81,7 +81,6 @@
       </div>
     </div>
   </div>
-
   <nz-drawer
     [nzClosable]="false"
     [nzVisible]="showMenu"
@@ -94,56 +93,10 @@
         <li nz-menu-item>
           <a (click)="closeNavBar()" routerLink="/home"> Home </a>
         </li>
-        <li nz-submenu nzTitle="WMS" nzOpen>
-          <ul>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/agin"> Aggregation In </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/agout">
-                Aggregation Out
-              </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/qc">Quality Control</a>
-            </li>
-          </ul>
-        </li>
-        <li nz-submenu nzTitle="Utility Tools" nzOpen>
-          <ul>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/tableviews">
-                Table Views
-              </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/printitn"> Print ITN </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/relocate"> Relocate </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/searchbarcode">
-                Search Barcode
-              </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/valuemap">
-                Value Mapping
-              </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/printermaintenance">
-                Printer Maintenance
-              </a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="closeNavBar()" routerLink="/pulltopick/pullerassignment">
-                Puller Assignment
-              </a>
-            </li>
-          </ul>
-        </li>
+        
+        <menubar-item *ngFor="let menubarItem of mItems"
+          [menuItem]="menubarItem"
+          (navBarClose)="closeNavBar()"></menubar-item>
       </ul>
     </ng-container>
   </nz-drawer>

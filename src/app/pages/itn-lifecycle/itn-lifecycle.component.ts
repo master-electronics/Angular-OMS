@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { CommonService } from '../../shared/services/common.service';
@@ -85,7 +86,8 @@ export class ITNLifecycleComponent implements OnInit {
     private _findITNTemplates: FindItnTemplatesGQL,
     private _findITNTemplate: FindItnTemplateGQL,
     private _findITNColumns: FindItnColumnsGQL,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.commonService.changeNavbar('ITN Lifecycle');
     this.titleService.setTitle('ITN Lifecycle');

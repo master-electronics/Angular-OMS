@@ -1713,70 +1713,29 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FindItNsByShelfQueryVariables = Types.Exact<{
-  Container: Types.SearchContainer;
+export type FetchMenuListQueryVariables = Types.Exact<{
+  pageName?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type FindItNsByShelfQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null } | null> | null };
+export type FetchMenuListQuery = { __typename?: 'Query', fetchMenuList?: Array<{ __typename?: 'Menu', _id?: number | null, ParentID?: number | null, Route?: string | null, RouteID?: number | null, Front?: string | null, Highlight?: string | null, End?: string | null, CoverSrc?: string | null, ADGroupProtected?: boolean | null, Order?: number | null, Level?: number | null, Groups?: string | null, Title?: string | null } | null> | null };
 
-export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
-  UserInfo: Types.InsertUserInfo;
-}>;
-
-
-export type Find_Or_Create_UserInfoMutation = { __typename?: 'Mutation', findOrCreateUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string } | null };
-
-export type Insert_UserEventLogsMutationVariables = Types.Exact<{
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
-}>;
-
-
-export type Insert_UserEventLogsMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
-
-export type Update_Merp_QcBinMutationVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-}>;
-
-
-export type Update_Merp_QcBinMutation = { __typename?: 'Mutation', updateMerpQCBin: { __typename?: 'Response', success: boolean } };
-
-export type UpdateContainerMutationVariables = Types.Exact<{
-  Container: Types.UpdateContainer;
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type UpdateContainerMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null };
-
-export const FindItNsByShelfDocument = gql`
-    query findITNsByShelf($Container: searchContainer!) {
-  findContainers(Container: $Container) {
-    INVENTORies {
-      InventoryTrackingNumber
-      ORDERLINEDETAILs {
-        StatusID
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindItNsByShelfGQL extends Apollo.Query<FindItNsByShelfQuery, FindItNsByShelfQueryVariables> {
-    document = FindItNsByShelfDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const Find_Or_Create_UserInfoDocument = gql`
-    mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
-  findOrCreateUserInfo(UserInfo: $UserInfo) {
+export const FetchMenuListDocument = gql`
+    query fetchMenuList($pageName: String) {
+  fetchMenuList(pageName: $pageName) {
     _id
-    Name
+    ParentID
+    Route
+    RouteID
+    Front
+    Highlight
+    End
+    CoverSrc
+    ADGroupProtected
+    Order
+    Level
+    Groups
+    Title
   }
 }
     `;
@@ -1784,60 +1743,8 @@ export const Find_Or_Create_UserInfoDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
-    document = Find_Or_Create_UserInfoDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const Insert_UserEventLogsDocument = gql`
-    mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class Insert_UserEventLogsGQL extends Apollo.Mutation<Insert_UserEventLogsMutation, Insert_UserEventLogsMutationVariables> {
-    document = Insert_UserEventLogsDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const Update_Merp_QcBinDocument = gql`
-    mutation update_Merp_QCBin($ITN: String!) {
-  updateMerpQCBin(ITN: $ITN) {
-    success
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class Update_Merp_QcBinGQL extends Apollo.Mutation<Update_Merp_QcBinMutation, Update_Merp_QcBinMutationVariables> {
-    document = Update_Merp_QcBinDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateContainerDocument = gql`
-    mutation updateContainer($Container: updateContainer!, $ContainerID: Int!) {
-  updateContainer(Container: $Container, _id: $ContainerID)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateContainerGQL extends Apollo.Mutation<UpdateContainerMutation, UpdateContainerMutationVariables> {
-    document = UpdateContainerDocument;
+  export class FetchMenuListGQL extends Apollo.Query<FetchMenuListQuery, FetchMenuListQueryVariables> {
+    document = FetchMenuListDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
