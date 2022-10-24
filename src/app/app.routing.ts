@@ -101,6 +101,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'dataMaintenance',
+        loadChildren:() =>
+          import('./pages/dataMaintenance/data-maintenance.module').then(
+            (m) => m.DataMaintenanceModule
+          ),
+      },
+      {
         path: 'logviewer',
         loadChildren: () =>
           import('./pages/log-viewer/log-viewer.module').then(

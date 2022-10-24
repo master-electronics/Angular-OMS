@@ -287,6 +287,8 @@ export class PrinterMaintenance implements OnInit {
     this.message = '';
     const index = this.viewData.findIndex((item) => item.ID === id);
 
+    const t = "test";
+    
     this.editCache[id] = {
       data: { ...this.viewData[index] },
       edit: false,

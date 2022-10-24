@@ -679,11 +679,6 @@ export class ITNLifecycleComponent implements OnInit {
       );
   }
 
-  test(): void {
-    this.pageNumber = 1;
-    alert(this.pageNumber);
-  }
-
   //add user entered filter info to the fitlers array
   //the array is used in the filterResults method to allow filtring on multiple columns
   setFilter(FilterColumn: [], FilterValue: string): void {

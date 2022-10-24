@@ -5,7 +5,7 @@ import { DataMaintenance } from './data-maintenance.component';
 const routes: Routes = [{ path: '', component: DataMaintenance }];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
 export class DataMaintenanceRoutingModule {}
