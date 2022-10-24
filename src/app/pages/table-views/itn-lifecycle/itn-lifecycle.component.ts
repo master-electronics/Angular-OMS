@@ -677,10 +677,6 @@ export class ITNLifecycleComponent implements OnInit {
       );
   }
 
-  test(): void {
-    alert(JSON.stringify(this.tableDataDisplay));
-  }
-
   //add user entered filter info to the fitlers array
   //the array is used in the filterResults method to allow filtring on multiple columns
   setFilter(FilterColumn: [], FilterValue: string): void {
