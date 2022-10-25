@@ -102,7 +102,7 @@ const routes: Routes = [
       },
       {
         path: 'dataMaintenance',
-        loadChildren:() =>
+        loadChildren: () =>
           import('./pages/dataMaintenance/data-maintenance.module').then(
             (m) => m.DataMaintenanceModule
           ),
@@ -119,6 +119,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/picker-manage/picker-manage.module').then(
             (m) => m.PickerManageModule
+          ),
+      },
+      {
+        path: 'receiving',
+        loadChildren: () =>
+          import('./pages/receiving/receiving.module').then(
+            (m) => m.ReceivingModule
           ),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },

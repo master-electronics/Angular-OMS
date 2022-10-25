@@ -61,7 +61,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzModalModule,
   ],
   providers: [QualityControlService],
-
   bootstrap: [QualityControlComponent],
 })
 export class QualityControlModule {}
