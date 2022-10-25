@@ -103,7 +103,7 @@
       <div nz-col nzSpan="8">
         <nz-form-item class="grid grid-flow-row justify-center">
           <nz-form-label nzFor="DateCode">ROHS</nz-form-label>
-          <div class="grid grid-cols-2 pt-1 space-x-4">
+          <div class="grid grid-cols-2 space-x-4 pt-1">
             <div *ngFor="let ROHS of booleanOptions">
               <input
                 type="radio"
@@ -122,12 +122,12 @@
             >Country of Origin</nz-form-label
           >
           <nz-select
-            formControlName="countryOfOrigin"
+            formControlName="countryISO2"
             nz-col
             nzSpan="14"
             nzShowSearch
             nzAllowClear
-            formControlName="countryOfOrigin"
+            formControlName="countryISO2"
             nzPlaceHolder="Select a country"
           >
             <nz-option
@@ -143,7 +143,7 @@
     <!-- button -->
     <div nz-row nzGutter="16">
       <div nz-col nzSpan="4" nzOffset="4">
-        <div class="bg-yellow-500 rounded-md">
+        <div class="rounded-md bg-yellow-500">
           <button
             nz-button
             type="button"
@@ -156,7 +156,7 @@
         </div>
       </div>
       <div nz-col nzSpan="4" nzOffset="6">
-        <div class="bg-green-500 rounded-md">
+        <div class="rounded-md bg-green-500">
           <button
             nz-button
             type="button"
@@ -201,7 +201,7 @@
         </label>
       </div>
     </div>
-    <span class="hidden text-red-600 text-sm" #countMethodError
+    <span class="hidden text-sm text-red-600" #countMethodError
       >Must select a method</span
     >
 
@@ -209,7 +209,7 @@
     <!-- button -->
     <nz-form-item nz-row nzGutter="16">
       <div nz-col nzSpan="4" nzOffset="4">
-        <div class="bg-gray-500 rounded-md">
+        <div class="rounded-md bg-gray-500">
           <button
             nz-button
             type="button"
@@ -266,7 +266,7 @@
 >
   <ng-container *nzDrawerContent>
     <form focusInvalidInput [formGroup]="holdForm" (ngSubmit)="onSubmit()">
-      <div class="block pb-2 pt-3 space-x-4" *ngFor="let option of holdOptions">
+      <div class="block space-x-4 pb-2 pt-3" *ngFor="let option of holdOptions">
         <label>
           <input
             type="radio"
@@ -278,7 +278,7 @@
           {{ option.content }}
         </label>
       </div>
-      <span class="hidden fixed text-red-600 text-sm" id="error"
+      <span class="fixed hidden text-sm text-red-600" id="error"
         >Option has to be selected</span
       >
       <button

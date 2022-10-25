@@ -5,9 +5,15 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -407,7 +413,6 @@ export type Mutation = {
   updateVendorFromMerp?: Maybe<Scalars['Boolean']>;
 };
 
-
 export type MutationChangeQcLineInfoArgs = {
   CountMethod: Scalars['String'];
   CountryOfOrigin: Scalars['String'];
@@ -416,57 +421,47 @@ export type MutationChangeQcLineInfoArgs = {
   ROHS: Scalars['String'];
 };
 
-
 export type MutationCleanContainerFromPrevOrderArgs = {
   ContainerID: Scalars['Int'];
   Inventory: UpdateInventory;
   OrderID: Scalars['Int'];
 };
 
-
 export type MutationClearItnUserDefaultTemplateArgs = {
   UserID: Scalars['Int'];
 };
-
 
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
 };
 
-
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
 };
-
 
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
-
 export type MutationDeleteCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
 };
-
 
 export type MutationDeleteItnLevelLimitArgs = {
   TemplateID: Scalars['Int'];
 };
 
-
 export type MutationDeleteItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationDeleteInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
 };
-
 
 export type MutationDeleteOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -475,20 +470,17 @@ export type MutationDeleteOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationDeleteOrderLineArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationDeleteOrderLineDetailArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationDeleteOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -499,17 +491,14 @@ export type MutationDeleteOrderLineDetailFromMerpArgs = {
   OrderNumber: Scalars['String'];
 };
 
-
 export type MutationDeletePrinterArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationDeleteProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
-
 
 export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
@@ -517,64 +506,52 @@ export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   PurchaseOrderNumber: Scalars['String'];
 };
 
-
 export type MutationDeleteTableDataArgs = {
   DeleteQuery?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationDeleteUserZoneArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
-
 
 export type MutationDeleteVendorFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
-
 export type MutationFindOrCreateOrderArgs = {
   Order: InsertOrder;
 };
-
 
 export type MutationFindOrCreateOrderLineArgs = {
   OrderLine: InsertOrderLine;
 };
 
-
 export type MutationFindOrCreateOrderLineDetailArgs = {
   OrderLineDetail: InsertOrderLineDetail;
 };
-
 
 export type MutationFindOrCreateProductArgs = {
   Product: InsertProduct;
 };
 
-
 export type MutationFindOrCreateUserContainerArgs = {
   Container: InsertContainer;
 };
 
-
 export type MutationFindOrCreateUserInfoArgs = {
   UserInfo: InsertUserInfo;
 };
-
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
 };
-
 
 export type MutationInsertItnLevelLimitArgs = {
   EventID?: InputMaybe<Scalars['Int']>;
@@ -584,16 +561,13 @@ export type MutationInsertItnLevelLimitArgs = {
   TemplateID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationInsertItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<InsertItnUserColumnsInfo>>;
 };
 
-
 export type MutationInsertItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<InsertItnUserLevelsInfo>>;
 };
-
 
 export type MutationInsertItnUserTemplateArgs = {
   DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
@@ -601,7 +575,6 @@ export type MutationInsertItnUserTemplateArgs = {
   TemplateName?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
@@ -611,22 +584,18 @@ export type MutationInsertPrinterArgs = {
   Orientation?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationInsertTableDataArgs = {
   InsertQuery?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
 };
 
-
 export type MutationInsertUserZoneArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationInsertValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -639,19 +608,16 @@ export type MutationInsertValueMapArgs = {
   TargetValue?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
 };
-
 
 export type MutationUpdateContainerArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
   Container: UpdateContainer;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateContainerListArgs = {
   BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -660,7 +626,6 @@ export type MutationUpdateContainerListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
-
 export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
@@ -668,12 +633,10 @@ export type MutationUpdateForContainerFromMerpArgs = {
   Zone?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdateForCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
   CustomerTier?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationUpdateForInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -689,7 +652,6 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -713,13 +675,11 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   detailQuantity: Scalars['Float'];
 };
 
-
 export type MutationUpdateForProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
@@ -734,18 +694,15 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
-
 export type MutationUpdateItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<UpdateItnUserColumnsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<UpdateItnUserLevelsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateItnUserTemplateArgs = {
   DefaultPagination?: InputMaybe<Scalars['Int']>;
@@ -755,7 +712,6 @@ export type MutationUpdateItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
 
-
 export type MutationUpdateInventoryArgs = {
   ContainerID?: InputMaybe<Scalars['Int']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -763,7 +719,6 @@ export type MutationUpdateInventoryArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateInventoryListArgs = {
   ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -773,7 +728,6 @@ export type MutationUpdateInventoryListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
-
 export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
@@ -781,11 +735,9 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdateMerpQcBinArgs = {
   ITN: Scalars['String'];
 };
-
 
 export type MutationUpdateMerpWmsLogArgs = {
   Action: Scalars['String'];
@@ -793,7 +745,6 @@ export type MutationUpdateMerpWmsLogArgs = {
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
 };
-
 
 export type MutationUpdateOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -803,11 +754,9 @@ export type MutationUpdateOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateOrderLineArgs = {
   OrderLine: UpdateOrderLine;
 };
-
 
 export type MutationUpdateOrderLineDetailArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
@@ -817,18 +766,15 @@ export type MutationUpdateOrderLineDetailArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateOrderLineDetailListArgs = {
   InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
-
 export type MutationUpdatePickingCalendarSettingsArgs = {
   events?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
@@ -839,30 +785,25 @@ export type MutationUpdatePrinterArgs = {
   _id: Scalars['Int'];
 };
 
-
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationUpdateUserCartArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
 
-
 export type MutationUpdateUserCartForDropOffArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
-
 
 export type MutationUpdateUserInfoArgs = {
   Name?: InputMaybe<Scalars['String']>;
   UserInfo: UpdateUserInfo;
   _id?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type MutationUpdateValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -875,7 +816,6 @@ export type MutationUpdateValueMapArgs = {
   TargetValue?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
-
 
 export type MutationUpdateVendorFromMerpArgs = {
   VendorName: Scalars['String'];
@@ -1072,35 +1012,29 @@ export type Query = {
   findVendor?: Maybe<Vendor>;
 };
 
-
 export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchDataColumnListArgs = {
   TABLE_NAME?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFetchHoldOnCounterArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
 
-
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
-
 
 export type QueryFetchItnLifecycleDrillDownArgs = {
   inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
@@ -1109,21 +1043,17 @@ export type QueryFetchItnLifecycleDrillDownArgs = {
   orderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFetchMenuListArgs = {
   pageName?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFetchOrderLineDetailforWmsCountArgs = {
   filter?: InputMaybe<SearchIntForWmsCount>;
 };
-
 
 export type QueryFetchOrderLineMessageArgs = {
   CustomerNumber: Scalars['String'];
@@ -1132,33 +1062,27 @@ export type QueryFetchOrderLineMessageArgs = {
   OrderNumber: Scalars['String'];
 };
 
-
 export type QueryFetchOrderTasktimeArgs = {
   Order?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
 
-
 export type QueryFetchOrderViewArgs = {
   filter?: InputMaybe<OrderViewFilter>;
 };
-
 
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
 
-
 export type QueryFetchPrinterListArgs = {
   includeInactive?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type QueryFetchProductInfoFromMerpArgs = {
   ProductList: Array<InputMaybe<Scalars['String']>>;
 };
-
 
 export type QueryFetchTableDataArgs = {
   ColumnList?: InputMaybe<Scalars['String']>;
@@ -1166,77 +1090,63 @@ export type QueryFetchTableDataArgs = {
   Where?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
 
-
 export type QueryFetchUserListArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFetchUsersForZoneArgs = {
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFetchZoneListArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFetchZonesForUserArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindContainerArgs = {
   Container?: InputMaybe<SearchContainer>;
 };
-
 
 export type QueryFindContainersArgs = {
   Container?: InputMaybe<SearchContainer>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindItnColumnsArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindItnTemplateArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindItnTemplatesArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindInventoryArgs = {
   Inventory: SearchInventory;
 };
-
 
 export type QueryFindInventorysArgs = {
   Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindLocalErrorLogsArgs = {
   Date: Scalars['String'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindNextItnForPullingArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
@@ -1245,89 +1155,73 @@ export type QueryFindNextItnForPullingArgs = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindOrderArgs = {
   Order?: InputMaybe<SearchOrder>;
 };
-
 
 export type QueryFindOrderByStatusArgs = {
   PriorityPinkPaper?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
 };
 
-
 export type QueryFindOrderLineArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
 };
 
-
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
 };
-
 
 export type QueryFindOrderLineDetailsArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindOrderLinesArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
   limit?: InputMaybe<Scalars['Int']>;
 };
-
 
 export type QueryFindOrdersArgs = {
   Order?: InputMaybe<SearchOrder>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindProductArgs = {
   Product?: InputMaybe<SearchProduct>;
 };
-
 
 export type QueryFindProductsArgs = {
   Product?: InputMaybe<SearchProduct>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindPurchaseOrderHArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
 };
-
 
 export type QueryFindPurchaseOrderHsArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindPurchaseOrderLArgs = {
   PurchaseOrderL: SearchPurchaseOrderL;
 };
-
 
 export type QueryFindPurchaseOrderLsArgs = {
   PurchaseOrderL: SearchPurchaseOrderL;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindRouteArgs = {
   route?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFindUserArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   User?: InputMaybe<SearchUser>;
 };
-
 
 export type QueryFindUserEventLogsArgs = {
   Module?: InputMaybe<Scalars['Int']>;
@@ -1338,23 +1232,19 @@ export type QueryFindUserEventLogsArgs = {
   startDate?: InputMaybe<Scalars['String']>;
 };
 
-
 export type QueryFindUserInfoArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
 };
-
 
 export type QueryFindUserInfosArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type QueryFindUsersArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryFindVendorArgs = {
   Vendor: SearchVendor;
@@ -1918,25 +1808,80 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchPrinterStationQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type FetchPrinterStationQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
 
-
-export type FetchPrinterStationQuery = { __typename?: 'Query', fetchPrinterStation: string };
+export type FetchPrinterStationQuery = {
+  __typename?: 'Query';
+  fetchPrinterStation: string;
+};
 
 export type VerifyItNforQcQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
   InventoryTrackingNumber: Types.Scalars['String'];
 }>;
 
-
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, ROHS?: boolean | null, DateCode?: string | null, CountryOfOrigin?: string | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type VerifyItNforQcQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    _id: number;
+    ParentITN?: string | null;
+    ROHS?: boolean | null;
+    DateCode?: string | null;
+    Country?: { __typename?: 'Country'; ISO2: string } | null;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      _id: number;
+      StatusID: number;
+      Quantity: number;
+      BinLocation?: string | null;
+      WMSPriority: number;
+      OrderLine: { __typename?: 'OrderLine'; OrderLineNumber: number };
+      Order: {
+        __typename?: 'Order';
+        _id: number;
+        DistributionCenter: string;
+        OrderNumber: string;
+        NOSINumber: string;
+        ShipmentMethod?: {
+          __typename?: 'ShipmentMethod';
+          _id: string;
+          ShippingMethod: string;
+          PriorityPinkPaper: boolean;
+        } | null;
+        Customer?: {
+          __typename?: 'Customer';
+          CustomerNumber: string;
+          CustomerTier: string;
+        } | null;
+      };
+    } | null> | null;
+    Product: {
+      __typename?: 'Product';
+      ProductTier?: string | null;
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
+  } | null;
+};
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
-  ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
+  ProductList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
-
-export type FetchProductInfoFromMerpQuery = { __typename?: 'Query', fetchProductInfoFromMerp?: Array<{ __typename?: 'ProdunctInfoFromMerp', HazardMaterialLevel?: string | null, MICPartNumber?: string | null, UnitOfMeasure?: string | null } | null> | null };
+export type FetchProductInfoFromMerpQuery = {
+  __typename?: 'Query';
+  fetchProductInfoFromMerp?: Array<{
+    __typename?: 'ProdunctInfoFromMerp';
+    HazardMaterialLevel?: string | null;
+    MICPartNumber?: string | null;
+    UnitOfMeasure?: string | null;
+  } | null> | null;
+};
 
 export type QcGlobalMessageQueryVariables = Types.Exact<{
   CustomerNumber: Types.Scalars['String'];
@@ -1947,16 +1892,31 @@ export type QcGlobalMessageQueryVariables = Types.Exact<{
   PartNumber: Types.Scalars['String'];
 }>;
 
-
-export type QcGlobalMessageQuery = { __typename?: 'Query', fetchOrderLineMessage?: { __typename?: 'GlobalMessage', comments?: Array<string | null> | null } | null, fetchPartMessage?: { __typename?: 'GlobalMessage', comments?: Array<string | null> | null } | null };
+export type QcGlobalMessageQuery = {
+  __typename?: 'Query';
+  fetchOrderLineMessage?: {
+    __typename?: 'GlobalMessage';
+    comments?: Array<string | null> | null;
+  } | null;
+  fetchPartMessage?: {
+    __typename?: 'GlobalMessage';
+    comments?: Array<string | null> | null;
+  } | null;
+};
 
 export type PrintItnLabelMutationVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
   Station: Types.Scalars['String'];
 }>;
 
-
-export type PrintItnLabelMutation = { __typename?: 'Mutation', printITNLabel: { __typename?: 'Response', success: boolean, message?: string | null } };
+export type PrintItnLabelMutation = {
+  __typename?: 'Mutation';
+  printITNLabel: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+};
 
 export type HoldQcOrderMutationVariables = Types.Exact<{
   OrderLineDetailID: Types.Scalars['Int'];
@@ -1964,27 +1924,53 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   Status: Types.Scalars['String'];
   Station: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
-  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+  log:
+    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
+    | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
-
-export type HoldQcOrderMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, holdQCOrder: { __typename?: 'Response', success: boolean, message?: string | null }, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+export type HoldQcOrderMutation = {
+  __typename?: 'Mutation';
+  updateOrderLineDetail?: Array<number | null> | null;
+  holdQCOrder: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+  insertUserEventLogs?: Array<{
+    __typename?: 'UserEventLog';
+    _id: number;
+  } | null> | null;
+};
 
 export type UpdateAfterQcVerifyMutationVariables = Types.Exact<{
   Inventory: Types.UpdateInventory;
   InventoryTrackingNumber: Types.Scalars['String'];
 }>;
 
-
-export type UpdateAfterQcVerifyMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+export type UpdateAfterQcVerifyMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
+};
 
 export type FindNewAfterUpdateBinQueryVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
   DistributionCenter: Types.Scalars['String'];
 }>;
 
-
-export type FindNewAfterUpdateBinQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, BinLocation?: string | null } | null> | null } | null };
+export type FindNewAfterUpdateBinQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    _id: number;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      _id: number;
+      StatusID: number;
+      BinLocation?: string | null;
+    } | null> | null;
+  } | null;
+};
 
 export type VerifyQcRepackQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
@@ -1992,8 +1978,38 @@ export type VerifyQcRepackQueryVariables = Types.Exact<{
   OrderID: Types.Scalars['Int'];
 }>;
 
-
-export type VerifyQcRepackQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Row?: string | null, ContainerTypeID: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, OrderID: number } | null> | null } | null> | null } | null, findOrder?: { __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ContainerID: number } | null } | null> | null } | null };
+export type VerifyQcRepackQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    _id: number;
+    Row?: string | null;
+    ContainerTypeID: number;
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      _id: number;
+      InventoryTrackingNumber: string;
+      ORDERLINEDETAILs?: Array<{
+        __typename?: 'OrderLineDetail';
+        StatusID: number;
+        OrderID: number;
+      } | null> | null;
+    } | null> | null;
+  } | null;
+  findOrder?: {
+    __typename?: 'Order';
+    _id: number;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      StatusID: number;
+      Inventory?: {
+        __typename?: 'Inventory';
+        InventoryTrackingNumber: string;
+        ContainerID: number;
+      } | null;
+    } | null> | null;
+  } | null;
+};
 
 export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
   InventoryID: Types.Scalars['Int'];
@@ -2002,16 +2018,21 @@ export type UpdateInventoryAndDetailAfterRepackMutationVariables = Types.Exact<{
   OrderLineDetail: Types.UpdateOrderLineDetail;
 }>;
 
-
-export type UpdateInventoryAndDetailAfterRepackMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null, updateOrderLineDetail?: Array<number | null> | null };
+export type UpdateInventoryAndDetailAfterRepackMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
+  updateOrderLineDetail?: Array<number | null> | null;
+};
 
 export type CleanContainerFromPrevOrderMutationVariables = Types.Exact<{
   idList: Array<Types.Scalars['Int']> | Types.Scalars['Int'];
   Inventory: Types.UpdateInventory;
 }>;
 
-
-export type CleanContainerFromPrevOrderMutation = { __typename?: 'Mutation', updateInventoryList?: Array<number | null> | null };
+export type CleanContainerFromPrevOrderMutation = {
+  __typename?: 'Mutation';
+  updateInventoryList?: Array<number | null> | null;
+};
 
 export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
@@ -2021,8 +2042,14 @@ export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   CountMethod: Types.Scalars['String'];
 }>;
 
-
-export type UpdateMerpAfterQcRepackMutation = { __typename?: 'Mutation', changeQCLineInfo: { __typename?: 'Response', success: boolean, message?: string | null } };
+export type UpdateMerpAfterQcRepackMutation = {
+  __typename?: 'Mutation';
+  changeQCLineInfo: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+};
 
 export type UpdateMerpForLastLineAfterQcRepackMutationVariables = Types.Exact<{
   OrderNumber: Types.Scalars['String'];
@@ -2031,349 +2058,453 @@ export type UpdateMerpForLastLineAfterQcRepackMutationVariables = Types.Exact<{
   UserOrStatus?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
-
-export type UpdateMerpForLastLineAfterQcRepackMutation = { __typename?: 'Mutation', updateMerpOrderStatus: { __typename?: 'Response', success: boolean, message?: string | null }, clearMerpTote: { __typename?: 'Response', success: boolean, message?: string | null } };
+export type UpdateMerpForLastLineAfterQcRepackMutation = {
+  __typename?: 'Mutation';
+  updateMerpOrderStatus: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+  clearMerpTote: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+};
 
 export const FetchPrinterStationDocument = gql`
-    query fetchPrinterStation {
-  fetchPrinterStation
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchPrinterStationGQL extends Apollo.Query<FetchPrinterStationQuery, FetchPrinterStationQueryVariables> {
-    document = FetchPrinterStationDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
+  query fetchPrinterStation {
+    fetchPrinterStation
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPrinterStationGQL extends Apollo.Query<
+  FetchPrinterStationQuery,
+  FetchPrinterStationQueryVariables
+> {
+  document = FetchPrinterStationDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const VerifyItNforQcDocument = gql`
-    query verifyITNforQc($DistributionCenter: String!, $InventoryTrackingNumber: String!) {
-  findInventory(
-    Inventory: {DistributionCenter: $DistributionCenter, InventoryTrackingNumber: $InventoryTrackingNumber}
+  query verifyITNforQc(
+    $DistributionCenter: String!
+    $InventoryTrackingNumber: String!
   ) {
-    _id
-    ParentITN
-    ROHS
-    DateCode
-    CountryOfOrigin
-    ORDERLINEDETAILs {
-      _id
-      StatusID
-      Quantity
-      BinLocation
-      WMSPriority
-      OrderLine {
-        OrderLineNumber
+    findInventory(
+      Inventory: {
+        DistributionCenter: $DistributionCenter
+        InventoryTrackingNumber: $InventoryTrackingNumber
       }
-      Order {
+    ) {
+      _id
+      ParentITN
+      ROHS
+      DateCode
+      Country {
+        ISO2
+      }
+      ORDERLINEDETAILs {
         _id
-        DistributionCenter
-        OrderNumber
-        NOSINumber
-        ShipmentMethod {
+        StatusID
+        Quantity
+        BinLocation
+        WMSPriority
+        OrderLine {
+          OrderLineNumber
+        }
+        Order {
           _id
-          ShippingMethod
-          PriorityPinkPaper
-        }
-        Customer {
-          CustomerNumber
-          CustomerTier
+          DistributionCenter
+          OrderNumber
+          NOSINumber
+          ShipmentMethod {
+            _id
+            ShippingMethod
+            PriorityPinkPaper
+          }
+          Customer {
+            CustomerNumber
+            CustomerTier
+          }
         }
       }
-    }
-    Product {
-      ProductCode {
-        ProductCodeNumber
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        ProductTier
+        PartNumber
       }
-      ProductTier
-      PartNumber
     }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyItNforQcGQL extends Apollo.Query<
+  VerifyItNforQcQuery,
+  VerifyItNforQcQueryVariables
+> {
+  document = VerifyItNforQcDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class VerifyItNforQcGQL extends Apollo.Query<VerifyItNforQcQuery, VerifyItNforQcQueryVariables> {
-    document = VerifyItNforQcDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const FetchProductInfoFromMerpDocument = gql`
-    query fetchProductInfoFromMerp($ProductList: [String]!) {
-  fetchProductInfoFromMerp(ProductList: $ProductList) {
-    HazardMaterialLevel
-    MICPartNumber
-    UnitOfMeasure
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchProductInfoFromMerpGQL extends Apollo.Query<FetchProductInfoFromMerpQuery, FetchProductInfoFromMerpQueryVariables> {
-    document = FetchProductInfoFromMerpDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  query fetchProductInfoFromMerp($ProductList: [String]!) {
+    fetchProductInfoFromMerp(ProductList: $ProductList) {
+      HazardMaterialLevel
+      MICPartNumber
+      UnitOfMeasure
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchProductInfoFromMerpGQL extends Apollo.Query<
+  FetchProductInfoFromMerpQuery,
+  FetchProductInfoFromMerpQueryVariables
+> {
+  document = FetchProductInfoFromMerpDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const QcGlobalMessageDocument = gql`
-    query qcGlobalMessage($CustomerNumber: String!, $DistributionCenter: String!, $OrderNumber: String!, $OrderLineNumber: String!, $ProductCode: String!, $PartNumber: String!) {
-  fetchOrderLineMessage(
-    CustomerNumber: $CustomerNumber
-    DistributionCenter: $DistributionCenter
-    OrderNumber: $OrderNumber
-    OrderLineNumber: $OrderLineNumber
+  query qcGlobalMessage(
+    $CustomerNumber: String!
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $OrderLineNumber: String!
+    $ProductCode: String!
+    $PartNumber: String!
   ) {
-    comments
-  }
-  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
-    comments
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class QcGlobalMessageGQL extends Apollo.Query<QcGlobalMessageQuery, QcGlobalMessageQueryVariables> {
-    document = QcGlobalMessageDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    fetchOrderLineMessage(
+      CustomerNumber: $CustomerNumber
+      DistributionCenter: $DistributionCenter
+      OrderNumber: $OrderNumber
+      OrderLineNumber: $OrderLineNumber
+    ) {
+      comments
+    }
+    fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+      comments
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class QcGlobalMessageGQL extends Apollo.Query<
+  QcGlobalMessageQuery,
+  QcGlobalMessageQueryVariables
+> {
+  document = QcGlobalMessageDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const PrintItnLabelDocument = gql`
-    mutation printITNLabel($InventoryTrackingNumber: String!, $Station: String!) {
-  printITNLabel(
-    InternalTrackingNumber: $InventoryTrackingNumber
-    Station: $Station
-  ) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class PrintItnLabelGQL extends Apollo.Mutation<PrintItnLabelMutation, PrintItnLabelMutationVariables> {
-    document = PrintItnLabelDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+  mutation printITNLabel($InventoryTrackingNumber: String!, $Station: String!) {
+    printITNLabel(
+      InternalTrackingNumber: $InventoryTrackingNumber
+      Station: $Station
+    ) {
+      success
+      message
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PrintItnLabelGQL extends Apollo.Mutation<
+  PrintItnLabelMutation,
+  PrintItnLabelMutationVariables
+> {
+  document = PrintItnLabelDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const HoldQcOrderDocument = gql`
-    mutation holdQCOrder($OrderLineDetailID: Int!, $InventoryTrackingNumber: String!, $Status: String!, $Station: String!, $StatusID: Int!, $log: [insertUserEventLog]!) {
-  holdQCOrder(
-    InternalTrackingNumber: $InventoryTrackingNumber
-    Status: $Status
-    Station: $Station
+  mutation holdQCOrder(
+    $OrderLineDetailID: Int!
+    $InventoryTrackingNumber: String!
+    $Status: String!
+    $Station: String!
+    $StatusID: Int!
+    $log: [insertUserEventLog]!
   ) {
-    success
-    message
-  }
-  updateOrderLineDetail(
-    _id: $OrderLineDetailID
-    OrderLineDetail: {StatusID: $StatusID}
-  )
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class HoldQcOrderGQL extends Apollo.Mutation<HoldQcOrderMutation, HoldQcOrderMutationVariables> {
-    document = HoldQcOrderDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    holdQCOrder(
+      InternalTrackingNumber: $InventoryTrackingNumber
+      Status: $Status
+      Station: $Station
+    ) {
+      success
+      message
+    }
+    updateOrderLineDetail(
+      _id: $OrderLineDetailID
+      OrderLineDetail: { StatusID: $StatusID }
+    )
+    insertUserEventLogs(log: $log) {
+      _id
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HoldQcOrderGQL extends Apollo.Mutation<
+  HoldQcOrderMutation,
+  HoldQcOrderMutationVariables
+> {
+  document = HoldQcOrderDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdateAfterQcVerifyDocument = gql`
-    mutation updateAfterQcVerify($Inventory: updateInventory!, $InventoryTrackingNumber: String!) {
-  updateInventory(
-    Inventory: $Inventory
-    InventoryTrackingNumber: $InventoryTrackingNumber
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateAfterQcVerifyGQL extends Apollo.Mutation<UpdateAfterQcVerifyMutation, UpdateAfterQcVerifyMutationVariables> {
-    document = UpdateAfterQcVerifyDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
+  mutation updateAfterQcVerify(
+    $Inventory: updateInventory!
+    $InventoryTrackingNumber: String!
+  ) {
+    updateInventory(
+      Inventory: $Inventory
+      InventoryTrackingNumber: $InventoryTrackingNumber
+    )
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateAfterQcVerifyGQL extends Apollo.Mutation<
+  UpdateAfterQcVerifyMutation,
+  UpdateAfterQcVerifyMutationVariables
+> {
+  document = UpdateAfterQcVerifyDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const FindNewAfterUpdateBinDocument = gql`
-    query findNewAfterUpdateBin($InventoryTrackingNumber: String!, $DistributionCenter: String!) {
-  findInventory(
-    Inventory: {DistributionCenter: $DistributionCenter, InventoryTrackingNumber: $InventoryTrackingNumber}
+  query findNewAfterUpdateBin(
+    $InventoryTrackingNumber: String!
+    $DistributionCenter: String!
   ) {
-    _id
-    ORDERLINEDETAILs {
+    findInventory(
+      Inventory: {
+        DistributionCenter: $DistributionCenter
+        InventoryTrackingNumber: $InventoryTrackingNumber
+      }
+    ) {
       _id
-      StatusID
-      BinLocation
+      ORDERLINEDETAILs {
+        _id
+        StatusID
+        BinLocation
+      }
     }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindNewAfterUpdateBinGQL extends Apollo.Query<
+  FindNewAfterUpdateBinQuery,
+  FindNewAfterUpdateBinQueryVariables
+> {
+  document = FindNewAfterUpdateBinDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindNewAfterUpdateBinGQL extends Apollo.Query<FindNewAfterUpdateBinQuery, FindNewAfterUpdateBinQueryVariables> {
-    document = FindNewAfterUpdateBinDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const VerifyQcRepackDocument = gql`
-    query verifyQCRepack($DistributionCenter: String!, $Barcode: String!, $OrderID: Int!) {
-  findContainer(
-    Container: {DistributionCenter: $DistributionCenter, Barcode: $Barcode}
+  query verifyQCRepack(
+    $DistributionCenter: String!
+    $Barcode: String!
+    $OrderID: Int!
   ) {
-    _id
-    Row
-    ContainerTypeID
-    INVENTORies {
+    findContainer(
+      Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+    ) {
       _id
-      InventoryTrackingNumber
+      Row
+      ContainerTypeID
+      INVENTORies {
+        _id
+        InventoryTrackingNumber
+        ORDERLINEDETAILs {
+          StatusID
+          OrderID
+        }
+      }
+    }
+    findOrder(Order: { _id: $OrderID }) {
+      _id
       ORDERLINEDETAILs {
         StatusID
-        OrderID
+        Inventory {
+          InventoryTrackingNumber
+          ContainerID
+        }
       }
     }
   }
-  findOrder(Order: {_id: $OrderID}) {
-    _id
-    ORDERLINEDETAILs {
-      StatusID
-      Inventory {
-        InventoryTrackingNumber
-        ContainerID
-      }
-    }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyQcRepackGQL extends Apollo.Query<
+  VerifyQcRepackQuery,
+  VerifyQcRepackQueryVariables
+> {
+  document = VerifyQcRepackDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
   }
 }
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class VerifyQcRepackGQL extends Apollo.Query<VerifyQcRepackQuery, VerifyQcRepackQueryVariables> {
-    document = VerifyQcRepackDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
 export const UpdateInventoryAndDetailAfterRepackDocument = gql`
-    mutation updateInventoryAndDetailAfterRepack($InventoryID: Int!, $OrderLineDetailID: Int!, $Inventory: updateInventory!, $OrderLineDetail: updateOrderLineDetail!) {
-  updateInventory(_id: $InventoryID, Inventory: $Inventory)
-  updateOrderLineDetail(
-    OrderLineDetail: $OrderLineDetail
-    _id: $OrderLineDetailID
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateInventoryAndDetailAfterRepackGQL extends Apollo.Mutation<UpdateInventoryAndDetailAfterRepackMutation, UpdateInventoryAndDetailAfterRepackMutationVariables> {
-    document = UpdateInventoryAndDetailAfterRepackDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
+  mutation updateInventoryAndDetailAfterRepack(
+    $InventoryID: Int!
+    $OrderLineDetailID: Int!
+    $Inventory: updateInventory!
+    $OrderLineDetail: updateOrderLineDetail!
+  ) {
+    updateInventory(_id: $InventoryID, Inventory: $Inventory)
+    updateOrderLineDetail(
+      OrderLineDetail: $OrderLineDetail
+      _id: $OrderLineDetailID
+    )
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateInventoryAndDetailAfterRepackGQL extends Apollo.Mutation<
+  UpdateInventoryAndDetailAfterRepackMutation,
+  UpdateInventoryAndDetailAfterRepackMutationVariables
+> {
+  document = UpdateInventoryAndDetailAfterRepackDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const CleanContainerFromPrevOrderDocument = gql`
-    mutation cleanContainerFromPrevOrder($idList: [Int!]!, $Inventory: updateInventory!) {
-  updateInventoryList(Inventory: $Inventory, idList: $idList)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CleanContainerFromPrevOrderGQL extends Apollo.Mutation<CleanContainerFromPrevOrderMutation, CleanContainerFromPrevOrderMutationVariables> {
-    document = CleanContainerFromPrevOrderDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
+  mutation cleanContainerFromPrevOrder(
+    $idList: [Int!]!
+    $Inventory: updateInventory!
+  ) {
+    updateInventoryList(Inventory: $Inventory, idList: $idList)
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CleanContainerFromPrevOrderGQL extends Apollo.Mutation<
+  CleanContainerFromPrevOrderMutation,
+  CleanContainerFromPrevOrderMutationVariables
+> {
+  document = CleanContainerFromPrevOrderDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdateMerpAfterQcRepackDocument = gql`
-    mutation updateMerpAfterQcRepack($InventoryTrackingNumber: String!, $DateCode: String!, $CountryOfOrigin: String!, $ROHS: String!, $CountMethod: String!) {
-  changeQCLineInfo(
-    InternalTrackingNumber: $InventoryTrackingNumber
-    DateCode: $DateCode
-    CountryOfOrigin: $CountryOfOrigin
-    ROHS: $ROHS
-    CountMethod: $CountMethod
+  mutation updateMerpAfterQcRepack(
+    $InventoryTrackingNumber: String!
+    $DateCode: String!
+    $CountryOfOrigin: String!
+    $ROHS: String!
+    $CountMethod: String!
   ) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateMerpAfterQcRepackGQL extends Apollo.Mutation<UpdateMerpAfterQcRepackMutation, UpdateMerpAfterQcRepackMutationVariables> {
-    document = UpdateMerpAfterQcRepackDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    changeQCLineInfo(
+      InternalTrackingNumber: $InventoryTrackingNumber
+      DateCode: $DateCode
+      CountryOfOrigin: $CountryOfOrigin
+      ROHS: $ROHS
+      CountMethod: $CountMethod
+    ) {
+      success
+      message
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateMerpAfterQcRepackGQL extends Apollo.Mutation<
+  UpdateMerpAfterQcRepackMutation,
+  UpdateMerpAfterQcRepackMutationVariables
+> {
+  document = UpdateMerpAfterQcRepackDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdateMerpForLastLineAfterQcRepackDocument = gql`
-    mutation updateMerpForLastLineAfterQCRepack($OrderNumber: String!, $NOSINumber: String!, $Status: String!, $UserOrStatus: String) {
-  updateMerpOrderStatus(
-    OrderNumber: $OrderNumber
-    NOSINumber: $NOSINumber
-    Status: $Status
-    UserOrStatus: $UserOrStatus
+  mutation updateMerpForLastLineAfterQCRepack(
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $Status: String!
+    $UserOrStatus: String
   ) {
-    success
-    message
-  }
-  clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
-    success
-    message
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<UpdateMerpForLastLineAfterQcRepackMutation, UpdateMerpForLastLineAfterQcRepackMutationVariables> {
-    document = UpdateMerpForLastLineAfterQcRepackDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
+    updateMerpOrderStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $Status
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+    clearMerpTote(OrderNumber: $OrderNumber, NOSINumber: $NOSINumber) {
+      success
+      message
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<
+  UpdateMerpForLastLineAfterQcRepackMutation,
+  UpdateMerpForLastLineAfterQcRepackMutationVariables
+> {
+  document = UpdateMerpForLastLineAfterQcRepackDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

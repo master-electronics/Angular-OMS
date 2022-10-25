@@ -203,7 +203,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
           const updatQCComplete = this.updateMerp.mutate({
             InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
             DateCode: this.itemInfo.DateCode,
-            CountryOfOrigin: this.itemInfo.CountryOfOrigin,
+            CountryOfOrigin: this.itemInfo.CountryISO2,
             ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
             CountMethod: this.itemInfo.CountMethod,
           });

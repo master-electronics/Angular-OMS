@@ -138,7 +138,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
-              CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
+              CountryISO2: detail.Country?.ISO2 || '',
               CountMethod: '',
               isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()

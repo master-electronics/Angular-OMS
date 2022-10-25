@@ -58,7 +58,7 @@ export interface itemParams {
   Quantity: number;
   ParentITN: string;
   ROHS: boolean;
-  CountryOfOrigin: string;
+  CountryISO2: string;
   DateCode: string;
   CountMethod: string;
   isHold: boolean;
