@@ -1958,52 +1958,43 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchDataTableListQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type FetchVendorListQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type FetchDataTableListQuery = { __typename?: 'Query', fetchDataTableList?: Array<{ __typename?: 'DataTable', TABLE_NAME?: string | null } | null> | null };
+export type FetchVendorListQuery = { __typename?: 'Query', fetchVendorList?: Array<{ __typename?: 'Vendor', _id: number, VendorNumber: string, VendorName: string } | null> | null };
 
-export type FetchDataColumnListQueryVariables = Types.Exact<{
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
+export type FindReceiptsQueryVariables = Types.Exact<{
+  receiptID?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type FetchDataColumnListQuery = { __typename?: 'Query', fetchDataColumnList?: Array<{ __typename?: 'DataColumn', COLUMN_NAME?: string | null, IS_NULLABLE?: string | null, DATA_TYPE?: string | null, CHARACTER_MAXIMUM_LENGTH?: number | null, IS_PRIMARY_KEY?: string | null } | null> | null };
+export type FindReceiptsQuery = { __typename?: 'Query', findReceipts?: Array<{ __typename?: 'Receipt', _id: number, VendorID?: number | null, ExpectedArrivalDate?: string | null, SourceType?: string | null } | null> | null };
 
-export type FetchTableDataQueryVariables = Types.Exact<{
-  columnList?: Types.InputMaybe<Types.Scalars['String']>;
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
-  where?: Types.InputMaybe<Types.Scalars['String']>;
+export type FindPartCodesQueryVariables = Types.Exact<{
+  searchString?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
-export type FetchTableDataQuery = { __typename?: 'Query', fetchTableData?: Array<{ __typename?: 'TableData', Results?: string | null } | null> | null };
+export type FindPartCodesQuery = { __typename?: 'Query', findPartCodes?: Array<{ __typename?: 'PARTCODE', _id: number, PRC?: string | null } | null> | null };
 
-export type InsertTableDataMutationVariables = Types.Exact<{
-  insertQuery?: Types.InputMaybe<Types.Scalars['String']>;
+export type FetchCountryListQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchCountryListQuery = { __typename?: 'Query', fetchCountryList?: Array<{ __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null> | null };
+
+export type InsertReceiptMutationVariables = Types.Exact<{
+  receipt?: Types.InputMaybe<Types.InsertReceipt>;
 }>;
 
 
-export type InsertTableDataMutation = { __typename?: 'Mutation', insertTableData?: Array<{ __typename?: 'TableData', Results?: string | null } | null> | null };
+export type InsertReceiptMutation = { __typename?: 'Mutation', insertReceipt?: { __typename?: 'Receipt', _id: number, VendorID?: number | null, ExpectedArrivalDate?: string | null, SourceType?: string | null } | null };
 
-export type UpdateTableDataMutationVariables = Types.Exact<{
-  updateQuery?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-
-export type UpdateTableDataMutation = { __typename?: 'Mutation', updateTableData?: { __typename?: 'TableData', Results?: string | null } | null };
-
-export type DeleteTableDataMutationVariables = Types.Exact<{
-  deleteQuery?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-
-export type DeleteTableDataMutation = { __typename?: 'Mutation', deleteTableData?: { __typename?: 'TableData', Results?: string | null } | null };
-
-export const FetchDataTableListDocument = gql`
-    query fetchDataTableList {
-  fetchDataTableList {
-    TABLE_NAME
+export const FetchVendorListDocument = gql`
+    query fetchVendorList {
+  fetchVendorList {
+    _id
+    VendorNumber
+    VendorName
   }
 }
     `;
@@ -2011,21 +2002,20 @@ export const FetchDataTableListDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchDataTableListGQL extends Apollo.Query<FetchDataTableListQuery, FetchDataTableListQueryVariables> {
-    document = FetchDataTableListDocument;
+  export class FetchVendorListGQL extends Apollo.Query<FetchVendorListQuery, FetchVendorListQueryVariables> {
+    document = FetchVendorListDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchDataColumnListDocument = gql`
-    query fetchDataColumnList($tableName: String) {
-  fetchDataColumnList(TABLE_NAME: $tableName) {
-    COLUMN_NAME
-    IS_NULLABLE
-    DATA_TYPE
-    CHARACTER_MAXIMUM_LENGTH
-    IS_PRIMARY_KEY
+export const FindReceiptsDocument = gql`
+    query findReceipts($receiptID: String) {
+  findReceipts(ReceiptID: $receiptID) {
+    _id
+    VendorID
+    ExpectedArrivalDate
+    SourceType
   }
 }
     `;
@@ -2033,17 +2023,18 @@ export const FetchDataColumnListDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchDataColumnListGQL extends Apollo.Query<FetchDataColumnListQuery, FetchDataColumnListQueryVariables> {
-    document = FetchDataColumnListDocument;
+  export class FindReceiptsGQL extends Apollo.Query<FindReceiptsQuery, FindReceiptsQueryVariables> {
+    document = FindReceiptsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchTableDataDocument = gql`
-    query fetchTableData($columnList: String, $tableName: String, $where: String) {
-  fetchTableData(ColumnList: $columnList, TableName: $tableName, Where: $where) {
-    Results
+export const FindPartCodesDocument = gql`
+    query findPartCodes($searchString: String) {
+  findPartCodes(SearchString: $searchString) {
+    _id
+    PRC
   }
 }
     `;
@@ -2051,17 +2042,21 @@ export const FetchTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchTableDataGQL extends Apollo.Query<FetchTableDataQuery, FetchTableDataQueryVariables> {
-    document = FetchTableDataDocument;
+  export class FindPartCodesGQL extends Apollo.Query<FindPartCodesQuery, FindPartCodesQueryVariables> {
+    document = FindPartCodesDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const InsertTableDataDocument = gql`
-    mutation insertTableData($insertQuery: String) {
-  insertTableData(InsertQuery: $insertQuery) {
-    Results
+export const FetchCountryListDocument = gql`
+    query fetchCountryList {
+  fetchCountryList {
+    _id
+    CountryCode
+    CountryName
+    ISO2
+    ISO3
   }
 }
     `;
@@ -2069,17 +2064,20 @@ export const InsertTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class InsertTableDataGQL extends Apollo.Mutation<InsertTableDataMutation, InsertTableDataMutationVariables> {
-    document = InsertTableDataDocument;
+  export class FetchCountryListGQL extends Apollo.Query<FetchCountryListQuery, FetchCountryListQueryVariables> {
+    document = FetchCountryListDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const UpdateTableDataDocument = gql`
-    mutation updateTableData($updateQuery: String) {
-  updateTableData(UpdateQuery: $updateQuery) {
-    Results
+export const InsertReceiptDocument = gql`
+    mutation insertReceipt($receipt: InsertReceipt) {
+  insertReceipt(Receipt: $receipt) {
+    _id
+    VendorID
+    ExpectedArrivalDate
+    SourceType
   }
 }
     `;
@@ -2087,26 +2085,8 @@ export const UpdateTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateTableDataGQL extends Apollo.Mutation<UpdateTableDataMutation, UpdateTableDataMutationVariables> {
-    document = UpdateTableDataDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const DeleteTableDataDocument = gql`
-    mutation deleteTableData($deleteQuery: String) {
-  deleteTableData(DeleteQuery: $deleteQuery) {
-    Results
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class DeleteTableDataGQL extends Apollo.Mutation<DeleteTableDataMutation, DeleteTableDataMutationVariables> {
-    document = DeleteTableDataDocument;
+  export class InsertReceiptGQL extends Apollo.Mutation<InsertReceiptMutation, InsertReceiptMutationVariables> {
+    document = InsertReceiptDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

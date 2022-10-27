@@ -1,0 +1,58 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 8px;
+}
+
+.add-item {
+    flex: 0 0 auto;
+    padding: 8px;
+    display: block;
+}
+
+.icon {
+    position: relative;
+    float: left;
+    top: 0px;
+    margin: 0;
+    padding: 0;
+    padding: 7px 7px 0px 7px;
+    height: 32px;
+    cursor: pointer;
+    color: #060606;
+    border: solid 1px #d9d9d9;
+}
+
+.icon:hover {
+    cursor: pointer;
+    color: #40a9ff;
+    border: solid 1px #40a9ff;
+}
+
+.invalid {
+    border: solid 1px red;
+}
+
+.valid {
+    border: 0;
+}
+
+.searchResults {
+    max-height: 300px;
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    border: solid 1px #dddddd; 
+    background-color: white;
+    box-shadow: 10px 10px 30px #e6e6e6, -10px 10px 30px #e6e6e6;
+    z-index: 1000;
+}
+
+.searchResults div {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.searchResults div:hover {
+    background-color: #f5f5f5;
+}

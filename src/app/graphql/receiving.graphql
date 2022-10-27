@@ -1,0 +1,42 @@
+query fetchVendorList {
+    fetchVendorList {
+        _id
+        VendorNumber
+        VendorName
+    }
+}
+
+query findReceipts($receiptID: String) {
+    findReceipts(ReceiptID: $receiptID) {
+        _id
+        VendorID
+        ExpectedArrivalDate
+        SourceType
+    }
+}
+
+query findPartCodes($searchString: String) {
+    findPartCodes(SearchString: $searchString) {
+        _id
+        PRC
+    }
+}
+
+query fetchCountryList {
+    fetchCountryList {
+        _id
+        CountryCode
+        CountryName
+        ISO2
+        ISO3
+    }
+}
+
+mutation insertReceipt($receipt: InsertReceipt) {
+    insertReceipt(Receipt: $receipt) {
+        _id
+        VendorID
+        ExpectedArrivalDate
+        SourceType
+    }
+}

@@ -1,0 +1,109 @@
+<div class="px-4 py-4 mx-auto">
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="24" style="height: 30px"></div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            Receipt ID
+        </div>
+        <div nz-col nzSpan="4">
+            Vendor ID
+        </div>
+        <div nz-col nzSpan="3">
+            Expected Arrival Date
+        </div>
+        <div nz-col nzSpan="4">
+            Source
+        </div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            <nz-select style="width: 80%; float: left" nzShowSearch
+                nzPlaceHolder="Receipt ID" [nzShowArrow]="false"
+                [nzFilterOption]="nzFilterOption"
+                (nzOnSearch)="searchReceipts($event)"
+                [(ngModel)]="receiptID" #receiptSearch
+                name="receiptSearchSel" nzAllowClear
+                (ngModelChange)="onReceiptIDChange($event)">
+                <nz-option *ngFor="let receipt of receiptList"
+                    [nzLabel]="receipt.text" [nzValue]="receipt.value">
+                </nz-option>
+            </nz-select>
+            <span nz-icon nzType="plus"
+                nzTheme="outline" class="icon"
+                (click)="insertReceipt()"></span>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-select style="width: 100%" nzShowSearch nzAllowClear
+                [(ngModel)]="vendorID" #vendorSelect id="vendorID"
+                [class]="vendorSearchClass" nzPlaceHolder="Vendor ID">
+                <nz-option *ngFor="let vendor of vendorList"
+                    nzLabel="{{ vendor.label }}"
+                    nzValue="{{ vendor.value }}"></nz-option>
+            </nz-select>
+        </div>
+        <div nz-col nzSpan="3">
+            <nz-date-picker [(ngModel)]="expectedArrivalDate"></nz-date-picker>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-select style="width: 90%" nzPlaceHolder="Source"
+                [(ngModel)]="sourceType" [nzOptions]="sourceTypeOptions">
+            </nz-select>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="24" style="height: 30px"></div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            Part Number
+        </div>
+        <div nz-col nzSpan="2">
+            Quantity
+        </div>
+        <div nz-col nzSpan="2">
+            Date Code
+        </div>
+        <div nz-col nzSpan="2">
+            Country of Origin
+        </div>
+        <div nz-col nzSpan="2">
+            ROHS
+        </div>
+        <div nz-col nzSpan="4">
+            Actions
+        </div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            <input nz-input [(ngModel)]="partNumber"
+             [disabled]="!receiptSelected" placeholder="Part Number"
+             (keyup)="onPartNumberChange($event)" />
+            <div class="searchResults" *ngIf="partCodes">
+                <div *ngFor="let partCode of partCodes" (click)="onPartNumberClick(partCode.PRC, partCode._id)">
+                    {{ partCode.PRC }}
+                </div>
+            </div>
+        </div>
+        <div nz-col nzSpan="2">
+            <input nz-input [(ngModel)]="quantity" 
+                [disabled]="!receiptSelected" placeholder="Quantity" />
+        </div>
+        <div nz-col nzSpan="2">
+            <input nz-input [(ngModel)]="dateCode"
+             [disabled]="!receiptSelected" placeholder="Date Code" />
+        </div>
+        <div nz-col nzSpan="2">
+            <input nz-input [(ngModel)]="coo" [disabled]="!receiptSelected" />
+        </div>
+        <div nz-col nzSpan="2">
+            <nz-select [(ngModel)]="rohs" style="width: 100%"
+                [nzOptions]="rohsOptions" [disabled]="!receiptSelected"
+                nzPlaceHolder="ROHS">
+            </nz-select>
+        </div>
+    </div>
+
+    <input nz-input [(ngModel)]="receiptID" />
+    <button nz-button (click)="test($event)">test</button>
+</div>

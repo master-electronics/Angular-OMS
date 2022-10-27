@@ -121,6 +121,13 @@ const routes: Routes = [
             (m) => m.PickerManageModule
           ),
       },
+      {
+        path: 'receiving/receiptentry',
+        loadChildren: () =>
+          import('./pages/receiving/receipt-entry/receipt-entry.module').then(
+            (m) => m.ReceiptEntryModule
+          ),
+      },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },
