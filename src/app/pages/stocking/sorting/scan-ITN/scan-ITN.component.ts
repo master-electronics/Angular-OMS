@@ -47,9 +47,7 @@ export class ScanITNComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
+    this.ITNInput.nativeElement.select();
   }
 
   back(): void {

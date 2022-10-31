@@ -85,7 +85,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       .pipe(
         tap((res) => {
           //if (res.data.findUserInfo.Zone === null)
-            //throw 'User has no zone assigned!';
+          //throw 'User has no zone assigned!';
 
           if (res.data.findUserInfo.StrictPriority === null)
             throw 'User has no Strict Priority assigned!';
@@ -109,9 +109,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       );
   }
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.containerInput.nativeElement.select();
-    }, 10);
+    this.containerInput.nativeElement.select();
   }
 
   onSubmit(): void {

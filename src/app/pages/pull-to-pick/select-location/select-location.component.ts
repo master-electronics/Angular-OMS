@@ -60,9 +60,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
 
   @ViewChild('positionNumber') positionInput!: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.positionInput.nativeElement.select();
-    }, 10);
+    this.positionInput.nativeElement.select();
   }
 
   ngOnInit(): void {

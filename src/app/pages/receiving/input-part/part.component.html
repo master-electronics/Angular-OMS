@@ -1,1 +1,73 @@
-working
+<div class="container mx-auto flex justify-center px-2 py-2 md:mt-4">
+  <div class="grid grid-cols-2 gap-5">
+    <nz-table
+      #partTable
+      [nzData]="partNumberList"
+      [nzScroll]="{ y: '600px' }"
+      [nzFrontPagination]="false"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="100px">Product Code</th>
+          <th>Part Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="
+            let data of partNumberList
+              | partFilter: this.inputForm.value.partNumber
+          "
+          (click)="select(data)"
+        >
+          <td>{{ data.ProductCode }}</td>
+          <td>{{ data.PartNumber }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+      <div>
+        <nz-form-control nzHasFeedback>
+          <input
+            nz-input
+            (input)="onInputChange($event)"
+            placeholder="Part#"
+            nzSize="large"
+            type="text"
+            id="partNumber"
+            formControlName="partNumber"
+            autocomplete="off"
+            #partNumber
+          />
+        </nz-form-control>
+      </div>
+      <div class="mt-10">
+        <button
+          class="w-32"
+          nz-button
+          type="submit"
+          [disabled]="inputForm.invalid"
+          nzType="primary"
+          (click)="onSubmit()"
+          [nzLoading]="isLoading"
+          nzSize="large"
+        >
+          Submit
+        </button>
+
+        <button
+          class="ml-10 w-32"
+          nz-button
+          type="submit"
+          (click)="back()"
+          nzSize="large"
+        >
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="fixed bottom-5 w-3/5">
+    <div class="simple-keyboard"></div>
+  </div>
+</div>

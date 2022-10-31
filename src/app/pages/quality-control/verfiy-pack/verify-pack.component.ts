@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subscription, throwError } from 'rxjs';
+import { Observable, of, Subscription, throwError } from 'rxjs';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
@@ -22,7 +22,7 @@ import {
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, delay, map, tap } from 'rxjs/operators';
 import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
@@ -261,9 +261,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateCodeInput.nativeElement.select();
   }
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.quantityInput.nativeElement.select();
-    }, 10);
+    this.quantityInput.nativeElement.select();
   }
 
   print(): void {
@@ -298,9 +296,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   holdVisible = false;
   open(): void {
     this.holdVisible = true;
-    setTimeout(() => {
-      this.holdInput.nativeElement.select();
-    }, 10);
+    of([])
+      .pipe(delay(10))
+      .subscribe(() => {
+        this.holdInput.nativeElement.select();
+      });
   }
 
   close(): void {

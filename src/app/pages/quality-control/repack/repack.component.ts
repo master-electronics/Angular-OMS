@@ -82,9 +82,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
   @ViewChild('container') containerInput!: ElementRef;
   @ViewChild('containerError') containerError!: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.containerInput.nativeElement.select();
-    }, 10);
+    this.containerInput.nativeElement.select();
   }
 
   findDetailID(): void {

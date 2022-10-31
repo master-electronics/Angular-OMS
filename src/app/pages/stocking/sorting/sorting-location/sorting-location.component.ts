@@ -71,9 +71,7 @@ export class SortingLocationComponent implements OnInit {
 
   @ViewChild('location') locationInput!: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.locationInput.nativeElement.select();
-    }, 10);
+    this.locationInput.nativeElement.select();
   }
 
   reprint(): void {

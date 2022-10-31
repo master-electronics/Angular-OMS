@@ -100,14 +100,12 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      if (this.stage === 'scanBarcode') {
-        this.barcodeInput.nativeElement.select();
-      }
-      if (this.stage === 'ITNCount') {
-        this.countNumberEle.nativeElement.select();
-      }
-    }, 10);
+    if (this.stage === 'scanBarcode') {
+      this.barcodeInput.nativeElement.select();
+    }
+    if (this.stage === 'ITNCount') {
+      this.countNumberEle.nativeElement.select();
+    }
   }
 
   back(): void {
@@ -248,9 +246,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
         }),
         map(() => {
           this.isLoading = false;
-          setTimeout(() => {
-            this.countNumberEle.nativeElement.select();
-          }, 10);
+          this.countNumberEle.nativeElement.select();
         }),
         catchError((err) => {
           this.alertType = 'error';

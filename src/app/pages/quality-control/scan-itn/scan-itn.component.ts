@@ -58,9 +58,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
+    this.ITNInput.nativeElement.select();
   }
 
   onSubmit(): void {

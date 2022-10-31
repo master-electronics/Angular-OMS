@@ -81,9 +81,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     this.fetchNext();
   }
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.barcodeInput.nativeElement.select();
-    }, 10);
+    this.barcodeInput.nativeElement.select();
   }
 
   fetchNext(): void {

@@ -5,14 +5,36 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 
-import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ReceivingComponent } from './receiving.component';
 import { ReceivingService } from './receiving.server';
 import { ReceivingRoutingModule } from './receiving.routing';
+import { ReceiptComponent } from './input-receipt/receipt.component';
+import { PartComponent } from './input-part/part.component';
+import { VerifyComponent } from './verify/verify.component';
+import { PartFilterPipe } from './input-part/part-filter.pipe';
+
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 @NgModule({
-  declarations: [ReceivingComponent, StepTabsComponent],
+  declarations: [
+    ReceivingComponent,
+    StepTabsComponent,
+    ReceiptComponent,
+    PartComponent,
+    VerifyComponent,
+    PartFilterPipe,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -20,7 +42,17 @@ import { ReceivingRoutingModule } from './receiving.routing';
     ReactiveFormsModule,
     SharedComponentModule,
     SharedUtilityModule,
+    NzInputModule,
+    NzSpinModule,
+    NzFormModule,
     NzStepsModule,
+    NzButtonModule,
+    NzSkeletonModule,
+    NzImageModule,
+    NzDescriptionsModule,
+    NzDrawerModule,
+    NzSelectModule,
+    NzTableModule,
   ],
   providers: [ReceivingService],
   bootstrap: [ReceivingComponent],
