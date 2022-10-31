@@ -1,0 +1,54 @@
+<div class="container mx-auto px-2 py-2 md:mt-4">
+  <form
+    focusInvalidInput
+    class="flex flex-col gap-5"
+    [formGroup]="kickoutForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div
+      class="block space-x-4 pb-2 pt-3"
+      *ngFor="let option of kickoutOptions"
+    >
+      <label>
+        <input
+          type="radio"
+          name="kickoutReason"
+          formControlName="kickoutReason"
+          [value]="option.id"
+          #kickoutInput
+        />
+        {{ option.content }}
+      </label>
+    </div>
+    <textarea
+      rows="4"
+      nz-input
+      (input)="onInputChange($event)"
+      name="otherReason"
+      formControlName="otherReason"
+      #otherReason
+    ></textarea>
+    <div class="flex gap-5">
+      <button nz-button class="w-32" (click)="cancal()" nzSize="large">
+        Cancel
+      </button>
+      <div class="grow"></div>
+      <button
+        nz-button
+        class="w-32"
+        [disabled]="kickoutForm.invalid"
+        nzType="primary"
+        (click)="onSubmit()"
+        type="submit"
+        nzSize="large"
+        [nzLoading]="isLoading"
+      >
+        kickout
+      </button>
+    </div>
+  </form>
+
+  <div class="fixed bottom-5 w-4/5">
+    <div class="simple-keyboard"></div>
+  </div>
+</div>

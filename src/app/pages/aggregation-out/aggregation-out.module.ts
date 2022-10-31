@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AggregationOutComponent } from './aggregation-out.component';
 import { AggregationOutRoutingModule } from './aggregation-out.routing';
 import { PickToteComponent } from './pick-tote/pick-tote.component';
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { AggregationOutService } from './aggregation-out.server';
 
@@ -26,7 +25,6 @@ import { PickITNComponent } from './pick-itn/pick-itn.component';
     AggregationOutRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzInputModule,
     NzSpinModule,

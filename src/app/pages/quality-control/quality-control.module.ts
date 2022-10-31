@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QualityControlService } from './quality-control.server';
 import { QualityControlComponent } from './quality-control.component';
 import { QualityControlRoutingModule } from './quality-control.routing';
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
@@ -42,7 +41,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     QualityControlRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     // NG ZORRO
     NzInputModule,

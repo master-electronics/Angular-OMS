@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedComponentModule } from '../../components/shared-component.module';
 
 import { AggregationInComponent } from './aggregation-in.component';
 import { LocationComponent } from './location/location.component';
@@ -32,7 +31,6 @@ import { VerifyITNComponent } from './verify-itn/verify-itn.component';
     AggregationInRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzInputModule,
     NzSpinModule,

@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsProviderModule } from '../../icons-provider.module';
 
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -32,7 +31,6 @@ import { LogViewerRoutingModule } from './log-viewer.routing';
     FormsModule,
     ReactiveFormsModule,
     SharedUtilityModule,
-    SharedComponentModule,
     LogViewerRoutingModule,
     NzInputModule,
     NzTableModule,

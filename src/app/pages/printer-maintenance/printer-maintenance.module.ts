@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PrinterMaintenance } from './printer-maintenance.component';
 import { PrinterMaintenanceRoutingModule } from './printer-maintenance.routing';
 
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -24,7 +23,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   imports: [
     CommonModule,
     PrinterMaintenanceRoutingModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzTableModule,
     NzDropDownModule,

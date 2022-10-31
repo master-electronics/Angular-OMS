@@ -5,7 +5,6 @@ import { IconsProviderModule } from '../../icons-provider.module';
 
 import { ManagerToolsComponent } from './manager-tools.component';
 import { TableViewsRoutingModule } from './manager-tools';
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -25,7 +24,6 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     FormsModule,
     ReactiveFormsModule,
     SharedUtilityModule,
-    SharedComponentModule,
     TableViewsRoutingModule,
     NzInputModule,
     NzTableModule,

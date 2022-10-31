@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Utiltiy Module
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 //UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -46,7 +45,6 @@ import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verif
     StockingRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzInputModule,
     NzSpinModule,

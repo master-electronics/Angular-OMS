@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
@@ -12,6 +11,7 @@ import { ReceivingRoutingModule } from './receiving.routing';
 import { ReceiptComponent } from './input-receipt/receipt.component';
 import { PartComponent } from './input-part/part.component';
 import { VerifyComponent } from './verify/verify.component';
+import { KickoutComponent } from './kickout/kickout.component';
 import { PartFilterPipe } from './input-part/part-filter.pipe';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -33,6 +33,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     ReceiptComponent,
     PartComponent,
     VerifyComponent,
+    KickoutComponent,
     PartFilterPipe,
   ],
   imports: [
@@ -40,7 +41,6 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     FormsModule,
     ReceivingRoutingModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzInputModule,
     NzSpinModule,

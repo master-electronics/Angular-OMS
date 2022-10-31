@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 // Utiltiy Module
-import { SharedComponentModule } from '../../components/shared-component.module';
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 //UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -18,8 +17,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzRadioModule } from "ng-zorro-antd/radio";
-import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
@@ -45,7 +44,6 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     PickRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
     SharedUtilityModule,
     NzInputModule,
     NzSpinModule,

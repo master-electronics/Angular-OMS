@@ -1,21 +1,22 @@
 <div class="container mx-auto px-2 py-2 md:mt-4">
-  <div *ngIf="!fetchInfo$">
-    <nz-skeleton-element
-      nzType="image"
-      [nzActive]="true"
-      style="width: 400px"
-    ></nz-skeleton-element>
-    <nz-skeleton [nzParagraph]="{ rows: 2 }" [nzActive]="true"></nz-skeleton>
-  </div>
-  <div *ngIf="fetchInfo$ | async">
-    <img
-      nz-image
-      [nzSrc]="imgURL"
-      width="200px"
-      height="200px"
-      alt="ProductImage"
-      nzFallback="assets/img/image-not-found.png"
-    />
+  <div>
+    <div *ngIf="!fetchInfo$">
+      <nz-skeleton-element
+        nzType="image"
+        [nzActive]="true"
+        style="width: 400px"
+      ></nz-skeleton-element>
+    </div>
+    <div *ngIf="fetchInfo$ | async">
+      <img
+        nz-image
+        [nzSrc]="imgURL"
+        width="200px"
+        height="200px"
+        alt="ProductImage"
+        nzFallback="assets/img/image-not-found.png"
+      />
+    </div>
   </div>
   <nz-descriptions nzTitle="Part Info" nzBordered [nzColumn]="2">
     <nz-descriptions-item nzTitle="Product Code"></nz-descriptions-item>
@@ -29,62 +30,23 @@
       [nzSpan]="2"
     ></nz-descriptions-item>
   </nz-descriptions>
-  <div nz-row>
-    <div class="rounded-md bg-red-300">
-      <button nz-button type="button" (click)="open()" nzGhost>KickOut</button>
-    </div>
-
-    <div class="rounded-md">
-      <button
-        nz-button
-        nzType="primary"
-        (click)="onSubmit()"
-        type="submit"
-        [nzLoading]="isLoading"
-      >
-        Submit
+  <div class="mt-5 flex gap-5">
+    <div class="w-32 rounded-md bg-red-500">
+      <button nz-button type="button" (click)="kickout()" class="w-32" nzGhost>
+        KickOut
       </button>
     </div>
+    <div class="grow"></div>
+    <button nz-button class="w-32" (click)="back()">Back</button>
+    <button
+      nz-button
+      class="w-32"
+      nzType="primary"
+      (click)="onSubmit()"
+      type="submit"
+      [nzLoading]="isLoading"
+    >
+      Verify
+    </button>
   </div>
 </div>
-<!-- Kick Out -->
-<nz-drawer
-  [nzClosable]="false"
-  [nzVisible]="kickoutVisible"
-  nzPlacement="left"
-  nzTitle="Place an order on kickout"
-  (nzOnClose)="close()"
->
-  <ng-container *nzDrawerContent>
-    <form focusInvalidInput [formGroup]="kickoutForm" (ngSubmit)="onSubmit()">
-      <div
-        class="block space-x-4 pb-2 pt-3"
-        *ngFor="let option of kickoutOptions"
-      >
-        <label>
-          <input
-            type="radio"
-            name="kickoutReason"
-            formControlName="kickoutReason"
-            [value]="option.id"
-            #kickoutInput
-          />
-          {{ option.content }}
-        </label>
-      </div>
-      <span class="fixed hidden text-sm text-red-600" id="error"
-        >Option has to be selected</span
-      >
-      <button
-        nz-button
-        nzType="primary"
-        (click)="onKickout()"
-        type="submit"
-        class="w-full"
-        [nzLoading]="isLoading"
-      >
-        kickout
-      </button>
-    </form>
-  </ng-container>
-</nz-drawer>

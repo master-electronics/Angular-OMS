@@ -1,88 +1,45 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { asapScheduler, filter, map, of } from 'rxjs';
 import Keyboard from 'simple-keyboard';
 import { ReceivingService } from '../receiving.server';
 
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { asapScheduler, of } from 'rxjs';
-
 @Component({
-  selector: 'part',
-  templateUrl: './part.component.html',
+  selector: 'kickout',
+  templateUrl: './kickout.component.html',
 })
-export class PartComponent implements OnInit {
-  constructor(private _router: Router, private _service: ReceivingService) {}
-  partNumberList = [
-    {
-      PartNumber: '1234',
-      ProductCode: 'abc',
-    },
-    {
-      PartNumber: '45678',
-      ProductCode: 'oiuh',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'erw',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'xxdf',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'fdsf',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'duufe',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'sadfa',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'pxdy',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'xyz',
-    },
-  ];
-  keyboard: Keyboard;
+export class KickoutComponent implements OnInit {
   isLoading = false;
-  singleValue;
+  keyboard: Keyboard;
 
-  inputForm = new FormGroup({
-    partNumber: new FormControl('', [
-      Validators.required,
-      this.partNumberSearch(),
-    ]),
+  kickoutOptions = [
+    { id: 1, content: 'Short Quantity' },
+    { id: 2, content: 'Damaged' },
+    { id: 3, content: 'Repackaging' },
+    { id: 4, content: 'Wrong Parts' },
+    { id: 5, content: 'Verify Quantity' },
+    { id: 6, content: 'Mixed Parts' },
+    { id: 7, content: 'Part Number Verification' },
+    { id: 8, content: 'Kit Set' },
+    { id: 0, content: 'Other' },
+  ];
+
+  kickoutForm = this._fb.group({
+    kickoutReason: ['', Validators.required],
+    otherReason: [''],
   });
 
-  partNumberSearch(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-
-      if (!value) {
-        return null;
-      }
-      const isVaild = this.partNumberList.some((part) => {
-        return (
-          part.ProductCode.toLowerCase() + part.PartNumber.toLowerCase() ===
-          value.toLowerCase()
-        );
-      });
-      return !isVaild ? { partNumberSearch: true } : null;
-    };
-  }
-
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _service: ReceivingService
+  ) {}
   ngOnInit(): void {
-    this._service.changeTab(1);
+    this._service.changeTab(2);
   }
 
+  @ViewChild('kickoutReason') InputKickout: ElementRef;
   ngAfterViewInit() {
     asapScheduler.schedule(() => {
       this.keyboard = new Keyboard({
@@ -133,7 +90,7 @@ export class PartComponent implements OnInit {
   }
 
   onChange = (input: string) => {
-    this.inputForm.setValue({ partNumber: input });
+    this.kickoutForm.get('otherReason').setValue(input);
   };
 
   onKeyPress = (button: string) => {
@@ -163,17 +120,11 @@ export class PartComponent implements OnInit {
     this.keyboard.setInput(event.target.value);
   };
 
-  select(data: any): void {
-    const input = data.ProductCode + data.PartNumber;
-    this.keyboard.setInput(input);
-    this.inputForm.setValue({ partNumber: input });
-  }
-
-  onSubmit(): void {
+  cancal(): void {
     this._router.navigateByUrl('receiving/verify');
   }
 
-  back(): void {
+  onSubmit(): void {
     this._router.navigateByUrl('receiving');
   }
 }
