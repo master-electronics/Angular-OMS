@@ -6,8 +6,6 @@
         <nz-form-control nzHasFeedback>
           <input
             nz-input
-            (input)="onInputChange($event)"
-            (focus)="onFocus()"
             placeholder="Receipt#"
             nzSize="large"
             type="number"
@@ -18,7 +16,11 @@
           />
         </nz-form-control>
       </div>
-      <div class="simple-keyboard"></div>
+      <simple-keyboard
+        [inputFromParent]="inputForm.value.receiptNumber"
+        [layout]="layout"
+        (outputFromChild)="onChange($event)"
+      ></simple-keyboard>
     </div>
     <div>
       <button

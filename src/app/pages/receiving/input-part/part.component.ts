@@ -15,11 +15,11 @@ export class PartComponent implements OnInit {
   constructor(private _router: Router, private _service: ReceivingService) {}
   partNumberList = [
     {
-      PartNumber: '1234',
+      PartNumber: 'wuzy',
       ProductCode: 'abc',
     },
     {
-      PartNumber: '45678',
+      PartNumber: 'uudi',
       ProductCode: 'oiuh',
     },
     {
@@ -70,10 +70,7 @@ export class PartComponent implements OnInit {
         return null;
       }
       const isVaild = this.partNumberList.some((part) => {
-        return (
-          part.ProductCode.toLowerCase() + part.PartNumber.toLowerCase() ===
-          value.toLowerCase()
-        );
+        return part.PartNumber.toLowerCase() === value.toLowerCase();
       });
       return !isVaild ? { partNumberSearch: true } : null;
     };
@@ -84,83 +81,11 @@ export class PartComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    asapScheduler.schedule(() => {
-      this.keyboard = new Keyboard({
-        onChange: (input) => this.onChange(input),
-        onKeyPress: (button) => this.onKeyPress(button),
-        mergeDisplay: true,
-        preventMouseDownDefault: true,
-        layoutName: 'default',
-        layout: {
-          default: [
-            'q w e r t y u i o p',
-            'a s d f g h j k l',
-            '{shift} z x c v b n m {backspace}',
-            '{numbers} , {space} . {ent}',
-          ],
-          shift: [
-            'Q W E R T Y U I O P',
-            'A S D F G H J K L',
-            '{shift} Z X C V B N M {backspace}',
-            '{numbers} , {space} . {ent}',
-          ],
-          numbers: [
-            '1 2 3 4 5 6 7 8 9 0',
-            '@ # $ _ & - + ( ) /',
-            `< > * " ' : ; ! ? {backspace}`,
-            '{abc} , {space} . {ent}',
-          ],
-        },
-        display: {
-          '{numbers}': '123',
-          '{ent}': 'return',
-          '{escape}': 'esc ⎋',
-          '{tab}': 'tab ⇥',
-          '{backspace}': '⌫',
-          '{capslock}': 'caps lock ⇪',
-          '{shift}': '⇧',
-          '{controlleft}': 'ctrl ⌃',
-          '{controlright}': 'ctrl ⌃',
-          '{altleft}': 'alt ⌥',
-          '{altright}': 'alt ⌥',
-          '{metaleft}': 'cmd ⌘',
-          '{metaright}': 'cmd ⌘',
-          '{abc}': 'ABC',
-          '{space}': '_________________________________',
-        },
-      });
-    });
+    //
   }
 
   onChange = (input: string) => {
     this.inputForm.setValue({ partNumber: input });
-  };
-
-  onKeyPress = (button: string) => {
-    if (button === '{shift}' || button === '{lock}') this.handleShift();
-    if (button === '{numbers}' || button === '{abc}') this.handleNumbers();
-    if (button === '{ent}') this.onSubmit();
-  };
-
-  handleShift(): void {
-    const currentLayout = this.keyboard.options.layoutName;
-    const shiftToggle = currentLayout === 'default' ? 'shift' : 'default';
-
-    this.keyboard.setOptions({
-      layoutName: shiftToggle,
-    });
-  }
-  handleNumbers(): void {
-    const currentLayout = this.keyboard.options.layoutName;
-    const numbersToggle = currentLayout !== 'numbers' ? 'numbers' : 'default';
-
-    this.keyboard.setOptions({
-      layoutName: numbersToggle,
-    });
-  }
-
-  onInputChange = (event: any) => {
-    this.keyboard.setInput(event.target.value);
   };
 
   select(data: any): void {

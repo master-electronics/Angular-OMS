@@ -15,7 +15,7 @@
           name="kickoutReason"
           formControlName="kickoutReason"
           [value]="option.id"
-          #kickoutInput
+          #kickoutReason
         />
         {{ option.content }}
       </label>
@@ -23,7 +23,6 @@
     <textarea
       rows="4"
       nz-input
-      (input)="onInputChange($event)"
       name="otherReason"
       formControlName="otherReason"
       #otherReason
@@ -47,8 +46,10 @@
       </button>
     </div>
   </form>
-
   <div class="fixed bottom-5 w-4/5">
-    <div class="simple-keyboard"></div>
+    <simple-keyboard
+      [inputFromParent]="kickoutForm.value.otherReason"
+      (outputFromChild)="onChange($event)"
+    ></simple-keyboard>
   </div>
 </div>

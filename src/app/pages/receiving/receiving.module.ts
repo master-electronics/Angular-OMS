@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SharedUtilityModule } from '../../shared/shared-utility.module';
 
+import { SimpleKeyboardComponent } from '../../components/simple-keyboard/simple-keyboard.component';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ReceivingComponent } from './receiving.component';
 import { ReceivingService } from './receiving.server';
@@ -28,6 +29,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 
 @NgModule({
   declarations: [
+    SimpleKeyboardComponent,
     ReceivingComponent,
     StepTabsComponent,
     ReceiptComponent,
