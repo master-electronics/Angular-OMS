@@ -1,0 +1,37 @@
+<form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
+    <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
+      <input
+        nz-input
+        nzSize="large"
+        [type]="type"
+        [placeholder]="placeholder"
+        autocomplete="off"
+        id="input"
+        formControlName="input"
+      />
+      <ng-template #errorTpl let-control>
+        <ng-container *ngIf="control.hasError('regex')"
+          >The input is not valid!</ng-container
+        >
+        <ng-container *ngIf="control.hasError('required')"
+          >Please input this field!</ng-container
+        >
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="isLoading"
+        [disabled]="inputForm.invalid"
+      >
+        Submit
+      </button>
+      <button nz-button (click)="resetForm($event)">{{ Back }}</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
