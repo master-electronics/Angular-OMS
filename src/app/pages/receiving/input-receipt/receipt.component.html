@@ -1,14 +1,11 @@
 <div class="container mx-auto px-2 py-2 md:mt-4">
   <div *ngIf="router$ | async"></div>
-  <<<<<<< Updated upstream
   <form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
     <div class="grid grid-cols-2 gap-5">
       <div>
         <nz-form-control nzHasFeedback>
           <input
             nz-input
-            (input)="onInputChange($event)"
-            (focus)="onFocus()"
             placeholder="Receipt#"
             nzSize="large"
             type="number"
@@ -19,44 +16,24 @@
           />
         </nz-form-control>
       </div>
-      <div class="simple-keyboard"></div>
+      <simple-keyboard
+        [inputFromParent]="inputForm.value.receiptNumber"
+        [layout]="layout"
+        (outputFromChild)="onChange($event)"
+      ></simple-keyboard>
     </div>
     <div>
-      =======
-      <div class="grid grid-cols-2 gap-5">
-        <form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-          <nz-form-control nzHasFeedback>
-            <input
-              nz-input
-              placeholder="Receipt#"
-              nzSize="large"
-              type="number"
-              id="receiptNumber"
-              formControlName="receiptNumber"
-              autocomplete="off"
-              #receiptNumber
-            />
-          </nz-form-control>
-          >>>>>>> Stashed changes
-          <button
-            nz-button
-            [disabled]="inputForm.invalid"
-            type="submit"
-            nzType="primary"
-            (click)="onSubmit()"
-            [nzLoading]="isLoading"
-            nzSize="large"
-          >
-            Submit
-          </button>
-        </form>
-
-        <simple-keyboard
-          [inputFromParent]="inputForm.value.receiptNumber"
-          [layout]="layout"
-          (outputFromChild)="onChange($event)"
-        ></simple-keyboard>
-      </div>
+      <button
+        nz-button
+        [disabled]="inputForm.invalid"
+        type="submit"
+        nzType="primary"
+        (click)="onSubmit()"
+        [nzLoading]="isLoading"
+        nzSize="large"
+      >
+        Submit
+      </button>
     </div>
   </form>
 </div>
