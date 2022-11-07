@@ -1,4 +1,4 @@
-<form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+<form nz-form [formGroup]="inputForm" (ngSubmit)="submit()">
   <nz-form-item>
     <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
     <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
@@ -7,9 +7,9 @@
         nzSize="large"
         [type]="type"
         [placeholder]="placeholder"
+        [formControlName]="controlName"
         autocomplete="off"
-        id="input"
-        formControlName="input"
+        #input
       />
       <ng-template #errorTpl let-control>
         <ng-container *ngIf="control.hasError('regex')"
@@ -25,13 +25,18 @@
     <nz-form-control [nzOffset]="7" [nzSpan]="12">
       <button
         nz-button
+        type="submit"
+        nzSize="large"
         nzType="primary"
         [nzLoading]="isLoading"
         [disabled]="inputForm.invalid"
+        class="mr-20"
       >
         Submit
       </button>
-      <button nz-button (click)="resetForm($event)">{{ Back }}</button>
+      <button nz-button nzSize="large" type="button" (click)="back()">
+        Back
+      </button>
     </nz-form-control>
   </nz-form-item>
 </form>

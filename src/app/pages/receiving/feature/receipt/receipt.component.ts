@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import Keyboard from 'simple-keyboard';
-import { ReceivingService } from '../receiving.server';
-import { Layout } from '../../../components/simple-keyboard/simple-keyboard.component';
+import { ReceivingService } from '../../data/receiving.server';
+import { Layout } from '../../../../shared/ui/simple-keyboard/simple-keyboard.component';
 
 @Component({
   selector: 'receipt',
@@ -19,9 +19,11 @@ export class ReceiptComponent implements OnInit {
     receiptNumber: new FormControl('', [Validators.required]),
   });
 
-  constructor(private _router: Router, private _service: ReceivingService) {}
-  ngOnInit(): void {
+  constructor(private _router: Router, private _service: ReceivingService) {
     this._service.changeTab(0);
+  }
+  ngOnInit(): void {
+    //
   }
 
   onChange = (input: string) => {

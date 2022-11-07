@@ -1,0 +1,47 @@
+<div>
+  <div *ngIf="!fetchInfo$">
+    <nz-skeleton-element
+      nzType="image"
+      [nzActive]="true"
+      style="width: 400px"
+    ></nz-skeleton-element>
+  </div>
+  <div *ngIf="fetchInfo$ | async">
+    <img
+      nz-image
+      [nzSrc]="imgURL"
+      width="200px"
+      height="200px"
+      alt="ProductImage"
+      nzFallback="assets/img/image-not-found.png"
+    />
+  </div>
+</div>
+<nz-descriptions nzTitle="Part Info" nzBordered [nzColumn]="2">
+  <nz-descriptions-item nzTitle="Product Code"></nz-descriptions-item>
+  <nz-descriptions-item nzTitle="Part Number"></nz-descriptions-item>
+  <nz-descriptions-item
+    nzTitle="Golbal Message"
+    [nzSpan]="2"
+  ></nz-descriptions-item>
+  <nz-descriptions-item nzTitle="Kit Info" [nzSpan]="2"></nz-descriptions-item>
+</nz-descriptions>
+<div class="mt-5 flex gap-5">
+  <div class="w-32 rounded-md bg-red-500">
+    <button nz-button type="button" (click)="kickout()" class="w-32" nzGhost>
+      KickOut
+    </button>
+  </div>
+  <div class="grow"></div>
+  <button nz-button class="w-32" (click)="back()">Back</button>
+  <button
+    nz-button
+    class="w-32"
+    nzType="primary"
+    (click)="onSubmit()"
+    type="submit"
+    [nzLoading]="isLoading"
+  >
+    Verify
+  </button>
+</div>

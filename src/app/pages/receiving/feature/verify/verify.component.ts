@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReceivingService } from '../receiving.server';
+import { ReceivingService } from '../../data/receiving.server';
 
 @Component({
   selector: 'verify',
@@ -28,6 +28,6 @@ export class VerifyComponent {
   }
 
   back(): void {
-    this._router.navigateByUrl('receiving');
+    this._router.navigateByUrl('receiving/part');
   }
 }

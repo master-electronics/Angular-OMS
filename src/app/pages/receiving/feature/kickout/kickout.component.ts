@@ -3,13 +3,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { asapScheduler, filter, map, of } from 'rxjs';
 import Keyboard from 'simple-keyboard';
-import { ReceivingService } from '../receiving.server';
+import { ReceivingService } from '../../data/receiving.server';
 
 @Component({
   selector: 'kickout',
   templateUrl: './kickout.component.html',
 })
-export class KickoutComponent implements OnInit {
+export class KickoutComponent {
   isLoading = false;
   keyboard: Keyboard;
 
@@ -34,8 +34,7 @@ export class KickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _service: ReceivingService
-  ) {}
-  ngOnInit(): void {
+  ) {
     this._service.changeTab(2);
   }
 

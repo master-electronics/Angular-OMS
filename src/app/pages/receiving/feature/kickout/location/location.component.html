@@ -1,0 +1,14 @@
+<single-input-form
+  (onBack)="onBack()"
+  (onSubmit)="onSubmit()"
+  [isLoading]="isLoading"
+  [formGroup]="locationForm"
+  title="Location"
+  controlName="location"
+></single-input-form>
+<div class="fixed bottom-5 w-4/5">
+  <simple-keyboard
+    [inputFromParent]="locationForm.value.location"
+    (outputFromChild)="onChange($event)"
+  ></simple-keyboard>
+</div>

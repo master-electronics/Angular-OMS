@@ -1,5 +1,7 @@
-<div class="flex flex-col min-h-screen">
+<div class="flex min-h-screen flex-col">
   <app-navbar></app-navbar>
-  <router-outlet></router-outlet>
-  <div *ngIf="idle$ | async"></div>
+  <div class="container mx-auto px-2 py-2">
+    <router-outlet></router-outlet>
+  </div>
+  <ng-container *ngIf="idle$ | async"></ng-container>
 </div>

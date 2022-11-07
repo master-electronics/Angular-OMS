@@ -1,0 +1,14 @@
+<single-input-form
+  (onBack)="onBack()"
+  (onSubmit)="onSubmit()"
+  [isLoading]="isLoading"
+  [formGroup]="inputForm"
+  title="Part#"
+  controlName="part"
+></single-input-form>
+<div class="fixed bottom-5 w-4/5">
+  <simple-keyboard
+    [inputFromParent]="inputForm.value.part"
+    (outputFromChild)="onChange($event)"
+  ></simple-keyboard>
+</div>

@@ -2,17 +2,17 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import Keyboard from 'simple-keyboard';
-import { ReceivingService } from '../receiving.server';
-
+import { ReceivingService } from '../../data/receiving.server';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { asapScheduler, of } from 'rxjs';
 
 @Component({
   selector: 'part',
   templateUrl: './part.component.html',
 })
 export class PartComponent implements OnInit {
-  constructor(private _router: Router, private _service: ReceivingService) {}
+  constructor(private _router: Router, private _service: ReceivingService) {
+    this._service.changeTab(1);
+  }
   partNumberList = [
     {
       PartNumber: 'wuzy',
@@ -77,7 +77,7 @@ export class PartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._service.changeTab(1);
+    //
   }
 
   ngAfterViewInit() {

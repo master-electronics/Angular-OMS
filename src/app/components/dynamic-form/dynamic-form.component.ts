@@ -10,7 +10,7 @@ export class DynamicFormComponent implements OnInit {
   @Input() formFields: FormInputBase<string | boolean>[] | null = [];
   @Output() submit: EventEmitter<string> = new EventEmitter();
   @Output() back: EventEmitter<string> = new EventEmitter();
-  form: FormGroup;
+  form!: FormGroup;
 
   ngOnInit(): void {
     this.toFormGroup();
@@ -30,8 +30,7 @@ export class DynamicFormComponent implements OnInit {
 
   private toFormGroup(): void {
     const group = {};
-
-    this.formFields.forEach((field) => {
+    this.formFields?.forEach((field) => {
       group[field.key] = field.required
         ? new FormControl(field.value || '', [
             ...field.validators,
