@@ -14,6 +14,10 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 @NgModule({
   declarations: [ReceiptEntry],
   imports: [
@@ -29,6 +33,10 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
     NzDividerModule,
     NzIconModule,
     NzDatePickerModule,
+    NzModalModule,
+    NzTableModule,
+    NzPopconfirmModule,
+    NzAlertModule,
   ],
 })
 export class ReceiptEntryModule {}

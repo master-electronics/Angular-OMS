@@ -37,6 +37,20 @@
     border: 0;
 }
 
+.inputValid {
+    /*
+    list-style: none;
+    position: relative;
+    display: inline-block;
+    padding: 4px 11px;
+    color: rgba(0,0,0,.85);
+    font-size: 14px;
+    line-height: 1.5715;
+    */
+    border: 1px solid #d9d9d9;
+    border-radius: 2px
+}
+
 .searchResults {
     max-height: 300px;
     width: 100%;
