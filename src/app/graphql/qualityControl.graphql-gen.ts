@@ -1006,6 +1006,7 @@ export type Query = {
   findRoute?: Maybe<Array<Maybe<Route>>>;
   findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
+  findUserEvents?: Maybe<Array<Maybe<UserEvent>>>;
   findUserInfo?: Maybe<UserInfo>;
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
@@ -1224,12 +1225,18 @@ export type QueryFindUserArgs = {
 };
 
 export type QueryFindUserEventLogsArgs = {
-  Module?: InputMaybe<Scalars['Int']>;
+  Modules?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   UserEventLog: SearchUserEventLog;
   endDate?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   startDate?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFindUserEventsArgs = {
+  UserEvent?: InputMaybe<SearchUserEvent>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFindUserInfoArgs = {
@@ -1655,6 +1662,12 @@ export type SearchPurchaseOrderL = {
 export type SearchUser = {
   Name?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchUserEvent = {
+  Event?: InputMaybe<Scalars['String']>;
+  Module?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['String']>;
 };
 
 export type SearchUserEventLog = {
