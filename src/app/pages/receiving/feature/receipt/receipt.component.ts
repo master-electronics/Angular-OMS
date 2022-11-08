@@ -1,38 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import Keyboard from 'simple-keyboard';
 import { ReceivingService } from '../../data/receiving.server';
-import { Layout } from '../../../../shared/ui/simple-keyboard/simple-keyboard.component';
+import {
+  Layout,
+  SimpleKeyboardComponent,
+} from '../../../../shared/ui/simple-keyboard/simple-keyboard.component';
+import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
 
 @Component({
-  selector: 'receipt',
+  standalone: true,
+  imports: [
+    SingleInputformComponent,
+    SimpleKeyboardComponent,
+    ReactiveFormsModule,
+  ],
   templateUrl: './receipt.component.html',
 })
-export class ReceiptComponent implements OnInit {
-  keyboard: Keyboard;
-  isLoading = false;
-  layout = Layout.numeric;
-  router$;
-
-  inputForm = new FormGroup({
-    receiptNumber: new FormControl('', [Validators.required]),
-  });
+export class ReceiptComponent {
+  public keyboard: Keyboard;
+  public isLoading = false;
+  public layout = Layout.numeric;
+  public title = `Receipt`;
+  public controlName = 'receipt';
+  public inputForm: FormGroup;
+  public inputType = 'number';
 
   constructor(private _router: Router, private _service: ReceivingService) {
     this._service.changeTab(0);
-  }
-  ngOnInit(): void {
-    //
+    this.inputForm = new FormGroup({
+      receipt: new FormControl('', [Validators.required]),
+    });
   }
 
-  onChange = (input: string) => {
+  public onChange = (input: string) => {
     if (input) {
-      this.inputForm.get('receiptNumber').setValue(input);
+      this.inputForm.get('receipt').setValue(input);
     }
   };
 
-  onSubmit(): void {
+  public onSubmit(): void {
     this._router.navigateByUrl('receiving/part');
   }
 }

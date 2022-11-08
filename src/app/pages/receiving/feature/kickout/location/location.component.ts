@@ -21,18 +21,19 @@ import { SingleInputformComponent } from '../../../ui/single-input-form/single-i
   templateUrl: './location.component.html',
 })
 export class LocationComponent {
-  public locationForm: FormGroup;
+  public inputForm: FormGroup;
   public isLoading = false;
   public title = `Location`;
+  public controlName = 'location';
 
   constructor(private _fb: FormBuilder, private _router: Router) {
-    this.locationForm = this._fb.group({
+    this.inputForm = this._fb.group({
       location: ['', Validators.required],
     });
   }
 
   onChange = (input: string) => {
-    this.locationForm.get('location').setValue(input);
+    this.inputForm.get('location').setValue(input);
   };
 
   onSubmit(): void {

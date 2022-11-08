@@ -3,7 +3,6 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { ReceivingService } from './data/receiving.server';
 
 @Component({
-  selector: 'receiving',
   templateUrl: './receiving.component.html',
 })
 export class ReceivingComponent {

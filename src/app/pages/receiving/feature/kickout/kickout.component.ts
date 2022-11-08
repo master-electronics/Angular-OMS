@@ -1,12 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
 import { asapScheduler, filter, map, of } from 'rxjs';
 import Keyboard from 'simple-keyboard';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simple-keyboard.component';
 import { ReceivingService } from '../../data/receiving.server';
 
 @Component({
-  selector: 'kickout',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    SimpleKeyboardComponent,
+    NzInputModule,
+    ReactiveFormsModule,
+    NzButtonModule,
+  ],
   templateUrl: './kickout.component.html',
 })
 export class KickoutComponent {

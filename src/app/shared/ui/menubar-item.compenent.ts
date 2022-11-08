@@ -1,6 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, NzMenuModule, NzSpinModule, RouterModule],
   selector: 'menubar-item',
   template: `
     <li
@@ -37,8 +43,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     </li>
   `,
 })
-export class menubarItem {
-  @Output() navBarClose: EventEmitter<any> = new EventEmitter();
+export class MenubarItemComponent {
+  @Output() navBarClose: EventEmitter<null> = new EventEmitter();
   @Input() menuItem;
 
   closeNavBar(): void {

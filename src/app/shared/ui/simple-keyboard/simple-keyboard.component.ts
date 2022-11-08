@@ -23,14 +23,9 @@ export class SimpleKeyboardComponent implements OnChanges {
   @Input() inputFromParent;
   @Input() layout: Layout | 0;
   @Output() outputFromChild: EventEmitter<string> = new EventEmitter();
-  constructor() {
-    //
-  }
 
   ngOnChanges(): void {
-    if (this.inputFromParent !== '') {
-      this.keyboard.setInput(this.inputFromParent);
-    }
+    this.keyboard?.setInput(this.inputFromParent);
   }
 
   ngAfterViewInit() {

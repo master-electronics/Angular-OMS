@@ -1,15 +1,30 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { Observable } from 'rxjs';
+import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
+import { environment } from 'src/environments/environment';
 import { ReceivingService } from '../../data/receiving.server';
 
 @Component({
-  selector: 'verify',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    NzSkeletonModule,
+    NzDescriptionsModule,
+    NzButtonModule,
+    NzImageBasicComponent,
+  ],
   templateUrl: './verify.component.html',
 })
 export class VerifyComponent {
-  fetchInfo$;
-  imgURL = `https://www.onlinecomponents.com/images/parts/largeimages/`;
-  isLoading;
+  public fetchInfo$ = new Observable();
+  public imgURL = environment.productImgSource;
+  public isLoading = false;
 
   constructor(private _router: Router, private _service: ReceivingService) {
     _service.changeTab(2);

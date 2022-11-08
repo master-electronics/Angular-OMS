@@ -1,48 +1,16 @@
-<div class="container flex justify-center">
-  <form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-    <div>
-      <nz-form-control nzHasFeedback>
-        <input
-          nz-input
-          oninput="this.value = this.value.toUpperCase()"
-          placeholder="Part#"
-          nzSize="large"
-          type="text"
-          id="partNumber"
-          formControlName="partNumber"
-          autocomplete="off"
-          #partNumber
-        />
-      </nz-form-control>
-    </div>
-    <div class="mt-10 flex gap-5">
-      <button
-        class="w-32"
-        nz-button
-        type="button"
-        (click)="back()"
-        nzSize="large"
-      >
-        Back
-      </button>
-      <button
-        class="w-32"
-        nz-button
-        type="submit"
-        [disabled]="inputForm.invalid"
-        nzType="primary"
-        (click)="onSubmit()"
-        [nzLoading]="isLoading"
-        nzSize="large"
-      >
-        Submit
-      </button>
-    </div>
-  </form>
-  <div class="fixed bottom-5 w-4/5">
-    <simple-keyboard
-      [inputFromParent]="inputForm.value.partNumber"
-      (outputFromChild)="onChange($event)"
-    ></simple-keyboard>
-  </div>
+<single-input-form
+  (onSubmit)="onSubmit()"
+  (onBack)="onBack()"
+  [isLoading]="isLoading"
+  [formGroup]="inputForm"
+  [type]="inputType"
+  [title]="title"
+  [controlName]="controlName"
+></single-input-form>
+
+<div class="fixed bottom-5 w-4/5">
+  <simple-keyboard
+    [inputFromParent]="inputForm.value.partNumber"
+    (outputFromChild)="onChange($event)"
+  ></simple-keyboard>
 </div>

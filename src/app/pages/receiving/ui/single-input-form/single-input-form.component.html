@@ -4,6 +4,7 @@
     <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
       <input
         nz-input
+        oninput="this.value = this.value.toUpperCase()"
         nzSize="large"
         [type]="type"
         [placeholder]="placeholder"

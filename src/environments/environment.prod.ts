@@ -6,4 +6,5 @@ export const environment = {
   changelogurl: 'https://master-electronics.gitbook.io/wms/',
   DistributionCenter: 'PH',
   idleTimeInMinutes: 20,
+  productImgSource: `https://www.onlinecomponents.com/images/parts/largeimages/`,
 };

@@ -25,7 +25,6 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { NavbarComponent } from './pages/shell/navbar/navbar.component';
 import { HomeComponent } from './pages/home/home.component';
-import { menubarItem } from './shared/menubar-item.compenent';
 
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -46,9 +45,9 @@ registerLocaleData(en);
 
 import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
+import { MenuItemComponent } from './shared/ui/menu-item.component';
+import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 // import { GlobalErrorHandler } from './shared/global-error-handler';
-
-import { menuItem } from './shared/menu-item.component';
 
 @NgModule({
   declarations: [
@@ -59,8 +58,6 @@ import { menuItem } from './shared/menu-item.component';
     ShellComponent,
     NavbarComponent,
     HomeComponent,
-    menuItem,
-    menubarItem,
   ],
   imports: [
     CommonModule,
@@ -84,6 +81,8 @@ import { menuItem } from './shared/menu-item.component';
     NzAlertModule,
     NzFormModule,
     NzCardModule,
+    MenuItemComponent,
+    MenubarItemComponent,
   ],
 
   providers: [

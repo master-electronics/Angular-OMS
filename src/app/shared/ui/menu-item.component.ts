@@ -1,7 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'menu-item',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   template: `
     <div *ngFor="let child of children">
       <div
@@ -23,6 +27,6 @@ import { Component, Input } from '@angular/core';
     </div>
   `,
 })
-export class menuItem {
+export class MenuItemComponent {
   @Input() children;
 }

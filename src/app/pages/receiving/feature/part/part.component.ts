@@ -1,66 +1,48 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import Keyboard from 'simple-keyboard';
 import { ReceivingService } from '../../data/receiving.server';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simple-keyboard.component';
 
 @Component({
-  selector: 'part',
+  standalone: true,
+  imports: [
+    SingleInputformComponent,
+    SimpleKeyboardComponent,
+    ReactiveFormsModule,
+  ],
   templateUrl: './part.component.html',
 })
-export class PartComponent implements OnInit {
+export class PartComponent {
+  public keyboard: Keyboard;
+  public isLoading = false;
+  public title = `Part#`;
+  public controlName = 'partNumber';
+  public inputForm: FormGroup;
+  public inputType = 'text';
   constructor(private _router: Router, private _service: ReceivingService) {
     this._service.changeTab(1);
+    this.inputForm = new FormGroup({
+      partNumber: new FormControl('', [
+        Validators.required,
+        this.partNumberSearch(),
+      ]),
+    });
   }
   partNumberList = [
     {
       PartNumber: 'wuzy',
       ProductCode: 'abc',
     },
-    {
-      PartNumber: 'uudi',
-      ProductCode: 'oiuh',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'erw',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'xxdf',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'fdsf',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'duufe',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'sadfa',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'pxdy',
-    },
-    {
-      PartNumber: '1234',
-      ProductCode: 'xyz',
-    },
   ];
-  keyboard: Keyboard;
-  isLoading = false;
-  singleValue;
-
-  inputForm = new FormGroup({
-    partNumber: new FormControl('', [
-      Validators.required,
-      this.partNumberSearch(),
-    ]),
-  });
 
   partNumberSearch(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -88,17 +70,11 @@ export class PartComponent implements OnInit {
     this.inputForm.setValue({ partNumber: input });
   };
 
-  select(data: any): void {
-    const input = data.ProductCode + data.PartNumber;
-    this.keyboard.setInput(input);
-    this.inputForm.setValue({ partNumber: input });
-  }
-
   onSubmit(): void {
     this._router.navigateByUrl('receiving/verify');
   }
 
-  back(): void {
+  onBack(): void {
     this._router.navigateByUrl('receiving');
   }
 }

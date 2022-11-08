@@ -2,13 +2,13 @@
   (onBack)="onBack()"
   (onSubmit)="onSubmit()"
   [isLoading]="isLoading"
-  [formGroup]="locationForm"
-  title="Location"
-  controlName="location"
+  [formGroup]="inputForm"
+  [title]="title"
+  [controlName]="controlName"
 ></single-input-form>
 <div class="fixed bottom-5 w-4/5">
   <simple-keyboard
-    [inputFromParent]="locationForm.value.location"
+    [inputFromParent]="inputForm.value.location"
     (outputFromChild)="onChange($event)"
   ></simple-keyboard>
 </div>

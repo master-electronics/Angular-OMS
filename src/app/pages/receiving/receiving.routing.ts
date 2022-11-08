@@ -1,20 +1,38 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PartComponent } from './feature/part/part.component';
-import { ReceiptComponent } from './feature/receipt/receipt.component';
-import { KickoutComponent } from './feature/kickout/kickout.component';
 import { ReceivingComponent } from './receiving.component';
-import { VerifyComponent } from './feature/verify/verify.component';
 
 const routes: Routes = [
   {
     path: '',
     component: ReceivingComponent,
     children: [
-      { path: 'receipt', component: ReceiptComponent },
-      { path: 'part', component: PartComponent },
-      { path: 'verify', component: VerifyComponent },
-      { path: 'kickout', component: KickoutComponent },
+      {
+        path: 'receipt',
+        loadComponent: () =>
+          import('./feature/receipt/receipt.component').then(
+            (m) => m.ReceiptComponent
+          ),
+      },
+      {
+        path: 'part',
+        loadComponent: () =>
+          import('./feature/part/part.component').then((m) => m.PartComponent),
+      },
+      {
+        path: 'verify',
+        loadComponent: () =>
+          import('./feature/verify/verify.component').then(
+            (m) => m.VerifyComponent
+          ),
+      },
+      {
+        path: 'kickout',
+        loadComponent: () =>
+          import('./feature/kickout/kickout.component').then(
+            (m) => m.KickoutComponent
+          ),
+      },
       {
         path: 'kickout/location',
         loadComponent: () =>
