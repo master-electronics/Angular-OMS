@@ -94,16 +94,24 @@ query fetchUserInfo {
   }
 }
 
+query fetchUserEvents {
+  findUserEvents {
+    _id
+    Module
+    Event
+  }
+}
+
 query fetchUserEventLog(
   $UserEventLog: searchUserEventLog!
-  $Module: Int
+  $Modules: [Int]
   $startDate: String
   $endDate: String
   $limit: Int
 ) {
   findUserEventLogs(
     UserEventLog: $UserEventLog
-    Module: $Module
+    Modules: $Modules
     startDate: $startDate
     endDate: $endDate
     limit: $limit
