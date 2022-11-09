@@ -122,9 +122,9 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'receiving',
+        path: 'receiptreceiving',
         loadChildren: () =>
-          import('./pages/receiving/receiving.module').then(
+          import('./pages/receipt-receiving/receiving.module').then(
             (m) => m.ReceivingModule
           ),
       },
