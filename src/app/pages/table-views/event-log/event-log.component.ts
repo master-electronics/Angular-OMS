@@ -134,10 +134,10 @@ export class EventLogComponent implements OnInit {
           return res.data.findUserEventLogs.map((log) => {
             const result = {
               ...log,
-              DataTime: new Date(Number(log.DateTime)).toLocaleString(),
               Module: log.UserEvent.Module,
               Event: log.UserEvent.Event,
             };
+            result.DateTime = new Date(Number(log.DateTime)).toLocaleString();
             delete result.UserEvent;
             delete result.__typename;
             return result;

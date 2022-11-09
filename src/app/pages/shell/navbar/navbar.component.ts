@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  providers: [MenuService]
+  providers: [MenuService],
 })
 export class NavbarComponent implements OnInit {
   showMenu = false;
