@@ -6,7 +6,7 @@ import {
   FetchUserEventsGQL,
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
-import { map } from 'rxjs/operators';
+import { last, map, tap } from 'rxjs/operators';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 import { ActivatedRoute } from '@angular/router';
@@ -65,7 +65,7 @@ export class EventLogComponent implements OnInit {
     this.listOfEvent$ = this._fetchUserEvents.fetch().pipe(
       map((res) => {
         return res.data.findUserEvents.map((res) => ({
-          label: res.Event,
+          label: res.Module + '-' + res.Event,
           value: res._id,
           groupLabel: res.Module,
         }));
@@ -104,7 +104,7 @@ export class EventLogComponent implements OnInit {
       limit = 500;
     }
     if (events) {
-      limit = 5000;
+      limit = 500;
     }
     if (order) {
       eventLog['OrderNumber'] = order.substring(0, 6);
@@ -132,11 +132,19 @@ export class EventLogComponent implements OnInit {
       .pipe(
         map((res) => {
           return res.data.findUserEventLogs.map((log) => {
-            const result = { ...log };
-            const tmp = new Date(Number(log.DateTime));
-            result.DateTime = tmp.toLocaleString();
+            const result = {
+              ...log,
+              DataTime: new Date(Number(log.DateTime)).toLocaleString(),
+              Module: log.UserEvent.Module,
+              Event: log.UserEvent.Event,
+            };
+            delete result.UserEvent;
+            delete result.__typename;
             return result;
           });
+        }),
+        tap((res) => {
+          this.ws = XLSX.utils.json_to_sheet(res);
         })
       );
   }
@@ -156,15 +164,12 @@ export class EventLogComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
-
+  public ws: XLSX.WorkSheet;
   exportexcel(): void {
     /* table id is passed over here */
-    const element = document.getElementById('table');
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
 
     /* save to file */
     XLSX.writeFile(wb, `${this.startDate?.substring(0, 10)}.xlsx`);
