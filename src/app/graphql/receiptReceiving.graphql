@@ -1,0 +1,36 @@
+query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
+  findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+    RECEIPTLs {
+      _id
+      ProductID
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
+  }
+}
+
+query findReceiptLineForReceiving($ProductID: Int!) {
+  findReceiptLs(ReceiptL: { ProductID: $ProductID }) {
+    DateCode
+    ROHS
+    Country {
+      ISO3
+    }
+    RECEIPTLDs {
+      ExpectedQuantity
+      PurchaseOrderL {
+        LineNumber
+        PurchaseOrderH {
+          PurchaseOrderNumber
+        }
+      }
+      ReceiptStatus {
+        Name
+      }
+    }
+  }
+}

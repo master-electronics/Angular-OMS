@@ -17,6 +17,7 @@ import {
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { HttpRequestState } from 'src/app/shared/data/interface';
 
 @Component({
   standalone: true,
@@ -33,6 +34,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
+  @Input()
+  staate: HttpRequestState<any>;
   @Input() controlName = 'input';
   @Input() type = 'text';
   @Input() placeholder = 'Input';

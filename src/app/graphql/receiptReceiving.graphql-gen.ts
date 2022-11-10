@@ -1978,88 +1978,67 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchDataTableListQueryVariables = Types.Exact<{
-  [key: string]: never;
+export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
+  ReceiptHID: Types.Scalars['Int'];
 }>;
 
-export type FetchDataTableListQuery = {
+export type FindReceiptHeaderForReceivingQuery = {
   __typename?: 'Query';
-  fetchDataTableList?: Array<{
-    __typename?: 'DataTable';
-    TABLE_NAME?: string | null;
-  } | null> | null;
-};
-
-export type FetchDataColumnListQueryVariables = Types.Exact<{
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-export type FetchDataColumnListQuery = {
-  __typename?: 'Query';
-  fetchDataColumnList?: Array<{
-    __typename?: 'DataColumn';
-    COLUMN_NAME?: string | null;
-    IS_NULLABLE?: string | null;
-    DATA_TYPE?: string | null;
-    CHARACTER_MAXIMUM_LENGTH?: number | null;
-    IS_PRIMARY_KEY?: string | null;
-  } | null> | null;
-};
-
-export type FetchTableDataQueryVariables = Types.Exact<{
-  columnList?: Types.InputMaybe<Types.Scalars['String']>;
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
-  where?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-export type FetchTableDataQuery = {
-  __typename?: 'Query';
-  fetchTableData?: Array<{
-    __typename?: 'TableData';
-    Results?: string | null;
-  } | null> | null;
-};
-
-export type InsertTableDataMutationVariables = Types.Exact<{
-  insertQuery?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-export type InsertTableDataMutation = {
-  __typename?: 'Mutation';
-  insertTableData?: Array<{
-    __typename?: 'TableData';
-    Results?: string | null;
-  } | null> | null;
-};
-
-export type UpdateTableDataMutationVariables = Types.Exact<{
-  updateQuery?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-export type UpdateTableDataMutation = {
-  __typename?: 'Mutation';
-  updateTableData?: {
-    __typename?: 'TableData';
-    Results?: string | null;
+  findReceiptH?: {
+    __typename?: 'ReceiptH';
+    RECEIPTLs?: Array<{
+      __typename?: 'ReceiptL';
+      _id: number;
+      ProductID: number;
+      Product: {
+        __typename?: 'Product';
+        PartNumber: string;
+        ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+      };
+    } | null> | null;
   } | null;
 };
 
-export type DeleteTableDataMutationVariables = Types.Exact<{
-  deleteQuery?: Types.InputMaybe<Types.Scalars['String']>;
+export type FindReceiptLineForReceivingQueryVariables = Types.Exact<{
+  ProductID: Types.Scalars['Int'];
 }>;
 
-export type DeleteTableDataMutation = {
-  __typename?: 'Mutation';
-  deleteTableData?: {
-    __typename?: 'TableData';
-    Results?: string | null;
-  } | null;
+export type FindReceiptLineForReceivingQuery = {
+  __typename?: 'Query';
+  findReceiptLs?: Array<{
+    __typename?: 'ReceiptL';
+    DateCode?: string | null;
+    ROHS?: boolean | null;
+    Country?: { __typename?: 'Country'; ISO3: string } | null;
+    RECEIPTLDs?: Array<{
+      __typename?: 'ReceiptLD';
+      ExpectedQuantity: number;
+      PurchaseOrderL?: {
+        __typename?: 'PurchaseOrderL';
+        LineNumber: number;
+        PurchaseOrderH: {
+          __typename?: 'PurchaseOrderH';
+          PurchaseOrderNumber: string;
+        };
+      } | null;
+      ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
+    } | null> | null;
+  } | null> | null;
 };
 
-export const FetchDataTableListDocument = gql`
-  query fetchDataTableList {
-    fetchDataTableList {
-      TABLE_NAME
+export const FindReceiptHeaderForReceivingDocument = gql`
+  query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
+    findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+      RECEIPTLs {
+        _id
+        ProductID
+        Product {
+          PartNumber
+          ProductCode {
+            ProductCodeNumber
+          }
+        }
+      }
     }
   }
 `;
@@ -2067,24 +2046,36 @@ export const FetchDataTableListDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class FetchDataTableListGQL extends Apollo.Query<
-  FetchDataTableListQuery,
-  FetchDataTableListQueryVariables
+export class FindReceiptHeaderForReceivingGQL extends Apollo.Query<
+  FindReceiptHeaderForReceivingQuery,
+  FindReceiptHeaderForReceivingQueryVariables
 > {
-  document = FetchDataTableListDocument;
+  document = FindReceiptHeaderForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const FetchDataColumnListDocument = gql`
-  query fetchDataColumnList($tableName: String) {
-    fetchDataColumnList(TABLE_NAME: $tableName) {
-      COLUMN_NAME
-      IS_NULLABLE
-      DATA_TYPE
-      CHARACTER_MAXIMUM_LENGTH
-      IS_PRIMARY_KEY
+export const FindReceiptLineForReceivingDocument = gql`
+  query findReceiptLineForReceiving($ProductID: Int!) {
+    findReceiptLs(ReceiptL: { ProductID: $ProductID }) {
+      DateCode
+      ROHS
+      Country {
+        ISO3
+      }
+      RECEIPTLDs {
+        ExpectedQuantity
+        PurchaseOrderL {
+          LineNumber
+          PurchaseOrderH {
+            PurchaseOrderNumber
+          }
+        }
+        ReceiptStatus {
+          Name
+        }
+      }
     }
   }
 `;
@@ -2092,103 +2083,11 @@ export const FetchDataColumnListDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class FetchDataColumnListGQL extends Apollo.Query<
-  FetchDataColumnListQuery,
-  FetchDataColumnListQueryVariables
+export class FindReceiptLineForReceivingGQL extends Apollo.Query<
+  FindReceiptLineForReceivingQuery,
+  FindReceiptLineForReceivingQueryVariables
 > {
-  document = FetchDataColumnListDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const FetchTableDataDocument = gql`
-  query fetchTableData(
-    $columnList: String
-    $tableName: String
-    $where: String
-  ) {
-    fetchTableData(
-      ColumnList: $columnList
-      TableName: $tableName
-      Where: $where
-    ) {
-      Results
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FetchTableDataGQL extends Apollo.Query<
-  FetchTableDataQuery,
-  FetchTableDataQueryVariables
-> {
-  document = FetchTableDataDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const InsertTableDataDocument = gql`
-  mutation insertTableData($insertQuery: String) {
-    insertTableData(InsertQuery: $insertQuery) {
-      Results
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class InsertTableDataGQL extends Apollo.Mutation<
-  InsertTableDataMutation,
-  InsertTableDataMutationVariables
-> {
-  document = InsertTableDataDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const UpdateTableDataDocument = gql`
-  mutation updateTableData($updateQuery: String) {
-    updateTableData(UpdateQuery: $updateQuery) {
-      Results
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class UpdateTableDataGQL extends Apollo.Mutation<
-  UpdateTableDataMutation,
-  UpdateTableDataMutationVariables
-> {
-  document = UpdateTableDataDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const DeleteTableDataDocument = gql`
-  mutation deleteTableData($deleteQuery: String) {
-    deleteTableData(DeleteQuery: $deleteQuery) {
-      Results
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class DeleteTableDataGQL extends Apollo.Mutation<
-  DeleteTableDataMutation,
-  DeleteTableDataMutationVariables
-> {
-  document = DeleteTableDataDocument;
+  document = FindReceiptLineForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

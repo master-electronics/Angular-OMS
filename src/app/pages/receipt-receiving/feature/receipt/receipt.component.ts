@@ -6,13 +6,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import Keyboard from 'simple-keyboard';
 import { ReceivingService } from '../../data/receiving.server';
 import {
   Layout,
   SimpleKeyboardComponent,
 } from '../../../../shared/ui/simple-keyboard/simple-keyboard.component';
 import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
+import { catchError, map, of, startWith, tap } from 'rxjs';
+import { FindReceiptHeaderForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 
 @Component({
   standalone: true,
@@ -24,15 +25,14 @@ import { SingleInputformComponent } from '../../ui/single-input-form/single-inpu
   templateUrl: './receipt.component.html',
 })
 export class ReceiptComponent {
-  public keyboard: Keyboard;
-  public isLoading = false;
   public layout = Layout.numeric;
-  public title = `Receipt`;
-  public controlName = 'receipt';
   public inputForm: FormGroup;
-  public inputType = 'number';
 
-  constructor(private _router: Router, private _service: ReceivingService) {
+  constructor(
+    private _router: Router,
+    private _service: ReceivingService,
+    private findReceiptH: FindReceiptHeaderForReceivingGQL
+  ) {
     this._service.changeTab(0);
     this.inputForm = new FormGroup({
       receipt: new FormControl('', [Validators.required]),
@@ -46,6 +46,18 @@ export class ReceiptComponent {
   };
 
   public onSubmit(): void {
-    this._router.navigateByUrl('receiving/part');
+    this._service.receiptHInfo$ = this.findReceiptH
+      .fetch(
+        {
+          ReceiptHID: this.inputForm.value.receipt,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        startWith({ isLoading: true }),
+        map((res) => ({ isLoading: false, value: res })),
+        catchError((error) => of({ isLoading: false, error })),
+        tap(() => this._router.navigateByUrl('receiving/part'))
+      );
   }
 }

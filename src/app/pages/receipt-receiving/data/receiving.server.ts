@@ -1,4 +1,5 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpRequestState } from 'src/app/shared/data/interface';
 
 export class ReceivingService {
   // Tab
@@ -7,4 +8,6 @@ export class ReceivingService {
   public changeTab(tab: number): void {
     this._currentTab.next(tab);
   }
+
+  public receiptHInfo$ = new Observable<HttpRequestState<unknown>>(null);
 }

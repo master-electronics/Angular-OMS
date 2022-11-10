@@ -3,9 +3,10 @@
     (onSubmit)="onSubmit()"
     [isLoading]="isLoading"
     [formGroup]="inputForm"
-    [type]="inputType"
-    [title]="title"
-    [controlName]="controlName"
+    [state]="this._service.receiptHInfo$ | async"
+    type="number"
+    controlName="receipt"
+    title="Receipt"
   ></single-input-form>
   <simple-keyboard
     [inputFromParent]="inputForm.value.receipt"
