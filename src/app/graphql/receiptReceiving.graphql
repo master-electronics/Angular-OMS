@@ -34,3 +34,13 @@ query findReceiptLineForReceiving($ProductID: Int!) {
     }
   }
 }
+
+query fetchProductInfoForReceiving(
+  $ProductCode: String!
+  $PartNumber: String!
+) {
+  fetchProductMICFromMerp(ProductCode: $ProductCode, PartNumber: $PartNumber)
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
+  }
+}

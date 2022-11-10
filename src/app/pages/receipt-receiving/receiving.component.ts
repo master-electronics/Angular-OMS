@@ -6,7 +6,6 @@ import { ReceivingService } from './data/receiving.server';
   templateUrl: './receiving.component.html',
 })
 export class ReceivingComponent {
-  currentTab$ = this._service.currentTab$;
   constructor(
     private commonService: CommonService,
     public _service: ReceivingService
@@ -17,5 +16,7 @@ export class ReceivingComponent {
     { title: 'Receipt', subtitle: '', description: '' },
     { title: 'Part', subtitle: '', description: '' },
     { title: 'Verify', subtitle: '', description: '' },
+    { title: 'PO Table', subtitle: '', description: '' },
+    { title: 'ITN', subtitle: '', description: '' },
   ];
 }

@@ -1,9 +1,10 @@
-<form nz-form [formGroup]="inputForm" (ngSubmit)="submit()">
+<form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
   <nz-form-item>
     <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
     <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
       <input
         nz-input
+        maxlength="30"
         oninput="this.value = this.value.toUpperCase()"
         nzSize="large"
         [type]="type"
@@ -13,9 +14,9 @@
         #input
       />
       <ng-template #errorTpl let-control>
-        <ng-container *ngIf="control.hasError('regex')"
-          >The input is not valid!</ng-container
-        >
+        <ng-container *ngIf="control.hasError(validator.name)">{{
+          validator.message
+        }}</ng-container>
         <ng-container *ngIf="control.hasError('required')"
           >Please input this field!</ng-container
         >
@@ -23,7 +24,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+    <nz-form-control [nzOffset]="7" [nzSpan]="16">
       <button
         nz-button
         type="submit"
@@ -31,13 +32,17 @@
         nzType="primary"
         [nzLoading]="state.isLoading"
         [disabled]="inputForm.invalid"
-        class="mr-20"
+        class="mr-20 w-32"
       >
         Submit
       </button>
-      <button nz-button nzSize="large" type="button" (click)="back()">
+      <button nz-button nzSize="large" type="button" (click)="onBack()">
         Back
       </button>
     </nz-form-control>
   </nz-form-item>
+
+  <alert-bar
+    [error]="{ error: state.error, messageType: state.messageType }"
+  ></alert-bar>
 </form>

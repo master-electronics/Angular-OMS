@@ -3,7 +3,7 @@
   [formGroup]="kickoutForm"
   (ngSubmit)="onSubmit()"
 >
-  <div class="block space-x-4 pb-2 pt-3" *ngFor="let option of kickoutOptions">
+  <div *ngFor="let option of kickoutOptions">
     <label>
       <input
         type="radio"
@@ -22,17 +22,7 @@
     formControlName="otherReason"
     #otherReason
   ></textarea>
-  <div class="flex gap-5">
-    <button
-      nz-button
-      type="button"
-      class="w-32"
-      (click)="cancal()"
-      nzSize="large"
-    >
-      Cancel
-    </button>
-    <div class="grow"></div>
+  <div class="mb-10 flex gap-5">
     <button
       nz-button
       class="w-32"
@@ -44,11 +34,19 @@
     >
       kickout
     </button>
+    <div class="grow"></div>
+    <button
+      nz-button
+      type="button"
+      class="w-32"
+      (click)="cancal()"
+      nzSize="large"
+    >
+      Cancel
+    </button>
   </div>
 </form>
-<div class="fixed bottom-5 w-4/5">
-  <simple-keyboard
-    [inputFromParent]="kickoutForm.value.otherReason"
-    (outputFromChild)="onChange($event)"
-  ></simple-keyboard>
-</div>
+<simple-keyboard
+  [inputFromParent]="kickoutForm.value.otherReason"
+  (outputFromChild)="onChange($event)"
+></simple-keyboard>

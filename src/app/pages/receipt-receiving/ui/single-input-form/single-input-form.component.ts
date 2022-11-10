@@ -18,6 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { HttpRequestState } from 'src/app/shared/data/interface';
+import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 
 @Component({
   standalone: true,
@@ -28,6 +29,7 @@ import { HttpRequestState } from 'src/app/shared/data/interface';
     NzInputModule,
     NzFormModule,
     NzButtonModule,
+    AlertBarComponent,
   ],
   selector: 'single-input-form',
   templateUrl: './single-input-form.component.html',
@@ -35,14 +37,15 @@ import { HttpRequestState } from 'src/app/shared/data/interface';
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
   @Input()
-  staate: HttpRequestState<any>;
+  state: HttpRequestState<any>;
+  @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';
-  @Input() placeholder = 'Input';
+  @Input() placeholder = '';
   @Input() title = 'Input';
   @Input() isLoading = false;
-  @Output() onSubmit: EventEmitter<null> = new EventEmitter();
-  @Output() onBack: EventEmitter<null> = new EventEmitter();
+  @Output() submit: EventEmitter<null> = new EventEmitter();
+  @Output() back: EventEmitter<null> = new EventEmitter();
 
   constructor(private controlContainer: ControlContainer) {}
 
@@ -55,11 +58,11 @@ export class SingleInputformComponent implements OnInit {
     this.containerInput.nativeElement.select();
   }
 
-  public submit(): void {
-    this.onSubmit.emit();
+  public onSubmit(): void {
+    this.submit.emit();
   }
 
-  public back(): void {
-    this.onBack.emit();
+  public onBack(): void {
+    this.back.emit();
   }
 }

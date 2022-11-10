@@ -303,6 +303,7 @@ export type Inventory = {
   ContainerID: Scalars['Int'];
   Country?: Maybe<Country>;
   CountryID?: Maybe<Scalars['Int']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -1879,6 +1880,7 @@ export type UpdateInventory = {
   BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
@@ -2026,6 +2028,20 @@ export type FindReceiptLineForReceivingQuery = {
   } | null> | null;
 };
 
+export type FetchProductInfoForReceivingQueryVariables = Types.Exact<{
+  ProductCode: Types.Scalars['String'];
+  PartNumber: Types.Scalars['String'];
+}>;
+
+export type FetchProductInfoForReceivingQuery = {
+  __typename?: 'Query';
+  fetchProductMICFromMerp?: string | null;
+  fetchPartMessage?: {
+    __typename?: 'GlobalMessage';
+    comments?: Array<string | null> | null;
+  } | null;
+};
+
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
     findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
@@ -2088,6 +2104,31 @@ export class FindReceiptLineForReceivingGQL extends Apollo.Query<
   FindReceiptLineForReceivingQueryVariables
 > {
   document = FindReceiptLineForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchProductInfoForReceivingDocument = gql`
+  query fetchProductInfoForReceiving(
+    $ProductCode: String!
+    $PartNumber: String!
+  ) {
+    fetchProductMICFromMerp(ProductCode: $ProductCode, PartNumber: $PartNumber)
+    fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+      comments
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchProductInfoForReceivingGQL extends Apollo.Query<
+  FetchProductInfoForReceivingQuery,
+  FetchProductInfoForReceivingQueryVariables
+> {
+  document = FetchProductInfoForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

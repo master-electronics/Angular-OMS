@@ -1,16 +1,13 @@
 <single-input-form
-  (onSubmit)="onSubmit()"
-  (onBack)="onBack()"
-  [isLoading]="isLoading"
+  (back)="onBack()"
+  (submit)="onSubmit()"
   [formGroup]="inputForm"
-  [type]="inputType"
-  [title]="title"
-  [controlName]="controlName"
+  [state]="data"
+  [validator]="validator"
+  controlName="partNumber"
+  title="Part #"
 ></single-input-form>
-
-<div class="fixed bottom-5 w-4/5">
-  <simple-keyboard
-    [inputFromParent]="inputForm.value.partNumber"
-    (outputFromChild)="onChange($event)"
-  ></simple-keyboard>
-</div>
+<simple-keyboard
+  [inputFromParent]="inputForm.value.partNumber"
+  (outputFromChild)="onChange($event)"
+></simple-keyboard>

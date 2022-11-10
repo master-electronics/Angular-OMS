@@ -1,9 +1,9 @@
 <div class="grid grid-cols-2 gap-5">
   <single-input-form
-    (onSubmit)="onSubmit()"
-    [isLoading]="isLoading"
+    (submit)="onSubmit()"
+    (back)="onBack()"
     [formGroup]="inputForm"
-    [state]="this._service.receiptHInfo$ | async"
+    [state]="data$ | async"
     type="number"
     controlName="receipt"
     title="Receipt"

@@ -11,10 +11,13 @@ import { ReceivingService } from '../../data/receiving.server';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simple-keyboard.component';
+import { filter, map, Observable, tap } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   imports: [
+    CommonModule,
     SingleInputformComponent,
     SimpleKeyboardComponent,
     ReactiveFormsModule,
@@ -22,12 +25,13 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simpl
   templateUrl: './part.component.html',
 })
 export class PartComponent {
-  public keyboard: Keyboard;
-  public isLoading = false;
-  public title = `Part#`;
-  public controlName = 'partNumber';
   public inputForm: FormGroup;
-  public inputType = 'text';
+  public data;
+  public validator = {
+    name: 'filter',
+    message: 'Not Found part number!',
+  };
+
   constructor(private _router: Router, private _service: ReceivingService) {
     this._service.changeTab(1);
     this.inputForm = new FormGroup({
@@ -36,13 +40,11 @@ export class PartComponent {
         this.partNumberSearch(),
       ]),
     });
+    this.data = this._service.getValueReceiptH();
+    if (!this.data.value) {
+      this._router.navigate(['receiptreceiving']);
+    }
   }
-  partNumberList = [
-    {
-      PartNumber: 'wuzy',
-      ProductCode: 'abc',
-    },
-  ];
 
   partNumberSearch(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -51,19 +53,14 @@ export class PartComponent {
       if (!value) {
         return null;
       }
-      const isVaild = this.partNumberList.some((part) => {
-        return part.PartNumber.toLowerCase() === value.toLowerCase();
+      const isVaild = this.data.value.some((part) => {
+        return (
+          part.Product.PartNumber.toLowerCase().trim() ===
+          value.toLowerCase().trim()
+        );
       });
-      return !isVaild ? { partNumberSearch: true } : null;
+      return !isVaild ? { filter: true } : null;
     };
-  }
-
-  ngOnInit(): void {
-    //
-  }
-
-  ngAfterViewInit() {
-    //
   }
 
   onChange = (input: string) => {
@@ -71,10 +68,16 @@ export class PartComponent {
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiving/verify');
+    this.data.value = this.data.value.filter(
+      (line) =>
+        line.Product.PartNumber.toLowerCase().trim() ===
+        this.inputForm.value.partNumber.toLowerCase().trim()
+    );
+    this._service.changereceiptH(this.data);
+    this._router.navigateByUrl('receiptreceiving/verify');
   }
 
   onBack(): void {
-    this._router.navigateByUrl('receiving');
+    this._router.navigate(['receiptreceiving/receipt']);
   }
 }

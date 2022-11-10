@@ -303,6 +303,7 @@ export type Inventory = {
   ContainerID: Scalars['Int'];
   Country?: Maybe<Country>;
   CountryID?: Maybe<Scalars['Int']>;
+  CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -1879,6 +1880,7 @@ export type UpdateInventory = {
   BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryID?: InputMaybe<Scalars['Int']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;

@@ -1,14 +1,12 @@
 <single-input-form
-  (onBack)="onBack()"
-  (onSubmit)="onSubmit()"
-  [isLoading]="isLoading"
+  (submit)="onSubmit()"
+  (back)="onBack()"
   [formGroup]="inputForm"
-  title="Part#"
+  [state]="data$ | async"
   controlName="part"
+  title="Location"
 ></single-input-form>
-<div class="fixed bottom-5 w-4/5">
-  <simple-keyboard
-    [inputFromParent]="inputForm.value.part"
-    (outputFromChild)="onChange($event)"
-  ></simple-keyboard>
-</div>
+<simple-keyboard
+  [inputFromParent]="inputForm.value.part"
+  (outputFromChild)="onChange($event)"
+></simple-keyboard>

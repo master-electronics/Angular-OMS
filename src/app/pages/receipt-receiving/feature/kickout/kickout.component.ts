@@ -60,10 +60,10 @@ export class KickoutComponent {
   };
 
   cancal(): void {
-    this._router.navigateByUrl('receiving/verify');
+    this._router.navigateByUrl('receiptreceiving/verify');
   }
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiving/kickout/location');
+    this._router.navigateByUrl('receiptreceiving/kickout/location');
   }
 }
