@@ -6,6 +6,14 @@ query fetchVendorList {
     }
 }
 
+query findVendor($vendor: searchVendor!) {
+    findVendor(Vendor: $vendor) {
+        _id
+        VendorName
+        VendorNumber
+    }
+}
+
 query findReceipt($receiptID: Int) {
     findReceipt(ReceiptID: $receiptID) {
         _id
@@ -156,7 +164,6 @@ mutation insertReceiptLineDetail($receiptLineDetail: InsertReceiptLineDetail) {
         ReceiptLID
         ExpectedQuantity
         PurchaseOrderLID
-        StatusID
     }
 }
 
@@ -185,7 +192,6 @@ mutation deleteReceiptLineDetails($receiptLineID: Int) {
         ReceiptLID
         ExpectedQuantity
         PurchaseOrderLID
-        StatusID
     }
 }
 
@@ -225,6 +231,28 @@ mutation deleteReceiptLineDetail($receiptLDID: Int!) {
         ReceiptLID
         ExpectedQuantity
         PurchaseOrderLID
-        StatusID
     }
+}
+
+mutation insertReceiptLineDetails($receiptLineDetails: [InsertReceiptLineDetail]) {
+    insertReceiptLineDetails(ReceiptLineDetails: $receiptLineDetails) {
+        _id
+        ReceiptLID
+        ExpectedQuantity
+        PurchaseOrderLID
+    }
+}
+
+mutation updateReceipt(
+    $_id: Int!
+    $vendorID: Int!
+    $expectedArrivalDate: String
+    $sourceType: String
+) {
+    updateReceipt(
+        _id: $_id
+        VendorID: $vendorID
+        ExpectedArrivalDate: $expectedArrivalDate
+        SourceType: $sourceType
+    )
 }

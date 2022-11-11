@@ -1,10 +1,10 @@
-import { ConstantPool } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { Subscription } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { CommonService } from 'src/app/shared/services/common.service';
 import {
   FetchVendorListGQL,
+  FindVendorGQL,
   FindReceiptGQL,
   FindReceiptsGQL,
   InsertReceiptGQL,
@@ -20,30 +20,16 @@ import {
   FindReceiptLineGQL,
   DeleteReceiptLineGQL,
   DeleteReceiptLineDetailsGQL,
+  UpdateReceiptGQL,
   UpdateReceiptLineGQL,
   UpdateReceiptLineDetailGQL,
   DeleteReceiptLineDetailGQL,
+  InsertReceiptLineDetailsGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
-import { ReceiptLineDetail } from 'src/app/graphql/route.graphql-gen';
-import { SelectCartComponent } from '../../pull-to-pick/select-cart/select-cart.component';
-
-interface Vendor {
-  _id: number;
-  Number: string;
-  Name: string;
-}
 
 interface PartCode {
   _id: number;
   PRC: string;
-}
-
-interface Country {
-  _id: number;
-  CountryCode: string;
-  CountryName: string;
-  ISO2: string;
-  ISO3: string;
 }
 
 interface ReceiptLine {
@@ -65,18 +51,17 @@ interface ReceiptLine {
     PurchaseOrderNumberLine: string;
   }[];
   Expanded: boolean;
+  Selected: boolean;
 }
 
 @Component({
   selector: 'receipt-entry',
   templateUrl: './receipt-entry.component.html',
   styleUrls: ['./receipt-entry.component.css'],
-  host: {
-    '(document:click)': 'onClick($event)',
-  },
 })
 export class ReceiptEntry implements OnInit {
-  public vendorsLoaded: Promise<boolean>;
+  message: string;
+  alertType = 'success';
   receiptLineDetailMessage: string;
   receiptLineDetailAlertType = 'success';
   receiptList: Array<{ value: string; text: string }> = [];
@@ -87,11 +72,18 @@ export class ReceiptEntry implements OnInit {
   receiptID;
   receiptNumber;
   vendorID;
+  receiptVendorID;
+  vendorNumber;
   expectedArrivalDate;
+  receiptExpectedArrivalDate;
+  receiptSource;
+  receiptLineDetailsTotal;
+  receiptLineDetailsList;
   vendorSearchClass;
   partNumberClass;
   quantityClass;
   dateCodeClass;
+  cooClass;
   sourceType;
   sourceTypeOptions: Array<{ label: string; value: string }> = [
     { label: 'Manually entered', value: 'manual' },
@@ -125,13 +117,21 @@ export class ReceiptEntry implements OnInit {
   receiptLineDetailID;
   lineDetailTitle;
   lineDetailTotal: number;
+  lineDetailTotalClass;
+  lineDetailOkDisabled = true;
   lineDetails: Array<{
     Quantity: number;
     PurchaseOrderLID: number;
     PurchaseOrderNumberLine: string;
   }> = [];
+  receiptModalVisible: boolean;
+  receiptModalOkDisabled = true;
+  receiptModalStyle = { width: '800px' };
+  receiptModalTitle;
+  editingReceipt: boolean;
 
   private vendorListSubscription = new Subscription();
+  private findVendorSubscription = new Subscription();
   private receiptSubscription = new Subscription();
   private receiptListSubscription = new Subscription();
   private insertReceiptSubscription = new Subscription();
@@ -147,12 +147,17 @@ export class ReceiptEntry implements OnInit {
   private findReceiptLineSubscription = new Subscription();
   private deleteReceiptLineSubscription = new Subscription();
   private deleteReceiptLineDetailsSubscription = new Subscription();
+  private updateReceiptSubscription = new Subscription();
   private updateReceiptLineSubscription = new Subscription();
   private updateReceiptLineDetailSubscription = new Subscription();
   private deleteReceiptLineDetailSubscription = new Subscription();
+  private insertReceiptLineDetailsSubscription = new Subscription();
 
   constructor(
+    private commonService: CommonService,
+    private titleService: Title,
     private _fetchVendorList: FetchVendorListGQL,
+    private _findVendor: FindVendorGQL,
     private _findReceipt: FindReceiptGQL,
     private _findReceiptList: FindReceiptsGQL,
     private _insertReceipt: InsertReceiptGQL,
@@ -168,20 +173,22 @@ export class ReceiptEntry implements OnInit {
     private _findReceiptLine: FindReceiptLineGQL,
     private _deleteReceiptLine: DeleteReceiptLineGQL,
     private _deleteReceiptLineDetails: DeleteReceiptLineDetailsGQL,
+    private _updateReceipt: UpdateReceiptGQL,
     private _updateReceiptLine: UpdateReceiptLineGQL,
     private _updateReceiptLineDetail: UpdateReceiptLineDetailGQL,
-    private _deleteReceiptLineDetail: DeleteReceiptLineDetailGQL
-  ) {}
+    private _deleteReceiptLineDetail: DeleteReceiptLineDetailGQL,
+    private _insertReceiptLineDetails: InsertReceiptLineDetailsGQL
+  ) {
+    this.commonService.changeNavbar('Receipt Entry');
+    this.titleService.setTitle('Receipt Entry');
+  }
 
   ngOnInit(): void {
+    this.editingReceipt = false;
     this.lineDetailTotal = 0;
     this.lineDetailTitle = 'Title';
     this.getVendors();
     this.getCountries();
-  }
-
-  onClick(e: Event) {
-    this.partCodes = null;
   }
 
   getVendors(): void {
@@ -198,6 +205,10 @@ export class ReceiptEntry implements OnInit {
                 value: vendor._id.toString(),
               });
             });
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = 'Error getting Vendor list - ' + error;
           },
         })
     );
@@ -218,8 +229,51 @@ export class ReceiptEntry implements OnInit {
               });
             });
           },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = 'Error getting Country list - ' + error;
+          },
         })
     );
+  }
+
+  onReceiptModalCancel(): void {
+    this.clearReceiptModal();
+  }
+
+  clearReceiptModal(): void {
+    this.editingReceipt = false;
+    this.vendorID = null;
+    this.expectedArrivalDate = null;
+    this.sourceType = null;
+    this.receiptModalVisible = false;
+  }
+
+  clearReceipt(): void {
+    this.receiptList = null;
+    this.receiptNumber = null;
+    this.receiptVendorID = null;
+    this.vendorNumber = null;
+    this.receiptExpectedArrivalDate = null;
+    this.receiptSource = null;
+    this.receiptLines = null;
+  }
+
+  onReceiptModalOk(): void {
+    if (this.editingReceipt) {
+      this.updateReceipt();
+    } else {
+      this.insertReceipt();
+    }
+  }
+
+  editReceipt(): void {
+    this.editingReceipt = true;
+    this.vendorID = this.receiptVendorID.toString();
+    this.expectedArrivalDate = this.receiptExpectedArrivalDate;
+    this.sourceType = this.receiptSource;
+    this.receiptModalTitle = 'Edit Receipt ' + this.receiptID;
+    this.receiptModalVisible = true;
   }
 
   searchReceipts(value: string): void {
@@ -242,6 +296,10 @@ export class ReceiptEntry implements OnInit {
                   value: receipt._id.toString(),
                 });
               });
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error searching Receipts - ' + error;
             },
             complete: () => {
               this.receiptList = receipts;
@@ -268,6 +326,10 @@ export class ReceiptEntry implements OnInit {
                   value: part._id.toString(),
                 });
               });
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error searching Part Numbers - ' + error;
             },
             complete: () => {
               this.partList = parts;
@@ -298,6 +360,11 @@ export class ReceiptEntry implements OnInit {
                 });
               });
             },
+            error: (error) => {
+              this.receiptLineDetailAlertType = 'error';
+              this.receiptLineDetailMessage =
+                'Error searching PO Number-Lines - ' + error;
+            },
             complete: () => {
               this.poLineList = poLines;
             },
@@ -305,6 +372,27 @@ export class ReceiptEntry implements OnInit {
       );
     } else {
       this.poLineList = [];
+    }
+  }
+
+  getReceiptVendor(): void {
+    if (this.receiptVendorID) {
+      this.findVendorSubscription.add(
+        this._findVendor
+          .fetch(
+            { vendor: { _id: Number(this.receiptVendorID) } },
+            { fetchPolicy: 'network-only' }
+          )
+          .subscribe({
+            next: (res) => {
+              this.vendorNumber = res.data.findVendor.VendorNumber;
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error finding Vendor - ' + error;
+            },
+          })
+      );
     }
   }
 
@@ -351,6 +439,7 @@ export class ReceiptEntry implements OnInit {
                 LineNumber: receiptLine.LineNumber,
                 ReceiptLineDetails: lineDetails,
                 Expanded: false,
+                Selected: false,
               });
             });
           },
@@ -372,6 +461,10 @@ export class ReceiptEntry implements OnInit {
                     complete: () => {
                       receiptLine.ISO3 = ISO3;
                     },
+                    error: (error) => {
+                      this.alertType = 'error';
+                      this.message = 'Error finding Country - ' + error;
+                    },
                   })
               );
 
@@ -388,6 +481,10 @@ export class ReceiptEntry implements OnInit {
                     },
                     complete: () => {
                       receiptLine.PartNumber = partNumber;
+                    },
+                    error: (error) => {
+                      this.alertType = 'error';
+                      this.message = 'Error finding Part Number - ' + error;
                     },
                   })
               );
@@ -409,6 +506,11 @@ export class ReceiptEntry implements OnInit {
                         lineDetail.PurchaseOrderNumberLine =
                           purchaseOrderNumberLine;
                       },
+                      error: (error) => {
+                        this.alertType = 'error';
+                        this.message =
+                          'Error finding PO Number-Line - ' + error;
+                      },
                     })
                 );
               });
@@ -416,19 +518,63 @@ export class ReceiptEntry implements OnInit {
 
             this.receiptLines = receiptLines;
           },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = 'Error getting Receipt Lines - ' + error;
+          },
         })
     );
   }
 
+  updateReceipt(): void {
+    if (this.receiptID) {
+      if (this.vendorID) {
+        this.vendorSearchClass = 'valid';
+        const expectedDate = new Date(this.expectedArrivalDate);
+        expectedDate.setHours(expectedDate.getHours() - 7);
+
+        this.updateReceiptSubscription.add(
+          this._updateReceipt
+            .mutate({
+              _id: Number(this.receiptID),
+              vendorID: Number(this.vendorID),
+              expectedArrivalDate: expectedDate.toLocaleDateString(),
+              sourceType: this.sourceType,
+            })
+            .subscribe({
+              complete: () => {
+                this.clearReceiptModal();
+                this.findReceipt();
+                this.alertType = 'success';
+                this.message = 'Receipt updated';
+              },
+              error: (error) => {
+                this.clearReceiptModal();
+                this.alertType = 'error';
+                this.message = 'Error updating Receipt - ' + error;
+              },
+            })
+        );
+      } else {
+        this.vendorSearchClass = 'invalid';
+      }
+    }
+  }
+
   insertReceipt(): void {
+    this.receiptLines = null;
+
     if (this.vendorID) {
       this.vendorSearchClass = 'valid';
+      const expectedDate = new Date(this.expectedArrivalDate);
+      expectedDate.setHours(expectedDate.getHours() - 7);
+
       this.insertReceiptSubscription.add(
         this._insertReceipt
           .mutate({
             receipt: {
               VendorID: Number(this.vendorID),
-              ExpectedArrivalDate: this.expectedArrivalDate,
+              ExpectedArrivalDate: expectedDate.toLocaleDateString(),
               SourceType: this.sourceType,
             },
           })
@@ -438,9 +584,14 @@ export class ReceiptEntry implements OnInit {
               this.receiptSelected = true;
             },
             error: (error) => {
-              console.log(error);
+              this.clearReceiptModal();
+              this.alertType = 'error';
+              this.message = 'Error inserting Receipt - ' + error;
             },
             complete: () => {
+              this.alertType = 'success';
+              this.message = 'Receipt added';
+              this.clearReceiptModal();
               this.findReceipt();
             },
           })
@@ -461,8 +612,15 @@ export class ReceiptEntry implements OnInit {
           .subscribe({
             next: (res) => {
               this.receiptNumber = res.data.findReceipt.ReceiptNumber;
+              this.receiptVendorID = res.data.findReceipt.VendorID;
+              this.receiptExpectedArrivalDate = new Date(
+                Number(res.data.findReceipt.ExpectedArrivalDate)
+              ).toLocaleDateString();
+              this.receiptSource = res.data.findReceipt.SourceType;
             },
             complete: () => {
+              this.getReceiptVendor();
+
               this.receiptList = [
                 {
                   value: this.receiptID.toString(),
@@ -470,47 +628,12 @@ export class ReceiptEntry implements OnInit {
                 },
               ];
             },
-          })
-      );
-    }
-  }
-
-  onPartNumberChange(e): void {
-    this.searhPartCodes();
-  }
-
-  searhPartCodes(): void {
-    if (this.partNumber) {
-      const partCodes: PartCode[] = [];
-      this.partCodeListSubscription.add(
-        this._findPartCodes
-          .fetch(
-            {
-              searchString: this.partNumber,
-            },
-            {
-              fetchPolicy: 'network-only',
-            }
-          )
-          .subscribe({
-            next: (res) => {
-              res.data.findPartCodes.map((partCode) => {
-                partCodes.push({
-                  _id: partCode._id,
-                  PRC: partCode.PRC,
-                });
-              });
-            },
             error: (error) => {
-              console.log(error);
-            },
-            complete: () => {
-              this.partCodes = partCodes;
+              this.alertType = 'error';
+              this.message = 'Error loading Receipt - ' + error;
             },
           })
       );
-    } else {
-      this.partCodes = null;
     }
   }
 
@@ -525,6 +648,10 @@ export class ReceiptEntry implements OnInit {
           .subscribe({
             next: (res) => {
               this.partNumber = res.data.findPart.PartNumber;
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error finding Part Number - ' + error;
             },
           })
       );
@@ -543,23 +670,53 @@ export class ReceiptEntry implements OnInit {
             next: (res) => {
               this.ISO3 = res.data.findCountry.ISO3;
             },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error finding Country - ' + error;
+            },
           })
       );
     }
   }
 
   onReceiptIDChange(e: Event): void {
+    this.clearReceiptLine();
+    this.clearReceiptLineDetail();
+    this.clearMessages();
+
     if (e) {
       this.receiptSelected = true;
+      this.findReceipt();
       this.getReceiptLines();
     } else {
       this.receiptSelected = false;
-      this.receiptLines = null;
+      this.clearReceipt();
     }
   }
 
-  selectReceiptLine(ReceiptLineID): void {
+  clearMessages(): void {
+    this.alertType = 'success';
+    this.message = null;
+    this.receiptLineDetailAlertType = 'success';
+    this.receiptLineDetailMessage = null;
+  }
+
+  selectReceiptLine(ReceiptLineID, ReceiptLineDetails): void {
+    this.clearMessages();
+    this.receiptLineDetailsTotal = 0;
+
     if (ReceiptLineID) {
+      if (ReceiptLineDetails) {
+        this.receiptLineDetailsList = [];
+
+        ReceiptLineDetails.map((receiptLineDetail) => {
+          this.receiptLineDetailsList.push(receiptLineDetail);
+          this.receiptLineDetailsTotal += Number(
+            receiptLineDetail.ExpectedQuantity
+          );
+        });
+      }
+
       this.findReceiptLineSubscription.add(
         this._findReceiptLine
           .fetch(
@@ -595,6 +752,18 @@ export class ReceiptEntry implements OnInit {
                           text: this.partNumber,
                         },
                       ];
+
+                      this.receiptLines.map((receiptLine) => {
+                        if (receiptLine._id == Number(ReceiptLineID)) {
+                          receiptLine.Selected = true;
+                        } else {
+                          receiptLine.Selected = false;
+                        }
+                      });
+                    },
+                    error: (error) => {
+                      this.alertType = 'error';
+                      this.message = 'Error finding Part Number - ' + error;
                     },
                   })
               );
@@ -611,8 +780,16 @@ export class ReceiptEntry implements OnInit {
                         ? res.data.findCountry.ISO3
                         : '';
                     },
+                    error: (error) => {
+                      this.alertType = 'error';
+                      this.message = 'Error finding Country - ' + error;
+                    },
                   })
               );
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error finding Receipt Line - ' + error;
             },
           })
       );
@@ -635,7 +812,7 @@ export class ReceiptEntry implements OnInit {
                         (item) => item._id === this.receiptLineID
                       );
 
-                      if (index) {
+                      if (index >= 0) {
                         this.receiptLines.splice(index, 1);
 
                         const receiptLines: ReceiptLine[] = [];
@@ -653,10 +830,21 @@ export class ReceiptEntry implements OnInit {
                         this.dateCode = null;
                         this.coo = null;
                         this.rohs = null;
+
+                        this.alertType = 'success';
+                        this.message = 'Receipt Line deleted';
                       }
+                    },
+                    error: (error) => {
+                      this.alertType = 'error';
+                      this.message = 'Error deleting Receipt Line - ' + error;
                     },
                   })
               );
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error deleting Receipt Line Details - ' + error;
             },
           })
       );
@@ -668,6 +856,7 @@ export class ReceiptEntry implements OnInit {
       this.partNumberClass = 'valid';
       this.quantityClass = 'inputValid';
       this.dateCodeClass = 'inputValid';
+      this.cooClass = 'valid';
 
       let valid = true;
 
@@ -690,6 +879,11 @@ export class ReceiptEntry implements OnInit {
         this.dateCodeClass = 'invalid';
       }
 
+      if (!this.coo) {
+        valid = false;
+        this.cooClass = 'invalid';
+      }
+
       if (valid) {
         this.updateReceiptLineSubscription.add(
           this._updateReceiptLine
@@ -703,6 +897,16 @@ export class ReceiptEntry implements OnInit {
             })
             .subscribe({
               complete: () => {
+                if (
+                  Number(this.quantity) != Number(this.receiptLineDetailsTotal)
+                ) {
+                  this.lineDetailOkDisabled = true;
+                } else {
+                  this.lineDetailOkDisabled = false;
+                }
+
+                this.showReceiptLineDetail('Save');
+
                 const receiptLine = this.receiptLines.find(
                   (item) => item._id == this.receiptLineID
                 );
@@ -716,6 +920,13 @@ export class ReceiptEntry implements OnInit {
                   receiptLine.ISO3 = this.ISO3;
                   receiptLine.ROHS = this.rohs;
                 }
+
+                this.alertType = 'success';
+                this.message = 'Receipt Line updated';
+              },
+              error: (error) => {
+                this.alertType = 'error';
+                this.message = 'Error updating Receipt Line - ' + error;
               },
             })
         );
@@ -729,20 +940,45 @@ export class ReceiptEntry implements OnInit {
     this.partNumberID = null;
     this.partList = [];
     this.quantity = null;
+    this.receiptLineDetailsTotal = null;
+    this.receiptLineDetailsList = null;
     this.dateCode = null;
     this.coo = null;
     this.rohs = null;
+
+    if (this.receiptLines) {
+      this.receiptLines.map((receiptLine) => {
+        receiptLine.Selected = false;
+      });
+    }
   }
 
-  addReceiptLineDetail(): void {
-    this.receiptLineDetailClosable = true;
-    this.showReceiptLineDetail('Add');
+  clearReceiptLineDetail(): void {
+    this.lineDetailTotal = 0;
+    this.lineDetails = [];
+    this.poLineID = null;
+    this.receiptLineDetailQuantity = null;
+    this.poLineList = null;
+  }
+
+  addReceipt(): void {
+    this.clearReceipt();
+    this.clearReceiptLine();
+    this.clearReceiptLineDetail();
+    this.clearMessages();
+
+    this.editingReceipt = false;
+    this.receiptModalTitle = 'New Receipt';
+    this.receiptModalVisible = true;
   }
 
   addReceiptLine(): void {
+    this.clearMessages();
+
     this.partNumberClass = 'valid';
     this.quantityClass = 'inputValid';
     this.dateCodeClass = 'inputValid';
+    this.cooClass = 'valid';
 
     let valid = true;
 
@@ -763,6 +999,11 @@ export class ReceiptEntry implements OnInit {
     if (!this.dateCode) {
       valid = false;
       this.dateCodeClass = 'invalid';
+    }
+
+    if (!this.coo) {
+      valid = false;
+      this.cooClass = 'invalid';
     }
 
     if (valid) {
@@ -798,16 +1039,20 @@ export class ReceiptEntry implements OnInit {
                 LineNumber: newLineNumber,
                 ReceiptLineDetails: null,
                 Expanded: false,
+                Selected: false,
               };
 
               const receiptLines: ReceiptLine[] = [];
 
-              this.receiptLines.map((receiptLine) => {
-                receiptLines.push(receiptLine);
-              });
-
               receiptLines.push(newReceiptLine);
               this.receiptLines = receiptLines;
+
+              this.alertType = 'success';
+              this.message = 'Receipt Line added';
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error inserting Receipt Line - ' + error;
             },
           })
       );
@@ -816,6 +1061,22 @@ export class ReceiptEntry implements OnInit {
 
   showReceiptLineDetail(okText: string): void {
     this.receiptLineDetailOkText = okText;
+
+    if (this.receiptLineDetailsList) {
+      this.lineDetails = [];
+      this.lineDetailTotal = 0;
+
+      this.receiptLineDetailsList.map((lineDetail) => {
+        this.lineDetailTotal += Number(lineDetail.ExpectedQuantity);
+
+        this.lineDetails.push({
+          Quantity: lineDetail.ExpectedQuantity,
+          PurchaseOrderLID: lineDetail.PurchaseOrderLID,
+          PurchaseOrderNumberLine: lineDetail.PurchaseOrderNumberLine,
+        });
+      });
+    }
+
     this.receiptLineDetailVisible = true;
   }
 
@@ -824,173 +1085,65 @@ export class ReceiptEntry implements OnInit {
   }
 
   onReceiptLineDetailOKClick(): void {
-    if (this.receiptLineDetailOkText == 'Save') {
-      if (
-        this.receiptLineDetailID &&
-        this.poLineID &&
-        this.receiptLineDetailQuantity
-      ) {
-        this.updateReceiptLineDetailSubscription.add(
-          this._updateReceiptLineDetail
-            .mutate({
-              receiptLDID: Number(this.receiptLineDetailID),
-              expectedQuantity: Number(this.receiptLineDetailQuantity),
-              purchaseOrderLID: Number(this.poLineID),
-            })
-            .subscribe({
-              error: (error) => {
-                this.receiptLineDetailAlertType = 'error';
-                this.receiptLineDetailMessage = error;
-              },
-              complete: () => {
-                this.receiptLineDetailAlertType = 'success';
-                this.receiptLineDetailMessage = 'Receipt line detail saved.';
-              },
-            })
-        );
-      }
-    } else if (this.receiptLineDetailOkText == 'Add') {
-      if (
-        this.receiptLineID &&
-        this.poLineID &&
-        this.receiptLineDetailQuantity
-      ) {
-        let newReceiptLineDetail: {
-          _id: number;
-          ReceiptLID: number;
-          ExpectedQuantity: number;
-          PurchaseOrderLID: number;
-          PurchaseOrderNumberLine: string;
-        };
+    if (this.lineDetails.length > 0) {
+      const lineDetails: Array<{
+        ReceiptLID: number;
+        PurchaseOrderLID: number;
+        ExpectedQuantity: number;
+      }> = [];
 
-        this.insertReceiptLineDetailSubscription.add(
-          this._insertReceiptLineDetail
-            .mutate({
-              receiptLineDetail: {
-                ReceiptLID: Number(this.receiptLineID),
-                ExpectedQuantity: Number(this.receiptLineDetailQuantity),
-                PurchaseOrderLID: Number(this.poLineID),
-              },
-            })
-            .subscribe({
-              next: (res) => {
-                newReceiptLineDetail = {
-                  _id: res.data.insertReceiptLineDetail._id,
-                  ReceiptLID: res.data.insertReceiptLineDetail.ReceiptLID,
-                  ExpectedQuantity:
-                    res.data.insertReceiptLineDetail.ExpectedQuantity,
-                  PurchaseOrderLID:
-                    res.data.insertReceiptLineDetail.PurchaseOrderLID,
-                  PurchaseOrderNumberLine: '',
-                };
-              },
-              error: (error) => {
-                this.receiptLineDetailAlertType = 'error';
-                this.receiptLineDetailMessage = error;
-              },
-              complete: () => {
-                let purchaseOrderNumberLine = '';
-                this.findPOLineSubscripton.add(
-                  this._findPOLine
-                    .fetch(
-                      {
-                        purchaseOrderLID: newReceiptLineDetail.PurchaseOrderLID,
-                      },
-                      { fetchPolicy: 'network-only' }
-                    )
-                    .subscribe({
-                      next: (res) => {
-                        purchaseOrderNumberLine =
-                          res.data.findPOLine[0].PurchaseOrderNumberLine;
-                      },
-                      complete: () => {
-                        newReceiptLineDetail.PurchaseOrderNumberLine =
-                          purchaseOrderNumberLine;
+      this.deleteReceiptLineDetailsSubscription.add(
+        this._deleteReceiptLineDetails
+          .mutate({ receiptLineID: Number(this.receiptLineID) })
+          .subscribe({
+            complete: () => {
+              this.lineDetails.map((lineDetail) => {
+                lineDetails.push({
+                  ReceiptLID: Number(this.receiptLineID),
+                  PurchaseOrderLID: lineDetail.PurchaseOrderLID,
+                  ExpectedQuantity: lineDetail.Quantity,
+                });
+              });
 
-                        this.receiptLineDetailClosable = true;
-                        this.receiptLineDetailAlertType = 'success';
-                        this.receiptLineDetailMessage =
-                          'Receipt line detail added.';
-                        this.poLineList = null;
-                        this.poLineID = null;
-                        this.receiptLineDetailQuantity = null;
+              this.insertReceiptLineDetailsSubscription.add(
+                this._insertReceiptLineDetails
+                  .mutate({
+                    receiptLineDetails: lineDetails,
+                  })
+                  .subscribe({
+                    error: (error) => {
+                      this.receiptLineDetailAlertType = 'error';
+                      this.receiptLineDetailMessage =
+                        'Error inserting Receipt Line Details - ' + error;
+                    },
+                    complete: () => {
+                      this.getReceiptLines();
+                      this.poLineID = null;
+                      this.poLineList = null;
+                      this.receiptLineDetailQuantity = null;
+                      this.receiptLineDetailVisible = false;
 
-                        const receiptLineDetails: {
-                          _id: number;
-                          ReceiptLID: number;
-                          ExpectedQuantity: number;
-                          PurchaseOrderLID: number;
-                          PurchaseOrderNumberLine: string;
-                        }[] = [];
+                      this.clearReceiptLine();
+                      this.clearReceiptLineDetail();
 
-                        const receiptLine = this.receiptLines.find(
-                          (item) => item._id == this.receiptLineID
-                        );
-
-                        if (receiptLine) {
-                          receiptLine.ReceiptLineDetails.map(
-                            (receiptLineDetail) => {
-                              receiptLineDetails.push(receiptLineDetail);
-                            }
-                          );
-
-                          receiptLineDetails.push({
-                            _id: newReceiptLineDetail._id,
-                            ReceiptLID: newReceiptLineDetail.ReceiptLID,
-                            ExpectedQuantity:
-                              newReceiptLineDetail.ExpectedQuantity,
-                            PurchaseOrderLID:
-                              newReceiptLineDetail.PurchaseOrderLID,
-                            PurchaseOrderNumberLine:
-                              newReceiptLineDetail.PurchaseOrderNumberLine,
-                          });
-
-                          receiptLine.ReceiptLineDetails = receiptLineDetails;
-                        }
-                      },
-                    })
-                );
-              },
-            })
-        );
-      }
+                      this.alertType = 'success';
+                      this.message = 'Receipt line detail(s) saved.';
+                    },
+                  })
+              );
+            },
+            error: (error) => {
+              this.receiptLineDetailAlertType = 'error';
+              this.receiptLineDetailMessage =
+                'Error deleting Receipt Line Details';
+            },
+          })
+      );
     }
   }
 
   resetReceiptLineDetailMessage() {
     this.receiptLineDetailMessage = null;
-  }
-
-  selectReceiptLineDetail(
-    receiptLineDetailID,
-    poLineID,
-    poNumberLine,
-    receiptLineDetailQuantity
-  ): void {
-    this.receiptLineDetailID = receiptLineDetailID;
-    this.poLineID = poLineID.toString();
-    this.poLineList = [
-      { text: poNumberLine.toString(), value: poLineID.toString() },
-    ];
-    this.receiptLineDetailQuantity = receiptLineDetailQuantity;
-    this.receiptLineDetailClosable = true;
-    this.showReceiptLineDetail('Save');
-  }
-
-  deleteReceiptLineDetail(receiptLineDetailID, receiptLineID): void {
-    if (receiptLineDetailID) {
-      this.deleteReceiptLineDetailSubscription.add(
-        this._deleteReceiptLineDetail
-          .mutate({
-            receiptLDID: Number(receiptLineDetailID),
-          })
-          .subscribe({
-            complete: () => {
-              //
-            },
-          })
-      );
-    }
   }
 
   addDetailLine(): void {
@@ -1015,6 +1168,27 @@ export class ReceiptEntry implements OnInit {
               });
 
               this.lineDetailTotal += Number(this.receiptLineDetailQuantity);
+
+              if (this.lineDetailTotal > this.quantity) {
+                this.lineDetailTotalClass = 'alert';
+              } else {
+                this.lineDetailTotalClass = null;
+              }
+
+              if (this.lineDetailTotal == this.quantity) {
+                this.lineDetailOkDisabled = false;
+              } else {
+                this.lineDetailOkDisabled = true;
+              }
+
+              this.poLineID = null;
+              this.poLineList = null;
+              this.receiptLineDetailQuantity = null;
+            },
+            error: (error) => {
+              this.receiptLineDetailAlertType = 'error';
+              this.receiptLineDetailMessage =
+                'Error finding PO Number-Line - ' + error;
             },
           })
       );
@@ -1022,11 +1196,41 @@ export class ReceiptEntry implements OnInit {
   }
 
   removeDetailLine(index: number): void {
-    //
+    if (index >= 0) {
+      this.lineDetailTotal = 0;
+
+      const lineDetails: Array<{
+        Quantity: number;
+        PurchaseOrderLID: number;
+        PurchaseOrderNumberLine: string;
+      }> = [];
+
+      this.lineDetails.splice(index, 1);
+
+      this.lineDetails.map((lineDetail) => {
+        this.lineDetailTotal += lineDetail.Quantity;
+        lineDetails.push(lineDetail);
+      });
+
+      this.lineDetails = lineDetails;
+
+      if (this.lineDetailTotal > this.quantity) {
+        this.lineDetailTotalClass = 'alert';
+      } else {
+        this.lineDetailTotalClass = null;
+      }
+
+      if (this.lineDetailTotal == this.quantity) {
+        this.lineDetailOkDisabled = false;
+      } else {
+        this.lineDetailOkDisabled = true;
+      }
+    }
   }
 
   ngOnDestroy(): void {
     this.vendorListSubscription.unsubscribe();
+    this.findVendorSubscription.unsubscribe();
     this.countryListSubscription.unsubscribe();
     this.receiptSubscription.unsubscribe();
     this.receiptListSubscription.unsubscribe();
@@ -1042,16 +1246,10 @@ export class ReceiptEntry implements OnInit {
     this.findReceiptLineSubscription.unsubscribe();
     this.deleteReceiptLineSubscription.unsubscribe();
     this.deleteReceiptLineDetailsSubscription.unsubscribe();
+    this.updateReceiptSubscription.unsubscribe();
     this.updateReceiptLineSubscription.unsubscribe();
     this.updateReceiptLineDetailSubscription.unsubscribe();
     this.deleteReceiptLineDetailSubscription.unsubscribe();
-  }
-
-  test(e: Event): void {
-    alert(this.lineDetailTotal);
-  }
-
-  test2(): void {
-    this.lineDetailTotal = 4;
+    this.insertReceiptLineDetailsSubscription.unsubscribe();
   }
 }

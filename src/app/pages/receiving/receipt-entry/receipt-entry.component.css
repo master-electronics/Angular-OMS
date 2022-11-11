@@ -70,3 +70,46 @@
 .searchResults div:hover {
     background-color: #f5f5f5;
 }
+
+.lineDetailLeft {
+    border-bottom: solid 1px #ededed; 
+    border-top: solid 1px #ededed; 
+    border-left: solid 1px #ededed; 
+    align-items: center; 
+    display: flex;
+}
+
+.lineDetailRight {
+    border-bottom: solid 1px #ededed; 
+    border-top: solid 1px #ededed; 
+    border-right: solid 1px #ededed; 
+    display: flex; 
+    align-items: center;
+}
+
+.infoBox {
+    background-color: #f5f5f5;
+    display: flex; 
+    align-items: center; 
+    margin-right: 5px;
+}
+
+.infoHeader {
+    margin-right: 5px;
+}
+
+.detailsInfoBox {
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.alert {
+    color: red;
+}
+
+.selected {
+    background-color: #8cd98c !important;
+}

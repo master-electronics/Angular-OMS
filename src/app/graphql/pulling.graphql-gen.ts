@@ -300,7 +300,6 @@ export type InsertReceiptLineDetail = {
   ExpectedQuantity: Scalars['Int'];
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID: Scalars['Int'];
-  StatusID?: InputMaybe<Scalars['Int']>;
 };
 
 export type Inventory = {
@@ -390,6 +389,7 @@ export type Mutation = {
   insertReceipt?: Maybe<Receipt>;
   insertReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
   insertReceiptLineDetail?: Maybe<ReceiptLineDetail>;
+  insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
@@ -418,6 +418,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
@@ -668,6 +669,11 @@ export type MutationInsertReceiptLineDetailArgs = {
 };
 
 
+export type MutationInsertReceiptLineDetailsArgs = {
+  ReceiptLineDetails?: InputMaybe<Array<InputMaybe<InsertReceiptLineDetail>>>;
+};
+
+
 export type MutationInsertTableDataArgs = {
   InsertQuery?: InputMaybe<Scalars['String']>;
 };
@@ -892,6 +898,14 @@ export type MutationUpdatePrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+
+export type MutationUpdateReceiptArgs = {
+  ExpectedArrivalDate?: InputMaybe<Scalars['String']>;
+  SourceType?: InputMaybe<Scalars['String']>;
+  VendorID: Scalars['Int'];
   _id: Scalars['Int'];
 };
 
@@ -1536,7 +1550,6 @@ export type ReceiptLineDetail = {
   ExpectedQuantity: Scalars['Int'];
   PurchaseOrderLID?: Maybe<Scalars['Int']>;
   ReceiptLID: Scalars['Int'];
-  StatusID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
 };
 

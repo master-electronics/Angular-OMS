@@ -300,7 +300,6 @@ export type InsertReceiptLineDetail = {
   ExpectedQuantity: Scalars['Int'];
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID: Scalars['Int'];
-  StatusID?: InputMaybe<Scalars['Int']>;
 };
 
 export type Inventory = {
@@ -390,6 +389,7 @@ export type Mutation = {
   insertReceipt?: Maybe<Receipt>;
   insertReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
   insertReceiptLineDetail?: Maybe<ReceiptLineDetail>;
+  insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
@@ -418,6 +418,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
@@ -668,6 +669,11 @@ export type MutationInsertReceiptLineDetailArgs = {
 };
 
 
+export type MutationInsertReceiptLineDetailsArgs = {
+  ReceiptLineDetails?: InputMaybe<Array<InputMaybe<InsertReceiptLineDetail>>>;
+};
+
+
 export type MutationInsertTableDataArgs = {
   InsertQuery?: InputMaybe<Scalars['String']>;
 };
@@ -892,6 +898,14 @@ export type MutationUpdatePrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+
+export type MutationUpdateReceiptArgs = {
+  ExpectedArrivalDate?: InputMaybe<Scalars['String']>;
+  SourceType?: InputMaybe<Scalars['String']>;
+  VendorID: Scalars['Int'];
   _id: Scalars['Int'];
 };
 
@@ -1536,7 +1550,6 @@ export type ReceiptLineDetail = {
   ExpectedQuantity: Scalars['Int'];
   PurchaseOrderLID?: Maybe<Scalars['Int']>;
   ReceiptLID: Scalars['Int'];
-  StatusID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
 };
 
@@ -2103,6 +2116,13 @@ export type FetchVendorListQueryVariables = Types.Exact<{ [key: string]: never; 
 
 export type FetchVendorListQuery = { __typename?: 'Query', fetchVendorList?: Array<{ __typename?: 'Vendor', _id: number, VendorNumber: string, VendorName: string } | null> | null };
 
+export type FindVendorQueryVariables = Types.Exact<{
+  vendor: Types.SearchVendor;
+}>;
+
+
+export type FindVendorQuery = { __typename?: 'Query', findVendor?: { __typename?: 'Vendor', _id: number, VendorName: string, VendorNumber: string } | null };
+
 export type FindReceiptQueryVariables = Types.Exact<{
   receiptID?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
@@ -2195,7 +2215,7 @@ export type InsertReceiptLineDetailMutationVariables = Types.Exact<{
 }>;
 
 
-export type InsertReceiptLineDetailMutation = { __typename?: 'Mutation', insertReceiptLineDetail?: { __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null, StatusID?: number | null } | null };
+export type InsertReceiptLineDetailMutation = { __typename?: 'Mutation', insertReceiptLineDetail?: { __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null };
 
 export type DeleteReceiptLineMutationVariables = Types.Exact<{
   receiptLineID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -2209,7 +2229,7 @@ export type DeleteReceiptLineDetailsMutationVariables = Types.Exact<{
 }>;
 
 
-export type DeleteReceiptLineDetailsMutation = { __typename?: 'Mutation', deleteReceiptLineDetails?: Array<{ __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null, StatusID?: number | null } | null> | null };
+export type DeleteReceiptLineDetailsMutation = { __typename?: 'Mutation', deleteReceiptLineDetails?: Array<{ __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null };
 
 export type UpdateReceiptLineMutationVariables = Types.Exact<{
   receiptLID: Types.Scalars['Int'];
@@ -2237,7 +2257,24 @@ export type DeleteReceiptLineDetailMutationVariables = Types.Exact<{
 }>;
 
 
-export type DeleteReceiptLineDetailMutation = { __typename?: 'Mutation', deleteReceiptLineDetail?: { __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null, StatusID?: number | null } | null };
+export type DeleteReceiptLineDetailMutation = { __typename?: 'Mutation', deleteReceiptLineDetail?: { __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null };
+
+export type InsertReceiptLineDetailsMutationVariables = Types.Exact<{
+  receiptLineDetails?: Types.InputMaybe<Array<Types.InputMaybe<Types.InsertReceiptLineDetail>> | Types.InputMaybe<Types.InsertReceiptLineDetail>>;
+}>;
+
+
+export type InsertReceiptLineDetailsMutation = { __typename?: 'Mutation', insertReceiptLineDetails?: Array<{ __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null };
+
+export type UpdateReceiptMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  vendorID: Types.Scalars['Int'];
+  expectedArrivalDate?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceType?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type UpdateReceiptMutation = { __typename?: 'Mutation', updateReceipt?: Array<number | null> | null };
 
 export const FetchVendorListDocument = gql`
     query fetchVendorList {
@@ -2254,6 +2291,26 @@ export const FetchVendorListDocument = gql`
   })
   export class FetchVendorListGQL extends Apollo.Query<FetchVendorListQuery, FetchVendorListQueryVariables> {
     document = FetchVendorListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindVendorDocument = gql`
+    query findVendor($vendor: searchVendor!) {
+  findVendor(Vendor: $vendor) {
+    _id
+    VendorName
+    VendorNumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindVendorGQL extends Apollo.Query<FindVendorQuery, FindVendorQueryVariables> {
+    document = FindVendorDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -2548,7 +2605,6 @@ export const InsertReceiptLineDetailDocument = gql`
     ReceiptLID
     ExpectedQuantity
     PurchaseOrderLID
-    StatusID
   }
 }
     `;
@@ -2601,7 +2657,6 @@ export const DeleteReceiptLineDetailsDocument = gql`
     ReceiptLID
     ExpectedQuantity
     PurchaseOrderLID
-    StatusID
   }
 }
     `;
@@ -2666,7 +2721,6 @@ export const DeleteReceiptLineDetailDocument = gql`
     ReceiptLID
     ExpectedQuantity
     PurchaseOrderLID
-    StatusID
   }
 }
     `;
@@ -2676,6 +2730,48 @@ export const DeleteReceiptLineDetailDocument = gql`
   })
   export class DeleteReceiptLineDetailGQL extends Apollo.Mutation<DeleteReceiptLineDetailMutation, DeleteReceiptLineDetailMutationVariables> {
     document = DeleteReceiptLineDetailDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertReceiptLineDetailsDocument = gql`
+    mutation insertReceiptLineDetails($receiptLineDetails: [InsertReceiptLineDetail]) {
+  insertReceiptLineDetails(ReceiptLineDetails: $receiptLineDetails) {
+    _id
+    ReceiptLID
+    ExpectedQuantity
+    PurchaseOrderLID
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InsertReceiptLineDetailsGQL extends Apollo.Mutation<InsertReceiptLineDetailsMutation, InsertReceiptLineDetailsMutationVariables> {
+    document = InsertReceiptLineDetailsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateReceiptDocument = gql`
+    mutation updateReceipt($_id: Int!, $vendorID: Int!, $expectedArrivalDate: String, $sourceType: String) {
+  updateReceipt(
+    _id: $_id
+    VendorID: $vendorID
+    ExpectedArrivalDate: $expectedArrivalDate
+    SourceType: $sourceType
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateReceiptGQL extends Apollo.Mutation<UpdateReceiptMutation, UpdateReceiptMutationVariables> {
+    document = UpdateReceiptDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
