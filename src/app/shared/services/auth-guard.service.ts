@@ -41,7 +41,6 @@ export class AuthGuard implements CanActivate {
 
   public checkRouteAuthorized(Route: string): void {
     let authorized = false;
-
     this.routeSubscription.add(
       this._findRoute
         .fetch(

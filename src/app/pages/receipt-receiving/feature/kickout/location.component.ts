@@ -8,19 +8,32 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simple-keyboard.component';
-import { ReceivingService } from '../../../data/receiving.server';
-import { SingleInputformComponent } from '../../../ui/single-input-form/single-input-form.component';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { ReceivingService } from '../../data/receiving.server';
+import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     SingleInputformComponent,
-    SimpleKeyboardComponent,
     ReactiveFormsModule,
+    SimpleKeyboardComponent,
   ],
-  templateUrl: './location.component.html',
+  template: `
+    <single-input-form
+      (submit)="onSubmit()"
+      (back)="onBack()"
+      [formGroup]="inputForm"
+      [state]="data$ | async"
+      controlName="location"
+      title="Location"
+    ></single-input-form>
+    <simple-keyboard
+      [inputFromParent]="inputForm.value.location"
+      (outputFromChild)="onChange($event)"
+    ></simple-keyboard>
+  `,
 })
 export class LocationComponent {
   public inputForm: FormGroup;

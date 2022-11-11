@@ -73,7 +73,7 @@ import { ReceivingService } from '../../data/receiving.server';
     ></simple-keyboard>
   `,
 })
-export class KickoutComponent {
+export class LabelComponent {
   isLoading = false;
   keyboard: Keyboard;
 

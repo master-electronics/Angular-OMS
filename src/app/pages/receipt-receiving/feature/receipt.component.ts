@@ -6,12 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ReceivingService } from '../../data/receiving.server';
-import {
-  Layout,
-  SimpleKeyboardComponent,
-} from '../../../../shared/ui/simple-keyboard/simple-keyboard.component';
-import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
+import { ReceivingService } from '../data/receiving.server';
+import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
+import { SingleInputformComponent } from '../ui/single-input-form.component';
 import { catchError, map, Observable, of, startWith, tap } from 'rxjs';
 import { FindReceiptHeaderForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CommonModule } from '@angular/common';
@@ -24,10 +21,26 @@ import { CommonModule } from '@angular/common';
     SimpleKeyboardComponent,
     ReactiveFormsModule,
   ],
-  templateUrl: './receipt.component.html',
+  template: `
+    <div class="grid grid-cols-2 gap-5">
+      <single-input-form
+        (submit)="onSubmit()"
+        (back)="onBack()"
+        [formGroup]="inputForm"
+        [state]="data$ | async"
+        type="number"
+        controlName="receipt"
+        title="Receipt"
+      ></single-input-form>
+      <simple-keyboard
+        [inputFromParent]="inputForm.value.receipt"
+        layout="number"
+        (outputFromChild)="onChange($event)"
+      ></simple-keyboard>
+    </div>
+  `,
 })
 export class ReceiptComponent {
-  public layout = Layout.numeric;
   public inputForm: FormGroup;
   public data$: Observable<any>;
 

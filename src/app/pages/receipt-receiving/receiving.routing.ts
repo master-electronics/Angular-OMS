@@ -10,9 +10,7 @@ const routes: Routes = [
       {
         path: 'receipt',
         loadComponent: () =>
-          import('./feature/receipt/receipt.component').then(
-            (m) => m.ReceiptComponent
-          ),
+          import('./feature/receipt.component').then((m) => m.ReceiptComponent),
       },
       {
         path: 'part',
@@ -22,7 +20,7 @@ const routes: Routes = [
       {
         path: 'verify',
         loadComponent: () =>
-          import('./feature/verify/verify.component').then(
+          import('./feature/part/verify.component').then(
             (m) => m.VerifyComponent
           ),
       },
@@ -34,17 +32,45 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'kickout/label',
+        loadComponent: () =>
+          import('./feature/kickout/label.component').then(
+            (mod) => mod.LabelComponent
+          ),
+      },
+      {
         path: 'kickout/location',
         loadComponent: () =>
-          import('./feature/kickout/location/location.component').then(
+          import('./feature/kickout/location.component').then(
             (mod) => mod.LocationComponent
           ),
       },
       {
-        path: 'kickout/part',
+        path: 'purchaseorder',
         loadComponent: () =>
-          import('./feature/kickout/part/part.component').then(
-            (mod) => mod.PartComponent
+          import('./feature/purchase-order/purchase-order.component').then(
+            (mod) => mod.PurchaseOrderComponent
+          ),
+      },
+      {
+        path: 'purchaseorder/quantity',
+        loadComponent: () =>
+          import('./feature/purchase-order/quantity.component').then(
+            (mod) => mod.QuantityComponent
+          ),
+      },
+      {
+        path: 'purchaseorder/label',
+        loadComponent: () =>
+          import('./feature/purchase-order/label.component').then(
+            (mod) => mod.LabelComponent
+          ),
+      },
+      {
+        path: 'itn',
+        loadComponent: () =>
+          import('./feature/purchase-order/purchase-order.component').then(
+            (mod) => mod.PurchaseOrderComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },

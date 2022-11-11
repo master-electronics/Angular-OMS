@@ -8,20 +8,15 @@ import {
 import { asapScheduler } from 'rxjs';
 import Keyboard from 'simple-keyboard';
 
-export enum Layout {
-  'default',
-  'numeric',
-}
-
 @Component({
   standalone: true,
   selector: 'simple-keyboard',
-  templateUrl: './simple-keyboard.component.html',
+  template: ` <div class="simple-keyboard"></div> `,
 })
 export class SimpleKeyboardComponent implements OnChanges {
   keyboard: Keyboard;
   @Input() inputFromParent;
-  @Input() layout: Layout | 0;
+  @Input() layout = 'default';
   @Output() outputFromChild: EventEmitter<string> = new EventEmitter();
 
   ngOnChanges(): void {
@@ -70,7 +65,7 @@ export class SimpleKeyboardComponent implements OnChanges {
         },
       });
 
-      if (this.layout === Layout.numeric) {
+      if (this.layout === 'number') {
         this.handleNumbers();
       }
     });

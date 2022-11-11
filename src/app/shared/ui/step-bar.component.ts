@@ -7,7 +7,16 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [CommonModule, NzStepsModule],
   selector: 'step-bar',
-  templateUrl: './step-bar.component.html',
+  template: `
+    <nz-steps [nzCurrent]="currentTab$ | async">
+      <nz-step
+        *ngFor="let step of steps"
+        [nzTitle]="step.title"
+        [nzSubtitle]="step.subtitle"
+        [nzDescription]="step.description"
+      ></nz-step>
+    </nz-steps>
+  `,
 })
 export class StepBarComponent {
   @Input() currentTab$!: Observable<number>;

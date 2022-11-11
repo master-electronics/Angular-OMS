@@ -6,23 +6,35 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import Keyboard from 'simple-keyboard';
 import { ReceivingService } from '../../data/receiving.server';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { SingleInputformComponent } from '../../ui/single-input-form/single-input-form.component';
-import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard/simple-keyboard.component';
-import { filter, map, Observable, tap } from 'rxjs';
+import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     SingleInputformComponent,
-    SimpleKeyboardComponent,
     ReactiveFormsModule,
+    SimpleKeyboardComponent,
   ],
-  templateUrl: './part.component.html',
+  template: `
+    <single-input-form
+      (back)="onBack()"
+      (submit)="onSubmit()"
+      [formGroup]="inputForm"
+      [state]="data"
+      [validator]="validator"
+      controlName="partNumber"
+      title="Part #"
+    ></single-input-form>
+    <simple-keyboard
+      [inputFromParent]="inputForm.value.partNumber"
+      (outputFromChild)="onChange($event)"
+    ></simple-keyboard>
+  `,
 })
 export class PartComponent {
   public inputForm: FormGroup;
