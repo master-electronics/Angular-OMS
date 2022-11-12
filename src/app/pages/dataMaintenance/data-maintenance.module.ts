@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataMaintenance } from './data-maintenance.component';
 import { DataMaintenanceRoutingModule } from './data-maintenance.routing';
 
-import { SharedUtilityModule } from 'src/app/shared/shared-utility.module';
-
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -25,7 +23,6 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
   imports: [
     CommonModule,
     DataMaintenanceRoutingModule,
-    SharedUtilityModule,
     NzTableModule,
     NzDropDownModule,
     NzButtonModule,

@@ -1,8 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
 import { ReceivingService } from './data/receiving.server';
 
 @Component({
+  standalone: true,
+  imports: [RouterModule, StepBarComponent],
+  providers: [ReceivingService],
   template: `
     <step-bar
       [currentTab$]="this._service.currentTab$"

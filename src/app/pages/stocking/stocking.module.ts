@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Utiltiy Module
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 //UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -14,7 +13,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
-import { AutoFocus } from 'src/app/shared/directives/auto-focus..directive';
+import { AutoFocusDirective } from 'src/app/shared/directives/auto-focus..directive';
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { StockingService } from './stocking.server';
@@ -27,10 +26,10 @@ import { StockingLocationComponent } from './stocking/stocking-location/stocking
 import { ITNListComponent } from './stocking/ITN-list/ITN-list';
 import { VerifyITNMatchComponent } from './stocking/verify-ITN-match/verify-ITN';
 import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verify-ITN-mismatch';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [
-    AutoFocus,
     StockingComponent,
     ScanITNComponent,
     SortingLocationComponent,
@@ -45,7 +44,6 @@ import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verif
     StockingRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSpinModule,
     NzButtonModule,
@@ -56,6 +54,8 @@ import { VerifyITNMismatchComponent } from './stocking/verify-ITN-mismatch/verif
     NzDividerModule,
     IconsProviderModule,
     NzInputNumberModule,
+    AutoFocusDirective,
+    FocusInvlidInputDirective,
   ],
   providers: [StockingService],
   bootstrap: [StockingComponent],

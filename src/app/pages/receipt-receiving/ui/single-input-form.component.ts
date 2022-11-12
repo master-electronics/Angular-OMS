@@ -18,6 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { HttpRequestState } from 'src/app/shared/data/interface';
+import { AutoFocusDirective } from 'src/app/shared/directives/auto-focus..directive';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 
 @Component({
@@ -30,6 +31,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
     NzFormModule,
     NzButtonModule,
     AlertBarComponent,
+    AutoFocusDirective,
   ],
   selector: 'single-input-form',
   template: `
@@ -38,6 +40,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
         <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
         <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
           <input
+            autofocus
             nz-input
             maxlength="30"
             oninput="this.value = this.value.toUpperCase()"
@@ -100,11 +103,6 @@ export class SingleInputformComponent implements OnInit {
 
   public ngOnInit(): void {
     this.inputForm = this.controlContainer.control as FormGroup;
-  }
-
-  @ViewChild('input') containerInput!: ElementRef;
-  ngAfterViewInit(): void {
-    this.containerInput.nativeElement.select();
   }
 
   public onSubmit(): void {

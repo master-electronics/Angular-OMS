@@ -3,8 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsProviderModule } from '../../icons-provider.module';
 
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
-
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -50,7 +48,6 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     TableViewsRoutingModule,
     NzInputModule,
     NzTableModule,

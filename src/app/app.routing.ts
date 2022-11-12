@@ -124,8 +124,8 @@ const routes: Routes = [
       {
         path: 'receiptreceiving',
         loadChildren: () =>
-          import('./pages/receipt-receiving/receiving.module').then(
-            (m) => m.ReceivingModule
+          import('./pages/receipt-receiving/receiving.routing').then(
+            (m) => m.ReceivingRoutes
           ),
       },
       { path: '', redirectTo: 'home', pathMatch: 'full' },

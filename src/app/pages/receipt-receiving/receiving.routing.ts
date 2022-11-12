@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ReceivingComponent } from './receiving.component';
 
-const routes: Routes = [
+export const ReceivingRoutes: Routes = [
   {
     path: '',
     component: ReceivingComponent,
@@ -77,9 +76,3 @@ const routes: Routes = [
     ],
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class ReceivingRoutingModule {}

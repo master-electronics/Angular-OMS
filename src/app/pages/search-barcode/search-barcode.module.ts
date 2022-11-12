@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SearchBarcodeComponent } from './search-barcode.component';
 import { SearchBarcodeRoutingModule } from './search-barcode.routing';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -20,7 +19,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
     FormsModule,
     ReactiveFormsModule,
     SearchBarcodeRoutingModule,
-    SharedUtilityModule,
     NzInputModule,
     NzTableModule,
     NzDropDownModule,

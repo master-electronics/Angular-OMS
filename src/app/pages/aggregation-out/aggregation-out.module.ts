@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AggregationOutComponent } from './aggregation-out.component';
 import { AggregationOutRoutingModule } from './aggregation-out.routing';
 import { PickToteComponent } from './pick-tote/pick-tote.component';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { AggregationOutService } from './aggregation-out.server';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -17,6 +16,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PickITNComponent } from './pick-itn/pick-itn.component';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [AggregationOutComponent, PickToteComponent, PickITNComponent],
@@ -25,7 +25,6 @@ import { PickITNComponent } from './pick-itn/pick-itn.component';
     AggregationOutRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSpinModule,
     NzButtonModule,
@@ -34,6 +33,7 @@ import { PickITNComponent } from './pick-itn/pick-itn.component';
     NzDescriptionsModule,
     NzSkeletonModule,
     NzDividerModule,
+    FocusInvlidInputDirective,
   ],
   providers: [AggregationOutService],
   bootstrap: [AggregationOutComponent],

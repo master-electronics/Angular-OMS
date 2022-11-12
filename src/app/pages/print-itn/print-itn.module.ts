@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { PrintITNComponent } from './print-itn.component';
 import { PrintITNRoutingModule } from './print-itn.routing';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -17,7 +16,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     PrintITNRoutingModule,
     NzInputModule,
     NzModalModule,

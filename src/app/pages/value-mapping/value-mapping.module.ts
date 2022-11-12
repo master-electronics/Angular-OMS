@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValueMapping } from './value-mapping.component';
 import { ValueMappingRoutingModule } from './value-mapping.routing';
 
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
-
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -26,7 +24,6 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   imports: [
     CommonModule,
     ValueMappingRoutingModule,
-    SharedUtilityModule,
     NzInputModule,
     NzTableModule,
     NzButtonModule,

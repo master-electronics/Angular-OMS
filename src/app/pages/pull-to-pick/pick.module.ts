@@ -3,8 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 // Utiltiy Module
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
-//UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -29,6 +27,7 @@ import { SelectLocationComponent } from './select-location/select-location.compo
 import { DropOffComponent } from './drop-off/drop-off.component';
 import { DetailAuthComponent } from './detail-auth/detail-auth.component';
 import { PullerAssignmentComponent } from './puller-assignment/puller-assignment.component';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [
@@ -44,7 +43,6 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     PickRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSpinModule,
     NzButtonModule,
@@ -61,6 +59,7 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     NzRadioModule,
     DragDropModule,
     NzCheckboxModule,
+    FocusInvlidInputDirective,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],

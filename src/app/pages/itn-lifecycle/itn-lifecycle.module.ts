@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsProviderModule } from '../../icons-provider.module';
 import { ITNLifecycleRoutingModule } from './itn-lifecycle.routing';
 
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
-
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -43,7 +41,6 @@ import { TemplateSettings } from './template-settings.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedUtilityModule,
     NzInputModule,
     NzTableModule,
     NzDropDownModule,

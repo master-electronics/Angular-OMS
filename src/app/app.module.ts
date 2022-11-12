@@ -15,7 +15,6 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlatformModule } from '@angular/cdk/platform';
 import { AppRoutingModule } from './app.routing';
-import { SharedUtilityModule } from './shared/shared-utility.module';
 import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interceptor';
 
 import { AppComponent } from './app.component';
@@ -69,7 +68,6 @@ import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    SharedUtilityModule,
     IconsProviderModule,
     NzButtonModule,
     NzInputModule,
