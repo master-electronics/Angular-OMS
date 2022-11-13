@@ -7,23 +7,31 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
+import { Observable } from 'rxjs';
 
-import { filter, map } from 'rxjs/operators';
-import { AuthenticationService } from './shared/services/authentication.service';
-import { AuthGuard } from './shared/services/auth-guard.service';
+import { filter } from 'rxjs/operators';
+import { UIStateStore } from './shared/data/ui-state';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `
+    <div
+      class="absolute top-0 z-50 flex h-screen w-screen items-center justify-center bg-black bg-opacity-50"
+      style="background-size: 100%"
+      *ngIf="loading$ | async"
+    >
+      <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+    </div>
+
+    <router-outlet></router-outlet>
+  `,
 })
 export class AppComponent implements OnInit {
-  isLoading = false;
+  public loading$: Observable<any>;
+  constructor(private router: Router, private _ui: UIStateStore) {}
 
-  constructor(
-    private router: Router,
-    private auth: AuthenticationService,
-    private authGuard: AuthGuard
-  ) {
+  ngOnInit(): void {
+    this.loading$ = this._ui.getLoading();
     this.router.events
       .pipe(
         filter(
@@ -35,29 +43,16 @@ export class AppComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map((event) => {
-          return event;
-        })
-      )
-      .subscribe(() => {
-        this.authGuard.checkRouteAuthorized(this.router.url);
-      });
-  }
-
   checkRouterEvent(routerEvent: RouterEvent): void {
     if (routerEvent instanceof NavigationStart) {
-      this.isLoading = true;
+      this._ui.changeLoading(true);
     }
     if (
       routerEvent instanceof NavigationEnd ||
       routerEvent instanceof NavigationCancel ||
       routerEvent instanceof NavigationError
     ) {
-      this.isLoading = false;
+      this._ui.changeLoading(false);
     }
   }
 }

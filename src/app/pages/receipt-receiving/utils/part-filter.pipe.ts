@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'partFilter',
+  standalone: true,
 })
 export class PartFilterPipe implements PipeTransform {
   transform(value: any, args: string) {

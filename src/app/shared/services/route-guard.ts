@@ -1,56 +1,63 @@
-import { Injectable } from '@angular/core';
+import { DoCheck, Injectable, NgZone, OnInit } from '@angular/core';
 import {
   Router,
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { AuthenticationService } from './authentication.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { FindRouteGQL } from 'src/app/graphql/route.graphql-gen';
-import { Subscription } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
-  private routeSubscription = new Subscription();
-  public routeAuthorized: boolean;
+export class RouterGuard implements CanActivate, OnInit, DoCheck {
+  public routeSubscription = new Subscription();
+  private _userGrups = new BehaviorSubject<string[]>([]);
+  private _routeAuthInfo = new BehaviorSubject<any>(null);
 
   constructor(
-    private router: Router,
-    private authentication: AuthenticationService,
-    private _findRoute: FindRouteGQL
-  ) {
-    //
+    private _router: Router,
+    private _findRoute: FindRouteGQL,
+    private _zone: NgZone,
+    private _message: NzMessageService
+  ) {}
+
+  ngOnInit(): void {
+    const userGroups = JSON.parse(sessionStorage.getItem('userToken'))
+      ?.userGroups?.toString()
+      .split(',');
+    this._userGrups.next(userGroups);
+    // fetch all route and routegroup info then store JSON into _routeAuthInfo;
+    this.routeSubscription.add();
+  }
+
+  ngDoCheck(): void {
+    this.routeSubscription.unsubscribe();
   }
 
   canActivate(
     _route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    const userinfo = sessionStorage.getItem('userToken');
-    if (userinfo) {
-      if (JSON.parse(userinfo).username === this.authentication.userName) {
-        // logged in so return true
-        return true;
-      }
+    // search routAuthInfo key by the route link
+    const result = true;
+    if (!result) {
+      this._zone.run(() => {
+        this._message.warning('You are not allowed to view this page.');
+      });
     }
-    // not logged in so redirect to login page
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return result;
   }
 
   public checkRouteAuthorized(Route: string): void {
     let authorized = false;
     this.routeSubscription.add(
       this._findRoute
-        .fetch(
-          {
-            route: Route,
-          },
-          {
-            fetchPolicy: 'network-only',
-          }
-        )
+        .fetch({
+          route: Route,
+        })
         .subscribe({
           next: (res) => {
             if (res.data.findRoute.length < 1) {
@@ -82,7 +89,7 @@ export class AuthGuard implements CanActivate {
           },
           complete: () => {
             if (!authorized) {
-              this.router.navigate(['/home']);
+              this._router.navigate(['/home']);
             }
           },
         })

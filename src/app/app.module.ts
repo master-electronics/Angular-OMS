@@ -46,6 +46,7 @@ import { environment } from '../environments/environment';
 import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
+import { UIStateStore } from './shared/data/ui-state';
 // import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
@@ -84,18 +85,18 @@ import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
   ],
 
   providers: [
+    UIStateStore,
     Title,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpHeaderInterceptor,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true,
-    },
-
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: HttpHeaderInterceptor,
+    //   multi: true,
+    // },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: ErrorInterceptor,
+    //   multi: true,
+    // },
     {
       provide: APOLLO_NAMED_OPTIONS,
       useFactory: (httpLink: HttpBatchLink): NamedOptions => {

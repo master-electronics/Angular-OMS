@@ -17,7 +17,6 @@ import {
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { HttpRequestState } from 'src/app/shared/data/interface';
 import { AutoFocusDirective } from 'src/app/shared/directives/auto-focus..directive';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 
@@ -89,7 +88,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
   @Input()
-  state: HttpRequestState<any>;
+  state: any;
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';
