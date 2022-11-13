@@ -42,7 +42,10 @@ export class RouterGuard implements CanActivate, OnInit, DoCheck {
     state: RouterStateSnapshot
   ): boolean {
     // search routAuthInfo key by the route link
-    const result = true;
+    let result = true;
+    if (state.url === '/searchbarcode') {
+      result = false;
+    }
     if (!result) {
       this._zone.run(() => {
         this._message.warning('You are not allowed to view this page.');
