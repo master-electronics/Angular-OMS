@@ -10,7 +10,7 @@ import {
 import { Observable } from 'rxjs';
 
 import { filter } from 'rxjs/operators';
-import { UIStateStore } from './shared/data/ui-state';
+import { UIStateStore } from './shared/data/app-ui-state';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
   constructor(private router: Router, private _ui: UIStateStore) {}
 
   ngOnInit(): void {
-    this.loading$ = this._ui.getLoading();
+    this.loading$ = this._ui.pageLoading$;
     this.router.events
       .pipe(
         filter(
@@ -45,14 +45,14 @@ export class AppComponent implements OnInit {
 
   checkRouterEvent(routerEvent: RouterEvent): void {
     if (routerEvent instanceof NavigationStart) {
-      this._ui.changeLoading(true);
+      this._ui.changePageLoading(true);
     }
     if (
       routerEvent instanceof NavigationEnd ||
       routerEvent instanceof NavigationCancel ||
       routerEvent instanceof NavigationError
     ) {
-      this._ui.changeLoading(false);
+      this._ui.changePageLoading(false);
     }
   }
 }

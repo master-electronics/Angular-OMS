@@ -45,7 +45,7 @@ registerLocaleData(en);
 import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
-import { UIStateStore } from './shared/data/ui-state';
+import { UIStateStore } from './shared/data/app-ui-state';
 
 @NgModule({
   declarations: [

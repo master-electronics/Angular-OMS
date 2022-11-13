@@ -46,7 +46,7 @@ export class DetailAuthComponent implements OnDestroy, OnInit {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.login$ = this._authenticationService
-        .userAuth(
+        .checkUserAuth(
           this.f.username.value.trim().toLowerCase(),
           this.f.password.value
         )
