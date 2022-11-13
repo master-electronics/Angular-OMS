@@ -85,12 +85,9 @@ export class LoginComponent implements OnDestroy, OnInit {
           this.f.password.value
         )
         .pipe(
-          switchMap((res) => {
-            const userToken = JSON.stringify(res);
-            sessionStorage.setItem('userToken', userToken);
-            this.authenticationService.changeUser(userToken);
+          switchMap(() => {
             const UserInfo = {
-              Name: this.authenticationService.userName,
+              Name: this.authenticationService.userInfo.username,
             };
             return this.userInfo.mutate({ UserInfo: UserInfo });
           }),

@@ -79,10 +79,7 @@ export class NavbarComponent implements OnInit {
     this.title$ = this.commonService.navbar$;
     this.user$ = this.authenticationService.user$.pipe(
       map((res) => {
-        if (res) {
-          return JSON.parse(res).username;
-        }
-        return '';
+        return res ? res.username : '';
       })
     );
   }

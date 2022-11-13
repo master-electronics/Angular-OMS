@@ -1,49 +1,53 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
+
+interface UserInfo {
+  username: string;
+  userGroups: string[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
   // user name
-  private user = new BehaviorSubject<string>(
-    sessionStorage.getItem('userToken')
+  private _user = new BehaviorSubject<UserInfo>(
+    JSON.parse(sessionStorage.getItem('userToken'))
   );
-  public user$: Observable<string> = this.user.asObservable();
-  public changeUser(user: string): void {
-    this.user.next(user);
+  public user$: Observable<UserInfo> = this._user.asObservable();
+
+  public changeUser(user: UserInfo): void {
+    this._user.next(user);
   }
 
-  public get userInfo(): string {
-    return this.user.value;
-  }
-
-  public get userName(): string {
-    const info = this.user.value;
-    if (info) {
-      return JSON.parse(info).username;
-    }
-    return null;
+  public get userInfo(): UserInfo {
+    return this._user.value;
   }
 
   constructor(private router: Router, private http: HttpClient) {}
 
   userAuth(username: string, password: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/AuthJWT/login`, {
-      username,
-      password,
-    });
+    return this.http
+      .post(`${environment.apiUrl}/AuthJWT/login`, {
+        username,
+        password,
+      })
+      .pipe(
+        tap((res) => {
+          const userToken = JSON.stringify(res);
+          sessionStorage.setItem('userToken', userToken);
+          this._user.next(res);
+        })
+      );
   }
 
   logout(): void {
-    // remove user from session
-    sessionStorage.setItem('userToken', '');
-    sessionStorage.setItem('userInfo', '');
-    this.user.next('');
     this.router.navigate(['/login']);
+    this._user.next(null);
+    sessionStorage.clear();
   }
 }

@@ -43,11 +43,9 @@ import en from '@angular/common/locales/en';
 registerLocaleData(en);
 
 import { environment } from '../environments/environment';
-import { ErrorInterceptor } from './shared/interceptors/http-error.interceptor';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 import { UIStateStore } from './shared/data/ui-state';
-// import { GlobalErrorHandler } from './shared/global-error-handler';
 
 @NgModule({
   declarations: [
@@ -112,7 +110,6 @@ import { UIStateStore } from './shared/data/ui-state';
       },
       deps: [HttpLink],
     },
-    // { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: NZ_I18N, useValue: en_US },
   ],
   bootstrap: [AppComponent],

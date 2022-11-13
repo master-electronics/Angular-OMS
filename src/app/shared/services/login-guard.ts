@@ -25,7 +25,10 @@ export class LoginGuard implements CanActivate {
   ): boolean {
     const userinfo = sessionStorage.getItem('userToken');
     if (userinfo) {
-      if (JSON.parse(userinfo).username === this.authentication.userName) {
+      if (
+        JSON.parse(userinfo)?.username ===
+        this.authentication.userInfo?.username
+      ) {
         // logged in so return true
         return true;
       }
