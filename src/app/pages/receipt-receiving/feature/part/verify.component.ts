@@ -1,14 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { catchError, Observable, of, mergeMap, startWith, take } from 'rxjs';
+import {
+  catchError,
+  Observable,
+  of,
+  mergeMap,
+  startWith,
+  take,
+  map,
+} from 'rxjs';
 import { FetchProductInfoForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
 import { environment } from 'src/environments/environment';
+import { PartStore } from '../../data/part';
 import { ReceivingService } from '../../data/receiving.server';
+import { ReceivingUIStateStore } from '../../data/ui-state';
 
 @Component({
   standalone: true,
@@ -24,24 +34,22 @@ import { ReceivingService } from '../../data/receiving.server';
     <div *ngIf="data$ | async as info">
       <div *ngIf="!info.isLoading; else loading">
         <div class="w-1/4">
-          <nz-image-basic
-            [imgURL]="imgURL + info.value.MICNumber"
-          ></nz-image-basic>
+          <nz-image-basic [imgURL]="imgURL + info.MICNumber"></nz-image-basic>
         </div>
         <nz-descriptions nzTitle="Part Info" nzBordered [nzColumn]="2">
           <nz-descriptions-item nzTitle="Product Code">
-            {{ info.value.ProductCode }}</nz-descriptions-item
+            {{ info.ProductCode }}</nz-descriptions-item
           >
           <nz-descriptions-item nzTitle="Part Number">{{
-            info.value.PartNumber
+            info.PartNumber
           }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Golbal Message" [nzSpan]="2">
-            <div *ngFor="let line of info.value.message">
+            <div *ngFor="let line of info.message">
               <p>{{ line }}</p>
             </div>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Kit Info" [nzSpan]="2">{{
-            info.value.kitInfo
+            info.kitInfo
           }}</nz-descriptions-item>
         </nz-descriptions>
 
@@ -68,7 +76,7 @@ import { ReceivingService } from '../../data/receiving.server';
           >
             Verify
           </button>
-          <button nz-button class="w-32" (click)="back()">Back</button>
+          <button nz-button class="w-32" (click)="onBack()">Back</button>
         </div>
       </div>
     </div>
@@ -81,43 +89,32 @@ import { ReceivingService } from '../../data/receiving.server';
     </ng-template>
   `,
 })
-export class VerifyComponent {
+export class VerifyComponent implements OnInit {
   public data$: Observable<any>;
   public current;
   public imgURL = environment.productImgSource;
 
   constructor(
     private _router: Router,
-    private _service: ReceivingService,
-    private readonly _findInfo: FetchProductInfoForReceivingGQL
-  ) {
-    _service.changeTab(2);
-    if (!this._service.getValueReceiptH().value) {
-      this._router.navigate(['receiptreceiving']);
+    private _ui: ReceivingUIStateStore,
+    private _partStore: PartStore
+  ) {}
+
+  ngOnInit(): void {
+    this._ui.changeSteps(2);
+    console.log(this._partStore.part);
+    if (!this._partStore.part[0]) {
+      this.onBack();
     }
-    this.data$ = this._service.getReceiptHInfo().pipe(
-      take(1),
-      mergeMap(
-        (res) =>
-          this._findInfo.fetch({
-            ProductCode: res.value[0].Product.ProductCode.ProductCodeNumber,
-            PartNumber: res.value[0].Product.PartNumber,
-          }),
-        (fromsource, fromfetch) => ({
+    this.data$ = this._partStore.findVerifyInfo().pipe(
+      map((res) => {
+        return {
+          ...res,
           isLoading: false,
-          value: {
-            ProductID: fromsource.value[0].ProductID,
-            ProductCode:
-              fromsource.value[0].Product.ProductCode.ProductCodeNumber,
-            PartNumber: fromsource.value[0].Product.PartNumber,
-            MICNumber: fromfetch.data.fetchProductMICFromMerp,
-            message: fromfetch.data.fetchPartMessage.comments,
-            kitInfo: '',
-          },
-        })
-      ),
+        };
+      }),
       catchError((error) =>
-        of({ isLoading: false, error, messageType: 'error' })
+        of({ isLoading: false, message: error.message, messageType: 'error' })
       ),
       startWith({ isLoading: true })
     );
@@ -131,7 +128,7 @@ export class VerifyComponent {
     this._router.navigateByUrl('receiptreceiving/kickout');
   }
 
-  back(): void {
+  onBack(): void {
     this._router.navigateByUrl('receiptreceiving/part');
   }
 }

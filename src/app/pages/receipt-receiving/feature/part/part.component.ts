@@ -6,14 +6,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ReceivingService } from '../../data/receiving.server';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { PartStore } from '../../data/part';
 import { ReceivingUIStateStore } from '../../data/ui-state';
-import { tap } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -26,9 +25,10 @@ import { tap } from 'rxjs';
 
   template: `
     <single-input-form
-      (back)="onBack()"
-      (submit)="onSubmit()"
+      (formBack)="onBack()"
+      (formSubmit)="onSubmit()"
       [data]="data$ | async"
+      [validator]="validator"
       [formGroup]="inputForm"
       controlName="partNumber"
       title="Part #"
@@ -42,6 +42,10 @@ import { tap } from 'rxjs';
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
   public data$;
+  public validator = {
+    name: 'filter',
+    message: 'Not Found part number!',
+  };
 
   constructor(
     private _router: Router,
@@ -52,20 +56,35 @@ export class PartComponent implements OnInit {
   ngOnInit(): void {
     this._ui.changeSteps(1);
     this.inputForm = new FormGroup({
-      partNumber: new FormControl('', [Validators.required]),
+      partNumber: new FormControl('', [
+        Validators.required,
+        this.partNumberSearch(),
+      ]),
     });
     console.log(this._partStore.receiptHeader);
-    this.data$ = this._partStore.part$;
+    if (!this._partStore.receiptHeader.RECEIPTLs) {
+      this.onBack();
+    }
+    this.data$ = this._partStore.receiptHeader$.pipe(
+      startWith({ isLoading: true }),
+      map((res) => ({
+        ...res,
+        isLoading: false,
+      }))
+    );
   }
 
   partNumberSearch(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-
       if (!value) {
         return null;
       }
-      const isVaild = true;
+      const isVaild = this._partStore.receiptHeader.RECEIPTLs.some(
+        (res) =>
+          res.Product.PartNumber.trim().toLowerCase() ===
+          value.trim().toLowerCase()
+      );
       return !isVaild ? { filter: true } : null;
     };
   }
@@ -75,7 +94,8 @@ export class PartComponent implements OnInit {
   };
 
   onSubmit(): void {
-    //
+    this._partStore.filterPartnumber(this.inputForm.value.partNumber);
+    this._router.navigate(['receiptreceiving/part/verify']);
   }
 
   onBack(): void {

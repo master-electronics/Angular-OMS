@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import {
   ControlContainer,
   FormGroup,
@@ -9,7 +17,6 @@ import {
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { AutoFocusDirective } from 'src/app/shared/directives/auto-focus..directive';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 
 @Component({
@@ -22,7 +29,6 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
     NzFormModule,
     NzButtonModule,
     AlertBarComponent,
-    AutoFocusDirective,
   ],
   selector: 'single-input-form',
   template: `
@@ -31,10 +37,8 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
         <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
         <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
           <input
-            autofocus
             nz-input
             maxlength="30"
-            oninput="this.value = this.value.toUpperCase()"
             nzSize="large"
             [type]="type"
             [placeholder]="placeholder"
@@ -87,20 +91,26 @@ export class SingleInputformComponent implements OnInit {
   @Input() type = 'text';
   @Input() placeholder = '';
   @Input() title = 'Input';
-  @Output() submit: EventEmitter<null> = new EventEmitter();
-  @Output() back: EventEmitter<null> = new EventEmitter();
+  @Output() formSubmit: EventEmitter<null> = new EventEmitter();
+  @Output() formBack: EventEmitter<null> = new EventEmitter();
 
   constructor(private controlContainer: ControlContainer) {}
+
+  @ViewChild('input') inputFiled!: ElementRef;
+
+  ngAfterViewInit(): void {
+    this.inputFiled.nativeElement.focus();
+  }
 
   public ngOnInit(): void {
     this.inputForm = this.controlContainer.control as FormGroup;
   }
 
   public onSubmit(): void {
-    this.submit.emit();
+    this.formSubmit.emit();
   }
 
   public onBack(): void {
-    this.back.emit();
+    this.formBack.emit();
   }
 }

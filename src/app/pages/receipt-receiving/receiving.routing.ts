@@ -17,7 +17,7 @@ export const ReceivingRoutes: Routes = [
           import('./feature/part/part.component').then((m) => m.PartComponent),
       },
       {
-        path: 'verify',
+        path: 'part/verify',
         loadComponent: () =>
           import('./feature/part/verify.component').then(
             (m) => m.VerifyComponent

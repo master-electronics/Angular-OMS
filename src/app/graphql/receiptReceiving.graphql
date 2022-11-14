@@ -44,3 +44,13 @@ query fetchProductInfoForReceiving(
     comments
   }
 }
+
+query findPartForReceiving($PartNumber: String!) {
+  findProducts(Product: { PartNumber: $PartNumber }) {
+    _id
+    PartNumber
+    ProductCode {
+      ProductCodeNumber
+    }
+  }
+}

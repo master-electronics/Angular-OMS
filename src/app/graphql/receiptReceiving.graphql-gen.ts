@@ -2042,6 +2042,20 @@ export type FetchProductInfoForReceivingQuery = {
   } | null;
 };
 
+export type FindPartForReceivingQueryVariables = Types.Exact<{
+  PartNumber: Types.Scalars['String'];
+}>;
+
+export type FindPartForReceivingQuery = {
+  __typename?: 'Query';
+  findProducts?: Array<{
+    __typename?: 'Product';
+    _id: number;
+    PartNumber: string;
+    ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+  } | null> | null;
+};
+
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
     findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
@@ -2129,6 +2143,31 @@ export class FetchProductInfoForReceivingGQL extends Apollo.Query<
   FetchProductInfoForReceivingQueryVariables
 > {
   document = FetchProductInfoForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindPartForReceivingDocument = gql`
+  query findPartForReceiving($PartNumber: String!) {
+    findProducts(Product: { PartNumber: $PartNumber }) {
+      _id
+      PartNumber
+      ProductCode {
+        ProductCodeNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindPartForReceivingGQL extends Apollo.Query<
+  FindPartForReceivingQuery,
+  FindPartForReceivingQueryVariables
+> {
+  document = FindPartForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

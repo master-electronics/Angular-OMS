@@ -13,7 +13,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
-import { AutoFocusDirective } from 'src/app/shared/directives/auto-focus..directive';
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { StockingService } from './stocking.server';
@@ -54,7 +53,6 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzDividerModule,
     IconsProviderModule,
     NzInputNumberModule,
-    AutoFocusDirective,
     FocusInvlidInputDirective,
   ],
   providers: [StockingService],

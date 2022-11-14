@@ -27,8 +27,8 @@ import { ReceivingUIStateStore } from '../data/ui-state';
     <div class="grid grid-cols-2 gap-5">
       <single-input-form
         [data]="data$ | async"
-        (submit)="onSubmit()"
-        (back)="onBack()"
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
         [formGroup]="inputForm"
         type="number"
         controlName="receipt"
@@ -72,30 +72,12 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.data$ = this._findReceiptH$
-      .fetch(
-        {
-          ReceiptHID: Number(this.inputForm.value.receipt),
-        },
-        { fetchPolicy: 'network-only' }
-      )
+    this.data$ = this._partStore
+      .findReceiptHeader(Number(this.inputForm.value.receipt))
       .pipe(
-        tap((res) => {
-          if (!res.data.findReceiptH) {
-            throw new Error("Can't find this Receipt!");
-          }
-          if (!res.data.findReceiptH.RECEIPTLs.length) {
-            throw new Error("Can't find this Receipt!");
-          }
-        }),
-        map((res) => {
-          const tmp = {
-            isLoading: false,
-            value: res.data.findReceiptH.RECEIPTLs,
-          };
-          this._partStore.changereceiptH(res);
+        map(() => {
           this._router.navigate(['receiptreceiving/part']);
-          return tmp;
+          return { isLoading: false };
         }),
         catchError((error) =>
           of({ isLoading: false, message: error.message, messageType: 'error' })

@@ -9,7 +9,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { filter } from 'rxjs/operators';
+import { delay, filter, map } from 'rxjs/operators';
 import { UIStateStore } from './shared/data/app-ui-state';
 
 @Component({
@@ -22,30 +22,26 @@ import { UIStateStore } from './shared/data/app-ui-state';
     >
       <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
     </div>
-
+    <ng-container *ngIf="router$ | async"></ng-container>
     <router-outlet></router-outlet>
   `,
 })
 export class AppComponent implements OnInit {
-  public loading$: Observable<any>;
+  public loading$: Observable<boolean>;
+  public router$: Observable<any>;
   constructor(private router: Router, private _ui: UIStateStore) {}
 
   ngOnInit(): void {
     this.loading$ = this._ui.pageLoading$;
-    this.router.events
-      .pipe(
-        filter(
-          (event): event is NavigationEnd => event instanceof NavigationEnd
-        )
-      )
-      .subscribe((routerEvent: RouterEvent) => {
-        this.checkRouterEvent(routerEvent);
-      });
+    this.router$ = this.router.events.pipe(
+      map((routerEvent: RouterEvent) => this.checkRouterEvent(routerEvent))
+    );
   }
 
   checkRouterEvent(routerEvent: RouterEvent): void {
     if (routerEvent instanceof NavigationStart) {
       this._ui.changePageLoading(true);
+      return;
     }
     if (
       routerEvent instanceof NavigationEnd ||
