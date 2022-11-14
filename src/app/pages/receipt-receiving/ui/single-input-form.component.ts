@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  OnInit,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import {
   ControlContainer,
   FormGroup,
@@ -67,7 +59,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
             type="submit"
             nzSize="large"
             nzType="primary"
-            [nzLoading]="state.isLoading"
+            [nzLoading]="data.isLoading"
             [disabled]="inputForm.invalid"
             class="mr-20 w-32"
           >
@@ -78,23 +70,23 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
           </button>
         </nz-form-control>
       </nz-form-item>
-
-      <alert-bar
-        [error]="{ error: state.error, messageType: state.messageType }"
-      ></alert-bar>
+      <div *ngIf="data.message">
+        <alert-bar
+          [message]="data.message"
+          [messageType]="data.messageType"
+        ></alert-bar>
+      </div>
     </form>
   `,
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input()
-  state: any;
+  @Input() data;
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';
   @Input() placeholder = '';
   @Input() title = 'Input';
-  @Input() isLoading = false;
   @Output() submit: EventEmitter<null> = new EventEmitter();
   @Output() back: EventEmitter<null> = new EventEmitter();
 

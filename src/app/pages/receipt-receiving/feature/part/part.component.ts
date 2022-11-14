@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -11,6 +11,9 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { PartStore } from '../../data/part';
+import { ReceivingUIStateStore } from '../../data/ui-state';
+import { tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -20,13 +23,13 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
     ReactiveFormsModule,
     SimpleKeyboardComponent,
   ],
+
   template: `
     <single-input-form
       (back)="onBack()"
       (submit)="onSubmit()"
+      [data]="data$ | async"
       [formGroup]="inputForm"
-      [state]="data"
-      [validator]="validator"
       controlName="partNumber"
       title="Part #"
     ></single-input-form>
@@ -36,26 +39,23 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
     ></simple-keyboard>
   `,
 })
-export class PartComponent {
+export class PartComponent implements OnInit {
   public inputForm: FormGroup;
-  public data;
-  public validator = {
-    name: 'filter',
-    message: 'Not Found part number!',
-  };
+  public data$;
 
-  constructor(private _router: Router, private _service: ReceivingService) {
-    this._service.changeTab(1);
+  constructor(
+    private _router: Router,
+    private _partStore: PartStore,
+    private _ui: ReceivingUIStateStore
+  ) {}
+
+  ngOnInit(): void {
+    this._ui.changeSteps(1);
     this.inputForm = new FormGroup({
-      partNumber: new FormControl('', [
-        Validators.required,
-        this.partNumberSearch(),
-      ]),
+      partNumber: new FormControl('', [Validators.required]),
     });
-    this.data = this._service.getValueReceiptH();
-    if (!this.data.value) {
-      this._router.navigate(['receiptreceiving']);
-    }
+    console.log(this._partStore.receiptHeader);
+    this.data$ = this._partStore.part$;
   }
 
   partNumberSearch(): ValidatorFn {
@@ -65,12 +65,7 @@ export class PartComponent {
       if (!value) {
         return null;
       }
-      const isVaild = this.data.value.some((part) => {
-        return (
-          part.Product.PartNumber.toLowerCase().trim() ===
-          value.toLowerCase().trim()
-        );
-      });
+      const isVaild = true;
       return !isVaild ? { filter: true } : null;
     };
   }
@@ -80,13 +75,7 @@ export class PartComponent {
   };
 
   onSubmit(): void {
-    this.data.value = this.data.value.filter(
-      (line) =>
-        line.Product.PartNumber.toLowerCase().trim() ===
-        this.inputForm.value.partNumber.toLowerCase().trim()
-    );
-    this._service.changereceiptH(this.data);
-    this._router.navigateByUrl('receiptreceiving/verify');
+    //
   }
 
   onBack(): void {

@@ -26,7 +26,6 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
         (submit)="onSubmit()"
         (back)="onBack()"
         [formGroup]="inputForm"
-        [state]="data$ | async"
         controlName="label"
         title="Number of Label"
       ></single-input-form>

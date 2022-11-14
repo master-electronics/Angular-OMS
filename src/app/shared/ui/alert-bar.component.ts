@@ -7,10 +7,10 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   standalone: true,
   imports: [CommonModule, NzAlertModule],
   template: `
-    <div nz-row *ngIf="error.error" nzJustify="center">
+    <div nz-row *ngIf="message" nzJustify="center">
       <nz-alert
-        [nzType]="error.messageType"
-        [nzMessage]="error.error.message"
+        [nzType]="messageType"
+        [nzMessage]="message"
         nzShowIcon
         class="w-full"
       ></nz-alert>
@@ -18,5 +18,6 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   `,
 })
 export class AlertBarComponent {
-  @Input() error;
+  @Input() message = '';
+  @Input() messageType: 'error' | 'success' | 'info' | 'warning' = 'info';
 }

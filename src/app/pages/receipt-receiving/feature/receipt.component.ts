@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -9,9 +9,11 @@ import { Router } from '@angular/router';
 import { ReceivingService } from '../data/receiving.server';
 import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
 import { SingleInputformComponent } from '../ui/single-input-form.component';
-import { catchError, map, Observable, of, startWith, tap } from 'rxjs';
+import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { FindReceiptHeaderForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CommonModule } from '@angular/common';
+import { PartStore } from '../data/part';
+import { ReceivingUIStateStore } from '../data/ui-state';
 
 @Component({
   standalone: true,
@@ -24,10 +26,10 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="grid grid-cols-2 gap-5">
       <single-input-form
+        [data]="data$ | async"
         (submit)="onSubmit()"
         (back)="onBack()"
         [formGroup]="inputForm"
-        [state]="data$ | async"
         type="number"
         controlName="receipt"
         title="Receipt"
@@ -40,20 +42,23 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
 })
-export class ReceiptComponent {
+export class ReceiptComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _router: Router,
-    private _service: ReceivingService
-  ) {
-    this._service.changeTab(0);
+    private _partStore: PartStore,
+    private _ui: ReceivingUIStateStore
+  ) {}
+
+  ngOnInit(): void {
+    this._ui.changeSteps(0);
     this.inputForm = new FormGroup({
       receipt: new FormControl('', [Validators.required]),
     });
-    this.data$ = this._service.getReceiptHInfo();
+    this.data$ = this._partStore.receiptHeader$;
   }
 
   public onChange = (input: string) => {
@@ -88,12 +93,12 @@ export class ReceiptComponent {
             isLoading: false,
             value: res.data.findReceiptH.RECEIPTLs,
           };
-          this._service.changereceiptH(tmp);
+          this._partStore.changereceiptH(res);
           this._router.navigate(['receiptreceiving/part']);
           return tmp;
         }),
         catchError((error) =>
-          of({ isLoading: false, error, messageType: 'error' })
+          of({ isLoading: false, message: error.message, messageType: 'error' })
         ),
         startWith({ isLoading: true })
       );
