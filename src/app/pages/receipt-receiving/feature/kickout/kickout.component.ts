@@ -9,8 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { Observable } from 'rxjs';
-import Keyboard from 'simple-keyboard';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
 import { PartStore } from '../../data/part';
@@ -21,38 +20,38 @@ import { PartStore } from '../../data/part';
     CommonModule,
     RouterModule,
     NzInputModule,
+    NzRadioModule,
     ReactiveFormsModule,
     NzButtonModule,
     SimpleKeyboardComponent,
   ],
   template: `
-    <form
-      class="flex flex-col gap-5"
-      [formGroup]="kickoutForm"
-      (ngSubmit)="onSubmit()"
-    >
-      <div class="grid grid-cols-3 gap-4">
-        <div *ngFor="let option of kickoutOptions">
-          <label>
-            <input
-              type="radio"
-              name="kickoutReason"
-              formControlName="kickoutReason"
-              [value]="option.id"
-              #kickoutReason
-            />
-            {{ option.content }}
-          </label>
+    <form [formGroup]="kickoutForm" (ngSubmit)="onSubmit()">
+      <nz-radio-group
+        nzSize="large"
+        formControlName="kickoutReason"
+        #kickoutReason
+        name="kickoutReason"
+      >
+        <div class="mb-4 grid grid-cols-3 gap-5">
+          <div *ngFor="let option of kickoutOptions">
+            <label nz-radio-button [nzValue]="option.id">{{
+              option.content
+            }}</label>
+          </div>
+          <label nz-radio-button nzValue="0"> Other... </label>
         </div>
-      </div>
+      </nz-radio-group>
+
       <textarea
+        *ngIf="kickoutForm.value.kickoutReason === '0'"
         rows="4"
         nz-input
         name="otherReason"
         formControlName="otherReason"
         #otherReason
       ></textarea>
-      <div class="mb-10 flex">
+      <div class="mb-10 mt-10 flex">
         <button
           nz-button
           class="w-32"
@@ -102,13 +101,12 @@ export class KickoutComponent implements OnInit {
       { id: 6, content: 'Mixed Parts' },
       { id: 7, content: 'Part Number Verification' },
       { id: 8, content: 'Kit Set' },
-      { id: 0, content: 'Other' },
     ];
     this.kickoutForm = this._fb.group({
       kickoutReason: ['', Validators.required],
       otherReason: [''],
     });
-    this._part.receiptLs;
+    this._kickout.initKickout();
   }
 
   @ViewChild('kickoutReason') InputKickout: ElementRef;
@@ -125,6 +123,7 @@ export class KickoutComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this._kickout.updateReasons;
     this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
   }
 }

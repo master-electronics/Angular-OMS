@@ -7,7 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { KickoutStore } from '../../data/kickout';
+import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -22,6 +25,7 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     <single-input-form
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
+      [formState]="formState$ | async"
       [formGroup]="inputForm"
       controlName="location"
       title="Location"
@@ -34,13 +38,20 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 })
 export class LocationComponent implements OnInit {
   public inputForm: FormGroup;
+  public formState$: Observable<FormState>;
 
-  constructor(private _fb: FormBuilder, private _router: Router) {}
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _ui: ReceivingUIStateStore,
+    private _kickout: KickoutStore
+  ) {}
 
   ngOnInit(): void {
     this.inputForm = this._fb.group({
       location: ['', Validators.required],
     });
+    this.formState$ = this._ui.formState$;
   }
 
   onChange = (input: string) => {
@@ -48,7 +59,7 @@ export class LocationComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout/part');
+    this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
   }
 
   public onBack(): void {

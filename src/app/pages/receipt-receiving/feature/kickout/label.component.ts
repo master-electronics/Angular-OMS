@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { KickoutStore } from '../../data/kickout';
 import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
@@ -38,7 +39,8 @@ export class LabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingUIStateStore
+    private _ui: ReceivingUIStateStore,
+    private _kickout: KickoutStore
   ) {}
 
   ngOnInit(): void {
@@ -49,10 +51,16 @@ export class LabelComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this._kickout.kickout.location) {
+      this._router.navigateByUrl('receiptreceiving/');
+    }
     this._router.navigateByUrl('receiptreceiving/kickout/location');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout');
+    if (this._kickout.kickout.location) {
+      this._router.navigateByUrl('receiptreceiving/kickout');
+    }
+    this._router.navigateByUrl('receiptreceiving/kickout/location');
   }
 }
