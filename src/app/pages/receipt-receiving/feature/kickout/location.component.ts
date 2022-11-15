@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,9 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -22,8 +20,8 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
   ],
   template: `
     <single-input-form
-      (submit)="onSubmit()"
-      (back)="onBack()"
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
       [formGroup]="inputForm"
       controlName="location"
       title="Location"
@@ -34,19 +32,15 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     ></simple-keyboard>
   `,
 })
-export class LocationComponent {
+export class LocationComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
 
-  constructor(
-    private _fb: FormBuilder,
-    private _router: Router,
-    private _service: ReceivingService
-  ) {
+  constructor(private _fb: FormBuilder, private _router: Router) {}
+
+  ngOnInit(): void {
     this.inputForm = this._fb.group({
       location: ['', Validators.required],
     });
-    this.data$ = this._service.getReceiptHInfo();
   }
 
   onChange = (input: string) => {

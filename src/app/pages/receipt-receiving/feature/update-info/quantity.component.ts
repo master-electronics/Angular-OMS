@@ -1,5 +1,6 @@
+import { useAnimation } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,7 +10,8 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
+import { ReceivingUIStateStore } from '../../data/ui-state';
+import { updateReceiptStore } from '../../data/updateReceipt';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -22,31 +24,35 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
   ],
   template: `
     <single-input-form
-      (submit)="onSubmit()"
-      (back)="onBack()"
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
       [formGroup]="inputForm"
-      controlName="ROHS"
-      title="ROHS"
+      controlName="quantity"
+      title="Quantity"
     ></single-input-form>
     <simple-keyboard
-      [inputFromParent]="inputForm.value.ROHS"
+      layout="numbers"
+      [inputFromParent]="inputForm.value.quantity"
       (outputFromChild)="onChange($event)"
     ></simple-keyboard>
   `,
 })
-export class ROHSComponent {
+export class ROHSComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _service: ReceivingService
-  ) {
+    private _ui: ReceivingUIStateStore,
+    private _update: updateReceiptStore
+  ) {}
+
+  ngOnInit(): void {
+    this._ui.changeSteps(3);
     this.inputForm = this._fb.group({
-      ROHS: ['', Validators.required],
+      quantity: [0, Validators.required],
     });
-    this.data$ = this._service.getReceiptHInfo();
   }
 
   onChange = (input: string) => {

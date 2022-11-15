@@ -4,20 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import {
-  catchError,
-  Observable,
-  of,
-  mergeMap,
-  startWith,
-  take,
-  map,
-} from 'rxjs';
-import { FetchProductInfoForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { catchError, Observable, of, startWith, map } from 'rxjs';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
 import { environment } from 'src/environments/environment';
 import { PartStore } from '../../data/part';
-import { ReceivingService } from '../../data/receiving.server';
 import { ReceivingUIStateStore } from '../../data/ui-state';
 
 @Component({
@@ -34,7 +24,7 @@ import { ReceivingUIStateStore } from '../../data/ui-state';
     <div *ngIf="data$ | async as info">
       <div *ngIf="!info.isLoading; else loading">
         <div class="w-1/4">
-          <nz-image-basic [imgURL]="imgURL + info.MICNumber"></nz-image-basic>
+          <nz-image-basic [imgURL]="info.MIC"></nz-image-basic>
         </div>
         <nz-descriptions nzTitle="Part Info" nzBordered [nzColumn]="2">
           <nz-descriptions-item nzTitle="Product Code">
@@ -91,7 +81,6 @@ import { ReceivingUIStateStore } from '../../data/ui-state';
 })
 export class VerifyComponent implements OnInit {
   public data$: Observable<any>;
-  public current;
   public imgURL = environment.productImgSource;
 
   constructor(
@@ -102,15 +91,14 @@ export class VerifyComponent implements OnInit {
 
   ngOnInit(): void {
     this._ui.changeSteps(2);
-    console.log(this._partStore.part);
-    if (!this._partStore.part[0]) {
+    if (!this._partStore.receiptLs) {
       this.onBack();
     }
     this.data$ = this._partStore.findVerifyInfo().pipe(
       map((res) => {
         return {
           ...res,
-          isLoading: false,
+          MIC: `${this.imgURL}${res.MIC}.jpg`,
         };
       }),
       catchError((error) =>

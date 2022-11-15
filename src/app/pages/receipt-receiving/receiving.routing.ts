@@ -31,7 +31,7 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'kickout/label',
+        path: 'kickout/scanlabel',
         loadComponent: () =>
           import('./feature/kickout/label.component').then(
             (mod) => mod.LabelComponent

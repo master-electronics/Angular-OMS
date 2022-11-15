@@ -11,8 +11,8 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { PartStore } from '../../data/part';
-import { ReceivingUIStateStore } from '../../data/ui-state';
-import { catchError, map, of, startWith } from 'rxjs';
+import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
+import { catchError, map, Observable, of, startWith } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -24,10 +24,11 @@ import { catchError, map, of, startWith } from 'rxjs';
   ],
 
   template: `
+    <ng-container *ngIf="data$ | async"></ng-container>
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
-      [data]="data$ | async"
+      [formState]="formState$ | async"
       [validator]="validator"
       [formGroup]="inputForm"
       controlName="partNumber"
@@ -41,7 +42,8 @@ import { catchError, map, of, startWith } from 'rxjs';
 })
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$;
+  public data$: Observable<any>;
+  public formState$: Observable<FormState>;
   public validator = {
     name: 'filter',
     message: 'Not Found part number!',
@@ -55,14 +57,14 @@ export class PartComponent implements OnInit {
 
   ngOnInit(): void {
     this._ui.changeSteps(1);
+    this.formState$ = this._ui.formState$;
     this.inputForm = new FormGroup({
       partNumber: new FormControl('', [
         Validators.required,
         this.partNumberSearch(),
       ]),
     });
-    console.log(this._partStore.receiptHeader);
-    if (!this._partStore.receiptHeader.RECEIPTLs) {
+    if (!this._partStore.receiptHeader?.RECEIPTLs) {
       this.onBack();
     }
     this.data$ = this._partStore.receiptHeader$.pipe(
@@ -81,8 +83,8 @@ export class PartComponent implements OnInit {
         return null;
       }
       const isVaild = this._partStore.receiptHeader.RECEIPTLs.some(
-        (res) =>
-          res.Product.PartNumber.trim().toLowerCase() ===
+        (line) =>
+          line.Product.PartNumber.trim().toLowerCase() ===
           value.trim().toLowerCase()
       );
       return !isVaild ? { filter: true } : null;
@@ -94,7 +96,7 @@ export class PartComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._partStore.filterPartnumber(this.inputForm.value.partNumber);
+    this._partStore.filterReceiptLines(this.inputForm.value.partNumber);
     this._router.navigate(['receiptreceiving/part/verify']);
   }
 

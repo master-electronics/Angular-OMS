@@ -63,7 +63,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
             type="submit"
             nzSize="large"
             nzType="primary"
-            [nzLoading]="data.isLoading"
+            [nzLoading]="formState.loading"
             [disabled]="inputForm.invalid"
             class="mr-20 w-32"
           >
@@ -74,10 +74,10 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
           </button>
         </nz-form-control>
       </nz-form-item>
-      <div *ngIf="data.message">
+      <div *ngIf="formState.message">
         <alert-bar
-          [message]="data.message"
-          [messageType]="data.messageType"
+          [message]="formState.message"
+          [messageType]="formState.messageType"
         ></alert-bar>
       </div>
     </form>
@@ -85,7 +85,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input() data;
+  @Input() formState;
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';

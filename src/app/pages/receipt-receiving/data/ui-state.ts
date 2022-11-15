@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface Tab {
   steps: { title: string; subtitle?: string; description?: string }[];
@@ -10,6 +9,12 @@ export interface Tab {
 export interface Keyboard {
   layout: string;
   fieldValue: string;
+}
+
+export interface FormState {
+  loading: boolean;
+  message?: string;
+  messageType?: 'error' | 'success' | 'info' | 'warning';
 }
 
 @Injectable()
@@ -46,5 +51,39 @@ export class ReceivingUIStateStore {
       ...this._tab.value,
       currentStep: index,
     });
+  }
+
+  //input form
+  private _formState = new BehaviorSubject<FormState>({ loading: false });
+  public get formState$(): Observable<FormState> {
+    return this._formState.asObservable();
+  }
+  public loadingOn(): void {
+    this._formState.next({
+      ...this._formState.value,
+      loading: true,
+    });
+  }
+
+  public loadingOff(): void {
+    this._formState.next({
+      ...this._formState.value,
+      loading: false,
+    });
+  }
+
+  public updateMessage(
+    message: string,
+    messageType: 'error' | 'success' | 'info' | 'warning'
+  ): void {
+    this._formState.next({
+      ...this._formState.value,
+      message,
+      messageType,
+    });
+  }
+
+  public initFormState(): void {
+    this._formState.next({ loading: false });
   }
 }

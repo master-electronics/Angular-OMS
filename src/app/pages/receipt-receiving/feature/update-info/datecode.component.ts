@@ -9,7 +9,6 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -22,43 +21,37 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
   ],
   template: `
     <single-input-form
-      (submit)="onSubmit()"
-      (back)="onBack()"
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
       [formGroup]="inputForm"
-      [state]="data$ | async"
-      controlName="country"
-      title="CountryOfOrigin"
+      controlName="datecode"
+      title="DateCode"
     ></single-input-form>
     <simple-keyboard
-      [inputFromParent]="inputForm.value.country"
+      [inputFromParent]="inputForm.value.datecode"
       (outputFromChild)="onChange($event)"
     ></simple-keyboard>
   `,
 })
-export class CountryComponent {
+export class DateCodeComponent {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
-  constructor(
-    private _fb: FormBuilder,
-    private _router: Router,
-    private _service: ReceivingService
-  ) {
+  constructor(private _fb: FormBuilder, private _router: Router) {
     this.inputForm = this._fb.group({
-      country: ['', Validators.required],
+      datecode: ['', Validators.required],
     });
-    this.data$ = this._service.getReceiptHInfo();
   }
 
   onChange = (input: string) => {
-    this.inputForm.get('country').setValue(input);
+    this.inputForm.get('datecode').setValue(input);
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/verify/datecode');
+    this._router.navigateByUrl('receiptreceiving/verify/rohs');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/verify');
+    this._router.navigateByUrl('receiptreceiving/verify/country');
   }
 }

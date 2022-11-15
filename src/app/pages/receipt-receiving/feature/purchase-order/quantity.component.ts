@@ -9,7 +9,6 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -42,15 +41,10 @@ export class QuantityComponent {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
-  constructor(
-    private _fb: FormBuilder,
-    private _router: Router,
-    private _service: ReceivingService
-  ) {
+  constructor(private _fb: FormBuilder, private _router: Router) {
     this.inputForm = this._fb.group({
       quantity: ['', Validators.required],
     });
-    this.data$ = this._service.getReceiptHInfo();
   }
 
   onChange = (input: string) => {

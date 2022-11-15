@@ -1,12 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { Observable } from 'rxjs';
 import Keyboard from 'simple-keyboard';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
+import { KickoutStore } from '../../data/kickout';
+import { PartStore } from '../../data/part';
 
 @Component({
   standalone: true,
@@ -24,17 +31,19 @@ import { ReceivingService } from '../../data/receiving.server';
       [formGroup]="kickoutForm"
       (ngSubmit)="onSubmit()"
     >
-      <div *ngFor="let option of kickoutOptions">
-        <label>
-          <input
-            type="radio"
-            name="kickoutReason"
-            formControlName="kickoutReason"
-            [value]="option.id"
-            #kickoutReason
-          />
-          {{ option.content }}
-        </label>
+      <div class="grid grid-cols-3 gap-4">
+        <div *ngFor="let option of kickoutOptions">
+          <label>
+            <input
+              type="radio"
+              name="kickoutReason"
+              formControlName="kickoutReason"
+              [value]="option.id"
+              #kickoutReason
+            />
+            {{ option.content }}
+          </label>
+        </div>
       </div>
       <textarea
         rows="4"
@@ -43,7 +52,7 @@ import { ReceivingService } from '../../data/receiving.server';
         formControlName="otherReason"
         #otherReason
       ></textarea>
-      <div class="mb-10 flex gap-5">
+      <div class="mb-10 flex">
         <button
           nz-button
           class="w-32"
@@ -51,7 +60,6 @@ import { ReceivingService } from '../../data/receiving.server';
           nzType="primary"
           type="submit"
           nzSize="large"
-          [nzLoading]="isLoading"
         >
           kickout
         </button>
@@ -60,10 +68,10 @@ import { ReceivingService } from '../../data/receiving.server';
           nz-button
           type="button"
           class="w-32"
-          (click)="cancal()"
+          (click)="onBack()"
           nzSize="large"
         >
-          Cancel
+          Back
         </button>
       </div>
     </form>
@@ -73,33 +81,34 @@ import { ReceivingService } from '../../data/receiving.server';
     ></simple-keyboard>
   `,
 })
-export class KickoutComponent {
-  isLoading = false;
-  keyboard: Keyboard;
-
-  kickoutOptions = [
-    { id: 1, content: 'Short Quantity' },
-    { id: 2, content: 'Damaged' },
-    { id: 3, content: 'Repackaging' },
-    { id: 4, content: 'Wrong Parts' },
-    { id: 5, content: 'Verify Quantity' },
-    { id: 6, content: 'Mixed Parts' },
-    { id: 7, content: 'Part Number Verification' },
-    { id: 8, content: 'Kit Set' },
-    { id: 0, content: 'Other' },
-  ];
-
-  kickoutForm = this._fb.group({
-    kickoutReason: ['', Validators.required],
-    otherReason: [''],
-  });
+export class KickoutComponent implements OnInit {
+  public kickoutOptions = [];
+  public kickoutForm: FormGroup;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _service: ReceivingService
-  ) {
-    this._service.changeTab(2);
+    private _kickout: KickoutStore,
+    private _part: PartStore
+  ) {}
+
+  ngOnInit(): void {
+    this.kickoutOptions = [
+      { id: 1, content: 'Short Quantity' },
+      { id: 2, content: 'Damaged' },
+      { id: 3, content: 'Repackaging' },
+      { id: 4, content: 'Wrong Parts' },
+      { id: 5, content: 'Verify Quantity' },
+      { id: 6, content: 'Mixed Parts' },
+      { id: 7, content: 'Part Number Verification' },
+      { id: 8, content: 'Kit Set' },
+      { id: 0, content: 'Other' },
+    ];
+    this.kickoutForm = this._fb.group({
+      kickoutReason: ['', Validators.required],
+      otherReason: [''],
+    });
+    this._part.receiptLs;
   }
 
   @ViewChild('kickoutReason') InputKickout: ElementRef;
@@ -111,11 +120,11 @@ export class KickoutComponent {
     this.kickoutForm.get('otherReason').setValue(input);
   };
 
-  cancal(): void {
+  onBack(): void {
     this._router.navigateByUrl('recyyeiptreceiving/verify');
   }
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout/location');
+    this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
   }
 }

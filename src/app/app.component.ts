@@ -7,9 +7,8 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
-import { Observable } from 'rxjs';
 
-import { delay, filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { UIStateStore } from './shared/data/app-ui-state';
 
 @Component({
@@ -27,8 +26,8 @@ import { UIStateStore } from './shared/data/app-ui-state';
   `,
 })
 export class AppComponent implements OnInit {
-  public loading$: Observable<boolean>;
-  public router$: Observable<any>;
+  public loading$;
+  public router$;
   constructor(private router: Router, private _ui: UIStateStore) {}
 
   ngOnInit(): void {

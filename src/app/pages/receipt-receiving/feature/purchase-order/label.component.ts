@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receiving.server';
+import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -21,40 +21,32 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     SimpleKeyboardComponent,
   ],
   template: `
-    <div class="grid grid-cols-2 gap-5">
-      <single-input-form
-        (submit)="onSubmit()"
-        (back)="onBack()"
-        [formGroup]="inputForm"
-        controlName="label"
-        title="Number of Label"
-      ></single-input-form>
-      <simple-keyboard
-        [inputFromParent]="inputForm.value.label"
-        layout="number"
-        (outputFromChild)="onChange($event)"
-      ></simple-keyboard>
-    </div>
+    <single-input-form
+      (submit)="onSubmit()"
+      (back)="onBack()"
+      [formState]="formState$ | async"
+      [formGroup]="inputForm"
+      controlName="label"
+      title="Number of Label"
+    ></single-input-form>
   `,
 })
-export class LabelComponent {
+export class LabelComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
+  public formState$: Observable<FormState>;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _service: ReceivingService
-  ) {
+    private _ui: ReceivingUIStateStore
+  ) {}
+
+  ngOnInit(): void {
     this.inputForm = this._fb.group({
       label: ['', Validators.required],
     });
-    this.data$ = this._service.getReceiptHInfo();
+    this.formState$ = this._ui.formState$;
   }
-
-  onChange = (input: string) => {
-    this.inputForm.get('label').setValue(input);
-  };
 
   onSubmit(): void {
     this._router.navigateByUrl('receiptreceiving/itn');
