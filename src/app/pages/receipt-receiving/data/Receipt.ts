@@ -18,7 +18,9 @@ export class ReceiptStore {
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL
   ) {}
-  // For Receipt Header page
+  /**
+   * Find Receipt Header info by ID, and all lines under this header
+   */
   private _receiptHeader = new BehaviorSubject<any>(null);
   public get receiptHeader$(): Observable<any> {
     return this._receiptHeader.asObservable();
@@ -49,7 +51,7 @@ export class ReceiptStore {
   }
 
   /**
-   * First Filter of Receipt lines by part number
+   * First Filter for Receipt by part number
    */
   private _receiptLs = new BehaviorSubject<any>(null);
   public get receiptLs$(): Observable<any> {
@@ -69,7 +71,7 @@ export class ReceiptStore {
   }
 
   /**
-   * Part Info
+   * fetch Part Info
    */
   private _verifyInfo = new BehaviorSubject<any>(null);
   public get _verifyInfo$() {
@@ -116,7 +118,7 @@ export class ReceiptStore {
   /**
    * get receiptLsAfterQuantity
    */
-  public get receiptLsAfterQuantity() {
+  public get receiptLsAfterQuantity(): any {
     return this._receiptLsAfterQuantity.value;
   }
   /**

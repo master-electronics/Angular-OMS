@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
-import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
+import { FormState, ReceivingStore } from '../../data/receivingStore';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -33,7 +33,7 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       [formState]="formState$ | async"
       [formGroup]="inputForm"
       controlName="label"
-      title="Scan the barcod on the Label"
+      title="Scan the barcod again"
     ></single-input-form>
   `,
 })
@@ -48,7 +48,7 @@ export class RescanLabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingUIStateStore,
+    private _ui: ReceivingStore,
     private _kickout: KickoutStore
   ) {}
 
@@ -63,7 +63,6 @@ export class RescanLabelComponent implements OnInit {
   }
 
   /**
-   *
    * @returns when the input is not equal to scaned Label, fire error.
    */
   public checkLabel(): ValidatorFn {
@@ -78,7 +77,7 @@ export class RescanLabelComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/');
+    this._router.navigateByUrl('receiptreceiving');
   }
 
   public onBack(): void {

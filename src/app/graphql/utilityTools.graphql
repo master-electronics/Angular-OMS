@@ -18,6 +18,10 @@ query fetchCountryList {
   }
 }
 
+query createITN($LocationCode: String!) {
+  createITN(LocationCode: $LocationCode)
+}
+
 mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
   findOrCreateUserInfo(UserInfo: $UserInfo) {
     _id

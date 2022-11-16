@@ -8,7 +8,7 @@ import { catchError, Observable, of, startWith, map } from 'rxjs';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
 import { environment } from 'src/environments/environment';
 import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingUIStateStore } from '../../data/ui-state';
+import { ReceivingStore } from '../../data/receivingStore';
 
 @Component({
   standalone: true,
@@ -85,7 +85,7 @@ export class VerifyComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _ui: ReceivingUIStateStore,
+    private _ui: ReceivingStore,
     private _receipt: ReceiptStore
   ) {}
 

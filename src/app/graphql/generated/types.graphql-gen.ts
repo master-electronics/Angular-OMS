@@ -974,6 +974,7 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  createITN: Scalars['String'];
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
@@ -1039,12 +1040,17 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
+  printReceivingLabel: Scalars['Boolean'];
 };
 
 export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+export type QueryCreateItnArgs = {
+  LocationCode: Scalars['String'];
 };
 
 export type QueryFetchDataColumnListArgs = {
@@ -1315,6 +1321,13 @@ export type QueryFindUsersArgs = {
 
 export type QueryFindVendorArgs = {
   Vendor: SearchVendor;
+};
+
+export type QueryPrintReceivingLabelArgs = {
+  DPI: Scalars['String'];
+  ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PRINTER: Scalars['String'];
 };
 
 export type ReceiptH = {

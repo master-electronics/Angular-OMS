@@ -19,7 +19,7 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
   }
 }
 
-query findReceiptLineForReceiving($ProductID: Int!) {
+query findPurchaseOrderForReceiving($idList: Int!) {
   findReceiptLs(ReceiptL: { ProductID: $ProductID }) {
     DateCode
     ROHS
@@ -70,5 +70,19 @@ mutation ReceivingUpdateReceiptL(
   updateReceiptLsByID(
     ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, ROHS: $ROHS }
     idList: $idList
+  )
+}
+
+query printReceivingLabel(
+  $PRINTER: String!
+  $ITN: String!
+  $DPI: String!
+  $ORIENTATION: String!
+) {
+  printReceivingLabel(
+    PRINTER: $PRINTER
+    ITN: $ITN
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
   )
 }

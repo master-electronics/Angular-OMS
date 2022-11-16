@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
+import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { environment } from 'src/environments/environment';
 
 export interface Tab {
   steps: { title: string; subtitle?: string; description?: string }[];
@@ -18,7 +20,7 @@ export interface FormState {
 }
 
 @Injectable()
-export class ReceivingUIStateStore {
+export class ReceivingStore {
   // keyboard
   private _keyboard = new BehaviorSubject<Keyboard>(null);
   public get keyboard$(): Observable<Keyboard> {
@@ -32,23 +34,16 @@ export class ReceivingUIStateStore {
   }
 
   // Tab
-  private readonly steps = [
-    {
-      title: 'Select',
-      subtitle: '',
-      description: 'ReceiptID, Part',
-    },
-    { title: 'Verify', subtitle: '', description: `Info, Quantity` },
-    { title: 'Update', subtitle: '', description: `Country Date RHOS` },
-    { title: 'Purchase Order', subtitle: '', description: '' },
-    { title: 'ITN', subtitle: '', description: '' },
-  ];
-  private _tab = new BehaviorSubject<Tab>({
-    currentStep: 0,
-    steps: this.steps,
-  });
+  private _tab = new BehaviorSubject<Tab>(null);
   public get tab$(): Observable<Tab> {
     return this._tab.asObservable();
+  }
+
+  public initTab(steps): void {
+    this._tab.next({
+      currentStep: 0,
+      steps,
+    });
   }
   public changeSteps(index: number): void {
     this._tab.next({
@@ -95,5 +90,14 @@ export class ReceivingUIStateStore {
 
   public initFormState(): void {
     this._formState.next({ loading: false });
+  }
+
+  constructor(private _itn: CreateItnGQL) {}
+
+  /**
+   * creatITN
+   */
+  public creatITN(): Observable<any> {
+    return this._itn.fetch({ LocationCode: environment.DistributionCenter });
   }
 }

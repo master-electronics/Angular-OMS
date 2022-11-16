@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SimpleKeyboardComponent } from '../../../../shared/ui/simple-keyboard.component';
+import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
 import { catchError, map, Observable, of, startWith, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, SimpleKeyboardComponent, ReactiveFormsModule],
   template: ``,
 })
-export class ITNComponent {
+export class PrintITNComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
@@ -23,6 +23,10 @@ export class ITNComponent {
     this.inputForm = new FormGroup({
       receipt: new FormControl('', [Validators.required]),
     });
+  }
+
+  ngOnInit(): void {
+    //
   }
 
   public onChange = (input: string) => {

@@ -10,6 +10,9 @@ import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { catchError, map, Observable, of, startWith } from 'rxjs';
+import { UIStateStore } from 'src/app/shared/data/app-ui-state';
+import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
 import { ReceiptStore } from '../../data/Receipt';
@@ -24,6 +27,7 @@ import { ReceiptStore } from '../../data/Receipt';
     ReactiveFormsModule,
     NzButtonModule,
     SimpleKeyboardComponent,
+    AlertBarComponent,
   ],
   template: `
     <form [formGroup]="kickoutForm" (ngSubmit)="onSubmit()">
@@ -75,6 +79,12 @@ import { ReceiptStore } from '../../data/Receipt';
         </button>
       </div>
     </form>
+    <div *ngIf="print$ | async as print">
+      <alert-bar
+        [message]="print.message"
+        [messageType]="print.messageType"
+      ></alert-bar>
+    </div>
     <simple-keyboard
       [inputString]="kickoutForm.value.otherReason"
       (outputString)="onChange($event)"
@@ -84,18 +94,21 @@ import { ReceiptStore } from '../../data/Receipt';
 export class KickoutComponent implements OnInit {
   public kickoutOptions = [];
   public kickoutForm: FormGroup;
+  public print$: Observable<any>;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
     private _kickout: KickoutStore,
-    private _receipt: ReceiptStore
+    private _receipt: ReceiptStore,
+    private _ui: UIStateStore
   ) {}
 
   ngOnInit(): void {
     if (!this._receipt.receiptLs?.length) {
       this.onBack();
     }
+    this._kickout.resetKickout();
     this.kickoutOptions = [
       { id: 1, content: 'Short Quantity' },
       { id: 2, content: 'Damaged' },
@@ -123,6 +136,15 @@ export class KickoutComponent implements OnInit {
 
   onSubmit(): void {
     this._kickout.updateReasons(this.kickoutForm.value);
-    this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
+    this.print$ = this._kickout
+      .printReceivingLabel$('PHLABELS139', '300', 'LANDSCAPE')
+      .pipe(
+        map(() => {
+          this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
+        }),
+        catchError((error) => {
+          return of({ message: error.message, messageType: 'error' });
+        })
+      );
   }
 }

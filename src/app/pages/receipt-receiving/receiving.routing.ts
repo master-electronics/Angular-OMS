@@ -80,31 +80,24 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'purchaseorder',
+        path: 'label/selectline',
         loadComponent: () =>
-          import('./feature/purchase-order/purchase-order.component').then(
-            (mod) => mod.PurchaseOrderComponent
+          import('./feature/label/selectLine.component').then(
+            (mod) => mod.SelectLineComponent
           ),
       },
       {
-        path: 'purchaseorder/quantity',
+        path: 'label/assign',
         loadComponent: () =>
-          import('./feature/purchase-order/quantity.component').then(
-            (mod) => mod.QuantityComponent
+          import('./feature/label/assignLabel.component').then(
+            (mod) => mod.AssignLabelComponent
           ),
       },
       {
-        path: 'purchaseorder/label',
+        path: 'label/printitn',
         loadComponent: () =>
-          import('./feature/purchase-order/label.component').then(
-            (mod) => mod.LabelComponent
-          ),
-      },
-      {
-        path: 'itn',
-        loadComponent: () =>
-          import('./feature/purchase-order/purchase-order.component').then(
-            (mod) => mod.PurchaseOrderComponent
+          import('./feature/printItn.component').then(
+            (mod) => mod.PrintITNComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },

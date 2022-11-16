@@ -11,7 +11,7 @@ import { SingleInputformComponent } from '../ui/single-input-form.component';
 import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptStore } from '../data/Receipt';
-import { FormState, ReceivingUIStateStore } from '../data/ui-state';
+import { FormState, ReceivingStore } from '../data/receivingStore';
 
 @Component({
   standalone: true,
@@ -49,7 +49,7 @@ export class ReceiptComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptStore,
-    private _ui: ReceivingUIStateStore
+    private _ui: ReceivingStore
   ) {}
 
   ngOnInit(): void {

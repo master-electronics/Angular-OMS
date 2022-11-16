@@ -11,7 +11,7 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptStore } from '../../data/Receipt';
-import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
+import { FormState, ReceivingStore } from '../../data/receivingStore';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 
 @Component({
@@ -52,7 +52,7 @@ export class PartComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptStore,
-    private _ui: ReceivingUIStateStore
+    private _ui: ReceivingStore
   ) {}
 
   ngOnInit(): void {

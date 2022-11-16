@@ -1,48 +1,99 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
+import { ReceiptStore } from '../../data/Receipt';
 import { updateReceiptStore } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, NzButtonModule],
+  imports: [CommonModule, NzButtonModule, AlertBarComponent],
   template: `
-    <div class="flex flex-row justify-center">
-      <div class="mt-8 h-12 w-32 rounded-md bg-green-300">
-        <button nz-button nzSize="large" type="button" (click)="onUpdate(true)">
-          YES
-        </button>
+    <div class="grid-col-1 grid justify-center gap-12">
+      <h1 class="text-xl">RHOS:</h1>
+      <div class="flex flex-row justify-center gap-5">
+        <div class="w-32 rounded-md bg-green-300">
+          <button
+            class="w-32"
+            nz-button
+            nzGhost
+            nzSize="large"
+            type="button"
+            (click)="onUpdate(true)"
+          >
+            YES
+          </button>
+        </div>
+        <div class="w-32 rounded-md bg-red-300">
+          <button
+            class="w-32 "
+            nz-button
+            nzGhost
+            nzSize="large"
+            type="button"
+            (click)="onUpdate(false)"
+          >
+            NO
+          </button>
+        </div>
       </div>
-      <div class="mt-8 h-12 w-32 rounded-md bg-red-300">
-        <button
-          nz-button
-          nzSize="large"
-          type="button"
-          (click)="onUpdate(false)"
-        >
-          NO
-        </button>
+
+      <button
+        class="w-32"
+        nz-button
+        nzSize="large"
+        type="button"
+        (click)="onBack()"
+      >
+        Back
+      </button>
+      <div *ngIf="update$ | async as data">
+        <alert-bar *ngIf="data.message"></alert-bar>
       </div>
     </div>
-    <button nz-button nzSize="large" type="button" (click)="onBack()">
-      Back
-    </button>
   `,
 })
-export class ROHSComponent {
+export class ROHSComponent implements OnInit {
   public update$: Observable<any>;
 
-  constructor(private _router: Router, private _update: updateReceiptStore) {}
+  constructor(
+    private _router: Router,
+    private _update: updateReceiptStore,
+    private _receipt: ReceiptStore
+  ) {}
 
-  onUpdate(ROHS: boolean): void {
+  ngOnInit(): void {
+    if (!this._update.receiptInfo?.DateCode) {
+      this.onBack();
+    }
+  }
+
+  public onUpdate(ROHS: boolean): void {
     this._update.updateROHS(ROHS);
-    this.update$;
-    this._router.navigateByUrl('receiptreceiving/verify/rohs');
+    this.update$ = this._update.updateReceiptLSQL().pipe(
+      tap((res) => {
+        if (!res.data.updateReceiptLsByID) {
+          throw new Error('Fail to updat to SQL!');
+        }
+      }),
+      map(() => {
+        switch (this._receipt.receiptLsAfterQuantity?.length) {
+          case 1:
+            this._router.navigateByUrl('receiptreceiving/assignlabel');
+            break;
+          default:
+            this._router.navigateByUrl('receiptreceiving/selectline');
+        }
+      }),
+      catchError((error) => {
+        return of({ message: error.message, messageType: 'error' });
+      })
+    );
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/verify/country');
+    this._router.navigateByUrl('receiptreceiving/update/datecode');
   }
 }

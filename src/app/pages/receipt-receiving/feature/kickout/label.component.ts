@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
-import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
+import { FormState, ReceivingStore } from '../../data/receivingStore';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -39,7 +39,7 @@ export class LabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingUIStateStore,
+    private _ui: ReceivingStore,
     private _kickout: KickoutStore
   ) {}
 

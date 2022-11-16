@@ -979,6 +979,7 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  createITN: Scalars['String'];
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
@@ -1044,12 +1045,17 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
+  printReceivingLabel: Scalars['Boolean'];
 };
 
 export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+export type QueryCreateItnArgs = {
+  LocationCode: Scalars['String'];
 };
 
 export type QueryFetchDataColumnListArgs = {
@@ -1320,6 +1326,13 @@ export type QueryFindUsersArgs = {
 
 export type QueryFindVendorArgs = {
   Vendor: SearchVendor;
+};
+
+export type QueryPrintReceivingLabelArgs = {
+  DPI: Scalars['String'];
+  ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PRINTER: Scalars['String'];
 };
 
 export type ReceiptH = {
@@ -2081,6 +2094,18 @@ export type ReceivingUpdateReceiptLMutation = {
   updateReceiptLsByID?: Array<number | null> | null;
 };
 
+export type PrintReceivingLabelQueryVariables = Types.Exact<{
+  PRINTER: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+  DPI: Types.Scalars['String'];
+  ORIENTATION: Types.Scalars['String'];
+}>;
+
+export type PrintReceivingLabelQuery = {
+  __typename?: 'Query';
+  printReceivingLabel: boolean;
+};
+
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
     findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
@@ -2226,6 +2251,35 @@ export class ReceivingUpdateReceiptLGQL extends Apollo.Mutation<
   ReceivingUpdateReceiptLMutationVariables
 > {
   document = ReceivingUpdateReceiptLDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const PrintReceivingLabelDocument = gql`
+  query printReceivingLabel(
+    $PRINTER: String!
+    $ITN: String!
+    $DPI: String!
+    $ORIENTATION: String!
+  ) {
+    printReceivingLabel(
+      PRINTER: $PRINTER
+      ITN: $ITN
+      DPI: $DPI
+      ORIENTATION: $ORIENTATION
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PrintReceivingLabelGQL extends Apollo.Query<
+  PrintReceivingLabelQuery,
+  PrintReceivingLabelQueryVariables
+> {
+  document = PrintReceivingLabelDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

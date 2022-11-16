@@ -18,7 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
-import { FormState } from '../data/ui-state';
+import { FormState } from '../data/receivingStore';
 
 @Component({
   standalone: true,

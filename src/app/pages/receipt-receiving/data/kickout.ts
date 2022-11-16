@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+import { PrintReceivingLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { environment } from 'src/environments/environment';
 import { ReceiptStore } from './Receipt';
 
 interface Kickout {
@@ -15,8 +18,13 @@ export class KickoutStore {
   /**
    *
    * @param _receipt part store class
+   * @param _print print receiving label end point
    */
-  constructor(private _receipt: ReceiptStore) {}
+  constructor(
+    private _receipt: ReceiptStore,
+    private _print: PrintReceivingLabelGQL,
+    private _itn: CreateItnGQL
+  ) {}
 
   /**
    * info for kickout process
@@ -81,8 +89,37 @@ export class KickoutStore {
       label,
     });
   }
-
+  /**
+   * resetKickout reset value at init kickout page
+   */
   public resetKickout(): void {
     this._kickout.next(null);
+  }
+
+  /**
+   * printReceivingLabel
+   */
+  public printReceivingLabel$(
+    PRINTER: string,
+    DPI: string,
+    ORIENTATION: string
+  ) {
+    return this._itn
+      .fetch(
+        { LocationCode: environment.DistributionCenter },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => console.log(res)),
+        switchMap((res) => {
+          return this._print.fetch({
+            PRINTER,
+            ITN: res.data.createITN,
+            DPI,
+            ORIENTATION,
+          });
+        }),
+        tap((res) => console.log(res))
+      );
   }
 }

@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { DefalutDateCode } from 'src/app/shared/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingUIStateStore } from '../../data/ui-state';
+import { ReceivingStore } from '../../data/receivingStore';
 import { updateReceiptStore } from '../../data/updateReceipt';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
@@ -54,7 +54,7 @@ export class DateCodeComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingUIStateStore,
+    private _ui: ReceivingStore,
     private _update: updateReceiptStore
   ) {}
 
@@ -84,6 +84,7 @@ export class DateCodeComponent implements OnInit {
   };
 
   onSubmit(): void {
+    this._update.updateDateCode(this.inputForm.value.dateCode);
     this._router.navigateByUrl('receiptreceiving/update/rohs');
   }
 

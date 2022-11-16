@@ -12,7 +12,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { CountryISO3Component } from 'src/app/shared/ui/input/country-iso3.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingUIStateStore } from '../../data/ui-state';
+import { ReceivingStore } from '../../data/receivingStore';
 import { updateReceiptStore } from '../../data/updateReceipt';
 
 @Component({

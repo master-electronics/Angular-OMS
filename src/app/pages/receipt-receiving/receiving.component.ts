@@ -7,14 +7,14 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
 import { KickoutStore } from './data/kickout';
 import { ReceiptStore } from './data/Receipt';
-import { ReceivingUIStateStore, Tab } from './data/ui-state';
+import { ReceivingStore, Tab } from './data/receivingStore';
 import { updateReceiptStore } from './data/updateReceipt';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
   providers: [
-    ReceivingUIStateStore,
+    ReceivingStore,
     ReceiptStore,
     KickoutStore,
     UIStateStore,
@@ -36,11 +36,28 @@ export class ReceivingComponent implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
     private commonService: CommonService,
-    private _service: ReceivingUIStateStore
+    private _service: ReceivingStore
   ) {}
 
   ngOnInit(): void {
+    this._service.initTab(this.steps);
     this.tab$ = this._service.tab$;
     this.commonService.changeNavbar('Receiving');
   }
+
+  private readonly steps = [
+    {
+      title: 'Select',
+      subtitle: '',
+      description: 'ReceiptID, Part',
+    },
+    { title: 'Verify', subtitle: '', description: `Info, Quantity` },
+    { title: 'Update', subtitle: '', description: `Country Date RHOS` },
+    {
+      title: 'Label',
+      subtitle: '',
+      description: 'Assign Label Quantity',
+    },
+    { title: 'ITN', subtitle: '', description: 'Print ITNs' },
+  ];
 }
