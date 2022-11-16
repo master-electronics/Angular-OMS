@@ -10,7 +10,7 @@ import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.comp
 import { SingleInputformComponent } from '../ui/single-input-form.component';
 import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { PartStore } from '../data/part';
+import { ReceiptStore } from '../data/Receipt';
 import { FormState, ReceivingUIStateStore } from '../data/ui-state';
 
 @Component({
@@ -34,9 +34,9 @@ import { FormState, ReceivingUIStateStore } from '../data/ui-state';
         title="Receipt"
       ></single-input-form>
       <simple-keyboard
-        [inputFromParent]="inputForm.value.receipt"
+        [inputString]="inputForm.value.receipt"
         layout="number"
-        (outputFromChild)="onChange($event)"
+        (outputString)="onChange($event)"
       ></simple-keyboard>
     </div>
   `,
@@ -48,7 +48,7 @@ export class ReceiptComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _partStore: PartStore,
+    private _receipt: ReceiptStore,
     private _ui: ReceivingUIStateStore
   ) {}
 
@@ -57,7 +57,7 @@ export class ReceiptComponent implements OnInit {
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });
-    this.data$ = this._partStore.receiptHeader$;
+    this.data$ = this._receipt.receiptHeader$;
     this.formState$ = this._ui.formState$;
   }
 
@@ -74,7 +74,7 @@ export class ReceiptComponent implements OnInit {
   public onSubmit(): void {
     this._ui.initFormState();
     this._ui.loadingOn();
-    this.data$ = this._partStore
+    this.data$ = this._receipt
       .findReceiptHeader(Number(this.inputForm.value.receipt))
       .pipe(
         map(() => {

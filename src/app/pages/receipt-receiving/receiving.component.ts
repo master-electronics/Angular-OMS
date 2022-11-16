@@ -6,13 +6,20 @@ import { UIStateStore } from 'src/app/shared/data/app-ui-state';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
 import { KickoutStore } from './data/kickout';
-import { PartStore } from './data/part';
+import { ReceiptStore } from './data/Receipt';
 import { ReceivingUIStateStore, Tab } from './data/ui-state';
+import { updateReceiptStore } from './data/updateReceipt';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
-  providers: [ReceivingUIStateStore, PartStore, KickoutStore, UIStateStore],
+  providers: [
+    ReceivingUIStateStore,
+    ReceiptStore,
+    KickoutStore,
+    UIStateStore,
+    updateReceiptStore,
+  ],
   template: `
     <ng-container *ngIf="tab$ | async as input">
       <step-bar

@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { FormState } from '../../data/ui-state';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -24,22 +25,34 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       <single-input-form
         (submit)="onSubmit()"
         (back)="onBack()"
+        [formState]="formState$ | async"
         [formGroup]="inputForm"
         controlName="quantity"
         title="Quantity"
         type="number"
       ></single-input-form>
+      <div ngIf="this." class="w-32 rounded-md bg-red-500">
+        <button
+          nz-button
+          type="button"
+          (click)="kickout()"
+          class="w-32"
+          nzGhost
+        >
+          KickOut
+        </button>
+      </div>
       <simple-keyboard
-        [inputFromParent]="inputForm.value.quantity"
+        [inputString]="inputForm.value.quantity"
         layout="number"
-        (outputFromChild)="onChange($event)"
+        (outputString)="onChange($event)"
       ></simple-keyboard>
     </div>
   `,
 })
 export class QuantityComponent {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
+  public formState$: Observable<FormState>;
 
   constructor(private _fb: FormBuilder, private _router: Router) {
     this.inputForm = this._fb.group({
@@ -50,6 +63,10 @@ export class QuantityComponent {
   onChange = (input: string) => {
     this.inputForm.get('quantity').setValue(input);
   };
+
+  kickout(): void {
+    this._router.navigateByUrl('receiptreceiving/kickout');
+  }
 
   onSubmit(): void {
     this._router.navigateByUrl('receiptreceiving/purchaseorder/label');

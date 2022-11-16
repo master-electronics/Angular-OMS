@@ -7,7 +7,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { catchError, Observable, of, startWith, map } from 'rxjs';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
 import { environment } from 'src/environments/environment';
-import { PartStore } from '../../data/part';
+import { ReceiptStore } from '../../data/Receipt';
 import { ReceivingUIStateStore } from '../../data/ui-state';
 
 @Component({
@@ -86,15 +86,15 @@ export class VerifyComponent implements OnInit {
   constructor(
     private _router: Router,
     private _ui: ReceivingUIStateStore,
-    private _partStore: PartStore
+    private _receipt: ReceiptStore
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(2);
-    if (!this._partStore.receiptLs) {
+    if (!this._receipt.receiptLs) {
       this.onBack();
     }
-    this.data$ = this._partStore.findVerifyInfo().pipe(
+    this.data$ = this._receipt.findVerifyInfo().pipe(
       map((res) => {
         return {
           ...res,
@@ -109,7 +109,7 @@ export class VerifyComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/purchaseorder');
+    this._router.navigateByUrl('receiptreceiving/part/quantity');
   }
 
   kickout(): void {

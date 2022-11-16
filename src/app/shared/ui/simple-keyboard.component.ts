@@ -15,12 +15,12 @@ import Keyboard from 'simple-keyboard';
 })
 export class SimpleKeyboardComponent implements OnChanges {
   keyboard: Keyboard;
-  @Input() inputFromParent;
+  @Input() inputString;
   @Input() layout = 'default';
-  @Output() outputFromChild: EventEmitter<string> = new EventEmitter();
+  @Output() outputString: EventEmitter<string> = new EventEmitter();
 
   ngOnChanges(): void {
-    this.keyboard?.setInput(this.inputFromParent);
+    this.keyboard?.setInput(this.inputString);
   }
 
   ngAfterViewInit() {
@@ -72,7 +72,7 @@ export class SimpleKeyboardComponent implements OnChanges {
   }
 
   onChange = (input: string) => {
-    this.outputFromChild.emit(input);
+    this.outputString.emit(input);
   };
 
   onKeyPress = (button: string) => {

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PartStore } from './part';
+import { ReceiptStore } from './Receipt';
 
 interface Kickout {
   receiptLineIDs: number[];
-  reason?: number;
+  reason?: string;
   other?: string;
   label?: string;
   location?: string;
@@ -14,9 +14,9 @@ interface Kickout {
 export class KickoutStore {
   /**
    *
-   * @param _part part store class
+   * @param _receipt part store class
    */
-  constructor(private _part: PartStore) {}
+  constructor(private _receipt: ReceiptStore) {}
 
   /**
    * info for kickout process
@@ -24,17 +24,24 @@ export class KickoutStore {
   private _kickout = new BehaviorSubject<Kickout>(null);
 
   /**
+   * kickout$
+ : Observerable<Kickout>  */
+  public kickout$(): Observable<Kickout> {
+    return this._kickout.asObservable();
+  }
+
+  /**
    * get kickout value
    */
   public get kickout(): Kickout {
-    return this._kickout.value;
+    return this._kickout.getValue();
   }
 
   /**
    * initKickout: fetch receipt line IDs from the lastest value of _receiptLs
    */
   public initKickout() {
-    const lines = this._part.receiptLs.map((res) => res._id);
+    const lines = this._receipt.receiptLs.map((res) => res._id);
     this._kickout.next({ receiptLineIDs: lines });
   }
 
@@ -43,12 +50,15 @@ export class KickoutStore {
    * @param index value of the reason list
    * @param other user input ohter reason
    */
-  public updateReasons(index: number, other?: string): void {
+  public updateReasons(input: {
+    kickoutReason: string;
+    otherReason: string;
+  }): void {
     const current = this._kickout.value;
     this._kickout.next({
       ...current,
-      reason: index,
-      other,
+      reason: input.kickoutReason,
+      other: input.otherReason,
     });
   }
 

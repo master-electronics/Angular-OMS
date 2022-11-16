@@ -1,14 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { DefalutDateCode } from 'src/app/shared/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { ReceivingUIStateStore } from '../../data/ui-state';
+import { updateReceiptStore } from '../../data/updateReceipt';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -20,38 +26,68 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     SimpleKeyboardComponent,
   ],
   template: `
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [formGroup]="inputForm"
-      controlName="datecode"
-      title="DateCode"
-    ></single-input-form>
-    <simple-keyboard
-      [inputFromParent]="inputForm.value.datecode"
-      (outputFromChild)="onChange($event)"
-    ></simple-keyboard>
+    <div class="grid grid-cols-2 gap-5">
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [validator]="validator"
+        [formGroup]="inputForm"
+        type="number"
+        controlName="dateCode"
+        title="DateCode"
+      ></single-input-form>
+      <simple-keyboard
+        layout="number"
+        [inputString]="inputForm.value.dateCode"
+        (outputString)="onChange($event)"
+      ></simple-keyboard>
+    </div>
   `,
 })
-export class DateCodeComponent {
+export class DateCodeComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
+  public validator = {
+    name: 'dateCode',
+    message: 'Not match the Datecode Format!',
+  };
 
-  constructor(private _fb: FormBuilder, private _router: Router) {
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _ui: ReceivingUIStateStore,
+    private _update: updateReceiptStore
+  ) {}
+
+  ngOnInit(): void {
+    if (!this._update.receiptInfo) {
+      this.onBack();
+    }
+    this._ui.changeSteps(2);
     this.inputForm = this._fb.group({
-      datecode: ['', Validators.required],
+      dateCode: ['', [Validators.required, this.checkDateCode()]],
     });
   }
 
+  public checkDateCode(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const isVaild = DefalutDateCode.test(value);
+      return !isVaild ? { dateCode: true } : null;
+    };
+  }
+
   onChange = (input: string) => {
-    this.inputForm.get('datecode').setValue(input);
+    this.inputForm.get('dateCode').setValue(input);
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/verify/rohs');
+    this._router.navigateByUrl('receiptreceiving/update/rohs');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/verify/country');
+    this._router.navigateByUrl('receiptreceiving/update/country');
   }
 }

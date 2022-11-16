@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 
 export interface Tab {
   steps: { title: string; subtitle?: string; description?: string }[];
@@ -33,9 +33,13 @@ export class ReceivingUIStateStore {
 
   // Tab
   private readonly steps = [
-    { title: 'Receipt', subtitle: '', description: '' },
-    { title: 'Part', subtitle: '', description: '' },
-    { title: 'Verify', subtitle: '', description: '' },
+    {
+      title: 'Select',
+      subtitle: '',
+      description: 'ReceiptID, Part',
+    },
+    { title: 'Verify', subtitle: '', description: `Info, Quantity` },
+    { title: 'Update', subtitle: '', description: `Country Date RHOS` },
     { title: 'Purchase Order', subtitle: '', description: '' },
     { title: 'ITN', subtitle: '', description: '' },
   ];
@@ -56,7 +60,13 @@ export class ReceivingUIStateStore {
   //input form
   private _formState = new BehaviorSubject<FormState>({ loading: false });
   public get formState$(): Observable<FormState> {
-    return this._formState.asObservable();
+    return this._formState.asObservable().pipe(shareReplay(1));
+  }
+  /**
+   * get formState
+   */
+  public get formState(): FormState {
+    return this._formState.value;
   }
   public loadingOn(): void {
     this._formState.next({
@@ -74,7 +84,7 @@ export class ReceivingUIStateStore {
 
   public updateMessage(
     message: string,
-    messageType: 'error' | 'success' | 'info' | 'warning'
+    messageType?: 'error' | 'success' | 'info' | 'warning'
   ): void {
     this._formState.next({
       ...this._formState.value,

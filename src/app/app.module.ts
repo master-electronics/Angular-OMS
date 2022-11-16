@@ -46,6 +46,7 @@ import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 import { UIStateStore } from './shared/data/app-ui-state';
+import { GobalValueStore } from './shared/data/gobal-value';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { UIStateStore } from './shared/data/app-ui-state';
 
   providers: [
     UIStateStore,
+    GobalValueStore,
     Title,
     // {
     //   provide: HTTP_INTERCEPTORS,

@@ -2,7 +2,13 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
   findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
     RECEIPTLs {
       _id
+      ExpectedQuantity
+      DateCode
+      ROHS
       ProductID
+      Country {
+        ISO3
+      }
       Product {
         PartNumber
         ProductCode {
@@ -53,4 +59,16 @@ query findPartForReceiving($PartNumber: String!) {
       ProductCodeNumber
     }
   }
+}
+
+mutation ReceivingUpdateReceiptL(
+  $idList: [Int]!
+  $CountryID: Int!
+  $DateCode: String!
+  $ROHS: Boolean!
+) {
+  updateReceiptLsByID(
+    ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, ROHS: $ROHS }
+    idList: $idList
+  )
 }

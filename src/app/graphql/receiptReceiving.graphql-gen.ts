@@ -408,6 +408,7 @@ export type Mutation = {
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -802,6 +803,11 @@ export type MutationUpdateReceiptLdArgs = {
   ReceiptLD: UpdateReceiptLd;
 };
 
+export type MutationUpdateReceiptLsByIdArgs = {
+  ReceiptL: UpdateReceiptL;
+  idList: Array<InputMaybe<Scalars['Int']>>;
+};
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
@@ -973,6 +979,7 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1991,7 +1998,11 @@ export type FindReceiptHeaderForReceivingQuery = {
     RECEIPTLs?: Array<{
       __typename?: 'ReceiptL';
       _id: number;
+      ExpectedQuantity: number;
+      DateCode?: string | null;
+      ROHS?: boolean | null;
       ProductID: number;
+      Country?: { __typename?: 'Country'; ISO3: string } | null;
       Product: {
         __typename?: 'Product';
         PartNumber: string;
@@ -2056,12 +2067,32 @@ export type FindPartForReceivingQuery = {
   } | null> | null;
 };
 
+export type ReceivingUpdateReceiptLMutationVariables = Types.Exact<{
+  idList:
+    | Array<Types.InputMaybe<Types.Scalars['Int']>>
+    | Types.InputMaybe<Types.Scalars['Int']>;
+  CountryID: Types.Scalars['Int'];
+  DateCode: Types.Scalars['String'];
+  ROHS: Types.Scalars['Boolean'];
+}>;
+
+export type ReceivingUpdateReceiptLMutation = {
+  __typename?: 'Mutation';
+  updateReceiptLsByID?: Array<number | null> | null;
+};
+
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
     findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
       RECEIPTLs {
         _id
+        ExpectedQuantity
+        DateCode
+        ROHS
         ProductID
+        Country {
+          ISO3
+        }
         Product {
           PartNumber
           ProductCode {
@@ -2168,6 +2199,33 @@ export class FindPartForReceivingGQL extends Apollo.Query<
   FindPartForReceivingQueryVariables
 > {
   document = FindPartForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ReceivingUpdateReceiptLDocument = gql`
+  mutation ReceivingUpdateReceiptL(
+    $idList: [Int]!
+    $CountryID: Int!
+    $DateCode: String!
+    $ROHS: Boolean!
+  ) {
+    updateReceiptLsByID(
+      ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, ROHS: $ROHS }
+      idList: $idList
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReceivingUpdateReceiptLGQL extends Apollo.Mutation<
+  ReceivingUpdateReceiptLMutation,
+  ReceivingUpdateReceiptLMutationVariables
+> {
+  document = ReceivingUpdateReceiptLDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

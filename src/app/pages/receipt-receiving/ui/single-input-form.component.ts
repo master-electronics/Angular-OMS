@@ -18,6 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
+import { FormState } from '../data/ui-state';
 
 @Component({
   standalone: true,
@@ -85,7 +86,11 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input() formState;
+  @Input() formState: FormState = {
+    loading: false,
+    message: null,
+    messageType: null,
+  };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';
@@ -97,7 +102,6 @@ export class SingleInputformComponent implements OnInit {
   constructor(private controlContainer: ControlContainer) {}
 
   @ViewChild('input') inputFiled!: ElementRef;
-
   ngAfterViewInit(): void {
     this.inputFiled.nativeElement.focus();
   }

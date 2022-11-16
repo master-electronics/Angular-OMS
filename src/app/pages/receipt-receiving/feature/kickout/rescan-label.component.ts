@@ -1,9 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -25,6 +29,7 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     <single-input-form
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
+      [validator]="validator"
       [formState]="formState$ | async"
       [formGroup]="inputForm"
       controlName="label"
@@ -32,9 +37,13 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     ></single-input-form>
   `,
 })
-export class LabelComponent implements OnInit {
+export class RescanLabelComponent implements OnInit {
   public inputForm: FormGroup;
   public formState$: Observable<FormState>;
+  public validator = {
+    name: 'filter',
+    message: 'Not the same Label!',
+  };
 
   constructor(
     private _fb: FormBuilder,
@@ -44,21 +53,35 @@ export class LabelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._kickout.kickout) {
-      this._router.navigateByUrl('receiptreceiving/kickout');
+    if (!this._kickout.kickout?.location) {
+      this.onBack();
     }
     this.inputForm = this._fb.group({
-      label: ['', Validators.required],
+      label: ['', [Validators.required, this.checkLabel()]],
     });
     this.formState$ = this._ui.formState$;
   }
 
+  /**
+   *
+   * @returns when the input is not equal to scaned Label, fire error.
+   */
+  public checkLabel(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const isVaild = this._kickout.kickout.label === value.trim();
+      return !isVaild ? { filter: true } : null;
+    };
+  }
+
   onSubmit(): void {
-    this._kickout.updateLabel(this.inputForm.value.label.trim());
-    this._router.navigateByUrl('receiptreceiving/kickout/location');
+    this._router.navigateByUrl('receiptreceiving/');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout');
+    this._router.navigateByUrl('receiptreceiving/kickout/location');
   }
 }

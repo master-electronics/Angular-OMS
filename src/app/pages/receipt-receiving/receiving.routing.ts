@@ -24,6 +24,13 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
+        path: 'part/quantity',
+        loadComponent: () =>
+          import('./feature/part/quantity.component').then(
+            (mod) => mod.QuantityComponent
+          ),
+      },
+      {
         path: 'kickout',
         loadComponent: () =>
           import('./feature/kickout/kickout.component').then(
@@ -42,6 +49,34 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/kickout/location.component').then(
             (mod) => mod.LocationComponent
+          ),
+      },
+      {
+        path: 'kickout/rescanlabel',
+        loadComponent: () =>
+          import('./feature/kickout/rescan-label.component').then(
+            (mod) => mod.RescanLabelComponent
+          ),
+      },
+      {
+        path: 'update/country',
+        loadComponent: () =>
+          import('./feature/update-info/country.component').then(
+            (m) => m.CountryComponent
+          ),
+      },
+      {
+        path: 'update/datecode',
+        loadComponent: () =>
+          import('./feature/update-info/datecode.component').then(
+            (m) => m.DateCodeComponent
+          ),
+      },
+      {
+        path: 'update/rohs',
+        loadComponent: () =>
+          import('./feature/update-info/rohs.component').then(
+            (m) => m.ROHSComponent
           ),
       },
       {

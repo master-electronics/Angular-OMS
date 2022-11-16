@@ -1,27 +1,44 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Observable } from 'rxjs';
-import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { updateReceiptStore } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    SingleInputformComponent,
-    ReactiveFormsModule,
-    SimpleKeyboardComponent,
-  ],
-  template: ` <div>ROHS</div> `,
+  imports: [CommonModule, NzButtonModule],
+  template: `
+    <div class="flex flex-row justify-center">
+      <div class="mt-8 h-12 w-32 rounded-md bg-green-300">
+        <button nz-button nzSize="large" type="button" (click)="onUpdate(true)">
+          YES
+        </button>
+      </div>
+      <div class="mt-8 h-12 w-32 rounded-md bg-red-300">
+        <button
+          nz-button
+          nzSize="large"
+          type="button"
+          (click)="onUpdate(false)"
+        >
+          NO
+        </button>
+      </div>
+    </div>
+    <button nz-button nzSize="large" type="button" (click)="onBack()">
+      Back
+    </button>
+  `,
 })
 export class ROHSComponent {
-  public data$: Observable<any>;
+  public update$: Observable<any>;
 
-  constructor(private _router: Router) {}
+  constructor(private _router: Router, private _update: updateReceiptStore) {}
 
-  onSubmit(): void {
+  onUpdate(ROHS: boolean): void {
+    this._update.updateROHS(ROHS);
+    this.update$;
     this._router.navigateByUrl('receiptreceiving/verify/rohs');
   }
 

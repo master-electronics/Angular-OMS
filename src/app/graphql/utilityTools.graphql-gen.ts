@@ -408,6 +408,7 @@ export type Mutation = {
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -802,6 +803,11 @@ export type MutationUpdateReceiptLdArgs = {
   ReceiptLD: UpdateReceiptLd;
 };
 
+export type MutationUpdateReceiptLsByIdArgs = {
+  ReceiptL: UpdateReceiptL;
+  idList: Array<InputMaybe<Scalars['Int']>>;
+};
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
@@ -973,6 +979,7 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1999,6 +2006,21 @@ export type FindItNsByShelfQuery = {
   } | null> | null;
 };
 
+export type FetchCountryListQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchCountryListQuery = {
+  __typename?: 'Query';
+  fetchAllCountry?: Array<{
+    __typename?: 'Country';
+    _id: number;
+    CountryName: string;
+    ISO2: string;
+    ISO3: string;
+  } | null> | null;
+};
+
 export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
   UserInfo: Types.InsertUserInfo;
 }>;
@@ -2066,6 +2088,30 @@ export class FindItNsByShelfGQL extends Apollo.Query<
   FindItNsByShelfQueryVariables
 > {
   document = FindItNsByShelfDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchCountryListDocument = gql`
+  query fetchCountryList {
+    fetchAllCountry {
+      _id
+      CountryName
+      ISO2
+      ISO3
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchCountryListGQL extends Apollo.Query<
+  FetchCountryListQuery,
+  FetchCountryListQueryVariables
+> {
+  document = FetchCountryListDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

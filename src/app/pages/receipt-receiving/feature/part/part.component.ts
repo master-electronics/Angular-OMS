@@ -10,7 +10,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { PartStore } from '../../data/part';
+import { ReceiptStore } from '../../data/Receipt';
 import { FormState, ReceivingUIStateStore } from '../../data/ui-state';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 
@@ -35,8 +35,8 @@ import { catchError, map, Observable, of, startWith } from 'rxjs';
       title="Part #"
     ></single-input-form>
     <simple-keyboard
-      [inputFromParent]="inputForm.value.partNumber"
-      (outputFromChild)="onChange($event)"
+      [inputString]="inputForm.value.partNumber"
+      (outputString)="onChange($event)"
     ></simple-keyboard>
   `,
 })
@@ -51,7 +51,7 @@ export class PartComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _partStore: PartStore,
+    private _receipt: ReceiptStore,
     private _ui: ReceivingUIStateStore
   ) {}
 
@@ -64,10 +64,10 @@ export class PartComponent implements OnInit {
         this.partNumberSearch(),
       ]),
     });
-    if (!this._partStore.receiptHeader?.RECEIPTLs) {
+    if (!this._receipt.receiptHeader?.RECEIPTLs) {
       this.onBack();
     }
-    this.data$ = this._partStore.receiptHeader$.pipe(
+    this.data$ = this._receipt.receiptHeader$.pipe(
       startWith({ isLoading: true }),
       map((res) => ({
         ...res,
@@ -82,7 +82,7 @@ export class PartComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = this._partStore.receiptHeader.RECEIPTLs.some(
+      const isVaild = this._receipt.receiptHeader.RECEIPTLs.some(
         (line) =>
           line.Product.PartNumber.trim().toLowerCase() ===
           value.trim().toLowerCase()
@@ -96,7 +96,7 @@ export class PartComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._partStore.filterReceiptLines(this.inputForm.value.partNumber);
+    this._receipt.filterbyPartNumber(this.inputForm.value.partNumber);
     this._router.navigate(['receiptreceiving/part/verify']);
   }
 

@@ -13,7 +13,7 @@ import {
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 
 @Injectable()
-export class PartStore {
+export class ReceiptStore {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL
@@ -48,7 +48,9 @@ export class PartStore {
       );
   }
 
-  // For part number page
+  /**
+   * First Filter of Receipt lines by part number
+   */
   private _receiptLs = new BehaviorSubject<any>(null);
   public get receiptLs$(): Observable<any> {
     return this._receiptLs.asObservable();
@@ -57,7 +59,7 @@ export class PartStore {
     return this._receiptLs.getValue();
   }
 
-  public filterReceiptLines(PartNumber: string): void {
+  public filterbyPartNumber(PartNumber: string): void {
     const tmp = this.receiptHeader.RECEIPTLs.filter(
       (res) =>
         res.Product.PartNumber.trim().toLowerCase() ===
@@ -66,7 +68,9 @@ export class PartStore {
     this._receiptLs.next(tmp);
   }
 
-  //For part verify page
+  /**
+   * Part Info
+   */
   private _verifyInfo = new BehaviorSubject<any>(null);
   public get _verifyInfo$() {
     return this._verifyInfo.asObservable();
@@ -97,5 +101,31 @@ export class PartStore {
       }),
       shareReplay()
     );
+  }
+
+  /**
+   * Second Filter for Receipt lines by quantity
+   */
+  private _receiptLsAfterQuantity = new BehaviorSubject<any>(null);
+  /**
+   * get receiptLsAfterQuantity$
+ : Observable<any>  */
+  public get receiptLsAfterQuantity$(): Observable<any> {
+    return this._receiptLsAfterQuantity.asObservable();
+  }
+  /**
+   * get receiptLsAfterQuantity
+   */
+  public get receiptLsAfterQuantity() {
+    return this._receiptLsAfterQuantity.value;
+  }
+  /**
+   * filterByQuantity
+   */
+  public filterByQuantity(Quantity: number): void {
+    const tmp = this.receiptLs.filter(
+      (res) => res.ExpectedQuantity === Quantity
+    );
+    this._receiptLsAfterQuantity.next(tmp);
   }
 }

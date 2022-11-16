@@ -31,8 +31,8 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       title="Location"
     ></single-input-form>
     <simple-keyboard
-      [inputFromParent]="inputForm.value.location"
-      (outputFromChild)="onChange($event)"
+      [inputString]="inputForm.value.location"
+      (outputString)="onChange($event)"
     ></simple-keyboard>
   `,
 })
@@ -48,6 +48,9 @@ export class LocationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!this._kickout.kickout?.label) {
+      this._router.navigateByUrl('receiptreceiving/kickout');
+    }
     this.inputForm = this._fb.group({
       location: ['', Validators.required],
     });
@@ -59,7 +62,8 @@ export class LocationComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
+    this._kickout.updateLocation(this.inputForm.value.location.trim());
+    this._router.navigateByUrl('receiptreceiving/kickout/rescanlabel');
   }
 
   public onBack(): void {

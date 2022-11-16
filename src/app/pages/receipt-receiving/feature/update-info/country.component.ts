@@ -1,46 +1,76 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { CountryISO3Component } from 'src/app/shared/ui/input/country-iso3.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { ReceiptStore } from '../../data/Receipt';
+import { ReceivingUIStateStore } from '../../data/ui-state';
+import { updateReceiptStore } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
-    SingleInputformComponent,
     ReactiveFormsModule,
+    FormsModule,
     SimpleKeyboardComponent,
+    NzFormModule,
+    NzButtonModule,
+    CountryISO3Component,
   ],
   template: `
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
+    <form
+      nz-form
       [formGroup]="inputForm"
-      controlName="country"
-      title="CountryOfOrigin"
-    ></single-input-form>
-    <simple-keyboard
-      [inputFromParent]="inputForm.value.country"
-      (outputFromChild)="onChange($event)"
-    ></simple-keyboard>
+      nzLayout="horizontal"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="flex justify-center">
+        <country-iso3></country-iso3>
+      </div>
+      <div class="mb-6 mt-6 flex justify-center">
+        <button
+          nz-button
+          type="submit"
+          nzSize="large"
+          nzType="primary"
+          [disabled]="inputForm.invalid"
+          class="mr-20 w-32"
+        >
+          Submit
+        </button>
+        <button nz-button nzSize="large" type="button" (click)="onBack()">
+          Back
+        </button>
+      </div>
+    </form>
   `,
 })
-export class CountryComponent {
-  public inputForm: FormGroup;
-  public data$: Observable<any>;
+export class CountryComponent implements OnInit {
+  public inputForm = this._fb.group({
+    country: ['', Validators.required],
+  });
 
-  constructor(private _fb: FormBuilder, private _router: Router) {
-    this.inputForm = this._fb.group({
-      country: ['', Validators.required],
-    });
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _info: updateReceiptStore,
+    private _receipt: ReceiptStore
+  ) {}
+
+  ngOnInit(): void {
+    if (!this._receipt.receiptLsAfterQuantity?.length) {
+      this.onBack();
+    }
+    this._info.initReceiptInfo();
   }
 
   onChange = (input: string) => {
@@ -48,10 +78,11 @@ export class CountryComponent {
   };
 
   onSubmit(): void {
-    this._router.navigateByUrl('receiptreceiving/verify/datecode');
+    this._info.updateCountryID(Number(this.inputForm.value.country));
+    this._router.navigateByUrl('receiptreceiving/update/datecode');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/verify');
+    this._router.navigateByUrl('receiptreceiving/part/quantity');
   }
 }

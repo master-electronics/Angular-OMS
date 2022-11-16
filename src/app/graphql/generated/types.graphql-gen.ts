@@ -403,6 +403,7 @@ export type Mutation = {
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -797,6 +798,11 @@ export type MutationUpdateReceiptLdArgs = {
   ReceiptLD: UpdateReceiptLd;
 };
 
+export type MutationUpdateReceiptLsByIdArgs = {
+  ReceiptL: UpdateReceiptL;
+  idList: Array<InputMaybe<Scalars['Int']>>;
+};
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
@@ -968,6 +974,7 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;

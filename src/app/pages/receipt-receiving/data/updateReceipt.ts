@@ -1,46 +1,68 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { ReceiptStore } from './Receipt';
 
 interface ReceiptInfo {
-  quantity: number;
-  dateCode?: string;
-  countryISO3?: string;
+  ReceiptLIDs: number[];
+  DateCode?: string;
+  CountryID?: number;
   ROHS?: boolean;
 }
 
 @Injectable()
 export class updateReceiptStore {
+  constructor(
+    private _update: ReceivingUpdateReceiptLGQL,
+    private _receipt: ReceiptStore
+  ) {}
   private _receiptInfo = new BehaviorSubject<ReceiptInfo>(null);
   public get receiptInfo(): ReceiptInfo {
     return this._receiptInfo.value;
   }
-  public updateReceiptInfo(
-    dateCode: string = undefined,
-    countryISO3: string = undefined,
-    ROHS: boolean = undefined
-  ): void {
-    let current = this._receiptInfo.value;
-    if (typeof dateCode !== 'undefined') {
-      current = {
-        ...current,
-        dateCode,
-      };
-    }
-    if (typeof countryISO3 !== 'undefined') {
-      current = {
-        ...current,
-        countryISO3,
-      };
-    }
-    if (typeof ROHS !== 'undefined') {
-      current = {
-        ...current,
-        ROHS,
-      };
-    }
-
+  /**
+   * initReceiptInfo: After filter by Quantity. All lines are target receipt
+   */
+  public initReceiptInfo(): void {
+    const ReceiptLIDs = this._receipt.receiptLsAfterQuantity.map(
+      (res) => res._id
+    );
     this._receiptInfo.next({
-      ...current,
+      ReceiptLIDs,
+    });
+  }
+
+  public updateDateCode(DateCode: string): void {
+    this._receiptInfo.next({
+      ...this._receiptInfo.value,
+      DateCode,
+    });
+  }
+  /**
+   * updateCountryID
+   */
+  public updateCountryID(CountryID: number): void {
+    this._receiptInfo.next({
+      ...this._receiptInfo.value,
+      CountryID,
+    });
+  }
+  /**
+   * updateROHS
+   */
+  public updateROHS(ROHS: boolean) {
+    this._receiptInfo.next({
+      ...this._receiptInfo.value,
+      ROHS,
+    });
+  }
+
+  public updateReceiptLSQL() {
+    return this._update.mutate({
+      idList: this.receiptInfo.ReceiptLIDs,
+      DateCode: this.receiptInfo.DateCode,
+      CountryID: this.receiptInfo.CountryID,
+      ROHS: this.receiptInfo.ROHS,
     });
   }
 }

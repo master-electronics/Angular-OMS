@@ -6,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ReceivingService } from '../../data/receiving.server';
 import { SimpleKeyboardComponent } from '../../../../shared/ui/simple-keyboard.component';
 import { catchError, map, Observable, of, startWith, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -20,12 +19,10 @@ export class ITNComponent {
   public inputForm: FormGroup;
   public data$: Observable<any>;
 
-  constructor(private _router: Router, private _service: ReceivingService) {
-    this._service.changeTab(4);
+  constructor(private _router: Router) {
     this.inputForm = new FormGroup({
       receipt: new FormControl('', [Validators.required]),
     });
-    this.data$ = this._service.getReceiptHInfo();
   }
 
   public onChange = (input: string) => {

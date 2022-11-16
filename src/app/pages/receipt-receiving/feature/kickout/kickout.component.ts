@@ -12,7 +12,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
-import { PartStore } from '../../data/part';
+import { ReceiptStore } from '../../data/Receipt';
 
 @Component({
   standalone: true,
@@ -28,10 +28,11 @@ import { PartStore } from '../../data/part';
   template: `
     <form [formGroup]="kickoutForm" (ngSubmit)="onSubmit()">
       <nz-radio-group
+        id="kickoutReason"
         nzSize="large"
         formControlName="kickoutReason"
-        #kickoutReason
         name="kickoutReason"
+        #kickoutReason
       >
         <div class="mb-4 grid grid-cols-3 gap-5">
           <div *ngFor="let option of kickoutOptions">
@@ -75,8 +76,8 @@ import { PartStore } from '../../data/part';
       </div>
     </form>
     <simple-keyboard
-      [inputFromParent]="kickoutForm.value.otherReason"
-      (outputFromChild)="onChange($event)"
+      [inputString]="kickoutForm.value.otherReason"
+      (outputString)="onChange($event)"
     ></simple-keyboard>
   `,
 })
@@ -88,10 +89,13 @@ export class KickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _kickout: KickoutStore,
-    private _part: PartStore
+    private _receipt: ReceiptStore
   ) {}
 
   ngOnInit(): void {
+    if (!this._receipt.receiptLs?.length) {
+      this.onBack();
+    }
     this.kickoutOptions = [
       { id: 1, content: 'Short Quantity' },
       { id: 2, content: 'Damaged' },
@@ -109,21 +113,16 @@ export class KickoutComponent implements OnInit {
     this._kickout.initKickout();
   }
 
-  @ViewChild('kickoutReason') InputKickout: ElementRef;
-  ngAfterViewInit() {
-    this.InputKickout.nativeElement.focus();
-  }
-
   onChange = (input: string) => {
     this.kickoutForm.get('otherReason').setValue(input);
   };
 
   onBack(): void {
-    this._router.navigateByUrl('recyyeiptreceiving/verify');
+    this._router.navigateByUrl('receiptreceiving/part');
   }
 
   onSubmit(): void {
-    this._kickout.updateReasons;
+    this._kickout.updateReasons(this.kickoutForm.value);
     this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
   }
 }
