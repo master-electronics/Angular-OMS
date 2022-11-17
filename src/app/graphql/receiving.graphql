@@ -50,7 +50,7 @@ query findPart($productID: Int) {
     }
 }
 
-query fetchCountryList {
+query fetchCountries {
     fetchCountryList {
         _id
         CountryCode

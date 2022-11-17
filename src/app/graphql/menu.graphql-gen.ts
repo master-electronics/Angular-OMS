@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2349,3 +2354,41 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchMenuListQueryVariables = Types.Exact<{
+  pageName?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FetchMenuListQuery = { __typename?: 'Query', fetchMenuList?: Array<{ __typename?: 'Menu', _id?: number | null, ParentID?: number | null, Route?: string | null, RouteID?: number | null, Front?: string | null, Highlight?: string | null, End?: string | null, CoverSrc?: string | null, ADGroupProtected?: boolean | null, Order?: number | null, Level?: number | null, Groups?: string | null, Title?: string | null } | null> | null };
+
+export const FetchMenuListDocument = gql`
+    query fetchMenuList($pageName: String) {
+  fetchMenuList(pageName: $pageName) {
+    _id
+    ParentID
+    Route
+    RouteID
+    Front
+    Highlight
+    End
+    CoverSrc
+    ADGroupProtected
+    Order
+    Level
+    Groups
+    Title
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchMenuListGQL extends Apollo.Query<FetchMenuListQuery, FetchMenuListQueryVariables> {
+    document = FetchMenuListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

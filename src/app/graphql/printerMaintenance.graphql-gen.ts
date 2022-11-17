@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2349,3 +2354,146 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchPrinterListQueryVariables = Types.Exact<{
+  includeInactive?: Types.InputMaybe<Types.Scalars['Boolean']>;
+}>;
+
+
+export type FetchPrinterListQuery = { __typename?: 'Query', fetchPrinterList?: Array<{ __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, DPI?: number | null, StationName?: string | null } | null> | null };
+
+export type InsertPrinterMutationVariables = Types.Exact<{
+  name?: Types.InputMaybe<Types.Scalars['String']>;
+  description?: Types.InputMaybe<Types.Scalars['String']>;
+  orientation?: Types.InputMaybe<Types.Scalars['String']>;
+  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
+  stationName?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type InsertPrinterMutation = { __typename?: 'Mutation', insertPrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, StationName?: string | null } | null };
+
+export type UpdatePrinterMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  name?: Types.InputMaybe<Types.Scalars['String']>;
+  description?: Types.InputMaybe<Types.Scalars['String']>;
+  orientation?: Types.InputMaybe<Types.Scalars['String']>;
+  active?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  dpi?: Types.InputMaybe<Types.Scalars['Int']>;
+  stationName?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type UpdatePrinterMutation = { __typename?: 'Mutation', updatePrinter?: { __typename?: 'Printer', _id?: number | null, Name?: string | null, Description?: string | null, Orientation?: string | null, Active?: boolean | null, StationName?: string | null } | null };
+
+export type DeletePrinterMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+}>;
+
+
+export type DeletePrinterMutation = { __typename?: 'Mutation', deletePrinter?: { __typename?: 'Printer', _id?: number | null } | null };
+
+export const FetchPrinterListDocument = gql`
+    query fetchPrinterList($includeInactive: Boolean) {
+  fetchPrinterList(includeInactive: $includeInactive) {
+    _id
+    Name
+    Description
+    Orientation
+    Active
+    DPI
+    StationName
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchPrinterListGQL extends Apollo.Query<FetchPrinterListQuery, FetchPrinterListQueryVariables> {
+    document = FetchPrinterListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertPrinterDocument = gql`
+    mutation insertPrinter($name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int, $stationName: String) {
+  insertPrinter(
+    Name: $name
+    Description: $description
+    Orientation: $orientation
+    Active: $active
+    DPI: $dpi
+    StationName: $stationName
+  ) {
+    _id
+    Name
+    Description
+    Orientation
+    Active
+    StationName
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InsertPrinterGQL extends Apollo.Mutation<InsertPrinterMutation, InsertPrinterMutationVariables> {
+    document = InsertPrinterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdatePrinterDocument = gql`
+    mutation updatePrinter($_id: Int!, $name: String, $description: String, $orientation: String, $active: Boolean, $dpi: Int, $stationName: String) {
+  updatePrinter(
+    _id: $_id
+    Name: $name
+    Description: $description
+    Orientation: $orientation
+    Active: $active
+    DPI: $dpi
+    StationName: $stationName
+  ) {
+    _id
+    Name
+    Description
+    Orientation
+    Active
+    StationName
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdatePrinterGQL extends Apollo.Mutation<UpdatePrinterMutation, UpdatePrinterMutationVariables> {
+    document = UpdatePrinterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeletePrinterDocument = gql`
+    mutation deletePrinter($_id: Int!) {
+  deletePrinter(_id: $_id) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeletePrinterGQL extends Apollo.Mutation<DeletePrinterMutation, DeletePrinterMutationVariables> {
+    document = DeletePrinterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

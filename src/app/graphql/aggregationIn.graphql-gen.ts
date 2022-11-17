@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2349,3 +2354,502 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type VerifyContainerForAggregationInQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  Barcode: Types.Scalars['String'];
+}>;
+
+
+export type VerifyContainerForAggregationInQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Barcode: string, ContainerTypeID: number, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerType: { __typename?: 'ContainerType', IsMobile: boolean }, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, ParentITN?: string | null, Product: { __typename?: 'Product', PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, WMSPriority: number, Quantity: number, OrderID: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, DistributionCenter: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number } } | null> | null } | null> | null } | null };
+
+export type FetchLocationAndOrderDetailForAgInQueryVariables = Types.Exact<{
+  OrderID: Types.Scalars['Int'];
+}>;
+
+
+export type FetchLocationAndOrderDetailForAgInQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', _id: number, Quantity: number, StatusID: number, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null } } | null } | null> | null };
+
+export type CountOrderItnsFromMerpQueryVariables = Types.Exact<{
+  LocationCode: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+
+export type CountOrderItnsFromMerpQuery = { __typename?: 'Query', countOrderItns: number };
+
+export type FetchHazardMaterialLevelQueryVariables = Types.Exact<{
+  ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FetchHazardMaterialLevelQuery = { __typename?: 'Query', fetchProductInfoFromMerp?: Array<{ __typename?: 'ProdunctInfoFromMerp', HazardMaterialLevel?: string | null } | null> | null };
+
+export type UpdateAfterAgOutMutationVariables = Types.Exact<{
+  OrderID: Types.Scalars['Int'];
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+  MerpStatus: Types.Scalars['String'];
+  UserOrStatus: Types.Scalars['String'];
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
+}>;
+
+
+export type UpdateAfterAgOutMutation = { __typename?: 'Mutation', updateOrderLineDetail?: Array<number | null> | null, updateOrder?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null, updateMerpOrderStatus: { __typename?: 'Response', success: boolean, message?: string | null }, updateMerpWMSLog: { __typename?: 'Response', success: boolean, message?: string | null } };
+
+export type UpdateContainerAfterAgInMutationVariables = Types.Exact<{
+  sourceContainerID: Types.Scalars['Int'];
+  endContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateContainerAfterAgInMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+
+export type UpdateStatusAfterAgInMutationVariables = Types.Exact<{
+  InventoryIDList: Array<Types.InputMaybe<Types.Scalars['Int']>> | Types.InputMaybe<Types.Scalars['Int']>;
+  StatusID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateStatusAfterAgInMutation = { __typename?: 'Mutation', updateOrderLineDetailList?: Array<number | null> | null };
+
+export type UpdateLocationAndLogAfterAgInMutationVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+  Container: Types.UpdateContainer;
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type UpdateLocationAndLogAfterAgInMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null, insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+
+export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
+}>;
+
+
+export type UpdateMerpWmsLogMutation = { __typename?: 'Mutation', updateMerpWMSLog: { __typename?: 'Response', success: boolean, message?: string | null } };
+
+export type UpdateMerpOrderStatusMutationVariables = Types.Exact<{
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  Status: Types.Scalars['String'];
+  UserOrStatus: Types.Scalars['String'];
+}>;
+
+
+export type UpdateMerpOrderStatusMutation = { __typename?: 'Mutation', updateMerpOrderStatus: { __typename?: 'Response', success: boolean, message?: string | null } };
+
+export type PickOrderForAgOutMutationVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type PickOrderForAgOutMutation = { __typename?: 'Mutation', pickOrderForAgOut?: { __typename?: 'OrderForAgOut', OrderID: number, OrderNumber: string, NOSINumber: string } | null };
+
+export type VerifyOrderForAgOutQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+
+export type VerifyOrderForAgOutQuery = { __typename?: 'Query', countOrderItns: number, findOrder?: { __typename?: 'Order', _id: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null };
+
+export type FetchContainerForAgoutPickQueryVariables = Types.Exact<{
+  OrderID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FetchContainerForAgoutPickQuery = { __typename?: 'Query', findOrderLineDetails?: Array<{ __typename?: 'OrderLineDetail', WMSPriority: number, Quantity: number, Order: { __typename?: 'Order', OrderNumber: string, NOSINumber: string, DistributionCenter: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null }, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Inventory?: { __typename?: 'Inventory', InventoryTrackingNumber: string, ParentITN?: string | null, Container: { __typename?: 'Container', Barcode: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null }, Product: { __typename?: 'Product', PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null } | null> | null };
+
+export const VerifyContainerForAggregationInDocument = gql`
+    query verifyContainerForAggregationIn($DistributionCenter: String!, $Barcode: String!) {
+  findContainer(
+    Container: {DistributionCenter: $DistributionCenter, Barcode: $Barcode}
+  ) {
+    _id
+    Barcode
+    ContainerTypeID
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    ContainerType {
+      IsMobile
+    }
+    INVENTORies {
+      _id
+      InventoryTrackingNumber
+      ParentITN
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+        ProductTier
+      }
+      ORDERLINEDETAILs {
+        _id
+        StatusID
+        WMSPriority
+        Quantity
+        OrderID
+        Order {
+          OrderNumber
+          NOSINumber
+          DistributionCenter
+          ShipmentMethod {
+            _id
+            ShippingMethod
+            PriorityPinkPaper
+          }
+          Customer {
+            CustomerNumber
+            CustomerTier
+          }
+        }
+        OrderLine {
+          OrderLineNumber
+        }
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyContainerForAggregationInGQL extends Apollo.Query<VerifyContainerForAggregationInQuery, VerifyContainerForAggregationInQueryVariables> {
+    document = VerifyContainerForAggregationInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchLocationAndOrderDetailForAgInDocument = gql`
+    query fetchLocationAndOrderDetailForAgIn($OrderID: Int!) {
+  findOrderLineDetails(OrderLineDetail: {OrderID: $OrderID}) {
+    _id
+    Quantity
+    StatusID
+    Inventory {
+      InventoryTrackingNumber
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchLocationAndOrderDetailForAgInGQL extends Apollo.Query<FetchLocationAndOrderDetailForAgInQuery, FetchLocationAndOrderDetailForAgInQueryVariables> {
+    document = FetchLocationAndOrderDetailForAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CountOrderItnsFromMerpDocument = gql`
+    query countOrderItnsFromMerp($LocationCode: String!, $OrderNumber: String!, $NOSINumber: String!) {
+  countOrderItns(
+    LocationCode: $LocationCode
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CountOrderItnsFromMerpGQL extends Apollo.Query<CountOrderItnsFromMerpQuery, CountOrderItnsFromMerpQueryVariables> {
+    document = CountOrderItnsFromMerpDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchHazardMaterialLevelDocument = gql`
+    query fetchHazardMaterialLevel($ProductList: [String]!) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    HazardMaterialLevel
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchHazardMaterialLevelGQL extends Apollo.Query<FetchHazardMaterialLevelQuery, FetchHazardMaterialLevelQueryVariables> {
+    document = FetchHazardMaterialLevelDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateAfterAgOutDocument = gql`
+    mutation updateAfterAgOut($OrderID: Int!, $OrderLineDetail: updateOrderLineDetail!, $DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!, $log: [insertUserEventLog]!, $MerpStatus: String!, $UserOrStatus: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
+  updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+  updateOrder(_id: $OrderID, Order: {isSelected: 0})
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $MerpStatus
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateAfterAgOutGQL extends Apollo.Mutation<UpdateAfterAgOutMutation, UpdateAfterAgOutMutationVariables> {
+    document = UpdateAfterAgOutDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateContainerAfterAgInDocument = gql`
+    mutation updateContainerAfterAgIn($sourceContainerID: Int!, $endContainerID: Int!) {
+  updateInventory(
+    ContainerID: $sourceContainerID
+    Inventory: {ContainerID: $endContainerID}
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateContainerAfterAgInGQL extends Apollo.Mutation<UpdateContainerAfterAgInMutation, UpdateContainerAfterAgInMutationVariables> {
+    document = UpdateContainerAfterAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateStatusAfterAgInDocument = gql`
+    mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
+  updateOrderLineDetailList(
+    InventoryIDList: $InventoryIDList
+    OrderLineDetail: {StatusID: $StatusID}
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateStatusAfterAgInGQL extends Apollo.Mutation<UpdateStatusAfterAgInMutation, UpdateStatusAfterAgInMutationVariables> {
+    document = UpdateStatusAfterAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateLocationAndLogAfterAgInDocument = gql`
+    mutation updateLocationAndLogAfterAgIn($ContainerID: Int!, $Container: updateContainer!, $log: [insertUserEventLog]!) {
+  updateContainer(_id: $ContainerID, Container: $Container)
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateLocationAndLogAfterAgInGQL extends Apollo.Mutation<UpdateLocationAndLogAfterAgInMutation, UpdateLocationAndLogAfterAgInMutationVariables> {
+    document = UpdateLocationAndLogAfterAgInDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateMerpWmsLogDocument = gql`
+    mutation updateMerpWMSLog($DistributionCenter: String!, $FileKeyList: [String!]!, $ActionType: String!, $Action: String!) {
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateMerpWmsLogGQL extends Apollo.Mutation<UpdateMerpWmsLogMutation, UpdateMerpWmsLogMutationVariables> {
+    document = UpdateMerpWmsLogDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateMerpOrderStatusDocument = gql`
+    mutation updateMerpOrderStatus($OrderNumber: String!, $NOSINumber: String!, $Status: String!, $UserOrStatus: String!) {
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $Status
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateMerpOrderStatusGQL extends Apollo.Mutation<UpdateMerpOrderStatusMutation, UpdateMerpOrderStatusMutationVariables> {
+    document = UpdateMerpOrderStatusDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const PickOrderForAgOutDocument = gql`
+    mutation pickOrderForAgOut {
+  pickOrderForAgOut {
+    OrderID
+    OrderNumber
+    NOSINumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class PickOrderForAgOutGQL extends Apollo.Mutation<PickOrderForAgOutMutation, PickOrderForAgOutMutationVariables> {
+    document = PickOrderForAgOutDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyOrderForAgOutDocument = gql`
+    query verifyOrderForAgOut($DistributionCenter: String!, $OrderNumber: String!, $NOSINumber: String!) {
+  findOrder(
+    Order: {DistributionCenter: $DistributionCenter, OrderNumber: $OrderNumber, NOSINumber: $NOSINumber}
+  ) {
+    _id
+    ORDERLINEDETAILs {
+      StatusID
+    }
+  }
+  countOrderItns(
+    LocationCode: $DistributionCenter
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyOrderForAgOutGQL extends Apollo.Query<VerifyOrderForAgOutQuery, VerifyOrderForAgOutQueryVariables> {
+    document = VerifyOrderForAgOutDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchContainerForAgoutPickDocument = gql`
+    query fetchContainerForAgoutPick($OrderID: Int) {
+  findOrderLineDetails(OrderLineDetail: {OrderID: $OrderID}) {
+    WMSPriority
+    Quantity
+    Order {
+      OrderNumber
+      NOSINumber
+      DistributionCenter
+      ShipmentMethod {
+        _id
+        ShippingMethod
+        PriorityPinkPaper
+      }
+      Customer {
+        CustomerNumber
+        CustomerTier
+      }
+    }
+    OrderLine {
+      OrderLineNumber
+    }
+    Inventory {
+      InventoryTrackingNumber
+      ParentITN
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+        ProductTier
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchContainerForAgoutPickGQL extends Apollo.Query<FetchContainerForAgoutPickQuery, FetchContainerForAgoutPickQueryVariables> {
+    document = FetchContainerForAgoutPickDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

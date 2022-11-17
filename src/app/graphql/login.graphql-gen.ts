@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2349,3 +2354,25 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchHostNameQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchHostNameQuery = { __typename?: 'Query', fetchHostName?: string | null };
+
+export const FetchHostNameDocument = gql`
+    query fetchHostName {
+  fetchHostName
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchHostNameGQL extends Apollo.Query<FetchHostNameQuery, FetchHostNameQueryVariables> {
+    document = FetchHostNameDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }

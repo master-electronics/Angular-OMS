@@ -4,8 +4,8 @@ import { NgModule } from '@angular/core';
 import { ReceiptEntry } from './receipt-entry.component';
 import { ReceiptEntryRoutingModule } from './receipt-entry.routing';
 
-import { SharedComponentModule } from 'src/app/components/shared-component.module';
-import { SharedUtilityModule } from 'src/app/shared/shared-utility.module';
+//import { SharedComponentModule } from 'src/app/components/shared-component.module';
+//import { SharedUtilityModule } from 'src/app/shared/shared-utility.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -24,8 +24,6 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     CommonModule,
     FormsModule,
     ReceiptEntryRoutingModule,
-    SharedComponentModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSelectModule,
     NzGridModule,

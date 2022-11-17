@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -2349,3 +2354,183 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FindItNsByShelfQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+}>;
+
+
+export type FindItNsByShelfQuery = { __typename?: 'Query', findContainers?: Array<{ __typename?: 'Container', INVENTORies?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', StatusID: number } | null> | null } | null> | null } | null> | null };
+
+export type FetchCountryListQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchCountryListQuery = { __typename?: 'Query', fetchAllCountry?: Array<{ __typename?: 'Country', _id: number, CountryName: string, ISO2: string, ISO3: string } | null> | null };
+
+export type CreateItnQueryVariables = Types.Exact<{
+  LocationCode: Types.Scalars['String'];
+}>;
+
+
+export type CreateItnQuery = { __typename?: 'Query', createITN: string };
+
+export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
+  UserInfo: Types.InsertUserInfo;
+}>;
+
+
+export type Find_Or_Create_UserInfoMutation = { __typename?: 'Mutation', findOrCreateUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string } | null };
+
+export type Insert_UserEventLogsMutationVariables = Types.Exact<{
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type Insert_UserEventLogsMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+
+export type Update_Merp_QcBinMutationVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+}>;
+
+
+export type Update_Merp_QcBinMutation = { __typename?: 'Mutation', updateMerpQCBin: { __typename?: 'Response', success: boolean } };
+
+export type UpdateContainerMutationVariables = Types.Exact<{
+  Container: Types.UpdateContainer;
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+
+export type UpdateContainerMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null };
+
+export const FindItNsByShelfDocument = gql`
+    query findITNsByShelf($Container: searchContainer!) {
+  findContainers(Container: $Container) {
+    INVENTORies {
+      InventoryTrackingNumber
+      ORDERLINEDETAILs {
+        StatusID
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindItNsByShelfGQL extends Apollo.Query<FindItNsByShelfQuery, FindItNsByShelfQueryVariables> {
+    document = FindItNsByShelfDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchCountryListDocument = gql`
+    query fetchCountryList {
+  fetchAllCountry {
+    _id
+    CountryName
+    ISO2
+    ISO3
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchCountryListGQL extends Apollo.Query<FetchCountryListQuery, FetchCountryListQueryVariables> {
+    document = FetchCountryListDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreateItnDocument = gql`
+    query createITN($LocationCode: String!) {
+  createITN(LocationCode: $LocationCode)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreateItnGQL extends Apollo.Query<CreateItnQuery, CreateItnQueryVariables> {
+    document = CreateItnDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Find_Or_Create_UserInfoDocument = gql`
+    mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
+  findOrCreateUserInfo(UserInfo: $UserInfo) {
+    _id
+    Name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Find_Or_Create_UserInfoGQL extends Apollo.Mutation<Find_Or_Create_UserInfoMutation, Find_Or_Create_UserInfoMutationVariables> {
+    document = Find_Or_Create_UserInfoDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Insert_UserEventLogsDocument = gql`
+    mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Insert_UserEventLogsGQL extends Apollo.Mutation<Insert_UserEventLogsMutation, Insert_UserEventLogsMutationVariables> {
+    document = Insert_UserEventLogsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const Update_Merp_QcBinDocument = gql`
+    mutation update_Merp_QCBin($ITN: String!) {
+  updateMerpQCBin(ITN: $ITN) {
+    success
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class Update_Merp_QcBinGQL extends Apollo.Mutation<Update_Merp_QcBinMutation, Update_Merp_QcBinMutationVariables> {
+    document = Update_Merp_QcBinDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateContainerDocument = gql`
+    mutation updateContainer($Container: updateContainer!, $ContainerID: Int!) {
+  updateContainer(Container: $Container, _id: $ContainerID)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateContainerGQL extends Apollo.Mutation<UpdateContainerMutation, UpdateContainerMutationVariables> {
+    document = UpdateContainerDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
