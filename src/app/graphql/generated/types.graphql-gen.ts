@@ -362,6 +362,7 @@ export type Mutation = {
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
   deletePurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteReceipt?: Maybe<Array<Maybe<ReceiptDeleteResult>>>;
   deleteReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
   deleteReceiptLineDetail?: Maybe<ReceiptLineDetail>;
   deleteReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
@@ -532,6 +533,11 @@ export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
   LocationCode: Scalars['String'];
   PurchaseOrderNumber: Scalars['String'];
+};
+
+
+export type MutationDeleteReceiptArgs = {
+  ReceiptID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1042,6 +1048,7 @@ export type Partcode = {
 
 export type PoLine = {
   __typename?: 'POLine';
+  MaxQuantity?: Maybe<Scalars['Int']>;
   PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
@@ -1414,7 +1421,8 @@ export type QueryFindPoLineArgs = {
 
 
 export type QueryFindPoLinesArgs = {
-  SearchString?: InputMaybe<Scalars['String']>;
+  ProductID?: InputMaybe<Scalars['Int']>;
+  VendorID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1525,6 +1533,11 @@ export type Receipt = {
   SourceType?: Maybe<Scalars['String']>;
   VendorID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
+};
+
+export type ReceiptDeleteResult = {
+  __typename?: 'ReceiptDeleteResult';
+  result?: Maybe<Scalars['Int']>;
 };
 
 export type ReceiptLine = {

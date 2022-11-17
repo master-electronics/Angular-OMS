@@ -367,6 +367,7 @@ export type Mutation = {
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
   deletePurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteReceipt?: Maybe<Array<Maybe<ReceiptDeleteResult>>>;
   deleteReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
   deleteReceiptLineDetail?: Maybe<ReceiptLineDetail>;
   deleteReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
@@ -537,6 +538,11 @@ export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
   LocationCode: Scalars['String'];
   PurchaseOrderNumber: Scalars['String'];
+};
+
+
+export type MutationDeleteReceiptArgs = {
+  ReceiptID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1047,6 +1053,7 @@ export type Partcode = {
 
 export type PoLine = {
   __typename?: 'POLine';
+  MaxQuantity?: Maybe<Scalars['Int']>;
   PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
@@ -1419,7 +1426,8 @@ export type QueryFindPoLineArgs = {
 
 
 export type QueryFindPoLinesArgs = {
-  SearchString?: InputMaybe<Scalars['String']>;
+  ProductID?: InputMaybe<Scalars['Int']>;
+  VendorID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1530,6 +1538,11 @@ export type Receipt = {
   SourceType?: Maybe<Scalars['String']>;
   VendorID?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
+};
+
+export type ReceiptDeleteResult = {
+  __typename?: 'ReceiptDeleteResult';
+  result?: Maybe<Scalars['Int']>;
 };
 
 export type ReceiptLine = {
@@ -2178,7 +2191,8 @@ export type FindReceiptLineQueryVariables = Types.Exact<{
 export type FindReceiptLineQuery = { __typename?: 'Query', findReceiptLine?: { __typename?: 'ReceiptLine', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, ROHS?: boolean | null, LineNumber?: number | null, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLineDetail', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null };
 
 export type FindPoLinesQueryVariables = Types.Exact<{
-  searchString?: Types.InputMaybe<Types.Scalars['String']>;
+  vendorID?: Types.InputMaybe<Types.Scalars['Int']>;
+  productID?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
@@ -2189,7 +2203,7 @@ export type FindPoLineQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindPoLineQuery = { __typename?: 'Query', findPOLine?: Array<{ __typename?: 'POLine', _id: number, PurchaseOrderNumberLine?: string | null } | null> | null };
+export type FindPoLineQuery = { __typename?: 'Query', findPOLine?: Array<{ __typename?: 'POLine', _id: number, PurchaseOrderNumberLine?: string | null, MaxQuantity?: number | null } | null> | null };
 
 export type InsertReceiptMutationVariables = Types.Exact<{
   receipt?: Types.InputMaybe<Types.InsertReceipt>;
@@ -2275,6 +2289,13 @@ export type UpdateReceiptMutationVariables = Types.Exact<{
 
 
 export type UpdateReceiptMutation = { __typename?: 'Mutation', updateReceipt?: Array<number | null> | null };
+
+export type DeleteReceiptMutationVariables = Types.Exact<{
+  receiptID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type DeleteReceiptMutation = { __typename?: 'Mutation', deleteReceipt?: Array<{ __typename?: 'ReceiptDeleteResult', result?: number | null } | null> | null };
 
 export const FetchVendorListDocument = gql`
     query fetchVendorList {
@@ -2507,8 +2528,8 @@ export const FindReceiptLineDocument = gql`
     }
   }
 export const FindPoLinesDocument = gql`
-    query findPOLines($searchString: String) {
-  findPOLines(SearchString: $searchString) {
+    query findPOLines($vendorID: Int, $productID: Int) {
+  findPOLines(VendorID: $vendorID, ProductID: $productID) {
     _id
     PurchaseOrderNumberLine
   }
@@ -2530,6 +2551,7 @@ export const FindPoLineDocument = gql`
   findPOLine(PurchaseOrderLID: $purchaseOrderLID) {
     _id
     PurchaseOrderNumberLine
+    MaxQuantity
   }
 }
     `;
@@ -2772,6 +2794,24 @@ export const UpdateReceiptDocument = gql`
   })
   export class UpdateReceiptGQL extends Apollo.Mutation<UpdateReceiptMutation, UpdateReceiptMutationVariables> {
     document = UpdateReceiptDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteReceiptDocument = gql`
+    mutation deleteReceipt($receiptID: Int) {
+  deleteReceipt(ReceiptID: $receiptID) {
+    result
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteReceiptGQL extends Apollo.Mutation<DeleteReceiptMutation, DeleteReceiptMutationVariables> {
+    document = DeleteReceiptDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

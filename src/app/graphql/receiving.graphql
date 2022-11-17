@@ -108,8 +108,12 @@ query findReceiptLine($receiptLineId: Int) {
     }
 }
 
-query findPOLines($searchString: String) {
-    findPOLines(SearchString: $searchString) {
+query findPOLines(
+    $vendorID: Int
+    $productID: Int) {
+    findPOLines(
+        VendorID: $vendorID
+        ProductID: $productID) {
         _id
         PurchaseOrderNumberLine
     }
@@ -119,6 +123,7 @@ query findPOLine($purchaseOrderLID: Int) {
     findPOLine(PurchaseOrderLID: $purchaseOrderLID) {
         _id
         PurchaseOrderNumberLine
+        MaxQuantity
     }
 }
 
@@ -255,4 +260,14 @@ mutation updateReceipt(
         ExpectedArrivalDate: $expectedArrivalDate
         SourceType: $sourceType
     )
+}
+
+mutation deleteReceipt(
+    $receiptID: Int
+) {
+    deleteReceipt(
+        ReceiptID: $receiptID
+    ) {
+        result
+    }
 }
