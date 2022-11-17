@@ -69,9 +69,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
 
   @ViewChild('barcode') barcode: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.barcode.nativeElement.select();
-    }, 10);
+    this.barcode.nativeElement.select();
   }
 
   onSubmit(): void {

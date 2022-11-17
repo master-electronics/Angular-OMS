@@ -5,8 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QualityControlService } from './quality-control.server';
 import { QualityControlComponent } from './quality-control.component';
 import { QualityControlRoutingModule } from './quality-control.routing';
-import { SharedComponentModule } from '../../components/shared-component.module';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { StepTabsComponent } from './step-tabs/step-tabs.component';
 import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { GlobalMessagesComponent } from './global-messages/global-messages.component';
@@ -27,6 +25,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [
@@ -42,8 +41,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     QualityControlRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
-    SharedUtilityModule,
     // NG ZORRO
     NzInputModule,
     NzSpinModule,
@@ -59,9 +56,9 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzSelectModule,
     NzDrawerModule,
     NzModalModule,
+    FocusInvlidInputDirective,
   ],
   providers: [QualityControlService],
-
   bootstrap: [QualityControlComponent],
 })
 export class QualityControlModule {}

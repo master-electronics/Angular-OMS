@@ -1,0 +1,67 @@
+query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
+  findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
+    RECEIPTLs {
+      _id
+      ExpectedQuantity
+      DateCode
+      ROHS
+      LineNumber
+      ProductID
+      Country {
+        ISO3
+      }
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
+  }
+}
+
+query fetchProductInfoForReceiving(
+  $ProductCode: String!
+  $PartNumber: String!
+) {
+  fetchProductMICFromMerp(ProductCode: $ProductCode, PartNumber: $PartNumber)
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
+  }
+}
+
+query findPartForReceiving($PartNumber: String!) {
+  findProducts(Product: { PartNumber: $PartNumber }) {
+    _id
+    PartNumber
+    ProductCode {
+      ProductCodeNumber
+    }
+  }
+}
+
+mutation ReceivingUpdateReceiptL(
+  $idList: [Int]!
+  $CountryID: Int!
+  $DateCode: String!
+  $ROHS: Boolean!
+) {
+  updateReceiptLsByID(
+    ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, ROHS: $ROHS }
+    idList: $idList
+  )
+}
+
+query printReceivingLabel(
+  $PRINTER: String!
+  $ITN: String!
+  $DPI: String!
+  $ORIENTATION: String!
+) {
+  printReceivingLabel(
+    PRINTER: $PRINTER
+    ITN: $ITN
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
+  )
+}

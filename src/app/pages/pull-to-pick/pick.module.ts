@@ -3,9 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 // Utiltiy Module
-import { SharedComponentModule } from '../../components/shared-component.module';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
-//UI Module
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -18,8 +15,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzRadioModule } from "ng-zorro-antd/radio";
-import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 // local components
 import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
@@ -30,6 +27,7 @@ import { SelectLocationComponent } from './select-location/select-location.compo
 import { DropOffComponent } from './drop-off/drop-off.component';
 import { DetailAuthComponent } from './detail-auth/detail-auth.component';
 import { PullerAssignmentComponent } from './puller-assignment/puller-assignment.component';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [
@@ -45,8 +43,6 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     PickRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSpinModule,
     NzButtonModule,
@@ -63,6 +59,7 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
     NzRadioModule,
     DragDropModule,
     NzCheckboxModule,
+    FocusInvlidInputDirective,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],

@@ -16,7 +16,9 @@ query verifyITNforQc(
     ParentITN
     ROHS
     DateCode
-    CountryOfOrigin
+    Country {
+      ISO2
+    }
     ORDERLINEDETAILs {
       _id
       StatusID

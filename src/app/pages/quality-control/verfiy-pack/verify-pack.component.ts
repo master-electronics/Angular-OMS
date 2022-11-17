@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subscription, throwError } from 'rxjs';
+import { Observable, of, Subscription, throwError } from 'rxjs';
 
 import { dateCodeRegex } from '../../../shared/dataRegex';
 import Countries from '../../../shared/countries';
@@ -22,7 +22,7 @@ import {
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, delay, map, tap } from 'rxjs/operators';
 import { sqlData } from 'src/app/shared/sqlData';
 
 @Component({
@@ -87,7 +87,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       [Validators.pattern(dateCodeRegex)],
     ],
     ROHS: [{ value: '', disabled: true }, [Validators.required]],
-    countryOfOrigin: [{ value: '', disabled: true }, [Validators.required]],
+    countryISO2: [{ value: '', disabled: true }, [Validators.required]],
     countMethods: [1, [Validators.required]],
   });
 
@@ -120,10 +120,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['qc']);
       return;
     }
-    itemInfo.CountryOfOrigin = itemInfo.CountryOfOrigin || 'Unknown';
+    itemInfo.CountryISO2 = itemInfo.CountryISO2 || 'Unknown';
     // Set up for html element
     let selectedCountry = this.countryData.find(
-      (element) => element.name.substring(0, 2) === itemInfo.CountryOfOrigin
+      (element) => element.name.substring(0, 2) === itemInfo.CountryISO2
     );
     selectedCountry ||
       (selectedCountry = this.countryData.find(
@@ -134,7 +134,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       dateCode: itemInfo.DateCode || '',
       ROHS: itemInfo.ROHS,
       countMethods: '',
-      countryOfOrigin: selectedCountry._id,
+      countryISO2: selectedCountry._id,
     });
     this.itemInfo = itemInfo;
 
@@ -189,7 +189,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // set up update query
     let cooValue = '';
     this.countryData.forEach((ele) => {
-      ele._id === this.verifyPack.get('countryOfOrigin').value &&
+      ele._id === this.verifyPack.get('countryISO2').value &&
         (cooValue = ele.name);
     });
     if (cooValue === 'UNKNOWN') {
@@ -200,7 +200,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // update itemInfo
     this.itemInfo.ROHS = this.verifyPack.get('ROHS').value;
-    this.itemInfo.CountryOfOrigin = cooValue;
+    this.itemInfo.CountryISO2 = cooValue;
     this.itemInfo.DateCode = this.verifyPack.get('dateCode').value;
     this.itemInfo.CountMethod = this.verifyPack.get('countMethods').value;
     this.qcService.changeItemParams(this.itemInfo);
@@ -210,7 +210,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Inventory: {
         ROHS: this.itemInfo.ROHS,
-        CountryOfOrigin: this.itemInfo.CountryOfOrigin,
+        CountryOfOrigin: this.itemInfo.CountryISO2,
         DateCode: this.itemInfo.DateCode,
       },
     });
@@ -257,13 +257,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isEditable = true;
     this.verifyPack.controls['ROHS'].enable();
     this.verifyPack.controls['dateCode'].enable();
-    this.verifyPack.controls['countryOfOrigin'].enable();
+    this.verifyPack.controls['countryISO2'].enable();
     this.dateCodeInput.nativeElement.select();
   }
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.quantityInput.nativeElement.select();
-    }, 10);
+    this.quantityInput.nativeElement.select();
   }
 
   print(): void {
@@ -298,9 +296,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   holdVisible = false;
   open(): void {
     this.holdVisible = true;
-    setTimeout(() => {
-      this.holdInput.nativeElement.select();
-    }, 10);
+    of([])
+      .pipe(delay(10))
+      .subscribe(() => {
+        this.holdInput.nativeElement.select();
+      });
   }
 
   close(): void {

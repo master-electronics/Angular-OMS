@@ -58,9 +58,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.ITNInput.nativeElement.select();
-    }, 10);
+    this.ITNInput.nativeElement.select();
   }
 
   onSubmit(): void {
@@ -138,7 +136,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               ParentITN: detail.ParentITN?.trim() || '',
               ROHS: detail.ROHS,
               DateCode: detail.DateCode?.trim() || '',
-              CountryOfOrigin: detail.CountryOfOrigin?.trim() || '',
+              CountryISO2: detail.Country?.ISO2 || '',
               CountMethod: '',
               isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()

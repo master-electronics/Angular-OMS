@@ -3,3 +3,4 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import '../node_modules/angular-calendar/css/angular-calendar.css';
+@import 'simple-keyboard/build/css/index.css';

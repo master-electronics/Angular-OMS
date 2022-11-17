@@ -82,9 +82,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
   @ViewChild('container') containerInput!: ElementRef;
   @ViewChild('containerError') containerError!: ElementRef;
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.containerInput.nativeElement.select();
-    }, 10);
+    this.containerInput.nativeElement.select();
   }
 
   findDetailID(): void {
@@ -203,7 +201,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
           const updatQCComplete = this.updateMerp.mutate({
             InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
             DateCode: this.itemInfo.DateCode,
-            CountryOfOrigin: this.itemInfo.CountryOfOrigin,
+            CountryOfOrigin: this.itemInfo.CountryISO2,
             ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
             CountMethod: this.itemInfo.CountMethod,
           });

@@ -3,41 +3,52 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../shared/services/common.service';
 import {
   FetchUserEventLogGQL,
+  FetchUserEventsGQL,
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
-import { map } from 'rxjs/operators';
+import { last, map, tap } from 'rxjs/operators';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'event-log',
   templateUrl: './event-log.component.html',
 })
 export class EventLogComponent implements OnInit {
-  isLoading = false;
-  urlParams;
-  startDate;
-  endDate;
+  public isLoading = false;
+  public urlParams;
+  public startDate;
+  public endDate;
   constructor(
     private fb: UntypedFormBuilder,
     private commonService: CommonService,
     private route: ActivatedRoute,
     private fetchUser: FetchUserInfoGQL,
-    private fetchEventLog: FetchUserEventLogGQL
+    private fetchEventLog: FetchUserEventLogGQL,
+    private _fetchUserEvents: FetchUserEventsGQL
   ) {
     this.commonService.changeNavbar('User Event Logs');
   }
 
   filterForm = this.fb.group({
     user: [''],
-    module: [''],
     order: ['', [Validators.pattern(OrderBarcodeRegex)]],
     ITN: ['', [Validators.pattern(ITNBarcodeRegex)]],
     timeRange: [''],
+    events: [[]],
   });
 
-  fetchUser$;
+  public fetchUser$: Observable<{ _id: number; Name: string }[]> = null;
+  public listOfEvent$: Observable<
+    {
+      label: string;
+      value: string;
+      groupLabel: string;
+    }[]
+  >;
   ngOnInit(): void {
     this.fetchUser$ = this.fetchUser
       .fetch()
@@ -50,6 +61,16 @@ export class EventLogComponent implements OnInit {
     if (this.urlParams.UserName) {
       this.filterForm.get('user').setValue(this.urlParams.UserName);
     }
+
+    this.listOfEvent$ = this._fetchUserEvents.fetch().pipe(
+      map((res) => {
+        return res.data.findUserEvents.map((res) => ({
+          label: res.Module + '-' + res.Event,
+          value: res._id,
+          groupLabel: res.Module,
+        }));
+      })
+    );
   }
 
   resetForm(): void {
@@ -64,6 +85,7 @@ export class EventLogComponent implements OnInit {
     this.endDate = null;
   }
 
+  public fetchTable$: Observable<any>;
   onSubmit(): void {
     if (this.filterForm.invalid || this.isLoading) {
       return;
@@ -71,7 +93,9 @@ export class EventLogComponent implements OnInit {
     const eventLog = {};
     const userName =
       this.urlParams.UserName || this.filterForm.get('user').value;
-    const module = Number(this.filterForm.get('module').value);
+    const events = this.filterForm
+      .get('events')
+      .value.map((res) => Number(res));
     const order = this.filterForm.get('order').value.toUpperCase();
     const ITN = this.filterForm.get('ITN').value.toUpperCase();
     let limit = 200;
@@ -79,7 +103,7 @@ export class EventLogComponent implements OnInit {
       eventLog['UserName'] = userName;
       limit = 500;
     }
-    if (module) {
+    if (events) {
       limit = 500;
     }
     if (order) {
@@ -92,15 +116,14 @@ export class EventLogComponent implements OnInit {
       limit = null;
     }
     if (this.startDate) {
-      limit = 500;
+      limit = null;
     }
-    this.isLoading = true;
     this.fetchTable$ = this.fetchEventLog
       .fetch(
         {
           limit: limit,
           UserEventLog: eventLog,
-          Module: module,
+          Modules: events,
           startDate: this.startDate,
           endDate: this.endDate,
         },
@@ -108,13 +131,20 @@ export class EventLogComponent implements OnInit {
       )
       .pipe(
         map((res) => {
-          this.isLoading = false;
-          this.tableData = res.data.findUserEventLogs.map((log) => {
-            const result = { ...log };
-            const tmp = new Date(Number(log.DateTime));
-            result.DateTime = tmp.toLocaleString();
+          return res.data.findUserEventLogs.map((log) => {
+            const result = {
+              ...log,
+              Module: log.UserEvent.Module,
+              Event: log.UserEvent.Event,
+            };
+            result.DateTime = new Date(Number(log.DateTime)).toLocaleString();
+            delete result.UserEvent;
+            delete result.__typename;
             return result;
           });
+        }),
+        tap((res) => {
+          this.ws = XLSX.utils.json_to_sheet(res);
         })
       );
   }
@@ -125,8 +155,6 @@ export class EventLogComponent implements OnInit {
   }
 
   // table setting:
-  fetchTable$;
-  tableData = [];
 
   expandSet = new Set<number>();
   onExpandChange(id: number, checked: boolean): void {
@@ -136,5 +164,14 @@ export class EventLogComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
+  public ws: XLSX.WorkSheet;
+  exportexcel(): void {
+    /* table id is passed over here */
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(wb, `${this.startDate?.substring(0, 10)}.xlsx`);
+  }
 }
-null;

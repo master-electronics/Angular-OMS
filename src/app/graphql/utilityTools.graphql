@@ -9,6 +9,19 @@ query findITNsByShelf($Container: searchContainer!) {
   }
 }
 
+query fetchCountryList {
+  fetchAllCountry {
+    _id
+    CountryName
+    ISO2
+    ISO3
+  }
+}
+
+query createITN($LocationCode: String!) {
+  createITN(LocationCode: $LocationCode)
+}
+
 mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
   findOrCreateUserInfo(UserInfo: $UserInfo) {
     _id

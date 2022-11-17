@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedComponentModule } from '../../components/shared-component.module';
 
 import { AggregationInComponent } from './aggregation-in.component';
 import { LocationComponent } from './location/location.component';
 import { AggregationInRoutingModule } from './aggregation-in.routing';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
 import { AggregationInService } from './aggregation-in.server';
 // ng-zorro
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -19,6 +17,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { VerifyToteComponent } from './verify-tote/verify-tote.component';
 import { VerifyITNComponent } from './verify-itn/verify-itn.component';
+import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
   declarations: [
@@ -32,8 +31,6 @@ import { VerifyITNComponent } from './verify-itn/verify-itn.component';
     AggregationInRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedComponentModule,
-    SharedUtilityModule,
     NzInputModule,
     NzSpinModule,
     NzButtonModule,
@@ -42,6 +39,7 @@ import { VerifyITNComponent } from './verify-itn/verify-itn.component';
     NzDescriptionsModule,
     NzSkeletonModule,
     NzDividerModule,
+    FocusInvlidInputDirective,
   ],
   providers: [AggregationInService],
   bootstrap: [AggregationInComponent],

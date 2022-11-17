@@ -1,11 +1,8 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ValueMapping } from "./value-mapping.component";
-import { ValueMappingRoutingModule } from "./value-mapping.routing";
-
-import { SharedComponentModule } from '../../components/shared-component.module';
-import { SharedUtilityModule } from '../../shared/shared-utility.module';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ValueMapping } from './value-mapping.component';
+import { ValueMappingRoutingModule } from './value-mapping.routing';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -23,31 +20,27 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 @NgModule({
-    declarations: [
-        ValueMapping,
-    ],
-    imports: [
-        CommonModule,
-        ValueMappingRoutingModule,
-        SharedComponentModule,
-        SharedUtilityModule,
-        NzInputModule,
-        NzTableModule,
-        NzButtonModule,
-        NzListModule,
-        NzCardModule,
-        NzDropDownModule,
-        NzFormModule,
-        NzDatePickerModule,
-        NzSelectModule,
-        NzDividerModule,
-        NzInputNumberModule,
-        NzIconModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NzPopconfirmModule,
-        NzAlertModule,
-    ],
-    bootstrap: [ValueMapping],
+  declarations: [ValueMapping],
+  imports: [
+    CommonModule,
+    ValueMappingRoutingModule,
+    NzInputModule,
+    NzTableModule,
+    NzButtonModule,
+    NzListModule,
+    NzCardModule,
+    NzDropDownModule,
+    NzFormModule,
+    NzDatePickerModule,
+    NzSelectModule,
+    NzDividerModule,
+    NzInputNumberModule,
+    NzIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NzPopconfirmModule,
+    NzAlertModule,
+  ],
+  bootstrap: [ValueMapping],
 })
 export class ValueMappingModule {}

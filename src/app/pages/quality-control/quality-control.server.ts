@@ -24,15 +24,6 @@ export class QualityControlService {
     return this._globalMessage.value;
   }
 
-  // task start time
-  private _qcStartTime = new BehaviorSubject<number>(0);
-  public resetQCStartTime(date: number): void {
-    this._qcStartTime.next(date);
-  }
-  public get qcStart(): number {
-    return this._qcStartTime.value;
-  }
-
   // item info
   private _itemInfo = new BehaviorSubject<itemParams>(null);
   public changeItemParams(item: itemParams): void {
@@ -58,7 +49,7 @@ export interface itemParams {
   Quantity: number;
   ParentITN: string;
   ROHS: boolean;
-  CountryOfOrigin: string;
+  CountryISO2: string;
   DateCode: string;
   CountMethod: string;
   isHold: boolean;

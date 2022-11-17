@@ -95,9 +95,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.orderInpt.nativeElement.select();
-    }, 10);
+    this.orderInpt.nativeElement.select();
   }
 
   onSubmit(): void {
