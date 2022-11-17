@@ -64,6 +64,22 @@
           DPI
         </th>
         <th
+          nzWidth="30%"
+          nzCustomFilter
+          [nzSortOrder]="null"
+          [nzSortDirections]="['ascend', 'descend']"
+          [nzSortFn]="sortStationNameFn"
+        >
+          Station Name
+          <nz-filter-trigger
+            [(nzVisible)]="stationNameFilterVisible"
+            [nzActive]="stationNameFilterActive"
+            [nzDropdownMenu]="stationNameFilterMenu"
+          >
+            <i nz-icon nzType="search"></i>
+          </nz-filter-trigger>
+        </th>
+        <th
           *ngIf="includeInactive"
           nzWidth="10%"
           [nzSortOrder]="null"
@@ -97,6 +113,7 @@
             </div>
           </td>
           <td>{{ data.DPI }}</td>
+          <td>{{ data.StationName }}</td>
           <td *ngIf="includeInactive">{{ data.Active ? 'Y' : 'N' }}</td>
           <td>
             <button
@@ -259,6 +276,17 @@
             style="width: 100%" nzPlaceHolder="DPI"></nz-select>
         </td>
         <td>
+          <input
+            #addStationName
+            nz-input
+            type="text"
+            maxlength="100"
+            style="width: 90%"
+            placeholder="Station Name"
+            [(ngModel)]="addPrinterStationName"
+          />
+        </td>
+        <td>
           <button
             nz-button
             (click)="addPrinter(addName, addDescription)"
@@ -331,7 +359,7 @@
           type="text"
           nz-input
           oninput="this.value = this.value"
-          placeholder="Name"
+          placeholder="Description"
           class="col-span-2"
           #descriptionFilterInput
         />
@@ -348,6 +376,36 @@
           nz-button
           nzSize="small"
           (click)="descriptionFilterInput.value = ''; clearDescriptionFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </nz-dropdown-menu>
+  <nz-dropdown-menu #stationNameFilterMenu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+      <div class="px-2 py-2 grid grid-cols-2 gap-2">
+        <input
+          type="tedxt"
+          nz-input
+          oninput="this.value = this.value"
+          placeholder="Station Name"
+          class="col-span-2"
+          #stationNameFilterInput
+        />
+        <button
+          nz-button
+          nzSize="small"
+          nzType="primary"
+          (click)="setStationNameFilter(stationNameFilterInput.value)"
+          class="search-button"
+        >
+          Search
+        </button>
+        <button
+          nz-button
+          nzSize="small"
+          (click)="stationNameFilterInput.value = ''; clearStationNameFilter()"
         >
           Reset
         </button>

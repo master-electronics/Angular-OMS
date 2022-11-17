@@ -652,6 +652,7 @@ export type MutationInsertPrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  StationName?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -904,6 +905,7 @@ export type MutationUpdatePrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  StationName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -1065,6 +1067,7 @@ export type Printer = {
   Description?: Maybe<Scalars['String']>;
   Name?: Maybe<Scalars['String']>;
   Orientation?: Maybe<Scalars['String']>;
+  StationName?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -1134,6 +1137,7 @@ export type Query = {
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
+  fetchHostName?: Maybe<Scalars['String']>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
@@ -1195,6 +1199,7 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
+  testHostname: Scalars['String'];
 };
 
 
