@@ -33,18 +33,19 @@ export class ReceiptStore {
       .fetch(
         {
           ReceiptHID,
+          statusID: 10,
         },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
         tap((res) => {
-          if (!res.data.findReceiptH) {
+          if (!res.data.findReceiptInfoByIdAndStatus) {
             throw new Error("Can't find this Receipt!");
           }
-          if (!res.data.findReceiptH.RECEIPTLs.length) {
+          if (!res.data.findReceiptInfoByIdAndStatus.RECEIPTLs.length) {
             throw new Error('No receipt lines under this Receipt!');
           }
-          this._receiptHeader.next(res.data.findReceiptH);
+          this._receiptHeader.next(res.data.findReceiptInfoByIdAndStatus);
         }),
         shareReplay(1)
       );
@@ -129,5 +130,26 @@ export class ReceiptStore {
       (res) => res.ExpectedQuantity === Quantity
     );
     this._receiptLsAfterQuantity.next(tmp);
+  }
+
+  /**
+   * After two filter, still have multi lines, let user select one line.
+   */
+  private _selectedReceiptLine = new BehaviorSubject<any>(null);
+  /**
+   * get selectedReceiptLine
+   */
+  public get selectedReceiptLine() {
+    return this._selectedReceiptLine.value;
+  }
+
+  /**
+   * pickOneReceiptLine
+   */
+  public pickOneReceiptLine(id: number) {
+    const selected = this.receiptLsAfterQuantity.filter(
+      (res) => res._id === id
+    );
+    this._selectedReceiptLine.next(selected);
   }
 }

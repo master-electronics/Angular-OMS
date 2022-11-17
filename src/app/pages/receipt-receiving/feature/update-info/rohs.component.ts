@@ -81,10 +81,10 @@ export class ROHSComponent implements OnInit {
       map(() => {
         switch (this._receipt.receiptLsAfterQuantity?.length) {
           case 1:
-            this._router.navigateByUrl('receiptreceiving/assignlabel');
+            this._router.navigateByUrl('receiptreceiving/label/assignlabel');
             break;
           default:
-            this._router.navigateByUrl('receiptreceiving/selectline');
+            this._router.navigateByUrl('receiptreceiving/label/selectline');
         }
       }),
       catchError((error) => {

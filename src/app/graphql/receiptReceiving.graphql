@@ -1,10 +1,11 @@
-query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
-  findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
+  findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
     RECEIPTLs {
       _id
       ExpectedQuantity
       DateCode
       ROHS
+      LineNumber
       ProductID
       Country {
         ISO3
@@ -14,28 +15,6 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
         ProductCode {
           ProductCodeNumber
         }
-      }
-    }
-  }
-}
-
-query findPurchaseOrderForReceiving($idList: Int!) {
-  findReceiptLs(ReceiptL: { ProductID: $ProductID }) {
-    DateCode
-    ROHS
-    Country {
-      ISO3
-    }
-    RECEIPTLDs {
-      ExpectedQuantity
-      PurchaseOrderL {
-        LineNumber
-        PurchaseOrderH {
-          PurchaseOrderNumber
-        }
-      }
-      ReceiptStatus {
-        Name
       }
     }
   }

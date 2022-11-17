@@ -6,6 +6,7 @@ import { UIStateStore } from 'src/app/shared/data/app-ui-state';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
 import { KickoutStore } from './data/kickout';
+import { LabelStore } from './data/label';
 import { ReceiptStore } from './data/Receipt';
 import { ReceivingStore, Tab } from './data/receivingStore';
 import { updateReceiptStore } from './data/updateReceipt';
@@ -19,6 +20,7 @@ import { updateReceiptStore } from './data/updateReceipt';
     KickoutStore,
     UIStateStore,
     updateReceiptStore,
+    LabelStore,
   ],
   template: `
     <ng-container *ngIf="tab$ | async as input">
@@ -56,8 +58,7 @@ export class ReceivingComponent implements OnInit {
     {
       title: 'Label',
       subtitle: '',
-      description: 'Assign Label Quantity',
+      description: 'Assign Print',
     },
-    { title: 'ITN', subtitle: '', description: 'Print ITNs' },
   ];
 }

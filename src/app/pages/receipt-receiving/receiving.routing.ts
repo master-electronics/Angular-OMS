@@ -1,10 +1,10 @@
-import { Routes, RouterModule } from '@angular/router';
-import { ReceivingComponent } from './receiving.component';
+import { Routes } from '@angular/router';
 
 export const ReceivingRoutes: Routes = [
   {
     path: '',
-    component: ReceivingComponent,
+    loadComponent: () =>
+      import('./receiving.component').then((m) => m.ReceivingComponent),
     children: [
       {
         path: 'receipt',
@@ -96,7 +96,7 @@ export const ReceivingRoutes: Routes = [
       {
         path: 'label/printitn',
         loadComponent: () =>
-          import('./feature/printItn.component').then(
+          import('./feature/label/printItn.component').then(
             (mod) => mod.PrintITNComponent
           ),
       },

@@ -111,6 +111,11 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnAndQuantity = {
+  ITN?: InputMaybe<Scalars['String']>;
+  quantity?: InputMaybe<Scalars['Float']>;
+};
+
 export type ItnColumn = {
   __typename?: 'ITNColumn';
   _id?: Maybe<Scalars['Int']>;
@@ -380,6 +385,7 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
+  updateAfterScanITN?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -620,6 +626,12 @@ export type MutationInsertValueMapArgs = {
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
+};
+
+export type MutationUpdateAfterScanItnArgs = {
+  ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
+  Inventory: UpdateInventory;
+  ReceiptLID: Scalars['Int'];
 };
 
 export type MutationUpdateContainerArgs = {
@@ -1028,6 +1040,7 @@ export type Query = {
   findPurchaseOrderLs?: Maybe<Array<Maybe<PurchaseOrderL>>>;
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
+  findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -1261,6 +1274,11 @@ export type QueryFindReceiptHArgs = {
 export type QueryFindReceiptHsArgs = {
   ReceiptH: SearchReceiptH;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFindReceiptInfoByIdAndStatusArgs = {
+  ReceiptHID: Scalars['Int'];
+  statusID: Scalars['Int'];
 };
 
 export type QueryFindReceiptLArgs = {

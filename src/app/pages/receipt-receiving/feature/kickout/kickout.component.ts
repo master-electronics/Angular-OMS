@@ -38,7 +38,7 @@ import { ReceiptStore } from '../../data/Receipt';
         name="kickoutReason"
         #kickoutReason
       >
-        <div class="mb-4 grid grid-cols-3 gap-5">
+        <div class="mb-4 grid grid-cols-3 justify-center gap-5">
           <div *ngFor="let option of kickoutOptions">
             <label nz-radio-button [nzValue]="option.id">{{
               option.content
@@ -140,7 +140,7 @@ export class KickoutComponent implements OnInit {
       .printReceivingLabel$('PHLABELS139', '300', 'LANDSCAPE')
       .pipe(
         map(() => {
-          this._router.navigateByUrl('receiptreceiving/kickout/scanlabel');
+          this._router.navigateByUrl('receiptreceiving/part');
         }),
         catchError((error) => {
           return of({ message: error.message, messageType: 'error' });

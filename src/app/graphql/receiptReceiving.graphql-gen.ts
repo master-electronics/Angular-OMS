@@ -116,6 +116,11 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type ItnAndQuantity = {
+  ITN?: InputMaybe<Scalars['String']>;
+  quantity?: InputMaybe<Scalars['Float']>;
+};
+
 export type ItnColumn = {
   __typename?: 'ITNColumn';
   _id?: Maybe<Scalars['Int']>;
@@ -385,6 +390,7 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
+  updateAfterScanITN?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -625,6 +631,12 @@ export type MutationInsertValueMapArgs = {
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
+};
+
+export type MutationUpdateAfterScanItnArgs = {
+  ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
+  Inventory: UpdateInventory;
+  ReceiptLID: Scalars['Int'];
 };
 
 export type MutationUpdateContainerArgs = {
@@ -1033,6 +1045,7 @@ export type Query = {
   findPurchaseOrderLs?: Maybe<Array<Maybe<PurchaseOrderL>>>;
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
+  findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -1266,6 +1279,11 @@ export type QueryFindReceiptHArgs = {
 export type QueryFindReceiptHsArgs = {
   ReceiptH: SearchReceiptH;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFindReceiptInfoByIdAndStatusArgs = {
+  ReceiptHID: Scalars['Int'];
+  statusID: Scalars['Int'];
 };
 
 export type QueryFindReceiptLArgs = {
@@ -2002,11 +2020,12 @@ export type ValueMap = {
 
 export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
   ReceiptHID: Types.Scalars['Int'];
+  statusID: Types.Scalars['Int'];
 }>;
 
 export type FindReceiptHeaderForReceivingQuery = {
   __typename?: 'Query';
-  findReceiptH?: {
+  findReceiptInfoByIdAndStatus?: {
     __typename?: 'ReceiptH';
     RECEIPTLs?: Array<{
       __typename?: 'ReceiptL';
@@ -2014,6 +2033,7 @@ export type FindReceiptHeaderForReceivingQuery = {
       ExpectedQuantity: number;
       DateCode?: string | null;
       ROHS?: boolean | null;
+      LineNumber: number;
       ProductID: number;
       Country?: { __typename?: 'Country'; ISO3: string } | null;
       Product: {
@@ -2023,33 +2043,6 @@ export type FindReceiptHeaderForReceivingQuery = {
       };
     } | null> | null;
   } | null;
-};
-
-export type FindReceiptLineForReceivingQueryVariables = Types.Exact<{
-  ProductID: Types.Scalars['Int'];
-}>;
-
-export type FindReceiptLineForReceivingQuery = {
-  __typename?: 'Query';
-  findReceiptLs?: Array<{
-    __typename?: 'ReceiptL';
-    DateCode?: string | null;
-    ROHS?: boolean | null;
-    Country?: { __typename?: 'Country'; ISO3: string } | null;
-    RECEIPTLDs?: Array<{
-      __typename?: 'ReceiptLD';
-      ExpectedQuantity: number;
-      PurchaseOrderL?: {
-        __typename?: 'PurchaseOrderL';
-        LineNumber: number;
-        PurchaseOrderH: {
-          __typename?: 'PurchaseOrderH';
-          PurchaseOrderNumber: string;
-        };
-      } | null;
-      ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
-    } | null> | null;
-  } | null> | null;
 };
 
 export type FetchProductInfoForReceivingQueryVariables = Types.Exact<{
@@ -2107,13 +2100,14 @@ export type PrintReceivingLabelQuery = {
 };
 
 export const FindReceiptHeaderForReceivingDocument = gql`
-  query findReceiptHeaderForReceiving($ReceiptHID: Int!) {
-    findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+  query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
+    findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
       RECEIPTLs {
         _id
         ExpectedQuantity
         DateCode
         ROHS
+        LineNumber
         ProductID
         Country {
           ISO3
@@ -2137,43 +2131,6 @@ export class FindReceiptHeaderForReceivingGQL extends Apollo.Query<
   FindReceiptHeaderForReceivingQueryVariables
 > {
   document = FindReceiptHeaderForReceivingDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const FindReceiptLineForReceivingDocument = gql`
-  query findReceiptLineForReceiving($ProductID: Int!) {
-    findReceiptLs(ReceiptL: { ProductID: $ProductID }) {
-      DateCode
-      ROHS
-      Country {
-        ISO3
-      }
-      RECEIPTLDs {
-        ExpectedQuantity
-        PurchaseOrderL {
-          LineNumber
-          PurchaseOrderH {
-            PurchaseOrderNumber
-          }
-        }
-        ReceiptStatus {
-          Name
-        }
-      }
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FindReceiptLineForReceivingGQL extends Apollo.Query<
-  FindReceiptLineForReceivingQuery,
-  FindReceiptLineForReceivingQueryVariables
-> {
-  document = FindReceiptLineForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

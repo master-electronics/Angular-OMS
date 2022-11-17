@@ -1,22 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import {
-  catchError,
-  map,
-  mergeMap,
-  Observable,
-  of,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
-import { FindReceiptLineForReceivingGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { ReceiptStore } from '../../data/Receipt';
 import { ReceivingStore } from '../../data/receivingStore';
-import { TableViewComponent } from '../../ui/table-view.component';
+import { TableViewComponent } from '../../../../shared/ui/table-view.component';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 interface DataItem {
   PurchaseOrder: string;
@@ -27,29 +16,37 @@ interface DataItem {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, TableViewComponent, NzSkeletonModule],
+  imports: [CommonModule, TableViewComponent, NzRadioModule, NzButtonModule],
   template: `
-    <div *ngIf="table$ | async as table">
-      <div *ngIf="!table.loading; else loading">
-        <p class="mt-2">Purchase Order List</p>
-        <table-view
-          [listOfData]="table.value"
-          [listOfColumn]="listOfColumn"
-          (click)="onClick($event)"
-        ></table-view>
-      </div>
+    <div class="grid-col-1 grid justify-center gap-12">
+      <h1 class="text-lg">Select One Receipt Line:</h1>
+      <nz-radio-group nzSize="large">
+        <div
+          *ngFor="let option of data"
+          class="mb-4 grid grid-cols-2 justify-center gap-5"
+        >
+          <label
+            nz-radio-button
+            [nzValue]="option.id"
+            (click)="onClick(option)"
+            >{{ option.content }}</label
+          >
+        </div>
+      </nz-radio-group>
+      <button
+        class="w-32"
+        nz-button
+        nzSize="large"
+        type="button"
+        (click)="onBack()"
+      >
+        Back
+      </button>
     </div>
-    <ng-template #loading>
-      <nz-skeleton-element
-        nzType="image"
-        [nzActive]="true"
-      ></nz-skeleton-element>
-      <nz-skeleton [nzActive]="true"></nz-skeleton>
-    </ng-template>
   `,
 })
 export class SelectLineComponent implements OnInit {
-  public table$: Observable<any>;
+  public data;
   public listOfColumn = [];
 
   constructor(
@@ -60,13 +57,19 @@ export class SelectLineComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
-      // this.onBack();
+      this.onBack();
     }
+    this.data = this._receipt.receiptLsAfterQuantity.map((res) => ({
+      id: res._id,
+      content: `Line ${res.LineNumber}`,
+    }));
     this._tab.changeSteps(3);
   }
 
   public onClick(data): void {
-    this._router.navigateByUrl('receiptreceiving/purchaseorder/assignlabel');
+    console.log(data);
+    this._receipt.pickOneReceiptLine(data._id);
+    this._router.navigateByUrl('receiptreceiving/label/assign');
   }
 
   public onBack(): void {
