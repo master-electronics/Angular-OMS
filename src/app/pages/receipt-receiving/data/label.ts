@@ -8,6 +8,7 @@ import {
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { ReceiptStore } from './Receipt';
+import { updateReceiptStore } from './updateReceipt';
 
 export interface ITNinfo {
   ITN: string;
@@ -20,6 +21,7 @@ export interface ITNinfo {
 export class LabelStore {
   constructor(
     private _receipt: ReceiptStore,
+    private _partInfo: updateReceiptStore,
     private _print: PrintReceivingLabelGQL,
     private _container: CheckBinLocationGQL,
     private _itn: CreateItnGQL,
@@ -171,10 +173,10 @@ export class LabelStore {
     const userinfo = sessionStorage.getItem('userToken');
     const Inventory = {
       DistributionCenter: environment.DistributionCenter,
-      DateCode: line.DateCode,
-      ROHS: line.ROHS,
       ProductID: line.ProductID,
-      CountryID: line.CountryID,
+      DateCode: this._partInfo.receiptInfo.DateCode,
+      ROHS: this._partInfo.receiptInfo.ROHS,
+      CountryID: this._partInfo.receiptInfo.CountryID,
     };
     const info = {
       PartNumber: line.Product?.PartNumber || 'null',
