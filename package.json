@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:d1": "ng build ---configuration=d1",
+    "build:dev": "ng build --configuration=dev",
     "watch": "ng build --watch --configuration development",
     "cypress:run": "cypress run --record --key 44dfdd28-8118-4667-832f-96dcd359110d",
     "docker": "git checkout main && git pull && npm run build && sudo docker-compose up --build -d",
