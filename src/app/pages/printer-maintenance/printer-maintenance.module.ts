@@ -15,6 +15,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @NgModule({
   declarations: [PrinterMaintenance],
@@ -34,6 +35,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzCheckboxModule,
     NzSpinModule,
     NzSelectModule,
+    NzGridModule,
   ],
 })
 export class PrinterMaintenanceModule {}

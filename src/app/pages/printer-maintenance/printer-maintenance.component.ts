@@ -373,6 +373,7 @@ export class PrinterMaintenance implements OnInit {
               this.addPrinterDescription = '';
               this.addPrinterOrientation = '';
               this.addPrinterDPI = null;
+              this.addPrinterStationName = '';
               this.isLoading = false;
             },
             (error) => {

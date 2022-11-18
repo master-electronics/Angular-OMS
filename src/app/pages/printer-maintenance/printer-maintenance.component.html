@@ -1,4 +1,4 @@
-<div class="container px-4 py-4 mx-auto">
+<div class="container px-4 py-4">
   <div *ngIf="fetchTable$ | async"></div>
   <div class="progress" *ngIf="isLoading">
     <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
@@ -12,6 +12,7 @@
     [(nzPageIndex)]="pageNumber"
     nzShowSizeChanger
     (nzPageIndexChange)="scrollToTop()"
+    style="width: 90%"
   >
     <thead>
       <tr>
@@ -200,6 +201,16 @@
               style="width: 100%" nzPlaceHolder="DPI"
               [nzOptions]="dpiOptions">
             </nz-select>
+          </td>
+          <td>
+            <input
+              #editStationName
+              type="text"
+              maxlength="100"
+              nz-input
+              [(ngModel)]="editCache[data.ID].data.StationName"
+              style="width: 90%"
+            />
           </td>
           <td>
             <button
