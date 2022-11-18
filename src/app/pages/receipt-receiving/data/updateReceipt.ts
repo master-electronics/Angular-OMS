@@ -8,6 +8,7 @@ interface ReceiptInfo {
   DateCode?: string;
   CountryID?: number;
   ROHS?: boolean;
+  ISO3?: string;
 }
 
 @Injectable()
@@ -41,10 +42,11 @@ export class updateReceiptStore {
   /**
    * updateCountryID
    */
-  public updateCountryID(CountryID: number): void {
+  public updateCountry(CountryID: number, ISO3: string): void {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
       CountryID,
+      ISO3,
     });
   }
   /**

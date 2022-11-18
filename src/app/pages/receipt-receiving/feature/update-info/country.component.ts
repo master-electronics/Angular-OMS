@@ -80,7 +80,8 @@ export class CountryComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._info.updateCountryID(Number(this.inputForm.value.country));
+    const [iso3, id] = this.inputForm.value.country.split('|');
+    this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }
 
