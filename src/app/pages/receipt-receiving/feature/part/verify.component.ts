@@ -33,7 +33,7 @@ import { ReceivingStore } from '../../data/receivingStore';
           <nz-descriptions-item nzTitle="Part Number">{{
             info.PartNumber
           }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Golbal Message" [nzSpan]="2">
+          <nz-descriptions-item nzTitle="Global Message" [nzSpan]="2">
             <div *ngFor="let line of info.message">
               <p>{{ line }}</p>
             </div>

@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptStore } from '../../data/Receipt';
 import { FormState, ReceivingStore } from '../../data/receivingStore';
-import { catchError, map, Observable, of, startWith } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { LabelStore } from '../../data/label';
 
 @Component({
@@ -81,8 +81,8 @@ export class PartComponent implements OnInit {
         this._ui.loadingOff();
       }),
       catchError((error) => {
-        this._ui.updateMessage(error.message, 'error');
         this._ui.loadingOff();
+        this._ui.updateMessage(error.message, 'error');
         return of(error);
       })
     );

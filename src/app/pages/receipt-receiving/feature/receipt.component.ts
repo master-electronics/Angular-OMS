@@ -54,6 +54,7 @@ export class ReceiptComponent implements OnInit {
 
   ngOnInit(): void {
     this._ui.changeSteps(0);
+    this._ui.initFormState();
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });

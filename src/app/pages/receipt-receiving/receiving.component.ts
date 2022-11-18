@@ -54,7 +54,7 @@ export class ReceivingComponent implements OnInit {
       description: 'ReceiptID, Part',
     },
     { title: 'Verify', subtitle: '', description: `Info, Quantity` },
-    { title: 'Update', subtitle: '', description: `Country Date RHOS` },
+    { title: 'Update', subtitle: '', description: `Country Date ROHS` },
     {
       title: 'Label',
       subtitle: '',
