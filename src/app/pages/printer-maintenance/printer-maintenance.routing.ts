@@ -5,7 +5,7 @@ import { PrinterMaintenance } from './printer-maintenance.component';
 const routes: Routes = [{ path: '', component: PrinterMaintenance }];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
 export class PrinterMaintenanceRoutingModule {}

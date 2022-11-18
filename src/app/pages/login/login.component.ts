@@ -17,6 +17,7 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { FetchHostNameGQL } from 'src/app/graphql/login.graphql-gen';
 
 @Component({
   selector: 'app-login',
@@ -37,6 +38,8 @@ export class LoginComponent implements OnDestroy, OnInit {
   }
 
   private subscription: Subscription = new Subscription();
+  private hostnameSubscription: Subscription = new Subscription();
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -44,7 +47,8 @@ export class LoginComponent implements OnDestroy, OnInit {
     private authenticationService: AuthenticationService,
     private userInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,
-    private titleService: Title
+    private titleService: Title,
+    private fetchHostname: FetchHostNameGQL
   ) {
     this.elem = document.documentElement;
     if (this.authenticationService.userInfo) {
@@ -96,7 +100,11 @@ export class LoginComponent implements OnDestroy, OnInit {
             sessionStorage.setItem('userInfo', userInfo);
             const returnUrl =
               this.route.snapshot.queryParams['returnUrl'] || '/home';
-            this.router.navigateByUrl(returnUrl);
+            this.getHostname();
+            setTimeout(() => {
+              this.router.navigateByUrl(returnUrl);
+            }, 100);
+
             if (this.commonService.isMobile()) {
               this.openFullscreen();
             }
@@ -117,7 +125,21 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.message = '';
   }
 
+  getHostname(): void {
+    this.hostnameSubscription.add(
+      this.fetchHostname.fetch({}, { fetchPolicy: 'network-only' }).subscribe({
+        next: (res) => {
+          sessionStorage.setItem('hostname', res.data.fetchHostName);
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      })
+    );
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.hostnameSubscription.unsubscribe();
   }
 }

@@ -1,0 +1,298 @@
+<div class="px-4 py-4 mx-auto">
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="24" style="height: 30px"></div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            Receipt ID
+        </div>
+        <div nz-col nzSpan="2" *ngIf="receiptID"
+            class="infoHeader">
+            Vendor ID
+        </div>
+        <div nz-col nzSpan="2" *ngIf="receiptID"
+            class="infoHeader">
+            Expected Arrival Date
+        </div>
+        <div nz-col nzSpan="2" *ngIf="receiptID"
+            class="infoHeader">
+            Source
+        </div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            <nz-select style="width: 80%; float: left" nzShowSearch
+                nzPlaceHolder="Receipt ID" [nzShowArrow]="false"
+                [nzFilterOption]="nzFilterOption"
+                (nzOnSearch)="searchReceipts($event)"
+                [(ngModel)]="receiptID" #receiptSearch
+                name="receiptSearchSel" nzAllowClear
+                (ngModelChange)="onReceiptIDChange($event)">
+                <nz-option *ngFor="let receipt of receiptList"
+                    [nzLabel]="receipt.text" [nzValue]="receipt.value">
+                </nz-option>
+            </nz-select>
+            <span nz-icon nzType="plus" title="New Receipt"
+                nzTheme="outline" class="icon"
+                (click)="addReceipt()"></span>
+        </div>
+        <div *ngIf="receiptID" nz-col nzSpan="2" class="infoBox">
+            {{ vendorNumber }}
+        </div>
+        <div *ngIf="receiptID" nz-col nzSpan="2" class="infoBox">
+            {{ receiptExpectedArrivalDate }}
+        </div>
+        <div *ngIf="receiptID" nz-col nzSpan="2" class="infoBox">
+            {{ receiptSource }}
+        </div>
+        <button *ngIf="receiptID" nz-button 
+            (click)="editReceipt()"
+        >Edit</button>
+        <button *ngIf="receiptID" nz-button
+            nz-popconfirm
+            nzPopconfirmTitle="Are you sure you want to delete this Receipt?"
+            (nzOnConfirm)="deleteReceipt()"
+        >Delete</button>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="24" style="height: 30px"></div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            Part Number
+        </div>
+        <div nz-col nzSpan="2">
+            Quantity
+        </div>
+        <div nz-col nzSpan="1"></div>
+        <div nz-col nzSpan="1"></div>
+    </div>
+    <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="4">
+            <nz-select style="width: 100%" nzShowSearch
+                nzPlaceHolder="Part Number" [nzShowArrow]="false"
+                [nzFilterOption]="nzFilterOption"
+                (nzOnSearch)="searchPartNumbers($event)"
+                [(ngModel)]="partNumberID" nzAllowClear
+                #partSearch name="partSearchSel"
+                [disabled]="!receiptSelected"
+                [class]="partNumberClass"
+                (ngModelChange)="onPartNumberClick($event)"
+            >
+                <nz-option *ngFor="let part of partList"
+                    [nzLabel]="part.text" [nzValue]="part.value">
+                </nz-option>
+            </nz-select>
+        </div>
+        <div nz-col nzSpan="2">
+            <input nz-input [(ngModel)]="quantity" type="number"
+                [disabled]="!receiptSelected" placeholder="Quantity"
+                [ngClass]="quantityClass" />
+        </div>
+        <div *ngIf="receiptLineID" nz-col nzSpan="5">
+            <button nz-button (click)="saveReceiptLine()"
+                style="margin-right: 10px;"
+            >
+                Save
+            </button>
+            <button nz-button (click)="clearReceiptLine()"
+            style="margin-right: 10px;"
+            >
+                Clear
+            </button>
+            <button nz-button
+                style="margin-right: 10px;" nz-popconfirm
+                nzPopconfirmTitle="Are you sure you want to delete this line?"
+                (nzOnConfirm)="deleteReceiptLine()"
+            >
+                Delete
+            </button>
+        </div>
+        <div *ngIf="!receiptLineID" nz-col nzSpan="2">
+            <button nz-button (click)="addReceiptLine()"
+                [disabled]="!receiptSelected">
+                Add
+            </button>
+        </div>
+    </div>
+    <div nz-row nzGutter="8">
+        <div nz-col nzSpan="24" style="height: 30px"></div>
+    </div>
+    <nz-table #receiptLineTable [nzData]="receiptLines" *ngIf="receiptLines">
+        <thead>
+            <tr>
+                <th nzWidth="55px"></th>
+                <th nzWidth="80px">Line #</th>
+                <th nzWidth="300px">Part #</th>
+                <th nzWidth="100px">Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-template ngFor let-data [ngForOf]="receiptLineTable.data">
+                <tr>
+                    <td [(nzExpand)]="data.Expanded" [ngClass]="data.Selected ? 'selected' : ''"></td>
+                    <td [ngClass]="data.Selected ? 'selected' : ''">{{ data.LineNumber }}</td>
+                    <td [ngClass]="data.Selected ? 'selected' : ''">{{ data.PartNumber }}</td>
+                    <td [ngClass]="data.Selected ? 'selected' : ''">{{ data.ExpectedQuantity }}</td>
+                    <td [ngClass]="data.Selected ? 'selected' : ''">
+                        <button nz-button (click)="selectReceiptLine(data._id, data.ReceiptLineDetails)">
+                            Select
+                        </button>
+                    </td>
+                </tr>
+                <tr [nzExpand]="data.Expanded">
+                    <nz-table #receiptLineDetailTable [nzData]="data.ReceiptLineDetails">
+                        <thead>
+                            <tr>
+                                <th nzWidth="300px">PO Line</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of receiptLineDetailTable.data">
+                                <td>{{ data.PurchaseOrderNumberLine }}</td>
+                                <td>{{ data.ExpectedQuantity }}</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </tr>
+            </ng-template>
+        </tbody>
+    </nz-table>
+    <div nz-row nzGutter="8" nzJustify="start" style="height: 20px"></div>
+    <div nz-row nzGutter="8" nzJustify="start" *ngIf="message">
+        <div nz-col nzSpan="24">
+            <ng-container>
+                <nz-alert
+                    [nzType]="
+                        alertType === 'error'
+                            ? 'error'
+                            : alertType === 'success'
+                            ? 'success'
+                            : alertType === 'info'
+                            ? 'info'
+                            : 'warning'
+                    "
+                    [nzMessage]="message"
+                    nzShowIcon class="w-full" style="width: 100%">
+                </nz-alert>
+            </ng-container>
+        </div>
+    </div>
+    <nz-modal [(nzVisible)]="receiptLineDetailVisible" 
+        [nzTitle]="lineDetailTitleTemplate"
+        (nzOnCancel)="hideReceiptLineDetail()" [nzClosable]="receiptLineDetailClosable"
+        [nzOkDisabled]="lineDetailOkDisabled" 
+        nzMaskClosable="false" (nzOnOk)="onReceiptLineDetailOKClick()" 
+        [nzOkText]="receiptLineDetailOkText" nzCancelText="Back">
+        <ng-template #lineDetailTitleTemplate>Expected Quantity: {{ quantity }}<br />
+            Total Quantity: <span [ngClass]="lineDetailTotalClass">{{ lineDetailTotal }}</span></ng-template>
+        <ng-container *nzModalContent>
+            <div nz-row nzGutter="8" nzJustify="start">
+                <div nz-col nzSpan="10">
+                    PO Number-Line
+                </div>
+                <div nz-col nzSpan="10">
+                    Quantity
+                </div>
+            </div>
+            <div *ngIf="lineDetails.length > 0">
+                <div nz-row nzGutter="8" nzJustify="start"
+                    *ngFor="let lineDetail of lineDetails; let i=index;">
+                    <span nz-col nzSpan="10" class="detailsInfoBox">
+                        {{ lineDetail.PurchaseOrderNumberLine }}
+                    </span>
+                    <span nz-col nzSpan="10" class="detailsInfoBox">
+                        {{ lineDetail.Quantity }}
+                    </span>
+                    <button nz-button (click)="removeDetailLine(i)">
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                </div>
+            </div>
+            <div nz-row nzGutter="8" nzJustify="start" style="margin-top: 5px;">
+                <div nz-col nzSpan="10">
+                    <nz-select nzShowSearch nzPlaceHolder="PO Line"
+                        [(ngModel)]="poLineID" (ngModelChange)="onPONumberLineChange()"
+                        nzAllowClear style="width: 100%" [nzShowArrow]="false"
+                        (nzFocus)="resetReceiptLineDetailMessage()"
+                    >
+                        <nz-option *ngFor="let poLine of poLineList"
+                            [nzLabel]="poLine.text" [nzValue]="poLine.value">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div nz-col nzSpan="10">
+                    <input nz-input placeholder="Quantity" [(ngModel)]="receiptLineDetailQuantity"
+                        (ngModelChange)="onReceiptLineDetailQuantityChange($event)"
+                        (focus)="resetReceiptLineDetailMessage()" type="number"
+                        min="0" [max]="receiptLineDetailQuantityMax" />
+                </div>
+                <button nz-button (click)="addDetailLine()"
+                    [disabled]="!poLineID || !(receiptLineDetailQuantity > 0)">
+                    <span nz-icon nzType="plus" nzTheme="outline"></span>
+                </button>
+            </div>
+            <div *ngIf="receiptLineDetailMessage">
+                <div nz-row nzGutter="8" style="height: 10px;"></div>
+                <div nz-row nzGutter="8" nzJustify="start">
+                    <div nz-col nzSpan="24">
+                        <ng-container>
+                            <nz-alert
+                                [nzType]="
+                                    receiptLineDetailAlertType === 'error'
+                                        ? 'error'
+                                        : receiptLineDetailAlertType === 'success'
+                                        ? 'success'
+                                        : receiptLineDetailAlertType === 'info'
+                                        ? 'info'
+                                        : 'warning'
+                                "
+                                [nzMessage]="receiptLineDetailMessage"
+                                nzShowIcon class="w-full" style="width: 100%">
+                            </nz-alert>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </nz-modal>
+    <nz-modal [(nzVisible)]="receiptModalVisible" [nzTitle]="receiptModalTitle"
+        (nzOnCancel)="onReceiptModalCancel()" [nzOkDisabled]="!vendorID || !expectedArrivalDate || !sourceType"
+        (nzOnOk)="onReceiptModalOk()" [nzStyle]="receiptModalStyle">
+        <ng-container *nzModalContent>
+            <div nz-row nzGutter="8" nzJustify="start">
+                <div nz-col nzSpan="8">
+                    Vendor ID
+                </div>
+                <div nz-col nzSpan="6">
+                    Expected Arrival Date
+                </div>
+                <div nz-col nzSpan="9">
+                    Source
+                </div>
+            </div>
+            <div nz-row nzGutter="8" nzJustify="start">
+                <div nz-col nzSpan="8">
+                    <nz-select style="width: 100%" nzShowSearch nzAllowClear
+                        [(ngModel)]="vendorID" #vendorSelect id="vendorID"
+                        [class]="vendorSearchClass" nzPlaceHolder="Vendor ID">
+                        <nz-option *ngFor="let vendor of vendorList"
+                            nzLabel="{{ vendor.label }}"
+                            nzValue="{{ vendor.value }}"></nz-option>
+                    </nz-select>
+                </div>
+                <div nz-col nzSpan="6">
+                    <nz-date-picker [(ngModel)]="expectedArrivalDate"></nz-date-picker>
+                </div>
+                <div nz-col nzSpan="9">
+                    <nz-select style="width: 90%" nzPlaceHolder="Source"
+                        [(ngModel)]="sourceType" [nzOptions]="sourceTypeOptions"
+                        nzAllowClear>
+                    </nz-select>
+                </div>
+            </div>
+        </ng-container> 
+    </nz-modal>
+</div>

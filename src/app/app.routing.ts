@@ -138,6 +138,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'receiving/receiptentry',
+        loadChildren: () =>
+          import('./pages/receiving/receipt-entry/receipt-entry.module').then(
+            (m) => m.ReceiptEntryModule
+          ),
+      },
+      {
         path: 'receiptreceiving',
         canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>

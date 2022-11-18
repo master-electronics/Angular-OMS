@@ -1,14 +1,8 @@
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -298,6 +292,18 @@ export type ItnUserTemplate = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type InsertReceipt = {
+  ExpectedArrivalDate?: InputMaybe<Scalars['String']>;
+  SourceType?: InputMaybe<Scalars['String']>;
+  VendorID?: InputMaybe<Scalars['Int']>;
+};
+
+export type InsertReceiptLineDetail = {
+  ExpectedQuantity: Scalars['Int'];
+  PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
+  ReceiptLID: Scalars['Int'];
+};
+
 export type Inventory = {
   __typename?: 'Inventory';
   BinLocation?: Maybe<Scalars['String']>;
@@ -325,8 +331,8 @@ export type InventoryForMerp = {
   CreatingProgram: Scalars['String'];
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
-  PurchaseOrderLine: Scalars['String'];
-  PurchaseOrderNumber: Scalars['String'];
+  PurchaseOrderLine?: InputMaybe<Scalars['String']>;
+  PurchaseOrderNumber?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
 };
 
@@ -374,7 +380,11 @@ export type Mutation = {
   deletePrinter?: Maybe<Printer>;
   deleteProductFromMerp?: Maybe<Scalars['Boolean']>;
   deletePurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteReceipt?: Maybe<Array<Maybe<ReceiptDeleteResult>>>;
   deleteReceiptLD?: Maybe<Array<Maybe<ReceiptLd>>>;
+  deleteReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
+  deleteReceiptLineDetail?: Maybe<ReceiptLineDetail>;
+  deleteReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
   deleteTableData?: Maybe<TableData>;
   deleteUserZone?: Maybe<Zone>;
   deleteValueMap?: Maybe<ValueMap>;
@@ -392,6 +402,10 @@ export type Mutation = {
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
   insertPrinter?: Maybe<Printer>;
+  insertReceipt?: Maybe<Receipt>;
+  insertReceiptLine?: Maybe<Array<Maybe<ReceiptLine>>>;
+  insertReceiptLineDetail?: Maybe<ReceiptLineDetail>;
+  insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
@@ -421,7 +435,10 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateReceiptLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateReceiptLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
@@ -431,6 +448,7 @@ export type Mutation = {
   updateVendorFromMerp?: Maybe<Scalars['Boolean']>;
 };
 
+
 export type MutationChangeQcLineInfoArgs = {
   CountMethod: Scalars['String'];
   CountryOfOrigin: Scalars['String'];
@@ -439,53 +457,64 @@ export type MutationChangeQcLineInfoArgs = {
   ROHS: Scalars['String'];
 };
 
+
 export type MutationCleanContainerFromPrevOrderArgs = {
   ContainerID: Scalars['Int'];
   Inventory: UpdateInventory;
   OrderID: Scalars['Int'];
 };
 
+
 export type MutationClearItnUserDefaultTemplateArgs = {
   UserID: Scalars['Int'];
 };
+
 
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
 };
 
+
 export type MutationCreateInventoryFromOmsArgs = {
-  ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
+  ITNList: Array<InputMaybe<ItnAndQuantity>>;
   Inventory: UpdateInventory;
-  info?: InputMaybe<InventoryForMerp>;
+  info: InventoryForMerp;
 };
+
 
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
 };
+
 
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
 };
 
+
 export type MutationDeleteCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
 };
+
 
 export type MutationDeleteItnLevelLimitArgs = {
   TemplateID: Scalars['Int'];
 };
 
+
 export type MutationDeleteItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
+
 
 export type MutationDeleteInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
 };
+
 
 export type MutationDeleteOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -494,17 +523,20 @@ export type MutationDeleteOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationDeleteOrderLineArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineNumber?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationDeleteOrderLineDetailArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderLineID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationDeleteOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -515,14 +547,17 @@ export type MutationDeleteOrderLineDetailFromMerpArgs = {
   OrderNumber: Scalars['String'];
 };
 
+
 export type MutationDeletePrinterArgs = {
   _id: Scalars['Int'];
 };
+
 
 export type MutationDeleteProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
+
 
 export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
@@ -530,62 +565,96 @@ export type MutationDeletePurchaseOrderLineFromMerpArgs = {
   PurchaseOrderNumber: Scalars['String'];
 };
 
+
+export type MutationDeleteReceiptArgs = {
+  ReceiptID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationDeleteReceiptLdArgs = {
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type MutationDeleteReceiptLineArgs = {
+  ReceiptLineID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationDeleteReceiptLineDetailArgs = {
+  ReceiptLDID: Scalars['Int'];
+};
+
+
+export type MutationDeleteReceiptLineDetailsArgs = {
+  ReceiptLineID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationDeleteTableDataArgs = {
   DeleteQuery?: InputMaybe<Scalars['String']>;
 };
+
 
 export type MutationDeleteUserZoneArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationDeleteValueMapArgs = {
   _id: Scalars['Int'];
 };
+
 
 export type MutationDeleteVendorFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
+
 export type MutationFindOrCreateOrderArgs = {
   Order: InsertOrder;
 };
+
 
 export type MutationFindOrCreateOrderLineArgs = {
   OrderLine: InsertOrderLine;
 };
 
+
 export type MutationFindOrCreateOrderLineDetailArgs = {
   OrderLineDetail: InsertOrderLineDetail;
 };
+
 
 export type MutationFindOrCreateProductArgs = {
   Product: InsertProduct;
 };
 
+
 export type MutationFindOrCreateReceiptLdArgs = {
   ReceiptLD: InsertReceiptLd;
 };
+
 
 export type MutationFindOrCreateUserContainerArgs = {
   Container: InsertContainer;
 };
 
+
 export type MutationFindOrCreateUserInfoArgs = {
   UserInfo: InsertUserInfo;
 };
+
 
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
 };
+
 
 export type MutationInsertItnLevelLimitArgs = {
   EventID?: InputMaybe<Scalars['Int']>;
@@ -595,13 +664,16 @@ export type MutationInsertItnLevelLimitArgs = {
   TemplateID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationInsertItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<InsertItnUserColumnsInfo>>;
 };
 
+
 export type MutationInsertItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<InsertItnUserLevelsInfo>>;
 };
+
 
 export type MutationInsertItnUserTemplateArgs = {
   DefaultTemplate?: InputMaybe<Scalars['Boolean']>;
@@ -610,26 +682,57 @@ export type MutationInsertItnUserTemplateArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
   DPI?: InputMaybe<Scalars['Int']>;
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  StationName?: InputMaybe<Scalars['String']>;
 };
+
+
+export type MutationInsertReceiptArgs = {
+  Receipt?: InputMaybe<InsertReceipt>;
+};
+
+
+export type MutationInsertReceiptLineArgs = {
+  CountryID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  ExpectedQuantity: Scalars['Int'];
+  ProductID: Scalars['Int'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  ReceiptHID: Scalars['Int'];
+};
+
+
+export type MutationInsertReceiptLineDetailArgs = {
+  ReceiptLineDetail?: InputMaybe<InsertReceiptLineDetail>;
+};
+
+
+export type MutationInsertReceiptLineDetailsArgs = {
+  ReceiptLineDetails?: InputMaybe<Array<InputMaybe<InsertReceiptLineDetail>>>;
+};
+
 
 export type MutationInsertTableDataArgs = {
   InsertQuery?: InputMaybe<Scalars['String']>;
 };
 
+
 export type MutationInsertUserEventLogsArgs = {
   log: Array<InputMaybe<InsertUserEventLog>>;
 };
+
 
 export type MutationInsertUserZoneArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationInsertValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -642,10 +745,12 @@ export type MutationInsertValueMapArgs = {
   TargetValue?: InputMaybe<Scalars['String']>;
 };
 
+
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
 };
+
 
 export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
@@ -653,11 +758,13 @@ export type MutationUpdateAfterReceivingArgs = {
   ReceiptLID: Scalars['Int'];
 };
 
+
 export type MutationUpdateContainerArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
   Container: UpdateContainer;
   _id?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationUpdateContainerListArgs = {
   BarcodeList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -666,6 +773,7 @@ export type MutationUpdateContainerListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+
 export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
@@ -673,10 +781,12 @@ export type MutationUpdateForContainerFromMerpArgs = {
   Zone?: InputMaybe<Scalars['String']>;
 };
 
+
 export type MutationUpdateForCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
   CustomerTier?: InputMaybe<Scalars['String']>;
 };
+
 
 export type MutationUpdateForInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -692,6 +802,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
+
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   BinLocation: Scalars['String'];
@@ -715,11 +826,13 @@ export type MutationUpdateForOrderLineDetailFromMerpArgs = {
   detailQuantity: Scalars['Float'];
 };
 
+
 export type MutationUpdateForProductFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
 };
+
 
 export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   LineNumber: Scalars['Int'];
@@ -734,15 +847,18 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
+
 export type MutationUpdateItnUserColumnsArgs = {
   ITNUserColumns: Array<InputMaybe<UpdateItnUserColumnsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationUpdateItnUserLevelsArgs = {
   ITNUserLevels: Array<InputMaybe<UpdateItnUserLevelsInfo>>;
   _id?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationUpdateItnUserTemplateArgs = {
   DefaultPagination?: InputMaybe<Scalars['Int']>;
@@ -752,6 +868,7 @@ export type MutationUpdateItnUserTemplateArgs = {
   _id: Scalars['Int'];
 };
 
+
 export type MutationUpdateInventoryArgs = {
   ContainerID?: InputMaybe<Scalars['Int']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -759,6 +876,7 @@ export type MutationUpdateInventoryArgs = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationUpdateInventoryListArgs = {
   ContainerIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -768,6 +886,7 @@ export type MutationUpdateInventoryListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+
 export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
@@ -775,9 +894,11 @@ export type MutationUpdateMerpOrderStatusArgs = {
   UserOrStatus?: InputMaybe<Scalars['String']>;
 };
 
+
 export type MutationUpdateMerpQcBinArgs = {
   ITN: Scalars['String'];
 };
+
 
 export type MutationUpdateMerpWmsLogArgs = {
   Action: Scalars['String'];
@@ -785,6 +906,7 @@ export type MutationUpdateMerpWmsLogArgs = {
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
 };
+
 
 export type MutationUpdateOrderArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
@@ -794,9 +916,11 @@ export type MutationUpdateOrderArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationUpdateOrderLineArgs = {
   OrderLine: UpdateOrderLine;
 };
+
 
 export type MutationUpdateOrderLineDetailArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
@@ -806,15 +930,18 @@ export type MutationUpdateOrderLineDetailArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type MutationUpdateOrderLineDetailListArgs = {
   InventoryIDList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
   OrderLineDetail: UpdateOrderLineDetail;
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+
 export type MutationUpdatePickingCalendarSettingsArgs = {
   events?: InputMaybe<Scalars['String']>;
 };
+
 
 export type MutationUpdatePrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
@@ -822,37 +949,70 @@ export type MutationUpdatePrinterArgs = {
   Description?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   Orientation?: InputMaybe<Scalars['String']>;
+  StationName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
+
+
+export type MutationUpdateReceiptArgs = {
+  ExpectedArrivalDate?: InputMaybe<Scalars['String']>;
+  SourceType?: InputMaybe<Scalars['String']>;
+  VendorID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
 
 export type MutationUpdateReceiptLdArgs = {
   ReceiptLD: UpdateReceiptLd;
 };
+
+
+export type MutationUpdateReceiptLineArgs = {
+  CountryID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  ExpectedQuantity: Scalars['Int'];
+  ProductID: Scalars['Int'];
+  ROHS?: InputMaybe<Scalars['Boolean']>;
+  ReceiptLID: Scalars['Int'];
+};
+
+
+export type MutationUpdateReceiptLineDetailArgs = {
+  ExpectedQuantity: Scalars['Int'];
+  PurchaseOrderLID: Scalars['Int'];
+  ReceiptLDID: Scalars['Int'];
+};
+
 
 export type MutationUpdateReceiptLsByIdArgs = {
   ReceiptL: UpdateReceiptL;
   idList: Array<InputMaybe<Scalars['Int']>>;
 };
 
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
+
 
 export type MutationUpdateUserCartArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
 
+
 export type MutationUpdateUserCartForDropOffArgs = {
   Container: SearchContainer;
   UserID: Scalars['Int'];
 };
+
 
 export type MutationUpdateUserInfoArgs = {
   Name?: InputMaybe<Scalars['String']>;
   UserInfo: UpdateUserInfo;
   _id?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type MutationUpdateValueMapArgs = {
   SourceColumnName?: InputMaybe<Scalars['String']>;
@@ -865,6 +1025,7 @@ export type MutationUpdateValueMapArgs = {
   TargetValue?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
+
 
 export type MutationUpdateVendorFromMerpArgs = {
   VendorName: Scalars['String'];
@@ -933,6 +1094,27 @@ export type OrderStatus = {
   _id: Scalars['Int'];
 };
 
+export type Part = {
+  __typename?: 'PART';
+  PartNumber?: Maybe<Scalars['String']>;
+  ProductCodeID?: Maybe<Scalars['Int']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+export type Partcode = {
+  __typename?: 'PARTCODE';
+  PRC?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
+export type PoLine = {
+  __typename?: 'POLine';
+  MaxQuantity?: Maybe<Scalars['Int']>;
+  PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
+  _id: Scalars['Int'];
+};
+
 export type Printer = {
   __typename?: 'Printer';
   Active?: Maybe<Scalars['Boolean']>;
@@ -940,6 +1122,7 @@ export type Printer = {
   Description?: Maybe<Scalars['String']>;
   Name?: Maybe<Scalars['String']>;
   Orientation?: Maybe<Scalars['String']>;
+  StationName?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -1007,11 +1190,13 @@ export type Query = {
   countOrderItns: Scalars['Int'];
   createITN: Scalars['String'];
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
+  fetchCountryList?: Maybe<Array<Maybe<Country>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
+  fetchHostName?: Maybe<Scalars['String']>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
@@ -1027,16 +1212,19 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchProductMICFromMerp?: Maybe<Scalars['String']>;
   fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
+  fetchReceiptLines?: Maybe<Array<Maybe<ReceiptLine>>>;
   fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserList?: Maybe<Array<Maybe<User>>>;
   fetchUsersForZone?: Maybe<Array<Maybe<User>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
+  fetchVendorList?: Maybe<Array<Maybe<Vendor>>>;
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   fetchZoneList?: Maybe<Array<Maybe<Zone>>>;
   fetchZonesForUser?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
+  findCountry?: Maybe<Country>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1051,19 +1239,26 @@ export type Query = {
   findOrderLineDetails?: Maybe<Array<Maybe<OrderLineDetail>>>;
   findOrderLines?: Maybe<Array<Maybe<OrderLine>>>;
   findOrders?: Maybe<Array<Maybe<Order>>>;
+  findPOLine?: Maybe<Array<Maybe<PoLine>>>;
+  findPOLines?: Maybe<Array<Maybe<PoLine>>>;
+  findPart?: Maybe<Part>;
+  findPartCodes?: Maybe<Array<Maybe<Partcode>>>;
   findProduct?: Maybe<Product>;
   findProducts?: Maybe<Array<Maybe<Product>>>;
   findPurchaseOrderH?: Maybe<PurchaseOrderH>;
   findPurchaseOrderHs?: Maybe<Array<Maybe<PurchaseOrderH>>>;
   findPurchaseOrderL?: Maybe<PurchaseOrderL>;
   findPurchaseOrderLs?: Maybe<Array<Maybe<PurchaseOrderL>>>;
+  findReceipt?: Maybe<Receipt>;
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
   findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
+  findReceiptLine?: Maybe<ReceiptLine>;
   findReceiptLs?: Maybe<Array<Maybe<ReceiptL>>>;
+  findReceipts?: Maybe<Array<Maybe<Receipt>>>;
   findRoute?: Maybe<Array<Maybe<Route>>>;
   findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
@@ -1074,7 +1269,9 @@ export type Query = {
   findVendor?: Maybe<Vendor>;
   printReceivingLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
+  testHostname: Scalars['String'];
 };
+
 
 export type QueryCountOrderItnsArgs = {
   LocationCode: Scalars['String'];
@@ -1082,27 +1279,33 @@ export type QueryCountOrderItnsArgs = {
   OrderNumber: Scalars['String'];
 };
 
+
 export type QueryCreateItnArgs = {
   LocationCode: Scalars['String'];
 };
+
 
 export type QueryFetchDataColumnListArgs = {
   TABLE_NAME?: InputMaybe<Scalars['String']>;
 };
 
+
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
 };
+
 
 export type QueryFetchHoldOnCounterArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
 
+
 export type QueryFetchItnLifecycleArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
+
 
 export type QueryFetchItnLifecycleDrillDownArgs = {
   inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
@@ -1111,17 +1314,21 @@ export type QueryFetchItnLifecycleDrillDownArgs = {
   orderNumber: Scalars['String'];
 };
 
+
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
 };
+
 
 export type QueryFetchMenuListArgs = {
   pageName?: InputMaybe<Scalars['String']>;
 };
 
+
 export type QueryFetchOrderLineDetailforWmsCountArgs = {
   filter?: InputMaybe<SearchIntForWmsCount>;
 };
+
 
 export type QueryFetchOrderLineMessageArgs = {
   CustomerNumber: Scalars['String'];
@@ -1130,32 +1337,44 @@ export type QueryFetchOrderLineMessageArgs = {
   OrderNumber: Scalars['String'];
 };
 
+
 export type QueryFetchOrderTasktimeArgs = {
   Order?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
 
+
 export type QueryFetchOrderViewArgs = {
   filter?: InputMaybe<OrderViewFilter>;
 };
+
 
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
 
+
 export type QueryFetchPrinterListArgs = {
   includeInactive?: InputMaybe<Scalars['Boolean']>;
 };
+
 
 export type QueryFetchProductInfoFromMerpArgs = {
   ProductList: Array<InputMaybe<Scalars['String']>>;
 };
 
+
 export type QueryFetchProductMicFromMerpArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
+
+
+export type QueryFetchReceiptLinesArgs = {
+  ReceiptHID?: InputMaybe<Scalars['Int']>;
+};
+
 
 export type QueryFetchTableDataArgs = {
   ColumnList?: InputMaybe<Scalars['String']>;
@@ -1163,63 +1382,82 @@ export type QueryFetchTableDataArgs = {
   Where?: InputMaybe<Scalars['String']>;
 };
 
+
 export type QueryFetchTaskCounterArgs = {
   Module: Scalars['Int'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
 
+
 export type QueryFetchUserListArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
 };
+
 
 export type QueryFetchUsersForZoneArgs = {
   ZoneID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFetchZoneListArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
 };
+
 
 export type QueryFetchZonesForUserArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindContainerArgs = {
   Container?: InputMaybe<SearchContainer>;
 };
+
 
 export type QueryFindContainersArgs = {
   Container?: InputMaybe<SearchContainer>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindCountryArgs = {
+  CountryID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryFindItnColumnsArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type QueryFindItnTemplateArgs = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindItnTemplatesArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindInventoryArgs = {
   Inventory: SearchInventory;
 };
+
 
 export type QueryFindInventorysArgs = {
   Inventory: SearchInventory;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindLocalErrorLogsArgs = {
   Date: Scalars['String'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type QueryFindNextItnForPullingArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
@@ -1228,105 +1466,164 @@ export type QueryFindNextItnForPullingArgs = {
   Zone?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindOrderArgs = {
   Order?: InputMaybe<SearchOrder>;
 };
+
 
 export type QueryFindOrderByStatusArgs = {
   PriorityPinkPaper?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
 };
 
+
 export type QueryFindOrderLineArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
 };
 
+
 export type QueryFindOrderLineDetailArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
 };
+
 
 export type QueryFindOrderLineDetailsArgs = {
   OrderLineDetail?: InputMaybe<SearchOrderLineDetail>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindOrderLinesArgs = {
   OrderLine?: InputMaybe<SearchOrderLine>;
   limit?: InputMaybe<Scalars['Int']>;
 };
+
 
 export type QueryFindOrdersArgs = {
   Order?: InputMaybe<SearchOrder>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindPoLineArgs = {
+  PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindPoLinesArgs = {
+  ProductID?: InputMaybe<Scalars['Int']>;
+  VendorID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindPartArgs = {
+  ProductID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindPartCodesArgs = {
+  SearchString?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFindProductArgs = {
   Product?: InputMaybe<SearchProduct>;
 };
+
 
 export type QueryFindProductsArgs = {
   Product?: InputMaybe<SearchProduct>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindPurchaseOrderHArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
 };
+
 
 export type QueryFindPurchaseOrderHsArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindPurchaseOrderLArgs = {
   PurchaseOrderL: SearchPurchaseOrderL;
 };
+
 
 export type QueryFindPurchaseOrderLsArgs = {
   PurchaseOrderL: SearchPurchaseOrderL;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindReceiptArgs = {
+  ReceiptID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryFindReceiptHArgs = {
   ReceiptH: SearchReceiptH;
 };
+
 
 export type QueryFindReceiptHsArgs = {
   ReceiptH: SearchReceiptH;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindReceiptInfoByIdAndStatusArgs = {
   ReceiptHID: Scalars['Int'];
   statusID: Scalars['Int'];
 };
 
+
 export type QueryFindReceiptLArgs = {
   ReceiptL: SearchReceiptL;
 };
 
+
 export type QueryFindReceiptLdArgs = {
   ReceiptLD: SearchReceiptLd;
 };
+
 
 export type QueryFindReceiptLDsArgs = {
   ReceiptLD: SearchReceiptLd;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindReceiptLineArgs = {
+  ReceiptLineID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryFindReceiptLsArgs = {
   ReceiptL: SearchReceiptL;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
+export type QueryFindReceiptsArgs = {
+  ReceiptID?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFindRouteArgs = {
   route?: InputMaybe<Scalars['String']>;
 };
+
 
 export type QueryFindUserArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   User?: InputMaybe<SearchUser>;
 };
+
 
 export type QueryFindUserEventLogsArgs = {
   Modules?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
@@ -1337,29 +1634,35 @@ export type QueryFindUserEventLogsArgs = {
   startDate?: InputMaybe<Scalars['String']>;
 };
 
+
 export type QueryFindUserEventsArgs = {
   UserEvent?: InputMaybe<SearchUserEvent>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindUserInfoArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
 };
+
 
 export type QueryFindUserInfosArgs = {
   UserInfo?: InputMaybe<SearchUserInfo>;
   limit?: InputMaybe<Scalars['Int']>;
 };
 
+
 export type QueryFindUsersArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
 };
 
+
 export type QueryFindVendorArgs = {
   Vendor: SearchVendor;
 };
+
 
 export type QueryPrintReceivingLabelArgs = {
   DPI: Scalars['String'];
@@ -1367,6 +1670,7 @@ export type QueryPrintReceivingLabelArgs = {
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
 };
+
 
 export type QueryPrintTextLabelArgs = {
   DPI: Scalars['String'];
@@ -1376,6 +1680,20 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
+};
+
+export type Receipt = {
+  __typename?: 'Receipt';
+  ExpectedArrivalDate?: Maybe<Scalars['String']>;
+  ReceiptNumber?: Maybe<Scalars['String']>;
+  SourceType?: Maybe<Scalars['String']>;
+  VendorID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
+export type ReceiptDeleteResult = {
+  __typename?: 'ReceiptDeleteResult';
+  result?: Maybe<Scalars['Int']>;
 };
 
 export type ReceiptH = {
@@ -1413,6 +1731,27 @@ export type ReceiptLd = {
   ReceiptLID: Scalars['Int'];
   ReceiptStatus: ReceiptStatus;
   ReceiptStatusID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type ReceiptLine = {
+  __typename?: 'ReceiptLine';
+  CountryID?: Maybe<Scalars['Int']>;
+  DateCode?: Maybe<Scalars['String']>;
+  ExpectedQuantity: Scalars['Int'];
+  LineNumber?: Maybe<Scalars['Int']>;
+  ProductID: Scalars['Int'];
+  RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLineDetail>>>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  ReceiptHID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type ReceiptLineDetail = {
+  __typename?: 'ReceiptLineDetail';
+  ExpectedQuantity: Scalars['Int'];
+  PurchaseOrderLID?: Maybe<Scalars['Int']>;
+  ReceiptLID: Scalars['Int'];
   _id: Scalars['Int'];
 };
 

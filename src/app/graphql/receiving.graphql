@@ -1,0 +1,273 @@
+query fetchVendorList {
+    fetchVendorList {
+        _id
+        VendorNumber
+        VendorName
+    }
+}
+
+query findVendor($vendor: searchVendor!) {
+    findVendor(Vendor: $vendor) {
+        _id
+        VendorName
+        VendorNumber
+    }
+}
+
+query findReceipt($receiptID: Int) {
+    findReceipt(ReceiptID: $receiptID) {
+        _id
+        VendorID
+        ExpectedArrivalDate
+        SourceType
+        ReceiptNumber
+    }
+}
+
+query findReceipts($receiptID: String) {
+    findReceipts(ReceiptID: $receiptID) {
+        _id
+        VendorID
+        ExpectedArrivalDate
+        SourceType
+        ReceiptNumber
+    }
+}
+
+query findPartCodes($searchString: String) {
+    findPartCodes(SearchString: $searchString) {
+        _id
+        PRC
+    }
+}
+
+query findPart($productID: Int) {
+    findPart(ProductID: $productID) {
+        _id
+        PartNumber
+        ProductCodeID
+        ProductTier
+    }
+}
+
+query fetchCountries {
+    fetchCountryList {
+        _id
+        CountryCode
+        CountryName
+        ISO2
+        ISO3
+    }
+}
+
+query findCountry($countryID: Int) {
+    findCountry(CountryID: $countryID) {
+        _id
+        CountryCode
+        CountryName
+        ISO2
+        ISO3
+    }
+}
+
+query fetchReceiptLines($receiptHID: Int) {
+    fetchReceiptLines(ReceiptHID: $receiptHID) {
+        _id
+        ReceiptHID
+        ProductID
+        ExpectedQuantity
+        DateCode
+        CountryID
+        ROHS
+        LineNumber
+        RECEIPTLDs {
+            _id
+            ReceiptLID
+            ExpectedQuantity
+            PurchaseOrderLID
+        }
+    }
+}
+
+query findReceiptLine($receiptLineId: Int) {
+    findReceiptLine(ReceiptLineID: $receiptLineId) {
+        _id
+        ReceiptHID
+        ProductID
+        ExpectedQuantity
+        DateCode
+        CountryID
+        ROHS
+        LineNumber
+        RECEIPTLDs {
+            _id
+            ReceiptLID
+            ExpectedQuantity
+            PurchaseOrderLID
+        }
+    }
+}
+
+query findPOLines(
+    $vendorID: Int
+    $productID: Int) {
+    findPOLines(
+        VendorID: $vendorID
+        ProductID: $productID) {
+        _id
+        PurchaseOrderNumberLine
+    }
+}
+
+query findPOLine($purchaseOrderLID: Int) {
+    findPOLine(PurchaseOrderLID: $purchaseOrderLID) {
+        _id
+        PurchaseOrderNumberLine
+        MaxQuantity
+    }
+}
+
+mutation insertReceipt($receipt: InsertReceipt) {
+    insertReceipt(Receipt: $receipt) {
+        _id
+        VendorID
+        ExpectedArrivalDate
+        SourceType
+        ReceiptNumber
+    }
+}
+
+mutation insertReceiptLine(
+    $receiptHID: Int!
+    $productID: Int!
+    $expectedQuantity: Int!
+    $dateCode: String
+    $countryID: Int
+    $rohs: Boolean) {
+    insertReceiptLine(
+        ReceiptHID: $receiptHID
+        ProductID: $productID
+        ExpectedQuantity: $expectedQuantity
+        DateCode: $dateCode
+        CountryID: $countryID
+        ROHS: $rohs
+    ) {
+        _id
+        ReceiptHID
+        ProductID
+        ExpectedQuantity
+        DateCode
+        CountryID
+        ROHS
+        LineNumber
+    }
+}
+
+mutation insertReceiptLineDetail($receiptLineDetail: InsertReceiptLineDetail) {
+    insertReceiptLineDetail(ReceiptLineDetail: $receiptLineDetail) {
+        _id
+        ReceiptLID
+        ExpectedQuantity
+        PurchaseOrderLID
+    }
+}
+
+mutation deleteReceiptLine($receiptLineID: Int) {
+    deleteReceiptLine(ReceiptLineID: $receiptLineID) {
+        _id
+        ReceiptHID
+        ProductID
+        ExpectedQuantity
+        DateCode
+        CountryID
+        ROHS
+        LineNumber
+        RECEIPTLDs {
+            _id
+            ReceiptLID
+            ExpectedQuantity
+            PurchaseOrderLID
+        }
+    }
+}
+
+mutation deleteReceiptLineDetails($receiptLineID: Int) {
+    deleteReceiptLineDetails(ReceiptLineID: $receiptLineID) {
+        _id
+        ReceiptLID
+        ExpectedQuantity
+        PurchaseOrderLID
+    }
+}
+
+mutation updateReceiptLine(
+    $receiptLID: Int!
+    $productID: Int!
+    $expectedQuantity: Int!
+    $dateCode: String
+    $countryID: Int
+    $rohs: Boolean
+) {
+    updateReceiptLine(
+        ReceiptLID: $receiptLID
+        ProductID: $productID
+        ExpectedQuantity: $expectedQuantity
+        DateCode: $dateCode
+        CountryID: $countryID
+        ROHS: $rohs
+    )
+}
+
+mutation updateReceiptLineDetail(
+    $receiptLDID: Int!
+    $expectedQuantity: Int!
+    $purchaseOrderLID: Int!
+) {
+    updateReceiptLineDetail(
+        ReceiptLDID: $receiptLDID
+        ExpectedQuantity: $expectedQuantity
+        PurchaseOrderLID: $purchaseOrderLID
+    )
+}
+
+mutation deleteReceiptLineDetail($receiptLDID: Int!) {
+    deleteReceiptLineDetail(ReceiptLDID: $receiptLDID) {
+        _id
+        ReceiptLID
+        ExpectedQuantity
+        PurchaseOrderLID
+    }
+}
+
+mutation insertReceiptLineDetails($receiptLineDetails: [InsertReceiptLineDetail]) {
+    insertReceiptLineDetails(ReceiptLineDetails: $receiptLineDetails) {
+        _id
+        ReceiptLID
+        ExpectedQuantity
+        PurchaseOrderLID
+    }
+}
+
+mutation updateReceipt(
+    $_id: Int!
+    $vendorID: Int!
+    $expectedArrivalDate: String
+    $sourceType: String
+) {
+    updateReceipt(
+        _id: $_id
+        VendorID: $vendorID
+        ExpectedArrivalDate: $expectedArrivalDate
+        SourceType: $sourceType
+    )
+}
+
+mutation deleteReceipt(
+    $receiptID: Int
+) {
+    deleteReceipt(
+        ReceiptID: $receiptID
+    ) {
+        result
+    }
+}

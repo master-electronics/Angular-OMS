@@ -6,6 +6,7 @@ query fetchPrinterList($includeInactive: Boolean) {
         Orientation
         Active
         DPI
+        StationName
     }
 }
 
@@ -15,6 +16,7 @@ mutation insertPrinter(
     $orientation: String
     $active: Boolean
     $dpi: Int
+    $stationName: String
 ) {
     insertPrinter(
         Name: $name
@@ -22,12 +24,14 @@ mutation insertPrinter(
         Orientation: $orientation
         Active: $active
         DPI: $dpi
+        StationName: $stationName
     ) {
         _id
         Name
         Description
         Orientation
         Active
+        StationName
     }
 }
 
@@ -38,6 +42,7 @@ mutation updatePrinter(
     $orientation: String
     $active: Boolean
     $dpi: Int
+    $stationName: String
 ) {
     updatePrinter(
         _id: $_id
@@ -46,12 +51,14 @@ mutation updatePrinter(
         Orientation: $orientation
         Active: $active
         DPI: $dpi
+        StationName: $stationName
     ) {
         _id
         Name
         Description
         Orientation
         Active
+        StationName
     }
 }
 

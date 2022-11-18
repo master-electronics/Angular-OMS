@@ -17,6 +17,7 @@ interface printerData {
   Orientation: string;
   Active: boolean;
   DPI: number;
+  StationName: string;
 }
 
 @Component({
@@ -35,6 +36,7 @@ export class PrinterMaintenance implements OnInit {
   addPrinterDescription;
   addPrinterOrientation;
   addPrinterDPI;
+  addPrinterStationName;
   message: string;
   alertType = 'error';
   sortNameFn = (a: printerData, b: printerData): number => {
@@ -61,10 +63,17 @@ export class PrinterMaintenance implements OnInit {
   sortActiveFn = (a: printerData, b: printerData): number => {
     return (a.Active ? 'Y' : 'N').localeCompare(b.Active ? 'Y' : 'N');
   };
+  sortStationNameFn = (a: printerData, b: printerData): number => {
+    return (a.StationName ? a.StationName : '').localeCompare(
+      b.StationName ? b.StationName : ''
+    );
+  };
   nameFilterVisible: boolean;
   nameFilterActive: boolean;
   descriptionFilterVisible: boolean;
   descriptionFilterActive: boolean;
+  stationNameFilterVisible: boolean;
+  stationNameFilterActive: boolean;
   pageNumber: number;
   includeInactive;
   screenWidth: any;
@@ -151,6 +160,7 @@ export class PrinterMaintenance implements OnInit {
                       Orientation: printer.Orientation,
                       Active: printer.Active,
                       DPI: printer.DPI,
+                      StationName: printer.StationName,
                     },
                   };
 
@@ -161,6 +171,7 @@ export class PrinterMaintenance implements OnInit {
                     Orientation: printer.Orientation,
                     Active: printer.Active,
                     DPI: printer.DPI,
+                    StationName: printer.StationName,
                   };
                 }
               );
@@ -214,6 +225,7 @@ export class PrinterMaintenance implements OnInit {
             orientation: this.editCache[id].data.Orientation,
             active: this.editCache[id].data.Active,
             dpi: this.editCache[id].data.DPI,
+            stationName: this.editCache[id].data.StationName,
           })
           .subscribe(
             () => {
@@ -228,6 +240,8 @@ export class PrinterMaintenance implements OnInit {
               this.viewDataDisplay[index].Active =
                 this.editCache[id].data.Active;
               this.viewDataDisplay[index].DPI = this.editCache[id].data.DPI;
+              this.viewDataDisplay[index].StationName =
+                this.editCache[id].data.StationName;
               this.editCache[id].edit = false;
               this.isLoading = false;
             },
@@ -287,8 +301,6 @@ export class PrinterMaintenance implements OnInit {
     this.message = '';
     const index = this.viewData.findIndex((item) => item.ID === id);
 
-    const t = "test";
-    
     this.editCache[id] = {
       data: { ...this.viewData[index] },
       edit: false,
@@ -350,6 +362,9 @@ export class PrinterMaintenance implements OnInit {
                 ? null
                 : Number(this.addPrinterDPI)
               : null,
+            stationName: this.addPrinterStationName
+              ? this.addPrinterStationName
+              : '',
           })
           .subscribe(
             () => {
@@ -358,6 +373,7 @@ export class PrinterMaintenance implements OnInit {
               this.addPrinterDescription = '';
               this.addPrinterOrientation = '';
               this.addPrinterDPI = null;
+              this.addPrinterStationName = '';
               this.isLoading = false;
             },
             (error) => {
@@ -384,6 +400,7 @@ export class PrinterMaintenance implements OnInit {
     this.addPrinterDescription = '';
     this.addPrinterOrientation = '';
     this.addPrinterDPI = '';
+    this.addPrinterStationName = '';
     nameTB.style.border = '';
     descriptionTB.style.border = '';
   }
@@ -393,6 +410,8 @@ export class PrinterMaintenance implements OnInit {
     this.nameFilterActive = true;
     this.descriptionFilterVisible = false;
     this.descriptionFilterActive = false;
+    this.stationNameFilterVisible = false;
+    this.stationNameFilterActive = false;
 
     this.viewDataDisplay = this.viewData;
 
@@ -416,6 +435,8 @@ export class PrinterMaintenance implements OnInit {
     this.nameFilterActive = false;
     this.descriptionFilterVisible = false;
     this.descriptionFilterActive = true;
+    this.stationNameFilterVisible = false;
+    this.stationNameFilterActive = false;
 
     this.viewDataDisplay = this.viewData;
 
@@ -429,6 +450,33 @@ export class PrinterMaintenance implements OnInit {
     this.nameFilterActive = false;
     this.descriptionFilterVisible = false;
     this.descriptionFilterActive = false;
+
+    this.viewDataDisplay = this.viewData;
+    this.pageNumber = 1;
+  }
+
+  setStationNameFilter(FilterValue: string): void {
+    this.nameFilterVisible = false;
+    this.nameFilterActive = false;
+    this.descriptionFilterVisible = false;
+    this.descriptionFilterActive = false;
+    this.stationNameFilterVisible = false;
+    this.stationNameFilterVisible = true;
+
+    this.viewDataDisplay = this.viewData;
+
+    this.viewDataDisplay = this.viewDataDisplay.filter(
+      (item) => item.StationName.indexOf(FilterValue) !== -1
+    );
+  }
+
+  clearStationNameFilter(): void {
+    this.nameFilterVisible = false;
+    this.nameFilterActive = false;
+    this.descriptionFilterVisible = false;
+    this.descriptionFilterActive = false;
+    this.stationNameFilterVisible = false;
+    this.stationNameFilterActive = false;
 
     this.viewDataDisplay = this.viewData;
     this.pageNumber = 1;
