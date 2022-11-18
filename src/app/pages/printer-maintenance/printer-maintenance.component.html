@@ -1,4 +1,5 @@
-<div class="container px-4 py-4">
+<div style="position: absolute; width: 100%; left: 0px;">
+<div class="px-4 py-4">
   <div *ngIf="fetchTable$ | async"></div>
   <div class="progress" *ngIf="isLoading">
     <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
@@ -17,7 +18,7 @@
     <thead>
       <tr>
         <th
-          nzWidth="24%"
+          nzWidth="20%"
           nzCustomFilter
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
@@ -33,7 +34,6 @@
           </nz-filter-trigger>
         </th>
         <th
-          nzWidth="30%"
           nzCustomFilter
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
@@ -65,7 +65,7 @@
           DPI
         </th>
         <th
-          nzWidth="30%"
+          nzWidth="20%"
           nzCustomFilter
           [nzSortOrder]="null"
           [nzSortDirections]="['ascend', 'descend']"
@@ -431,4 +431,5 @@
       >Include Inactive</label
     >
   </ng-template>
+</div>
 </div>

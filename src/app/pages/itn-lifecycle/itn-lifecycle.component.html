@@ -1,142 +1,77 @@
-<div class="container px-4 py-4" style="max-width: 200%">
-  <form nz-form [formGroup]="filterForm">
-    <div nz-row nzGutter="8" nzJustify="space-between">
-      <nz-form-item nz-col nzSpan="8">
-        <nz-form-label nzRequired> Date </nz-form-label>
-        <nz-form-control>
-          <nz-date-picker
-            formControlName="startDatePicker"
-            nzPlaceHolder="Start Date"
-            nzId="startDatePicker"
-            (nzOnOpenChange)="onStartDateChange($event)"
-            notvalid="false"
-          ></nz-date-picker>
-          <nz-date-picker
-            formControlName="endDatePicker"
-            nzPlaceHolder="End Date"
-            nzId="endDatePicker"
-            (nzOnOpenChange)="onEndDateChange($event)"
-          ></nz-date-picker>
-          <nz-select
-            class="templateSelect"
-            [(ngModel)]="templateIdName"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="onTemplateChange($event)"
-            nzPlaceHolder="Select Template"
-          >
-            <nz-option
-              *ngFor="let template of templates"
-              nzValue="{{ template.id }},{{ template.name }}"
-              nzLabel="{{ template.name }}"
-            ></nz-option>
-          </nz-select>
-          <template-settings
-            (modalClosed)="onModalClose()"
-            [templates]="templates"
-            [columns]="columns"
-            [selectedColumns]="[]"
-            [templateNameValue]="templateNameValue"
-            [activeTemplateId]="templateId"
-            [activeTemplateName]="templateNameValue"
-          ></template-settings>
-        </nz-form-control>
-      </nz-form-item>
-      <div nz-col nzSpan="10">
-        <button
-          nz-button
-          [nzType]="'primary'"
-          (click)="onSubmit()"
-          [disabled]="isLoading"
-          class="mr-4"
-        >
-          Search
-        </button>
-        <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
-        <button nz-button (click)="exportexcel()">Export to Excel</button>
+<div style="position: absolute; width: 100%; left: 0px;">
+  <div class="px-4 py-4" style="max-width: 200%">
+    <form nz-form [formGroup]="filterForm">
+      <div nz-row nzGutter="8" nzJustify="space-between">
+        <nz-form-item nz-col nzSpan="8">
+          <nz-form-label nzRequired> Date </nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="startDatePicker" nzPlaceHolder="Start Date" nzId="startDatePicker"
+              (nzOnOpenChange)="onStartDateChange($event)" notvalid="false"></nz-date-picker>
+            <nz-date-picker formControlName="endDatePicker" nzPlaceHolder="End Date" nzId="endDatePicker"
+              (nzOnOpenChange)="onEndDateChange($event)"></nz-date-picker>
+            <nz-select class="templateSelect" [(ngModel)]="templateIdName" [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
+              <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"
+                nzLabel="{{ template.name }}"></nz-option>
+            </nz-select>
+            <template-settings (modalClosed)="onModalClose()" [templates]="templates" [columns]="columns"
+              [selectedColumns]="[]" [templateNameValue]="templateNameValue" [activeTemplateId]="templateId"
+              [activeTemplateName]="templateNameValue"></template-settings>
+          </nz-form-control>
+        </nz-form-item>
+        <div nz-col nzSpan="10">
+          <button nz-button [nzType]="'primary'" (click)="onSubmit()" [disabled]="isLoading" class="mr-4">
+            Search
+          </button>
+          <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
+          <button nz-button (click)="exportexcel()">Export to Excel</button>
+        </div>
       </div>
+    </form>
+    <!-- Event log table -->
+    <div *ngIf="fetchTable$ | async"></div>
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+    <!--<div class="progress2"><span>overlay</span></div>-->
+    <div class="progress" *ngIf="isLoading">
+      <span>
+        <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+      </span>
     </div>
-  </form>
-  <!-- Event log table -->
-  <div *ngIf="fetchTable$ | async"></div>
-  <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
-  <!--<div class="progress2"><span>overlay</span></div>-->
-  <div class="progress" *ngIf="isLoading">
-    <span><nz-spin nzSimple [nzSize]="'large'"></nz-spin></span>
-  </div>
-  <nz-table
-    id="excel-table"
-    #table
-    [nzPageSize]="pageSize"
-    [(nzPageIndex)]="pageNumber"
-    [nzFrontPagination]="paging"
-    nzShowSizeChanger
-    [nzData]="tableDataDisplay"
-    nzBordered
-    [nzPageSizeOptions]="paginationValues"
-    [nzScroll]="{ y: screenHeight }"
-    (nzPageIndexChange)="scrollToTop()"
-  >
-    <thead>
-      <tr>
-        <th
-          *ngFor="let column of columnsVisible"
-          [nzWidth]="column.width"
-          nzCustomFilter
-          [nzSortOrder]="null"
-          [nzSortDirections]="['ascend', 'descend']"
-          [nzSortFn]="column.sortFn"
-        >
-          {{ column.title }}
-          <nz-filter-trigger
-            *ngIf="column.searchable"
-            [(nzVisible)]="column.searchVisible"
-            [nzActive]="column.searchActive"
-            [nzDropdownMenu]="menu"
-          >
-            <i nz-icon nzType="search"></i>
-          </nz-filter-trigger>
-          <nz-dropdown-menu #menu="nzDropdownMenu">
-            <div class="ant-table-filter-dropdown">
-              <div class="px-2 py-2 grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  nz-input
-                  oninput="this.value = this.value"
-                  placeholder="{{ column.title }}"
-                  class="col-span-2"
-                  #searchInput
-                />
-                <button
-                  nz-button
-                  nzSize="small"
-                  nzType="primary"
-                  (click)="setFilter(column, searchInput.value)"
-                  class="search-button"
-                >
-                  Search
-                </button>
-                <button
-                  nz-button
-                  nzSize="small"
-                  (click)="searchInput.value = ''; clearFilter(column)"
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
-          </nz-dropdown-menu>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-template ngFor let-data [ngForOf]="table.data">
+    <nz-table id="excel-table" #table [nzPageSize]="pageSize" [(nzPageIndex)]="pageNumber" [nzFrontPagination]="paging"
+      nzShowSizeChanger [nzData]="tableDataDisplay" nzBordered [nzPageSizeOptions]="paginationValues"
+      [nzScroll]="{ y: screenHeight }" (nzPageIndexChange)="scrollToTop()">
+      <thead>
         <tr>
-          <ng-template ngFor let-column [ngForOf]="columnsVisible">
-            <td
-              *ngIf="column.drilldown"
-              (click)="onDrilldown(data, column.name)"
-              [ngClass]="'drilldown'"
-              title="Drill down for {{
+          <th *ngFor="let column of columnsVisible" [nzWidth]="column.width" nzCustomFilter [nzSortOrder]="null"
+            [nzSortDirections]="['ascend', 'descend']" [nzSortFn]="column.sortFn">
+            {{ column.title }}
+            <nz-filter-trigger *ngIf="column.searchable" [(nzVisible)]="column.searchVisible"
+              [nzActive]="column.searchActive" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="search"></i>
+            </nz-filter-trigger>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div class="ant-table-filter-dropdown">
+                <div class="px-2 py-2 grid grid-cols-2 gap-2">
+                  <input type="text" nz-input oninput="this.value = this.value" placeholder="{{ column.title }}"
+                    class="col-span-2" #searchInput />
+                  <button nz-button nzSize="small" nzType="primary" (click)="setFilter(column, searchInput.value)"
+                    class="search-button">
+                    Search
+                  </button>
+                  <button nz-button nzSize="small" (click)="searchInput.value = ''; clearFilter(column)">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </nz-dropdown-menu>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-template ngFor let-data [ngForOf]="table.data">
+          <tr>
+            <ng-template ngFor let-column [ngForOf]="columnsVisible">
+              <td *ngIf="column.drilldown" (click)="onDrilldown(data, column.name)" [ngClass]="'drilldown'" title="Drill down for {{
                 column.name == 'Order'
                   ? 'Order ' + data[column.dataName] + ' '
                   : ''
@@ -158,69 +93,49 @@
                     data[column.dataName] +
                     ' '
                   : ''
-              }}"
-              style="cursor: pointer"
-            >
-              {{ data[column.dataName] }}
-            </td>
-            <td
-              *ngIf="!column.drilldown"
-              [ngClass]="
+              }}" style="cursor: pointer">
+                {{ data[column.dataName] }}
+              </td>
+              <td *ngIf="!column.drilldown" [ngClass]="
                 getClass(
                   data[column.eventGroup + 'StartNum'],
                   data[column.eventGroup + 'DoneNum'],
                   column.eventGroup
                 )
-              "
-            >
-              {{ data[column.dataName] }}
-            </td>
-          </ng-template>
-        </tr>
+              ">
+                {{ data[column.dataName] }}
+              </td>
+            </ng-template>
+          </tr>
+        </ng-template>
+      </tbody>
+    </nz-table>
+    <nz-modal [(nzVisible)]="drilldownVisible" [nzTitle]="drilldownTitle" (nzOnCancel)="drilldownVisible = false"
+      [nzContent]="drilldownBody" [nzFooter]="drilldownFooter" [nzWidth]="'90%'" [nzBodyStyle]="drilldownBodyStyle">
+      <ng-template #drilldownBody>
+        <nz-table id="excel-drilldown-table" #drilldownTable [nzData]="drilldownTableData" [nzShowPagination]="false"
+          [nzPageSize]="1000" [nzScroll]="{ x: '90%', y: drilldownHeight }">
+          <thead>
+            <tr>
+              <th *ngFor="let drillColumn of drillDownColumns" [nzWidth]="drillColumn.width">
+                {{ drillColumn.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of drilldownTable.data">
+              <td *ngFor="let drillColumn of drillDownColumns">
+                {{ data[drillColumn.dataName] }}
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
       </ng-template>
-    </tbody>
-  </nz-table>
-  <nz-modal
-    [(nzVisible)]="drilldownVisible"
-    [nzTitle]="drilldownTitle"
-    (nzOnCancel)="drilldownVisible = false"
-    [nzContent]="drilldownBody"
-    [nzFooter]="drilldownFooter"
-    [nzWidth]="'90%'"
-    [nzBodyStyle]="drilldownBodyStyle"
-  >
-    <ng-template #drilldownBody>
-      <nz-table
-        id="excel-drilldown-table"
-        #drilldownTable
-        [nzData]="drilldownTableData"
-        [nzShowPagination]="false"
-        [nzPageSize]="1000"
-        [nzScroll]="{ x: '90%', y: drilldownHeight }"
-      >
-        <thead>
-          <tr>
-            <th
-              *ngFor="let drillColumn of drillDownColumns"
-              [nzWidth]="drillColumn.width"
-            >
-              {{ drillColumn.name }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of drilldownTable.data">
-            <td *ngFor="let drillColumn of drillDownColumns">
-              {{ data[drillColumn.dataName] }}
-            </td>
-          </tr>
-        </tbody>
-      </nz-table>
-    </ng-template>
-    <ng-template #drilldownFooter>
-      <div style="width: 100%; text-align: center">
-        <button nz-button (click)="exportDrilldown()">Export to Excel</button>
-      </div>
-    </ng-template>
-  </nz-modal>
+      <ng-template #drilldownFooter>
+        <div style="width: 100%; text-align: center">
+          <button nz-button (click)="exportDrilldown()">Export to Excel</button>
+        </div>
+      </ng-template>
+    </nz-modal>
+  </div>
 </div>
