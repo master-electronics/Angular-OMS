@@ -1,3 +1,9 @@
+query checkReceiptHeader($id: Int!) {
+  findReceiptH(ReceiptH: { _id: $id }) {
+    _id
+  }
+}
+
 query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
   findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
     RECEIPTLs {
@@ -7,6 +13,7 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
       ROHS
       LineNumber
       ProductID
+      CountryID
       Country {
         ISO3
       }
@@ -14,6 +21,14 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
         PartNumber
         ProductCode {
           ProductCodeNumber
+        }
+      }
+      RECEIPTLDs {
+        PurchaseOrderL {
+          LineNumber
+          PurchaseOrderH {
+            PurchaseOrderNumber
+          }
         }
       }
     }
@@ -64,4 +79,41 @@ query printReceivingLabel(
     DPI: $DPI
     ORIENTATION: $ORIENTATION
   )
+}
+
+query printTextLabel(
+  $PRINTER: String!
+  $DPI: String!
+  $ORIENTATION: String!
+  $LINE1: String!
+) {
+  printTextLabel(
+    PRINTER: $PRINTER
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
+    LINE1: $LINE1
+  )
+}
+
+mutation updateAfterReceiving(
+  $ITNList: [ITNAndQuantity]!
+  $Inventory: updateInventory!
+  $info: InventoryForMerp!
+  $ReceiptLID: Int!
+) {
+  updateAfterReceiving(
+    ITNList: $ITNList
+    Inventory: $Inventory
+    ReceiptLID: $ReceiptLID
+  )
+  createInventoryFromOMS(ITNList: $ITNList, Inventory: $Inventory, info: $info)
+}
+
+query checkBinLocation($Barcode: String!, $DistributionCenter: String!) {
+  findContainer(
+    Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+  ) {
+    _id
+    Barcode
+  }
 }

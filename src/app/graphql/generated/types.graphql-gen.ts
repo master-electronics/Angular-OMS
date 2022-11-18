@@ -112,8 +112,10 @@ export type HoldOnCounter = {
 };
 
 export type ItnAndQuantity = {
-  ITN?: InputMaybe<Scalars['String']>;
-  quantity?: InputMaybe<Scalars['Float']>;
+  BinLocation: Scalars['String'];
+  ContainerID: Scalars['Int'];
+  ITN: Scalars['String'];
+  quantity: Scalars['Float'];
 };
 
 export type ItnColumn = {
@@ -318,6 +320,16 @@ export type Inventory = {
   _id: Scalars['Int'];
 };
 
+export type InventoryForMerp = {
+  CountryOfOrigin: Scalars['String'];
+  CreatingProgram: Scalars['String'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  PurchaseOrderLine: Scalars['String'];
+  PurchaseOrderNumber: Scalars['String'];
+  User: Scalars['String'];
+};
+
 export type Menu = {
   __typename?: 'Menu';
   ADGroupProtected?: Maybe<Scalars['Boolean']>;
@@ -348,6 +360,7 @@ export type Mutation = {
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
+  createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
   deleteCustomerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -385,7 +398,7 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
-  updateAfterScanITN?: Maybe<Scalars['Boolean']>;
+  updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -439,6 +452,12 @@ export type MutationClearItnUserDefaultTemplateArgs = {
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+export type MutationCreateInventoryFromOmsArgs = {
+  ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
+  Inventory: UpdateInventory;
+  info?: InputMaybe<InventoryForMerp>;
 };
 
 export type MutationDeleteAndInsertRouteTableArgs = {
@@ -628,7 +647,7 @@ export type MutationPrintItnLabelArgs = {
   Station: Scalars['String'];
 };
 
-export type MutationUpdateAfterScanItnArgs = {
+export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
@@ -1053,7 +1072,8 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
-  printReceivingLabel: Scalars['Boolean'];
+  printReceivingLabel?: Maybe<Scalars['Boolean']>;
+  printTextLabel?: Maybe<Scalars['Boolean']>;
 };
 
 export type QueryCountOrderItnsArgs = {
@@ -1344,6 +1364,16 @@ export type QueryFindVendorArgs = {
 export type QueryPrintReceivingLabelArgs = {
   DPI: Scalars['String'];
   ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PRINTER: Scalars['String'];
+};
+
+export type QueryPrintTextLabelArgs = {
+  DPI: Scalars['String'];
+  LINE1?: InputMaybe<Scalars['String']>;
+  LINE2?: InputMaybe<Scalars['String']>;
+  LINE3?: InputMaybe<Scalars['String']>;
+  LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
 };

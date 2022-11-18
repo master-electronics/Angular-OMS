@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
-import { PrintReceivingLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { PrintTextLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { ReceiptStore } from './Receipt';
@@ -22,7 +22,7 @@ export class KickoutStore {
    */
   constructor(
     private _receipt: ReceiptStore,
-    private _print: PrintReceivingLabelGQL,
+    private _print: PrintTextLabelGQL,
     private _itn: CreateItnGQL
   ) {}
 
@@ -97,12 +97,13 @@ export class KickoutStore {
   }
 
   /**
-   * printReceivingLabel
+   * printTextLabel
    */
-  public printReceivingLabel$(
+  public printTextLabel$(
     PRINTER: string,
     DPI: string,
-    ORIENTATION: string
+    ORIENTATION: string,
+    LINE1: string
   ) {
     return this._itn
       .fetch(
@@ -110,16 +111,14 @@ export class KickoutStore {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
-        tap((res) => console.log(res)),
-        switchMap((res) => {
+        switchMap(() => {
           return this._print.fetch({
             PRINTER,
-            ITN: res.data.createITN,
             DPI,
             ORIENTATION,
+            LINE1,
           });
-        }),
-        tap((res) => console.log(res))
+        })
       );
   }
 }

@@ -8,6 +8,7 @@ import {
   tap,
 } from 'rxjs';
 import {
+  CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
@@ -16,8 +17,31 @@ import {
 export class ReceiptStore {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
-    private _findverifyInfo$: FetchProductInfoForReceivingGQL
+    private _findverifyInfo$: FetchProductInfoForReceivingGQL,
+    private _checkHeader: CheckReceiptHeaderGQL
   ) {}
+
+  /**
+   * checkReceiptHeader
+   */
+  private _headerID = new BehaviorSubject<number>(null);
+  public get headerID(): number {
+    return this._headerID.value;
+  }
+  public checkReceiptHeader(id: number): Observable<boolean> {
+    return this._checkHeader.fetch({ id }).pipe(
+      tap((res) => {
+        if (!res.data.findReceiptH?._id) {
+          throw new Error("Can't find this Receipt!");
+        }
+      }),
+      map((res) => {
+        this._headerID.next(id);
+        return true;
+      })
+    );
+  }
+
   /**
    * Find Receipt Header info by ID, and all lines under this header
    */
@@ -28,11 +52,11 @@ export class ReceiptStore {
   public get receiptHeader() {
     return this._receiptHeader.value;
   }
-  public findReceiptHeader(ReceiptHID: number) {
+  public findReceiptHeader$() {
     return this._findReceiptH$
       .fetch(
         {
-          ReceiptHID,
+          ReceiptHID: this.headerID,
           statusID: 10,
         },
         { fetchPolicy: 'network-only' }
@@ -146,10 +170,25 @@ export class ReceiptStore {
   /**
    * pickOneReceiptLine
    */
-  public pickOneReceiptLine(id: number) {
-    const selected = this.receiptLsAfterQuantity.filter(
-      (res) => res._id === id
-    );
-    this._selectedReceiptLine.next(selected);
+  public pickOneReceiptLine(id?: number) {
+    if (!id) {
+      this._selectedReceiptLine.next(this.receiptLsAfterQuantity);
+    } else {
+      const selected = this.receiptLsAfterQuantity.filter(
+        (res) => res._id === id
+      );
+      this._selectedReceiptLine.next(selected);
+    }
+  }
+
+  /**
+   * InitValue
+   */
+  public InitValue() {
+    // this._receiptHeader.next(null);
+    this._receiptLs.next(null);
+    this._receiptLsAfterQuantity.next(null);
+    this._verifyInfo.next(null);
+    this._selectedReceiptLine.next(null);
   }
 }

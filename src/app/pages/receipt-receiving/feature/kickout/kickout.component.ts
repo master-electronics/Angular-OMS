@@ -16,6 +16,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutStore } from '../../data/kickout';
 import { ReceiptStore } from '../../data/Receipt';
+import { ReceivingStore } from '../../data/receivingStore';
 
 @Component({
   standalone: true,
@@ -40,16 +41,16 @@ import { ReceiptStore } from '../../data/Receipt';
       >
         <div class="mb-4 grid grid-cols-3 justify-center gap-5">
           <div *ngFor="let option of kickoutOptions">
-            <label nz-radio-button [nzValue]="option.id">{{
+            <label nz-radio-button [nzValue]="option.content">{{
               option.content
             }}</label>
           </div>
-          <label nz-radio-button nzValue="0"> Other... </label>
+          <label nz-radio-button nzValue="Other"> Other... </label>
         </div>
       </nz-radio-group>
 
       <textarea
-        *ngIf="kickoutForm.value.kickoutReason === '0'"
+        *ngIf="kickoutForm.value.kickoutReason === 'Other'"
         rows="4"
         nz-input
         name="otherReason"
@@ -101,23 +102,24 @@ export class KickoutComponent implements OnInit {
     private _router: Router,
     private _kickout: KickoutStore,
     private _receipt: ReceiptStore,
-    private _ui: UIStateStore
+    private _step: ReceivingStore
   ) {}
 
   ngOnInit(): void {
     if (!this._receipt.receiptLs?.length) {
       this.onBack();
     }
+    this._step.changeSteps(1);
     this._kickout.resetKickout();
     this.kickoutOptions = [
-      { id: 1, content: 'Short Quantity' },
-      { id: 2, content: 'Damaged' },
-      { id: 3, content: 'Repackaging' },
-      { id: 4, content: 'Wrong Parts' },
-      { id: 5, content: 'Verify Quantity' },
-      { id: 6, content: 'Mixed Parts' },
-      { id: 7, content: 'Part Number Verification' },
-      { id: 8, content: 'Kit Set' },
+      { content: 'Missing/Incorrect Picture' },
+      { content: 'Missing/Incorrect Piece Kit' },
+      { content: 'Part Number Verification' },
+      { content: 'Date Code Verification' },
+      { content: 'Wrong PO/No Open PO/No Open Line' },
+      { content: 'Damaged Parts' },
+      { content: 'Over PO Quantity' },
+      { content: 'Wrong Parts' },
     ];
     this.kickoutForm = this._fb.group({
       kickoutReason: ['', Validators.required],
@@ -131,13 +133,14 @@ export class KickoutComponent implements OnInit {
   };
 
   onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/part');
+    this._router.navigateByUrl('receiptreceiving/part/verify');
   }
 
   onSubmit(): void {
-    this._kickout.updateReasons(this.kickoutForm.value);
+    const { kickoutReason, otherReason } = this.kickoutForm.value;
+    const line = (kickoutReason + otherReason).substring(0, 79);
     this.print$ = this._kickout
-      .printReceivingLabel$('PHLABELS139', '300', 'LANDSCAPE')
+      .printTextLabel$('PHLABELS139', '300', 'LANDSCAPE', line)
       .pipe(
         map(() => {
           this._router.navigateByUrl('receiptreceiving/part');

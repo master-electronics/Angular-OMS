@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
+import { LabelStore } from './label';
+import { updateReceiptStore } from './updateReceipt';
 
 export interface Tab {
   steps: { title: string; subtitle?: string; description?: string }[];
@@ -21,6 +23,11 @@ export interface FormState {
 
 @Injectable()
 export class ReceivingStore {
+  constructor(private _itn: CreateItnGQL) {}
+  /**
+   * initITNList
+   */
+
   // keyboard
   private _keyboard = new BehaviorSubject<Keyboard>(null);
   public get keyboard$(): Observable<Keyboard> {
@@ -91,8 +98,6 @@ export class ReceivingStore {
   public initFormState(): void {
     this._formState.next({ loading: false });
   }
-
-  constructor(private _itn: CreateItnGQL) {}
 
   /**
    * creatITN

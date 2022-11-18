@@ -1,22 +1,44 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, delay, map, Observable, switchMap, tap } from 'rxjs';
-import { PrintReceivingLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import {
+  CheckBinLocationGQL,
+  PrintReceivingLabelGQL,
+  UpdateAfterReceivingGQL,
+} from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
-import { ReceivingStore } from './receivingStore';
+import { ReceiptStore } from './Receipt';
 
 export interface ITNinfo {
   ITN: string;
   quantity: number;
+  BinLocation: string;
+  ContainerID: number;
 }
 
 @Injectable()
 export class LabelStore {
   constructor(
+    private _receipt: ReceiptStore,
     private _print: PrintReceivingLabelGQL,
-    private _itn: CreateItnGQL
+    private _container: CheckBinLocationGQL,
+    private _itn: CreateItnGQL,
+    private _update: UpdateAfterReceivingGQL
   ) {}
 
+  private _scanAll = new BehaviorSubject<boolean>(false);
+  /**
+   * get scanAll
+   */
+  public get scanAll() {
+    return this._scanAll.value;
+  }
+  /**
+   * changeScanALl
+   */
+  public changeScanALl(boolean: boolean) {
+    this._scanAll.next(boolean);
+  }
   /**
    * save quantitylist after assign label
    */
@@ -44,21 +66,41 @@ export class LabelStore {
     return this._ITNList.value;
   }
   /**
-   * updateITNList
+   * insertITNList
    */
-  public updateITNList(ITN: string, quantity: number): void {
-    let tmp = [{ ITN, quantity }];
+  public insertITNList(itn: ITNinfo) {
+    let tmp;
     if (this._ITNList.value) {
-      tmp = [...this._ITNList.value, { ITN, quantity }];
+      tmp = [...this._ITNList.value, itn];
+    } else {
+      tmp = [itn];
     }
     this._ITNList.next(tmp);
   }
+  /**
+   * updateLastITN
+   */
+  public updateLastITN(itn: ITNinfo) {
+    let tmp = [...this._ITNList.value];
+    if (tmp.length) {
+      tmp.pop();
+    } else {
+      tmp = [];
+    }
+    tmp.push(itn);
+    this._ITNList.next(tmp);
+  }
+  /**
+   * resetITNList
+   */
+  public resetITNList() {
+    this._ITNList.next(null);
+  }
 
   /**
-   * printReceivingLabel
+   * printReceivingLabel And insert itn to list
    */
   public printReceivingLabel$(
-    index: number,
     quantity: number,
     PRINTER: string,
     DPI: string,
@@ -71,7 +113,13 @@ export class LabelStore {
       )
       .pipe(
         tap((res) => {
-          this.updateITNList(res.data.createITN, quantity);
+          this.insertITNList({
+            quantity,
+            ITN: res.data.createITN,
+            BinLocation: '',
+            ContainerID: 0,
+          });
+          console.log(res.data.createITN);
         }),
         switchMap((res) => {
           return this._print.fetch(
@@ -83,8 +131,74 @@ export class LabelStore {
             },
             { fetchPolicy: 'network-only' }
           );
-        }),
-        delay(5000)
+        })
       );
+  }
+
+  /**
+   * checkBinLocation and update info to last itn.
+   */
+  public checkBinLocation(Barcode: string) {
+    return this._container
+      .fetch({
+        Barcode,
+        DistributionCenter: environment.DistributionCenter,
+      })
+      .pipe(
+        tap((res) => {
+          if (!res.data.findContainer?._id) {
+            throw new Error('Can not find this Location!');
+          }
+        }),
+        map((res) => {
+          let itn = this.ITNList.slice(-1)[0];
+          itn = {
+            ...itn,
+            BinLocation: res.data.findContainer.Barcode,
+            ContainerID: res.data.findContainer._id,
+          };
+          this.updateLastITN(itn);
+          return null;
+        })
+      );
+  }
+
+  /**
+   * updateAfterReceving
+   */
+  public updateAfterReceving(): Observable<any> {
+    const line = this._receipt.selectedReceiptLine[0];
+    const userinfo = sessionStorage.getItem('userToken');
+    const Inventory = {
+      DistributionCenter: environment.DistributionCenter,
+      DateCode: line.DateCode,
+      ROHS: line.ROHS,
+      ProductID: line.ProductID,
+      CountryID: line.CountryID,
+    };
+    const info = {
+      PartNumber: line.Product?.PartNumber || 'null',
+      ProductCode: line.Product?.ProductCode.ProductCodeNumber || 'null',
+      CountryOfOrigin: line.Country?.ISO3 || 'null',
+      User: JSON.parse(userinfo)?.username,
+      CreatingProgram: 'OMS-Receiving',
+      PurchaseOrderNumber:
+        line.RECEIPTLDs[0]?.PurchaseOrderL?.PurchaseOrderH
+          ?.PurchaseOrderNumber || 'null',
+      PurchaseOrderLine:
+        line.RECEIPTLDs[0].PurchaseOrderL?.LineNumber.toString() || 'null',
+    };
+    const ReceiptLID = line._id;
+    return this._update.mutate({
+      ITNList: this._ITNList.value,
+      ReceiptLID,
+      Inventory,
+      info,
+    });
+  }
+
+  public initValue() {
+    this._ITNList.next(null);
+    this._quantityList.next(null);
   }
 }

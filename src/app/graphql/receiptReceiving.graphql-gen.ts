@@ -117,8 +117,10 @@ export type HoldOnCounter = {
 };
 
 export type ItnAndQuantity = {
-  ITN?: InputMaybe<Scalars['String']>;
-  quantity?: InputMaybe<Scalars['Float']>;
+  BinLocation: Scalars['String'];
+  ContainerID: Scalars['Int'];
+  ITN: Scalars['String'];
+  quantity: Scalars['Float'];
 };
 
 export type ItnColumn = {
@@ -323,6 +325,16 @@ export type Inventory = {
   _id: Scalars['Int'];
 };
 
+export type InventoryForMerp = {
+  CountryOfOrigin: Scalars['String'];
+  CreatingProgram: Scalars['String'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+  PurchaseOrderLine: Scalars['String'];
+  PurchaseOrderNumber: Scalars['String'];
+  User: Scalars['String'];
+};
+
 export type Menu = {
   __typename?: 'Menu';
   ADGroupProtected?: Maybe<Scalars['Boolean']>;
@@ -353,6 +365,7 @@ export type Mutation = {
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
+  createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
   deleteCustomerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -390,7 +403,7 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
-  updateAfterScanITN?: Maybe<Scalars['Boolean']>;
+  updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateForContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -444,6 +457,12 @@ export type MutationClearItnUserDefaultTemplateArgs = {
 export type MutationClearMerpToteArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
+};
+
+export type MutationCreateInventoryFromOmsArgs = {
+  ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
+  Inventory: UpdateInventory;
+  info?: InputMaybe<InventoryForMerp>;
 };
 
 export type MutationDeleteAndInsertRouteTableArgs = {
@@ -633,7 +652,7 @@ export type MutationPrintItnLabelArgs = {
   Station: Scalars['String'];
 };
 
-export type MutationUpdateAfterScanItnArgs = {
+export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
@@ -1058,7 +1077,8 @@ export type Query = {
   findUserInfos?: Maybe<Array<Maybe<UserInfo>>>;
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
-  printReceivingLabel: Scalars['Boolean'];
+  printReceivingLabel?: Maybe<Scalars['Boolean']>;
+  printTextLabel?: Maybe<Scalars['Boolean']>;
 };
 
 export type QueryCountOrderItnsArgs = {
@@ -1349,6 +1369,16 @@ export type QueryFindVendorArgs = {
 export type QueryPrintReceivingLabelArgs = {
   DPI: Scalars['String'];
   ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PRINTER: Scalars['String'];
+};
+
+export type QueryPrintTextLabelArgs = {
+  DPI: Scalars['String'];
+  LINE1?: InputMaybe<Scalars['String']>;
+  LINE2?: InputMaybe<Scalars['String']>;
+  LINE3?: InputMaybe<Scalars['String']>;
+  LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
 };
@@ -2018,6 +2048,15 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type CheckReceiptHeaderQueryVariables = Types.Exact<{
+  id: Types.Scalars['Int'];
+}>;
+
+export type CheckReceiptHeaderQuery = {
+  __typename?: 'Query';
+  findReceiptH?: { __typename?: 'ReceiptH'; _id: number } | null;
+};
+
 export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
   ReceiptHID: Types.Scalars['Int'];
   statusID: Types.Scalars['Int'];
@@ -2035,12 +2074,24 @@ export type FindReceiptHeaderForReceivingQuery = {
       ROHS?: boolean | null;
       LineNumber: number;
       ProductID: number;
+      CountryID?: number | null;
       Country?: { __typename?: 'Country'; ISO3: string } | null;
       Product: {
         __typename?: 'Product';
         PartNumber: string;
         ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
       };
+      RECEIPTLDs?: Array<{
+        __typename?: 'ReceiptLD';
+        PurchaseOrderL?: {
+          __typename?: 'PurchaseOrderL';
+          LineNumber: number;
+          PurchaseOrderH: {
+            __typename?: 'PurchaseOrderH';
+            PurchaseOrderNumber: string;
+          };
+        } | null;
+      } | null> | null;
     } | null> | null;
   } | null;
 };
@@ -2096,9 +2147,71 @@ export type PrintReceivingLabelQueryVariables = Types.Exact<{
 
 export type PrintReceivingLabelQuery = {
   __typename?: 'Query';
-  printReceivingLabel: boolean;
+  printReceivingLabel?: boolean | null;
 };
 
+export type PrintTextLabelQueryVariables = Types.Exact<{
+  PRINTER: Types.Scalars['String'];
+  DPI: Types.Scalars['String'];
+  ORIENTATION: Types.Scalars['String'];
+  LINE1: Types.Scalars['String'];
+}>;
+
+export type PrintTextLabelQuery = {
+  __typename?: 'Query';
+  printTextLabel?: boolean | null;
+};
+
+export type UpdateAfterReceivingMutationVariables = Types.Exact<{
+  ITNList:
+    | Array<Types.InputMaybe<Types.ItnAndQuantity>>
+    | Types.InputMaybe<Types.ItnAndQuantity>;
+  Inventory: Types.UpdateInventory;
+  info: Types.InventoryForMerp;
+  ReceiptLID: Types.Scalars['Int'];
+}>;
+
+export type UpdateAfterReceivingMutation = {
+  __typename?: 'Mutation';
+  updateAfterReceiving?: boolean | null;
+  createInventoryFromOMS?: boolean | null;
+};
+
+export type CheckBinLocationQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+}>;
+
+export type CheckBinLocationQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    _id: number;
+    Barcode: string;
+  } | null;
+};
+
+export const CheckReceiptHeaderDocument = gql`
+  query checkReceiptHeader($id: Int!) {
+    findReceiptH(ReceiptH: { _id: $id }) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CheckReceiptHeaderGQL extends Apollo.Query<
+  CheckReceiptHeaderQuery,
+  CheckReceiptHeaderQueryVariables
+> {
+  document = CheckReceiptHeaderDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
     findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
@@ -2109,6 +2222,7 @@ export const FindReceiptHeaderForReceivingDocument = gql`
         ROHS
         LineNumber
         ProductID
+        CountryID
         Country {
           ISO3
         }
@@ -2116,6 +2230,14 @@ export const FindReceiptHeaderForReceivingDocument = gql`
           PartNumber
           ProductCode {
             ProductCodeNumber
+          }
+        }
+        RECEIPTLDs {
+          PurchaseOrderL {
+            LineNumber
+            PurchaseOrderH {
+              PurchaseOrderNumber
+            }
           }
         }
       }
@@ -2237,6 +2359,92 @@ export class PrintReceivingLabelGQL extends Apollo.Query<
   PrintReceivingLabelQueryVariables
 > {
   document = PrintReceivingLabelDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const PrintTextLabelDocument = gql`
+  query printTextLabel(
+    $PRINTER: String!
+    $DPI: String!
+    $ORIENTATION: String!
+    $LINE1: String!
+  ) {
+    printTextLabel(
+      PRINTER: $PRINTER
+      DPI: $DPI
+      ORIENTATION: $ORIENTATION
+      LINE1: $LINE1
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PrintTextLabelGQL extends Apollo.Query<
+  PrintTextLabelQuery,
+  PrintTextLabelQueryVariables
+> {
+  document = PrintTextLabelDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateAfterReceivingDocument = gql`
+  mutation updateAfterReceiving(
+    $ITNList: [ITNAndQuantity]!
+    $Inventory: updateInventory!
+    $info: InventoryForMerp!
+    $ReceiptLID: Int!
+  ) {
+    updateAfterReceiving(
+      ITNList: $ITNList
+      Inventory: $Inventory
+      ReceiptLID: $ReceiptLID
+    )
+    createInventoryFromOMS(
+      ITNList: $ITNList
+      Inventory: $Inventory
+      info: $info
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateAfterReceivingGQL extends Apollo.Mutation<
+  UpdateAfterReceivingMutation,
+  UpdateAfterReceivingMutationVariables
+> {
+  document = UpdateAfterReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const CheckBinLocationDocument = gql`
+  query checkBinLocation($Barcode: String!, $DistributionCenter: String!) {
+    findContainer(
+      Container: { DistributionCenter: $DistributionCenter, Barcode: $Barcode }
+    ) {
+      _id
+      Barcode
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CheckBinLocationGQL extends Apollo.Query<
+  CheckBinLocationQuery,
+  CheckBinLocationQueryVariables
+> {
+  document = CheckBinLocationDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

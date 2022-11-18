@@ -44,7 +44,7 @@ import { GobalValueStore } from '../../data/gobal-value';
       >
         <div *ngFor="let country of countryList$ | async">
           <nz-option
-            [nzLabel]="country.CountryName.trim() + '-' + country.ISO3"
+            [nzLabel]="country.ISO3 + '-' + country.CountryName.trim()"
             [nzValue]="country._id"
           ></nz-option>
         </div>

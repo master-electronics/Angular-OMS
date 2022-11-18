@@ -63,13 +63,15 @@ export class CountryComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _info: updateReceiptStore,
-    private _receipt: ReceiptStore
+    private _receipt: ReceiptStore,
+    private _step: ReceivingStore
   ) {}
 
   ngOnInit(): void {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
       this.onBack();
     }
+    this._step.changeSteps(2);
     this._info.initReceiptInfo();
   }
 

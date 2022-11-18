@@ -68,7 +68,7 @@ export class SelectLineComponent implements OnInit {
 
   public onClick(data): void {
     console.log(data);
-    this._receipt.pickOneReceiptLine(data._id);
+    this._receipt.pickOneReceiptLine(data.id);
     this._router.navigateByUrl('receiptreceiving/label/assign');
   }
 

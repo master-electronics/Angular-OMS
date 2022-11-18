@@ -100,6 +100,13 @@ export const ReceivingRoutes: Routes = [
             (mod) => mod.PrintITNComponent
           ),
       },
+      {
+        path: 'label/sacnlocation',
+        loadComponent: () =>
+          import('./feature/label/scanLocation.component').then(
+            (mod) => mod.ScanLocationComponent
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },
     ],
   },

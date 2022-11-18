@@ -65,4 +65,8 @@ export class updateReceiptStore {
       ROHS: this.receiptInfo.ROHS,
     });
   }
+
+  public initValue() {
+    this._receiptInfo.next(null);
+  }
 }

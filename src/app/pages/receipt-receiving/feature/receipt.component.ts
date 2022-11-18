@@ -75,7 +75,7 @@ export class ReceiptComponent implements OnInit {
     this._ui.initFormState();
     this._ui.loadingOn();
     this.data$ = this._receipt
-      .findReceiptHeader(Number(this.inputForm.value.receipt))
+      .checkReceiptHeader(Number(this.inputForm.value.receipt))
       .pipe(
         map(() => {
           this._ui.initFormState();

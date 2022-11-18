@@ -5,6 +5,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { ReceiptStore } from '../../data/Receipt';
+import { ReceivingStore } from '../../data/receivingStore';
 import { updateReceiptStore } from '../../data/updateReceipt';
 
 @Component({
@@ -61,13 +62,15 @@ export class ROHSComponent implements OnInit {
   constructor(
     private _router: Router,
     private _update: updateReceiptStore,
-    private _receipt: ReceiptStore
+    private _receipt: ReceiptStore,
+    private _steps: ReceivingStore
   ) {}
 
   ngOnInit(): void {
     if (!this._update.receiptInfo?.DateCode) {
       this.onBack();
     }
+    this._steps.changeSteps(2);
   }
 
   public onUpdate(ROHS: boolean): void {
@@ -81,7 +84,8 @@ export class ROHSComponent implements OnInit {
       map(() => {
         switch (this._receipt.receiptLsAfterQuantity?.length) {
           case 1:
-            this._router.navigateByUrl('receiptreceiving/label/assignlabel');
+            this._receipt.pickOneReceiptLine();
+            this._router.navigateByUrl('receiptreceiving/label/assign');
             break;
           default:
             this._router.navigateByUrl('receiptreceiving/label/selectline');

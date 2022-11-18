@@ -30,7 +30,10 @@ import { ReceivingStore } from '../../data/receivingStore';
     NzIconModule,
   ],
   template: `
-    <h1>Total: {{ total }} | Remaining: {{ remaining$ | async }}</h1>
+    <div class="flex flex-col gap-5 text-lg">
+      <h1>Total: {{ total }}</h1>
+      <h1>Remaining: {{ remaining$ | async }}</h1>
+    </div>
     <form nz-form [formGroup]="inputForm" (ngSubmit)="submitForm()">
       <nz-form-item nzFlex> </nz-form-item>
       <nz-form-item *ngFor="let control of listOfControl; let i = index">
@@ -40,7 +43,7 @@ import { ReceivingStore } from '../../data/receivingStore';
           *ngIf="i === 0"
           [nzFor]="control.controlInstance"
         >
-          Labels
+          Quantity
         </nz-form-label>
         <nz-form-control
           [nzXs]="24"
@@ -149,6 +152,8 @@ export class AssignLabelComponent implements OnInit {
     if (this._receipt.selectedReceiptLine?.length !== 1) {
       this.onBack();
     }
+    this._label.resetITNList();
+    this._label.changeScanALl(false);
     this.total = this._receipt.selectedReceiptLine[0].ExpectedQuantity;
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});

@@ -86,7 +86,8 @@ export class VerifyComponent implements OnInit {
   constructor(
     private _router: Router,
     private _ui: ReceivingStore,
-    private _receipt: ReceiptStore
+    private _receipt: ReceiptStore,
+    private _step: ReceivingStore
   ) {}
 
   ngOnInit(): void {
@@ -94,6 +95,7 @@ export class VerifyComponent implements OnInit {
     if (!this._receipt.receiptLs) {
       this.onBack();
     }
+    this._step.changeSteps(1);
     this.data$ = this._receipt.findVerifyInfo().pipe(
       map((res) => {
         return {
