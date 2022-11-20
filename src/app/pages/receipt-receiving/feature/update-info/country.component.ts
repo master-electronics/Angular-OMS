@@ -11,9 +11,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { CountryISO3Component } from 'src/app/shared/ui/input/country-iso3.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
-import { updateReceiptStore } from '../../data/updateReceipt';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
+import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
@@ -62,9 +62,9 @@ export class CountryComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _info: updateReceiptStore,
-    private _receipt: ReceiptStore,
-    private _step: ReceivingStore
+    private _info: updateReceiptInfoService,
+    private _receipt: ReceiptInfoService,
+    private _step: ReceivingService
   ) {}
 
   ngOnInit(): void {

@@ -11,12 +11,11 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
-import { UIStateStore } from 'src/app/shared/data/app-ui-state';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { KickoutStore } from '../../data/kickout';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
+import { KickoutService } from '../../data/kickout';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
 
 @Component({
   standalone: true,
@@ -64,6 +63,7 @@ import { ReceivingStore } from '../../data/receivingStore';
           [disabled]="kickoutForm.invalid"
           nzType="primary"
           type="submit"
+          [nzLoading]="print$ | async"
           nzSize="large"
         >
           kickout
@@ -82,8 +82,8 @@ import { ReceivingStore } from '../../data/receivingStore';
     </form>
     <div *ngIf="print$ | async as print">
       <alert-bar
-        [message]="print.message"
-        [messageType]="print.messageType"
+        [message]="print.error.message"
+        [type]="print.error.type"
       ></alert-bar>
     </div>
     <simple-keyboard
@@ -100,9 +100,9 @@ export class KickoutComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _kickout: KickoutStore,
-    private _receipt: ReceiptStore,
-    private _step: ReceivingStore
+    private _kickout: KickoutService,
+    private _receipt: ReceiptInfoService,
+    private _step: ReceivingService
   ) {}
 
   ngOnInit(): void {
@@ -110,7 +110,6 @@ export class KickoutComponent implements OnInit {
       this.onBack();
     }
     this._step.changeSteps(1);
-    this._kickout.resetKickout();
     this.kickoutOptions = [
       { content: 'Missing/Incorrect Picture' },
       { content: 'Missing/Incorrect Piece Kit' },
@@ -125,7 +124,6 @@ export class KickoutComponent implements OnInit {
       kickoutReason: ['', Validators.required],
       otherReason: [''],
     });
-    this._kickout.initKickout();
   }
 
   onChange = (input: string) => {
@@ -146,7 +144,10 @@ export class KickoutComponent implements OnInit {
           this._router.navigateByUrl('receiptreceiving/part');
         }),
         catchError((error) => {
-          return of({ message: error.message, messageType: 'error' });
+          return of({
+            loading: false,
+            error: { message: error.message, type: 'error' },
+          });
         })
       );
   }

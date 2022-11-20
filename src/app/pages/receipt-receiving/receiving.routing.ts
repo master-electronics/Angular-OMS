@@ -4,7 +4,7 @@ export const ReceivingRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./receiving.component').then((m) => m.ReceivingComponent),
+      import('./shell.component').then((m) => m.ReceivingShell),
     children: [
       {
         path: 'receipt',
@@ -37,27 +37,27 @@ export const ReceivingRoutes: Routes = [
             (m) => m.KickoutComponent
           ),
       },
-      {
-        path: 'kickout/scanlabel',
-        loadComponent: () =>
-          import('./feature/kickout/label.component').then(
-            (mod) => mod.LabelComponent
-          ),
-      },
-      {
-        path: 'kickout/location',
-        loadComponent: () =>
-          import('./feature/kickout/location.component').then(
-            (mod) => mod.LocationComponent
-          ),
-      },
-      {
-        path: 'kickout/rescanlabel',
-        loadComponent: () =>
-          import('./feature/kickout/rescan-label.component').then(
-            (mod) => mod.RescanLabelComponent
-          ),
-      },
+      // {
+      //   path: 'kickout/scanlabel',
+      //   loadComponent: () =>
+      //     import('./feature/kickout/label.component').then(
+      //       (mod) => mod.LabelComponent
+      //     ),
+      // },
+      // {
+      //   path: 'kickout/location',
+      //   loadComponent: () =>
+      //     import('./feature/kickout/location.component').then(
+      //       (mod) => mod.LocationComponent
+      //     ),
+      // },
+      // {
+      //   path: 'kickout/rescanlabel',
+      //   loadComponent: () =>
+      //     import('./feature/kickout/rescan-label.component').then(
+      //       (mod) => mod.RescanLabelComponent
+      //     ),
+      // },
       {
         path: 'update/country',
         loadComponent: () =>

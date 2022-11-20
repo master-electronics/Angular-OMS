@@ -9,8 +9,8 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptStore } from '../../data/Receipt';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { FormState, ReceivingService } from '../../data/receivingService';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -26,7 +26,6 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       <single-input-form
         (formBack)="onBack()"
         (formSubmit)="onSubmit()"
-        [formState]="formState$ | async"
         [formGroup]="inputForm"
         controlName="quantity"
         title="Quantity"
@@ -54,14 +53,13 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 })
 export class QuantityComponent implements OnInit {
   public inputForm: FormGroup;
-  public formState$: Observable<FormState>;
   public showKickout = false;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingStore,
-    private _receipt: ReceiptStore
+    private _ui: ReceivingService,
+    private _receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +71,6 @@ export class QuantityComponent implements OnInit {
     this.inputForm = this._fb.group({
       quantity: ['', Validators.required],
     });
-    this.formState$ = this._ui.formState$;
   }
 
   onChange = (input: string) => {

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
 import { TableViewComponent } from '../../../../shared/ui/table-view.component';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -51,8 +51,8 @@ export class SelectLineComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _tab: ReceivingStore,
-    private _receipt: ReceiptStore
+    private _tab: ReceivingService,
+    private _receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {

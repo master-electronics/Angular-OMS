@@ -10,8 +10,9 @@ import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.comp
 import { SingleInputformComponent } from '../ui/single-input-form.component';
 import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { ReceiptStore } from '../data/Receipt';
-import { FormState, ReceivingStore } from '../data/receivingStore';
+import { ReceiptInfoService } from '../data/ReceiptInfo';
+import { FormState, ReceivingService } from '../data/receivingService';
+import { GlobalService, HttpResponse } from 'src/app/shared/data/Global';
 
 @Component({
   standalone: true,
@@ -22,12 +23,12 @@ import { FormState, ReceivingStore } from '../data/receivingStore';
     ReactiveFormsModule,
   ],
   template: `
-    <ng-container *ngIf="data$ | async"></ng-container>
+    <ng-container></ng-container>
     <div class="grid grid-cols-2 gap-5">
       <single-input-form
         (formSubmit)="onSubmit()"
         (formBack)="onBack()"
-        [formState]="formState$ | async"
+        [data]="data$ | async"
         [formGroup]="inputForm"
         type="number"
         controlName="receipt"
@@ -43,13 +44,13 @@ import { FormState, ReceivingStore } from '../data/receivingStore';
 })
 export class ReceiptComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
-  public formState$: Observable<FormState>;
+  public data$: Observable<HttpResponse>;
 
   constructor(
     private _router: Router,
-    private _receipt: ReceiptStore,
-    private _ui: ReceivingStore
+    private _receipt: ReceiptInfoService,
+    private _ui: ReceivingService,
+    private _http: GlobalService
   ) {}
 
   ngOnInit(): void {
@@ -58,8 +59,7 @@ export class ReceiptComponent implements OnInit {
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });
-    this.data$ = this._receipt.receiptHeader$;
-    this.formState$ = this._ui.formState$;
+    this.data$ = this._http.httpResponse$;
   }
 
   public onChange = (input: string) => {
@@ -73,19 +73,18 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this._ui.initFormState();
-    this._ui.loadingOn();
+    this.data$ = of({ loading: true });
     this.data$ = this._receipt
       .checkReceiptHeader(Number(this.inputForm.value.receipt))
       .pipe(
-        map(() => {
-          this._ui.initFormState();
+        tap(() => {
           this._router.navigate(['receiptreceiving/part']);
         }),
         catchError((error) => {
-          this._ui.updateMessage(error.message, 'error');
-          this._ui.loadingOff();
-          return of(error);
+          return of({
+            loading: false,
+            error: { message: error.message, type: 'error' },
+          });
         })
       );
   }

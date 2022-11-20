@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
-import { updateReceiptStore } from '../../data/updateReceipt';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
+import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
@@ -61,9 +61,9 @@ export class ROHSComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _update: updateReceiptStore,
-    private _receipt: ReceiptStore,
-    private _steps: ReceivingStore
+    private _update: updateReceiptInfoService,
+    private _receipt: ReceiptInfoService,
+    private _steps: ReceivingService
   ) {}
 
   ngOnInit(): void {

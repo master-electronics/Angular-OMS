@@ -1,26 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { UIStateStore } from 'src/app/shared/data/app-ui-state';
+import { CountryListService } from 'src/app/shared/data/countryList';
+import { GlobalService } from 'src/app/shared/data/Global';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
-import { KickoutStore } from './data/kickout';
-import { LabelStore } from './data/label';
-import { ReceiptStore } from './data/Receipt';
-import { ReceivingStore, Tab } from './data/receivingStore';
-import { updateReceiptStore } from './data/updateReceipt';
+import { KickoutService } from './data/kickout';
+import { LabelService } from './data/label';
+import { ReceiptInfoService } from './data/ReceiptInfo';
+import { ReceivingService, Tab } from './data/receivingService';
+import { updateReceiptInfoService } from './data/updateReceipt';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    ReceivingStore,
-    ReceiptStore,
-    KickoutStore,
-    UIStateStore,
-    updateReceiptStore,
-    LabelStore,
+    ReceivingService,
+    ReceiptInfoService,
+    KickoutService,
+    GlobalService,
+    updateReceiptInfoService,
+    LabelService,
+    CountryListService,
   ],
   template: `
     <ng-container *ngIf="tab$ | async as input">
@@ -34,11 +37,11 @@ import { updateReceiptStore } from './data/updateReceipt';
     </div>
   `,
 })
-export class ReceivingComponent implements OnInit {
+export class ReceivingShell implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
     private commonService: CommonService,
-    private _service: ReceivingStore
+    private _service: ReceivingService
   ) {}
 
   ngOnInit(): void {

@@ -10,10 +10,10 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptStore } from '../../data/Receipt';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
-import { catchError, map, Observable, of } from 'rxjs';
-import { LabelStore } from '../../data/label';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { FormState, ReceivingService } from '../../data/receivingService';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { LabelService } from '../../data/label';
 
 @Component({
   standalone: true,
@@ -25,11 +25,10 @@ import { LabelStore } from '../../data/label';
   ],
 
   template: `
-    <ng-container *ngIf="data$ | async"></ng-container>
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
-      [formState]="formState$ | async"
+      [data]="data$ | async"
       [validator]="validator"
       [formGroup]="inputForm"
       controlName="partNumber"
@@ -52,9 +51,9 @@ export class PartComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _receipt: ReceiptStore,
-    private _ui: ReceivingStore,
-    private _label: LabelStore
+    private _receipt: ReceiptInfoService,
+    private _ui: ReceivingService,
+    private _label: LabelService
   ) {}
 
   ngOnInit(): void {
@@ -74,16 +73,11 @@ export class PartComponent implements OnInit {
     }
     this._ui.loadingOn();
     this.data$ = this._receipt.findReceiptHeader$().pipe(
-      map((res) => {
-        console.log(
-          res.data.findReceiptInfoByIdAndStatus.RECEIPTLs[0].Product.PartNumber
-        );
-        this._ui.loadingOff();
-      }),
       catchError((error) => {
-        this._ui.loadingOff();
-        this._ui.updateMessage(error.message, 'error');
-        return of(error);
+        return of({
+          loading: false,
+          error: { message: error.message, type: 'error' },
+        });
       })
     );
   }

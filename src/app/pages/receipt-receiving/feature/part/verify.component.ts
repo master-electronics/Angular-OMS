@@ -7,8 +7,8 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { catchError, Observable, of, startWith, map } from 'rxjs';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';
 import { environment } from 'src/environments/environment';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
 
 @Component({
   standalone: true,
@@ -85,9 +85,9 @@ export class VerifyComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _ui: ReceivingStore,
-    private _receipt: ReceiptStore,
-    private _step: ReceivingStore
+    private _ui: ReceivingService,
+    private _receipt: ReceiptInfoService,
+    private _step: ReceivingService
   ) {}
 
   ngOnInit(): void {

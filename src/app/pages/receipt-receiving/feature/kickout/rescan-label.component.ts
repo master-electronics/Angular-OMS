@@ -13,8 +13,8 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { KickoutStore } from '../../data/kickout';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
+import { KickoutService } from '../../data/kickout';
+import { FormState, ReceivingService } from '../../data/receivingService';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -30,7 +30,6 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
       [validator]="validator"
-      [formState]="formState$ | async"
       [formGroup]="inputForm"
       controlName="label"
       title="Scan the barcod again"
@@ -48,8 +47,8 @@ export class RescanLabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingStore,
-    private _kickout: KickoutStore
+    private _ui: ReceivingService,
+    private _kickout: KickoutService
   ) {}
 
   ngOnInit(): void {

@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { GobalValueStore } from '../../data/gobal-value';
+import { CountryListService } from '../../data/countryList';
 
 @Component({
   selector: 'country-iso3',
@@ -64,16 +64,12 @@ export class CountryISO3Component implements OnInit {
 
   constructor(
     private controlContainer: ControlContainer,
-    private _gobalStore: GobalValueStore
+    private _list: CountryListService
   ) {}
 
   ngOnInit(): void {
     this.countryForm = this.controlContainer.control as FormGroup;
-    if (this._gobalStore.countryList) {
-      this.countryList$ = this._gobalStore.countryList$;
-    } else {
-      this.countryList$ = this._gobalStore.initCountryList();
-    }
+    this.countryList$ = this._list.countryList$;
   }
   onSubmit() {
     //

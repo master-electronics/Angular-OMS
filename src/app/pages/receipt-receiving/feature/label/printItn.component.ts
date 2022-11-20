@@ -13,8 +13,8 @@ import { Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
-import { LabelStore, ITNinfo } from '../../data/label';
+import { FormState, ReceivingService } from '../../data/receivingService';
+import { LabelService, ITNinfo } from '../../data/label';
 
 @Component({
   standalone: true,
@@ -35,7 +35,6 @@ import { LabelStore, ITNinfo } from '../../data/label';
         (formSubmit)="onSubmit()"
         (formBack)="onBack()"
         [validator]="validator"
-        [formState]="formState$ | async"
         [formGroup]="inputForm"
         controlName="label"
         title="Label"
@@ -56,8 +55,8 @@ export class PrintITNComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _ui: ReceivingStore,
-    public _label: LabelStore
+    private _ui: ReceivingService,
+    public _label: LabelService
   ) {}
 
   ngOnInit(): void {

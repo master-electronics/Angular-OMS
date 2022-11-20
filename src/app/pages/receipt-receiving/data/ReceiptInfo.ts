@@ -4,6 +4,7 @@ import {
   map,
   Observable,
   shareReplay,
+  startWith,
   switchMap,
   tap,
 } from 'rxjs';
@@ -12,9 +13,10 @@ import {
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { HttpResponse } from 'src/app/shared/data/Global';
 
 @Injectable()
-export class ReceiptStore {
+export class ReceiptInfoService {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
@@ -28,16 +30,16 @@ export class ReceiptStore {
   public get headerID(): number {
     return this._headerID.value;
   }
-  public checkReceiptHeader(id: number): Observable<boolean> {
+  public checkReceiptHeader(id: number): Observable<HttpResponse> {
     return this._checkHeader.fetch({ id }).pipe(
       tap((res) => {
         if (!res.data.findReceiptH?._id) {
           throw new Error("Can't find this Receipt!");
         }
       }),
-      map((res) => {
+      map(() => {
         this._headerID.next(id);
-        return true;
+        return { loading: false };
       })
     );
   }
