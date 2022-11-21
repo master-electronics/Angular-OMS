@@ -56,7 +56,7 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
     </div>
   `,
 })
-export class ROHSComponent implements OnInit {
+export class RHOSComponent implements OnInit {
   public update$: Observable<any>;
 
   constructor(
@@ -73,8 +73,8 @@ export class ROHSComponent implements OnInit {
     this._steps.changeSteps(2);
   }
 
-  public onUpdate(ROHS: boolean): void {
-    this._update.updateROHS(ROHS);
+  public onUpdate(RHOS: boolean): void {
+    this._update.updateRHOS(RHOS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
       tap((res) => {
         if (!res.data.updateReceiptLsByID) {

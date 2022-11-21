@@ -42,7 +42,7 @@ interface ReceiptLine {
   DateCode: string;
   CountryID: number;
   ISO3: string;
-  ROHS: boolean;
+  RHOS: boolean;
   LineNumber: number;
   ReceiptLineDetails: {
     _id: number;
@@ -534,7 +534,7 @@ export class ReceiptEntry implements OnInit {
                 DateCode: receiptLine.DateCode,
                 CountryID: receiptLine.CountryID,
                 ISO3: '',
-                ROHS: receiptLine.ROHS,
+                RHOS: receiptLine.RHOS,
                 LineNumber: receiptLine.LineNumber,
                 ReceiptLineDetails: lineDetails,
                 Expanded: false,
@@ -941,7 +941,7 @@ export class ReceiptEntry implements OnInit {
                   receiptLine.DateCode = null;
                   receiptLine.CountryID = null;
                   receiptLine.ISO3 = null;
-                  receiptLine.ROHS = null;
+                  receiptLine.RHOS = null;
                 }
 
                 this.alertType = 'success';
@@ -1045,7 +1045,7 @@ export class ReceiptEntry implements OnInit {
                 DateCode: null,
                 CountryID: null,
                 ISO3: null,
-                ROHS: null,
+                RHOS: null,
                 LineNumber: newLineNumber,
                 ReceiptLineDetails: null,
                 Expanded: false,

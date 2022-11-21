@@ -9,7 +9,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
@@ -25,21 +25,22 @@ import { LabelService, ITNinfo } from '../../data/label';
     SingleInputformComponent,
   ],
   template: `
-    <ng-container *ngIf="data$ | async"></ng-container>
-    <div *ngIf="ITNList$ | async as list">
-      <div class="flex flex-col justify-center text-lg">
-        <h1>Scan Label</h1>
-        <h1>({{ list.length }} of {{ _label.quantityList?.length }})</h1>
-      </div>
-      <single-input-form
-        (formSubmit)="onSubmit()"
-        (formBack)="onBack()"
-        [validator]="validator"
-        [formGroup]="inputForm"
-        controlName="label"
-        title="Label"
-      ></single-input-form>
+    <div
+      *ngIf="ITNList$ | async as list"
+      class="flex flex-col justify-center text-lg"
+    >
+      <h1>Scan Label</h1>
+      <h1>({{ list.length }} of {{ _label.quantityList?.length }})</h1>
     </div>
+    <single-input-form
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
+      [data]="data$ | async"
+      [validator]="validator"
+      [formGroup]="inputForm"
+      controlName="label"
+      title="Label"
+    ></single-input-form>
   `,
 })
 export class PrintITNComponent implements OnInit {
@@ -54,6 +55,7 @@ export class PrintITNComponent implements OnInit {
 
   constructor(
     private _router: Router,
+    private _actRoute: ActivatedRoute,
     private _ui: ReceivingService,
     public _label: LabelService
   ) {}
@@ -61,9 +63,10 @@ export class PrintITNComponent implements OnInit {
   ngOnInit(): void {
     // this._label.initQuantityList([1, 2, 3]);
     if (!this._label.quantityList?.length) {
-      this.onBack();
+      this._router.navigate(['../../'], { relativeTo: this._actRoute });
     }
     this._ui.changeSteps(3);
+    this.data$ = this._actRoute.data;
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),

@@ -7,30 +7,29 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { map } from 'rxjs/operators';
-import { GlobalService } from './shared/data/Global';
 
 @Component({
   selector: 'app-root',
   template: `
-    <div
-      class="absolute top-0 z-50 flex h-screen w-screen items-center justify-center bg-black bg-opacity-50"
-      style="background-size: 100%"
-      *ngIf="loading$ | async"
-    >
-      <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
-    </div>
     <ng-container *ngIf="router$ | async"></ng-container>
+    <ngx-spinner
+      bdColor="rgba(91,110,142,0.8)"
+      size="medium"
+      color="#fff"
+      type="square-loader"
+      [fullScreen]="true"
+      ><p style="color: white">Loading...</p></ngx-spinner
+    >
     <router-outlet></router-outlet>
   `,
 })
 export class AppComponent implements OnInit {
-  public loading$;
   public router$;
-  constructor(private router: Router, private _ui: GlobalService) {}
+  constructor(private router: Router, private _spinner: NgxSpinnerService) {}
 
   ngOnInit(): void {
-    this.loading$ = this._ui.pageLoading$;
     this.router$ = this.router.events.pipe(
       map((routerEvent: RouterEvent) => this.checkRouterEvent(routerEvent))
     );
@@ -38,7 +37,7 @@ export class AppComponent implements OnInit {
 
   checkRouterEvent(routerEvent: RouterEvent): void {
     if (routerEvent instanceof NavigationStart) {
-      this._ui.changePageLoading(true);
+      this._spinner.show();
       return;
     }
     if (
@@ -46,7 +45,7 @@ export class AppComponent implements OnInit {
       routerEvent instanceof NavigationCancel ||
       routerEvent instanceof NavigationError
     ) {
-      this._ui.changePageLoading(false);
+      this._spinner.hide();
     }
   }
 }

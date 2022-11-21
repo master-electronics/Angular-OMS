@@ -315,7 +315,7 @@ export type Inventory = {
   Product: Product;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  ROHS?: Maybe<Scalars['Boolean']>;
+  RHOS?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -447,7 +447,7 @@ export type MutationChangeQcLineInfoArgs = {
   CountryOfOrigin: Scalars['String'];
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
-  ROHS: Scalars['String'];
+  RHOS: Scalars['String'];
 };
 
 
@@ -696,7 +696,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -793,7 +793,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -965,7 +965,7 @@ export type MutationUpdateReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
   ReceiptLID: Scalars['Int'];
 };
 
@@ -1686,7 +1686,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  ROHS?: Maybe<Scalars['Boolean']>;
+  RHOS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -1903,7 +1903,7 @@ export type InsertInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type InsertOrder = {
@@ -2068,7 +2068,7 @@ export type SearchInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2139,7 +2139,7 @@ export type SearchReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
@@ -2246,7 +2246,7 @@ export type UpdateInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOrder = {
@@ -2305,7 +2305,7 @@ export type UpdateReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  ROHS?: InputMaybe<Scalars['Boolean']>;
+  RHOS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2348,7 +2348,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, ROHS?: boolean | null, DateCode?: string | null, Country?: { __typename?: 'Country', ISO2: string } | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, RHOS?: boolean | null, DateCode?: string | null, Country?: { __typename?: 'Country', ISO2: string } | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -2436,7 +2436,7 @@ export type UpdateMerpAfterQcRepackMutationVariables = Types.Exact<{
   InventoryTrackingNumber: Types.Scalars['String'];
   DateCode: Types.Scalars['String'];
   CountryOfOrigin: Types.Scalars['String'];
-  ROHS: Types.Scalars['String'];
+  RHOS: Types.Scalars['String'];
   CountMethod: Types.Scalars['String'];
 }>;
 
@@ -2476,7 +2476,7 @@ export const VerifyItNforQcDocument = gql`
   ) {
     _id
     ParentITN
-    ROHS
+    RHOS
     DateCode
     Country {
       ISO2
@@ -2746,12 +2746,12 @@ export const CleanContainerFromPrevOrderDocument = gql`
     }
   }
 export const UpdateMerpAfterQcRepackDocument = gql`
-    mutation updateMerpAfterQcRepack($InventoryTrackingNumber: String!, $DateCode: String!, $CountryOfOrigin: String!, $ROHS: String!, $CountMethod: String!) {
+    mutation updateMerpAfterQcRepack($InventoryTrackingNumber: String!, $DateCode: String!, $CountryOfOrigin: String!, $RHOS: String!, $CountMethod: String!) {
   changeQCLineInfo(
     InternalTrackingNumber: $InventoryTrackingNumber
     DateCode: $DateCode
     CountryOfOrigin: $CountryOfOrigin
-    ROHS: $ROHS
+    RHOS: $RHOS
     CountMethod: $CountMethod
   ) {
     success

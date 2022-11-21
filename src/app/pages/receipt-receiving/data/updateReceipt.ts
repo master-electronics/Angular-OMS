@@ -7,7 +7,7 @@ interface ReceiptInfo {
   ReceiptLIDs: number[];
   DateCode?: string;
   CountryID?: number;
-  ROHS?: boolean;
+  RHOS?: boolean;
   ISO3?: string;
 }
 
@@ -50,12 +50,12 @@ export class updateReceiptInfoService {
     });
   }
   /**
-   * updateROHS
+   * updateRHOS
    */
-  public updateROHS(ROHS: boolean) {
+  public updateRHOS(RHOS: boolean) {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
-      ROHS,
+      RHOS,
     });
   }
 
@@ -64,7 +64,7 @@ export class updateReceiptInfoService {
       idList: this.receiptInfo.ReceiptLIDs,
       DateCode: this.receiptInfo.DateCode,
       CountryID: this.receiptInfo.CountryID,
-      ROHS: this.receiptInfo.ROHS,
+      RHOS: this.receiptInfo.RHOS,
     });
   }
 

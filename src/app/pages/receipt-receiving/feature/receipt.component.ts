@@ -58,7 +58,7 @@ export class ReceiptComponent implements OnInit {
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });
-    this.data$ = this._actRoute.data;
+    this.data$ = this._actRoute.queryParamMap;
   }
 
   public onChange = (input: string) => {

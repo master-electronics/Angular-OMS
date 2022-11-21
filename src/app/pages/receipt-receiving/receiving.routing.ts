@@ -101,8 +101,8 @@ export const ReceivingRoutes: Routes = [
       {
         path: 'update/rohs',
         loadComponent: () =>
-          import('./feature/update-info/rohs.component').then(
-            (m) => m.ROHSComponent
+          import('./feature/update-info/rhos.component').then(
+            (m) => m.RHOSComponent
           ),
       },
       {

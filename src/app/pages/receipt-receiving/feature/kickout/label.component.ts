@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutService } from '../../data/kickout';
-import { FormState, ReceivingService } from '../../data/receivingService';
+import { ReceivingService } from '../../data/receivingService';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -33,7 +33,6 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 })
 export class LabelComponent implements OnInit {
   public inputForm: FormGroup;
-  public formState$: Observable<FormState>;
 
   constructor(
     private _fb: FormBuilder,
@@ -49,7 +48,6 @@ export class LabelComponent implements OnInit {
     this.inputForm = this._fb.group({
       label: ['', Validators.required],
     });
-    this.formState$ = this._ui.formState$;
   }
 
   onSubmit(): void {
