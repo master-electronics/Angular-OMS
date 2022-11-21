@@ -9,11 +9,11 @@ import {
   FindReceiptsGQL,
   InsertReceiptGQL,
   FindPartCodesGQL,
-  FetchCountriesGQL,
+  //FetchCountriesGQL,
   InsertReceiptLineGQL,
   FetchReceiptLinesGQL,
   FindPoLinesGQL,
-  FindCountryGQL,
+  //FindCountryGQL,
   FindPartGQL,
   FindPoLineGQL,
   InsertReceiptLineDetailGQL,
@@ -159,11 +159,11 @@ export class ReceiptEntry implements OnInit {
     private _findReceiptList: FindReceiptsGQL,
     private _insertReceipt: InsertReceiptGQL,
     private _findPartCodes: FindPartCodesGQL,
-    private _fetchCountryList: FetchCountriesGQL,
+    //private _fetchCountryList: FetchCountriesGQL,
     private _insertReceiptLine: InsertReceiptLineGQL,
     private _fetchReceiptLines: FetchReceiptLinesGQL,
     private _findPOLines: FindPoLinesGQL,
-    private _findCountry: FindCountryGQL,
+    //private _findCountry: FindCountryGQL,
     private _findPart: FindPartGQL,
     private _findPOLine: FindPoLineGQL,
     private _insertReceiptLineDetail: InsertReceiptLineDetailGQL,
@@ -1104,6 +1104,7 @@ export class ReceiptEntry implements OnInit {
         ReceiptLID: number;
         PurchaseOrderLID: number;
         ExpectedQuantity: number;
+        StatusID: number;
       }> = [];
 
       this.deleteReceiptLineDetailsSubscription.add(
@@ -1116,6 +1117,7 @@ export class ReceiptEntry implements OnInit {
                   ReceiptLID: Number(this.receiptLineID),
                   PurchaseOrderLID: lineDetail.PurchaseOrderLID,
                   ExpectedQuantity: lineDetail.Quantity,
+                  StatusID: 10,
                 });
               });
 

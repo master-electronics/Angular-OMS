@@ -50,25 +50,25 @@ query findPart($productID: Int) {
     }
 }
 
-query fetchCountries {
-    fetchCountryList {
-        _id
-        CountryCode
-        CountryName
-        ISO2
-        ISO3
-    }
-}
+# query fetchCountries {
+#     fetchCountryList {
+#         _id
+#         CountryCode
+#         CountryName
+#         ISO2
+#         ISO3
+#     }
+# }
 
-query findCountry($countryID: Int) {
-    findCountry(CountryID: $countryID) {
-        _id
-        CountryCode
-        CountryName
-        ISO2
-        ISO3
-    }
-}
+# query findCountry($countryID: Int) {
+#     findCountry(CountryID: $countryID) {
+#         _id
+#         CountryCode
+#         CountryName
+#         ISO2
+#         ISO3
+#     }
+# }
 
 query fetchReceiptLines($receiptHID: Int) {
     fetchReceiptLines(ReceiptHID: $receiptHID) {
@@ -127,7 +127,7 @@ query findPOLine($purchaseOrderLID: Int) {
     }
 }
 
-mutation insertReceipt($receipt: InsertReceipt) {
+mutation insertReceipt($receipt: insertReceiptH) {
     insertReceipt(Receipt: $receipt) {
         _id
         VendorID
@@ -163,7 +163,7 @@ mutation insertReceiptLine(
     }
 }
 
-mutation insertReceiptLineDetail($receiptLineDetail: InsertReceiptLineDetail) {
+mutation insertReceiptLineDetail($receiptLineDetail: insertReceiptLD) {
     insertReceiptLineDetail(ReceiptLineDetail: $receiptLineDetail) {
         _id
         ReceiptLID
@@ -239,7 +239,7 @@ mutation deleteReceiptLineDetail($receiptLDID: Int!) {
     }
 }
 
-mutation insertReceiptLineDetails($receiptLineDetails: [InsertReceiptLineDetail]) {
+mutation insertReceiptLineDetails($receiptLineDetails: [insertReceiptLD]) {
     insertReceiptLineDetails(ReceiptLineDetails: $receiptLineDetails) {
         _id
         ReceiptLID
