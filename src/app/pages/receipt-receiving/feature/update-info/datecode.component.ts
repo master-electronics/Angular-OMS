@@ -33,7 +33,7 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
         [formGroup]="inputForm"
         type="number"
         controlName="dateCode"
-        title="DateCode"
+        title="Date Code"
       ></single-input-form>
       <simple-keyboard
         layout="number"
@@ -47,7 +47,7 @@ export class DateCodeComponent implements OnInit {
   public inputForm: FormGroup;
   public validator = {
     name: 'dateCode',
-    message: 'Not match the Datecode Format!',
+    message: 'Format must be YYWW(2 digit year, 2 digit week)',
   };
 
   constructor(
@@ -59,7 +59,7 @@ export class DateCodeComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._update.receiptInfo) {
-      this.onBack();
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._ui.changeSteps(2);
     this.inputForm = this._fb.group({
@@ -84,7 +84,7 @@ export class DateCodeComponent implements OnInit {
 
   onSubmit(): void {
     this._update.updateDateCode(this.inputForm.value.dateCode);
-    this._router.navigateByUrl('receiptreceiving/update/rohs');
+    this._router.navigateByUrl('receiptreceiving/update/rhos');
   }
 
   public onBack(): void {

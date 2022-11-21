@@ -66,33 +66,11 @@ export class PrintITNComponent implements OnInit {
       this._router.navigate(['../../'], { relativeTo: this._actRoute });
     }
     this._ui.changeSteps(3);
-    this.data$ = this._actRoute.data;
+    this.data$ = this._actRoute.data.pipe(map((res) => res.print));
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
     });
-    if (this._label.scanAll) {
-      this.onConfirm();
-      return;
-    }
-    let index = 0;
-    if (this._label.ITNList?.length) {
-      index = this._label.ITNList.length;
-    }
-    this.data$ = this.printITN(this._label.quantityList[index]);
-  }
-
-  public printITN(quantity: number): Observable<any> {
-    return this._label
-      .printReceivingLabel$(quantity, 'PHLABELS139', '300', 'LANDSCAPE')
-      .pipe(
-        map(() => {
-          //
-        }),
-        catchError((error) => {
-          return of(error);
-        })
-      );
   }
 
   public checKLabel(): ValidatorFn {
@@ -113,7 +91,7 @@ export class PrintITNComponent implements OnInit {
   };
 
   public onBack(): void {
-    this._router.navigate(['receiptreceiving/label/assign']);
+    this._router.navigate(['../assign'], { relativeTo: this._actRoute });
   }
 
   public onSubmit(): void {
@@ -121,20 +99,6 @@ export class PrintITNComponent implements OnInit {
       return;
     }
     this.inputForm.setValue({ label: '' });
-    this._router.navigate(['receiptreceiving/label/sacnlocation']);
-  }
-  /**
-   * After create and scan all ITN wrint ITN Number to server
-   */
-  public onConfirm(): void {
-    this.data$ = this._label.updateAfterReceving().pipe(
-      map(() => {
-        this._label.initValue();
-        this._router.navigate(['receiptreceiving/part']);
-      }),
-      catchError((error) => {
-        return of(error);
-      })
-    );
+    this._router.navigate(['../sacnlocation'], { relativeTo: this._actRoute });
   }
 }

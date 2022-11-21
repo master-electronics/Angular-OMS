@@ -2,12 +2,12 @@ import { Routes } from '@angular/router';
 import { PartResolver } from './data/resolver/part.resolver';
 import { CountryListService } from 'src/app/shared/data/countryList';
 import { KickoutService } from './data/kickout';
-import { GlobalService } from 'src/app/shared/data/Global';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
 import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { VerifyResolver } from './data/resolver/verify.resolver';
+import { PrintItnResolver } from './data/resolver/printItn.resolver';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -15,10 +15,10 @@ export const ReceivingRoutes: Routes = [
     providers: [
       PartResolver,
       VerifyResolver,
+      PrintItnResolver,
       ReceivingService,
       ReceiptInfoService,
       KickoutService,
-      GlobalService,
       updateReceiptInfoService,
       LabelService,
       CountryListService,
@@ -99,7 +99,7 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'update/rohs',
+        path: 'update/rhos',
         loadComponent: () =>
           import('./feature/update-info/rhos.component').then(
             (m) => m.RHOSComponent
@@ -121,6 +121,9 @@ export const ReceivingRoutes: Routes = [
       },
       {
         path: 'label/printitn',
+        resolve: {
+          print: PrintItnResolver,
+        },
         loadComponent: () =>
           import('./feature/label/printItn.component').then(
             (mod) => mod.PrintITNComponent

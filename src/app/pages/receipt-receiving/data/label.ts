@@ -28,19 +28,6 @@ export class LabelService {
     private _update: UpdateAfterReceivingGQL
   ) {}
 
-  private _scanAll = new BehaviorSubject<boolean>(false);
-  /**
-   * get scanAll
-   */
-  public get scanAll() {
-    return this._scanAll.value;
-  }
-  /**
-   * changeScanALl
-   */
-  public changeScanALl(boolean: boolean) {
-    this._scanAll.next(boolean);
-  }
   /**
    * save quantitylist after assign label
    */
@@ -92,22 +79,11 @@ export class LabelService {
     tmp.push(itn);
     this._ITNList.next(tmp);
   }
-  /**
-   * resetITNList
-   */
-  public resetITNList() {
-    this._ITNList.next(null);
-  }
 
   /**
    * printReceivingLabel And insert itn to list
    */
-  public printReceivingLabel$(
-    quantity: number,
-    PRINTER: string,
-    DPI: string,
-    ORIENTATION: string
-  ) {
+  public printReceivingLabel$() {
     return this._itn
       .fetch(
         { LocationCode: environment.DistributionCenter },
@@ -116,20 +92,22 @@ export class LabelService {
       .pipe(
         tap((res) => {
           this.insertITNList({
-            quantity,
+            quantity: this.quantityList[this.ITNList?.length | 0],
             ITN: res.data.createITN,
             BinLocation: '',
             ContainerID: 0,
           });
           console.log(res.data.createITN);
         }),
+        // Do not delay at the first time;
+        delay(this.ITNList?.length ? 5000 : 0),
         switchMap((res) => {
           return this._print.fetch(
             {
-              PRINTER,
+              PRINTER: 'PHLABELS139',
               ITN: res.data.createITN,
-              DPI,
-              ORIENTATION,
+              DPI: '300',
+              ORIENTATION: 'LANDSCAPE',
             },
             { fetchPolicy: 'network-only' }
           );

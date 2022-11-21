@@ -69,7 +69,7 @@ export class CountryComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
-      this.onBack();
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._step.changeSteps(2);
     this._info.initReceiptInfo();

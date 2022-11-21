@@ -93,7 +93,7 @@ export class ReceiptEntry implements OnInit {
   partNumber;
   partNumberID;
   quantity;
-  rohsOptions: Array<{ label: string; value: string }> = [
+  rhosOptions: Array<{ label: string; value: string }> = [
     { label: 'Yes', value: 'true' },
     { label: 'No', value: 'false' },
   ];
@@ -914,7 +914,7 @@ export class ReceiptEntry implements OnInit {
               expectedQuantity: Number(this.quantity),
               dateCode: null,
               countryID: null,
-              rohs: null,
+              rhos: null,
             })
             .subscribe({
               complete: () => {
@@ -1026,7 +1026,7 @@ export class ReceiptEntry implements OnInit {
             expectedQuantity: Number(this.quantity),
             dateCode: null,
             countryID: null,
-            rohs: null,
+            rhos: null,
           })
           .subscribe({
             next: (res) => {

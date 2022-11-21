@@ -119,7 +119,7 @@ mutation insertReceiptLine(
   $expectedQuantity: Int!
   $dateCode: String
   $countryID: Int
-  $rohs: Boolean
+  $rhos: Boolean
 ) {
   insertReceiptLine(
     ReceiptHID: $receiptHID
@@ -127,7 +127,7 @@ mutation insertReceiptLine(
     ExpectedQuantity: $expectedQuantity
     DateCode: $dateCode
     CountryID: $countryID
-    RHOS: $rohs
+    RHOS: $rhos
   ) {
     _id
     ReceiptHID
@@ -183,7 +183,7 @@ mutation updateReceiptLine(
   $expectedQuantity: Int!
   $dateCode: String
   $countryID: Int
-  $rohs: Boolean
+  $rhos: Boolean
 ) {
   updateReceiptLine(
     ReceiptLID: $receiptLID
@@ -191,7 +191,7 @@ mutation updateReceiptLine(
     ExpectedQuantity: $expectedQuantity
     DateCode: $dateCode
     CountryID: $countryID
-    RHOS: $rohs
+    RHOS: $rhos
   )
 }
 

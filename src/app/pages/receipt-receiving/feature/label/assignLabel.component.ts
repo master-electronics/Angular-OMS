@@ -150,12 +150,11 @@ export class AssignLabelComponent implements OnInit {
 
   ngOnInit(): void {
     if (this._receipt.selectedReceiptLine?.length !== 1) {
-      this.onBack();
+      this._router.navigateByUrl('/receiptreceiving');
     }
-    this._label.resetITNList();
-    this._label.changeScanALl(false);
-    this.total = this._receipt.selectedReceiptLine[0].ExpectedQuantity;
+    this._label.initValue();
     this._step.changeSteps(3);
+    this.total = this._receipt.selectedReceiptLine[0].ExpectedQuantity;
     this.inputForm = this._fb.group({});
     this.addField();
     this.remaining$ = this.inputForm.valueChanges.pipe(
@@ -166,7 +165,7 @@ export class AssignLabelComponent implements OnInit {
         });
         return this.total - sum;
       }),
-      shareReplay()
+      shareReplay(1)
     );
     this.validator$ = this.remaining$.pipe(
       map((res) => {
@@ -223,6 +222,6 @@ export class AssignLabelComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/update/rohs');
+    this._router.navigateByUrl('receiptreceiving/update/rhos');
   }
 }

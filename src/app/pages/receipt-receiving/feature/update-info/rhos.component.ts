@@ -68,7 +68,7 @@ export class RHOSComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._update.receiptInfo?.DateCode) {
-      this.onBack();
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._steps.changeSteps(2);
   }

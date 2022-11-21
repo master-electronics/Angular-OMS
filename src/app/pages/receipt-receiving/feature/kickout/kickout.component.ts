@@ -107,7 +107,7 @@ export class KickoutComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._receipt.lineAfterPart?.length) {
-      this.onBack();
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._step.changeSteps(1);
     this.kickoutOptions = [
