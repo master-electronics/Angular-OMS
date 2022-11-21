@@ -4,6 +4,7 @@ import {
   map,
   Observable,
   shareReplay,
+  startWith,
   switchMap,
   tap,
 } from 'rxjs';
@@ -12,9 +13,11 @@ import {
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { sqlData } from 'src/app/shared/sqlData';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
-export class ReceiptStore {
+export class ReceiptInfoService {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
@@ -35,41 +38,47 @@ export class ReceiptStore {
           throw new Error("Can't find this Receipt!");
         }
       }),
-      map((res) => {
+      map(() => {
         this._headerID.next(id);
         return true;
-      })
+      }),
+      shareReplay(1)
     );
   }
 
   /**
-   * Find Receipt Header info by ID, and all lines under this header
+   * Find Receipt info by ID, and all lines under this header with status "Entered".
    */
-  private _receiptHeader = new BehaviorSubject<any>(null);
-  public get receiptHeader$(): Observable<any> {
-    return this._receiptHeader.asObservable();
+  private _receiptLines = new BehaviorSubject<any>(null);
+  public get receiptLines() {
+    return this._receiptLines.value;
   }
-  public get receiptHeader() {
-    return this._receiptHeader.value;
-  }
-  public findReceiptHeader$() {
+  public findLines$(): Observable<boolean> {
     return this._findReceiptH$
       .fetch(
         {
           ReceiptHID: this.headerID,
-          statusID: 10,
+          statusID: sqlData.Receipt_Entered,
         },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
         tap((res) => {
           if (!res.data.findReceiptInfoByIdAndStatus) {
-            throw new Error("Can't find this Receipt!");
+            throw { name: 'error', message: "Can't find this Receipt!" };
           }
-          if (!res.data.findReceiptInfoByIdAndStatus.RECEIPTLs.length) {
-            throw new Error('No receipt lines under this Receipt!');
+          if (!res.data.findReceiptInfoByIdAndStatus.RECEIPTLs?.length) {
+            throw {
+              name: 'warning',
+              message: 'No avaiable line under this Receipt!',
+            };
           }
-          this._receiptHeader.next(res.data.findReceiptInfoByIdAndStatus);
+        }),
+        map((res) => res.data.findReceiptInfoByIdAndStatus.RECEIPTLs),
+        map((res) => {
+          console.log(res[0].Product.PartNumber);
+          this._receiptLines.next(res);
+          return true;
         }),
         shareReplay(1)
       );
@@ -78,32 +87,28 @@ export class ReceiptStore {
   /**
    * First Filter for Receipt by part number
    */
-  private _receiptLs = new BehaviorSubject<any>(null);
-  public get receiptLs$(): Observable<any> {
-    return this._receiptLs.asObservable();
+  private _lineAfterPart = new BehaviorSubject<any>(null);
+  public get lineAfterPart$(): Observable<any> {
+    return this._lineAfterPart.asObservable();
   }
-  public get receiptLs() {
-    return this._receiptLs.getValue();
+  public get lineAfterPart() {
+    return this._lineAfterPart.getValue();
   }
 
   public filterbyPartNumber(PartNumber: string): void {
-    const tmp = this.receiptHeader.RECEIPTLs.filter(
+    const tmp = this.receiptLines.filter(
       (res) =>
         res.Product.PartNumber.trim().toLowerCase() ===
         PartNumber.trim().toLowerCase()
     );
-    this._receiptLs.next(tmp);
+    this._lineAfterPart.next(tmp);
   }
 
   /**
    * fetch Part Info
    */
-  private _verifyInfo = new BehaviorSubject<any>(null);
-  public get _verifyInfo$() {
-    return this._verifyInfo.asObservable();
-  }
   public findVerifyInfo() {
-    return this._receiptLs.pipe(
+    return this._lineAfterPart.pipe(
       switchMap((line) => {
         return this._findverifyInfo$
           .fetch({
@@ -116,17 +121,14 @@ export class ReceiptStore {
                 ProductID: line[0].Product.ProductID,
                 ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
                 PartNumber: line[0].Product.PartNumber,
-                MIC: info.data.fetchProductMICFromMerp,
+                MIC: `${environment.productImgSource}${info.data.fetchProductMICFromMerp}.jpg`,
                 message: info.data.fetchPartMessage.comments,
                 kitInfo: '',
               };
             })
           );
       }),
-      tap((res) => {
-        this._verifyInfo.next(res);
-      }),
-      shareReplay()
+      shareReplay(1)
     );
   }
 
@@ -150,7 +152,7 @@ export class ReceiptStore {
    * filterByQuantity
    */
   public filterByQuantity(Quantity: number): void {
-    const tmp = this.receiptLs.filter(
+    const tmp = this.lineAfterPart.filter(
       (res) => res.ExpectedQuantity === Quantity
     );
     this._receiptLsAfterQuantity.next(tmp);
@@ -179,16 +181,5 @@ export class ReceiptStore {
       );
       this._selectedReceiptLine.next(selected);
     }
-  }
-
-  /**
-   * InitValue
-   */
-  public InitValue() {
-    // this._receiptHeader.next(null);
-    this._receiptLs.next(null);
-    this._receiptLsAfterQuantity.next(null);
-    this._verifyInfo.next(null);
-    this._selectedReceiptLine.next(null);
   }
 }

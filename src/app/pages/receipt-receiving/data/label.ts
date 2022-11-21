@@ -7,8 +7,8 @@ import {
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
-import { ReceiptStore } from './Receipt';
-import { updateReceiptStore } from './updateReceipt';
+import { ReceiptInfoService } from './ReceiptInfo';
+import { updateReceiptInfoService } from './updateReceipt';
 
 export interface ITNinfo {
   ITN: string;
@@ -18,10 +18,10 @@ export interface ITNinfo {
 }
 
 @Injectable()
-export class LabelStore {
+export class LabelService {
   constructor(
-    private _receipt: ReceiptStore,
-    private _partInfo: updateReceiptStore,
+    private _receipt: ReceiptInfoService,
+    private _partInfo: updateReceiptInfoService,
     private _print: PrintReceivingLabelGQL,
     private _container: CheckBinLocationGQL,
     private _itn: CreateItnGQL,

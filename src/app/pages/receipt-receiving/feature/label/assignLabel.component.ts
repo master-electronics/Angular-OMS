@@ -14,9 +14,9 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { map, Observable, shareReplay, startWith } from 'rxjs';
-import { LabelStore } from '../../data/label';
-import { ReceiptStore } from '../../data/Receipt';
-import { ReceivingStore } from '../../data/receivingStore';
+import { LabelService } from '../../data/label';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
 
 @Component({
   standalone: true,
@@ -143,9 +143,9 @@ export class AssignLabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _step: ReceivingStore,
-    private _receipt: ReceiptStore,
-    private _label: LabelStore
+    private _step: ReceivingService,
+    private _receipt: ReceiptInfoService,
+    private _label: LabelService
   ) {}
 
   ngOnInit(): void {

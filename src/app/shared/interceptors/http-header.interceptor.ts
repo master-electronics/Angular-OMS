@@ -18,7 +18,7 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const cloned = request.clone({
-      headers: request.headers.set('SameSite', 'Strict'),
+      headers: request.headers.set('SameSite', 'None'),
     });
     return next.handle(cloned);
   }

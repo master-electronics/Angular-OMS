@@ -7,9 +7,8 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
-
 import { map } from 'rxjs/operators';
-import { UIStateStore } from './shared/data/app-ui-state';
+import { GlobalService } from './shared/data/Global';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +27,7 @@ import { UIStateStore } from './shared/data/app-ui-state';
 export class AppComponent implements OnInit {
   public loading$;
   public router$;
-  constructor(private router: Router, private _ui: UIStateStore) {}
+  constructor(private router: Router, private _ui: GlobalService) {}
 
   ngOnInit(): void {
     this.loading$ = this._ui.pageLoading$;

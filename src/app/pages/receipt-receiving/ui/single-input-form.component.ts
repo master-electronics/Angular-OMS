@@ -17,8 +17,8 @@ import {
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
-import { FormState } from '../data/receivingStore';
 
 @Component({
   standalone: true,
@@ -29,11 +29,17 @@ import { FormState } from '../data/receivingStore';
     NzInputModule,
     NzFormModule,
     NzButtonModule,
+    NzSkeletonModule,
     AlertBarComponent,
   ],
   selector: 'single-input-form',
   template: `
-    <form nz-form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+    <form
+      *ngIf="data; else loading"
+      nz-form
+      [formGroup]="inputForm"
+      (ngSubmit)="onSubmit()"
+    >
       <nz-form-item>
         <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
         <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
@@ -64,8 +70,8 @@ import { FormState } from '../data/receivingStore';
             type="submit"
             nzSize="large"
             nzType="primary"
-            [nzLoading]="formState.loading"
             [disabled]="inputForm.invalid"
+            [nzLoading]="data?.loading"
             class="mr-20 w-32"
           >
             Submit
@@ -75,22 +81,21 @@ import { FormState } from '../data/receivingStore';
           </button>
         </nz-form-control>
       </nz-form-item>
-      <div *ngIf="formState.message">
+      <div *ngIf="data?.error">
         <alert-bar
-          [message]="formState.message"
-          [messageType]="formState.messageType"
+          [message]="data?.error.message"
+          [name]="data?.error.name"
         ></alert-bar>
       </div>
     </form>
+    <ng-template #loading>
+      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }"></nz-skeleton>
+    </ng-template>
   `,
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input() formState: FormState = {
-    loading: false,
-    message: null,
-    messageType: null,
-  };
+  @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';

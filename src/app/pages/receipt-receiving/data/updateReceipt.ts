@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { ReceiptStore } from './Receipt';
+import { ReceiptInfoService } from './ReceiptInfo';
 
 interface ReceiptInfo {
   ReceiptLIDs: number[];
@@ -12,10 +12,10 @@ interface ReceiptInfo {
 }
 
 @Injectable()
-export class updateReceiptStore {
+export class updateReceiptInfoService {
   constructor(
     private _update: ReceivingUpdateReceiptLGQL,
-    private _receipt: ReceiptStore
+    private _receipt: ReceiptInfoService
   ) {}
   private _receiptInfo = new BehaviorSubject<ReceiptInfo>(null);
   public get receiptInfo(): ReceiptInfo {

@@ -65,4 +65,8 @@ export const sqlData = {
   // sorting
   Event_Stocking_SortingStart: 900,
   Event_Stocking_SortingDone: 901,
+  // Receipt Status
+  Receipt_Entered: 10,
+  Receipt_Received: 20,
+  Receipt_Confirmed: 30,
 };

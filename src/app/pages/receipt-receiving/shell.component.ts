@@ -1,27 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { UIStateStore } from 'src/app/shared/data/app-ui-state';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
-import { KickoutStore } from './data/kickout';
-import { LabelStore } from './data/label';
-import { ReceiptStore } from './data/Receipt';
-import { ReceivingStore, Tab } from './data/receivingStore';
-import { updateReceiptStore } from './data/updateReceipt';
+import { ReceivingService, Tab } from './data/receivingService';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
-  providers: [
-    ReceivingStore,
-    ReceiptStore,
-    KickoutStore,
-    UIStateStore,
-    updateReceiptStore,
-    LabelStore,
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-container *ngIf="tab$ | async as input">
       <step-bar
@@ -34,11 +22,11 @@ import { updateReceiptStore } from './data/updateReceipt';
     </div>
   `,
 })
-export class ReceivingComponent implements OnInit {
+export class ReceivingShell implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
     private commonService: CommonService,
-    private _service: ReceivingStore
+    private _service: ReceivingService
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +42,7 @@ export class ReceivingComponent implements OnInit {
       description: 'ReceiptID, Part',
     },
     { title: 'Verify', subtitle: '', description: `Info, Quantity` },
-    { title: 'Update', subtitle: '', description: `Country Date RHOS` },
+    { title: 'Update', subtitle: '', description: `Country Date ROHS` },
     {
       title: 'Label',
       subtitle: '',

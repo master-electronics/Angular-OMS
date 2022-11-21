@@ -45,8 +45,7 @@ registerLocaleData(en);
 import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
-import { UIStateStore } from './shared/data/app-ui-state';
-import { GobalValueStore } from './shared/data/gobal-value';
+import { GlobalService } from './shared/data/Global';
 
 @NgModule({
   declarations: [
@@ -84,19 +83,13 @@ import { GobalValueStore } from './shared/data/gobal-value';
   ],
 
   providers: [
-    UIStateStore,
-    GobalValueStore,
+    GlobalService,
     Title,
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: HttpHeaderInterceptor,
-    //   multi: true,
-    // },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: ErrorInterceptor,
-    //   multi: true,
-    // },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpHeaderInterceptor,
+      multi: true,
+    },
     {
       provide: APOLLO_NAMED_OPTIONS,
       useFactory: (httpLink: HttpBatchLink): NamedOptions => {

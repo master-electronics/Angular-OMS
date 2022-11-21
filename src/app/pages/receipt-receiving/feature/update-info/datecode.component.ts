@@ -10,11 +10,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { DefalutDateCode } from 'src/app/shared/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingStore } from '../../data/receivingStore';
-import { updateReceiptStore } from '../../data/updateReceipt';
+import { ReceivingService } from '../../data/receivingService';
+import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -54,8 +53,8 @@ export class DateCodeComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingStore,
-    private _update: updateReceiptStore
+    private _ui: ReceivingService,
+    private _update: updateReceiptInfoService
   ) {}
 
   ngOnInit(): void {

@@ -13,8 +13,8 @@ import { Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
-import { LabelStore, ITNinfo } from '../../data/label';
+import { ReceivingService } from '../../data/receivingService';
+import { LabelService, ITNinfo } from '../../data/label';
 
 @Component({
   standalone: true,
@@ -35,7 +35,6 @@ import { LabelStore, ITNinfo } from '../../data/label';
         (formSubmit)="onSubmit()"
         (formBack)="onBack()"
         [validator]="validator"
-        [formState]="formState$ | async"
         [formGroup]="inputForm"
         controlName="label"
         title="Label"
@@ -46,7 +45,6 @@ import { LabelStore, ITNinfo } from '../../data/label';
 export class PrintITNComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
-  public formState$: Observable<FormState>;
   public ITNList$ = new Observable<Array<ITNinfo>>();
   public scanAll = false;
   public validator = {
@@ -56,8 +54,8 @@ export class PrintITNComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _ui: ReceivingStore,
-    public _label: LabelStore
+    private _ui: ReceivingService,
+    public _label: LabelService
   ) {}
 
   ngOnInit(): void {
@@ -66,8 +64,6 @@ export class PrintITNComponent implements OnInit {
       this.onBack();
     }
     this._ui.changeSteps(3);
-    this._ui.initFormState();
-    this.formState$ = this._ui.formState$;
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
@@ -84,16 +80,13 @@ export class PrintITNComponent implements OnInit {
   }
 
   public printITN(quantity: number): Observable<any> {
-    this._ui.loadingOn();
     return this._label
       .printReceivingLabel$(quantity, 'PHLABELS139', '300', 'LANDSCAPE')
       .pipe(
         map(() => {
-          this._ui.loadingOff();
+          //
         }),
         catchError((error) => {
-          this._ui.updateMessage(error.message, 'error');
-          this._ui.loadingOff();
           return of(error);
         })
       );
@@ -131,16 +124,12 @@ export class PrintITNComponent implements OnInit {
    * After create and scan all ITN wrint ITN Number to server
    */
   public onConfirm(): void {
-    this._ui.loadingOn();
     this.data$ = this._label.updateAfterReceving().pipe(
       map(() => {
-        this._ui.loadingOff();
         this._label.initValue();
         this._router.navigate(['receiptreceiving/part']);
       }),
       catchError((error) => {
-        this._ui.updateMessage(error.message, 'error');
-        this._ui.loadingOff();
         return of(error);
       })
     );

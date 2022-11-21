@@ -1,12 +1,10 @@
 import { DoCheck, Injectable, NgZone, OnInit } from '@angular/core';
 import {
-  Router,
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { FindRouteGQL } from 'src/app/graphql/route.graphql-gen';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthenticationService } from './authentication.service';
 
@@ -14,7 +12,7 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root',
 })
 export class RouterGuard implements CanActivate, OnInit, DoCheck {
-  public routeSubscription = new Subscription();
+  public destroy$: Subject<boolean> = new Subject<boolean>();
   private _routeAuthInfo = new BehaviorSubject<[]>([]);
 
   constructor(
@@ -24,12 +22,12 @@ export class RouterGuard implements CanActivate, OnInit, DoCheck {
   ) {}
 
   ngOnInit(): void {
-    // fetch all route and routegroup info then store JSON into _routeAuthInfo;
-    this.routeSubscription.add();
+    //
   }
 
   ngDoCheck(): void {
-    this.routeSubscription.unsubscribe();
+    // this.destroy$.next(true);
+    // this.destroy$.unsubscribe();
   }
 
   canActivate(
@@ -37,10 +35,7 @@ export class RouterGuard implements CanActivate, OnInit, DoCheck {
     state: RouterStateSnapshot
   ): boolean {
     // search routAuthInfo key by the route.url, auth.userInfo.userGroups to get current group
-    let result = true;
-    if (state.url === '/searchbarcode') {
-      result = false;
-    }
+    const result = true;
     if (!result) {
       this._zone.run(() => {
         this._message.warning('You are not allowed to view this page.');

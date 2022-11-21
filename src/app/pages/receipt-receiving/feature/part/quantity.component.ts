@@ -6,11 +6,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptStore } from '../../data/Receipt';
-import { FormState, ReceivingStore } from '../../data/receivingStore';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 
 @Component({
@@ -26,8 +26,8 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
       <single-input-form
         (formBack)="onBack()"
         (formSubmit)="onSubmit()"
-        [formState]="formState$ | async"
         [formGroup]="inputForm"
+        [data]="data$ | async"
         controlName="quantity"
         title="Quantity"
         type="number"
@@ -54,26 +54,26 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
 })
 export class QuantityComponent implements OnInit {
   public inputForm: FormGroup;
-  public formState$: Observable<FormState>;
+  public data$;
   public showKickout = false;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingStore,
-    private _receipt: ReceiptStore
+    private _actRoute: ActivatedRoute,
+    private _ui: ReceivingService,
+    private _receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {
-    this._ui.changeSteps(1);
-    this._ui.initFormState();
-    if (!this._receipt.receiptLs?.length) {
+    if (!this._receipt.lineAfterPart?.length) {
       this.onBack();
     }
+    this._ui.changeSteps(1);
+    this.data$ = this._actRoute.data;
     this.inputForm = this._fb.group({
       quantity: ['', Validators.required],
     });
-    this.formState$ = this._ui.formState$;
   }
 
   onChange = (input: string) => {
@@ -85,7 +85,7 @@ export class QuantityComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const vaild = this._receipt.receiptLs.some(
+    const vaild = this._receipt.lineAfterPart.some(
       (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
     );
     if (vaild) {
@@ -94,10 +94,12 @@ export class QuantityComponent implements OnInit {
       return;
     }
     this.showKickout = true;
-    this._ui.updateMessage(
-      `Not found receipt line with this quantity!`,
-      'warning'
-    );
+    this.data$ = of({
+      error: {
+        message: `Not found receipt line with this quantity!`,
+        name: `warning`,
+      },
+    });
   }
 
   public onBack(): void {

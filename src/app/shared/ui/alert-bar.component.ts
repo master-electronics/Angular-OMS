@@ -9,7 +9,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   template: `
     <div nz-row *ngIf="message" nzJustify="center">
       <nz-alert
-        [nzType]="messageType"
+        [nzType]="type"
         [nzMessage]="message"
         nzShowIcon
         class="w-full"
@@ -18,6 +18,14 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   `,
 })
 export class AlertBarComponent {
+  public type;
   @Input() message = '';
-  @Input() messageType: 'error' | 'success' | 'info' | 'warning' = 'info';
+  @Input() set name(name: string) {
+    const list = ['error', 'success', 'info', 'warning'];
+    if (list.includes(name)) {
+      this.type = name;
+      return;
+    }
+    this.type = 'error';
+  }
 }
