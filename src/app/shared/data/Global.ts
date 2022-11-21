@@ -1,25 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export interface HttpResponse {
-  loading: boolean;
-  response?: any;
-  error?: {
-    message: string;
-    type: string;
-  };
-}
-
 @Injectable()
 export class GlobalService {
-  /**
-   * http response
-   */
-  private _httpResponse = new BehaviorSubject<HttpResponse>({ loading: false });
-
-  public get httpResponse$(): Observable<HttpResponse> {
-    return this._httpResponse.asObservable();
-  }
   /**
    * page loading flag
    */

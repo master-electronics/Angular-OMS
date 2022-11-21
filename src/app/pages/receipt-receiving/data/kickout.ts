@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { PrintTextLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { GlobalService, HttpResponse } from 'src/app/shared/data/Global';
+import { GlobalService } from 'src/app/shared/data/Global';
 import { ReceiptInfoService } from './ReceiptInfo';
 
 interface Kickout {
@@ -36,7 +36,7 @@ export class KickoutService {
   ) {}
 
   private _kickout = new BehaviorSubject<Kickout>({
-    receiptLineIDs: this._receipt?.receiptLs?.map((res) => res._id),
+    receiptLineIDs: this._receipt.lineAfterPart?.map((res) => res._id),
   });
 
   /**
@@ -91,7 +91,7 @@ export class KickoutService {
     DPI: string,
     ORIENTATION: string,
     LINE1: string
-  ): Observable<HttpResponse> {
+  ): Observable<boolean> {
     return this._print
       .fetch({
         PRINTER,
@@ -100,8 +100,7 @@ export class KickoutService {
         LINE1,
       })
       .pipe(
-        startWith({ loading: true }),
-        map(() => ({ loading: false })),
+        map(() => true),
         shareReplay(1)
       );
   }

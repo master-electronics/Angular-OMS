@@ -2,29 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CountryListService } from 'src/app/shared/data/countryList';
-import { GlobalService } from 'src/app/shared/data/Global';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
-import { KickoutService } from './data/kickout';
-import { LabelService } from './data/label';
-import { ReceiptInfoService } from './data/ReceiptInfo';
 import { ReceivingService, Tab } from './data/receivingService';
-import { updateReceiptInfoService } from './data/updateReceipt';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    ReceivingService,
-    ReceiptInfoService,
-    KickoutService,
-    GlobalService,
-    updateReceiptInfoService,
-    LabelService,
-    CountryListService,
-  ],
   template: `
     <ng-container *ngIf="tab$ | async as input">
       <step-bar

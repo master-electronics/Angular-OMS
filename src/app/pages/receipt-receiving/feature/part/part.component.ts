@@ -5,15 +5,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { FormState, ReceivingService } from '../../data/receivingService';
-import { catchError, map, Observable, of, tap } from 'rxjs';
-import { LabelService } from '../../data/label';
+import { ReceivingService } from '../../data/receivingService';
+import { map, tap } from 'rxjs';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   standalone: true,
@@ -22,6 +22,7 @@ import { LabelService } from '../../data/label';
     SingleInputformComponent,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
+    NzModalModule,
   ],
 
   template: `
@@ -42,8 +43,7 @@ import { LabelService } from '../../data/label';
 })
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
-  public formState$: Observable<FormState>;
+  public data$;
   public validator = {
     name: 'filter',
     message: 'Not Found part number!',
@@ -52,15 +52,12 @@ export class PartComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
+    private _modal: NzModalService,
     private _ui: ReceivingService,
-    private _label: LabelService
+    private _actRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this._receipt.InitValue();
-    this._label.initValue();
-    this._ui.initFormState();
-    this.formState$ = this._ui.formState$;
     this._ui.changeSteps(1);
     this.inputForm = new FormGroup({
       partNumber: new FormControl('', [
@@ -71,15 +68,30 @@ export class PartComponent implements OnInit {
     if (!this._receipt.headerID) {
       this.onBack();
     }
-    this._ui.loadingOn();
-    this.data$ = this._receipt.findReceiptHeader$().pipe(
-      catchError((error) => {
-        return of({
-          loading: false,
-          error: { message: error.message, type: 'error' },
-        });
+    this.data$ = this._actRoute.data.pipe(
+      map((res) => {
+        if (res.lines?.error) {
+          this.showConfirm(res.lines.error);
+        }
+        return res.lines;
       })
     );
+  }
+
+  /**
+   * showConfirm
+   */
+  public showConfirm(error) {
+    const modal = {
+      nzTitle: `<i>${error.message}</i>`,
+      nzContent: '<b>Select an other receipt.</b>',
+      nzOnOk: () => this.onBack(),
+    };
+    if (error.name === 'warning') {
+      this._modal.warning(modal);
+      return;
+    }
+    this._modal.error(modal);
   }
 
   partNumberSearch(): ValidatorFn {
@@ -88,7 +100,7 @@ export class PartComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = this._receipt.receiptHeader.RECEIPTLs.some(
+      const isVaild = this._receipt.receiptLines?.some(
         (line) =>
           line.Product.PartNumber.trim().toLowerCase() ===
           value.trim().toLowerCase()
@@ -103,10 +115,10 @@ export class PartComponent implements OnInit {
 
   onSubmit(): void {
     this._receipt.filterbyPartNumber(this.inputForm.value.partNumber);
-    this._router.navigate(['receiptreceiving/part/verify']);
+    this._router.navigate(['../part/verify'], { relativeTo: this._actRoute });
   }
 
   onBack(): void {
-    this._router.navigate(['receiptreceiving/receipt']);
+    this._router.navigate(['../receipt'], { relativeTo: this._actRoute });
   }
 }

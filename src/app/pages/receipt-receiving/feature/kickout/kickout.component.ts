@@ -83,7 +83,7 @@ import { ReceivingService } from '../../data/receivingService';
     <div *ngIf="print$ | async as print">
       <alert-bar
         [message]="print.error.message"
-        [type]="print.error.type"
+        [name]="print.error.type"
       ></alert-bar>
     </div>
     <simple-keyboard
@@ -106,7 +106,7 @@ export class KickoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._receipt.receiptLs?.length) {
+    if (!this._receipt.lineAfterPart?.length) {
       this.onBack();
     }
     this._step.changeSteps(1);

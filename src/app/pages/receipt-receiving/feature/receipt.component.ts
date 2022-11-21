@@ -5,14 +5,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
 import { SingleInputformComponent } from '../ui/single-input-form.component';
 import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
-import { FormState, ReceivingService } from '../data/receivingService';
-import { GlobalService, HttpResponse } from 'src/app/shared/data/Global';
+import { ReceivingService } from '../data/receivingService';
+import { GlobalService } from 'src/app/shared/data/Global';
 
 @Component({
   standalone: true,
@@ -44,22 +44,21 @@ import { GlobalService, HttpResponse } from 'src/app/shared/data/Global';
 })
 export class ReceiptComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<HttpResponse>;
+  public data$;
 
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
     private _ui: ReceivingService,
-    private _http: GlobalService
+    private _actRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(0);
-    this._ui.initFormState();
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });
-    this.data$ = this._http.httpResponse$;
+    this.data$ = this._actRoute.data;
   }
 
   public onChange = (input: string) => {
@@ -69,16 +68,15 @@ export class ReceiptComponent implements OnInit {
   };
 
   public onBack(): void {
-    this._router.navigate(['home']);
+    this._router.navigate(['/home']);
   }
 
   public onSubmit(): void {
-    this.data$ = of({ loading: true });
     this.data$ = this._receipt
       .checkReceiptHeader(Number(this.inputForm.value.receipt))
       .pipe(
         tap(() => {
-          this._router.navigate(['receiptreceiving/part']);
+          this._router.navigate(['../part'], { relativeTo: this._actRoute });
         }),
         catchError((error) => {
           return of({

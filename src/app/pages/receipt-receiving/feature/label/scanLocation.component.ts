@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
-import { FormState, ReceivingService } from '../../data/receivingService';
+import { ReceivingService } from '../../data/receivingService';
 import { LabelService, ITNinfo } from '../../data/label';
 
 @Component({
@@ -44,7 +44,6 @@ import { LabelService, ITNinfo } from '../../data/label';
 export class ScanLocationComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
-  public formState$: Observable<FormState>;
   public ITNList$: Observable<any>;
   // public validator = {
   //   name: 'label',
@@ -61,20 +60,17 @@ export class ScanLocationComponent implements OnInit {
     if (!this._label.ITNList?.length) {
       this.onBack();
     }
-    this._ui.initFormState();
     this._ui.changeSteps(3);
-    this.formState$ = this._ui.formState$;
     console.log(this._label.ITNList);
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       location: new FormControl('', [Validators.required]),
     });
-    this._ui.loadingOn();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this._ui.loadingOff();
+      //
     }, 3000);
   }
 
@@ -89,12 +85,10 @@ export class ScanLocationComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this._ui.loadingOn();
     this.data$ = this._label
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
         map(() => {
-          this._ui.loadingOff();
           if (
             this._label.ITNList?.length === this._label.quantityList?.length
           ) {
@@ -103,8 +97,6 @@ export class ScanLocationComponent implements OnInit {
           this._router.navigate(['receiptreceiving/label/printitn']);
         }),
         catchError((error) => {
-          this._ui.updateMessage(error.message, 'error');
-          this._ui.loadingOff();
           return of(error);
         })
       );

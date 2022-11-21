@@ -8,12 +8,6 @@ export interface Tab {
   currentStep: number;
 }
 
-export interface FormState {
-  loading: boolean;
-  message?: string;
-  messageType?: 'error' | 'success' | 'info' | 'warning';
-}
-
 @Injectable()
 export class ReceivingService {
   constructor(private _itn: CreateItnGQL) {}
@@ -35,46 +29,6 @@ export class ReceivingService {
       ...this._tab.value,
       currentStep: index,
     });
-  }
-
-  //input form
-  private _formState = new BehaviorSubject<FormState>({ loading: false });
-  public get formState$(): Observable<FormState> {
-    return this._formState.asObservable().pipe(shareReplay(1));
-  }
-  /**
-   * get formState
-   */
-  public get formState(): FormState {
-    return this._formState.value;
-  }
-  public loadingOn(): void {
-    this._formState.next({
-      ...this._formState.value,
-      loading: true,
-    });
-  }
-
-  public loadingOff(): void {
-    this._formState.next({
-      ...this._formState.value,
-      loading: false,
-    });
-  }
-
-  public updateMessage(
-    message: string,
-    messageType?: 'error' | 'success' | 'info' | 'warning'
-  ): void {
-    this._formState.next({
-      ...this._formState.value,
-      message,
-      messageType,
-    });
-  }
-
-  public initFormState(): void {
-    this._formState.next({ loading: false });
   }
 
   /**

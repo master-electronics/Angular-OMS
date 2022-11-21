@@ -18,9 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { HttpResponse } from 'src/app/shared/data/Global';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
-import { FormState } from '../data/receivingService';
 
 @Component({
   standalone: true,
@@ -73,6 +71,7 @@ import { FormState } from '../data/receivingService';
             nzSize="large"
             nzType="primary"
             [disabled]="inputForm.invalid"
+            [nzLoading]="data?.loading"
             class="mr-20 w-32"
           >
             Submit
@@ -82,10 +81,10 @@ import { FormState } from '../data/receivingService';
           </button>
         </nz-form-control>
       </nz-form-item>
-      <div *ngIf="data.error">
+      <div *ngIf="data?.error">
         <alert-bar
-          [message]="data.error.message"
-          [type]="data.error.type"
+          [message]="data?.error.message"
+          [name]="data?.error.name"
         ></alert-bar>
       </div>
     </form>
@@ -96,7 +95,7 @@ import { FormState } from '../data/receivingService';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input() data: HttpResponse;
+  @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() type = 'text';

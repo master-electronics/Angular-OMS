@@ -1,8 +1,28 @@
 import { Routes } from '@angular/router';
+import { PartResolver } from './data/resolver/part.resolver';
+import { CountryListService } from 'src/app/shared/data/countryList';
+import { KickoutService } from './data/kickout';
+import { GlobalService } from 'src/app/shared/data/Global';
+import { LabelService } from './data/label';
+import { ReceiptInfoService } from './data/ReceiptInfo';
+import { ReceivingService } from './data/receivingService';
+import { updateReceiptInfoService } from './data/updateReceipt';
+import { VerifyResolver } from './data/resolver/verify.resolver';
 
 export const ReceivingRoutes: Routes = [
   {
     path: '',
+    providers: [
+      PartResolver,
+      VerifyResolver,
+      ReceivingService,
+      ReceiptInfoService,
+      KickoutService,
+      GlobalService,
+      updateReceiptInfoService,
+      LabelService,
+      CountryListService,
+    ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
     children: [
@@ -13,11 +33,17 @@ export const ReceivingRoutes: Routes = [
       },
       {
         path: 'part',
+        resolve: {
+          lines: PartResolver,
+        },
         loadComponent: () =>
           import('./feature/part/part.component').then((m) => m.PartComponent),
       },
       {
         path: 'part/verify',
+        resolve: {
+          info: VerifyResolver,
+        },
         loadComponent: () =>
           import('./feature/part/verify.component').then(
             (m) => m.VerifyComponent

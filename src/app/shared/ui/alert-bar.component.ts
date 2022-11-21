@@ -18,6 +18,14 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   `,
 })
 export class AlertBarComponent {
+  public type;
   @Input() message = '';
-  @Input() type;
+  @Input() set name(name: string) {
+    const list = ['error', 'success', 'info', 'warning'];
+    if (list.includes(name)) {
+      this.type = name;
+      return;
+    }
+    this.type = 'error';
+  }
 }
