@@ -10,7 +10,7 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
       _id
       ExpectedQuantity
       DateCode
-      ROHS
+      RHOS
       LineNumber
       ProductID
       CountryID
@@ -59,10 +59,10 @@ mutation ReceivingUpdateReceiptL(
   $idList: [Int]!
   $CountryID: Int!
   $DateCode: String!
-  $ROHS: Boolean!
+  $RHOS: Boolean!
 ) {
   updateReceiptLsByID(
-    ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, ROHS: $ROHS }
+    ReceiptL: { CountryID: $CountryID, DateCode: $DateCode, RHOS: $RHOS }
     idList: $idList
   )
 }

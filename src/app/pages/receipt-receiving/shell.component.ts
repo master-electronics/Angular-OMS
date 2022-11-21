@@ -37,16 +37,12 @@ export class ReceivingShell implements OnInit {
 
   private readonly steps = [
     {
-      title: 'Select',
-      subtitle: '',
-      description: 'ReceiptID, Part',
+      title: 'Identify',
     },
-    { title: 'Verify', subtitle: '', description: `Info, Quantity` },
-    { title: 'Update', subtitle: '', description: `Country Date ROHS` },
+    { title: 'Verify' },
+    { title: 'Update' },
     {
       title: 'Label',
-      subtitle: '',
-      description: 'Assign Print',
     },
   ];
 }

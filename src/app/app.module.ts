@@ -46,6 +46,7 @@ import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 import { GlobalService } from './shared/data/Global';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,6 @@ import { GlobalService } from './shared/data/Global';
     IconsProviderModule,
     NzButtonModule,
     NzInputModule,
-    NzSpinModule,
     NzMessageModule,
     NzDrawerModule,
     NzDropDownModule,
@@ -80,6 +80,7 @@ import { GlobalService } from './shared/data/Global';
     NzCardModule,
     MenuItemComponent,
     MenubarItemComponent,
+    NgxSpinnerModule,
   ],
 
   providers: [

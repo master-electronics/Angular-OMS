@@ -202,7 +202,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
             InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
             DateCode: this.itemInfo.DateCode,
             CountryOfOrigin: this.itemInfo.CountryISO2,
-            ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
+            RHOS: this.itemInfo.RHOS ? 'Y' : 'N',
             CountMethod: this.itemInfo.CountMethod,
           });
 
