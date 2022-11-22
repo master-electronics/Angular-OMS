@@ -10,7 +10,7 @@ import { ReceivingService, Tab } from './data/receivingService';
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
   template: `
-    <div class=" mx-auto px-2 py-2">
+    <div class="px-2 py-2">
       <div *ngIf="tab$ | async as input">
         <step-bar
           [currentStep]="input.currentStep"

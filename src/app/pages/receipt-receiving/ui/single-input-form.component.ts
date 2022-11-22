@@ -7,6 +7,7 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -28,26 +29,38 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
     AlertBarComponent,
   ],
   selector: 'single-input-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form
       *ngIf="data; else loading"
       [formGroup]="inputForm"
       (ngSubmit)="onSubmit()"
     >
-      <div class="mb-16 text-2xl">
-        <label class="mb-2 block font-bold text-gray-700" for="input">
+      <div class="text-2xl">
+        <label class="mb-0.5 block font-bold text-gray-700" for="input">
           {{ title }}
         </label>
         <input
           [formControlName]="controlName"
-          [ngClass]="checkValidate() ? 'border-red-500' : 'border-blue-500'"
-          class="focus:shadow-outline mb-3 h-fit w-full appearance-none rounded border py-2 px-3 text-3xl leading-tight text-gray-700 shadow focus:outline-none"
+          [ngClass]="
+            this.inputForm.get(this.controlName).invalid &&
+            this.inputForm.get(this.controlName).dirty
+              ? 'border-red-500'
+              : 'border-blue-500'
+          "
+          class="focus:shadow-outline mb-3 h-fit w-full appearance-none rounded border py-2 px-3 text-4xl leading-tight text-gray-700 shadow focus:outline-none"
           id="input"
           [type]="inputType"
           [placeholder]="placeholder"
           #input
         />
-        <div *ngIf="checkValidate()" class="text-xs italic text-red-500">
+        <div
+          *ngIf="
+            this.inputForm.get(this.controlName).invalid &&
+            this.inputForm.get(this.controlName).dirty
+          "
+          class="text-lg italic text-red-500"
+        >
           <div *ngIf="inputForm.get(controlName).errors?.['required']">
             This field is required.
           </div>
@@ -55,29 +68,30 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
             {{ validator.message }}
           </div>
         </div>
-      </div>
 
-      <div class="flex flex-row gap-10">
-        <button
-          type="submit"
-          [disabled]="inputForm.invalid"
-          class="h-32 basis-1/2 bg-blue-400 text-2xl"
-        >
-          Submit
-        </button>
-        <button
-          class="h-32 basis-1/2 bg-gray-300 text-2xl"
-          type="button"
-          (click)="onBack()"
-        >
-          Back
-        </button>
-      </div>
-      <div *ngIf="data?.error">
-        <alert-bar
-          [message]="data?.error.message"
-          [name]="data?.error.name"
-        ></alert-bar>
+        <div class="flex w-full flex-row md:mt-16">
+          <button
+            class="h-32 w-2/5  rounded-lg bg-blue-700 font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            [disabled]="inputForm.invalid"
+          >
+            Submit
+          </button>
+          <div class="grow"></div>
+          <button
+            type="button"
+            class="h-32 w-2/5 rounded-lg border border-gray-200 bg-gray-100 font-medium text-gray-900 hover:bg-gray-200 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+            type="button"
+            (click)="onBack()"
+          >
+            Back
+          </button>
+        </div>
+        <div *ngIf="data?.error">
+          <alert-bar
+            [message]="data?.error.message"
+            [name]="data?.error.name"
+          ></alert-bar>
+        </div>
       </div>
     </form>
     <ng-template #loading>
@@ -87,6 +101,7 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
+  public input;
   @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
@@ -105,6 +120,7 @@ export class SingleInputformComponent implements OnInit {
 
   public ngOnInit(): void {
     this.inputForm = this.controlContainer.control as FormGroup;
+    this.input = this.inputForm.get(this.controlName);
   }
 
   public onSubmit(): void {

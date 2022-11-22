@@ -32,11 +32,11 @@ import { GlobalService } from 'src/app/shared/data/Global';
       controlName="receipt"
       title="Receipt"
     ></single-input-form>
-    <!-- <simple-keyboard
-        [inputString]="inputForm.value.receipt"
-        layout="number"
-        (outputString)="onChange($event)"
-      ></simple-keyboard> -->
+    <simple-keyboard
+      [inputString]="inputForm.value.receipt"
+      layout="number"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
 })
 export class ReceiptComponent implements OnInit {

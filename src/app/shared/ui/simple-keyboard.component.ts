@@ -12,6 +12,18 @@ import Keyboard from 'simple-keyboard';
   standalone: true,
   selector: 'simple-keyboard',
   template: ` <div class="simple-keyboard"></div> `,
+  styles: [
+    `
+      .simple-keyboard {
+        font-size: 3vw;
+        position: absolute;
+        bottom: 15px;
+        width: 95%;
+        left: 2.5%;
+        text-align: center;
+      }
+    `,
+  ],
 })
 export class SimpleKeyboardComponent implements OnChanges {
   keyboard: Keyboard;
