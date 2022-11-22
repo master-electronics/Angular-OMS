@@ -8,7 +8,7 @@
     "build:dev": "ng build --configuration=dev",
     "watch": "ng build --watch --configuration development",
     "cypress:run": "cypress run --record --key 44dfdd28-8118-4667-832f-96dcd359110d",
-    "docker": "git checkout main && git pull && npm run build && sudo docker-compose up --build -d",
+    "docker": "docker-compose up --build -d",
     "test": "ng test",
     "prepare": "husky install",
     "gql": "NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config gqlGen.yml",

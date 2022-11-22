@@ -33,7 +33,7 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
       [validator]="validator"
       [formGroup]="inputForm"
       controlName="partNumber"
-      title="Part #"
+      title="Part Number"
     ></single-input-form>
     <simple-keyboard
       [inputString]="inputForm.value.partNumber"

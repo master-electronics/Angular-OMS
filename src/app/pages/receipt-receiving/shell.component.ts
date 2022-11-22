@@ -9,15 +9,14 @@ import { ReceivingService, Tab } from './data/receivingService';
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, StepBarComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class=" mx-auto px-2 py-2">
-      <ng-container *ngIf="tab$ | async as input">
+      <div *ngIf="tab$ | async as input">
         <step-bar
           [currentStep]="input.currentStep"
           [steps]="input.steps"
         ></step-bar>
-      </ng-container>
+      </div>
       <div class="mt-4">
         <router-outlet></router-outlet>
       </div>

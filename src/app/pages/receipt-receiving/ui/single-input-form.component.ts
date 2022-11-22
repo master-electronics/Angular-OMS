@@ -14,9 +14,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 
@@ -26,9 +24,6 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NzInputModule,
-    NzFormModule,
-    NzButtonModule,
     NzSkeletonModule,
     AlertBarComponent,
   ],
@@ -36,51 +31,48 @@ import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
   template: `
     <form
       *ngIf="data; else loading"
-      nz-form
       [formGroup]="inputForm"
       (ngSubmit)="onSubmit()"
     >
-      <nz-form-item>
-        <nz-form-label [nzSpan]="7" nzRequired>{{ title }}</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="errorTpl">
-          <input
-            nz-input
-            maxlength="30"
-            nzSize="large"
-            [type]="type"
-            [placeholder]="placeholder"
-            [formControlName]="controlName"
-            autocomplete="off"
-            #input
-          />
-          <ng-template #errorTpl let-control>
-            <ng-container *ngIf="control.hasError(validator.name)">{{
-              validator.message
-            }}</ng-container>
-            <ng-container *ngIf="control.hasError('required')"
-              >Please input this field!</ng-container
-            >
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control [nzOffset]="7" [nzSpan]="16">
-          <button
-            nz-button
-            type="submit"
-            nzSize="large"
-            nzType="primary"
-            [disabled]="inputForm.invalid"
-            [nzLoading]="data?.loading"
-            class="mr-20 w-32"
-          >
-            Submit
-          </button>
-          <button nz-button nzSize="large" type="button" (click)="onBack()">
-            Back
-          </button>
-        </nz-form-control>
-      </nz-form-item>
+      <div class="mb-16 text-2xl">
+        <label class="mb-2 block font-bold text-gray-700" for="input">
+          {{ title }}
+        </label>
+        <input
+          [formControlName]="controlName"
+          [ngClass]="checkValidate() ? 'border-red-500' : 'border-blue-500'"
+          class="focus:shadow-outline mb-3 h-fit w-full appearance-none rounded border py-2 px-3 text-3xl leading-tight text-gray-700 shadow focus:outline-none"
+          id="input"
+          [type]="inputType"
+          [placeholder]="placeholder"
+          #input
+        />
+        <div *ngIf="checkValidate()" class="text-xs italic text-red-500">
+          <div *ngIf="inputForm.get(controlName).errors?.['required']">
+            This field is required.
+          </div>
+          <div *ngIf="inputForm.get(controlName).errors?.[validator.name]">
+            {{ validator.message }}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-10">
+        <button
+          type="submit"
+          [disabled]="inputForm.invalid"
+          class="h-32 basis-1/2 bg-blue-400 text-2xl"
+        >
+          Submit
+        </button>
+        <button
+          class="h-32 basis-1/2 bg-gray-300 text-2xl"
+          type="button"
+          (click)="onBack()"
+        >
+          Back
+        </button>
+      </div>
       <div *ngIf="data?.error">
         <alert-bar
           [message]="data?.error.message"
@@ -98,7 +90,7 @@ export class SingleInputformComponent implements OnInit {
   @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
-  @Input() type = 'text';
+  @Input() inputType = 'text';
   @Input() placeholder = '';
   @Input() title = 'Input';
   @Output() formSubmit: EventEmitter<null> = new EventEmitter();
@@ -122,5 +114,13 @@ export class SingleInputformComponent implements OnInit {
 
   public onBack(): void {
     this.formBack.emit();
+  }
+
+  public checkValidate(): boolean {
+    return (
+      this.inputForm.get(this.controlName).invalid &&
+      (this.inputForm.get(this.controlName).dirty ||
+        this.inputForm.get(this.controlName).touched)
+    );
   }
 }

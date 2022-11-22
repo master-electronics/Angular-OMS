@@ -23,23 +23,20 @@ import { GlobalService } from 'src/app/shared/data/Global';
     ReactiveFormsModule,
   ],
   template: `
-    <ng-container></ng-container>
-    <div class="grid grid-cols-2 gap-5">
-      <single-input-form
-        (formSubmit)="onSubmit()"
-        (formBack)="onBack()"
-        [data]="data$ | async"
-        [formGroup]="inputForm"
-        type="number"
-        controlName="receipt"
-        title="Receipt"
-      ></single-input-form>
-      <simple-keyboard
+    <single-input-form
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
+      [data]="data$ | async"
+      [formGroup]="inputForm"
+      inputType="number"
+      controlName="receipt"
+      title="Receipt"
+    ></single-input-form>
+    <!-- <simple-keyboard
         [inputString]="inputForm.value.receipt"
         layout="number"
         (outputString)="onChange($event)"
-      ></simple-keyboard>
-    </div>
+      ></simple-keyboard> -->
   `,
 })
 export class ReceiptComponent implements OnInit {
