@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlatformModule } from '@angular/cdk/platform';
 import { AppRoutingModule } from './app.routing';
 import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interceptor';
+import { CookieService } from 'ngx-cookie-service';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -36,6 +37,7 @@ import { IconsProviderModule } from './icons-provider.module';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
@@ -81,6 +83,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MenuItemComponent,
     MenubarItemComponent,
     NgxSpinnerModule,
+    NzModalModule,
   ],
 
   providers: [
@@ -107,6 +110,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
       deps: [HttpLink],
     },
     { provide: NZ_I18N, useValue: en_US },
+    CookieService,
   ],
   bootstrap: [AppComponent],
 })
