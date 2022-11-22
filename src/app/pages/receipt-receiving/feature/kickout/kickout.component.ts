@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { tmpdir } from 'os';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
@@ -136,19 +137,26 @@ export class KickoutComponent implements OnInit {
 
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
-    const line = (kickoutReason + otherReason).substring(0, 79);
-    this.print$ = this._kickout
-      .printTextLabel$('PHLABELS139', '300', 'LANDSCAPE', line)
-      .pipe(
-        map(() => {
-          this._router.navigateByUrl('receiptreceiving/part');
-        }),
-        catchError((error) => {
-          return of({
-            loading: false,
-            error: { message: error.message, type: 'error' },
-          });
-        })
-      );
+    const line1 = (kickoutReason + otherReason).substring(0, 20);
+    let reason = kickoutReason;
+    if (otherReason) {
+      reason = kickoutReason + ': ' + otherReason;
+    }
+    const list = [];
+    while (list.length < 4) {
+      const tmp = reason.substring(list.length * 20, (list.length + 1) * 20);
+      list.push(tmp);
+    }
+    this.print$ = this._kickout.printTextLabel$(list).pipe(
+      map(() => {
+        this._router.navigateByUrl('receiptreceiving/part');
+      }),
+      catchError((error) => {
+        return of({
+          loading: false,
+          error: { message: error.message, type: 'error' },
+        });
+      })
+    );
   }
 }

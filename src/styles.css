@@ -55,7 +55,7 @@
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: 10vh;
+  height: 9vh;
   justify-content: center;
   padding: 5px;
 }

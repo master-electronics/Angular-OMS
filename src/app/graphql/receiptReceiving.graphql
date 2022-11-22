@@ -86,12 +86,18 @@ query printTextLabel(
   $DPI: String!
   $ORIENTATION: String!
   $LINE1: String!
+  $LINE2: String!
+  $LINE3: String!
+  $LINE4: String!
 ) {
   printTextLabel(
     PRINTER: $PRINTER
     DPI: $DPI
     ORIENTATION: $ORIENTATION
     LINE1: $LINE1
+    LINE2: $LINE2
+    LINE3: $LINE3
+    LINE4: $LINE4
   )
 }
 

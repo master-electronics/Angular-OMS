@@ -11,6 +11,7 @@ import {
 import { PrintTextLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { GlobalService } from 'src/app/shared/data/Global';
+import { PrinterService } from 'src/app/shared/data/printerInfo';
 import { ReceiptInfoService } from './ReceiptInfo';
 
 interface Kickout {
@@ -30,9 +31,8 @@ export class KickoutService {
    */
   constructor(
     private _receipt: ReceiptInfoService,
-    private _http: GlobalService,
     private _print: PrintTextLabelGQL,
-    private _itn: CreateItnGQL
+    private _findPrinter: PrinterService
   ) {}
 
   private _kickout = new BehaviorSubject<Kickout>({
@@ -86,22 +86,21 @@ export class KickoutService {
   /**
    * printTextLabel
    */
-  public printTextLabel$(
-    PRINTER: string,
-    DPI: string,
-    ORIENTATION: string,
-    LINE1: string
-  ): Observable<boolean> {
-    return this._print
-      .fetch({
-        PRINTER,
-        DPI,
-        ORIENTATION,
-        LINE1,
-      })
-      .pipe(
-        map(() => true),
-        shareReplay(1)
-      );
+  public printTextLabel$(list: string[]): Observable<boolean> {
+    return this._findPrinter.printer$.pipe(
+      switchMap((printer) => {
+        return this._print.fetch({
+          PRINTER: printer.Name,
+          DPI: String(printer.DPI),
+          ORIENTATION: printer.Orientation,
+          LINE1: list[0],
+          LINE2: list[1],
+          LINE3: list[2],
+          LINE4: list[3],
+        });
+      }),
+      map(() => true),
+      shareReplay(1)
+    );
   }
 }

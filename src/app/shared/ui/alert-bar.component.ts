@@ -9,6 +9,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
   template: `
     <div nz-row *ngIf="message" nzJustify="center">
       <nz-alert
+        nzSize="large"
         [nzType]="type"
         [nzMessage]="message"
         nzShowIcon

@@ -8,6 +8,7 @@ import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { VerifyResolver } from './data/resolver/verify.resolver';
 import { PrintItnResolver } from './data/resolver/printItn.resolver';
+import { PrinterService } from 'src/app/shared/data/printerInfo';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -22,6 +23,7 @@ export const ReceivingRoutes: Routes = [
       updateReceiptInfoService,
       LabelService,
       CountryListService,
+      PrinterService,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),

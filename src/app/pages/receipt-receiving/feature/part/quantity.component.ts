@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
@@ -20,36 +21,31 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     SingleInputformComponent,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
+    RedButtonComponent,
   ],
   template: `
-    <div class="grid grid-cols-2 gap-5">
-      <single-input-form
-        (formBack)="onBack()"
-        (formSubmit)="onSubmit()"
-        [formGroup]="inputForm"
-        [data]="data$ | async"
-        controlName="quantity"
-        title="Quantity"
-        type="number"
-      ></single-input-form>
-      <simple-keyboard
-        [inputString]="inputForm.value.quantity"
-        layout="number"
-        (outputString)="onChange($event)"
-      ></simple-keyboard>
+    <single-input-form
+      (formBack)="onBack()"
+      (formSubmit)="onSubmit()"
+      [formGroup]="inputForm"
+      [data]="data$ | async"
+      controlName="quantity"
+      title="Quantity"
+      inputType="number"
+    ></single-input-form>
+    <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
+      <div></div>
+      <red-button
+        *ngIf="showKickout"
+        (formClick)="onKickout()"
+        buttonText="Kickout"
+      ></red-button>
     </div>
-    <div *ngIf="showKickout" class="mt-8 h-12 w-32 rounded-md bg-red-500">
-      <button
-        nz-button
-        nzSize="large"
-        type="button"
-        (click)="kickout()"
-        class="h-12 w-32"
-        nzGhost
-      >
-        KickOut
-      </button>
-    </div>
+    <simple-keyboard
+      [inputString]="inputForm.value.quantity"
+      layout="number"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
 })
 export class QuantityComponent implements OnInit {
@@ -80,7 +76,7 @@ export class QuantityComponent implements OnInit {
     this.inputForm.get('quantity').setValue(input);
   };
 
-  kickout(): void {
+  onKickout(): void {
     this._router.navigateByUrl('receiptreceiving/kickout');
   }
 

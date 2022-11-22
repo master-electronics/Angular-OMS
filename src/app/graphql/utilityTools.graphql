@@ -18,6 +18,14 @@ query fetchCountryList {
   }
 }
 
+query findBindedPrinter($hostName: String!) {
+  findPrinters(Printer: { StationName: $hostName }) {
+    Name
+    Orientation
+    DPI
+  }
+}
+
 query createITN($LocationCode: String!) {
   createITN(LocationCode: $LocationCode)
 }

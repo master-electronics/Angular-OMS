@@ -31,8 +31,8 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
     NormalButtonComponent,
     SubmitButtonComponent,
   ],
-  selector: 'single-input-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'single-input-form',
   template: `
     <form
       *ngIf="data; else loading"
@@ -46,8 +46,8 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
         <input
           [formControlName]="controlName"
           [ngClass]="
-            this.inputForm.get(this.controlName).invalid &&
-            this.inputForm.get(this.controlName).dirty
+            inputForm.get(controlName).invalid &&
+            inputForm.get(controlName).dirty
               ? 'border-red-500'
               : 'border-blue-500'
           "
@@ -59,8 +59,8 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
         />
         <div
           *ngIf="
-            this.inputForm.get(this.controlName).invalid &&
-            this.inputForm.get(this.controlName).dirty
+            inputForm.get(controlName).invalid &&
+            inputForm.get(controlName).dirty
           "
           class="text-lg italic text-red-500"
         >
@@ -73,7 +73,11 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
         </div>
 
         <div class="grid h-16 w-full grid-cols-3 md:mt-16 md:h-32">
-          <submit-button (formClick)="onSubmit()"> </submit-button>
+          <submit-button
+            [disabled]="inputForm.invalid"
+            (formClick)="onSubmit()"
+          >
+          </submit-button>
           <div></div>
           <normal-button (formClick)="onBack()"></normal-button>
         </div>
@@ -93,6 +97,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
   public input;
+  public vaild;
   @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';

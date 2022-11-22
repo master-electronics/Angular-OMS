@@ -25,22 +25,20 @@ import { SingleInputformComponent } from '../../ui/single-input-form.component';
     SimpleKeyboardComponent,
   ],
   template: `
-    <div class="grid grid-cols-2 gap-5">
-      <single-input-form
-        (formSubmit)="onSubmit()"
-        (formBack)="onBack()"
-        [validator]="validator"
-        [formGroup]="inputForm"
-        type="number"
-        controlName="dateCode"
-        title="Date Code"
-      ></single-input-form>
-      <simple-keyboard
-        layout="number"
-        [inputString]="inputForm.value.dateCode"
-        (outputString)="onChange($event)"
-      ></simple-keyboard>
-    </div>
+    <single-input-form
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
+      [validator]="validator"
+      [formGroup]="inputForm"
+      inputType="number"
+      controlName="dateCode"
+      title="Date Code"
+    ></single-input-form>
+    <simple-keyboard
+      layout="number"
+      [inputString]="inputForm.value.dateCode"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
 })
 export class DateCodeComponent implements OnInit {

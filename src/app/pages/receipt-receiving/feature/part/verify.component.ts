@@ -28,10 +28,13 @@ import { ReceiptPartInfoComponent } from '../../ui/receipt-part-info.component';
       </div>
       <receipt-part-info [info]="info"></receipt-part-info>
     </div>
-    <div class="grid h-16 w-full grid-cols-4 gap-6 md:mt-16 md:h-32">
+    <div
+      class="grid h-16 w-full grid-cols-4 gap-6 md:mt-16 md:h-32 md:text-4xl"
+    >
       <red-button (formClick)="onKickout()" buttonText="Kickout"></red-button>
       <div></div>
-      <submit-button (formClick)="onSubmit()"> </submit-button>
+      <submit-button (formClick)="onSubmit()" buttonText="Verify">
+      </submit-button>
       <normal-button (formClick)="onBack()"></normal-button>
     </div>
   `,
@@ -48,7 +51,7 @@ export class VerifyComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._receipt.lineAfterPart) {
-      // this._router.navigateByUrl('/receiptreceiving');
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._step.changeSteps(1);
     this.data$ = this._actRoute.data.pipe(

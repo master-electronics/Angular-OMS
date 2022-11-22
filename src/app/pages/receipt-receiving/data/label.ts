@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  delay,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   CheckBinLocationGQL,
   PrintReceivingLabelGQL,
   UpdateAfterReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { PrinterService } from 'src/app/shared/data/printerInfo';
 import { environment } from 'src/environments/environment';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
@@ -25,7 +34,8 @@ export class LabelService {
     private _print: PrintReceivingLabelGQL,
     private _container: CheckBinLocationGQL,
     private _itn: CreateItnGQL,
-    private _update: UpdateAfterReceivingGQL
+    private _update: UpdateAfterReceivingGQL,
+    private _findPrinter: PrinterService
   ) {}
 
   /**
@@ -99,19 +109,24 @@ export class LabelService {
           });
           console.log(res.data.createITN);
         }),
-        // Do not delay at the first time;
-        delay(this.ITNList?.length ? 5000 : 0),
-        switchMap((res) => {
-          return this._print.fetch(
-            {
-              PRINTER: 'PHLABELS139',
-              ITN: res.data.createITN,
-              DPI: '300',
-              ORIENTATION: 'LANDSCAPE',
-            },
-            { fetchPolicy: 'network-only' }
-          );
-        })
+        switchMap((res) =>
+          this._findPrinter.printer$.pipe(
+            // Do not delay at the first time;
+            delay(this.ITNList?.length ? 5000 : 0),
+            switchMap((printer) => {
+              return this._print.fetch(
+                {
+                  PRINTER: printer.Name,
+                  ITN: res.data.createITN,
+                  DPI: String(printer.DPI),
+                  ORIENTATION: printer.Orientation,
+                },
+                { fetchPolicy: 'network-only' }
+              );
+            })
+          )
+        ),
+        shareReplay()
       );
   }
 
