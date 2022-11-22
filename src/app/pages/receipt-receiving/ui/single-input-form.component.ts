@@ -15,7 +15,6 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
