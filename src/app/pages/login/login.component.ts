@@ -17,7 +17,6 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -51,8 +50,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private authenticationService: AuthenticationService,
     private userInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,
-    private titleService: Title,
-    private cookieService: CookieService
+    private titleService: Title
   ) {
     this.elem = document.documentElement;
     if (this.authenticationService.userInfo) {
@@ -62,9 +60,9 @@ export class LoginComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('Login');
-    this.hostnameValue = this.cookieService.get('hostname');
+    this.hostnameValue = localStorage.getItem('hostname');
 
-    if (this.hostnameValue == '') {
+    if (!this.hostnameValue) {
       this.hostnameIcon = 'exclamation-circle';
       this.hostnameIconTitle =
         'Hostname is not set. Contact the help desk to have it set.';
@@ -72,7 +70,7 @@ export class LoginComponent implements OnDestroy, OnInit {
       this.hostnameIcon = 'check-circle';
       this.hostnameIconTitle =
         'Hostname is set. Contact the help desk to have it changed.';
-      this.cookieService.set('hostname', this.hostnameValue, 400);
+      localStorage.setItem('hostname', this.hostnameValue);
     }
   }
 
@@ -143,7 +141,7 @@ export class LoginComponent implements OnDestroy, OnInit {
   }
 
   setHostnameCookie(): void {
-    this.cookieService.set('hostname', this.hostnameValue, 400);
+    localStorage.setItem('hostname', this.hostnameValue);
     this.hostnameIcon = 'check-circle';
     this.hostnameIconTitle =
       'Hostname is set. Contact the help desk to have it changed.';

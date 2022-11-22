@@ -8,7 +8,6 @@ import { MenuService } from 'src/app/shared/services/menu.service';
 
 import { registerLocaleData } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-home',
@@ -24,8 +23,7 @@ export class HomeComponent {
     private commonService: CommonService,
     public menuService: MenuService,
     private titleService: Title,
-    private router: Router,
-    private cookieService: CookieService
+    private router: Router
   ) {
     this.isMobile = this.commonService.isMobile();
     this.commonService.changeNavbar(this.title);
