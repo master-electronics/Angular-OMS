@@ -17,7 +17,7 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { FetchHostNameGQL } from 'src/app/graphql/login.graphql-gen';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -36,9 +36,13 @@ export class LoginComponent implements OnDestroy, OnInit {
   get f(): { [key: string]: AbstractControl } {
     return this.loginForm.controls;
   }
+  showCookieAlert: boolean;
+  showCookieModal: boolean;
+  hostnameValue;
+  hostnameIcon;
+  hostnameIconTitle;
 
   private subscription: Subscription = new Subscription();
-  private hostnameSubscription: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -48,7 +52,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private userInfo: Find_Or_Create_UserInfoGQL,
     private commonService: CommonService,
     private titleService: Title,
-    private fetchHostname: FetchHostNameGQL
+    private cookieService: CookieService
   ) {
     this.elem = document.documentElement;
     if (this.authenticationService.userInfo) {
@@ -58,6 +62,18 @@ export class LoginComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('Login');
+    this.hostnameValue = this.cookieService.get('hostname');
+
+    if (this.hostnameValue == '') {
+      this.hostnameIcon = 'exclamation-circle';
+      this.hostnameIconTitle =
+        'Hostname is not set. Contact the help desk to have it set.';
+    } else {
+      this.hostnameIcon = 'check-circle';
+      this.hostnameIconTitle =
+        'Hostname is set. Contact the help desk to have it changed.';
+      this.cookieService.set('hostname', this.hostnameValue, 400);
+    }
   }
 
   @ViewChild('username') username: ElementRef;
@@ -100,10 +116,7 @@ export class LoginComponent implements OnDestroy, OnInit {
             sessionStorage.setItem('userInfo', userInfo);
             const returnUrl =
               this.route.snapshot.queryParams['returnUrl'] || '/home';
-            this.getHostname();
-            setTimeout(() => {
-              this.router.navigateByUrl(returnUrl);
-            }, 100);
+            this.router.navigateByUrl(returnUrl);
 
             if (this.commonService.isMobile()) {
               this.openFullscreen();
@@ -125,21 +138,19 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.message = '';
   }
 
-  getHostname(): void {
-    this.hostnameSubscription.add(
-      this.fetchHostname.fetch({}, { fetchPolicy: 'network-only' }).subscribe({
-        next: (res) => {
-          sessionStorage.setItem('hostname', res.data.fetchHostName);
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      })
-    );
+  hideCookieModal(): void {
+    this.showCookieModal = false;
+  }
+
+  setHostnameCookie(): void {
+    this.cookieService.set('hostname', this.hostnameValue, 400);
+    this.hostnameIcon = 'check-circle';
+    this.hostnameIconTitle =
+      'Hostname is set. Contact the help desk to have it changed.';
+    this.showCookieModal = false;
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.hostnameSubscription.unsubscribe();
   }
 }

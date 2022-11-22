@@ -94,5 +94,27 @@
         </div>
       </div>
     </div>
+    <div nz-row nzJustify="center">
+      <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="8" nzXl="6" nzXXl="4">
+        <div class="mb-3 text-center">
+          <span 
+            style="cursor: pointer" (click)="showCookieModal = true" 
+            nz-icon [nzType]="hostnameIcon" nzTheme="outline"
+            [title]="hostnameIconTitle"
+          ></span>
+        </div>
+      </div>
+    </div>
   </div>
+  <nz-modal [(nzVisible)]="showCookieModal" nzTitle="Set Hostname Cookie"
+    (nzOnCancel)="hideCookieModal()"
+    (nzOnOk)="setHostnameCookie()">
+    <ng-container *nzModalContent>
+      <div nz-row nzGutter="8" nzJustify="start">
+        <div nz-col nzSpan="24">
+          <input nz-input [(ngModel)]="hostnameValue" type="text" />
+        </div>
+      </div>
+    </ng-container>
+  </nz-modal>
 </div>
