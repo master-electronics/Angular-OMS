@@ -19,10 +19,10 @@ import { CommonService } from '../../../shared/services/common.service';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
-} from '../../../shared/dataRegex';
+} from '../../../shared/utils/dataRegex';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { Title } from '@angular/platform-browser';
 import {
   CountOrderItnsFromMerpGQL,

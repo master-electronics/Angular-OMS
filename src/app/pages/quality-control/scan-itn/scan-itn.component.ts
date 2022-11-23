@@ -10,7 +10,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
@@ -18,7 +18,7 @@ import {
   Insert_UserEventLogsGQL,
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 
 @Component({

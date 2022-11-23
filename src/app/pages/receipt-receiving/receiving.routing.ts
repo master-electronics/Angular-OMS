@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { PartResolver } from './data/resolver/part.resolver';
-import { CountryListService } from 'src/app/shared/data/countryList';
 import { KickoutService } from './data/kickout';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
@@ -8,7 +7,6 @@ import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { VerifyResolver } from './data/resolver/verify.resolver';
 import { PrintItnResolver } from './data/resolver/printItn.resolver';
-import { PrinterService } from 'src/app/shared/data/printerInfo';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -22,8 +20,6 @@ export const ReceivingRoutes: Routes = [
       KickoutService,
       updateReceiptInfoService,
       LabelService,
-      CountryListService,
-      PrinterService,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),

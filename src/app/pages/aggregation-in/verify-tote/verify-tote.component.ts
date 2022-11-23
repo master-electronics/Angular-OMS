@@ -8,7 +8,7 @@ import {
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ToteBarcodeRegex } from '../../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import { Title } from '@angular/platform-browser';
 import {

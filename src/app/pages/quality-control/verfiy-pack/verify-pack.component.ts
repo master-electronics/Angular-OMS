@@ -10,8 +10,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, of, Subscription, throwError } from 'rxjs';
 
-import { dateCodeRegex } from '../../../shared/dataRegex';
-import Countries from '../../../shared/countries';
+import { dateCodeRegex } from '../../../shared/utils/dataRegex';
 import { itemParams, QualityControlService } from '../quality-control.server';
 import {
   FetchProductInfoFromMerpGQL,
@@ -23,7 +22,8 @@ import {
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, delay, map, tap } from 'rxjs/operators';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import countries from 'src/app/shared/utils/countyList';
 
 @Component({
   selector: 'verify-pack',
@@ -41,10 +41,10 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   UnitOfMeasure = 'loading';
   MICPartNumber: string;
   HazardMaterialLevel: boolean;
-  countryData = Countries;
   itemInfo: itemParams;
   printITN$ = new Observable();
   productInfo$ = new Observable();
+  countryData = countries;
 
   countMethods = [
     { id: 1, content: 'Factory bag' },

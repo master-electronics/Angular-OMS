@@ -16,13 +16,13 @@ import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { ShelfBarcodeBarcodeRegex } from '../../../shared/dataRegex';
+import { ShelfBarcodeBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'select-location',

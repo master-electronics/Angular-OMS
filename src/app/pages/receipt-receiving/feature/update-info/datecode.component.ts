@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DefalutDateCode } from 'src/app/shared/dataRegex';
+import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceivingService } from '../../data/receivingService';
 import { updateReceiptInfoService } from '../../data/updateReceipt';

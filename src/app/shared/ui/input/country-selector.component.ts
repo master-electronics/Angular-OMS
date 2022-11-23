@@ -19,7 +19,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { CountryListService } from '../../data/countryList';
 
 @Component({
-  selector: 'country-iso3',
+  selector: 'country-selector',
   standalone: true,
   imports: [
     CommonModule,
@@ -56,7 +56,7 @@ import { CountryListService } from '../../data/countryList';
     </form>
   `,
 })
-export class CountryISO3Component implements OnInit {
+export class CountrySelectorComponent implements OnInit {
   public countryForm: FormGroup;
   public countryList$;
   @Input() controlName = 'country';

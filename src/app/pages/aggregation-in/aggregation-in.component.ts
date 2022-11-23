@@ -17,11 +17,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
-import { ToteBarcodeRegex } from '../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../shared/utils/dataRegex';
 import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 

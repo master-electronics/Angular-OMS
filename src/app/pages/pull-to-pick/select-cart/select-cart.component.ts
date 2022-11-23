@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { CartBarcodeRegex } from '../../../shared/dataRegex';
+import { CartBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
@@ -26,7 +26,7 @@ import {
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'select-cart',

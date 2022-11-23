@@ -11,7 +11,7 @@ import {
   UntypedFormControl,
   Validators,
 } from '@angular/forms';
-import { OrderBarcodeRegex } from '../../../shared/dataRegex';
+import { OrderBarcodeRegex } from '../../../shared/utils/dataRegex';
 import {
   FetchOrderDetailforitnViewGQL,
   FetchOrderLineDetailforWmsCountGQL,

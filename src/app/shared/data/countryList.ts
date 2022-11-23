@@ -9,7 +9,9 @@ export interface CountryList {
   ISO3: string;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CountryListService {
   private _countryList = new BehaviorSubject<CountryList[]>(null);
   constructor(private _fetch$: FetchCountryListGQL) {}

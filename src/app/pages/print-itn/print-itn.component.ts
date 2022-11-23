@@ -15,7 +15,7 @@ import {
 import { of, Subscription, throwError } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
-import { ITNBarcodeRegex } from '../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../shared/utils/dataRegex';
 import {
   FetchPrinterStationGQL,
   PrintItnLabelGQL,

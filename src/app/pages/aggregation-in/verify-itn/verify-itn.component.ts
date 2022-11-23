@@ -8,7 +8,7 @@ import {
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import {
   UpdateContainerAfterAgInGQL,
   UpdateLocationAndLogAfterAgInGQL,
@@ -16,7 +16,7 @@ import {
   UpdateMerpWmsLogGQL,
   UpdateStatusAfterAgInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import {
   AggregationInService,
   endContainer,

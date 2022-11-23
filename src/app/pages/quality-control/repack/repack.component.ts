@@ -19,14 +19,14 @@ import {
   UpdateInventoryAndDetailAfterRepackGQL,
   CleanContainerFromPrevOrderGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
-import { ToteBarcodeRegex } from '../../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   Insert_UserEventLogsGQL,
   UpdateContainerGQL,
 } from '../../../graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'repack',

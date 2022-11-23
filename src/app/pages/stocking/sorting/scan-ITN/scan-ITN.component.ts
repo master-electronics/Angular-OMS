@@ -6,9 +6,9 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
+import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { StockingService } from '../../stocking.server';
 

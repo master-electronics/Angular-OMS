@@ -8,8 +8,8 @@ import {
   UpdateNotFoundForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
-import { sqlData } from 'src/app/shared/sqlData';
+import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { ITNinfoForStocking, StockingService } from '../../stocking.server';
 

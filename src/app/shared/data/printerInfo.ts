@@ -17,7 +17,9 @@ export interface PrinterInfo {
   StationName: string;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class PrinterService {
   constructor(private _find: FindBindedPrinterGQL) {
     //

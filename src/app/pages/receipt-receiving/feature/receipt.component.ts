@@ -12,7 +12,6 @@ import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
 import { ReceivingService } from '../data/receivingService';
-import { GlobalService } from 'src/app/shared/data/Global';
 
 @Component({
   standalone: true,

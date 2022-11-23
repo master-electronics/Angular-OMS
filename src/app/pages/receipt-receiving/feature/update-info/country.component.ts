@@ -11,7 +11,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { CountryISO3Component } from 'src/app/shared/ui/input/country-iso3.component';
+import { CountrySelectorComponent } from 'src/app/shared/ui/input/country-selector.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
@@ -26,9 +26,9 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
     SimpleKeyboardComponent,
     NzFormModule,
     NzButtonModule,
-    CountryISO3Component,
     SubmitButtonComponent,
     NormalButtonComponent,
+    CountrySelectorComponent,
   ],
   template: `
     <form
@@ -38,7 +38,7 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
       (ngSubmit)="onSubmit()"
     >
       <div class="flex justify-center">
-        <country-iso3></country-iso3>
+        <country-selector></country-selector>
       </div>
       <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
         <submit-button [disabled]="inputForm.invalid" (formClick)="onSubmit()">

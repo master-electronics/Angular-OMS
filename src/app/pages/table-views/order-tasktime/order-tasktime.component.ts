@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchOrderTasktimeGQL } from '../../../graphql/tableViews.graphql-gen';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { OrderBarcodeRegex } from 'src/app/shared/dataRegex';
+import { OrderBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { map } from 'rxjs/operators';
 
 @Component({

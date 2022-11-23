@@ -10,14 +10,14 @@ import { Title } from '@angular/platform-browser';
 
 import { CommonService } from '../../shared/services/common.service';
 
-import { AggregationShelfBarcodeRegex } from '../../shared/dataRegex';
+import { AggregationShelfBarcodeRegex } from '../../shared/utils/dataRegex';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { catchError, map } from 'rxjs/operators';
 import { ShelfInventoryService } from './shelf-inventory.server';
 import { FindItNsByShelfGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'shelf-inventory',

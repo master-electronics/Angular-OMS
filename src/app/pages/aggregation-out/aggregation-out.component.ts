@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { CommonService } from '../../shared/services/common.service';
-import { OrderBarcodeRegex } from '../../shared/dataRegex';
+import { OrderBarcodeRegex } from '../../shared/utils/dataRegex';
 import { Title } from '@angular/platform-browser';
 import {
   PickOrderForAgOutGQL,
@@ -23,7 +23,7 @@ import {
 import { environment } from 'src/environments/environment';
 import { of, throwError } from 'rxjs';
 import { AggregationOutService } from './aggregation-out.server';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'aggregation-out',

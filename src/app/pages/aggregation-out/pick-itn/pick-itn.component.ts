@@ -8,7 +8,7 @@ import {
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { AggregationOutService } from '../aggregation-out.server';
 
 @Component({

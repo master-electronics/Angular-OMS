@@ -1,16 +1,6 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  map,
-  Observable,
-  shareReplay,
-  startWith,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
 import { PrintTextLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { GlobalService } from 'src/app/shared/data/Global';
 import { PrinterService } from 'src/app/shared/data/printerInfo';
 import { ReceiptInfoService } from './ReceiptInfo';
 

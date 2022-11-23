@@ -12,7 +12,7 @@ import {
   ToteBarcodeRegex,
   ITNBarcodeRegex,
   OrderBarcodeRegex,
-} from '../../shared/dataRegex';
+} from '../../shared/utils/dataRegex';
 import {
   FindContainerForSearchBarcodeGQL,
   FindItNforSearchBarcodeGQL,

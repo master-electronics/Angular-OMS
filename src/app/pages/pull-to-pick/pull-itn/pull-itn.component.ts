@@ -25,7 +25,7 @@ import {
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'pull-itn',

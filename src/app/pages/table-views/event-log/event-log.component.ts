@@ -8,7 +8,10 @@ import {
 } from '../../../graphql/tableViews.graphql-gen';
 import { last, map, tap } from 'rxjs/operators';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { ITNBarcodeRegex, OrderBarcodeRegex } from 'src/app/shared/dataRegex';
+import {
+  ITNBarcodeRegex,
+  OrderBarcodeRegex,
+} from 'src/app/shared/utils/dataRegex';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as XLSX from 'xlsx';

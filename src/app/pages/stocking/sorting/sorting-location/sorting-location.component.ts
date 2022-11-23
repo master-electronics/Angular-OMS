@@ -8,7 +8,7 @@ import {
   UpdateInventoryAfterSortingGQL,
   VerifyContainerForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import {
   ITNInfo,

@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { ITNBarcodeRegex } from 'src/app/shared/dataRegex';
+import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../stocking.server';
 
 @Component({

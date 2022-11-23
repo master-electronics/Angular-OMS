@@ -8,7 +8,7 @@ import {
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ITNBarcodeRegex } from '../../../shared/dataRegex';
+import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { ShelfInventoryService } from '../shelf-inventory.server';
 
 @Component({

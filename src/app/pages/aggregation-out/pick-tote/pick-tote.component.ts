@@ -10,7 +10,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
-import { ToteBarcodeRegex } from '../../../shared/dataRegex';
+import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { CommonService } from '../../../shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
@@ -22,7 +22,7 @@ import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { AggregationOutService } from '../aggregation-out.server';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { sqlData } from 'src/app/shared/sqlData';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   selector: 'pick-tote',
