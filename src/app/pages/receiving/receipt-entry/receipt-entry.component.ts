@@ -84,10 +84,18 @@ export class ReceiptEntry implements OnInit {
   partNumberClass;
   quantityClass;
   sourceType;
-  sourceTypeOptions: Array<{ label: string; value: string }> = [
-    { label: 'Manually entered', value: 'manual' },
-    { label: 'ASN from vendor', value: 'ASN' },
-    { label: 'Generated from packing list scan', value: 'scan' },
+  sourceTypeOptions: Array<{
+    label: string;
+    value: string;
+    disabled: boolean;
+  }> = [
+    { label: 'Manually entered', value: 'manual', disabled: false },
+    { label: 'ASN from vendor', value: 'ASN', disabled: true },
+    {
+      label: 'Generated from packing list scan',
+      value: 'scan',
+      disabled: true,
+    },
   ];
   receiptSelected: boolean;
   partNumber;
@@ -198,7 +206,11 @@ export class ReceiptEntry implements OnInit {
           next: (res) => {
             res.data.fetchVendorList.map((vendor) => {
               this.vendorList.push({
-                label: vendor.VendorNumber,
+                label:
+                  vendor.VendorNumber.trim() +
+                  (vendor.VendorName.trim() == ''
+                    ? ''
+                    : '-' + vendor.VendorName.trim()),
                 value: vendor._id.toString(),
               });
             });
@@ -462,15 +474,39 @@ export class ReceiptEntry implements OnInit {
   }
 
   onReceiptLineDetailQuantityChange(e: Event): void {
+    this.receiptLineDetailAlertType = 'success';
+    this.receiptLineDetailMessage = null;
+
     if (Number(e) > this.receiptLineDetailQuantityMax) {
       this.receiptLineDetailAlertType = 'warning';
       this.receiptLineDetailMessage =
         'The max quantity for this PO Line is ' +
         this.receiptLineDetailQuantityMax;
       this.receiptLineDetailQuantity = '';
-    } else {
-      this.receiptLineDetailAlertType = 'success';
-      this.receiptLineDetailMessage = null;
+
+      return;
+    }
+  }
+
+  onReceiptLineDetailQuantityFocusOut(e: Event): void {
+    this.receiptLineDetailAlertType = 'success';
+    this.receiptLineDetailMessage = null;
+
+    if (Number(this.receiptLineDetailQuantity) < 1) {
+      this.receiptLineDetailAlertType = 'warning';
+      this.receiptLineDetailMessage = 'Quantity must be greater than 0';
+      this.receiptLineDetailQuantity = '';
+    }
+  }
+
+  onReceiptLineQuantityFocusOut(): void {
+    this.alertType = 'success';
+    this.message = null;
+
+    if (Number(this.quantity) < 1) {
+      this.alertType = 'warning';
+      this.message = 'Quantity must be greater than 0';
+      this.quantity = '';
     }
   }
 
@@ -906,53 +942,52 @@ export class ReceiptEntry implements OnInit {
       }
 
       if (valid) {
-        this.updateReceiptLineSubscription.add(
-          this._updateReceiptLine
-            .mutate({
-              receiptLID: Number(this.receiptLineID),
-              productID: Number(this.partNumberID),
-              expectedQuantity: Number(this.quantity),
-              dateCode: null,
-              countryID: null,
-              rhos: null,
-            })
-            .subscribe({
-              complete: () => {
-                if (
-                  Number(this.quantity) != Number(this.receiptLineDetailsTotal)
-                ) {
-                  this.lineDetailOkDisabled = true;
-                } else {
-                  this.lineDetailOkDisabled = false;
-                }
+        this.showReceiptLineDetail('Save');
+        // this.updateReceiptLineSubscription.add(
+        //   this._updateReceiptLine
+        //     .mutate({
+        //       receiptLID: Number(this.receiptLineID),
+        //       productID: Number(this.partNumberID),
+        //       expectedQuantity: Number(this.quantity),
+        //       dateCode: null,
+        //       countryID: null,
+        //       rhos: null,
+        //     })
+        //     .subscribe({
+        //       complete: () => {
+        //         if (
+        //           Number(this.quantity) != Number(this.receiptLineDetailsTotal)
+        //         ) {
+        //           this.lineDetailOkDisabled = true;
+        //         } else {
+        //           this.lineDetailOkDisabled = false;
+        //         }
 
-                this.getPOLines();
+        //         this.getPOLines();
 
-                this.showReceiptLineDetail('Save');
+        //         const receiptLine = this.receiptLines.find(
+        //           (item) => item._id == this.receiptLineID
+        //         );
 
-                const receiptLine = this.receiptLines.find(
-                  (item) => item._id == this.receiptLineID
-                );
+        //         if (receiptLine) {
+        //           receiptLine.ProductID = Number(this.partNumberID);
+        //           receiptLine.PartNumber = this.partNumber;
+        //           receiptLine.ExpectedQuantity = Number(this.quantity);
+        //           receiptLine.DateCode = null;
+        //           receiptLine.CountryID = null;
+        //           receiptLine.ISO3 = null;
+        //           receiptLine.RHOS = null;
+        //         }
 
-                if (receiptLine) {
-                  receiptLine.ProductID = Number(this.partNumberID);
-                  receiptLine.PartNumber = this.partNumber;
-                  receiptLine.ExpectedQuantity = Number(this.quantity);
-                  receiptLine.DateCode = null;
-                  receiptLine.CountryID = null;
-                  receiptLine.ISO3 = null;
-                  receiptLine.RHOS = null;
-                }
-
-                this.alertType = 'success';
-                this.message = 'Receipt Line updated';
-              },
-              error: (error) => {
-                this.alertType = 'error';
-                this.message = 'Error updating Receipt Line - ' + error;
-              },
-            })
-        );
+        //         this.alertType = 'success';
+        //         this.message = 'Receipt Line updated';
+        //       },
+        //       error: (error) => {
+        //         this.alertType = 'error';
+        //         this.message = 'Error updating Receipt Line - ' + error;
+        //       },
+        //     })
+        // );
       }
     }
   }
@@ -1017,63 +1052,64 @@ export class ReceiptEntry implements OnInit {
     }
 
     if (valid) {
-      let newLineNumber;
-      this.insertReceiptLineSubscription.add(
-        this._insertReceiptLine
-          .mutate({
-            receiptHID: Number(this.receiptID),
-            productID: Number(this.partNumberID),
-            expectedQuantity: Number(this.quantity),
-            dateCode: null,
-            countryID: null,
-            rhos: null,
-          })
-          .subscribe({
-            next: (res) => {
-              this.receiptLineID = res.data.insertReceiptLine[0]._id;
-              newLineNumber = res.data.insertReceiptLine[0].LineNumber;
-            },
-            complete: () => {
-              this.showReceiptLineDetail('Add');
+      this.showReceiptLineDetail('Add');
 
-              const newReceiptLine: ReceiptLine = {
-                _id: Number(this.receiptLineID),
-                ReceiptHID: Number(this.receiptID),
-                ProductID: Number(this.partNumberID),
-                PartNumber: this.partNumber,
-                ExpectedQuantity: Number(this.quantity),
-                DateCode: null,
-                CountryID: null,
-                ISO3: null,
-                RHOS: null,
-                LineNumber: newLineNumber,
-                ReceiptLineDetails: null,
-                Expanded: false,
-                Selected: false,
-              };
+      // let newLineNumber;
+      // this.insertReceiptLineSubscription.add(
+      //   this._insertReceiptLine
+      //     .mutate({
+      //       receiptHID: Number(this.receiptID),
+      //       productID: Number(this.partNumberID),
+      //       expectedQuantity: Number(this.quantity),
+      //       dateCode: null,
+      //       countryID: null,
+      //       rhos: null,
+      //     })
+      //     .subscribe({
+      //       next: (res) => {
+      //         this.receiptLineID = res.data.insertReceiptLine[0]._id;
+      //         newLineNumber = res.data.insertReceiptLine[0].LineNumber;
+      //       },
+      //       complete: () => {
+      //         const newReceiptLine: ReceiptLine = {
+      //           _id: Number(this.receiptLineID),
+      //           ReceiptHID: Number(this.receiptID),
+      //           ProductID: Number(this.partNumberID),
+      //           PartNumber: this.partNumber,
+      //           ExpectedQuantity: Number(this.quantity),
+      //           DateCode: null,
+      //           CountryID: null,
+      //           ISO3: null,
+      //           RHOS: null,
+      //           LineNumber: newLineNumber,
+      //           ReceiptLineDetails: null,
+      //           Expanded: false,
+      //           Selected: false,
+      //         };
 
-              const receiptLines: ReceiptLine[] = [];
+      //         const receiptLines: ReceiptLine[] = [];
 
-              receiptLines.push(newReceiptLine);
-              this.receiptLines = receiptLines;
+      //         receiptLines.push(newReceiptLine);
+      //         this.receiptLines = receiptLines;
 
-              this.getReceiptLines();
+      //         this.getReceiptLines();
 
-              this.getPOLines();
+      //         this.getPOLines();
 
-              this.alertType = 'success';
-              this.message = 'Receipt Line added';
-            },
-            error: (error) => {
-              this.alertType = 'error';
-              this.message = 'Error inserting Receipt Line - ' + error;
-            },
-          })
-      );
+      //         this.alertType = 'success';
+      //         this.message = 'Receipt Line added';
+      //       },
+      //       error: (error) => {
+      //         this.alertType = 'error';
+      //         this.message = 'Error inserting Receipt Line - ' + error;
+      //       },
+      //     })
+      // );
     }
   }
 
   showReceiptLineDetail(okText: string): void {
+    this.getPOLines();
     this.receiptLineDetailOkText = okText;
 
     if (this.receiptLineDetailsList) {
@@ -1096,9 +1132,116 @@ export class ReceiptEntry implements OnInit {
 
   hideReceiptLineDetail(): void {
     this.receiptLineDetailVisible = false;
+    this.clearReceiptLineDetail();
   }
 
   onReceiptLineDetailOKClick(): void {
+    if (this.receiptLineDetailOkText == 'Add') {
+      let newLineNumber;
+      this.insertReceiptLineSubscription.add(
+        this._insertReceiptLine
+          .mutate({
+            receiptHID: Number(this.receiptID),
+            productID: Number(this.partNumberID),
+            expectedQuantity: Number(this.quantity),
+            dateCode: null,
+            countryID: null,
+            rhos: null,
+          })
+          .subscribe({
+            next: (res) => {
+              this.receiptLineID = res.data.insertReceiptLine[0]._id;
+              newLineNumber = res.data.insertReceiptLine[0].LineNumber;
+            },
+            complete: () => {
+              const newReceiptLine: ReceiptLine = {
+                _id: Number(this.receiptLineID),
+                ReceiptHID: Number(this.receiptID),
+                ProductID: Number(this.partNumberID),
+                PartNumber: this.partNumber,
+                ExpectedQuantity: Number(this.quantity),
+                DateCode: null,
+                CountryID: null,
+                ISO3: null,
+                RHOS: null,
+                LineNumber: newLineNumber,
+                ReceiptLineDetails: null,
+                Expanded: false,
+                Selected: false,
+              };
+
+              this.alertType = 'success';
+              this.message = 'Receipt Line added.';
+
+              this.addLineDetails();
+
+              const receiptLines: ReceiptLine[] = [];
+
+              receiptLines.push(newReceiptLine);
+              this.receiptLines = receiptLines;
+
+              this.getReceiptLines();
+
+              this.getPOLines();
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error inserting Receipt Line - ' + error;
+            },
+          })
+      );
+    } else if (this.receiptLineDetailOkText == 'Save') {
+      this.updateReceiptLineSubscription.add(
+        this._updateReceiptLine
+          .mutate({
+            receiptLID: Number(this.receiptLineID),
+            productID: Number(this.partNumberID),
+            expectedQuantity: Number(this.quantity),
+            dateCode: null,
+            countryID: null,
+            rhos: null,
+          })
+          .subscribe({
+            complete: () => {
+              if (
+                Number(this.quantity) != Number(this.receiptLineDetailsTotal)
+              ) {
+                this.lineDetailOkDisabled = true;
+              } else {
+                this.lineDetailOkDisabled = false;
+              }
+
+              this.getPOLines();
+
+              const receiptLine = this.receiptLines.find(
+                (item) => item._id == this.receiptLineID
+              );
+
+              if (receiptLine) {
+                receiptLine.ProductID = Number(this.partNumberID);
+                receiptLine.PartNumber = this.partNumber;
+                receiptLine.ExpectedQuantity = Number(this.quantity);
+                receiptLine.DateCode = null;
+                receiptLine.CountryID = null;
+                receiptLine.ISO3 = null;
+                receiptLine.RHOS = null;
+              }
+
+              this.alertType = 'success';
+              this.message = 'Receipt Line updated.';
+
+              this.addLineDetails();
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error updating Receipt Line - ' + error;
+            },
+          })
+      );
+    }
+  }
+
+  addLineDetails(): void {
     if (this.lineDetails.length > 0) {
       const lineDetails: Array<{
         ReceiptLID: number;
@@ -1143,7 +1286,7 @@ export class ReceiptEntry implements OnInit {
                       this.clearReceiptLineDetail();
 
                       this.alertType = 'success';
-                      this.message = 'Receipt line detail(s) saved.';
+                      this.message += ' Receipt line detail(s) saved.';
                     },
                   })
               );
