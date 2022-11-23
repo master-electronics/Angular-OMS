@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,9 +10,11 @@ import { Router, RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { tmpdir } from 'os';
-import { catchError, map, Observable, of, startWith } from 'rxjs';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { catchError, map, Observable, of } from 'rxjs';
 import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
+import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutService } from '../../data/kickout';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
@@ -23,15 +25,21 @@ import { ReceivingService } from '../../data/receivingService';
   imports: [
     CommonModule,
     RouterModule,
-    NzInputModule,
     NzRadioModule,
     ReactiveFormsModule,
-    NzButtonModule,
     SimpleKeyboardComponent,
     AlertBarComponent,
+    NzSkeletonModule,
+    SubmitButtonComponent,
+    NormalButtonComponent,
   ],
   template: `
-    <form [formGroup]="kickoutForm" (ngSubmit)="onSubmit()">
+    <form
+      *ngIf="print$ | async as print; else loading"
+      [formGroup]="kickoutForm"
+      (ngSubmit)="onSubmit()"
+      class="text-xl md:mx-16"
+    >
       <nz-radio-group
         id="kickoutReason"
         nzSize="large"
@@ -48,45 +56,36 @@ import { ReceivingService } from '../../data/receivingService';
           <label nz-radio-button nzValue="Other"> Other... </label>
         </div>
       </nz-radio-group>
-
       <textarea
         *ngIf="kickoutForm.value.kickoutReason === 'Other'"
-        rows="4"
-        nz-input
+        id="otherReason"
         name="otherReason"
         formControlName="otherReason"
         #otherReason
+        rows="3"
+        name="message"
+        id="message"
+        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
       ></textarea>
-      <div class="mb-10 mt-10 flex">
-        <button
-          nz-button
-          class="w-32"
+      <div class="grid h-16 grid-cols-3 text-2xl md:mt-10 md:h-32 md:text-4xl">
+        <submit-button
           [disabled]="kickoutForm.invalid"
-          nzType="primary"
-          type="submit"
-          [nzLoading]="print$ | async"
-          nzSize="large"
+          (formClick)="onSubmit()"
         >
-          kickout
-        </button>
-        <div class="grow"></div>
-        <button
-          nz-button
-          type="button"
-          class="w-32"
-          (click)="onBack()"
-          nzSize="large"
-        >
-          Back
-        </button>
+        </submit-button>
+        <div></div>
+        <normal-button (formClick)="onBack()"></normal-button>
       </div>
+      <ng-container *ngIf="print.error">
+        <alert-bar
+          [message]="print.error.message"
+          [name]="print.error.type"
+        ></alert-bar>
+      </ng-container>
     </form>
-    <div *ngIf="print$ | async as print">
-      <alert-bar
-        [message]="print.error.message"
-        [name]="print.error.type"
-      ></alert-bar>
-    </div>
+    <ng-template #loading>
+      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }"></nz-skeleton>
+    </ng-template>
     <simple-keyboard
       [inputString]="kickoutForm.value.otherReason"
       (outputString)="onChange($event)"
@@ -111,6 +110,7 @@ export class KickoutComponent implements OnInit {
       this._router.navigateByUrl('/receiptreceiving');
     }
     this._step.changeSteps(1);
+    this.print$ = of(true);
     this.kickoutOptions = [
       { content: 'Missing/Incorrect Picture' },
       { content: 'Missing/Incorrect Piece Kit' },

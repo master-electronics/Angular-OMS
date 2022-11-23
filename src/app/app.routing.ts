@@ -16,7 +16,7 @@ const routes: Routes = [
     children: [
       {
         path: 'home',
-        canActivate: [LoginGuard, RouterGuard],
+        canActivate: [LoginGuard],
         component: HomeComponent,
       },
       {
@@ -139,6 +139,7 @@ const routes: Routes = [
       },
       {
         path: 'receiving/receiptentry',
+        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/receiving/receipt-entry/receipt-entry.module').then(
             (m) => m.ReceiptEntryModule
@@ -152,7 +153,11 @@ const routes: Routes = [
             (m) => m.ReceivingRoutes
           ),
       },
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
     ],
   },
   { path: 'login', component: LoginComponent },

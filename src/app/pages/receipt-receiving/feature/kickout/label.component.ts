@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutService } from '../../data/kickout';
 import { ReceivingService } from '../../data/receivingService';
@@ -37,7 +36,6 @@ export class LabelComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingService,
     private _kickout: KickoutService
   ) {}
 

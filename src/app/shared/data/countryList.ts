@@ -29,7 +29,7 @@ export class CountryListService {
       tap((res) => {
         this._countryList.next(res);
       }),
-      shareReplay()
+      shareReplay(1)
     );
   }
 }

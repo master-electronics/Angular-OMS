@@ -31,7 +31,6 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
     NormalButtonComponent,
     SubmitButtonComponent,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'single-input-form',
   template: `
     <form
@@ -96,7 +95,6 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  public input;
   public vaild;
   @Input() data = { loading: false, error: null };
   @Input() validator = { name: '', message: '' };
@@ -116,7 +114,6 @@ export class SingleInputformComponent implements OnInit {
 
   public ngOnInit(): void {
     this.inputForm = this.controlContainer.control as FormGroup;
-    this.input = this.inputForm.get(this.controlName);
   }
 
   public onSubmit(): void {

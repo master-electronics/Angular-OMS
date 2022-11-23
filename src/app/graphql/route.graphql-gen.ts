@@ -1165,7 +1165,7 @@ export type Query = {
   findReceiptLine?: Maybe<ReceiptL>;
   findReceiptLs?: Maybe<Array<Maybe<ReceiptL>>>;
   findReceipts?: Maybe<Array<Maybe<ReceiptH>>>;
-  findRoute?: Maybe<Array<Maybe<Route>>>;
+  findRoutes?: Maybe<Array<Route>>;
   findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserEvents?: Maybe<Array<Maybe<UserEvent>>>;
@@ -1457,8 +1457,8 @@ export type QueryFindReceiptsArgs = {
   ReceiptID?: InputMaybe<Scalars['String']>;
 };
 
-export type QueryFindRouteArgs = {
-  route?: InputMaybe<Scalars['String']>;
+export type QueryFindRoutesArgs = {
+  Route?: InputMaybe<SearchRoute>;
 };
 
 export type QueryFindUserArgs = {
@@ -1576,9 +1576,17 @@ export type Response = {
 export type Route = {
   __typename?: 'Route';
   ADGroupProtected?: Maybe<Scalars['Boolean']>;
-  Groups?: Maybe<Scalars['String']>;
-  Route?: Maybe<Scalars['String']>;
-  _id?: Maybe<Scalars['Int']>;
+  ROUTEGROUPs?: Maybe<Array<Maybe<RouteGroup>>>;
+  Route: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
+export type RouteGroup = {
+  __typename?: 'RouteGroup';
+  ADGroup: Scalars['String'];
+  Route: Route;
+  RouteID: Scalars['Int'];
+  _id: Scalars['Int'];
 };
 
 export type ShipmentMethod = {
@@ -2018,6 +2026,12 @@ export type SearchReceiptLd = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+export type SearchRoute = {
+  ADGroupProtected?: InputMaybe<Scalars['Boolean']>;
+  Route?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
 export type SearchUser = {
   Name?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -2203,28 +2217,29 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FindRouteQueryVariables = Types.Exact<{
-  route?: Types.InputMaybe<Types.Scalars['String']>;
-}>;
+export type FindAllRoutesQueryVariables = Types.Exact<{ [key: string]: never }>;
 
-export type FindRouteQuery = {
+export type FindAllRoutesQuery = {
   __typename?: 'Query';
-  findRoute?: Array<{
+  findRoutes?: Array<{
     __typename?: 'Route';
-    _id?: number | null;
-    Route?: string | null;
+    Route: string;
     ADGroupProtected?: boolean | null;
-    Groups?: string | null;
-  } | null> | null;
+    ROUTEGROUPs?: Array<{
+      __typename?: 'RouteGroup';
+      ADGroup: string;
+    } | null> | null;
+  }> | null;
 };
 
-export const FindRouteDocument = gql`
-  query findRoute($route: String) {
-    findRoute(route: $route) {
-      _id
+export const FindAllRoutesDocument = gql`
+  query findAllRoutes {
+    findRoutes {
       Route
       ADGroupProtected
-      Groups
+      ROUTEGROUPs {
+        ADGroup
+      }
     }
   }
 `;
@@ -2232,11 +2247,11 @@ export const FindRouteDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class FindRouteGQL extends Apollo.Query<
-  FindRouteQuery,
-  FindRouteQueryVariables
+export class FindAllRoutesGQL extends Apollo.Query<
+  FindAllRoutesQuery,
+  FindAllRoutesQueryVariables
 > {
-  document = FindRouteDocument;
+  document = FindAllRoutesDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

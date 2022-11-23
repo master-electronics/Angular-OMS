@@ -1165,7 +1165,7 @@ export type Query = {
   findReceiptLine?: Maybe<ReceiptL>;
   findReceiptLs?: Maybe<Array<Maybe<ReceiptL>>>;
   findReceipts?: Maybe<Array<Maybe<ReceiptH>>>;
-  findRoute?: Maybe<Array<Maybe<Route>>>;
+  findRoutes?: Maybe<Array<Route>>;
   findUser?: Maybe<User>;
   findUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   findUserEvents?: Maybe<Array<Maybe<UserEvent>>>;
@@ -1457,8 +1457,8 @@ export type QueryFindReceiptsArgs = {
   ReceiptID?: InputMaybe<Scalars['String']>;
 };
 
-export type QueryFindRouteArgs = {
-  route?: InputMaybe<Scalars['String']>;
+export type QueryFindRoutesArgs = {
+  Route?: InputMaybe<SearchRoute>;
 };
 
 export type QueryFindUserArgs = {
@@ -1576,9 +1576,17 @@ export type Response = {
 export type Route = {
   __typename?: 'Route';
   ADGroupProtected?: Maybe<Scalars['Boolean']>;
-  Groups?: Maybe<Scalars['String']>;
-  Route?: Maybe<Scalars['String']>;
-  _id?: Maybe<Scalars['Int']>;
+  ROUTEGROUPs?: Maybe<Array<Maybe<RouteGroup>>>;
+  Route: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
+export type RouteGroup = {
+  __typename?: 'RouteGroup';
+  ADGroup: Scalars['String'];
+  Route: Route;
+  RouteID: Scalars['Int'];
+  _id: Scalars['Int'];
 };
 
 export type ShipmentMethod = {
@@ -2015,6 +2023,12 @@ export type SearchReceiptLd = {
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID?: InputMaybe<Scalars['Int']>;
   StatusID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchRoute = {
+  ADGroupProtected?: InputMaybe<Scalars['Boolean']>;
+  Route?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 

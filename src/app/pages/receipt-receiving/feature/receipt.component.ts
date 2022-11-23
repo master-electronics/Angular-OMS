@@ -59,9 +59,7 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onChange = (input: string) => {
-    if (input) {
-      this.inputForm.get('receipt').setValue(input);
-    }
+    this.inputForm.get('receipt').setValue(input);
   };
 
   public onBack(): void {

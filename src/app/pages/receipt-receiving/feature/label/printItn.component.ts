@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../ui/single-input-form.component';
 import { ReceivingService } from '../../data/receivingService';

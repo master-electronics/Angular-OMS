@@ -29,7 +29,6 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { IconsProviderModule } from './icons-provider.module';
@@ -46,7 +45,6 @@ registerLocaleData(en);
 import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
-import { GlobalService } from './shared/data/Global';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
@@ -86,7 +84,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
   ],
 
   providers: [
-    GlobalService,
     Title,
     {
       provide: HTTP_INTERCEPTORS,

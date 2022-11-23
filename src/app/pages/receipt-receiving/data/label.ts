@@ -126,7 +126,7 @@ export class LabelService {
             })
           )
         ),
-        shareReplay()
+        shareReplay(1)
       );
   }
 

@@ -112,9 +112,9 @@ export class LoginComponent implements OnDestroy, OnInit {
           map((res) => {
             const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
             sessionStorage.setItem('userInfo', userInfo);
-            const returnUrl =
-              this.route.snapshot.queryParams['returnUrl'] || '/home';
-            this.router.navigateByUrl(returnUrl);
+            // const returnUrl =
+            //   this.route.snapshot.queryParams['returnUrl'] || '/home';
+            this.router.navigateByUrl('/home');
 
             if (this.commonService.isMobile()) {
               this.openFullscreen();

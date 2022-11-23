@@ -20,7 +20,9 @@ interface MenuItem {
   Authorized?: boolean;
   Title?: string;
 }
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MenuService {
   tempItems: MenuItem[];
   public menuItems: MenuItem[];
@@ -43,12 +45,9 @@ export class MenuService {
 
     this.menuListSubscription.add(
       this._fetchMenuList
-        .fetch(
-          {
-            pageName: PageName,
-          },
-          { fetchPolicy: 'network-only' }
-        )
+        .fetch({
+          pageName: PageName,
+        })
         .subscribe({
           next: (res) => {
             res.data.fetchMenuList.map((menu) => {

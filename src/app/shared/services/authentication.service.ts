@@ -44,7 +44,7 @@ export class AuthenticationService {
           sessionStorage.setItem('userToken', userToken);
           this._user.next(res);
         }),
-        shareReplay()
+        shareReplay(1)
       );
   }
 

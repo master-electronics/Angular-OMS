@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -11,6 +12,7 @@ import Keyboard from 'simple-keyboard';
 @Component({
   standalone: true,
   selector: 'simple-keyboard',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: ` <div class="simple-keyboard"></div> `,
   styles: [
     `
