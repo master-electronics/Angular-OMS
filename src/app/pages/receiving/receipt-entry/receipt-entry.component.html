@@ -87,8 +87,10 @@
         </div>
         <div nz-col nzSpan="2">
             <input nz-input [(ngModel)]="quantity" type="number"
+                min="1"
                 [disabled]="!receiptSelected" placeholder="Quantity"
-                [ngClass]="quantityClass" />
+                [ngClass]="quantityClass"
+                (focusout)="onReceiptLineQuantityFocusOut()" />
         </div>
         <div *ngIf="receiptLineID" nz-col nzSpan="5">
             <button nz-button (click)="saveReceiptLine()"
@@ -227,8 +229,9 @@
                 <div nz-col nzSpan="10">
                     <input nz-input placeholder="Quantity" [(ngModel)]="receiptLineDetailQuantity"
                         (ngModelChange)="onReceiptLineDetailQuantityChange($event)"
+                        (focusout)="onReceiptLineDetailQuantityFocusOut($event)"
                         (focus)="resetReceiptLineDetailMessage()" type="number"
-                        min="0" [max]="receiptLineDetailQuantityMax" />
+                        min="1" [max]="receiptLineDetailQuantityMax" />
                 </div>
                 <button nz-button (click)="addDetailLine()"
                     [disabled]="!poLineID || !(receiptLineDetailQuantity > 0)">
