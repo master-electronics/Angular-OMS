@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
 } from '@angular/core';
 import { asapScheduler } from 'rxjs';
@@ -19,6 +20,7 @@ import Keyboard from 'simple-keyboard';
       .simple-keyboard {
         font-size: 3vw;
         position: absolute;
+        z-index: 10;
         bottom: 15px;
         width: 95%;
         left: 2.5%;
@@ -27,7 +29,7 @@ import Keyboard from 'simple-keyboard';
     `,
   ],
 })
-export class SimpleKeyboardComponent implements OnChanges {
+export class SimpleKeyboardComponent implements OnChanges, OnDestroy {
   keyboard: Keyboard;
   @Input() inputString;
   @Input() layout = 'default';
@@ -109,5 +111,9 @@ export class SimpleKeyboardComponent implements OnChanges {
     this.keyboard.setOptions({
       layoutName: numbersToggle,
     });
+  }
+
+  ngOnDestroy(): void {
+    this.keyboard = null;
   }
 }

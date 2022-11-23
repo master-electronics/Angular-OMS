@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
 import { SingleInputformComponent } from '../ui/single-input-form.component';
-import { catchError, map, Observable, of, startWith, take, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
 import { ReceivingService } from '../data/receivingService';
@@ -32,8 +32,8 @@ import { ReceivingService } from '../data/receivingService';
       title="Receipt"
     ></single-input-form>
     <simple-keyboard
-      [inputString]="inputForm.value.receipt"
       layout="number"
+      [inputString]="inputForm.value.dateCode"
       (outputString)="onChange($event)"
     ></simple-keyboard>
   `,

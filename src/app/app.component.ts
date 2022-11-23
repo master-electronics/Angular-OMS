@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -7,27 +7,27 @@ import {
   Router,
   RouterEvent,
 } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   template: `
     <ng-container *ngIf="router$ | async"></ng-container>
-    <ngx-spinner
-      bdColor="rgba(91,110,142,0.8)"
-      size="medium"
-      color="#fff"
-      type="square-loader"
-      [fullScreen]="true"
-      ><p style="color: white">Loading...</p></ngx-spinner
+    <div
+      class="    
+      absolute z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-900 text-white opacity-30"
+      *ngIf="loading$ | async"
     >
+      <loading-spinner></loading-spinner>
+    </div>
     <router-outlet></router-outlet>
   `,
 })
 export class AppComponent implements OnInit {
+  public loading$ = new BehaviorSubject<boolean>(false);
   public router$;
-  constructor(private router: Router, private _spinner: NgxSpinnerService) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.router$ = this.router.events.pipe(
@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
 
   checkRouterEvent(routerEvent: RouterEvent): void {
     if (routerEvent instanceof NavigationStart) {
-      this._spinner.show();
+      this.loading$.next(true);
       return;
     }
     if (
@@ -45,7 +45,15 @@ export class AppComponent implements OnInit {
       routerEvent instanceof NavigationCancel ||
       routerEvent instanceof NavigationError
     ) {
-      this._spinner.hide();
+      this.loading$.next(false);
+    }
+  }
+  @ViewChild('overlay') spinnerDOM;
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (this.spinnerDOM && this.spinnerDOM.nativeElement) {
+      event.preventDefault();
     }
   }
 }

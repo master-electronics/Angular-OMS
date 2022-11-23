@@ -46,6 +46,7 @@ import { environment } from '../environments/environment';
 import { MenuItemComponent } from './shared/ui/menu-item.component';
 import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { LoadingSpinnerComponent } from './shared/ui/loading-spinner.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MenubarItemComponent,
     NgxSpinnerModule,
     NzModalModule,
+    LoadingSpinnerComponent,
   ],
 
   providers: [

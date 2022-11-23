@@ -7,6 +7,7 @@ import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { VerifyResolver } from './data/resolver/verify.resolver';
 import { PrintItnResolver } from './data/resolver/printItn.resolver';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 
 export const ReceivingRoutes: Routes = [
   {
