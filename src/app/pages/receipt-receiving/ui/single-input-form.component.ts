@@ -7,7 +7,6 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   ControlContainer,

@@ -29,7 +29,7 @@ import Keyboard from 'simple-keyboard';
     `,
   ],
 })
-export class SimpleKeyboardComponent implements OnChanges, OnDestroy {
+export class SimpleKeyboardComponent implements OnChanges {
   keyboard: Keyboard;
   @Input() inputString;
   @Input() layout = 'default';
@@ -111,9 +111,5 @@ export class SimpleKeyboardComponent implements OnChanges, OnDestroy {
     this.keyboard.setOptions({
       layoutName: numbersToggle,
     });
-  }
-
-  ngOnDestroy(): void {
-    this.keyboard = null;
   }
 }

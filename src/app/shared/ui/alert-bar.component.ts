@@ -1,22 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 @Component({
   selector: 'alert-bar',
   standalone: true,
-  imports: [CommonModule, NzAlertModule],
-  template: `
-    <div nz-row *ngIf="message" nzJustify="center">
-      <nz-alert
-        nzSize="large"
-        [nzType]="type"
-        [nzMessage]="message"
-        nzShowIcon
-        class="w-full"
-      ></nz-alert>
-    </div>
-  `,
+  imports: [CommonModule],
+  template: ``,
 })
 export class AlertBarComponent {
   public type;
