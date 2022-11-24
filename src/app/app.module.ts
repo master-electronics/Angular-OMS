@@ -19,8 +19,6 @@ import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interce
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
-import { ErrorPageComponent } from './pages/error-page/error-page.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { NavbarComponent } from './pages/shell/navbar/navbar.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -51,8 +49,6 @@ import { LoadingSpinnerComponent } from './shared/ui/loading-spinner.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    ErrorPageComponent,
-    NotFoundComponent,
     ShellComponent,
     NavbarComponent,
     HomeComponent,

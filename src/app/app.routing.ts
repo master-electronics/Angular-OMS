@@ -2,12 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { LoginGuard } from './shared/services/login-guard';
+import { RouterGuard } from './shared/services/route-guard';
+
 import { LoginComponent } from './pages/login/login.component';
-import { ErrorPageComponent } from './pages/error-page/error-page.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { HomeComponent } from './pages/home/home.component';
-import { RouterGuard } from './shared/services/route-guard';
 
 const routes: Routes = [
   {
@@ -161,8 +160,20 @@ const routes: Routes = [
     ],
   },
   { path: 'login', component: LoginComponent },
-  { path: 'error', component: ErrorPageComponent },
-  { path: '**', component: NotFoundComponent },
+  {
+    path: 'error',
+    loadComponent: () =>
+      import('./pages/util-pages/error-page.component').then(
+        (m) => m.ErrorPageComponent
+      ),
+  },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/util-pages/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
+  },
 ];
 
 @NgModule({
