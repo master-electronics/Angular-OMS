@@ -7,14 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { catchError, map, Observable, of } from 'rxjs';
-import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutService } from '../../data/kickout';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
@@ -28,10 +26,10 @@ import { ReceivingService } from '../../data/receivingService';
     NzRadioModule,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
-    AlertBarComponent,
     NzSkeletonModule,
     SubmitButtonComponent,
     NormalButtonComponent,
+    MessageBarComponent,
   ],
   template: `
     <form
@@ -77,10 +75,10 @@ import { ReceivingService } from '../../data/receivingService';
         <normal-button (formClick)="onBack()"></normal-button>
       </div>
       <ng-container *ngIf="print.error">
-        <alert-bar
+        <message-bar
           [message]="print.error.message"
           [name]="print.error.type"
-        ></alert-bar>
+        ></message-bar>
       </ng-container>
     </form>
     <ng-template #loading>

@@ -12,7 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { ReceivingService } from '../../data/receivingService';
 import { LabelService, ITNinfo } from '../../data/label';
 

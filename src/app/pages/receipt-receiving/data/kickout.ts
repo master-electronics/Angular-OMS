@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { PrintTextLabelGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printerInfo';
 import { ReceiptInfoService } from './ReceiptInfo';
@@ -17,7 +24,7 @@ export class KickoutService {
   /**
    *
    * @param _receipt part store class
-   * @param _print print receiving label end point
+   * @param _print GQL for printing receiving label end point
    */
   constructor(
     private _receipt: ReceiptInfoService,

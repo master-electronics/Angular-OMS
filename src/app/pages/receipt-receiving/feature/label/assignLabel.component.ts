@@ -209,7 +209,7 @@ export class AssignLabelComponent implements OnInit {
       const list = Object.values(this.inputForm.value).map((res) =>
         Number(res)
       );
-      this._label.initQuantityList(list);
+      this._label.changeQuantityList(list);
       this._router.navigateByUrl('receiptreceiving/label/printitn');
     } else {
       Object.values(this.inputForm.controls).forEach((control) => {

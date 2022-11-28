@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { KickoutService } from '../../data/kickout';
 import { FormState, ReceivingService } from '../../data/receivingService';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 
 @Component({
   standalone: true,

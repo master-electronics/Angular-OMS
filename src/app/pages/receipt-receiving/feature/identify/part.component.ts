@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';

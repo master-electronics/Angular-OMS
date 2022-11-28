@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { ReceivingService } from '../../data/receivingService';
 import { LabelService, ITNinfo } from '../../data/label';
 
@@ -61,7 +61,7 @@ export class PrintITNComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this._label.initQuantityList([1, 2, 3]);
+    // this._label.changeQuantityList([1, 2, 3]);
     if (!this._label.quantityList?.length) {
       this._router.navigate(['../../'], { relativeTo: this._actRoute });
     }

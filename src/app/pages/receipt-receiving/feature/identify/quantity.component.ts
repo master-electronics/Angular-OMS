@@ -12,7 +12,7 @@ import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.componen
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
-import { SingleInputformComponent } from '../../ui/single-input-form.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 
 @Component({
   standalone: true,

@@ -4,7 +4,6 @@ import {
   map,
   Observable,
   shareReplay,
-  startWith,
   switchMap,
   tap,
 } from 'rxjs';
@@ -24,9 +23,6 @@ export class ReceiptInfoService {
     private _checkHeader: CheckReceiptHeaderGQL
   ) {}
 
-  /**
-   * checkReceiptHeader
-   */
   private _headerID = new BehaviorSubject<number>(null);
   public get headerID(): number {
     return this._headerID.value;

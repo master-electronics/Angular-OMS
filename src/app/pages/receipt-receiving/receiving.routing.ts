@@ -27,7 +27,9 @@ export const ReceivingRoutes: Routes = [
       {
         path: 'receipt',
         loadComponent: () =>
-          import('./feature/receipt.component').then((m) => m.ReceiptComponent),
+          import('./feature/identify/receipt.component').then(
+            (m) => m.ReceiptComponent
+          ),
       },
       {
         path: 'part',
@@ -35,7 +37,9 @@ export const ReceivingRoutes: Routes = [
           lines: PartResolver,
         },
         loadComponent: () =>
-          import('./feature/part/part.component').then((m) => m.PartComponent),
+          import('./feature/identify/part.component').then(
+            (m) => m.PartComponent
+          ),
       },
       {
         path: 'part/verify',
@@ -43,45 +47,24 @@ export const ReceivingRoutes: Routes = [
           info: VerifyResolver,
         },
         loadComponent: () =>
-          import('./feature/part/verify.component').then(
+          import('./feature/verify/verify.component').then(
             (m) => m.VerifyComponent
           ),
       },
       {
         path: 'part/quantity',
         loadComponent: () =>
-          import('./feature/part/quantity.component').then(
+          import('./feature/identify/quantity.component').then(
             (mod) => mod.QuantityComponent
           ),
       },
       {
         path: 'kickout',
         loadComponent: () =>
-          import('./feature/kickout/kickout.component').then(
+          import('./feature/verify/kickout.component').then(
             (m) => m.KickoutComponent
           ),
       },
-      // {
-      //   path: 'kickout/scanlabel',
-      //   loadComponent: () =>
-      //     import('./feature/kickout/label.component').then(
-      //       (mod) => mod.LabelComponent
-      //     ),
-      // },
-      // {
-      //   path: 'kickout/location',
-      //   loadComponent: () =>
-      //     import('./feature/kickout/location.component').then(
-      //       (mod) => mod.LocationComponent
-      //     ),
-      // },
-      // {
-      //   path: 'kickout/rescanlabel',
-      //   loadComponent: () =>
-      //     import('./feature/kickout/rescan-label.component').then(
-      //       (mod) => mod.RescanLabelComponent
-      //     ),
-      // },
       {
         path: 'update/country',
         loadComponent: () =>

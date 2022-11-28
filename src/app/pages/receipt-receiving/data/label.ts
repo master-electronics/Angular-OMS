@@ -45,7 +45,7 @@ export class LabelService {
   public get quantityList(): number[] {
     return this._quantityList.value;
   }
-  public initQuantityList(list: number[]) {
+  public changeQuantityList(list: number[]) {
     this._quantityList.next(list);
   }
   /**
@@ -65,7 +65,7 @@ export class LabelService {
     return this._ITNList.value;
   }
   /**
-   * insertITNList
+   * insertITNList push input itn to the list;
    */
   public insertITNList(itn: ITNinfo) {
     let tmp;
@@ -77,7 +77,7 @@ export class LabelService {
     this._ITNList.next(tmp);
   }
   /**
-   * updateLastITN
+   * updateLastITN pop the last itn of list, then insert the new ITN;
    */
   public updateLastITN(itn: ITNinfo) {
     let tmp = [...this._ITNList.value];
@@ -131,7 +131,7 @@ export class LabelService {
   }
 
   /**
-   * checkBinLocation and update info to last itn.
+   * checkBinLocation and update binlocation info to last itn.
    */
   public checkBinLocation(Barcode: string) {
     return this._container

@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LoginGuard } from './shared/services/login-guard';
-import { RouterGuard } from './shared/services/route-guard';
+import { LoginGuard } from './shared/route-guard/login.guard';
+import { RouterGuard } from './shared/route-guard/route-auth.guard';
 
 import { LoginComponent } from './pages/login/login.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { HomeComponent } from './pages/home/home.component';
+import { PrinterGuard } from './shared/route-guard/printer.guard';
 
 const routes: Routes = [
   {
@@ -146,10 +147,18 @@ const routes: Routes = [
       },
       {
         path: 'receiptreceiving',
-        canActivate: [LoginGuard, RouterGuard],
+        canActivate: [LoginGuard, RouterGuard, PrinterGuard],
         loadChildren: () =>
           import('./pages/receipt-receiving/receiving.routing').then(
             (m) => m.ReceivingRoutes
+          ),
+      },
+      {
+        path: 'printersetting',
+        canActivate: [LoginGuard, RouterGuard],
+        loadComponent: () =>
+          import('./pages/printer-setting/printer-setting.component').then(
+            (m) => m.PrinterSettingComponent
           ),
       },
       {

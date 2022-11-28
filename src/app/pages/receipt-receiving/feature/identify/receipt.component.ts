@@ -6,12 +6,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SimpleKeyboardComponent } from '../../../shared/ui/simple-keyboard.component';
-import { SingleInputformComponent } from '../ui/single-input-form.component';
+import { SimpleKeyboardComponent } from '../../../../shared/ui/simple-keyboard.component';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { catchError, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { ReceiptInfoService } from '../data/ReceiptInfo';
-import { ReceivingService } from '../data/receivingService';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceivingService } from '../../data/receivingService';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
 @Component({
   standalone: true,
@@ -20,6 +21,7 @@ import { ReceivingService } from '../data/receivingService';
     SingleInputformComponent,
     SimpleKeyboardComponent,
     ReactiveFormsModule,
+    MessageBarComponent,
   ],
   template: `
     <single-input-form
@@ -33,7 +35,7 @@ import { ReceivingService } from '../data/receivingService';
     ></single-input-form>
     <simple-keyboard
       layout="number"
-      [inputString]="inputForm.value.dateCode"
+      [inputString]="inputForm.value.receipt"
       (outputString)="onChange($event)"
     ></simple-keyboard>
   `,
@@ -58,7 +60,7 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onChange = (input: string) => {
-    this.inputForm.get('receipt').setValue(input);
+    this.inputForm.patchValue({ receipt: input });
   };
 
   public onBack(): void {

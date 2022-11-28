@@ -6,8 +6,8 @@ import {
 } from '@angular/router';
 import { catchError, EMPTY, map, Observable, of, Subject, tap } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { AuthenticationService } from './authentication.service';
-import { RouteAuthService } from './route-auth.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { RouteAuthService } from '../services/route-auth.service';
 
 @Injectable({
   providedIn: 'root',

@@ -66,7 +66,7 @@ export class CountryComponent implements OnInit {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
       // this._router.navigateByUrl('/receiptreceiving');
     }
-    // this._info.initReceiptInfo();
+    this._info.initReceiptInfo();
     this._step.changeSteps(2);
   }
 

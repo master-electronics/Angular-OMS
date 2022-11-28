@@ -15,9 +15,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
 @Component({
   standalone: true,
@@ -26,10 +26,11 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
     FormsModule,
     ReactiveFormsModule,
     NzSkeletonModule,
-    AlertBarComponent,
     NormalButtonComponent,
     SubmitButtonComponent,
+    MessageBarComponent,
   ],
+
   selector: 'single-input-form',
   template: `
     <form
@@ -37,7 +38,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
       [formGroup]="inputForm"
       (ngSubmit)="onSubmit()"
     >
-      <div class="text-2xl md:mx-16 md:text-4xl">
+      <div class="md:mx-16 md:text-2xl lg:text-4xl">
         <label class="mb-0.5 block font-bold text-gray-700" [for]="controlName">
           {{ title }}
         </label>
@@ -49,7 +50,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
               ? 'border-red-500'
               : 'border-blue-500'
           "
-          class="focus:shadow-outline mb-3 h-fit w-full appearance-none rounded border py-2 px-3 text-4xl leading-tight text-gray-700 shadow focus:outline-none"
+          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
           [id]="controlName"
           [type]="inputType"
           [placeholder]="placeholder"
@@ -61,7 +62,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
               inputForm.get(controlName).dirty;
             else NonError
           "
-          class="text-lg italic text-red-500"
+          class="italic text-red-500"
         >
           <div *ngIf="inputForm.get(controlName).errors?.['required']">
             This field is required.
@@ -71,9 +72,9 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
           </div>
         </div>
         <ng-template #NonError>
-          <div class="text-lg opacity-0 ">no error</div>
+          <div class="opacity-0 ">no error</div>
         </ng-template>
-        <div class="grid h-16 w-full grid-cols-3 md:mt-16 md:h-32">
+        <div class="grid h-16 w-full grid-cols-3 md:mt-6 md:h-32 lg:h-40">
           <submit-button
             [disabled]="inputForm.invalid"
             (formClick)="onSubmit()"
@@ -82,11 +83,11 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
           <div></div>
           <normal-button (formClick)="onBack()"></normal-button>
         </div>
-        <div *ngIf="data?.error">
-          <alert-bar
+        <div *ngIf="data?.error" class="mt-2 md:mt-4 lg:mt-6">
+          <message-bar
             [message]="data?.error.message"
             [name]="data?.error.name"
-          ></alert-bar>
+          ></message-bar>
         </div>
       </div>
     </form>
@@ -125,13 +126,5 @@ export class SingleInputformComponent implements OnInit {
 
   public onBack(): void {
     this.formBack.emit();
-  }
-
-  public checkValidate(): boolean {
-    return (
-      this.inputForm.get(this.controlName).invalid &&
-      (this.inputForm.get(this.controlName).dirty ||
-        this.inputForm.get(this.controlName).touched)
-    );
   }
 }

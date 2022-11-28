@@ -2252,7 +2252,7 @@ export type FetchCountryListQuery = {
 };
 
 export type FindBindedPrinterQueryVariables = Types.Exact<{
-  hostName: Types.Scalars['String'];
+  printerID: Types.Scalars['Int'];
 }>;
 
 export type FindBindedPrinterQuery = {
@@ -2368,8 +2368,8 @@ export class FetchCountryListGQL extends Apollo.Query<
   }
 }
 export const FindBindedPrinterDocument = gql`
-  query findBindedPrinter($hostName: String!) {
-    findPrinters(Printer: { StationName: $hostName }) {
+  query findBindedPrinter($printerID: Int!) {
+    findPrinters(Printer: { _id: $printerID }) {
       Name
       Orientation
       DPI

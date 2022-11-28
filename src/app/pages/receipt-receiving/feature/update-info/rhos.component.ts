@@ -3,14 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { AlertBarComponent } from 'src/app/shared/ui/alert-bar.component';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, NzButtonModule, AlertBarComponent],
+  imports: [CommonModule, NzButtonModule, MessageBarComponent],
   template: `
     <div class="grid-col-1 grid justify-center gap-12">
       <h1 class="text-xl">RHOS:</h1>
@@ -51,7 +51,7 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
         Back
       </button>
       <div *ngIf="update$ | async as data">
-        <alert-bar *ngIf="data.message"></alert-bar>
+        <message-bar *ngIf="data.message"></message-bar>
       </div>
     </div>
   `,
