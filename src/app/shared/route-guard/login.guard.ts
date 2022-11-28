@@ -4,12 +4,15 @@ import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
+  CanActivateChild,
+  UrlTree,
 } from '@angular/router';
+import { Observable } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 @Injectable({
   providedIn: 'root',
 })
-export class LoginGuard implements CanActivate {
+export class LoginGuard implements CanActivateChild {
   public routeAuthorized: boolean;
 
   constructor(
@@ -19,10 +22,14 @@ export class LoginGuard implements CanActivate {
     //
   }
 
-  canActivate(
-    _route: ActivatedRouteSnapshot,
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): boolean {
+  ):
+    | boolean
+    | UrlTree
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree> {
     const userinfo = sessionStorage.getItem('userToken');
     if (userinfo) {
       if (

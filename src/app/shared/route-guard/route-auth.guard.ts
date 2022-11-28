@@ -3,6 +3,8 @@ import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
+  CanActivateChild,
+  UrlTree,
 } from '@angular/router';
 import { catchError, EMPTY, map, Observable, of, Subject, tap } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -12,7 +14,7 @@ import { RouteAuthService } from '../services/route-auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class RouterGuard implements CanActivate {
+export class RouterGuard implements CanActivateChild {
   public destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
@@ -22,10 +24,14 @@ export class RouterGuard implements CanActivate {
     private _routeAuth: RouteAuthService
   ) {}
 
-  canActivate(
-    _route: ActivatedRouteSnapshot,
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean> {
+  ):
+    | boolean
+    | UrlTree
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree> {
     // search routAuthInfo key by the route.url, auth.userInfo.userGroups to get current group
     const userGroups = this._auth.userInfo.userGroups;
     return this._routeAuth.routeAuth$.pipe(

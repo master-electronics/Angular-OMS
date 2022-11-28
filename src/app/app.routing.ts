@@ -13,15 +13,14 @@ const routes: Routes = [
   {
     path: '',
     component: ShellComponent,
+    canActivateChild: [LoginGuard, RouterGuard],
     children: [
       {
         path: 'home',
-        canActivate: [LoginGuard],
         component: HomeComponent,
       },
       {
         path: 'agin',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/aggregation-in/aggregation-in.module').then(
             (m) => m.AggregationInModule
@@ -29,7 +28,6 @@ const routes: Routes = [
       },
       {
         path: 'agout',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/aggregation-out/aggregation-out.module').then(
             (m) => m.AggregationOutModule
@@ -37,7 +35,6 @@ const routes: Routes = [
       },
       {
         path: 'qc',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/quality-control/quality-control.module').then(
             (m) => m.QualityControlModule
@@ -45,7 +42,6 @@ const routes: Routes = [
       },
       {
         path: 'searchbarcode',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/search-barcode/search-barcode.module').then(
             (m) => m.SearchBarcodeModule
@@ -53,7 +49,6 @@ const routes: Routes = [
       },
       {
         path: 'tableviews',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/table-views/table-views.module').then(
             (m) => m.TableViewsModule
@@ -61,7 +56,6 @@ const routes: Routes = [
       },
       {
         path: 'tableviews/itnlifecycle',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/itn-lifecycle/itn-lifecycle.module').then(
             (m) => m.ITNLifeCycleModule
@@ -69,7 +63,6 @@ const routes: Routes = [
       },
       {
         path: 'printitn',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/print-itn/print-itn.module').then(
             (m) => m.PrintITNModule
@@ -77,7 +70,6 @@ const routes: Routes = [
       },
       {
         path: 'shelfinventory',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages//shelf-inventory/shelf-inventory.module').then(
             (m) => m.ShelfInventoryModule
@@ -85,21 +77,11 @@ const routes: Routes = [
       },
       {
         path: 'pulltopick',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
       },
-      // {
-      //   path: 'stocking',
-      // canActivate: [LoginGuard, RouterGuard],
-      //   loadChildren: () =>
-      //     import('./pages/stocking/stocking.module').then(
-      //       (m) => m.StockingModule
-      //     ),
-      // },
       {
         path: 'valuemap',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/value-mapping/value-mapping.module').then(
             (m) => m.ValueMappingModule
@@ -107,7 +89,6 @@ const routes: Routes = [
       },
       {
         path: 'printermaintenance',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/printer-maintenance/printer-maintenance.module').then(
             (m) => m.PrinterMaintenanceModule
@@ -115,7 +96,6 @@ const routes: Routes = [
       },
       {
         path: 'dataMaintenance',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/dataMaintenance/data-maintenance.module').then(
             (m) => m.DataMaintenanceModule
@@ -123,7 +103,6 @@ const routes: Routes = [
       },
       {
         path: 'logviewer',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/log-viewer/log-viewer.module').then(
             (m) => m.LogViewerModule
@@ -131,7 +110,6 @@ const routes: Routes = [
       },
       {
         path: 'demo',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/picker-manage/picker-manage.module').then(
             (m) => m.PickerManageModule
@@ -139,7 +117,6 @@ const routes: Routes = [
       },
       {
         path: 'receiving/receiptentry',
-        canActivate: [LoginGuard, RouterGuard],
         loadChildren: () =>
           import('./pages/receiving/receipt-entry/receipt-entry.module').then(
             (m) => m.ReceiptEntryModule
@@ -147,7 +124,7 @@ const routes: Routes = [
       },
       {
         path: 'receiptreceiving',
-        canActivate: [LoginGuard, RouterGuard, PrinterGuard],
+        canActivate: [PrinterGuard],
         loadChildren: () =>
           import('./pages/receipt-receiving/receiving.routing').then(
             (m) => m.ReceivingRoutes
@@ -155,7 +132,6 @@ const routes: Routes = [
       },
       {
         path: 'printersetting',
-        canActivate: [LoginGuard, RouterGuard],
         loadComponent: () =>
           import('./pages/printer-setting/printer-setting.component').then(
             (m) => m.PrinterSettingComponent
