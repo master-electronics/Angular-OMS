@@ -15,7 +15,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 

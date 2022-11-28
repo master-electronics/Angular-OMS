@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, Observable, of, map } from 'rxjs';
-import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { NzImageBasicComponent } from 'src/app/shared/ui/nz-image-basic.component';

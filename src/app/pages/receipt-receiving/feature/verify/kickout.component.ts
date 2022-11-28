@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { catchError, map, Observable, of } from 'rxjs';
-import { NormalButtonComponent } from 'src/app/shared/ui/button/back-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';

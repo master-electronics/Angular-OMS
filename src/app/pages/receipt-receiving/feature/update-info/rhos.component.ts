@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
@@ -10,46 +13,28 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, NzButtonModule, MessageBarComponent],
+  imports: [
+    CommonModule,
+    NzButtonModule,
+    MessageBarComponent,
+    NormalButtonComponent,
+    RedButtonComponent,
+    GreenButtonComponent,
+  ],
   template: `
-    <div class="grid-col-1 grid justify-center gap-12">
-      <h1 class="text-xl">RHOS:</h1>
-      <div class="flex flex-row justify-center gap-5">
-        <div class="w-32 rounded-md bg-green-300">
-          <button
-            class="w-32"
-            nz-button
-            nzGhost
-            nzSize="large"
-            type="button"
-            (click)="onUpdate(true)"
-          >
-            YES
-          </button>
-        </div>
-        <div class="w-32 rounded-md bg-red-300">
-          <button
-            class="w-32 "
-            nz-button
-            nzGhost
-            nzSize="large"
-            type="button"
-            (click)="onUpdate(false)"
-          >
-            NO
-          </button>
-        </div>
+    <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
+      <h1 class="text-4xl">RHOS:</h1>
+      <div
+        class="grid h-64 grid-cols-2 justify-center gap-4 text-4xl md:gap-10 lg:gap-16"
+      >
+        <green-button
+          buttonText="Yes"
+          (fromClick)="onUpdate(true)"
+        ></green-button>
+        <red-button buttonText="No" (fromClick)="onUpdate(true)"></red-button>
+        <normal-button (fromClick)="onBack()">Back</normal-button>
       </div>
 
-      <button
-        class="w-32"
-        nz-button
-        nzSize="large"
-        type="button"
-        (click)="onBack()"
-      >
-        Back
-      </button>
       <div *ngIf="update$ | async as data">
         <message-bar *ngIf="data.message"></message-bar>
       </div>
