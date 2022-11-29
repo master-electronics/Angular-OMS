@@ -11,10 +11,10 @@ import { ReceivingService, Tab } from './data/receivingService';
   imports: [CommonModule, RouterModule, StepBarComponent],
   template: `
     <div class="px-2 py-2">
-      <div *ngIf="tab$ | async as input">
+      <div *ngIf="tab$ | async as tab">
         <step-bar
-          [currentStep]="input.currentStep"
-          [steps]="input.steps"
+          [currentStep]="tab.currentStep"
+          [steps]="tab.steps"
         ></step-bar>
       </div>
       <div class="mt-4">

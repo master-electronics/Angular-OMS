@@ -29,7 +29,7 @@ import { CountryListService } from '../../data/countryList';
     NzFormModule,
   ],
   template: `
-    <form [formGroup]="countryForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="countryForm">
       <nz-form-label label nzRequired>Country</nz-form-label>
       <nz-select
         id="country"
@@ -70,8 +70,5 @@ export class CountrySelectorComponent implements OnInit {
   ngOnInit(): void {
     this.countryForm = this.controlContainer.control as FormGroup;
     this.countryList$ = this._list.countryList$;
-  }
-  onSubmit() {
-    //
   }
 }

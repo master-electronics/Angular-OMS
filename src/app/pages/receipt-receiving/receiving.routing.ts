@@ -7,6 +7,7 @@ import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { VerifyResolver } from './data/resolver/verify.resolver';
 import { PrintItnResolver } from './data/resolver/printItn.resolver';
+import { ReceiptGuard } from './utils/receipt.guard';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -20,9 +21,11 @@ export const ReceivingRoutes: Routes = [
       KickoutService,
       updateReceiptInfoService,
       LabelService,
+      ReceiptGuard,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
+    canActivateChild: [ReceiptGuard],
     children: [
       {
         path: 'receipt',
