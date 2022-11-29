@@ -1,14 +1,14 @@
 <div nz-row nzJustify="center">
   <div nz-col nzXs="20" nzSm="16" nzMd="12" nzLg="8" nzXl="6" nzXXl="4">
     <div
-      class="bg-gray-200 px-6 py-6 rounded-lg mt-10 md:mt-20 lg:mt-30 xl:mt-40 bg-opacity-80"
+      class="lg:mt-30 mt-10 rounded-lg bg-gray-200 bg-opacity-80 px-6 py-6 md:mt-20 xl:mt-40"
     >
       <!-- title of login form -->
       <div class="rounded-t">
         <div class="mb-3 text-center">
           <h4 class="text-base font-bold text-gray-600">Sign in with</h4>
         </div>
-        <hr class="py-4 border-gray-400 border-b-1" />
+        <hr class="border-b-1 border-gray-400 py-4" />
       </div>
       <!-- login form -->
       <form
@@ -20,7 +20,7 @@
         class="grid grid-flow-row gap-6 px-4 py-4 lg:px-10"
       >
         <!-- two input box -->
-        <nz-form-item class="w-full relative">
+        <nz-form-item class="relative w-full">
           <nz-form-control nzErrorTip="Please input your username!">
             <nz-input-group nzSize="large" nzPrefixIcon="user">
               <input
@@ -35,13 +35,9 @@
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
-        <nz-form-item class="w-full relative">
+        <nz-form-item class="relative w-full">
           <nz-form-control nzErrorTip="Please input your password!">
-            <nz-input-group
-              [nzSuffix]="suffixTemplate"
-              nzPrefixIcon="lock"
-              nzSize="large"
-            >
+            <nz-input-group nzPrefixIcon="lock" nzSize="large">
               <input
                 id="password"
                 [type]="passwordVisible ? 'text' : 'password'"
@@ -52,13 +48,6 @@
                 formControlName="password"
                 #password
               />
-              <ng-template #suffixTemplate>
-                <i
-                  nz-icon
-                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-                  (click)="passwordVisible = !passwordVisible"
-                ></i>
-              </ng-template>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>

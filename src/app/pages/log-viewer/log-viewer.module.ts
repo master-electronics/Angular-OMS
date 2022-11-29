@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IconsProviderModule } from '../../icons-provider.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -33,7 +32,6 @@ import { LogViewerRoutingModule } from './log-viewer.routing';
     NzTableModule,
     NzDropDownModule,
     NzButtonModule,
-    IconsProviderModule,
     NzFormModule,
     NzListModule,
     NzCardModule,

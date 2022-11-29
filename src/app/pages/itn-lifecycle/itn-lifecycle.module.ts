@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IconsProviderModule } from '../../icons-provider.module';
 import { ITNLifecycleRoutingModule } from './itn-lifecycle.routing';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -45,7 +44,6 @@ import { TemplateSettings } from './template-settings.component';
     NzTableModule,
     NzDropDownModule,
     NzButtonModule,
-    IconsProviderModule,
     NzFormModule,
     NzListModule,
     NzCardModule,

@@ -1,10 +1,10 @@
 import { Component, OnInit, HostListener, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { CommonService } from '../../../shared/services/common.service';
 import { MenuService } from 'src/app/shared/services/menu.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',

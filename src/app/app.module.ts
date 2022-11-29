@@ -29,10 +29,10 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageModule } from 'ng-zorro-antd/message';
-import { IconsProviderModule } from './icons-provider.module';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
@@ -63,7 +63,7 @@ import { LoadingSpinnerComponent } from './shared/ui/loading-spinner.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    IconsProviderModule,
+    NzIconModule,
     NzButtonModule,
     NzInputModule,
     NzMessageModule,

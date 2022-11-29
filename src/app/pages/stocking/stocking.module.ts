@@ -14,7 +14,6 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 // local components
-import { IconsProviderModule } from '../../icons-provider.module';
 import { StockingService } from './stocking.server';
 import { StockingRoutingModule } from './stocking.routing';
 import { StockingComponent } from './stocking.component';
@@ -51,7 +50,6 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzDescriptionsModule,
     NzSkeletonModule,
     NzDividerModule,
-    IconsProviderModule,
     NzInputNumberModule,
     FocusInvlidInputDirective,
   ],

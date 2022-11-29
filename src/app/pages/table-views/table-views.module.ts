@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IconsProviderModule } from '../../icons-provider.module';
 
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -53,7 +52,6 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     NzTableModule,
     NzDropDownModule,
     NzButtonModule,
-    IconsProviderModule,
     NzFormModule,
     NzListModule,
     NzCardModule,

@@ -18,7 +18,6 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 // local components
-import { IconsProviderModule } from '../../icons-provider.module';
 import { PickRoutingModule } from './pick.routing';
 import { PickService } from './pick.server';
 import { PullITNComponent } from './pull-itn/pull-itn.component';
@@ -51,7 +50,6 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzDescriptionsModule,
     NzSkeletonModule,
     NzDividerModule,
-    IconsProviderModule,
     NzSelectModule,
     NzSliderModule,
     NzTableModule,

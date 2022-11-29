@@ -1,6 +1,6 @@
-<nav class="bg-gray-100 border-b-2 border-indigo-500">
-  <div class="px-2 mx-auto">
-    <div class="grid grid-flow-col justify-between h-10">
+<nav class="border-b-2 border-indigo-500 bg-gray-100">
+  <div class="mx-auto px-2">
+    <div class="grid h-10 grid-flow-col justify-between">
       <div class="grid grid-flow-col items-center justify-center">
         <a routerLink="/home">
           <i nz-icon nzType="home" nzTheme="outline" class="text-2xl"></i>
@@ -15,7 +15,7 @@
       <div class="grid grid-flow-col items-center md:ml-6">
         <div class="md:hidden">
           <button
-            class="inline-flex items-center justify-center rounded-md focus:outline-none mr-4"
+            class="mr-4 inline-flex items-center justify-center rounded-md focus:outline-none"
             (click)="toggleFullscreen()"
           >
             <i
@@ -93,10 +93,12 @@
         <li nz-menu-item>
           <a (click)="closeNavBar()" routerLink="/home"> Home </a>
         </li>
-        
-        <menubar-item *ngFor="let menubarItem of mItems"
+
+        <menubar-item
+          *ngFor="let menubarItem of mItems"
           [menuItem]="menubarItem"
-          (navBarClose)="closeNavBar()"></menubar-item>
+          (navBarClose)="closeNavBar()"
+        ></menubar-item>
       </ul>
     </ng-container>
   </nz-drawer>
