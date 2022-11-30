@@ -62,9 +62,6 @@ export class QuantityComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._receipt.lineAfterPart?.length) {
-      this._router.navigateByUrl('/receiptreceiving');
-    }
     this._ui.changeSteps(1);
     this.data$ = this._actRoute.data;
     this.inputForm = this._fb.group({

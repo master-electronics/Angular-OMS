@@ -114,9 +114,6 @@ export class AssignLabelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.receipt.selectedReceiptLine?.length !== 1) {
-      this._router.navigateByUrl('/receiptreceiving');
-    }
     this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
     this._label.initValue();
     this._step.changeSteps(3);

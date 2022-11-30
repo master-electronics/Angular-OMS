@@ -47,9 +47,6 @@ export class VerifyComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._receipt.lineAfterPart) {
-      this._router.navigateByUrl('/receiptreceiving');
-    }
     this._step.changeSteps(1);
     this.data$ = this._actRoute.data.pipe(
       map((res) => {

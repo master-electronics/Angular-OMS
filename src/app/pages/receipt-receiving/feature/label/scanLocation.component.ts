@@ -58,9 +58,6 @@ export class ScanLocationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._label.ITNList?.length) {
-      this.onBack();
-    }
     this.data$ = of({ loading: false });
     this._ui.changeSteps(3);
     console.log(this._label.ITNList);

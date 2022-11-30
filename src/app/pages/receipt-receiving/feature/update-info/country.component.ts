@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
@@ -79,16 +78,11 @@ export class CountryComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _info: updateReceiptInfoService,
-    private _receipt: ReceiptInfoService,
     private _step: ReceivingService,
     private _country: CountryListService
   ) {}
 
   ngOnInit(): void {
-    if (!this._receipt.receiptLsAfterQuantity?.length) {
-      this._router.navigateByUrl('/receiptreceiving');
-    }
-
     this.countryList$ = this.inputForm.valueChanges.pipe(
       map((res) => res.country),
       debounceTime(300),

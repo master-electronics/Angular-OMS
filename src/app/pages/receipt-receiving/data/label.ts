@@ -111,8 +111,6 @@ export class LabelService {
         }),
         switchMap((res) =>
           this._findPrinter.printer$.pipe(
-            // Do not delay at the first time;
-            delay(this.ITNList?.length ? 5000 : 0),
             switchMap((printer) => {
               return this._print.fetch(
                 {
@@ -123,7 +121,9 @@ export class LabelService {
                 },
                 { fetchPolicy: 'network-only' }
               );
-            })
+            }),
+            // Add waiting time after print label
+            delay(5000)
           )
         ),
         shareReplay(1)

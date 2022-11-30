@@ -56,9 +56,6 @@ export class DateCodeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._update.receiptInfo) {
-      this._router.navigateByUrl('/receiptreceiving');
-    }
     this._ui.changeSteps(2);
     this.inputForm = this._fb.group({
       dateCode: ['', [Validators.required, this.checkDateCode()]],

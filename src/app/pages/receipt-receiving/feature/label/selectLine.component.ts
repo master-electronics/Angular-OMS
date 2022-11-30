@@ -56,9 +56,6 @@ export class SelectLineComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this._receipt.receiptLsAfterQuantity?.length) {
-      this.onBack();
-    }
     this.data = this._receipt.receiptLsAfterQuantity.map((res) => ({
       id: res._id,
       content: `Line ${res.LineNumber}`,
