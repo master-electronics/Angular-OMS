@@ -23,9 +23,12 @@ export class CountryListService {
     return this._fetch$.fetch().pipe(
       map((res) => {
         return res.data.fetchAllCountry.map((country) => {
-          const tmp = { ...country };
-          delete tmp.__typename;
-          return tmp;
+          return {
+            _id: country._id,
+            CountryName: country.CountryName.trim(),
+            ISO2: country.ISO2.trim(),
+            ISO3: country.ISO3.trim(),
+          };
         });
       }),
       tap((res) => {

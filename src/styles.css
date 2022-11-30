@@ -3,6 +3,8 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import '../node_modules/angular-calendar/css/angular-calendar.css';
+
+/* simple keyboard */
 .hg-theme-default {
   background-color: #ececec;
   border-radius: 5px;

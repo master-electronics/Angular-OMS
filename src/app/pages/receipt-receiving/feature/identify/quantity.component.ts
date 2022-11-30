@@ -37,7 +37,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
       <div></div>
       <red-button
         *ngIf="showKickout"
-        (formClick)="onKickout()"
+        (buttonClick)="onKickout()"
         buttonText="Kickout"
       ></red-button>
     </div>

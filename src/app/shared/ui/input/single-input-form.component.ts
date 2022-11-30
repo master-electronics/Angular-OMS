@@ -77,11 +77,11 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         <div class="grid h-16 w-full grid-cols-3 md:mt-6 md:h-32 lg:h-40">
           <submit-button
             [disabled]="inputForm.invalid"
-            (formClick)="onSubmit()"
+            (buttonClick)="onSubmit()"
           >
           </submit-button>
           <div></div>
-          <normal-button (formClick)="onBack()"></normal-button>
+          <normal-button (buttonClick)="onBack()"></normal-button>
         </div>
         <div *ngIf="data?.error" class="mt-2 md:mt-4 lg:mt-6">
           <message-bar

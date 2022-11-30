@@ -68,11 +68,11 @@ import { ReceivingService } from '../../data/receivingService';
       <div class="grid h-16 grid-cols-3 text-2xl md:mt-10 md:h-32 md:text-4xl">
         <submit-button
           [disabled]="kickoutForm.invalid"
-          (formClick)="onSubmit()"
+          (buttonClick)="onSubmit()"
         >
         </submit-button>
         <div></div>
-        <normal-button (formClick)="onBack()"></normal-button>
+        <normal-button (buttonClick)="onBack()"></normal-button>
       </div>
       <ng-container *ngIf="print.error">
         <message-bar

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
@@ -11,24 +13,26 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { CountrySelectorComponent } from 'src/app/shared/ui/input/country-selector.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
+import { NgSelectModule, NgOption } from '@ng-select/ng-select';
+import { CountryListService } from 'src/app/shared/data/countryList';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs';
+import { CountrySelecterComponent } from 'src/app/shared/ui/input/country-list.component';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
+    NgSelectModule,
     ReactiveFormsModule,
     FormsModule,
     SimpleKeyboardComponent,
-    NzFormModule,
-    NzButtonModule,
     SubmitButtonComponent,
     NormalButtonComponent,
-    CountrySelectorComponent,
+    CountrySelecterComponent,
   ],
   template: `
     <form
@@ -38,20 +42,30 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
       (ngSubmit)="onSubmit()"
     >
       <div class="flex justify-center">
-        <country-selector></country-selector>
+        <country-selecter
+          [countryList]="countryList$ | async"
+        ></country-selecter>
       </div>
       <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
-        <submit-button [disabled]="inputForm.invalid" (formClick)="onSubmit()">
+        <submit-button
+          [disabled]="inputForm.invalid"
+          (buttonClick)="onSubmit()"
+        >
         </submit-button>
         <div></div>
-        <normal-button (formClick)="onBack()"></normal-button>
+        <normal-button (buttonClick)="onBack()"></normal-button>
       </div>
     </form>
+    <simple-keyboard
+      [inputString]="inputForm.value.country"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
 })
 export class CountryComponent implements OnInit {
+  public countryList$;
   public inputForm = this._fb.group({
-    country: ['', Validators.required],
+    country: ['', [Validators.required], [this.countryValidator()]],
   });
 
   constructor(
@@ -59,23 +73,71 @@ export class CountryComponent implements OnInit {
     private _router: Router,
     private _info: updateReceiptInfoService,
     private _receipt: ReceiptInfoService,
-    private _step: ReceivingService
+    private _step: ReceivingService,
+    private _country: CountryListService
   ) {}
 
   ngOnInit(): void {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
       // this._router.navigateByUrl('/receiptreceiving');
     }
-    this._info.initReceiptInfo();
+
+    this.countryList$ = this.inputForm.valueChanges.pipe(
+      map((res) => res.country),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((searchQuery) => {
+        return this._country.countryList$.pipe(
+          map((res) => {
+            return res.filter((country) => {
+              if (searchQuery.length < 4) {
+                return country.ISO3.includes(searchQuery.trim().toUpperCase());
+              }
+              return country.CountryName.trim()
+                .toLocaleUpperCase()
+                .includes(searchQuery.trim().toLocaleUpperCase());
+            });
+          }),
+          map((res) => {
+            return res.slice(0, 6).map((country) => ({
+              name:
+                country.ISO3 +
+                ' - ' +
+                country.CountryName +
+                ' - ' +
+                country._id,
+            }));
+          })
+        );
+      })
+    );
+    // this._info.initReceiptInfo();
     this._step.changeSteps(2);
   }
 
-  onChange = (input: string) => {
-    this.inputForm.get('country').setValue(input);
-  };
+  countryValidator(): AsyncValidatorFn {
+    return (control: AbstractControl) => {
+      return this._country.countryList$.pipe(
+        map((res) => {
+          return res.map((country) => ({
+            name:
+              country.ISO3 + ' - ' + country.CountryName + ' - ' + country._id,
+          }));
+        }),
+        map((list) => {
+          const isVaild = list.some((country) => country === control.value);
+          return !isVaild ? { country: true } : null;
+        })
+      );
+    };
+  }
+
+  onChange(input: string) {
+    this.inputForm.patchValue({ country: input });
+  }
 
   onSubmit(): void {
-    const [iso3, id] = this.inputForm.value.country.split('|');
+    const [iso3, , id] = this.inputForm.value.country.split(' - ');
     this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }

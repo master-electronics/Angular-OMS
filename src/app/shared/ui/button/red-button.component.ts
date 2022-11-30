@@ -24,9 +24,9 @@ import {
 export class RedButtonComponent {
   @Input() disabled = false;
   @Input() buttonText = 'Cancel';
-  @Output() formClick: EventEmitter<null> = new EventEmitter();
+  @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 
   public onClick(): void {
-    this.formClick.emit();
+    this.buttonClick.emit();
   }
 }

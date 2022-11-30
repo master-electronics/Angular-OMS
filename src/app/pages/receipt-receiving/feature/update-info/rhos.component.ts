@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzButtonModule } from 'ng-zorro-antd/button';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
@@ -15,7 +14,6 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
   standalone: true,
   imports: [
     CommonModule,
-    NzButtonModule,
     MessageBarComponent,
     NormalButtonComponent,
     RedButtonComponent,
@@ -29,10 +27,13 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
       >
         <green-button
           buttonText="Yes"
-          (fromClick)="onUpdate(true)"
+          (buttonClick)="onUpdate(true)"
         ></green-button>
-        <red-button buttonText="No" (fromClick)="onUpdate(true)"></red-button>
-        <normal-button (fromClick)="onBack()">Back</normal-button>
+        <red-button
+          buttonText="No"
+          (buttonClick)="onUpdate(false)"
+        ></red-button>
+        <normal-button (buttonClick)="onBack()">Back</normal-button>
       </div>
 
       <div *ngIf="update$ | async as data">
@@ -53,12 +54,14 @@ export class RHOSComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._update.receiptInfo?.DateCode) {
-      this._router.navigateByUrl('/receiptreceiving');
+      // this._router.navigateByUrl('/receiptreceiving');
     }
     this._steps.changeSteps(2);
   }
 
   public onUpdate(RHOS: boolean): void {
+    console.log(RHOS);
+
     this._update.updateRHOS(RHOS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
       tap((res) => {

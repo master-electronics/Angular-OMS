@@ -24,9 +24,9 @@ import {
 export class SubmitButtonComponent {
   @Input() disabled = false;
   @Input() buttonText = 'Submit';
-  @Output() formClick: EventEmitter<null> = new EventEmitter();
+  @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 
   public onClick(): void {
-    this.formClick.emit();
+    this.buttonClick.emit();
   }
 }
