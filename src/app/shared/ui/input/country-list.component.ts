@@ -11,22 +11,26 @@ import {
   imports: [CommonModule, ReactiveFormsModule],
   selector: 'country-selecter',
   template: `
-    <form [formGroup]="inputForm" class="md:text-2xl lg:text-4xl">
+    <form [formGroup]="inputForm" class="md:text-xl lg:text-3xl">
       <label class="mb-0.5 block font-bold text-gray-700" for="country">
         Country
       </label>
-      <input
-        formControlName="country"
-        [ngClass]="
-          inputForm.get('country').invalid && inputForm.get('country').dirty
-            ? 'border-red-500'
-            : 'border-blue-500'
-        "
-        class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none "
-        id="country"
-        placeholder="Select a country"
-        #input
-      />
+      <div class="relative w-full">
+        <input
+          formControlName="country"
+          type="search"
+          [ngClass]="
+            inputForm.get('country').invalid && inputForm.get('country').dirty
+              ? 'border-red-500'
+              : 'border-blue-500'
+          "
+          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+          id="country"
+          placeholder="Select a country"
+          required
+          #input
+        />
+      </div>
       <div
         *ngIf="
           inputForm.get('country').invalid && inputForm.get('country').dirty;
@@ -38,7 +42,7 @@ import {
           This field is required.
         </div>
         <div *ngIf="inputForm.get('country').errors?.['country']">
-          Must select a country under the list!
+          Must select a country!
         </div>
       </div>
       <ng-template #NonError>
@@ -46,21 +50,20 @@ import {
       </ng-template>
       <div
         id="dropdown"
-        class="fixed z-10 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700"
+        class="fixed z-10 w-1/3 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700"
       >
         <ul
-          class="py-1 text-gray-700 dark:text-gray-200"
+          class=" text-gray-700 dark:text-gray-200"
           aria-labelledby="dropdown-button"
-          *ngFor="let country of countryList"
+          *ngFor="let country of dataSource"
         >
           <li>
-            <button
-              type="button"
+            <a
               (click)="onClick(country)"
               class="inline-flex w-full px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >
               {{ country.name }}
-            </button>
+            </a>
           </li>
         </ul>
       </div>
@@ -69,7 +72,7 @@ import {
 })
 export class CountrySelecterComponent implements OnInit {
   public inputForm: FormGroup;
-  @Input() countryList;
+  @Input() dataSource;
 
   @ViewChild('input') inputFiled!: ElementRef;
   ngAfterViewInit(): void {
