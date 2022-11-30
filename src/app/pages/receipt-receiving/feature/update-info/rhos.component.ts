@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
@@ -54,14 +54,12 @@ export class RHOSComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._update.receiptInfo?.DateCode) {
-      // this._router.navigateByUrl('/receiptreceiving');
+      this._router.navigateByUrl('/receiptreceiving');
     }
     this._steps.changeSteps(2);
   }
 
   public onUpdate(RHOS: boolean): void {
-    console.log(RHOS);
-
     this._update.updateRHOS(RHOS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
       tap((res) => {
@@ -78,6 +76,7 @@ export class RHOSComponent implements OnInit {
           default:
             this._router.navigateByUrl('receiptreceiving/label/selectline');
         }
+        return null;
       }),
       catchError((error) => {
         return of({ message: error.message, messageType: 'error' });

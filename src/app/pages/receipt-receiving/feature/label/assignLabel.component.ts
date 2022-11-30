@@ -20,7 +20,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { map, Observable, shareReplay, startWith } from 'rxjs';
+import { map, Observable, of, shareReplay, startWith } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -49,7 +49,9 @@ import { ReceivingService } from '../../data/receivingService';
     </div>
 
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+      <div
+        class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 md:text-xl"
+      >
         <div *ngFor="let control of listOfControl; let i = index">
           <div class="relative">
             <div
@@ -83,7 +85,7 @@ import { ReceivingService } from '../../data/receivingService';
           buttonText="Add Label"
         ></green-button>
         <div></div>
-        <submit-button (buttonClick)="onSubmit()" buttonText="Verify">
+        <submit-button [disabled]="validator$ | async" buttonText="Verify">
         </submit-button>
         <normal-button (buttonClick)="onBack()"></normal-button>
       </div>
@@ -113,19 +115,20 @@ export class AssignLabelComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.receipt.selectedReceiptLine?.length !== 1) {
-      // this._router.navigateByUrl('/receiptreceiving');
+      this._router.navigateByUrl('/receiptreceiving');
     }
-    // this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
+    this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
     this._label.initValue();
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});
+    this.addField();
     this.remaining$ = this.inputForm.valueChanges.pipe(
       map((res) => {
         let sum = 0;
         Object.values(res).forEach((element) => {
           sum += Number(element);
         });
-        return -sum;
+        return this.total - sum;
       }),
       shareReplay(1)
     );
@@ -135,11 +138,6 @@ export class AssignLabelComponent implements OnInit {
       }),
       startWith(true)
     );
-    this.addField();
-  }
-
-  ngAfterViewInit() {
-    this.inputFiledList.last.nativeElement.select();
   }
 
   @ViewChildren('inputs') inputFiledList: QueryList<ElementRef>;

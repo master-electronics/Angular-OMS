@@ -86,7 +86,7 @@ export class CountryComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this._receipt.receiptLsAfterQuantity?.length) {
-      // this._router.navigateByUrl('/receiptreceiving');
+      this._router.navigateByUrl('/receiptreceiving');
     }
 
     this.countryList$ = this.inputForm.valueChanges.pipe(
@@ -121,7 +121,7 @@ export class CountryComponent implements OnInit {
         );
       })
     );
-    // this._info.initReceiptInfo();
+    this._info.initReceiptInfo();
     this._step.changeSteps(2);
   }
 
