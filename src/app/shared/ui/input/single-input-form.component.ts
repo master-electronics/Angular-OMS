@@ -53,6 +53,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
           [id]="controlName"
           [type]="inputType"
+          autocomplete="off"
           [placeholder]="placeholder"
           #input
         />

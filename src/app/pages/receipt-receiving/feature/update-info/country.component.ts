@@ -25,7 +25,7 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { CountrySelecterComponent } from 'src/app/shared/ui/input/country-list.component';
+import { SearchListInputComponent } from '../../ui/search-list-input.component';
 
 @Component({
   standalone: true,
@@ -36,7 +36,7 @@ import { CountrySelecterComponent } from 'src/app/shared/ui/input/country-list.c
     SimpleKeyboardComponent,
     SubmitButtonComponent,
     NormalButtonComponent,
-    CountrySelecterComponent,
+    SearchListInputComponent,
   ],
   template: `
     <form
@@ -47,9 +47,10 @@ import { CountrySelecterComponent } from 'src/app/shared/ui/input/country-list.c
     >
       <div class="grid grid-cols-3">
         <div></div>
-        <country-selecter
+        <search-list-input
+          controlName="country"
           [dataSource]="countryList$ | async"
-        ></country-selecter>
+        ></search-list-input>
         <div></div>
       </div>
       <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
@@ -139,7 +140,7 @@ export class CountryComponent implements OnInit {
               country.name.trim().toLocaleUpperCase() ===
               control.value.trim().toLocaleUpperCase()
           );
-          return !isVaild ? { country: true } : null;
+          return !isVaild ? { notExist: true } : null;
         }),
         take(1),
         finalize(() => {

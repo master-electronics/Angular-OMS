@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -14,6 +21,10 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { map, Observable, shareReplay, startWith } from 'rxjs';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { LabelService } from '../../data/label';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
@@ -23,147 +34,98 @@ import { ReceivingService } from '../../data/receivingService';
   imports: [
     CommonModule,
     FormsModule,
+    SimpleKeyboardComponent,
     ReactiveFormsModule,
-    NzFormModule,
-    NzButtonModule,
-    NzInputModule,
     NzIconModule,
+    GreenButtonComponent,
+    SubmitButtonComponent,
+    NormalButtonComponent,
   ],
+
   template: `
-    <div class="flex flex-col gap-5 text-lg">
+    <div class="grid grid-cols-2 gap-5 text-lg">
       <h1>Total: {{ total }}</h1>
       <h1>Remaining: {{ remaining$ | async }}</h1>
     </div>
-    <form nz-form [formGroup]="inputForm" (ngSubmit)="submitForm()">
-      <nz-form-item nzFlex> </nz-form-item>
-      <nz-form-item *ngFor="let control of listOfControl; let i = index">
-        <nz-form-label
-          [nzXs]="24"
-          [nzSm]="4"
-          *ngIf="i === 0"
-          [nzFor]="control.controlInstance"
-        >
-          Quantity
-        </nz-form-label>
-        <nz-form-control
-          [nzXs]="24"
-          [nzSm]="20"
-          [nzOffset]="i === 0 ? 0 : 4"
-          nzErrorTip="Please input a number!"
-        >
-          <input
-            class="passenger-input"
-            nz-input
-            type="number"
-            placeholder="Quantity"
-            [attr.id]="control.id"
-            [formControlName]="control.controlInstance"
-          />
-          <span
-            class="dynamic-delete-button"
-            nz-icon
-            nzType="minus-circle-o"
-            (click)="removeField(control, $event)"
-          ></span>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control
-          [nzXs]="{ span: 24, offset: 0 }"
-          [nzSm]="{ span: 20, offset: 4 }"
-        >
-          <button
-            nz-button
-            nzType="dashed"
-            class="add-button"
-            (click)="addField($event)"
-          >
-            <span nz-icon nzType="plus"></span>
-            Add Label
-          </button>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control
-          [nzXs]="{ span: 24, offset: 0 }"
-          [nzSm]="{ span: 20, offset: 4 }"
-        >
-          <button
-            [disabled]="validator$ | async"
-            nz-button
-            type="submit"
-            nzType="primary"
-          >
-            Submit
-          </button>
-          <button class="ml-6" nz-button nzSize="large" (click)="onBack()">
-            Back
-          </button>
-        </nz-form-control>
-      </nz-form-item>
+
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+        <div *ngFor="let control of listOfControl; let i = index">
+          <div class="relative">
+            <div
+              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+            ></div>
+            <input
+              type="number"
+              placeholder="Quantity"
+              [attr.id]="control.id"
+              (focus)="onInputFocus($event)"
+              [formControlName]="control.controlInstance"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              required
+              #inputs
+            />
+            <button
+              type="remove"
+              (click)="removeField(control, $event)"
+              class="absolute right-2.5 bottom-2.5 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="grid h-16 w-full grid-cols-4 gap-6 md:mt-16 md:h-32 md:text-4xl"
+      >
+        <green-button
+          (buttonClick)="addField($event)"
+          buttonText="Add Label"
+        ></green-button>
+        <div></div>
+        <submit-button (buttonClick)="onSubmit()" buttonText="Verify">
+        </submit-button>
+        <normal-button (buttonClick)="onBack()"></normal-button>
+      </div>
     </form>
+    <simple-keyboard
+      layout="number"
+      [inputString]="this.currentInputFied?.value"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
-  styles: [
-    `
-      .dynamic-delete-button {
-        cursor: pointer;
-        position: relative;
-        top: 4px;
-        font-size: 24px;
-        color: #999;
-        transition: all 0.3s;
-      }
-
-      .dynamic-delete-button:hover {
-        color: #777;
-      }
-
-      .passenger-input {
-        width: 60%;
-        margin-right: 8px;
-      }
-
-      [nz-form] {
-        max-width: 600px;
-      }
-
-      .add-button {
-        width: 60%;
-      }
-    `,
-  ],
 })
 export class AssignLabelComponent implements OnInit {
-  public total: number;
   public remaining$: Observable<number>;
   public validator$: Observable<boolean>;
+  public currentInputFied;
+  public total = 0;
   public inputForm: FormGroup;
-  listOfControl: Array<{ id: number; controlInstance: string }> = [];
+  public listOfControl: Array<{ id: number; controlInstance: string }> = [];
 
   constructor(
+    public receipt: ReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
     private _step: ReceivingService,
-    private _receipt: ReceiptInfoService,
     private _label: LabelService
   ) {}
 
   ngOnInit(): void {
-    if (this._receipt.selectedReceiptLine?.length !== 1) {
+    if (this.receipt.selectedReceiptLine?.length !== 1) {
       // this._router.navigateByUrl('/receiptreceiving');
     }
+    // this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
     this._label.initValue();
     this._step.changeSteps(3);
-    this.total = this._receipt.selectedReceiptLine[0].ExpectedQuantity;
     this.inputForm = this._fb.group({});
-    this.addField();
     this.remaining$ = this.inputForm.valueChanges.pipe(
       map((res) => {
         let sum = 0;
         Object.values(res).forEach((element) => {
           sum += Number(element);
         });
-        return this.total - sum;
+        return -sum;
       }),
       shareReplay(1)
     );
@@ -173,7 +135,14 @@ export class AssignLabelComponent implements OnInit {
       }),
       startWith(true)
     );
+    this.addField();
   }
+
+  ngAfterViewInit() {
+    this.inputFiledList.last.nativeElement.select();
+  }
+
+  @ViewChildren('inputs') inputFiledList: QueryList<ElementRef>;
 
   addField(e?: MouseEvent): void {
     if (e) {
@@ -204,7 +173,15 @@ export class AssignLabelComponent implements OnInit {
     }
   }
 
-  submitForm(): void {
+  onInputFocus(event) {
+    this.currentInputFied = this.inputForm.get(`field${event.target.id}`);
+  }
+
+  onChange(input) {
+    this.currentInputFied.setValue(input);
+  }
+
+  onSubmit(): void {
     if (this.inputForm.valid) {
       const list = Object.values(this.inputForm.value).map((res) =>
         Number(res)
