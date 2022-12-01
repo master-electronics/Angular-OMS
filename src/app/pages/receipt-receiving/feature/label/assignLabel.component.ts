@@ -57,7 +57,7 @@ import { ReceivingService } from '../../data/receivingService';
 
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div
-        class="grid h-32 grid-cols-1 gap-5 overflow-auto sm:grid-cols-2 md:h-64 md:grid-cols-3"
+        class="grid h-16 grid-cols-1 gap-5 overflow-auto md:h-32 md:grid-cols-3 lg:h-64"
       >
         <div *ngFor="let control of listOfControl; let i = index">
           <div class="relative">
@@ -84,9 +84,7 @@ import { ReceivingService } from '../../data/receivingService';
           </div>
         </div>
       </div>
-      <div
-        class="grid h-16 w-full grid-cols-4 gap-6 md:mt-16 md:h-32 md:text-4xl"
-      >
+      <div class="mt-4 grid h-16 w-full grid-cols-4 gap-6 md:h-32 md:text-4xl">
         <green-button
           (buttonClick)="addField($event)"
           buttonText="Add Label"
@@ -121,8 +119,7 @@ export class AssignLabelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
-    this.total = 10;
+    this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
     this.remaining = this.total;
     this._label.initValue();
     this._step.changeSteps(3);
