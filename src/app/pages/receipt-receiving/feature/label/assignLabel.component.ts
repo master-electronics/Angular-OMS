@@ -20,7 +20,14 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { map, Observable, of, shareReplay, startWith } from 'rxjs';
+import {
+  asapScheduler,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  startWith,
+} from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -43,14 +50,14 @@ import { ReceivingService } from '../../data/receivingService';
   ],
 
   template: `
-    <div class="grid grid-cols-2 gap-5 text-lg">
+    <div class="grid grid-cols-2 gap-5 text-xl">
       <h1>Total: {{ total }}</h1>
-      <h1>Remaining: {{ remaining$ | async }}</h1>
+      <h1>Remaining: {{ remaining }}</h1>
     </div>
 
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div
-        class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 md:text-xl"
+        class="grid h-32 grid-cols-1 gap-5 overflow-auto sm:grid-cols-2 md:h-64 md:grid-cols-3"
       >
         <div *ngFor="let control of listOfControl; let i = index">
           <div class="relative">
@@ -63,7 +70,7 @@ import { ReceivingService } from '../../data/receivingService';
               [attr.id]="control.id"
               (focus)="onInputFocus($event)"
               [formControlName]="control.controlInstance"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               required
               #inputs
             />
@@ -98,10 +105,10 @@ import { ReceivingService } from '../../data/receivingService';
   `,
 })
 export class AssignLabelComponent implements OnInit {
-  public remaining$: Observable<number>;
   public validator$: Observable<boolean>;
   public currentInputFied;
   public total = 0;
+  public remaining = 0;
   public inputForm: FormGroup;
   public listOfControl: Array<{ id: number; controlInstance: string }> = [];
 
@@ -114,22 +121,22 @@ export class AssignLabelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
+    // this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
+    this.total = 10;
+    this.remaining = this.total;
     this._label.initValue();
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});
     this.addField();
-    this.remaining$ = this.inputForm.valueChanges.pipe(
+    this.validator$ = this.inputForm.valueChanges.pipe(
       map((res) => {
         let sum = 0;
         Object.values(res).forEach((element) => {
           sum += Number(element);
         });
-        return this.total - sum;
+        this.remaining = this.total - sum;
+        return this.remaining;
       }),
-      shareReplay(1)
-    );
-    this.validator$ = this.remaining$.pipe(
       map((res) => {
         return res !== 0 || this.inputForm.invalid;
       }),
@@ -153,10 +160,19 @@ export class AssignLabelComponent implements OnInit {
       controlInstance: `field${id}`,
     };
     const index = this.listOfControl.push(control);
+    let quantity = 0;
+    if (!id) {
+      quantity = this.total;
+    }
     this.inputForm.addControl(
       this.listOfControl[index - 1].controlInstance,
-      new FormControl(0, [Validators.required, Validators.min(1)])
+      new FormControl(quantity, [Validators.required, Validators.min(1)])
     );
+    setTimeout(() => {
+      this.inputFiledList
+        .get(this.listOfControl.length - 1)
+        .nativeElement.select();
+    }, 0);
   }
 
   removeField(i: { id: number; controlInstance: string }, e: MouseEvent): void {

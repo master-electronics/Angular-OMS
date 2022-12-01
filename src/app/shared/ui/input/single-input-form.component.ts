@@ -76,11 +76,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           <div class="opacity-0 ">no error</div>
         </ng-template>
         <div class="grid h-16 w-full grid-cols-3 md:mt-6 md:h-32 lg:h-40">
-          <submit-button
-            [disabled]="inputForm.invalid"
-            (buttonClick)="onSubmit()"
-          >
-          </submit-button>
+          <submit-button [disabled]="inputForm.invalid"> </submit-button>
           <div></div>
           <normal-button (buttonClick)="onBack()"></normal-button>
         </div>

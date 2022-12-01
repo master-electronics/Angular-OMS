@@ -15,15 +15,7 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
 import { ReceivingService } from '../../data/receivingService';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
-import {
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  finalize,
-  map,
-  switchMap,
-  take,
-} from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs';
 import { SearchListInputComponent } from '../../ui/search-list-input.component';
 
 @Component({
@@ -38,28 +30,20 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
     SearchListInputComponent,
   ],
   template: `
-    <form
-      nz-form
-      [formGroup]="inputForm"
-      nzLayout="horizontal"
-      (ngSubmit)="onSubmit()"
-    >
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div class="grid grid-cols-3">
-        <div></div>
         <search-list-input
+          class="col-start-2"
           controlName="country"
           [dataSource]="countryList$ | async"
         ></search-list-input>
-        <div></div>
       </div>
       <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
-        <submit-button
-          [disabled]="inputForm.invalid"
-          (buttonClick)="onSubmit()"
-        >
-        </submit-button>
-        <div></div>
-        <normal-button (buttonClick)="onBack()"></normal-button>
+        <submit-button [disabled]="inputForm.invalid"> </submit-button>
+        <normal-button
+          class="col-start-3"
+          (buttonClick)="onBack()"
+        ></normal-button>
       </div>
     </form>
     <simple-keyboard
@@ -70,6 +54,7 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
 })
 export class CountryComponent implements OnInit {
   public countryList$;
+  public countryInfo;
   public inputForm = this._fb.group({
     country: ['', [Validators.required], [this.countryValidator()]],
   });
@@ -129,17 +114,29 @@ export class CountryComponent implements OnInit {
           }));
         }),
         map((list) => {
-          const isVaild = list.some(
-            (country) =>
-              country.name.trim().toLocaleUpperCase() ===
-              control.value.trim().toLocaleUpperCase()
-          );
-          return !isVaild ? { notExist: true } : null;
+          if (control.value.trim().length === 3) {
+            return list.some((country) => {
+              if (
+                country.name.substring(0, 3).toLocaleUpperCase() ===
+                control.value.trim().toLocaleUpperCase()
+              ) {
+                this.countryInfo = country.name;
+                return true;
+              }
+              return false;
+            });
+          }
+          if (control.value.trim().length > 6) {
+            return list.some(
+              (country) =>
+                country.name.trim().toLocaleUpperCase() ===
+                control.value.trim().toLocaleUpperCase()
+            );
+          }
+          return false;
         }),
-        take(1),
-        finalize(() => {
-          //
-        })
+        map((res) => (!res ? { notExist: true } : null)),
+        take(1)
       );
     };
   }
@@ -149,7 +146,10 @@ export class CountryComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const [iso3, , id] = this.inputForm.value.country.split(' - ');
+    if (!this.countryInfo) {
+      this.countryInfo = this.inputForm.value.country;
+    }
+    const [iso3, , id] = this.countryInfo.split(' - ');
     this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }

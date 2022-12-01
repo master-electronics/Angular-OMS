@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
-import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { environment } from 'src/environments/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface Tab {
   steps: { title: string; subtitle?: string; description?: string }[];
@@ -10,14 +8,13 @@ export interface Tab {
 
 @Injectable()
 export class ReceivingService {
-  constructor(private _itn: CreateItnGQL) {}
-
-  // Tab
+  /**
+   * Tab
+   */
   private _tab = new BehaviorSubject<Tab>(null);
   public get tab$(): Observable<Tab> {
     return this._tab.asObservable();
   }
-
   public initTab(steps): void {
     this._tab.next({
       currentStep: 0,
@@ -29,12 +26,5 @@ export class ReceivingService {
       ...this._tab.value,
       currentStep: index,
     });
-  }
-
-  /**
-   * creatITN
-   */
-  public creatITN(): Observable<any> {
-    return this._itn.fetch({ LocationCode: environment.DistributionCenter });
   }
 }
