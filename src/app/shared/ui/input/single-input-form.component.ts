@@ -14,6 +14,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -29,6 +30,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     NormalButtonComponent,
     SubmitButtonComponent,
     MessageBarComponent,
+    NzIconModule,
   ],
 
   selector: 'single-input-form',
@@ -42,21 +44,27 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         <label class="mb-0.5 block font-bold text-gray-700" [for]="controlName">
           {{ title }}
         </label>
-        <input
-          [formControlName]="controlName"
-          [ngClass]="
-            inputForm.get(controlName).invalid &&
-            inputForm.get(controlName).dirty
-              ? 'border-red-500'
-              : 'border-blue-500'
-          "
-          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-          [id]="controlName"
-          [type]="inputType"
-          autocomplete="off"
-          [placeholder]="placeholder"
-          #input
-        />
+        <div class="relative">
+          <input
+            [formControlName]="controlName"
+            [ngClass]="
+              inputForm.get(controlName).invalid &&
+              inputForm.get(controlName).dirty
+                ? 'border-red-500'
+                : 'border-blue-500'
+            "
+            class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+            [id]="controlName"
+            [type]="inputType"
+            autocomplete="off"
+            [placeholder]="placeholder"
+            #input
+          />
+          <a class=" absolute right-8" (click)="clean()">
+            <span nz-icon nzType="close-circle" nzTheme="outline"></span>
+          </a>
+        </div>
+        <!-- error mesage -->
         <div
           *ngIf="
             inputForm.get(controlName).invalid &&
@@ -75,6 +83,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         <ng-template #NonError>
           <div class="opacity-0 ">no error</div>
         </ng-template>
+        <!-- Button area -->
         <div class="grid h-16 w-full grid-cols-3 md:mt-6 md:h-32 lg:h-40">
           <submit-button [disabled]="inputForm.invalid"> </submit-button>
           <div></div>
@@ -109,6 +118,11 @@ export class SingleInputformComponent implements OnInit {
 
   @ViewChild('input') inputFiled!: ElementRef;
   ngAfterViewInit(): void {
+    this.inputFiled.nativeElement.focus();
+  }
+
+  clean() {
+    this.inputForm.get(this.controlName).setValue('');
     this.inputFiled.nativeElement.focus();
   }
 

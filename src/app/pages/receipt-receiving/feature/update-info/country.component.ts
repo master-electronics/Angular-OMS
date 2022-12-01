@@ -32,11 +32,15 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
   template: `
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div class="grid grid-cols-3">
-        <search-list-input
-          class="col-start-2"
-          controlName="country"
-          [dataSource]="countryList$ | async"
-        ></search-list-input>
+        <div class="col-start-2 text-4xl">
+          <label class="mb-0.5 block font-bold text-gray-700" for="country">
+            Country
+          </label>
+          <search-list-input
+            controlName="country"
+            [dataSource]="countryList$ | async"
+          ></search-list-input>
+        </div>
       </div>
       <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
         <submit-button [disabled]="inputForm.invalid"> </submit-button>

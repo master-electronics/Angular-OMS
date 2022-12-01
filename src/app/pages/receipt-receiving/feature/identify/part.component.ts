@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
-import { map, tap } from 'rxjs';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { map, Observable, of, tap } from 'rxjs';
+import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 
 @Component({
   standalone: true,
@@ -22,19 +22,21 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
     SingleInputformComponent,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
-    NzModalModule,
+    PopupModalComponent,
   ],
 
   template: `
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
-      [data]="data$ | async"
       [validator]="validator"
       [formGroup]="inputForm"
       controlName="partNumber"
       title="Part Number"
     ></single-input-form>
+    <ng-container *ngIf="initData$ | async as data">
+      <popup-modal (clickOK)="onBack()" [message]="data"></popup-modal>
+    </ng-container>
     <simple-keyboard
       [inputString]="inputForm.value.partNumber"
       (outputString)="onChange($event)"
@@ -43,7 +45,7 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 })
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$;
+  public initData$: Observable<string>;
   public validator = {
     name: 'filter',
     message: 'Not Found part number!',
@@ -52,7 +54,6 @@ export class PartComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
-    private _modal: NzModalService,
     private _ui: ReceivingService,
     private _actRoute: ActivatedRoute
   ) {}
@@ -68,30 +69,14 @@ export class PartComponent implements OnInit {
     if (!this._receipt.headerID) {
       this.onBack();
     }
-    this.data$ = this._actRoute.data.pipe(
+    this.initData$ = this._actRoute.data.pipe(
       map((res) => {
         if (res.lines?.error) {
-          this.showConfirm(res.lines.error);
+          return res.lines.error.message;
         }
-        return res.lines;
+        return null;
       })
     );
-  }
-
-  /**
-   * showConfirm
-   */
-  public showConfirm(error) {
-    const modal = {
-      nzTitle: `<i>${error.message}</i>`,
-      nzContent: '<b>Select an other receipt.</b>',
-      nzOnOk: () => this.onBack(),
-    };
-    if (error.name === 'warning') {
-      this._modal.warning(modal);
-      return;
-    }
-    this._modal.error(modal);
   }
 
   partNumberSearch(): ValidatorFn {

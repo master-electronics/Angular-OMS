@@ -5,17 +5,15 @@ import {
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NzIconModule],
   selector: 'search-list-input',
   template: `
-    <form [formGroup]="inputForm" class="md:text-xl lg:text-3xl">
-      <label class="mb-0.5 block font-bold text-gray-700" for="country">
-        Country
-      </label>
-      <div class="relative w-full">
+    <form [formGroup]="inputForm" class="text-lg md:text-xl lg:text-4xl">
+      <div class="relative">
         <input
           [formControlName]="controlName"
           type="search"
@@ -25,13 +23,17 @@ import {
               ? 'border-red-500'
               : 'border-blue-500'
           "
-          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 text-lg leading-tight text-gray-700 shadow focus:outline-none md:text-xl lg:text-2xl xl:text-4xl"
           [id]="controlName"
           autocomplete="off"
           required
           #input
         />
+        <a class=" absolute right-2.5" (click)="clean()">
+          <span nz-icon nzType="close-circle" nzTheme="outline"></span>
+        </a>
       </div>
+      <!-- error message -->
       <div
         *ngIf="
           inputForm.get(controlName).invalid &&
@@ -88,5 +90,10 @@ export class SearchListInputComponent implements OnInit {
 
   onClick(node) {
     this.inputForm.get(this.controlName).setValue(node.name);
+  }
+
+  clean() {
+    this.inputForm.get(this.controlName).setValue('');
+    this.inputFiled.nativeElement.focus();
   }
 }

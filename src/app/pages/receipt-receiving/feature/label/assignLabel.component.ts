@@ -61,9 +61,6 @@ import { ReceivingService } from '../../data/receivingService';
       >
         <div *ngFor="let control of listOfControl; let i = index">
           <div class="relative">
-            <div
-              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-            ></div>
             <input
               type="number"
               placeholder="Quantity"

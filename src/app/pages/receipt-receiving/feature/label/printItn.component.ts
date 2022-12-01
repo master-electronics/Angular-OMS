@@ -61,7 +61,6 @@ export class PrintITNComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this._label.changeQuantityList([1, 2, 3]);
     this._ui.changeSteps(3);
     this.data$ = this._actRoute.data.pipe(map((res) => res.print));
     this.ITNList$ = this._label.ITNList$;
