@@ -65,7 +65,7 @@
       </form>
 
       <!-- Item Info -->
-      <div class="text-black grid grid-cols-2 dark:text-white">
+      <div class="grid grid-cols-2 text-black dark:text-white">
         <span>ITN:</span>
         <span>{{ sortingInfo.ITN }}</span>
         <span>ProductCode:</span>
@@ -105,7 +105,7 @@
         (click)="reprint()"
         [nzLoading]="isLoading"
         nzSize="large"
-        class="w-full mt-2"
+        class="mt-2 w-full"
       >
         Print ITN Label
       </button>
@@ -114,7 +114,7 @@
         (click)="back()"
         [nzLoading]="isLoading"
         nzSize="large"
-        class="w-full mt-2"
+        class="mt-2 w-full"
       >
         Back
       </button>

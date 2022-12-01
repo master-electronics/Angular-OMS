@@ -40,56 +40,67 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       [formGroup]="inputForm"
       (ngSubmit)="onSubmit()"
     >
-      <div class="md:mx-16 md:text-2xl lg:text-4xl">
-        <label class="mb-0.5 block font-bold text-gray-700" [for]="controlName">
-          {{ title }}
-        </label>
-        <div class="relative">
-          <input
-            [formControlName]="controlName"
-            [ngClass]="
-              inputForm.get(controlName).invalid &&
-              inputForm.get(controlName).dirty
-                ? 'border-red-500'
-                : 'border-blue-500'
-            "
-            class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-            [id]="controlName"
-            [type]="inputType"
-            autocomplete="off"
-            [placeholder]="placeholder"
-            #input
-          />
-          <a class=" absolute right-8" (click)="clean()">
-            <span nz-icon nzType="close-circle" nzTheme="outline"></span>
-          </a>
-        </div>
-        <!-- error mesage -->
-        <div
-          *ngIf="
-            inputForm.get(controlName).invalid &&
-              inputForm.get(controlName).dirty;
-            else NonError
-          "
-          class="italic text-red-500"
-        >
-          <div *ngIf="inputForm.get(controlName).errors?.['required']">
-            This field is required.
+      <div class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
+        <div class="flex md:grid">
+          <label
+            class="mb-0.5 mr-1 font-bold text-gray-700"
+            [for]="controlName"
+          >
+            {{ title }}:
+          </label>
+          <div class="relative grow">
+            <input
+              [formControlName]="controlName"
+              oninput="this.value = this.value.toUpperCase()"
+              [ngClass]="
+                inputForm.get(controlName).invalid &&
+                inputForm.get(controlName).dirty
+                  ? 'border-red-500'
+                  : 'border-blue-500'
+              "
+              class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+              [id]="controlName"
+              [type]="inputType"
+              autocomplete="off"
+              [placeholder]="placeholder"
+              #input
+            />
+            <a class="absolute right-8" (click)="clean()">
+              <span nz-icon nzType="close-circle" nzTheme="outline"></span>
+            </a>
+            <!-- error mesage -->
+            <div
+              *ngIf="
+                inputForm.get(controlName).invalid &&
+                  inputForm.get(controlName).dirty;
+                else NonError
+              "
+              class="italic text-red-500"
+            >
+              <div *ngIf="inputForm.get(controlName).errors?.['required']">
+                This field is required.
+              </div>
+              <div *ngIf="inputForm.get(controlName).errors?.['pattern']">
+                Invalid Format!
+              </div>
+              <div *ngIf="inputForm.get(controlName).errors?.[validator.name]">
+                {{ validator.message }}
+              </div>
+            </div>
+            <ng-template #NonError>
+              <div class="opacity-0 ">no error</div>
+            </ng-template>
           </div>
-          <div *ngIf="inputForm.get(controlName).errors?.[validator.name]">
-            {{ validator.message }}
-          </div>
         </div>
-        <ng-template #NonError>
-          <div class="opacity-0 ">no error</div>
-        </ng-template>
         <!-- Button area -->
-        <div class="grid h-16 w-full grid-cols-3 md:mt-6 md:h-32 lg:h-40">
-          <submit-button [disabled]="inputForm.invalid"> </submit-button>
+        <div
+          class="grid h-8 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-40"
+        >
+          <submit-button [disabled]="!isvalid"> </submit-button>
           <div></div>
           <normal-button (buttonClick)="onBack()"></normal-button>
         </div>
-        <div *ngIf="data?.error" class="mt-2 md:mt-4 lg:mt-6">
+        <div *ngIf="data?.error" class="mt-1 md:mt-3 lg:mt-6">
           <message-bar
             [message]="data?.error.message"
             [name]="data?.error.name"
@@ -111,6 +122,7 @@ export class SingleInputformComponent implements OnInit {
   @Input() inputType = 'text';
   @Input() placeholder = '';
   @Input() title = 'Input';
+  @Input() isvalid = true;
   @Output() formSubmit: EventEmitter<null> = new EventEmitter();
   @Output() formBack: EventEmitter<null> = new EventEmitter();
 
@@ -132,7 +144,9 @@ export class SingleInputformComponent implements OnInit {
 
   public onSubmit(): void {
     this.inputFiled.nativeElement.select();
-    this.formSubmit.emit();
+    if (this.inputForm.valid) {
+      this.formSubmit.emit();
+    }
   }
 
   public onBack(): void {

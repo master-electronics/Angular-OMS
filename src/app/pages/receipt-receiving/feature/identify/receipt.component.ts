@@ -32,6 +32,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       inputType="number"
       controlName="receipt"
       title="Receipt"
+      [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <simple-keyboard
       layout="number"

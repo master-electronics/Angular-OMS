@@ -50,7 +50,6 @@ export class VerifyComponent implements OnInit {
     this._step.changeSteps(1);
     this.data$ = this._actRoute.data.pipe(
       map((res) => {
-        console.log(res);
         return res.info;
       }),
       catchError((error) =>

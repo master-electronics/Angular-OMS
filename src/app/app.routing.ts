@@ -131,6 +131,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'stocking',
+        loadChildren: () =>
+          import('./pages/stocking/stocking.routing').then(
+            (m) => m.StockingRoutes
+          ),
+      },
+      {
         path: 'printersetting',
         loadComponent: () =>
           import('./pages/printer-setting/printer-setting.component').then(

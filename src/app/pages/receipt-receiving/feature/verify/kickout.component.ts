@@ -99,7 +99,6 @@ export class KickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _kickout: KickoutService,
-    private _receipt: ReceiptInfoService,
     private _step: ReceivingService
   ) {}
 

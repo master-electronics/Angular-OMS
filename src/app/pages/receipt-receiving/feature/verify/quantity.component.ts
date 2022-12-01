@@ -7,12 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
 @Component({
   standalone: true,
@@ -22,24 +23,33 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
     ReactiveFormsModule,
     SimpleKeyboardComponent,
     RedButtonComponent,
+    MessageBarComponent,
   ],
   template: `
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
       [formGroup]="inputForm"
-      [data]="data$ | async"
       controlName="quantity"
       title="Quantity"
       inputType="number"
+      [isvalid]="this.inputForm.valid"
     ></single-input-form>
-    <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
-      <div></div>
+    <div
+      class="mt-6 grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl"
+    >
       <red-button
         *ngIf="showKickout"
         (buttonClick)="onKickout()"
         buttonText="Kickout"
       ></red-button>
+      <ng-container *ngIf="data$ | async as error">
+        <message-bar
+          class="col-span-2"
+          [message]="error.error.message"
+          [name]="error.error.name"
+        ></message-bar>
+      </ng-container>
     </div>
     <simple-keyboard
       [inputString]="inputForm.value.quantity"
@@ -50,20 +60,18 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 })
 export class QuantityComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$;
+  public data$: Observable<{ error: { message: string; name: string } }>;
   public showKickout = false;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _actRoute: ActivatedRoute,
     private _ui: ReceivingService,
     private _receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(1);
-    this.data$ = this._actRoute.data;
     this.inputForm = this._fb.group({
       quantity: ['', Validators.required],
     });

@@ -123,6 +123,7 @@ export class AssignLabelComponent implements OnInit {
     this.inputForm = this._fb.group({});
     this.addField();
     this.validator$ = this.inputForm.valueChanges.pipe(
+      startWith(true),
       map((res) => {
         let sum = 0;
         Object.values(res).forEach((element) => {
@@ -132,9 +133,8 @@ export class AssignLabelComponent implements OnInit {
         return this.remaining;
       }),
       map((res) => {
-        return res !== 0 || this.inputForm.invalid;
-      }),
-      startWith(true)
+        return res === 0 && this.inputForm.invalid;
+      })
     );
   }
 
@@ -154,15 +154,14 @@ export class AssignLabelComponent implements OnInit {
       controlInstance: `field${id}`,
     };
     const index = this.listOfControl.push(control);
-    let quantity = 0;
-    if (!id) {
-      quantity = this.total;
-    }
     this.inputForm.addControl(
       this.listOfControl[index - 1].controlInstance,
-      new FormControl(quantity, [Validators.required, Validators.min(1)])
+      new FormControl(0, [Validators.required, Validators.min(1)])
     );
     setTimeout(() => {
+      if (!id) {
+        this.inputForm.get(`field${id}`).setValue(this.total);
+      }
       this.inputFiledList
         .get(this.listOfControl.length - 1)
         .nativeElement.select();

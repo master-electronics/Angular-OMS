@@ -40,6 +40,7 @@ import { LabelService, ITNinfo } from '../../data/label';
       [formGroup]="inputForm"
       controlName="label"
       title="Label"
+      [isvalid]="this.inputForm.valid"
     ></single-input-form>
   `,
 })

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -27,13 +28,15 @@ export class ReceivingShell implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
     private commonService: CommonService,
-    private _service: ReceivingService
+    private _service: ReceivingService,
+    private _title: Title
   ) {}
 
   ngOnInit(): void {
     this._service.initTab(this.steps);
     this.tab$ = this._service.tab$;
     this.commonService.changeNavbar('Receiving');
+    this._title.setTitle('Receiving');
   }
 
   private readonly steps = [

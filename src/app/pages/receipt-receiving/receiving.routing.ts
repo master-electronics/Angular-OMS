@@ -57,7 +57,7 @@ export const ReceivingRoutes: Routes = [
       {
         path: 'part/quantity',
         loadComponent: () =>
-          import('./feature/identify/quantity.component').then(
+          import('./feature/verify/quantity.component').then(
             (mod) => mod.QuantityComponent
           ),
       },

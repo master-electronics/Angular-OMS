@@ -33,6 +33,7 @@ import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.compone
       [formGroup]="inputForm"
       controlName="partNumber"
       title="Part Number"
+      [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <ng-container *ngIf="initData$ | async as data">
       <popup-modal (clickOK)="onBack()" [message]="data"></popup-modal>

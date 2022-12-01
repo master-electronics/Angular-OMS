@@ -33,6 +33,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
       inputType="number"
       controlName="dateCode"
       title="Date Code"
+      [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <simple-keyboard
       layout="number"

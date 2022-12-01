@@ -1,5 +1,5 @@
 export const ToteBarcodeRegex = /^\d{2}-\d{2}-\d{2}$/;
-export const ITNBarcodeRegex = /^\w{2}\d{8}$/;
+export const ITNBarcodeRegex = /^[a-zA-Z]{2}\d{8}$/;
 export const CartBarcodeRegex = /^OS\d{3,4}/;
 export const AggregationShelfBarcodeRegex = /^10-AG-\d{2}-\d{2}-[A-Z]-\d{2}$/;
 export const ShelfBarcodeBarcodeRegex = /^\w{2}-\w{2}-\d{2}-\d{2}-[A-Z]-\d{2}$/;
