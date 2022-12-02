@@ -2365,281 +2365,112 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type CheckReceiptHeaderQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
-}>;
-
-
-export type CheckReceiptHeaderQuery = { __typename?: 'Query', findReceiptH?: { __typename?: 'ReceiptH', _id: number } | null };
-
-export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
-  ReceiptHID: Types.Scalars['Int'];
-  statusID: Types.Scalars['Int'];
-}>;
-
-
-export type FindReceiptHeaderForReceivingQuery = { __typename?: 'Query', findReceiptInfoByIdAndStatus?: { __typename?: 'ReceiptH', RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, ExpectedQuantity: number, DateCode?: string | null, RHOS?: boolean | null, LineNumber: number, ProductID: number, CountryID?: number | null, Country?: { __typename?: 'Country', ISO3: string } | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', PurchaseOrderL?: { __typename?: 'PurchaseOrderL', LineNumber: number, PurchaseOrderH: { __typename?: 'PurchaseOrderH', PurchaseOrderNumber: string } } | null } | null> | null } | null> | null } | null };
-
-export type FetchProductInfoForReceivingQueryVariables = Types.Exact<{
-  ProductCode: Types.Scalars['String'];
-  PartNumber: Types.Scalars['String'];
-}>;
-
-
-export type FetchProductInfoForReceivingQuery = { __typename?: 'Query', fetchProductMICFromMerp?: string | null, fetchPartMessage?: { __typename?: 'GlobalMessage', comments?: Array<string | null> | null } | null };
-
-export type FindPartForReceivingQueryVariables = Types.Exact<{
-  PartNumber: Types.Scalars['String'];
-}>;
-
-
-export type FindPartForReceivingQuery = { __typename?: 'Query', findProducts?: Array<{ __typename?: 'Product', _id: number, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null> | null };
-
-export type ReceivingUpdateReceiptLMutationVariables = Types.Exact<{
-  idList: Array<Types.InputMaybe<Types.Scalars['Int']>> | Types.InputMaybe<Types.Scalars['Int']>;
-  CountryID: Types.Scalars['Int'];
-  DateCode: Types.Scalars['String'];
-  RHOS: Types.Scalars['Boolean'];
-}>;
-
-
-export type ReceivingUpdateReceiptLMutation = { __typename?: 'Mutation', updateReceiptLsByID?: Array<number | null> | null };
-
-export type PrintReceivingLabelQueryVariables = Types.Exact<{
-  PRINTER: Types.Scalars['String'];
-  ITN: Types.Scalars['String'];
-  DPI: Types.Scalars['String'];
-  ORIENTATION: Types.Scalars['String'];
-}>;
-
-
-export type PrintReceivingLabelQuery = { __typename?: 'Query', printReceivingLabel?: boolean | null };
-
-export type PrintTextLabelQueryVariables = Types.Exact<{
-  PRINTER: Types.Scalars['String'];
-  DPI: Types.Scalars['String'];
-  ORIENTATION: Types.Scalars['String'];
-  LINE1: Types.Scalars['String'];
-  LINE2: Types.Scalars['String'];
-  LINE3: Types.Scalars['String'];
-  LINE4: Types.Scalars['String'];
-}>;
-
-
-export type PrintTextLabelQuery = { __typename?: 'Query', printTextLabel?: boolean | null };
-
-export type UpdateAfterReceivingMutationVariables = Types.Exact<{
-  ITNList: Array<Types.InputMaybe<Types.ItnAndQuantity>> | Types.InputMaybe<Types.ItnAndQuantity>;
-  Inventory: Types.UpdateInventory;
-  info: Types.InventoryForMerp;
-  ReceiptLID: Types.Scalars['Int'];
-}>;
-
-
-export type UpdateAfterReceivingMutation = { __typename?: 'Mutation', updateAfterReceiving?: boolean | null, createInventoryFromOMS?: boolean | null };
-
-export type CheckBinLocationQueryVariables = Types.Exact<{
-  Barcode: Types.Scalars['String'];
+export type FindInventoryQueryVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
+  InventoryTrackingNumber: Types.Scalars['String'];
 }>;
 
 
-export type CheckBinLocationQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, Barcode: string } | null };
+export type FindInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, DateCode?: string | null, ParentITN?: string | null, RHOS?: boolean | null, OriginalQuantity?: number | null, BinLocation?: string | null, ProductID: number, ContainerID: number, CountryOfOrigin?: string | null, CountryID?: number | null, NotFound: boolean, Country?: { __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null, Container: { __typename?: 'Container', _id: number, Barcode: string, Zone?: number | null, DistributionCenter: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', _id: number, Name: string, IsMobile: boolean }, USERINFOs?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null }, Product: { __typename?: 'Product', _id: number, ProductCodeID: number, PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, OrderID: number, OrderLineID: number, StatusID: number, Quantity: number, LastUpdated?: string | null, BinLocation?: string | null, WMSPriority: number, Status: { __typename?: 'OrderStatus', _id: number, Name: string }, OrderLine: { __typename?: 'OrderLine', _id: number, OrderLineNumber: number, Quantity?: number | null }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, OrderStatusCode?: string | null, ShipmentMethodID?: string | null, OrderType?: string | null, isSelected: number, CustomerID?: number | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', _id: number, CustomerNumber: string, CustomerTier: string } | null } } | null> | null } | null };
 
-export const CheckReceiptHeaderDocument = gql`
-    query checkReceiptHeader($id: Int!) {
-  findReceiptH(ReceiptH: {_id: $id}) {
-    _id
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CheckReceiptHeaderGQL extends Apollo.Query<CheckReceiptHeaderQuery, CheckReceiptHeaderQueryVariables> {
-    document = CheckReceiptHeaderDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FindReceiptHeaderForReceivingDocument = gql`
-    query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
-  findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
-    RECEIPTLs {
-      _id
-      ExpectedQuantity
-      DateCode
-      RHOS
-      LineNumber
-      ProductID
-      CountryID
-      Country {
-        ISO3
-      }
-      Product {
-        PartNumber
-        ProductCode {
-          ProductCodeNumber
-        }
-      }
-      RECEIPTLDs {
-        PurchaseOrderL {
-          LineNumber
-          PurchaseOrderH {
-            PurchaseOrderNumber
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindReceiptHeaderForReceivingGQL extends Apollo.Query<FindReceiptHeaderForReceivingQuery, FindReceiptHeaderForReceivingQueryVariables> {
-    document = FindReceiptHeaderForReceivingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchProductInfoForReceivingDocument = gql`
-    query fetchProductInfoForReceiving($ProductCode: String!, $PartNumber: String!) {
-  fetchProductMICFromMerp(ProductCode: $ProductCode, PartNumber: $PartNumber)
-  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
-    comments
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchProductInfoForReceivingGQL extends Apollo.Query<FetchProductInfoForReceivingQuery, FetchProductInfoForReceivingQueryVariables> {
-    document = FetchProductInfoForReceivingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FindPartForReceivingDocument = gql`
-    query findPartForReceiving($PartNumber: String!) {
-  findProducts(Product: {PartNumber: $PartNumber}) {
-    _id
-    PartNumber
-    ProductCode {
-      ProductCodeNumber
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FindPartForReceivingGQL extends Apollo.Query<FindPartForReceivingQuery, FindPartForReceivingQueryVariables> {
-    document = FindPartForReceivingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const ReceivingUpdateReceiptLDocument = gql`
-    mutation ReceivingUpdateReceiptL($idList: [Int]!, $CountryID: Int!, $DateCode: String!, $RHOS: Boolean!) {
-  updateReceiptLsByID(
-    ReceiptL: {CountryID: $CountryID, DateCode: $DateCode, RHOS: $RHOS}
-    idList: $idList
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class ReceivingUpdateReceiptLGQL extends Apollo.Mutation<ReceivingUpdateReceiptLMutation, ReceivingUpdateReceiptLMutationVariables> {
-    document = ReceivingUpdateReceiptLDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const PrintReceivingLabelDocument = gql`
-    query printReceivingLabel($PRINTER: String!, $ITN: String!, $DPI: String!, $ORIENTATION: String!) {
-  printReceivingLabel(
-    PRINTER: $PRINTER
-    ITN: $ITN
-    DPI: $DPI
-    ORIENTATION: $ORIENTATION
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class PrintReceivingLabelGQL extends Apollo.Query<PrintReceivingLabelQuery, PrintReceivingLabelQueryVariables> {
-    document = PrintReceivingLabelDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const PrintTextLabelDocument = gql`
-    query printTextLabel($PRINTER: String!, $DPI: String!, $ORIENTATION: String!, $LINE1: String!, $LINE2: String!, $LINE3: String!, $LINE4: String!) {
-  printTextLabel(
-    PRINTER: $PRINTER
-    DPI: $DPI
-    ORIENTATION: $ORIENTATION
-    LINE1: $LINE1
-    LINE2: $LINE2
-    LINE3: $LINE3
-    LINE4: $LINE4
-  )
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class PrintTextLabelGQL extends Apollo.Query<PrintTextLabelQuery, PrintTextLabelQueryVariables> {
-    document = PrintTextLabelDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateAfterReceivingDocument = gql`
-    mutation updateAfterReceiving($ITNList: [ITNAndQuantity]!, $Inventory: updateInventory!, $info: InventoryForMerp!, $ReceiptLID: Int!) {
-  updateAfterReceiving(
-    ITNList: $ITNList
-    Inventory: $Inventory
-    ReceiptLID: $ReceiptLID
-  )
-  createInventoryFromOMS(ITNList: $ITNList, Inventory: $Inventory, info: $info)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateAfterReceivingGQL extends Apollo.Mutation<UpdateAfterReceivingMutation, UpdateAfterReceivingMutationVariables> {
-    document = UpdateAfterReceivingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const CheckBinLocationDocument = gql`
-    query checkBinLocation($Barcode: String!, $DistributionCenter: String!) {
-  findContainer(
-    Container: {DistributionCenter: $DistributionCenter, Barcode: $Barcode}
+export const FindInventoryDocument = gql`
+    query findInventory($DistributionCenter: String!, $InventoryTrackingNumber: String!) {
+  findInventory(
+    Inventory: {DistributionCenter: $DistributionCenter, InventoryTrackingNumber: $InventoryTrackingNumber}
   ) {
     _id
-    Barcode
+    DistributionCenter
+    InventoryTrackingNumber
+    QuantityOnHand
+    DateCode
+    ParentITN
+    RHOS
+    OriginalQuantity
+    BinLocation
+    ProductID
+    ContainerID
+    CountryOfOrigin
+    CountryID
+    NotFound
+    Country {
+      _id
+      CountryCode
+      CountryName
+      ISO2
+      ISO3
+    }
+    Container {
+      _id
+      Barcode
+      Zone
+      DistributionCenter
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+      ContainerTypeID
+      ContainerType {
+        _id
+        Name
+        IsMobile
+      }
+      USERINFOs {
+        _id
+        Name
+      }
+    }
+    Product {
+      _id
+      ProductCodeID
+      PartNumber
+      ProductTier
+      ProductCode {
+        _id
+        ProductCodeNumber
+      }
+    }
+    ORDERLINEDETAILs {
+      _id
+      OrderID
+      OrderLineID
+      StatusID
+      Quantity
+      LastUpdated
+      BinLocation
+      WMSPriority
+      Status {
+        _id
+        Name
+      }
+      OrderLine {
+        _id
+        OrderLineNumber
+        Quantity
+      }
+      Order {
+        _id
+        DistributionCenter
+        OrderNumber
+        NOSINumber
+        OrderStatusCode
+        ShipmentMethodID
+        OrderType
+        isSelected
+        CustomerID
+        ShipmentMethod {
+          _id
+          ShippingMethod
+          PriorityPinkPaper
+        }
+        Customer {
+          _id
+          CustomerNumber
+          CustomerTier
+        }
+      }
+    }
   }
 }
     `;
@@ -2647,8 +2478,8 @@ export const CheckBinLocationDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class CheckBinLocationGQL extends Apollo.Query<CheckBinLocationQuery, CheckBinLocationQueryVariables> {
-    document = CheckBinLocationDocument;
+  export class FindInventoryGQL extends Apollo.Query<FindInventoryQuery, FindInventoryQueryVariables> {
+    document = FindInventoryDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
