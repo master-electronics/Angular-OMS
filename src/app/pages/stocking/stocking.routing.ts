@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { SortLocationResolver } from './data/resolver/sort-location.resolver';
 import { SortingService } from './data/sorting';
 
 export const StockingRoutes: Routes = [
   {
     path: '',
-    providers: [SortingService],
+    providers: [SortingService, SortLocationResolver],
     loadComponent: () =>
       import('./shell.component').then((m) => m.StockingShell),
     children: [
@@ -23,9 +24,10 @@ export const StockingRoutes: Routes = [
       },
       {
         path: 'sorting/location',
+        resolve: { locations: SortLocationResolver },
         loadComponent: () =>
-          import('./feature/sorting/sort-location.component').then(
-            (m) => m.SortLocationComponent
+          import('./feature/sorting/location.component').then(
+            (m) => m.LocationComponent
           ),
       },
     ],

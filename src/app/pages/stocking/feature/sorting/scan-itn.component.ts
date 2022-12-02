@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
@@ -34,25 +29,24 @@ import { SortingService } from '../../data/sorting';
   `,
 })
 export class ScanITNComponent implements OnInit {
-  public data$;
-  public inputForm;
   constructor(
     private title: Title,
     private navbar: CommonService,
+    private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
     private _sort: SortingService
   ) {}
+
+  public data$;
+  public inputForm = this._fb.nonNullable.group({
+    itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
+  });
+
   ngOnInit(): void {
     this.title.setTitle('Sorting');
     this.navbar.changeNavbar('Sorting');
-    this.data$ = this._actRoute.queryParamMap;
-    this.inputForm = new FormGroup({
-      itn: new FormControl('', [
-        Validators.required,
-        Validators.pattern(ITNBarcodeRegex),
-      ]),
-    });
+    this.data$ = of(true);
   }
 
   onSubmit(): void {
@@ -62,7 +56,6 @@ export class ScanITNComponent implements OnInit {
       }),
       catchError((error) => {
         return of({
-          loading: false,
           error: { message: error.message, type: 'error' },
         });
       })

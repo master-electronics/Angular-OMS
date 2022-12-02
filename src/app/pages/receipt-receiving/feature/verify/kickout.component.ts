@@ -147,7 +147,6 @@ export class KickoutComponent implements OnInit {
       }),
       catchError((error) => {
         return of({
-          loading: false,
           error: { message: error.message, type: 'error' },
         });
       })

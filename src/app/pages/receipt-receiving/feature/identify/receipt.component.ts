@@ -77,7 +77,6 @@ export class ReceiptComponent implements OnInit {
         }),
         catchError((error) => {
           return of({
-            loading: false,
             error: { message: error.message, type: 'error' },
           });
         })

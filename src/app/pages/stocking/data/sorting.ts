@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, switchMap, tap } from 'rxjs';
-import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
+import { BehaviorSubject, elementAt, map, switchMap, tap } from 'rxjs';
+import {
+  FetchSuggetionLocationForSortingGQL,
+  UpdateInventoryAfterSortingGQL,
+  VerifyContainerForSortingGQL,
+  VerifyItnForSortingGQL,
+} from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -14,15 +19,14 @@ export interface SuggetionLocation {
 export interface SortingInfo {
   ITN: string;
   InventoryID: number;
-  productID: number;
-  productCode: string;
-  partNumber: string;
+  ProductID: number;
+  ProductCode: string;
+  PartNumber: string;
   QuantityOnHand: number;
-  remaining: number;
-  productType: string;
-  velocity: string;
-  zone: number;
-  suggetionLocationList: SuggetionLocation[];
+  Remaining: number;
+  ProductType: string;
+  Velocity: string;
+  Zone: number;
   OrderNumber: string;
   NOSINumber: string;
   OrderLineNumber: number;
@@ -31,14 +35,32 @@ export interface SortingInfo {
 export class SortingService {
   constructor(
     private _verifyITN: VerifyItnForSortingGQL,
-    private _insertLog: Insert_UserEventLogsGQL
+    private _insertLog: Insert_UserEventLogsGQL,
+    private _suggetLocation: FetchSuggetionLocationForSortingGQL,
+    private _verifyContainer: VerifyContainerForSortingGQL,
+    private _updateInventory: UpdateInventoryAfterSortingGQL
   ) {}
   //
   private _sortingInfo = new BehaviorSubject<SortingInfo>(null);
+  public get sortingInfo() {
+    return this._sortingInfo.value;
+  }
+  public get sortingInfo$() {
+    return this._sortingInfo.asObservable();
+  }
+
+  /**
+   *
+   * @param date Update sortingInfo
+   */
   public changeSortingInfo(date: SortingInfo): void {
     this._sortingInfo.next(date);
   }
-  //
+
+  /**
+   * @param ITN User input ITN
+   * @returns result of http request.
+   */
   public verifyITN$(ITN: string) {
     return this._verifyITN
       .fetch(
@@ -58,20 +80,19 @@ export class SortingService {
           const inventory = res.data.findInventory;
           this.changeSortingInfo({
             ITN,
-            productID: inventory.Product._id,
+            ProductID: inventory.Product._id,
             InventoryID: inventory._id,
-            productCode: inventory.Product.ProductCode.ProductCodeNumber,
-            partNumber: inventory.Product.PartNumber,
-            QuantityOnHand: inventory.QuantityOnHand ?? null,
-            remaining: null,
-            productType: null,
-            velocity: inventory.Product.DCPRODUCTs[0]?.Velocity ?? null,
-            zone: null,
-            suggetionLocationList: [],
+            ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
+            PartNumber: inventory.Product.PartNumber,
+            QuantityOnHand: inventory.QuantityOnHand,
+            Velocity: inventory.Product.DCPRODUCTs[0]?.Velocity,
             OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
             NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,
             OrderLineNumber:
               inventory.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+            Remaining: null,
+            ProductType: null,
+            Zone: null,
           });
           return this._insertLog.mutate({
             log: {
@@ -86,17 +107,50 @@ export class SortingService {
             },
           });
         })
-        // map(() => {
-        //   this.isLoading = false;
-        //   this._router.navigate(['/stocking/sorting/location']);
-        // }),
-        // catchError((error) => {
-        //   this.isLoading = false;
-        //   this.alertMessage = error;
-        //   this.alertType = 'error';
-        //   this.ITNInput.nativeElement.select();
-        //   return of(null);
-        // })
+      );
+  }
+
+  public suggestLocation$() {
+    return this._suggetLocation
+      .fetch({ ProductID: this.sortingInfo?.ProductID, limit: 5 })
+      .pipe(
+        map((res) => {
+          return res.data.findInventorys.map((inventory) => ({
+            Quantity: inventory.QuantityOnHand,
+            Zone: inventory.Container.Zone,
+            Bincode: inventory.Container.Barcode,
+          }));
+        })
+      );
+  }
+
+  public moveItn$(Barcode: string) {
+    return this._verifyContainer
+      .fetch(
+        { Barcode, DistributionCenter: environment.DistributionCenter },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          if (!res.data.findContainer._id) {
+            throw new Error('Container not found!');
+          }
+          if (!res.data.findContainer.ContainerType.IsMobile) {
+            throw new Error('This container is not a mobile container');
+          }
+        }),
+        switchMap((res) => {
+          return this._updateInventory.mutate({
+            InventoryID: this.sortingInfo.InventoryID,
+            ContainerID: res.data.findContainer._id,
+            log: {
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserEventID: sqlData.Event_Stocking_SortingDone,
+              InventoryTrackingNumber: this.sortingInfo.ITN,
+              Message: Barcode,
+            },
+          });
+        })
       );
   }
 }

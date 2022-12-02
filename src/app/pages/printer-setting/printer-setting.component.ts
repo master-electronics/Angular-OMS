@@ -29,7 +29,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
         inputType="number"
         controlName="printerID"
         title="Printer ID"
-        placeholder="Scan the Printer QR Code!"
+        placeholder="Scan the printer's barcode!"
       ></single-input-form>
     </div>
   `,
@@ -46,7 +46,7 @@ export class PrinterSettingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.data$ = of({ loading: false, error: null });
+    this.data$ = of(true);
   }
 
   onSubmit(): void {
@@ -60,7 +60,6 @@ export class PrinterSettingComponent implements OnInit {
         }),
         catchError((error) => {
           return of({
-            loading: false,
             error: { message: error.message, type: 'error' },
           });
         })

@@ -94,7 +94,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         </div>
         <!-- Button area -->
         <div
-          class="grid h-8 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-40"
+          class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-40"
         >
           <submit-button [disabled]="!isvalid"> </submit-button>
           <div></div>
@@ -109,14 +109,14 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       </div>
     </form>
     <ng-template #loading>
-      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }"></nz-skeleton>
+      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
     </ng-template>
   `,
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
   public vaild;
-  @Input() data = { loading: false, error: null };
+  @Input() data = { error: null };
   @Input() validator = { name: '', message: '' };
   @Input() controlName = 'input';
   @Input() inputType = 'text';
