@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { LabelService } from '../label';
+import { LabelService } from '../../data/label';
 
 @Injectable()
 export class PrintItnResolver implements Resolve<any> {

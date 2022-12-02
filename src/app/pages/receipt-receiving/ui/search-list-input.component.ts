@@ -79,9 +79,11 @@ export class SearchListInputComponent implements OnInit {
   @Input() controlName;
 
   @ViewChild('input') inputFiled!: ElementRef;
+
   ngAfterViewInit(): void {
-    this.inputFiled.nativeElement.focus();
+    this.inputFiled?.nativeElement.focus();
   }
+
   constructor(private controlContainer: ControlContainer) {}
 
   ngOnInit() {

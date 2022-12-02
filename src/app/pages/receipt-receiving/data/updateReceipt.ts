@@ -17,10 +17,21 @@ export class updateReceiptInfoService {
     private _update: ReceivingUpdateReceiptLGQL,
     private _receipt: ReceiptInfoService
   ) {}
+  /**
+   * Store info for update receipt
+   */
   private _receiptInfo = new BehaviorSubject<ReceiptInfo>(null);
   public get receiptInfo(): ReceiptInfo {
     return this._receiptInfo.value;
   }
+
+  /**
+   * reset
+   */
+  public reset() {
+    this._receiptInfo.next(null);
+  }
+
   /**
    * initReceiptInfo: After filter by Quantity. All lines are target receipt
    */
@@ -66,9 +77,5 @@ export class updateReceiptInfoService {
       CountryID: this.receiptInfo.CountryID,
       RHOS: this.receiptInfo.RHOS,
     });
-  }
-
-  public initValue() {
-    this._receiptInfo.next(null);
   }
 }

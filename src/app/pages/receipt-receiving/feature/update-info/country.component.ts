@@ -72,6 +72,7 @@ export class CountryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this._info.initReceiptInfo();
     this.countryList$ = this.inputForm.valueChanges.pipe(
       map((res) => res.country),
       debounceTime(300),
@@ -104,7 +105,6 @@ export class CountryComponent implements OnInit {
         );
       })
     );
-    this._info.initReceiptInfo();
     this._step.changeSteps(2);
   }
 

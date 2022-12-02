@@ -90,7 +90,6 @@ export class ScanLocationComponent implements OnInit {
         }),
         switchMap(() => this._label.updateAfterReceving()),
         tap(() => {
-          this._label.initValue();
           this._router.navigate(['receiptreceiving/part']);
         }),
         catchError((error) => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
-import { SortingService } from '../sorting';
+import { SortingService } from '../../data/sorting';
 
 @Injectable()
 export class SortLocationResolver implements Resolve<any> {

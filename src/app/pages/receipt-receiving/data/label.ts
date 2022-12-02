@@ -48,22 +48,20 @@ export class LabelService {
   public changeQuantityList(list: number[]) {
     this._quantityList.next(list);
   }
-  /**
-   * label and quantity assign list
-   */
+
   private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
-  /**
-   * get ITNList$
-   */
   public get ITNList$() {
     return this._ITNList.asObservable();
   }
-  /**
-   * get value
-   */
   public get ITNList(): ITNinfo[] {
     return this._ITNList.value;
   }
+
+  public reset(): void {
+    this._quantityList.next(null);
+    this._ITNList.next(null);
+  }
+
   /**
    * insertITNList push input itn to the list;
    */
@@ -190,10 +188,5 @@ export class LabelService {
       Inventory,
       info,
     });
-  }
-
-  public initValue() {
-    this._ITNList.next(null);
-    this._quantityList.next(null);
   }
 }

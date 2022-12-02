@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Resolve, Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { ReceiptInfoService } from '../ReceiptInfo';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Injectable()
-export class VerifyResolver implements Resolve<any> {
+export class PartResolver implements Resolve<any> {
   constructor(private _receipt: ReceiptInfoService) {}
   resolve() {
-    return this._receipt.findVerifyInfo().pipe(
+    return this._receipt.findLines$().pipe(
       catchError((error) => {
         return of({ error });
       })

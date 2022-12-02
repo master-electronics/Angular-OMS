@@ -7,12 +7,26 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
+import { LabelService } from '../data/label';
+import { ReceiptInfoService } from '../data/ReceiptInfo';
+import { updateReceiptInfoService } from '../data/updateReceipt';
 
 @Injectable()
 export class ReceiptGuard implements CanActivateChild {
   public routeAuthorized: boolean;
 
-  constructor(private router: Router) {}
+  constructor(
+    private _router: Router,
+    private _receipt: ReceiptInfoService,
+    private _info: updateReceiptInfoService,
+    private _label: LabelService
+  ) {}
+
+  public resetAfterFinished(): void {
+    this._label.reset();
+    this._info.reset();
+    this._receipt.resetAfterDone();
+  }
 
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
@@ -22,6 +36,49 @@ export class ReceiptGuard implements CanActivateChild {
     | UrlTree
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree> {
-    return true;
+    let isActive;
+    switch (state.url) {
+      case '/receiptreceiving/part':
+        this.resetAfterFinished();
+        isActive = this._receipt.headerID !== null;
+        break;
+      case '/receiptreceiving/part/verify':
+        isActive = this._receipt.lineAfterPart !== null;
+        break;
+      case '/receiptreceiving/part/quantity':
+        isActive = this._receipt.lineAfterPart !== null;
+        break;
+      case '/receiptreceiving/kickout':
+        isActive = this._receipt.lineAfterPart !== null;
+        break;
+      case '/receiptreceiving/update/country':
+        isActive = this._receipt.receiptLsAfterQuantity !== null;
+        break;
+      case '/receiptreceiving/update/datecode':
+        isActive = this._info.receiptInfo?.CountryID;
+        break;
+      case '/receiptreceiving/update/rhos':
+        isActive = this._info.receiptInfo?.DateCode;
+        break;
+      case '/receiptreceiving/label/selectline':
+        isActive = this._receipt.receiptLsAfterQuantity !== null;
+        break;
+      case '/receiptreceiving/label/assign':
+        isActive = this._receipt.selectedReceiptLine !== null;
+        break;
+      case '/receiptreceiving/label/printitn':
+        isActive = this._label.quantityList !== null;
+        break;
+      case '/receiptreceiving/label/sacnlocation':
+        isActive = this._label.ITNList !== null;
+        break;
+      default:
+        isActive = true;
+        break;
+    }
+    if (!isActive) {
+      this._router.navigate(['/receiptreceiving']);
+    }
+    return isActive;
   }
 }

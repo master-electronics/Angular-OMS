@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
-import { SortLocationResolver } from './data/resolver/sort-location.resolver';
 import { SortingService } from './data/sorting';
+import { SortLocationResolver } from './utils/resolver/sort-location.resolver';
+import { StockingGuard } from './utils/stocking.guard';
 
 export const StockingRoutes: Routes = [
   {
     path: '',
-    providers: [SortingService, SortLocationResolver],
+    providers: [SortingService, SortLocationResolver, StockingGuard],
+    canActivateChild: [StockingGuard],
     loadComponent: () =>
       import('./shell.component').then((m) => m.StockingShell),
     children: [

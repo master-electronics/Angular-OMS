@@ -23,10 +23,59 @@ export class ReceiptInfoService {
     private _checkHeader: CheckReceiptHeaderGQL
   ) {}
 
+  /**
+   * Store header id after verify
+   */
   private _headerID = new BehaviorSubject<number>(null);
   public get headerID(): number {
     return this._headerID.value;
   }
+  /**
+   * Find Receipt info by ID, and all lines under this header with status "Entered".
+   */
+  private _receiptLines = new BehaviorSubject<any>(null);
+  public get receiptLines() {
+    return this._receiptLines.value;
+  }
+
+  /**
+   * First Filter for Receipt by part number
+   */
+  private _lineAfterPart = new BehaviorSubject<any>(null);
+  public get lineAfterPart$(): Observable<any> {
+    return this._lineAfterPart.asObservable();
+  }
+  public get lineAfterPart() {
+    return this._lineAfterPart.getValue();
+  }
+  /**
+   * Second Filter for Receipt lines by quantity
+   */
+  private _receiptLsAfterQuantity = new BehaviorSubject<any>(null);
+  public get receiptLsAfterQuantity$(): Observable<any> {
+    return this._receiptLsAfterQuantity.asObservable();
+  }
+  public get receiptLsAfterQuantity(): any {
+    return this._receiptLsAfterQuantity.value;
+  }
+  /**
+   * After two filter, still have multi lines, let user select one line.
+   */
+  private _selectedReceiptLine = new BehaviorSubject<any>(null);
+  public get selectedReceiptLine() {
+    return this._selectedReceiptLine.value;
+  }
+
+  /**
+   * resetAfterDone
+   */
+  public resetAfterDone() {
+    this._receiptLines.next(null);
+    this._lineAfterPart.next(null);
+    this._receiptLsAfterQuantity.next(null);
+    this._selectedReceiptLine.next(null);
+  }
+
   public checkReceiptHeader(id: number): Observable<boolean> {
     return this._checkHeader.fetch({ id }).pipe(
       tap((res) => {
@@ -42,13 +91,6 @@ export class ReceiptInfoService {
     );
   }
 
-  /**
-   * Find Receipt info by ID, and all lines under this header with status "Entered".
-   */
-  private _receiptLines = new BehaviorSubject<any>(null);
-  public get receiptLines() {
-    return this._receiptLines.value;
-  }
   public findLines$(): Observable<boolean> {
     return this._findReceiptH$
       .fetch(
@@ -78,17 +120,6 @@ export class ReceiptInfoService {
         }),
         shareReplay(1)
       );
-  }
-
-  /**
-   * First Filter for Receipt by part number
-   */
-  private _lineAfterPart = new BehaviorSubject<any>(null);
-  public get lineAfterPart$(): Observable<any> {
-    return this._lineAfterPart.asObservable();
-  }
-  public get lineAfterPart() {
-    return this._lineAfterPart.getValue();
   }
 
   public filterbyPartNumber(PartNumber: string): void {
@@ -129,22 +160,6 @@ export class ReceiptInfoService {
   }
 
   /**
-   * Second Filter for Receipt lines by quantity
-   */
-  private _receiptLsAfterQuantity = new BehaviorSubject<any>(null);
-  /**
-   * get receiptLsAfterQuantity$
- : Observable<any>  */
-  public get receiptLsAfterQuantity$(): Observable<any> {
-    return this._receiptLsAfterQuantity.asObservable();
-  }
-  /**
-   * get receiptLsAfterQuantity
-   */
-  public get receiptLsAfterQuantity(): any {
-    return this._receiptLsAfterQuantity.value;
-  }
-  /**
    * filterByQuantity
    */
   public filterByQuantity(Quantity: number): void {
@@ -152,17 +167,6 @@ export class ReceiptInfoService {
       (res) => res.ExpectedQuantity === Quantity
     );
     this._receiptLsAfterQuantity.next(tmp);
-  }
-
-  /**
-   * After two filter, still have multi lines, let user select one line.
-   */
-  private _selectedReceiptLine = new BehaviorSubject<any>(null);
-  /**
-   * get selectedReceiptLine
-   */
-  public get selectedReceiptLine() {
-    return this._selectedReceiptLine.value;
   }
 
   /**

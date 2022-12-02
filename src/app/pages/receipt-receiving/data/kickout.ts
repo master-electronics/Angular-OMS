@@ -35,10 +35,6 @@ export class KickoutService {
   private _kickout = new BehaviorSubject<Kickout>({
     receiptLineIDs: this._receipt.lineAfterPart?.map((res) => res._id),
   });
-
-  /**
-   * get kickout value
-   */
   public get kickout(): Kickout {
     return this._kickout.getValue();
   }
