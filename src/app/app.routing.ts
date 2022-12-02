@@ -153,6 +153,14 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'itn_info',
+        canActivate: [LoginGuard, RouterGuard],
+        loadChildren: () =>
+          import('./pages/itn_info/itn_info.routing').then(
+            (m) => m.ITNInfoRoutes
+          ),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
