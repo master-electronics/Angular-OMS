@@ -299,7 +299,7 @@ interface IITN {
                   </li>
                 </ul>
               </li>
-              <li *ngIf="itn.ORDERLINEDETAILs">
+              <li *ngIf="itn.ORDERLINEDETAILs.length > 0">
                 Order Lines:
                 <ul
                   *ngFor="let order of itn.ORDERLINEDETAILs"
