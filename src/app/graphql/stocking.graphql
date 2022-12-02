@@ -21,16 +21,6 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
       }
       PartNumber
     }
-    ORDERLINEDETAILs {
-      _id
-      Order {
-        OrderNumber
-        NOSINumber
-      }
-      OrderLine {
-        OrderLineNumber
-      }
-    }
   }
 }
 

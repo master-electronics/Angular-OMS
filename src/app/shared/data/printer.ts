@@ -8,6 +8,10 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import {
+  PrintReceivingLabelGQL,
+  PrintTextLabelGQL,
+} from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { FindBindedPrinterGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 export interface PrinterInfo {
@@ -21,7 +25,11 @@ export interface PrinterInfo {
   providedIn: 'root',
 })
 export class PrinterService {
-  constructor(private _find: FindBindedPrinterGQL) {
+  constructor(
+    private _find: FindBindedPrinterGQL,
+    private _itn: PrintReceivingLabelGQL,
+    private _text: PrintTextLabelGQL
+  ) {
     //
   }
   private _printer = new BehaviorSubject<PrinterInfo>(null);
@@ -82,6 +90,41 @@ export class PrinterService {
       tap((printer) => {
         this._printer.next(printer);
         localStorage.setItem('printerID', printerID.toString());
+      })
+    );
+  }
+
+  public printITN$(ITN: string) {
+    return this.printer$.pipe(
+      switchMap((printer) => {
+        return this._itn.fetch(
+          {
+            ITN,
+            PRINTER: printer.Name,
+            DPI: String(printer.DPI),
+            ORIENTATION: printer.Orientation,
+          },
+          { fetchPolicy: 'network-only' }
+        );
+      })
+    );
+  }
+
+  public printText$(list: string[]) {
+    return this.printer$.pipe(
+      switchMap((printer) => {
+        return this._text.fetch(
+          {
+            PRINTER: printer.Name,
+            DPI: String(printer.DPI),
+            ORIENTATION: printer.Orientation,
+            LINE1: list[0],
+            LINE2: list[1],
+            LINE3: list[2],
+            LINE4: list[3],
+          },
+          { fetchPolicy: 'network-only' }
+        );
       })
     );
   }

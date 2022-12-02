@@ -26,10 +26,6 @@ export interface SortingInfo {
   Remaining: number;
   ProductType: string;
   Velocity: string;
-  Zone: number;
-  OrderNumber: string;
-  NOSINumber: string;
-  OrderLineNumber: number;
 }
 @Injectable()
 export class SortingService {
@@ -86,23 +82,17 @@ export class SortingService {
             PartNumber: inventory.Product.PartNumber,
             QuantityOnHand: inventory.QuantityOnHand,
             Velocity: inventory.Product.DCPRODUCTs[0]?.Velocity,
-            OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
-            NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,
-            OrderLineNumber:
-              inventory.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
             Remaining: null,
             ProductType: null,
-            Zone: null,
           });
           return this._insertLog.mutate({
             log: {
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_SortingStart,
-              OrderNumber: inventory.ORDERLINEDETAILs[0].Order.OrderNumber,
-              NOSINumber: inventory.ORDERLINEDETAILs[0].Order.NOSINumber,
-              OrderLineNumber:
-                inventory.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
               InventoryTrackingNumber: ITN,
+              PartNumber: this.sortingInfo.PartNumber,
+              ProductCode: this.sortingInfo.ProductCode,
+              Quantity: this.sortingInfo.QuantityOnHand,
               Message: ``,
             },
           });
@@ -146,6 +136,9 @@ export class SortingService {
             log: {
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_SortingDone,
+              ProductCode: this.sortingInfo.ProductCode,
+              PartNumber: this.sortingInfo.PartNumber,
+              Quantity: this.sortingInfo.QuantityOnHand,
               InventoryTrackingNumber: this.sortingInfo.ITN,
               Message: Barcode,
             },

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { KickoutService } from './data/kickout';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
 import { ReceivingService } from './data/receivingService';
@@ -18,7 +17,6 @@ export const ReceivingRoutes: Routes = [
       PrintItnResolver,
       ReceivingService,
       ReceiptInfoService,
-      KickoutService,
       updateReceiptInfoService,
       LabelService,
       ReceiptGuard,

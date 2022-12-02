@@ -2243,12 +2243,6 @@ export type VerifyItnForSortingQuery = {
         Velocity?: string | null;
       } | null> | null;
     };
-    ORDERLINEDETAILs?: Array<{
-      __typename?: 'OrderLineDetail';
-      _id: number;
-      Order: { __typename?: 'Order'; OrderNumber: string; NOSINumber: string };
-      OrderLine: { __typename?: 'OrderLine'; OrderLineNumber: number };
-    } | null> | null;
   } | null;
 };
 
@@ -2424,16 +2418,6 @@ export const VerifyItnForSortingDocument = gql`
           Velocity
         }
         PartNumber
-      }
-      ORDERLINEDETAILs {
-        _id
-        Order {
-          OrderNumber
-          NOSINumber
-        }
-        OrderLine {
-          OrderLineNumber
-        }
       }
     }
   }
