@@ -145,6 +145,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'itn_info',
+        loadComponent: () =>
+          import('./pages/itn_info/feature/itn_info.component').then(
+            (m) => m.INTInfoComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',

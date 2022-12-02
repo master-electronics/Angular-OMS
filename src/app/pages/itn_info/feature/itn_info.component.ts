@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, map } from 'rxjs';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 import {
   FormsModule,
@@ -362,7 +364,7 @@ interface IITN {
     </div>
   `,
 })
-export class INTInfoComponent {
+export class INTInfoComponent implements OnInit {
   public itnData$: Observable<any>;
   itn: IITN;
   isLoading = false;
@@ -371,13 +373,20 @@ export class INTInfoComponent {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private _findInventory: FindInventoryGQL
+    private _findInventory: FindInventoryGQL,
+    private commonService: CommonService,
+    private _title: Title
   ) {}
 
   @ViewChild('ITN') ITNInput!: ElementRef;
   ITNForm = this.fb.group({
     ITN: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
+
+  ngOnInit(): void {
+    this.commonService.changeNavbar('ITN Info');
+    this._title.setTitle('ITN Info');
+  }
 
   onSubmit(): void {
     this.itnData$ = this._findInventory
