@@ -3,9 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
-import { TableViewComponent } from '../../../../shared/ui/table-view.component';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 
 interface DataItem {
   PurchaseOrder: string;
@@ -16,32 +15,21 @@ interface DataItem {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, TableViewComponent, NzRadioModule, NzButtonModule],
+  imports: [CommonModule, GreenButtonComponent, NormalButtonComponent],
   template: `
-    <div class="grid-col-1 grid justify-center gap-12">
-      <h1 class="text-lg">Select One Receipt Line:</h1>
-      <nz-radio-group nzSize="large">
-        <div
-          *ngFor="let option of data"
-          class="mb-4 grid grid-cols-2 justify-center gap-5"
+    <p class="text-4xl">Select One Receipt Line:</p>
+    <div class="grid w-full grid-cols-3 gap-12 text-4xl md:mt-6">
+      <div *ngFor="let option of data">
+        <green-button
+          (buttonClick)="onClick(option)"
+          [buttonText]="option.content"
         >
-          <label
-            nz-radio-button
-            [nzValue]="option.id"
-            (click)="onClick(option)"
-            >{{ option.content }}</label
-          >
-        </div>
-      </nz-radio-group>
-      <button
-        class="w-32"
-        nz-button
-        nzSize="large"
-        type="button"
-        (click)="onBack()"
-      >
-        Back
-      </button>
+        </green-button>
+      </div>
+      <normal-button
+        class="col-start-1 h-32"
+        (buttonClick)="onBack()"
+      ></normal-button>
     </div>
   `,
 })

@@ -19,6 +19,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
+import { AutoFocusDirective } from '../../directives/auto-focus.directive';
 
 @Component({
   standalone: true,
@@ -31,6 +32,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     SubmitButtonComponent,
     MessageBarComponent,
     NzIconModule,
+    AutoFocusDirective,
   ],
 
   selector: 'single-input-form',
@@ -50,6 +52,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           </label>
           <div class="relative grow">
             <input
+              autofocus
               [formControlName]="controlName"
               oninput="this.value = this.value.toUpperCase()"
               [ngClass]="
@@ -130,7 +133,7 @@ export class SingleInputformComponent implements OnInit {
 
   @ViewChild('input') inputFiled!: ElementRef;
   ngAfterViewInit(): void {
-    this.inputFiled.nativeElement.focus();
+    this.inputFiled?.nativeElement.focus();
   }
 
   clean() {

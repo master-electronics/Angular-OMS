@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { LabelService } from '../label';
+import { SortingService } from '../../data/sorting';
 
 @Injectable()
-export class PrintItnResolver implements Resolve<any> {
-  constructor(private _label: LabelService) {}
+export class SortLocationResolver implements Resolve<any> {
+  constructor(private _sort: SortingService) {}
   resolve() {
-    return this._label.printReceivingLabel$().pipe(
+    return this._sort.suggestLocation$().pipe(
       catchError((error) => {
         return of({ error });
       })

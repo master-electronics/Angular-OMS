@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
-import { PrinterService } from 'src/app/shared/data/printerInfo';
+import { PrinterService } from 'src/app/shared/data/printer';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 
 @Component({

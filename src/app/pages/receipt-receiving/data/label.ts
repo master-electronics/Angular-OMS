@@ -10,11 +10,10 @@ import {
 } from 'rxjs';
 import {
   CheckBinLocationGQL,
-  PrintReceivingLabelGQL,
   UpdateAfterReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { PrinterService } from 'src/app/shared/data/printerInfo';
+import { PrinterService } from 'src/app/shared/data/printer';
 import { environment } from 'src/environments/environment';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
@@ -31,11 +30,10 @@ export class LabelService {
   constructor(
     private _receipt: ReceiptInfoService,
     private _partInfo: updateReceiptInfoService,
-    private _print: PrintReceivingLabelGQL,
     private _container: CheckBinLocationGQL,
     private _itn: CreateItnGQL,
     private _update: UpdateAfterReceivingGQL,
-    private _findPrinter: PrinterService
+    private _printer: PrinterService
   ) {}
 
   /**
@@ -48,22 +46,20 @@ export class LabelService {
   public changeQuantityList(list: number[]) {
     this._quantityList.next(list);
   }
-  /**
-   * label and quantity assign list
-   */
+
   private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
-  /**
-   * get ITNList$
-   */
   public get ITNList$() {
     return this._ITNList.asObservable();
   }
-  /**
-   * get value
-   */
   public get ITNList(): ITNinfo[] {
     return this._ITNList.value;
   }
+
+  public reset(): void {
+    this._quantityList.next(null);
+    this._ITNList.next(null);
+  }
+
   /**
    * insertITNList push input itn to the list;
    */
@@ -109,23 +105,8 @@ export class LabelService {
           });
           console.log(res.data.createITN);
         }),
-        switchMap((res) =>
-          this._findPrinter.printer$.pipe(
-            switchMap((printer) => {
-              return this._print.fetch(
-                {
-                  PRINTER: printer.Name,
-                  ITN: res.data.createITN,
-                  DPI: String(printer.DPI),
-                  ORIENTATION: printer.Orientation,
-                },
-                { fetchPolicy: 'network-only' }
-              );
-            }),
-            // Add waiting time after print label
-            delay(5000)
-          )
-        ),
+        switchMap((res) => this._printer.printITN$(res.data.createITN)),
+        delay(5000),
         shareReplay(1)
       );
   }
@@ -190,10 +171,5 @@ export class LabelService {
       Inventory,
       info,
     });
-  }
-
-  public initValue() {
-    this._ITNList.next(null);
-    this._quantityList.next(null);
   }
 }

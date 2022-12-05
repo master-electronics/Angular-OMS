@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -9,13 +8,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { asapScheduler } from 'rxjs';
-import { NormalButtonComponent } from '../button/normal-button.component';
-import { SubmitButtonComponent } from '../button/submit-button.component';
 
 @Component({
   selector: 'popup-modal',
   standalone: true,
-  imports: [CommonModule, SubmitButtonComponent, NormalButtonComponent],
+  imports: [CommonModule],
   template: `
     <div
       id="popup-modal"

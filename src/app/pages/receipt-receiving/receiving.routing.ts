@@ -1,13 +1,12 @@
 import { Routes } from '@angular/router';
-import { PartResolver } from './data/resolver/part.resolver';
-import { KickoutService } from './data/kickout';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
 import { ReceivingService } from './data/receivingService';
 import { updateReceiptInfoService } from './data/updateReceipt';
-import { VerifyResolver } from './data/resolver/verify.resolver';
-import { PrintItnResolver } from './data/resolver/printItn.resolver';
 import { ReceiptGuard } from './utils/receipt.guard';
+import { VerifyResolver } from './utils/resolver/verify.resolver';
+import { PrintItnResolver } from './utils/resolver/printItn.resolver';
+import { PartResolver } from './utils/resolver/part.resolver';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -18,7 +17,6 @@ export const ReceivingRoutes: Routes = [
       PrintItnResolver,
       ReceivingService,
       ReceiptInfoService,
-      KickoutService,
       updateReceiptInfoService,
       LabelService,
       ReceiptGuard,
