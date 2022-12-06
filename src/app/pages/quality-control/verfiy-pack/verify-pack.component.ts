@@ -210,7 +210,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Inventory: {
         RHOS: this.itemInfo.RHOS,
-        CountryOfOrigin: this.itemInfo.CountryISO2,
+        // CountryOfOrigin: this.itemInfo.CountryISO2,
         DateCode: this.itemInfo.DateCode,
       },
     });

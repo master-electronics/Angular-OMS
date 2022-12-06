@@ -310,7 +310,6 @@ export type Inventory = {
   ContainerID: Scalars['Int'];
   Country?: Maybe<Country>;
   CountryID?: Maybe<Scalars['Int']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -390,7 +389,6 @@ export type Mutation = {
   deleteVendorFromMerp?: Maybe<Scalars['Boolean']>;
   findOrCreateOrder: Order;
   findOrCreateOrderLine: OrderLine;
-  findOrCreateOrderLineDetail?: Maybe<OrderLineDetail>;
   findOrCreateProduct: Product;
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
@@ -591,10 +589,6 @@ export type MutationFindOrCreateOrderArgs = {
 
 export type MutationFindOrCreateOrderLineArgs = {
   OrderLine: InsertOrderLine;
-};
-
-export type MutationFindOrCreateOrderLineDetailArgs = {
-  OrderLineDetail: InsertOrderLineDetail;
 };
 
 export type MutationFindOrCreateProductArgs = {
@@ -1658,6 +1652,7 @@ export type UserEventLog = {
   UserEvent: UserEvent;
   UserEventID: Scalars['Int'];
   UserName: Scalars['String'];
+  VendorName?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
   _id: Scalars['Int'];
@@ -1836,7 +1831,6 @@ export type InsertUserEventLog = {
   CustomerNumber?: InputMaybe<Scalars['String']>;
   CustomerTier?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
-  InternalTrackingNumber?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   NOSINumber?: InputMaybe<Scalars['String']>;
@@ -1857,6 +1851,7 @@ export type InsertUserEventLog = {
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID: Scalars['Int'];
   UserName: Scalars['String'];
+  VendorName?: InputMaybe<Scalars['String']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
 };
@@ -2079,6 +2074,7 @@ export type SearchUserEventLog = {
   TrackingNumber?: InputMaybe<Scalars['String']>;
   UserEventID?: InputMaybe<Scalars['Int']>;
   UserName?: InputMaybe<Scalars['String']>;
+  VendorName?: InputMaybe<Scalars['String']>;
   WMSPriority?: InputMaybe<Scalars['Int']>;
   Zone?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
@@ -2133,7 +2129,6 @@ export type UpdateInventory = {
   BinLocation?: InputMaybe<Scalars['String']>;
   ContainerID?: InputMaybe<Scalars['Int']>;
   CountryID?: InputMaybe<Scalars['Int']>;
-  CountryOfOrigin?: InputMaybe<Scalars['String']>;
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;

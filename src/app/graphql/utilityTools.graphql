@@ -18,8 +18,8 @@ query fetchCountryList {
   }
 }
 
-query findBindedPrinter($printerID: Int!) {
-  findPrinters(Printer: { _id: $printerID }) {
+query findBindedPrinter($Name: String!) {
+  findPrinters(Printer: { Name: $Name }) {
     Name
     Orientation
     DPI

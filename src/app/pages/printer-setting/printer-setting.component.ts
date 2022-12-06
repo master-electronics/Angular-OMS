@@ -26,9 +26,8 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
         (formBack)="onBack()"
         [data]="data$ | async"
         [formGroup]="inputForm"
-        inputType="number"
-        controlName="printerID"
-        title="Printer ID"
+        controlName="printerName"
+        title="Printer"
         placeholder="Scan the printer's barcode!"
       ></single-input-form>
     </div>
@@ -37,7 +36,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
 export class PrinterSettingComponent implements OnInit {
   public data$;
   public inputForm: FormGroup = new FormGroup({
-    printerID: new FormControl(null, [Validators.required]),
+    printerName: new FormControl(null, [Validators.required]),
   });
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +50,7 @@ export class PrinterSettingComponent implements OnInit {
 
   onSubmit(): void {
     this.data$ = this.printer
-      .setPrinter$(Number(this.inputForm.value.printerID))
+      .setPrinter$(this.inputForm.value.printerName)
       .pipe(
         tap((res) => {
           const returnUrl =

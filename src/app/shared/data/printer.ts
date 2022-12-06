@@ -38,14 +38,14 @@ export class PrinterService {
     if (this._printer.value) {
       return this._printer.asObservable();
     }
-    return of(localStorage.getItem('printerID')).pipe(
+    return of(localStorage.getItem('printerName')).pipe(
       tap((res) => {
         if (!res) {
           throw new Error('Printer is not set!');
         }
       }),
       switchMap((res) => {
-        return this._find.fetch({ printerID: Number(res) });
+        return this._find.fetch({ Name: res });
       }),
       tap((info) => {
         if (!info.data.findPrinters.length) {
@@ -68,13 +68,13 @@ export class PrinterService {
     );
   }
 
-  public setPrinter$(printerID: number): Observable<PrinterInfo> {
+  public setPrinter$(printerName: string): Observable<PrinterInfo> {
     this._printer.next(null);
-    localStorage.removeItem('printerID');
-    return this._find.fetch({ printerID: printerID }).pipe(
+    localStorage.removeItem('printerName');
+    return this._find.fetch({ Name: printerName }).pipe(
       tap((info) => {
         if (!info.data.findPrinters.length) {
-          localStorage.removeItem('printerID');
+          localStorage.removeItem('printerName');
           throw new Error("Can't find this printer, Contact the help desk!");
         }
       }),
@@ -89,7 +89,7 @@ export class PrinterService {
       }),
       tap((printer) => {
         this._printer.next(printer);
-        localStorage.setItem('printerID', printerID.toString());
+        localStorage.setItem('printerName', printer.Name);
       })
     );
   }

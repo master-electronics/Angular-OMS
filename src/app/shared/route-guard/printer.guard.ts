@@ -18,10 +18,10 @@ export class PrinterGuard implements CanActivate {
     _route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (localStorage.getItem('printerID')) {
+    if (localStorage.getItem('printerName')) {
       return true;
     }
-    // printerID have not set, then redirect to setting page
+    // printerName have not set, then redirect to setting page
     this.router.navigate(['/printersetting'], {
       queryParams: { returnUrl: state.url },
     });

@@ -1,105 +1,104 @@
 query findInventory(
-    $DistributionCenter: String!
-    $InventoryTrackingNumber: String!
+  $DistributionCenter: String!
+  $InventoryTrackingNumber: String!
 ) {
-    findInventory(
-        Inventory: {
-            DistributionCenter: $DistributionCenter
-            InventoryTrackingNumber: $InventoryTrackingNumber
-        }
-    ) {
+  findInventory(
+    Inventory: {
+      DistributionCenter: $DistributionCenter
+      InventoryTrackingNumber: $InventoryTrackingNumber
+    }
+  ) {
+    _id
+    DistributionCenter
+    InventoryTrackingNumber
+    QuantityOnHand
+    DateCode
+    ParentITN
+    RHOS
+    OriginalQuantity
+    BinLocation
+    ProductID
+    ContainerID
+    CountryID
+    NotFound
+    Country {
+      _id
+      CountryCode
+      CountryName
+      ISO2
+      ISO3
+    }
+    Container {
+      _id
+      Barcode
+      Zone
+      DistributionCenter
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+      ContainerTypeID
+      ContainerType {
+        _id
+        Name
+        IsMobile
+      }
+      USERINFOs {
+        _id
+        Name
+      }
+    }
+    Product {
+      _id
+      ProductCodeID
+      PartNumber
+      ProductTier
+      ProductCode {
+        _id
+        ProductCodeNumber
+      }
+    }
+    ORDERLINEDETAILs {
+      _id
+      OrderID
+      OrderLineID
+      StatusID
+      Quantity
+      LastUpdated
+      BinLocation
+      WMSPriority
+      Status {
+        _id
+        Name
+      }
+      OrderLine {
+        _id
+        OrderLineNumber
+        Quantity
+      }
+      Order {
         _id
         DistributionCenter
-        InventoryTrackingNumber
-        QuantityOnHand
-        DateCode
-        ParentITN
-        RHOS
-        OriginalQuantity
-        BinLocation
-        ProductID
-        ContainerID
-        CountryOfOrigin
-        CountryID
-        NotFound
-        Country {
-            _id
-            CountryCode
-            CountryName
-            ISO2
-            ISO3
+        OrderNumber
+        NOSINumber
+        OrderStatusCode
+        ShipmentMethodID
+        OrderType
+        isSelected
+        CustomerID
+        ShipmentMethod {
+          _id
+          ShippingMethod
+          PriorityPinkPaper
         }
-        Container {
-            _id
-            Barcode
-            Zone
-            DistributionCenter
-            Warehouse
-            Row
-            Aisle
-            Section
-            Shelf
-            ShelfDetail
-            ContainerTypeID
-            ContainerType {
-                _id
-                Name
-                IsMobile
-            }
-            USERINFOs {
-                _id
-                Name
-            }
+        Customer {
+          _id
+          CustomerNumber
+          CustomerTier
         }
-        Product {
-            _id
-            ProductCodeID
-            PartNumber
-            ProductTier
-            ProductCode {
-                _id
-                ProductCodeNumber
-            }
-        }
-        ORDERLINEDETAILs {
-            _id
-            OrderID
-            OrderLineID
-            StatusID
-            Quantity
-            LastUpdated
-            BinLocation
-            WMSPriority
-            Status {
-                _id
-                Name
-            }
-            OrderLine {
-                _id
-                OrderLineNumber
-                Quantity
-            }
-            Order {
-                _id
-                DistributionCenter
-                OrderNumber
-                NOSINumber
-                OrderStatusCode
-                ShipmentMethodID
-                OrderType
-                isSelected
-                CustomerID
-                ShipmentMethod {
-                    _id
-                    ShippingMethod
-                    PriorityPinkPaper
-                }
-                Customer {
-                    _id
-                    CustomerNumber
-                    CustomerTier
-                }
-            }
-        }
+      }
     }
+  }
 }

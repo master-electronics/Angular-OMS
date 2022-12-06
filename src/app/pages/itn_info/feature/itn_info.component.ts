@@ -416,9 +416,6 @@ export class INTInfoComponent implements OnInit {
           tempITN.BinLocation = itn.BinLocation ? itn.BinLocation.trim() : null;
           tempITN.ProductID = itn.ProductID;
           tempITN.ContainerID = itn.ContainerID;
-          tempITN.CountryOfOrigin = itn.CountryOfOrigin
-            ? itn.CountryOfOrigin.trim()
-            : null;
           tempITN.CountryID = itn.CountryID ? itn.CountryID : null;
           tempITN.NotFound = itn.NotFound ? itn.NotFound : null;
 
