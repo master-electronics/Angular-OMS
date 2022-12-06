@@ -83,10 +83,10 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'update/rhos',
+        path: 'update/ROHS',
         loadComponent: () =>
-          import('./feature/update-info/rhos.component').then(
-            (m) => m.RHOSComponent
+          import('./feature/update-info/rohs.component').then(
+            (m) => m.ROHSComponent
           ),
       },
       {

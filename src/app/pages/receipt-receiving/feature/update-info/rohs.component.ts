@@ -21,7 +21,7 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
   ],
   template: `
     <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
-      <h1 class="text-4xl">RHOS:</h1>
+      <h1 class="text-4xl">ROHS:</h1>
       <div
         class="grid h-64 grid-cols-2 justify-center gap-4 text-4xl md:gap-10 lg:gap-16"
       >
@@ -42,7 +42,7 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
     </div>
   `,
 })
-export class RHOSComponent implements OnInit {
+export class ROHSComponent implements OnInit {
   public update$: Observable<any>;
 
   constructor(
@@ -56,8 +56,8 @@ export class RHOSComponent implements OnInit {
     this._steps.changeSteps(2);
   }
 
-  public onUpdate(RHOS: boolean): void {
-    this._update.updateRHOS(RHOS);
+  public onUpdate(ROHS: boolean): void {
+    this._update.updateROHS(ROHS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
       tap((res) => {
         if (!res.update.data.updateReceiptLsByID) {

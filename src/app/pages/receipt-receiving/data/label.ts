@@ -170,7 +170,7 @@ export class LabelService {
       DistributionCenter: environment.DistributionCenter,
       ProductID: line.ProductID,
       DateCode: this._partInfo.receiptInfo.DateCode,
-      RHOS: this._partInfo.receiptInfo.RHOS,
+      ROHS: this._partInfo.receiptInfo.ROHS,
       CountryID: this._partInfo.receiptInfo.CountryID,
     };
     const info = {

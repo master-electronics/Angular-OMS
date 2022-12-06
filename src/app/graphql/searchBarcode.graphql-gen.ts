@@ -320,7 +320,7 @@ export type Inventory = {
   Product: Product;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -450,7 +450,7 @@ export type MutationChangeQcLineInfoArgs = {
   CountryOfOrigin: Scalars['String'];
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
-  RHOS: Scalars['String'];
+  ROHS: Scalars['String'];
 };
 
 export type MutationCleanContainerFromPrevOrderArgs = {
@@ -654,7 +654,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -738,7 +738,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
@@ -891,7 +891,7 @@ export type MutationUpdateReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptLID: Scalars['Int'];
 };
 
@@ -1538,7 +1538,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -1768,7 +1768,7 @@ export type InsertInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type InsertOrder = {
@@ -1938,7 +1938,7 @@ export type SearchInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2020,7 +2020,7 @@ export type SearchReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
@@ -2137,7 +2137,7 @@ export type UpdateInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOrder = {
@@ -2197,7 +2197,7 @@ export type UpdateReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
 };
 

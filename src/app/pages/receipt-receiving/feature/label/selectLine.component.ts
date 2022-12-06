@@ -58,6 +58,6 @@ export class SelectLineComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/update/rhos');
+    this._router.navigateByUrl('receiptreceiving/update/ROHS');
   }
 }

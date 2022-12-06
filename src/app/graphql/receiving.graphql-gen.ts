@@ -320,7 +320,7 @@ export type Inventory = {
   Product: Product;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -450,7 +450,7 @@ export type MutationChangeQcLineInfoArgs = {
   CountryOfOrigin: Scalars['String'];
   DateCode: Scalars['String'];
   InternalTrackingNumber: Scalars['String'];
-  RHOS: Scalars['String'];
+  ROHS: Scalars['String'];
 };
 
 export type MutationCleanContainerFromPrevOrderArgs = {
@@ -654,7 +654,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -738,7 +738,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
@@ -891,7 +891,7 @@ export type MutationUpdateReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptLID: Scalars['Int'];
 };
 
@@ -1538,7 +1538,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -1768,7 +1768,7 @@ export type InsertInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type InsertOrder = {
@@ -1938,7 +1938,7 @@ export type SearchInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2020,7 +2020,7 @@ export type SearchReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
@@ -2137,7 +2137,7 @@ export type UpdateInventory = {
   ParentITN?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOrder = {
@@ -2197,7 +2197,7 @@ export type UpdateReceiptL = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
   ProductID?: InputMaybe<Scalars['Int']>;
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2331,7 +2331,7 @@ export type FetchReceiptLinesQuery = {
     ExpectedQuantity: number;
     DateCode?: string | null;
     CountryID?: number | null;
-    RHOS?: boolean | null;
+    ROHS?: boolean | null;
     LineNumber: number;
     RECEIPTLDs?: Array<{
       __typename?: 'ReceiptLD';
@@ -2357,7 +2357,7 @@ export type FindReceiptLineQuery = {
     ExpectedQuantity: number;
     DateCode?: string | null;
     CountryID?: number | null;
-    RHOS?: boolean | null;
+    ROHS?: boolean | null;
     LineNumber: number;
     RECEIPTLDs?: Array<{
       __typename?: 'ReceiptLD';
@@ -2419,7 +2419,7 @@ export type InsertReceiptLineMutationVariables = Types.Exact<{
   expectedQuantity: Types.Scalars['Int'];
   dateCode?: Types.InputMaybe<Types.Scalars['String']>;
   countryID?: Types.InputMaybe<Types.Scalars['Int']>;
-  rhos?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  ROHS?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 export type InsertReceiptLineMutation = {
@@ -2432,7 +2432,7 @@ export type InsertReceiptLineMutation = {
     ExpectedQuantity: number;
     DateCode?: string | null;
     CountryID?: number | null;
-    RHOS?: boolean | null;
+    ROHS?: boolean | null;
     LineNumber: number;
   } | null> | null;
 };
@@ -2466,7 +2466,7 @@ export type DeleteReceiptLineMutation = {
     ExpectedQuantity: number;
     DateCode?: string | null;
     CountryID?: number | null;
-    RHOS?: boolean | null;
+    ROHS?: boolean | null;
     LineNumber: number;
     RECEIPTLDs?: Array<{
       __typename?: 'ReceiptLD';
@@ -2499,7 +2499,7 @@ export type UpdateReceiptLineMutationVariables = Types.Exact<{
   expectedQuantity: Types.Scalars['Int'];
   dateCode?: Types.InputMaybe<Types.Scalars['String']>;
   countryID?: Types.InputMaybe<Types.Scalars['Int']>;
-  rhos?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  ROHS?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 export type UpdateReceiptLineMutation = {
@@ -2726,7 +2726,7 @@ export const FetchReceiptLinesDocument = gql`
       ExpectedQuantity
       DateCode
       CountryID
-      RHOS
+      ROHS
       LineNumber
       RECEIPTLDs {
         _id
@@ -2760,7 +2760,7 @@ export const FindReceiptLineDocument = gql`
       ExpectedQuantity
       DateCode
       CountryID
-      RHOS
+      ROHS
       LineNumber
       RECEIPTLDs {
         _id
@@ -2862,7 +2862,7 @@ export const InsertReceiptLineDocument = gql`
     $expectedQuantity: Int!
     $dateCode: String
     $countryID: Int
-    $rhos: Boolean
+    $ROHS: Boolean
   ) {
     insertReceiptLine(
       ReceiptHID: $receiptHID
@@ -2870,7 +2870,7 @@ export const InsertReceiptLineDocument = gql`
       ExpectedQuantity: $expectedQuantity
       DateCode: $dateCode
       CountryID: $countryID
-      RHOS: $rhos
+      ROHS: $ROHS
     ) {
       _id
       ReceiptHID
@@ -2878,7 +2878,7 @@ export const InsertReceiptLineDocument = gql`
       ExpectedQuantity
       DateCode
       CountryID
-      RHOS
+      ROHS
       LineNumber
     }
   }
@@ -2930,7 +2930,7 @@ export const DeleteReceiptLineDocument = gql`
       ExpectedQuantity
       DateCode
       CountryID
-      RHOS
+      ROHS
       LineNumber
       RECEIPTLDs {
         _id
@@ -2986,7 +2986,7 @@ export const UpdateReceiptLineDocument = gql`
     $expectedQuantity: Int!
     $dateCode: String
     $countryID: Int
-    $rhos: Boolean
+    $ROHS: Boolean
   ) {
     updateReceiptLine(
       ReceiptLID: $receiptLID
@@ -2994,7 +2994,7 @@ export const UpdateReceiptLineDocument = gql`
       ExpectedQuantity: $expectedQuantity
       DateCode: $dateCode
       CountryID: $countryID
-      RHOS: $rhos
+      ROHS: $ROHS
     )
   }
 `;

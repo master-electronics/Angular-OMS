@@ -80,7 +80,7 @@ export class DateCodeComponent implements OnInit {
 
   onSubmit(): void {
     this._update.updateDateCode(this.inputForm.value.dateCode);
-    this._router.navigateByUrl('receiptreceiving/update/rhos');
+    this._router.navigateByUrl('receiptreceiving/update/ROHS');
   }
 
   public onBack(): void {

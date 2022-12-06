@@ -10,7 +10,7 @@ interface ReceiptInfo {
   ReceiptLIDs: number[];
   DateCode?: string;
   CountryID?: number;
-  RHOS?: boolean;
+  ROHS?: boolean;
   ISO3?: string;
 }
 
@@ -66,12 +66,12 @@ export class updateReceiptInfoService {
     });
   }
   /**
-   * updateRHOS
+   * updateROHS
    */
-  public updateRHOS(RHOS: boolean) {
+  public updateROHS(ROHS: boolean) {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
-      RHOS,
+      ROHS,
     });
   }
 
@@ -80,7 +80,7 @@ export class updateReceiptInfoService {
       idList: this.receiptInfo.ReceiptLIDs,
       DateCode: this.receiptInfo.DateCode,
       CountryID: this.receiptInfo.CountryID,
-      RHOS: this.receiptInfo.RHOS,
+      ROHS: this.receiptInfo.ROHS,
     });
     const log = this._receipt.receiptLsAfterQuantity.map((line) => {
       return {

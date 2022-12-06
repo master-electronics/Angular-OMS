@@ -14,7 +14,7 @@ query findInventory(
     QuantityOnHand
     DateCode
     ParentITN
-    RHOS
+    ROHS
     OriginalQuantity
     BinLocation
     ProductID

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  combineLatest,
   forkJoin,
   map,
   Observable,
@@ -185,7 +186,7 @@ export class ReceiptInfoService {
         Message: list[0],
       };
     });
-    return forkJoin({
+    return combineLatest({
       log: this._insertLog.mutate({ log }),
       print: this._printer.printText$(list),
     });

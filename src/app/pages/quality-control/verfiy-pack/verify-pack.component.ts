@@ -86,7 +86,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       { value: '', disabled: true },
       [Validators.pattern(dateCodeRegex)],
     ],
-    RHOS: [{ value: '', disabled: true }, [Validators.required]],
+    ROHS: [{ value: '', disabled: true }, [Validators.required]],
     countryISO2: [{ value: '', disabled: true }, [Validators.required]],
     countMethods: [1, [Validators.required]],
   });
@@ -132,7 +132,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     // set html by urlParams
     this.verifyPack.setValue({
       dateCode: itemInfo.DateCode || '',
-      RHOS: itemInfo.RHOS,
+      ROHS: itemInfo.ROHS,
       countMethods: '',
       countryISO2: selectedCountry._id,
     });
@@ -199,7 +199,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // update itemInfo
-    this.itemInfo.RHOS = this.verifyPack.get('RHOS').value;
+    this.itemInfo.ROHS = this.verifyPack.get('ROHS').value;
     this.itemInfo.CountryISO2 = cooValue;
     this.itemInfo.DateCode = this.verifyPack.get('dateCode').value;
     this.itemInfo.CountMethod = this.verifyPack.get('countMethods').value;
@@ -209,7 +209,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     const updateAfterQc = this.updateAfterQc.mutate({
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Inventory: {
-        RHOS: this.itemInfo.RHOS,
+        ROHS: this.itemInfo.ROHS,
         // CountryOfOrigin: this.itemInfo.CountryISO2,
         DateCode: this.itemInfo.DateCode,
       },
@@ -255,7 +255,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   toggleEdit(): void {
     this.isEditable = true;
-    this.verifyPack.controls['RHOS'].enable();
+    this.verifyPack.controls['ROHS'].enable();
     this.verifyPack.controls['dateCode'].enable();
     this.verifyPack.controls['countryISO2'].enable();
     this.dateCodeInput.nativeElement.select();

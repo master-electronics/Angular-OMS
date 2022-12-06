@@ -14,7 +14,7 @@ query verifyITNforQc(
   ) {
     _id
     ParentITN
-    RHOS
+    ROHS
     DateCode
     Country {
       ISO2
@@ -205,14 +205,14 @@ mutation updateMerpAfterQcRepack(
   $InventoryTrackingNumber: String!
   $DateCode: String!
   $CountryOfOrigin: String!
-  $RHOS: String!
+  $ROHS: String!
   $CountMethod: String!
 ) {
   changeQCLineInfo(
     InternalTrackingNumber: $InventoryTrackingNumber
     DateCode: $DateCode
     CountryOfOrigin: $CountryOfOrigin
-    RHOS: $RHOS
+    ROHS: $ROHS
     CountMethod: $CountMethod
   ) {
     success
