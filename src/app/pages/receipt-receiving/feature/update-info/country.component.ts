@@ -37,6 +37,7 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
             Country
           </label>
           <search-list-input
+            (formSubmit)="onSubmit()"
             controlName="country"
             [dataSource]="countryList$ | async"
           ></search-list-input>

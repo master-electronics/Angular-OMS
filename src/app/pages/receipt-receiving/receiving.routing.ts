@@ -7,6 +7,7 @@ import { ReceiptGuard } from './utils/receipt.guard';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
 import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { PartResolver } from './utils/resolver/part.resolver';
+import { LogService } from './data/eventLog';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -19,6 +20,7 @@ export const ReceivingRoutes: Routes = [
       ReceiptInfoService,
       updateReceiptInfoService,
       LabelService,
+      LogService,
       ReceiptGuard,
     ],
     loadComponent: () =>

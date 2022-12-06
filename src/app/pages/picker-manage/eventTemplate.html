@@ -87,7 +87,6 @@
 </div>
 <!-- Calendar -->
 <mwl-day-view-scheduler
-  *ngIf="fetch$ | async"
   [viewDate]="viewDate"
   [events]="events"
   [users]="users"
@@ -96,4 +95,5 @@
   (eventTimesChanged)="eventTimesChanged($event)"
 >
 </mwl-day-view-scheduler>
-<div *ngIf="uploadSetting$ | async"></div>
+<ng-container *ngIf="uploadSetting$ | async"></ng-container>
+<ng-container *ngIf="events$ | async"></ng-container>

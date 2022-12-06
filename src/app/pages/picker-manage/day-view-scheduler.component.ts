@@ -8,7 +8,6 @@ import {
   Input,
   LOCALE_ID,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -20,7 +19,6 @@ import {
   getWeekViewPeriod,
 } from 'angular-calendar';
 
-import { startOfDay, addDays, addHours } from 'date-fns';
 import {
   WeekView,
   GetWeekViewArgs,

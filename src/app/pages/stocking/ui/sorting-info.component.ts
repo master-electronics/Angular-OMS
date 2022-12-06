@@ -9,7 +9,7 @@ import { info } from 'console';
   template: `
     <!-- Item Info -->
     <div
-      class="grid grid-cols-3 justify-items-end gap-0 text-black dark:text-white"
+      class="grid grid-cols-3 justify-items-end gap-0 text-black dark:text-white md:text-lg lg:text-xl"
       *ngFor="let item of sortingInfo.info | keyvalue"
     >
       <span class="mr-2 font-medium">{{ item.key }}:</span>
@@ -18,7 +18,7 @@ import { info } from 'console';
       }}</span>
     </div>
     <!-- Suggetion location -->
-    <table *ngIf="sortingInfo.locations" class="w-full">
+    <table *ngIf="sortingInfo.locations" class="w-full md:text-lg lg:text-xl">
       <tr class="grid grid-cols-3">
         <th>Locations</th>
         <th>Zone</th>

@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   ControlContainer,
   FormGroup,
@@ -12,7 +20,11 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   imports: [CommonModule, ReactiveFormsModule, NzIconModule],
   selector: 'search-list-input',
   template: `
-    <form [formGroup]="inputForm" class="text-lg md:text-xl lg:text-4xl">
+    <form
+      [formGroup]="inputForm"
+      class="text-lg md:text-xl lg:text-4xl"
+      (ngSubmit)="onSubmit()"
+    >
       <div class="relative">
         <input
           [formControlName]="controlName"
@@ -77,6 +89,7 @@ export class SearchListInputComponent implements OnInit {
   public inputForm: FormGroup;
   @Input() dataSource;
   @Input() controlName;
+  @Output() formSubmit: EventEmitter<null> = new EventEmitter();
 
   @ViewChild('input') inputFiled!: ElementRef;
 
@@ -92,6 +105,12 @@ export class SearchListInputComponent implements OnInit {
 
   onClick(node) {
     this.inputForm.get(this.controlName).setValue(node.name);
+  }
+
+  onSubmit() {
+    if (this.inputForm.valid) {
+      this.formSubmit.emit();
+    }
   }
 
   clean() {

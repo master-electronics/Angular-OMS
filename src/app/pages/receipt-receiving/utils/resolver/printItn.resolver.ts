@@ -6,9 +6,11 @@ import { LabelService } from '../../data/label';
 @Injectable()
 export class PrintItnResolver implements Resolve<any> {
   constructor(private _label: LabelService) {}
+  10;
   resolve() {
     return this._label.printReceivingLabel$().pipe(
       catchError((error) => {
+        console.log(error);
         return of({ error });
       })
     );

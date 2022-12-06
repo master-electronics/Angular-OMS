@@ -9,12 +9,12 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { catchError, map, Observable, of } from 'rxjs';
-import { PrinterService } from 'src/app/shared/data/printer';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 
 @Component({
@@ -98,7 +98,7 @@ export class KickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _step: ReceivingService,
-    private _printer: PrinterService
+    private _receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {
@@ -140,7 +140,7 @@ export class KickoutComponent implements OnInit {
       const tmp = reason.substring(list.length * 20, (list.length + 1) * 20);
       list.push(tmp);
     }
-    this.print$ = this._printer.printText$(list).pipe(
+    this.print$ = this._receipt.printKickOutLabel$(list).pipe(
       map(() => {
         this._router.navigateByUrl('receiptreceiving/part');
       }),

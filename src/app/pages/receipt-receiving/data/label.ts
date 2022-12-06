@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  combineLatest,
   delay,
+  forkJoin,
   map,
   Observable,
   shareReplay,
@@ -12,9 +14,14 @@ import {
   CheckBinLocationGQL,
   UpdateAfterReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { CreateItnGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import {
+  CreateItnGQL,
+  Insert_UserEventLogsGQL,
+} from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
 
@@ -33,7 +40,9 @@ export class LabelService {
     private _container: CheckBinLocationGQL,
     private _itn: CreateItnGQL,
     private _update: UpdateAfterReceivingGQL,
-    private _printer: PrinterService
+    private _printer: PrinterService,
+    private _insertLog: Insert_UserEventLogsGQL,
+    private _log: LogService
   ) {}
 
   /**
@@ -105,7 +114,19 @@ export class LabelService {
           });
           console.log(res.data.createITN);
         }),
-        switchMap((res) => this._printer.printITN$(res.data.createITN)),
+        switchMap((res) => {
+          return combineLatest({
+            print: this._printer.printITN$(res.data.createITN),
+            log: this._insertLog.mutate({
+              log: {
+                ...this._log.receivingLog,
+                InventoryTrackingNumber: res.data.createITN,
+                Quantity: null,
+                UserEventID: sqlData.Event_Receiving_GenerateITN,
+              },
+            }),
+          });
+        }),
         delay(5000),
         shareReplay(1)
       );
@@ -134,7 +155,7 @@ export class LabelService {
             ContainerID: res.data.findContainer._id,
           };
           this.updateLastITN(itn);
-          return null;
+          return true;
         })
       );
   }
@@ -165,11 +186,25 @@ export class LabelService {
         line.RECEIPTLDs[0].PurchaseOrderL?.LineNumber.toString() || 'null',
     };
     const ReceiptLID = line._id;
-    return this._update.mutate({
+    const update = this._update.mutate({
       ITNList: this._ITNList.value,
       ReceiptLID,
       Inventory,
       info,
+    });
+    // collect info for log
+    const log = this._ITNList.value.map((itn) => {
+      return {
+        ...this._log.receivingLog,
+        UserEventID: sqlData.Event_Receiving_UpdateInventory,
+        InventoryTrackingNumber: itn.ITN,
+        Quantity: itn.quantity,
+        Message: itn.BinLocation,
+      };
+    });
+    return forkJoin({
+      log: this._insertLog.mutate({ log }),
+      update,
     });
   }
 }

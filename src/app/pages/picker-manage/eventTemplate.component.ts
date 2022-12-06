@@ -64,12 +64,12 @@ export class EventTemplateComponent implements OnInit {
   ) {}
   events: CalendarEvent[] = [];
 
-  fetch$;
+  public events$;
   ngOnInit(): void {
-    this.fetch$ = this.fetchEvent.fetch().pipe(
+    this.events$ = this.fetchEvent.fetch().pipe(
       map((res) => {
         const array = res.data.fetchPickingCalendarSettings.split(/\r?\n/);
-        array.forEach((ele) => {
+        return array.map((ele) => {
           if (!ele) {
             return;
           }
@@ -97,41 +97,41 @@ export class EventTemplateComponent implements OnInit {
           };
           this.events.push(event);
         });
-        return true;
       })
     );
   }
 
-  async eventTimesChanged({
+  eventTimesChanged({
     event,
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent) {
-    //check if the new data is in one day
-    await delay(10);
-    this.isOverlap = false;
-    if (newStart.getHours() > newEnd.getHours()) {
-      return;
-    }
-    //check time overlap
-    this.events.some((ele) => {
-      if (ele.meta.id === event.meta.id) {
-        return false;
+    setTimeout(() => {
+      //check if the new data is in one day
+      this.isOverlap = false;
+      if (newStart.getHours() > newEnd.getHours()) {
+        return;
       }
-      if (ele.meta.user === event.meta.user) {
-        if (ele.start < newEnd && newStart < ele.end) {
-          this.isOverlap = true;
-          return true;
+      //check time overlap
+      this.events.some((ele) => {
+        if (ele.meta.id === event.meta.id) {
+          return false;
         }
+        if (ele.meta.user === event.meta.user) {
+          if (ele.start < newEnd && newStart < ele.end) {
+            this.isOverlap = true;
+            return true;
+          }
+        }
+        return false;
+      });
+      if (this.isOverlap) {
+        return;
       }
-      return false;
-    });
-    if (this.isOverlap) {
-      return;
-    }
-    event.start = newStart;
-    event.end = newEnd;
-    this.events = [...this.events];
+      event.start = newStart;
+      event.end = newEnd;
+      this.events = [...this.events];
+    }, 0);
   }
 
   userChanged({ event, newUser }) {
@@ -194,6 +194,14 @@ export class EventTemplateComponent implements OnInit {
         }
       }
     }
+    isValid = !this.events.some((event) => {
+      if (!event.title || !event.end || !event.start) {
+        this.message.error('Empty Field!');
+        return true;
+      }
+      return false;
+    });
+
     return isValid;
   }
 
@@ -202,14 +210,7 @@ export class EventTemplateComponent implements OnInit {
     if (!this.events.length) {
       return;
     }
-    let isValid = !this.events.some((event) => {
-      if (!event.title || !event.end || !event.start) {
-        this.message.error('Empty Field!');
-        return true;
-      }
-      return false;
-    });
-    isValid = this.checkTimeValid(this.events);
+    const isValid = this.checkTimeValid(this.events);
     if (!isValid) {
       return;
     }

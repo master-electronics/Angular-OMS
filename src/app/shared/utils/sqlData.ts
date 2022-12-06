@@ -65,6 +65,23 @@ export const sqlData = {
   // sorting
   Event_Stocking_SortingStart: 900,
   Event_Stocking_SortingDone: 901,
+  //Receipt Entry
+  Event_ReceiptEntry_HeaderCreating: 1010,
+  Event_ReceiptEntry_HeaderUpdate: 1020,
+  Event_ReceiptEntry_HeaderDelete: 1030,
+  Event_ReceiptEntry_LineCreating: 1040,
+  Event_ReceiptEntry_Lineupdate: 1050,
+  Event_ReceiptEntry_LineDelete: 1060,
+  Event_ReceiptEntry_LineDetailCreating: 1070,
+  Event_ReceiptEntry_LineDetailUpdate: 1080,
+  Event_ReceiptEntry_LineDetailDelete: 1090,
+  //Receiving
+  Event_Receiving_Start: 1100,
+  Event_Receiving_UpdateInfo: 1120,
+  Event_Receiving_GenerateITN: 1130,
+  Event_Receiving_UpdateInventory: 1140,
+  Event_Receiving_ReceiptLineDone: 1160,
+  Event_Receiving_KickOut: 1170,
   // Receipt Status
   Receipt_Entered: 10,
   Receipt_Received: 20,

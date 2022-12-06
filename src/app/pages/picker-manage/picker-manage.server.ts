@@ -11,7 +11,7 @@ export interface User {
 export const users: User[] = [
   {
     id: 0,
-    name: 'Test 1',
+    name: 'Priority',
     color: {
       primary: '#1e90ff',
       secondary: '#D1E8FF',
@@ -19,7 +19,7 @@ export const users: User[] = [
   },
   {
     id: 1,
-    name: 'Test 2',
+    name: 'Non Priority',
     color: {
       primary: '#e3bc08',
       secondary: '#FDF1BA',
@@ -27,7 +27,7 @@ export const users: User[] = [
   },
   {
     id: 2,
-    name: 'Test 3',
+    name: '80/20 A Customer',
     color: {
       primary: '#ad2121',
       secondary: '#FAE3E3',
@@ -35,7 +35,7 @@ export const users: User[] = [
   },
   {
     id: 3,
-    name: 'Test 4',
+    name: 'Order Started Pulling',
     color: {
       primary: '#1e90ff',
       secondary: '#D1E8FF',
@@ -43,18 +43,10 @@ export const users: User[] = [
   },
   {
     id: 4,
-    name: 'Test 5',
+    name: 'Aging',
     color: {
       primary: '#e3bc08',
       secondary: '#FDF1BA',
-    },
-  },
-  {
-    id: 5,
-    name: 'Test 6',
-    color: {
-      primary: '#ad2121',
-      secondary: '#FAE3E3',
     },
   },
 ];

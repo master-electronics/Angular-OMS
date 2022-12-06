@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  forkJoin,
   map,
   Observable,
   shareReplay,
@@ -12,15 +13,21 @@ import {
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { PrinterService } from 'src/app/shared/data/printer';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { LogService } from './eventLog';
 
 @Injectable()
 export class ReceiptInfoService {
   constructor(
+    private _log: LogService,
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
-    private _checkHeader: CheckReceiptHeaderGQL
+    private _checkHeader: CheckReceiptHeaderGQL,
+    private _insertLog: Insert_UserEventLogsGQL,
+    private _printer: PrinterService
   ) {}
 
   /**
@@ -76,16 +83,21 @@ export class ReceiptInfoService {
     this._selectedReceiptLine.next(null);
   }
 
-  public checkReceiptHeader(id: number): Observable<boolean> {
+  public checkReceiptHeader(id: number): Observable<any> {
     return this._checkHeader.fetch({ id }).pipe(
       tap((res) => {
         if (!res.data.findReceiptH?._id) {
           throw new Error("Can't find this Receipt!");
         }
       }),
-      map(() => {
+      switchMap(() => {
         this._headerID.next(id);
-        return true;
+        this._log.initReceivingLog({
+          ReceiptHeader: id,
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserEventID: sqlData.Event_Receiving_Start,
+        });
+        return this._insertLog.mutate({ log: this._log.receivingLog });
       }),
       shareReplay(1)
     );
@@ -159,6 +171,24 @@ export class ReceiptInfoService {
     );
   }
 
+  public printKickOutLabel$(list: string[]) {
+    const log = this._lineAfterPart.value.map((line) => {
+      return {
+        ...this._log.receivingLog,
+        UserEventID: sqlData.Event_Receiving_KickOut,
+        ReceiptLine: line.LineNumber,
+        PartNumber: line.Product.PartNumber,
+        ProductCode: line.Product.ProductCode.ProductCodeNumber,
+        Quantity: line.ExpectedQuantity,
+        Message: list[0],
+      };
+    });
+    return forkJoin({
+      log: this._insertLog.mutate({ log }),
+      print: this._printer.printText$(list),
+    });
+  }
+
   /**
    * filterByQuantity
    */
@@ -173,13 +203,22 @@ export class ReceiptInfoService {
    * pickOneReceiptLine
    */
   public pickOneReceiptLine(id?: number) {
+    let line;
     if (!id) {
       this._selectedReceiptLine.next(this.receiptLsAfterQuantity);
+      line = this.receiptLsAfterQuantity[0];
     } else {
       const selected = this.receiptLsAfterQuantity.filter(
         (res) => res._id === id
       );
       this._selectedReceiptLine.next(selected);
+      line = selected[0];
     }
+    this._log.updateReceivingLog({
+      ReceiptLine: line.LineNumber,
+      PartNumber: line.Product.PartNumber,
+      ProductCode: line.Product.ProductCode.ProductCodeNumber,
+      Quantity: line.ExpectedQuantity,
+    });
   }
 }

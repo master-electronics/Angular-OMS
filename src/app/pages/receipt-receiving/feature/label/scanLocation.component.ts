@@ -58,7 +58,6 @@ export class ScanLocationComponent implements OnInit {
   ngOnInit(): void {
     this.data$ = of(true);
     this._ui.changeSteps(3);
-    console.log(this._label.ITNList);
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       location: new FormControl('', [Validators.required]),
