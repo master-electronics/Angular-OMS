@@ -3,7 +3,6 @@ import {
   BehaviorSubject,
   combineLatest,
   delay,
-  forkJoin,
   map,
   Observable,
   shareReplay,
@@ -206,7 +205,7 @@ export class LabelService {
       ...this._log.receivingLog,
       UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
     });
-    return forkJoin({
+    return combineLatest({
       log: this._insertLog.mutate({ log }),
       update,
     });
