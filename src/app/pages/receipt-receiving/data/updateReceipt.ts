@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { ReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
 
 interface ReceiptInfo {
@@ -15,7 +18,9 @@ interface ReceiptInfo {
 export class updateReceiptInfoService {
   constructor(
     private _update: ReceivingUpdateReceiptLGQL,
-    private _receipt: ReceiptInfoService
+    private _receipt: ReceiptInfoService,
+    private _log: LogService,
+    private _insertLog: Insert_UserEventLogsGQL
   ) {}
   /**
    * Store info for update receipt
@@ -71,11 +76,23 @@ export class updateReceiptInfoService {
   }
 
   public updateReceiptLSQL() {
-    return this._update.mutate({
+    const update = this._update.mutate({
       idList: this.receiptInfo.ReceiptLIDs,
       DateCode: this.receiptInfo.DateCode,
       CountryID: this.receiptInfo.CountryID,
       RHOS: this.receiptInfo.RHOS,
+    });
+    const log = this._receipt.receiptLsAfterQuantity.map((line) => {
+      return {
+        ...this._log.receivingLog,
+        UserEventID: sqlData.Event_Receiving_UpdateInfo,
+        ReceiptLine: line.LineNumber,
+        Quantity: line.ExpectedQuantity,
+      };
+    });
+    return combineLatest({
+      update,
+      log: this._insertLog.mutate({ log }),
     });
   }
 }

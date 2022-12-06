@@ -22,10 +22,10 @@ import { LogService } from './eventLog';
 @Injectable()
 export class ReceiptInfoService {
   constructor(
-    private _log: LogService,
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
     private _checkHeader: CheckReceiptHeaderGQL,
+    private _log: LogService,
     private _insertLog: Insert_UserEventLogsGQL,
     private _printer: PrinterService
   ) {}
@@ -141,6 +141,10 @@ export class ReceiptInfoService {
         PartNumber.trim().toLowerCase()
     );
     this._lineAfterPart.next(tmp);
+    this._log.updateReceivingLog({
+      PartNumber: tmp[0].Product.PartNumber,
+      ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
+    });
   }
 
   /**
@@ -177,8 +181,6 @@ export class ReceiptInfoService {
         ...this._log.receivingLog,
         UserEventID: sqlData.Event_Receiving_KickOut,
         ReceiptLine: line.LineNumber,
-        PartNumber: line.Product.PartNumber,
-        ProductCode: line.Product.ProductCode.ProductCodeNumber,
         Quantity: line.ExpectedQuantity,
         Message: list[0],
       };
@@ -216,8 +218,6 @@ export class ReceiptInfoService {
     }
     this._log.updateReceivingLog({
       ReceiptLine: line.LineNumber,
-      PartNumber: line.Product.PartNumber,
-      ProductCode: line.Product.ProductCode.ProductCodeNumber,
       Quantity: line.ExpectedQuantity,
     });
   }

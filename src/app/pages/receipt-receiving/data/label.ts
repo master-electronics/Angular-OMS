@@ -193,7 +193,7 @@ export class LabelService {
       info,
     });
     // collect info for log
-    const log = this._ITNList.value.map((itn) => {
+    const log: any = this._ITNList.value.map((itn) => {
       return {
         ...this._log.receivingLog,
         UserEventID: sqlData.Event_Receiving_UpdateInventory,
@@ -201,6 +201,10 @@ export class LabelService {
         Quantity: itn.quantity,
         Message: itn.BinLocation,
       };
+    });
+    log.push({
+      ...this._log.receivingLog,
+      UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
     });
     return forkJoin({
       log: this._insertLog.mutate({ log }),

@@ -60,7 +60,7 @@ export class RHOSComponent implements OnInit {
     this._update.updateRHOS(RHOS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
       tap((res) => {
-        if (!res.data.updateReceiptLsByID) {
+        if (!res.update.data.updateReceiptLsByID) {
           throw new Error('Fail to updat to SQL!');
         }
       }),
