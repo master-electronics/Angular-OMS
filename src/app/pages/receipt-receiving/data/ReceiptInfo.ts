@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
-  forkJoin,
   map,
   Observable,
-  shareReplay,
   switchMap,
   tap,
 } from 'rxjs';
@@ -99,8 +97,7 @@ export class ReceiptInfoService {
           UserEventID: sqlData.Event_Receiving_Start,
         });
         return this._insertLog.mutate({ log: this._log.receivingLog });
-      }),
-      shareReplay(1)
+      })
     );
   }
 
@@ -130,8 +127,7 @@ export class ReceiptInfoService {
           console.log(res[0].Product.PartNumber);
           this._receiptLines.next(res);
           return true;
-        }),
-        shareReplay(1)
+        })
       );
   }
 
@@ -171,8 +167,7 @@ export class ReceiptInfoService {
               };
             })
           );
-      }),
-      shareReplay(1)
+      })
     );
   }
 

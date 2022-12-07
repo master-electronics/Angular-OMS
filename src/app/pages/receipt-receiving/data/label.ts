@@ -126,8 +126,7 @@ export class LabelService {
             }),
           });
         }),
-        delay(5000),
-        shareReplay(1)
+        delay(5000)
       );
   }
 

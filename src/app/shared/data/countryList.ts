@@ -33,8 +33,7 @@ export class CountryListService {
       }),
       tap((res) => {
         this._countryList.next(res);
-      }),
-      shareReplay(1)
+      })
     );
   }
 }

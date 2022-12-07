@@ -16,18 +16,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import {
-  asapScheduler,
-  map,
-  Observable,
-  of,
-  shareReplay,
-  startWith,
-} from 'rxjs';
+import { map, Observable, startWith, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -132,7 +122,7 @@ export class AssignLabelComponent implements OnInit {
         return this.remaining;
       }),
       map((res) => {
-        return res === 0 && this.inputForm.invalid;
+        return res !== 0 || this.inputForm.invalid;
       })
     );
   }

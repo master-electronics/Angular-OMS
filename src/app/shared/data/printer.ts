@@ -63,8 +63,7 @@ export class PrinterService {
       }),
       tap((res) => {
         this._printer.next(res);
-      }),
-      shareReplay(1)
+      })
     );
   }
 
