@@ -32,6 +32,13 @@ export const StockingRoutes: Routes = [
             (m) => m.LocationComponent
           ),
       },
+      {
+        path: 'scantarget',
+        loadComponent: () =>
+          import('./feature/stocking/scan-target.component').then(
+            (m) => m.ScanTargetComponent
+          ),
+      },
     ],
   },
 ];

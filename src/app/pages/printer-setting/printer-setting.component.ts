@@ -20,7 +20,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
     SingleInputformComponent,
   ],
   template: `
-    <div class="mx-20 mt-4">
+    <div class="px-1 py-4">
       <single-input-form
         (formSubmit)="onSubmit()"
         (formBack)="onBack()"

@@ -270,7 +270,7 @@ export class StartPageComponent implements OnInit, AfterViewInit {
     }
 
     if (
-      this.inputForm.value.countNumber ===
+      Number(this.inputForm.value.countNumber) ===
       this._service.ITNListInContainer.length
     ) {
       this._router.navigate(['/stocking/stocking/verify']);

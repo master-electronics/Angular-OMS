@@ -43,12 +43,9 @@ import { AutoFocusDirective } from '../../directives/auto-focus.directive';
       (ngSubmit)="onSubmit()"
     >
       <div class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
-        <div class="flex md:grid">
-          <label
-            class="mb-0.5 mr-1 font-bold text-gray-700"
-            [for]="controlName"
-          >
-            {{ title }}:
+        <div class="flex gap-2 md:grid">
+          <label class="mb-0.5 font-bold text-gray-700" [for]="controlName">
+            {{ title }}
           </label>
           <div class="relative grow">
             <input
@@ -124,7 +121,7 @@ export class SingleInputformComponent implements OnInit {
   @Input() controlName = 'input';
   @Input() inputType = 'text';
   @Input() placeholder = '';
-  @Input() title = 'Input';
+  @Input() title = '';
   @Input() isvalid = true;
   @Output() formSubmit: EventEmitter<null> = new EventEmitter();
   @Output() formBack: EventEmitter<null> = new EventEmitter();
