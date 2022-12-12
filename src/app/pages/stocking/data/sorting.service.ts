@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, elementAt, map, switchMap, tap } from 'rxjs';
 import {
-  FetchSuggetionLocationForSortingGQL,
   UpdateInventoryAfterSortingGQL,
   VerifyContainerForSortingGQL,
   VerifyItnForSortingGQL,
@@ -32,7 +31,6 @@ export class SortingService {
   constructor(
     private _verifyITN: VerifyItnForSortingGQL,
     private _insertLog: Insert_UserEventLogsGQL,
-    private _suggetLocation: FetchSuggetionLocationForSortingGQL,
     private _verifyContainer: VerifyContainerForSortingGQL,
     private _updateInventory: UpdateInventoryAfterSortingGQL
   ) {}
@@ -96,20 +94,6 @@ export class SortingService {
               Message: ``,
             },
           });
-        })
-      );
-  }
-
-  public suggestLocation$() {
-    return this._suggetLocation
-      .fetch({ ProductID: this.sortingInfo?.ProductID, limit: 5 })
-      .pipe(
-        map((res) => {
-          return res.data.findInventorys.map((inventory) => ({
-            Quantity: inventory.QuantityOnHand,
-            Zone: inventory.Container.Zone,
-            Bincode: inventory.Container.Barcode,
-          }));
         })
       );
   }

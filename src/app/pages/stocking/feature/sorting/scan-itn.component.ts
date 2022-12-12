@@ -7,7 +7,7 @@ import { catchError, map, of } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { SortingService } from '../../data/sorting';
+import { SortingService } from '../../data/sorting.service';
 
 @Component({
   standalone: true,
@@ -52,7 +52,10 @@ export class ScanITNComponent implements OnInit {
   onSubmit(): void {
     this.data$ = this._sort.verifyITN$(this.inputForm.value.itn).pipe(
       map(() => {
-        this._router.navigate(['../location'], { relativeTo: this._actRoute });
+        this._router.navigate(['../location'], {
+          relativeTo: this._actRoute,
+          queryParams: { ProductID: this._sort.sortingInfo.ProductID },
+        });
       }),
       catchError((error) => {
         return of({

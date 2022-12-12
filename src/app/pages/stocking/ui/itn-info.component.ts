@@ -4,7 +4,7 @@ import { info } from 'console';
 
 @Component({
   standalone: true,
-  selector: 'sorting-info',
+  selector: 'itn-info',
   imports: [CommonModule],
   template: `
     <!-- Item Info -->
@@ -18,7 +18,10 @@ import { info } from 'console';
       }}</span>
     </div>
     <!-- Suggetion location -->
-    <table *ngIf="sortingInfo.locations" class="w-full md:text-lg lg:text-xl">
+    <table
+      *ngIf="sortingInfo.locations?.length"
+      class="w-full md:text-lg lg:text-xl"
+    >
       <tr class="grid grid-cols-3">
         <th>Locations</th>
         <th>Zone</th>
@@ -35,6 +38,6 @@ import { info } from 'console';
     </table>
   `,
 })
-export class SortingInfoComponent {
+export class ITNInfoComponent {
   @Input() sortingInfo;
 }

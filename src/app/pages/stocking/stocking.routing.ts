@@ -1,12 +1,22 @@
 import { Routes } from '@angular/router';
-import { SortingService } from './data/sorting';
+import { SortingService } from './data/sorting.service';
+import { StockingService } from './data/stocking.service';
+import { SuggestLocationsService } from './data/suggestLocations.service';
+import { ScanTargetResolver } from './utils/resolver/scan-target.resolver';
 import { SortLocationResolver } from './utils/resolver/sort-location.resolver';
 import { StockingGuard } from './utils/stocking.guard';
 
 export const StockingRoutes: Routes = [
   {
     path: '',
-    providers: [SortingService, SortLocationResolver, StockingGuard],
+    providers: [
+      SortingService,
+      StockingService,
+      SuggestLocationsService,
+      SortLocationResolver,
+      ScanTargetResolver,
+      StockingGuard,
+    ],
     canActivateChild: [StockingGuard],
     loadComponent: () =>
       import('./shell.component').then((m) => m.StockingShell),
@@ -34,6 +44,7 @@ export const StockingRoutes: Routes = [
       },
       {
         path: 'scantarget',
+        resolve: { containerID: ScanTargetResolver },
         loadComponent: () =>
           import('./feature/stocking/scan-target.component').then(
             (m) => m.ScanTargetComponent

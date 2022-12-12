@@ -43,7 +43,7 @@ import { AutoFocusDirective } from '../../directives/auto-focus.directive';
       (ngSubmit)="onSubmit()"
     >
       <div class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
-        <div class="flex gap-2 md:grid">
+        <div class="gap-2 md:grid" [class.flex]="title.length < 10">
           <label class="mb-0.5 font-bold text-gray-700" [for]="controlName">
             {{ title }}
           </label>
@@ -143,10 +143,10 @@ export class SingleInputformComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.inputFiled.nativeElement.select();
     if (this.inputForm.valid) {
       this.formSubmit.emit();
     }
+    this.inputFiled.nativeElement.select();
   }
 
   public onBack(): void {

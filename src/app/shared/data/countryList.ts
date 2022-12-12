@@ -21,19 +21,15 @@ export class CountryListService {
       return this._countryList.asObservable();
     }
     return this._fetch$.fetch().pipe(
-      map((res) => {
-        return res.data.fetchAllCountry.map((country) => {
-          return {
-            _id: country._id,
-            CountryName: country.CountryName.trim(),
-            ISO2: country.ISO2.trim(),
-            ISO3: country.ISO3.trim(),
-          };
-        });
-      }),
-      tap((res) => {
-        this._countryList.next(res);
-      })
+      map((res) =>
+        res.data.fetchAllCountry.map((country) => ({
+          _id: country._id,
+          CountryName: country.CountryName.trim(),
+          ISO2: country.ISO2.trim(),
+          ISO3: country.ISO3.trim(),
+        }))
+      ),
+      tap((res) => this._countryList.next(res))
     );
   }
 }

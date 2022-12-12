@@ -7,7 +7,7 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SortingService } from '../data/sorting';
+import { SortingService } from '../data/sorting.service';
 
 @Injectable()
 export class StockingGuard implements CanActivateChild {

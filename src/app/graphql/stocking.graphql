@@ -86,16 +86,10 @@ query verifyITNForStocking($ITN: String!, $DC: String!) {
     QuantityOnHand
     Product {
       _id
-    }
-    ORDERLINEDETAILs {
-      _id
-      Order {
-        OrderNumber
-        NOSINumber
+      ProductCode {
+        ProductCodeNumber
       }
-      OrderLine {
-        OrderLineNumber
-      }
+      PartNumber
     }
   }
 }

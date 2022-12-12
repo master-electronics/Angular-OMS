@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, combineLatest, map, of } from 'rxjs';
+import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
-import { SortingService } from '../../data/sorting';
-import { SortingInfoComponent } from '../../ui/sorting-info.component';
+import { SortingService } from '../../data/sorting.service';
+import { ITNInfoComponent } from '../../ui/itn-info.component';
 
 @Component({
   standalone: true,
@@ -15,8 +15,8 @@ import { SortingInfoComponent } from '../../ui/sorting-info.component';
     RouterModule,
     SingleInputformComponent,
     ReactiveFormsModule,
-    SortingInfoComponent,
     PrinterButtomComponent,
+    ITNInfoComponent,
   ],
   template: `
     <single-input-form
@@ -28,7 +28,7 @@ import { SortingInfoComponent } from '../../ui/sorting-info.component';
       title="Location"
     ></single-input-form>
     <ng-container *ngIf="info$ | async as info">
-      <sorting-info [sortingInfo]="info"></sorting-info>
+      <itn-info [sortingInfo]="info"></itn-info>
       <printer-button
         class=" absolute bottom-1 right-1"
         [ITN]="info.info.ITN"
@@ -60,7 +60,10 @@ export class LocationComponent implements OnInit {
       }))
     ),
     this._actRoute.data.pipe(map((res) => res.locations)),
-  ]).pipe(map(([info, locations]) => ({ info, locations })));
+  ]).pipe(
+    map(([info, locations]) => ({ info, locations })),
+    shareReplay(1)
+  );
 
   ngOnInit() {
     this.data$ = of(true);

@@ -3,9 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
+import { catchError, EMPTY, map, of } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { StockingService } from '../../data/stocking.service';
 
 @Component({
   standalone: true,
@@ -22,7 +24,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title=""
+      title="Scan Location or ITN:"
     ></single-input-form>
   `,
 })
@@ -32,7 +34,8 @@ export class ScanTargetComponent implements OnInit {
     private navbar: CommonService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _stock: StockingService
   ) {}
 
   public data$;
@@ -43,10 +46,36 @@ export class ScanTargetComponent implements OnInit {
   ngOnInit(): void {
     this.title.setTitle('Stocking');
     this.navbar.changeNavbar('Stocking');
-    this.data$ = of(true);
+    this.data$ = this._actRoute.data.pipe(map((res) => res.containerID));
   }
 
   onSubmit(): void {
+    const input = this.inputForm.value.itn.trim();
+    if (ITNBarcodeRegex.test(input)) {
+      this.moveItnToUser(input);
+      return;
+    }
+    const Barcode =
+      input.trim().length === 16
+        ? input.trim().replace(/-/g, '')
+        : input.trim();
+    this.findITNInLocation(input);
+  }
+
+  private moveItnToUser(ITN: string) {
+    this.data$ = this._stock.moveItnToUser(ITN).pipe(
+      map(() => {
+        this._router.navigate(['../'], { relativeTo: this._actRoute });
+      }),
+      catchError((error) => {
+        return of({
+          error: { message: error.message, type: 'error' },
+        });
+      })
+    );
+  }
+
+  private findITNInLocation(location: string) {
     //
   }
 

@@ -2340,13 +2340,12 @@ export type VerifyItnForStockingQuery = {
     __typename?: 'Inventory';
     _id: number;
     QuantityOnHand: number;
-    Product: { __typename?: 'Product'; _id: number };
-    ORDERLINEDETAILs?: Array<{
-      __typename?: 'OrderLineDetail';
+    Product: {
+      __typename?: 'Product';
       _id: number;
-      Order: { __typename?: 'Order'; OrderNumber: string; NOSINumber: string };
-      OrderLine: { __typename?: 'OrderLine'; OrderLineNumber: number };
-    } | null> | null;
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
   } | null;
 };
 
@@ -2570,16 +2569,10 @@ export const VerifyItnForStockingDocument = gql`
       QuantityOnHand
       Product {
         _id
-      }
-      ORDERLINEDETAILs {
-        _id
-        Order {
-          OrderNumber
-          NOSINumber
+        ProductCode {
+          ProductCodeNumber
         }
-        OrderLine {
-          OrderLineNumber
-        }
+        PartNumber
       }
     }
   }
