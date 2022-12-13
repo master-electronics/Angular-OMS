@@ -47,6 +47,7 @@ export class ScanTargetComponent implements OnInit {
     this.title.setTitle('Stocking');
     this.navbar.changeNavbar('Stocking');
     this.data$ = this._actRoute.data.pipe(map((res) => res.containerID));
+    this._stock.reset();
   }
 
   onSubmit(): void {

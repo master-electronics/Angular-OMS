@@ -26,6 +26,7 @@ export interface SortingInfo {
   ProductType: string;
   Velocity: string;
 }
+
 @Injectable()
 export class SortingService {
   constructor(

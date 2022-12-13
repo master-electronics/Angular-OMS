@@ -14,6 +14,7 @@ import {
   FetchItnInfoByContainerforStockingGQL,
   FindorCreateUserContainerForStockingGQL,
   MoveInventoryToContainerForStockingGQL,
+  UpdateNotFoundForStockingGQL,
   VerifyItnForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -31,6 +32,8 @@ export interface ITNinfo {
   ITN: string;
   Quantity: number;
   productID: number;
+  PartNumber?: string;
+  ProductCode?: string;
 }
 
 @Injectable()
@@ -40,20 +43,34 @@ export class StockingService {
     private _verifyITN: VerifyItnForStockingGQL,
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
+    private _noFound: UpdateNotFoundForStockingGQL,
     private _insertLog: Insert_UserEventLogsGQL
   ) {}
 
-  /**
-   * Store user container id
-   */
   private _containerID = new BehaviorSubject<number>(null);
   public get containerID(): number {
     return this._containerID.value;
   }
+
   private _currentITN = new BehaviorSubject<ITNinfo>(null);
-  private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
+  public get currentITN() {
+    return this._currentITN.value;
+  }
+  public updateCurrentItn(itn: ITNinfo) {
+    this._currentITN.next(itn);
+  }
+
+  private _ITNList = new BehaviorSubject<ITNinfo[]>([]);
   public get ITNList() {
     return this._ITNList.value;
+  }
+  public updateItnList(list: ITNinfo[]): void {
+    this._ITNList.next(list);
+  }
+
+  public reset(): void {
+    this._currentITN.next(null);
+    this._ITNList.next(null);
   }
 
   /**
@@ -104,6 +121,7 @@ export class StockingService {
             throw new Error('Container not found');
           }
         }),
+
         switchMap((res) => {
           const inventory = res.data.findInventory;
           const ITNInfo = {
@@ -111,26 +129,29 @@ export class StockingService {
             ITN,
             Quantity: inventory.QuantityOnHand,
             productID: inventory.Product._id,
+            PartNumber: inventory.Product.PartNumber,
+            ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
           };
-          // If user scan a itn, store info, then do a single itn stocking in next page.
-          this._ITNList.next([ITNInfo]);
           this._currentITN.next(ITNInfo);
-          const log = this._insertLog.mutate({
+          return this._move.mutate({
+            ITN: this.currentITN.ITN,
+            DC: environment.DistributionCenter,
+            ContainerID: this.containerID,
+          });
+        }),
+
+        switchMap(() =>
+          this._insertLog.mutate({
             log: {
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-              UserEventID: sqlData.Event_Stocking_ScanITN,
-              InventoryTrackingNumber: ITN,
-              PartNumber: inventory.Product.PartNumber,
-              ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
+              UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
+              InventoryTrackingNumber: this.currentITN.ITN,
+              PartNumber: this.currentITN.PartNumber,
+              ProductCode: this.currentITN.ProductCode,
+              Message: ``,
             },
-          });
-          const moveToUser = this._move.mutate({
-            ContainerID: this.containerID,
-            ITN,
-            DC: environment.DistributionCenter,
-          });
-          return forkJoin({ log, moveToUser });
-        })
+          })
+        )
       );
   }
 
@@ -148,7 +169,7 @@ export class StockingService {
       )
       .pipe(
         tap((res) => {
-          if (!res.data.findContainer._id) {
+          if (!res.data.findContainer) {
             throw new Error(`${Barcode} not found!`);
           }
           if (!res.data.findContainer.ContainerType.IsMobile) {
@@ -160,17 +181,19 @@ export class StockingService {
         }),
         map((res) => res.data.findContainer.INVENTORies),
         switchMap((res) => {
-          const ITNList = res.map((item) => ({
-            _id: item._id,
-            ITN: item.InventoryTrackingNumber,
-            Quantity: item.QuantityOnHand,
-            productID: item.Product._id,
-          }));
-          Logger.devOnly(
-            'stocking',
-            'findITNsInLocation',
-            `Total ITNs: ${ITNList.length}`
-          );
+          const ITNList = res.map((item) => {
+            Logger.devOnly(
+              'stockingService',
+              'findITNsInLocation',
+              item.InventoryTrackingNumber
+            );
+            return {
+              _id: item._id,
+              ITN: item.InventoryTrackingNumber,
+              Quantity: item.QuantityOnHand,
+              productID: item.Product._id,
+            };
+          });
           const log = {
             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
             UserEventID: sqlData.Event_Stocking_ScanLocation,
@@ -180,5 +203,23 @@ export class StockingService {
           return this._insertLog.mutate({ log });
         })
       );
+  }
+
+  /**
+   * notFound
+   */
+  public addNotFoundFlag$(ITNList: string[]) {
+    const log = ITNList.map((itn) => ({
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserEventID: sqlData.Event_Stocking_NotFound,
+      InventoryTrackingNumber: itn,
+      Message: ``,
+    }));
+    return this._noFound
+      .mutate({
+        ITNList,
+        DC: environment.DistributionCenter,
+      })
+      .pipe(switchMap(() => this._insertLog.mutate({ log })));
   }
 }

@@ -36,7 +36,7 @@ import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.compone
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <ng-container *ngIf="initData$ | async as data">
-      <popup-modal (clickOK)="onBack()" [message]="data"></popup-modal>
+      <popup-modal (clickSubmit)="onBack()" [message]="data"></popup-modal>
     </ng-container>
     <simple-keyboard
       [inputString]="inputForm.value.partNumber"

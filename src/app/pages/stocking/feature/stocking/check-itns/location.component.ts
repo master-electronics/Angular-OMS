@@ -24,7 +24,7 @@ import { ITNInfoComponent } from '../../../ui/itn-info.component';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="location"
-      title="Location"
+      title="Location:"
     ></single-input-form>
     <ng-container *ngIf="info$ | async as info">
       <itn-info [sortingInfo]="info"></itn-info>
@@ -58,6 +58,6 @@ export class LocationComponent implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../itn'], { relativeTo: this._actRoute });
+    this._router.navigate(['../'], { relativeTo: this._actRoute });
   }
 }

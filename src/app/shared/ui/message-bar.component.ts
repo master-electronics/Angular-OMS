@@ -19,9 +19,7 @@ import { Component, Input } from '@angular/core';
           type="button"
           class="-mx-1.5 -my-1.5 ml-auto inline-flex h-5 rounded-lg  bg-blue-100 p-1.5 hover:bg-blue-200 focus:ring-2 focus:ring-blue-400 dark:bg-blue-200 dark:hover:bg-blue-300 lg:h-10"
           aria-label="Close"
-        >
-          <ng-template [ngTemplateOutlet]="closeButton" ]></ng-template>
-        </button>
+        ></button>
       </div>
 
       <!-- success -->
@@ -36,9 +34,7 @@ import { Component, Input } from '@angular/core';
           type="button"
           class="-mx-1.5 -my-1.5 ml-auto inline-flex h-5 rounded-lg  bg-green-100 p-1.5 text-green-500 hover:bg-green-200 focus:ring-2 focus:ring-green-400 dark:bg-green-200 dark:hover:bg-green-300 lg:h-10"
           aria-label="Close"
-        >
-          <ng-template [ngTemplateOutlet]="closeButton" ]></ng-template>
-        </button>
+        ></button>
       </div>
 
       <!-- warning -->
@@ -54,9 +50,7 @@ import { Component, Input } from '@angular/core';
           class="-mx-1.5 -my-1.5 ml-auto inline-flex h-5 rounded-lg  bg-yellow-100 p-1.5 text-yellow-500 hover:bg-yellow-200 focus:ring-2 focus:ring-yellow-400 dark:bg-yellow-200 dark:hover:bg-yellow-300 lg:h-10"
           data-dismiss-target="#message-bar-warning"
           aria-label="Close"
-        >
-          <ng-template [ngTemplateOutlet]="closeButton" ]></ng-template>
-        </button>
+        ></button>
       </div>
 
       <!-- info -->
@@ -72,9 +66,7 @@ import { Component, Input } from '@angular/core';
           class="-mx-1.5 -my-1.5 ml-auto inline-flex h-5 rounded-lg  bg-gray-100 p-1.5 text-gray-500 hover:bg-gray-200 focus:ring-2 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white lg:h-10"
           data-dismiss-target="#message-bar-info"
           aria-label="Close"
-        >
-          <ng-template [ngTemplateOutlet]="closeButton" ]></ng-template>
-        </button>
+        ></button>
       </div>
 
       <!-- error -->
@@ -89,9 +81,7 @@ import { Component, Input } from '@angular/core';
           type="button"
           class="-mx-1.5 -my-1.5 ml-auto inline-flex h-5 rounded-lg  bg-red-100 p-1.5 text-red-500 hover:bg-red-200 focus:ring-2 focus:ring-red-400 dark:bg-red-200 dark:hover:bg-red-300 lg:h-10"
           aria-label="Close"
-        >
-          <ng-template [ngTemplateOutlet]="closeButton" ]></ng-template>
-        </button>
+        ></button>
       </div>
     </div>
 
@@ -110,23 +100,6 @@ import { Component, Input } from '@angular/core';
         ></path>
       </svg>
       <div class="ml-3 font-medium">{{ message }}</div>
-    </ng-template>
-
-    <ng-template #closeButton>
-      <span class="sr-only">Dismiss</span>
-      <svg
-        aria-hidden="true"
-        class="h-5 w-5"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
     </ng-template>
   `,
 })

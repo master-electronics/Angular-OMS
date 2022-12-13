@@ -59,7 +59,7 @@ export class ScanITNComponent implements OnInit {
       }),
       catchError((error) => {
         return of({
-          error: { message: error.message, type: 'error' },
+          error: { message: error.message, name: 'error' },
         });
       })
     );

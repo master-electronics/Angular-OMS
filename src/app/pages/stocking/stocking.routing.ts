@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { CheckItnsService } from './data/checkItns.service';
 import { SortingService } from './data/sorting.service';
 import { StockingService } from './data/stocking.service';
 import { SuggestLocationsService } from './data/suggestLocations.service';
@@ -60,23 +61,26 @@ export const StockingRoutes: Routes = [
       {
         path: 'mismatch',
         loadComponent: () =>
-          import('./feature/stocking/mismatch/verify-itn.component').then(
-            (m) => m.VerifyItnComponent
+          import('./feature/stocking/mismatch.component').then(
+            (m) => m.MismatchComponent
           ),
       },
       {
-        path: 'verify/sacnitn',
+        path: 'checkitns',
+        providers: [CheckItnsService],
         loadComponent: () =>
-          import('./feature/stocking/check-each-itn/scan-itn.component').then(
-            (m) => m.ScanItnCountComponent
+          import('./feature/stocking/check-itns/scan-itn.component').then(
+            (m) => m.ScanItnComponent
           ),
-      },
-      {
-        path: 'verify/sacnlocation',
-        loadComponent: () =>
-          import('./feature/stocking/check-each-itn/location.component').then(
-            (m) => m.LocationComponent
-          ),
+        children: [
+          {
+            path: 'location',
+            loadComponent: () =>
+              import('./feature/stocking/check-itns/location.component').then(
+                (m) => m.LocationComponent
+              ),
+          },
+        ],
       },
     ],
   },
