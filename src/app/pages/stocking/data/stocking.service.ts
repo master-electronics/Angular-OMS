@@ -17,6 +17,7 @@ import {
   VerifyItnForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 
@@ -51,6 +52,10 @@ export class StockingService {
   }
   private _currentITN = new BehaviorSubject<ITNinfo>(null);
   private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
+  public get ITNList() {
+    return this._ITNList.value;
+  }
+
   /**
    * Fetch or create a container as user's username in Container table.
    */
@@ -161,6 +166,11 @@ export class StockingService {
             Quantity: item.QuantityOnHand,
             productID: item.Product._id,
           }));
+          Logger.devOnly(
+            'stocking',
+            'findITNsInLocation',
+            `Total ITNs: ${ITNList.length}`
+          );
           const log = {
             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
             UserEventID: sqlData.Event_Stocking_ScanLocation,

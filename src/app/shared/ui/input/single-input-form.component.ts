@@ -7,6 +7,7 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -20,6 +21,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { AutoFocusDirective } from '../../directives/auto-focus.directive';
+import { LoaderButtonComponent } from '../button/loader-button.component';
 
 @Component({
   standalone: true,
@@ -30,18 +32,15 @@ import { AutoFocusDirective } from '../../directives/auto-focus.directive';
     NzSkeletonModule,
     NormalButtonComponent,
     SubmitButtonComponent,
+    LoaderButtonComponent,
     MessageBarComponent,
     NzIconModule,
     AutoFocusDirective,
   ],
-
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'single-input-form',
   template: `
-    <form
-      *ngIf="data; else loading"
-      [formGroup]="inputForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
         <div class="gap-2 md:grid" [class.flex]="title.length < 10">
           <label class="mb-0.5 font-bold text-gray-700" [for]="controlName">
@@ -94,11 +93,17 @@ import { AutoFocusDirective } from '../../directives/auto-focus.directive';
         </div>
         <!-- Button area -->
         <div
-          class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-40"
+          class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
         >
-          <submit-button [disabled]="!isvalid"> </submit-button>
-          <div></div>
-          <normal-button (buttonClick)="onBack()"></normal-button>
+          <submit-button *ngIf="data; else loading" [disabled]="!isvalid">
+          </submit-button>
+          <ng-template #loading>
+            <loader-button></loader-button>
+          </ng-template>
+          <normal-button
+            class="col-start-3"
+            (buttonClick)="onBack()"
+          ></normal-button>
         </div>
         <div *ngIf="data?.error" class="mt-1 md:mt-3 lg:mt-6">
           <message-bar
@@ -108,9 +113,6 @@ import { AutoFocusDirective } from '../../directives/auto-focus.directive';
         </div>
       </div>
     </form>
-    <ng-template #loading>
-      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
-    </ng-template>
   `,
 })
 export class SingleInputformComponent implements OnInit {

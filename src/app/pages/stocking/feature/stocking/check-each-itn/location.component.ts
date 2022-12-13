@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
+import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { ITNInfoComponent } from '../../../ui/itn-info.component';
 
 @Component({
   standalone: true,
@@ -14,6 +14,8 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
     RouterModule,
     SingleInputformComponent,
     ReactiveFormsModule,
+    PrinterButtomComponent,
+    ITNInfoComponent,
   ],
   template: `
     <single-input-form
@@ -21,15 +23,16 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
       (formBack)="onBack()"
       [data]="data$ | async"
       [formGroup]="inputForm"
-      controlName="itn"
-      title=""
+      controlName="location"
+      title="Location"
     ></single-input-form>
+    <ng-container *ngIf="info$ | async as info">
+      <itn-info [sortingInfo]="info"></itn-info>
+    </ng-container>
   `,
 })
-export class ITNCountComponent implements OnInit {
+export class LocationComponent implements OnInit {
   constructor(
-    private title: Title,
-    private navbar: CommonService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router
@@ -37,20 +40,24 @@ export class ITNCountComponent implements OnInit {
 
   public data$;
   public inputForm = this._fb.nonNullable.group({
-    itn: ['', [Validators.required]],
+    location: ['', [Validators.required]],
   });
+  public info$ = combineLatest([
+    of(null),
+    this._actRoute.data.pipe(map((res) => res.locations)),
+  ]).pipe(map(([info, locations]) => ({ info, locations })));
 
-  ngOnInit(): void {
-    this.title.setTitle('Stocking');
-    this.navbar.changeNavbar('Stocking');
+  ngOnInit() {
     this.data$ = of(true);
   }
 
   onSubmit(): void {
-    //
+    const tmp = this.inputForm.value.location;
+    const Barcode =
+      tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
   }
 
   onBack(): void {
-    this._router.navigate(['../'], { relativeTo: this._actRoute });
+    this._router.navigate(['../itn'], { relativeTo: this._actRoute });
   }
 }

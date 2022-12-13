@@ -76,7 +76,16 @@ export class ScanTargetComponent implements OnInit {
   }
 
   private findITNInLocation(location: string) {
-    //
+    this.data$ = this._stock.findITNsInLocation(location).pipe(
+      map(() => {
+        this._router.navigate(['../itncount'], { relativeTo: this._actRoute });
+      }),
+      catchError((error) => {
+        return of({
+          error: { message: error.message, type: 'error' },
+        });
+      })
+    );
   }
 
   onBack(): void {

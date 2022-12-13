@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: 'http://meow-aws-wdxd2:4000',
   graphql: 'http://meow-aws-wdxd2:3000/graphql',
   GTM_ID: 'GTM-KS8744D',

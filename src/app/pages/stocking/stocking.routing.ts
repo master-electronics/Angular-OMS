@@ -50,6 +50,34 @@ export const StockingRoutes: Routes = [
             (m) => m.ScanTargetComponent
           ),
       },
+      {
+        path: 'itncount',
+        loadComponent: () =>
+          import('./feature/stocking/itn-count.component').then(
+            (m) => m.ITNCountComponent
+          ),
+      },
+      {
+        path: 'mismatch',
+        loadComponent: () =>
+          import('./feature/stocking/mismatch/verify-itn.component').then(
+            (m) => m.VerifyItnComponent
+          ),
+      },
+      {
+        path: 'verify/sacnitn',
+        loadComponent: () =>
+          import('./feature/stocking/check-each-itn/scan-itn.component').then(
+            (m) => m.ScanItnCountComponent
+          ),
+      },
+      {
+        path: 'verify/sacnlocation',
+        loadComponent: () =>
+          import('./feature/stocking/check-each-itn/location.component').then(
+            (m) => m.LocationComponent
+          ),
+      },
     ],
   },
 ];

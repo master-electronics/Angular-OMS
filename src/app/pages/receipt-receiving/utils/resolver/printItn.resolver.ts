@@ -10,7 +10,6 @@ export class PrintItnResolver implements Resolve<any> {
   resolve() {
     return this._label.printReceivingLabel$().pipe(
       catchError((error) => {
-        console.log(error);
         return of({ error });
       })
     );

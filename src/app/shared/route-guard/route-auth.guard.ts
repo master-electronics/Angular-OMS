@@ -10,6 +10,7 @@ import { catchError, EMPTY, map, Observable, of, Subject, tap } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthenticationService } from '../services/authentication.service';
 import { RouteAuthService } from '../services/route-auth.service';
+import { Logger } from '../services/logger.service';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +62,7 @@ export class RouterGuard implements CanActivateChild {
         }
       }),
       catchError((err) => {
-        console.log(err);
+        Logger.error('route-auth', 'activate', err.message);
         return EMPTY;
       })
     );

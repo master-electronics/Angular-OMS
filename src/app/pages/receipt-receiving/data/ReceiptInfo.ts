@@ -14,6 +14,7 @@ import {
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { LogService } from './eventLog';
@@ -124,7 +125,7 @@ export class ReceiptInfoService {
         }),
         map((res) => res.data.findReceiptInfoByIdAndStatus.RECEIPTLs),
         map((res) => {
-          console.log(res[0].Product.PartNumber);
+          Logger.devOnly('ReceiptInfo', 'findLines', res[0].Product.PartNumber);
           this._receiptLines.next(res);
           return true;
         })

@@ -18,6 +18,7 @@ import {
   Insert_UserEventLogsGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { LogService } from './eventLog';
@@ -111,7 +112,11 @@ export class LabelService {
             BinLocation: '',
             ContainerID: 0,
           });
-          console.log(res.data.createITN);
+          Logger.devOnly(
+            'LabelService',
+            'printReceivingLabel',
+            res.data.createITN
+          );
         }),
         switchMap((res) => {
           return combineLatest({

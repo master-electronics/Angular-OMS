@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { StockingService } from '../../data/stocking.service';
+import { of } from 'rxjs';
+import { Logger } from 'src/app/shared/services/logger.service';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
+    SimpleKeyboardComponent,
     SingleInputformComponent,
     ReactiveFormsModule,
   ],
@@ -22,35 +24,51 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title=""
+      inputType="number"
+      title="Enter ITN Count"
     ></single-input-form>
+    <simple-keyboard
+      layout="number"
+      [inputString]="inputForm.value.itn"
+      (outputString)="onChange($event)"
+    ></simple-keyboard>
   `,
 })
 export class ITNCountComponent implements OnInit {
   constructor(
-    private title: Title,
-    private navbar: CommonService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _stock: StockingService
   ) {}
 
+  public audio = new Audio('./assets/audio/warning.wav');
   public data$;
   public inputForm = this._fb.nonNullable.group({
     itn: ['', [Validators.required]],
   });
 
+  public onChange = (input: string) => {
+    this.inputForm.patchValue({ itn: input });
+  };
+
   ngOnInit(): void {
-    this.title.setTitle('Stocking');
-    this.navbar.changeNavbar('Stocking');
     this.data$ = of(true);
+    this.audio.load();
   }
 
   onSubmit(): void {
-    //
+    if (Number(this.inputForm.value.itn) === this._stock.ITNList.length) {
+      this._router.navigate(['../verify/scanitn'], {
+        relativeTo: this._actRoute,
+      });
+      return;
+    }
+    this.audio.play();
+    this._router.navigate(['../mismatch'], { relativeTo: this._actRoute });
   }
 
   onBack(): void {
-    this._router.navigate(['../'], { relativeTo: this._actRoute });
+    this._router.navigate(['../scantarget'], { relativeTo: this._actRoute });
   }
 }
