@@ -12,8 +12,9 @@ import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
-import { map, Observable, of, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, tap } from 'rxjs';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
+import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   standalone: true,
@@ -36,7 +37,12 @@ import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.compone
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <ng-container *ngIf="initData$ | async as data">
-      <popup-modal (clickSubmit)="onBack()" [message]="data"></popup-modal>
+      <ng-container *ngIf="data.checkLine">
+        <popup-modal
+          (clickSubmit)="onBack()"
+          [message]="data.checkLine"
+        ></popup-modal>
+      </ng-container>
     </ng-container>
     <simple-keyboard
       [inputString]="inputForm.value.partNumber"
@@ -46,7 +52,7 @@ import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.compone
 })
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
-  public initData$: Observable<string>;
+  public initData$: Observable<any>;
   public validator = {
     name: 'filter',
     message: 'Not Found part number!',
@@ -56,11 +62,12 @@ export class PartComponent implements OnInit {
     private _router: Router,
     private _receipt: ReceiptInfoService,
     private _ui: ReceivingService,
+    private _message: NzMessageService,
     private _actRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this._ui.changeSteps(1);
+    this._ui.changeSteps(0);
     this.inputForm = new FormGroup({
       partNumber: new FormControl('', [
         Validators.required,
@@ -70,7 +77,16 @@ export class PartComponent implements OnInit {
     if (!this._receipt.headerID) {
       this.onBack();
     }
-    this.initData$ = this._actRoute.data.pipe(
+    const url$ = this._actRoute.queryParams.pipe(
+      map((res) => {
+        if (res.receipt) {
+          this._message.success(
+            `Finished Receipt: ${res.receipt}, line: ${res.line}`
+          );
+        }
+      })
+    );
+    const checkLine$ = this._actRoute.data.pipe(
       map((res) => {
         if (res.lines?.error) {
           return res.lines.error.message;
@@ -78,6 +94,7 @@ export class PartComponent implements OnInit {
         return null;
       })
     );
+    this.initData$ = combineLatest({ url: url$, checkLine: checkLine$ });
   }
 
   partNumberSearch(): ValidatorFn {

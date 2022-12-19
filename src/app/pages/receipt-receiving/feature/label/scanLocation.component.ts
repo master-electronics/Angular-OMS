@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { ReceivingService } from '../../data/receivingService';
 import { LabelService } from '../../data/label';
+import { LogService } from '../../data/eventLog';
 
 @Component({
   standalone: true,
@@ -52,7 +53,8 @@ export class ScanLocationComponent implements OnInit {
   constructor(
     private _router: Router,
     private _ui: ReceivingService,
-    public _label: LabelService
+    public _label: LabelService,
+    private _log: LogService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,12 @@ export class ScanLocationComponent implements OnInit {
         }),
         switchMap(() => this._label.updateAfterReceving()),
         tap(() => {
-          this._router.navigate(['receiptreceiving/part']);
+          this._router.navigate(['receiptreceiving/part'], {
+            queryParams: {
+              receipt: this._log.receivingLog.ReceiptHeader,
+              line: this._log.receivingLog.ReceiptLine,
+            },
+          });
         }),
         catchError((error) => {
           return of(error);
