@@ -73,10 +73,12 @@ export class MismatchComponent implements OnInit {
   onSubmit(): void {
     const input = this.inputForm.value.itn;
     this.inputForm.patchValue({ itn: '' });
+    // IF ITN not in the list, then move this itn to user container
     if (!this._stock.ITNList.some((itn) => itn.ITN === input)) {
       this.moveItnToUser(input);
       return;
     }
+    // If itn in the list, move this itn from unverified to verified list.
     this.unverifiedITNs = this.unverifiedITNs.filter((itn) => {
       const isequal = itn.ITN !== input;
       if (isequal) {
@@ -96,7 +98,7 @@ export class MismatchComponent implements OnInit {
     this.data$ = this._stock.moveItnToUser(input).pipe(
       map(() => ({
         error: {
-          message: `ITN is not found in the working location,  It has been moved to your personal location.`,
+          message: `${input} is not found in the working location,  It has been moved to your personal location.`,
           name: `warning`,
         },
       })),

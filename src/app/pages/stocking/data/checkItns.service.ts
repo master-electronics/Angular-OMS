@@ -4,9 +4,7 @@ import { ITNinfo, StockingService } from './stocking.service';
 
 @Injectable()
 export class CheckItnsService {
-  constructor(private _stock: StockingService) {
-    //
-  }
+  constructor(private _stock: StockingService) {}
 
   private _verifiedItns = new BehaviorSubject<Set<ITNinfo>>(new Set());
   public get verifiedItns() {

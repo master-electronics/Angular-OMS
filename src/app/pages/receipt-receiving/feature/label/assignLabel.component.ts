@@ -107,6 +107,7 @@ export class AssignLabelComponent implements OnInit {
 
   ngOnInit(): void {
     this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
+    this._label.reset();
     this.remaining = this.total;
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});

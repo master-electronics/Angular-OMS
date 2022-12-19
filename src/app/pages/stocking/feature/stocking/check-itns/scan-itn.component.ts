@@ -49,7 +49,10 @@ export class ScanItnComponent implements OnInit {
 
   onSubmit(): void {
     const input = this.inputForm.value.itn;
-    // Search itn in the location itn list
+    /**
+     * Search itn in the location itn list, If found unpdate current itn.
+     * Then go to location page.
+     */
     const isInList = this._stock.ITNList.some((itn, index) => {
       if (itn.ITN === input) {
         this._check.addItnintoVerifiedItns(itn);
@@ -58,16 +61,16 @@ export class ScanItnComponent implements OnInit {
       }
       return false;
     });
-    // if found, go to next step
     if (isInList) {
       this._router.navigate(['location'], { relativeTo: this._actRoute });
       return;
     }
     // if not move this non found itn to user container.
+    this.inputForm.patchValue({ itn: '' });
     this.data$ = this._stock.moveItnToUser(input).pipe(
       map(() => ({
         error: {
-          message: `ITN is not found in the working location. It has been moved to your personal location.`,
+          message: `${input} is not found in the working location. It has been moved to your personal location.`,
           name: `warning`,
         },
       })),
