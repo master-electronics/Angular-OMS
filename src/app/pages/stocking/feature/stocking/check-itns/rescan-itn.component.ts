@@ -2,10 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
-import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
+import {
+  catchError,
+  combineLatest,
+  EMPTY,
+  filter,
+  map,
+  merge,
+  mergeMap,
+  of,
+  share,
+  take,
+  tap,
+} from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
-import { ITNInfoComponent } from '../../../ui/itn-info.component';
+import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { StockingService } from '../../../data/stocking.service';
 
 @Component({
   standalone: true,
@@ -14,8 +26,6 @@ import { ITNInfoComponent } from '../../../ui/itn-info.component';
     RouterModule,
     SingleInputformComponent,
     ReactiveFormsModule,
-    PrinterButtomComponent,
-    ITNInfoComponent,
   ],
   template: `
     <single-input-form
@@ -23,38 +33,36 @@ import { ITNInfoComponent } from '../../../ui/itn-info.component';
       (formBack)="onBack()"
       [data]="data$ | async"
       [formGroup]="inputForm"
-      controlName="location"
-      title="Location:"
+      controlName="itn"
+      title="Rescan the ITN:"
     ></single-input-form>
-    <ng-container *ngIf="info$ | async as info">
-      <itn-info [sortingInfo]="info"></itn-info>
-    </ng-container>
   `,
 })
-export class LocationComponent implements OnInit {
+export class RescanItnComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _stock: StockingService
   ) {}
 
   public data$;
   public inputForm = this._fb.nonNullable.group({
-    location: ['', [Validators.required]],
+    itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
-  public info$ = combineLatest([
-    of(null),
-    this._actRoute.data.pipe(map((res) => res.locations)),
-  ]).pipe(map(([info, locations]) => ({ info, locations })));
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.data$ = of(true);
   }
 
   onSubmit(): void {
-    const tmp = this.inputForm.value.location;
-    const Barcode =
-      tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
+    const input = this.inputForm.value.itn;
+    // const isValid= input === this._stock.currentITN.ITN),
+    if (input === 'PH11111111') {
+      this._router.navigate(['../checkitns'], { relativeTo: this._actRoute });
+      return;
+    }
+    this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
   }
 
   onBack(): void {

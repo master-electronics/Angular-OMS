@@ -14,7 +14,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 import { combineLatest, map, Observable, of, tap } from 'rxjs';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
-import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   standalone: true,

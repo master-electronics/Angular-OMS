@@ -1,15 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   FetchItnInfoByContainerforStockingGQL,
   FindorCreateUserContainerForStockingGQL,
@@ -56,6 +46,9 @@ export class StockingService {
   public get currentITN() {
     return this._currentITN.value;
   }
+  public get currentITN$() {
+    return this._currentITN.asObservable();
+  }
   public updateCurrentItn(itn: ITNinfo) {
     this._currentITN.next(itn);
   }
@@ -68,9 +61,27 @@ export class StockingService {
     this._ITNList.next(list);
   }
 
+  private _verifiedItns = new BehaviorSubject<ITNinfo[]>([]);
+  public get verifiedItns() {
+    return this._verifiedItns.value;
+  }
+  /**
+   * verifiedItns should be a set of itn object. not dupicate elements.
+   */
+  public addVerifiedItns(itn: ITNinfo) {
+    const currentList = this._verifiedItns.value;
+    if (!currentList?.length) {
+      this._verifiedItns.next([itn]);
+      return;
+    }
+    const set = [...new Map(currentList.map((itn) => [itn.ITN, itn])).values()];
+    this._verifiedItns.next(set);
+  }
+
   public reset(): void {
     this._currentITN.next(null);
     this._ITNList.next(null);
+    this._verifiedItns.next(null);
   }
 
   /**

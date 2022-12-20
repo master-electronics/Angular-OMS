@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { CheckItnsService } from '../../../data/checkItns.service';
+import { SortingService } from '../../../data/sorting.service';
 import { StockingService } from '../../../data/stocking.service';
 
 @Component({
@@ -23,7 +23,7 @@ import { StockingService } from '../../../data/stocking.service';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title="Scan ITN: {{ _check.verifiedItns.size + 1 }} of {{
+      title="Scan ITN: {{ _stock.verifiedItns?.length || 0 + 1 }} of {{
         _stock.ITNList.length
       }}"
     ></single-input-form>
@@ -34,8 +34,8 @@ export class ScanItnComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    public _check: CheckItnsService,
-    public _stock: StockingService
+    public _stock: StockingService,
+    public _sort: SortingService
   ) {}
 
   public data$;
@@ -55,14 +55,25 @@ export class ScanItnComponent implements OnInit {
      */
     const isInList = this._stock.ITNList.some((itn, index) => {
       if (itn.ITN === input) {
-        this._check.addItnintoVerifiedItns(itn);
+        this._stock.addVerifiedItns(itn);
         this._stock.updateCurrentItn(itn);
         return true;
       }
       return false;
     });
     if (isInList) {
-      this._router.navigate(['location'], { relativeTo: this._actRoute });
+      this.data$ = this._sort.verifyITN$(input).pipe(
+        map(() =>
+          this._router.navigate(['../location'], {
+            relativeTo: this._actRoute,
+          })
+        ),
+        catchError((error) =>
+          of({
+            error: { message: error.message, name: 'error' },
+          })
+        )
+      );
       return;
     }
     // if not move this non found itn to user container.

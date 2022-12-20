@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
   template: `
     <!-- Item Info -->
     <div
-      class="grid grid-cols-3 justify-items-end gap-0 text-black dark:text-white md:text-lg lg:text-xl"
+      class="grid grid-cols-3 justify-items-end gap-0 text-black md:text-lg lg:text-xl"
       *ngFor="let item of sortingInfo.info | keyvalue"
     >
       <span class="mr-2 font-medium">{{ item.key }}:</span>

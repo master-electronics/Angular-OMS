@@ -8,6 +8,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { SortingService } from '../../data/sorting.service';
+import { StockingService } from '../../data/stocking.service';
 
 @Component({
   standalone: true,
@@ -24,7 +25,7 @@ import { SortingService } from '../../data/sorting.service';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title="ITN"
+      title="ITN:"
     ></single-input-form>
   `,
 })
@@ -35,7 +36,8 @@ export class ScanITNComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _sort: SortingService
+    private _sort: SortingService,
+    private _stock: StockingService
   ) {}
 
   public data$;
@@ -47,6 +49,7 @@ export class ScanITNComponent implements OnInit {
     this.title.setTitle('Sorting');
     this.navbar.changeNavbar('Sorting');
     this.data$ = of(true);
+    this._stock.reset();
   }
 
   onSubmit(): void {
@@ -66,6 +69,6 @@ export class ScanITNComponent implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../../'], { relativeTo: this._actRoute });
+    this._router.navigate(['../'], { relativeTo: this._actRoute });
   }
 }

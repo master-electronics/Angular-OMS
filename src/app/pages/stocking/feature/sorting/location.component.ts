@@ -6,6 +6,7 @@ import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { SortingService } from '../../data/sorting.service';
+import { StockingService } from '../../data/stocking.service';
 import { ITNInfoComponent } from '../../ui/itn-info.component';
 
 @Component({
@@ -25,7 +26,7 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="location"
-      title="Location"
+      title="Location:"
     ></single-input-form>
     <ng-container *ngIf="info$ | async as info">
       <itn-info [sortingInfo]="info"></itn-info>
@@ -41,7 +42,8 @@ export class LocationComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _sort: SortingService
+    private _sort: SortingService,
+    private _stock: StockingService
   ) {}
 
   public data$;
@@ -75,6 +77,13 @@ export class LocationComponent implements OnInit {
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
     this.data$ = this._sort.moveItn$(Barcode).pipe(
       map(() => {
+        // if there ITNList is not null, move to rescanitn page.
+        if (this._stock.ITNList) {
+          this._router.navigate(['../rescanitn'], {
+            relativeTo: this._actRoute,
+          });
+          return;
+        }
         this._router.navigate(['../itn'], { relativeTo: this._actRoute });
       }),
       catchError((error) => {

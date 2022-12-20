@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
-import { CheckItnsService } from './data/checkItns.service';
 import { SortingService } from './data/sorting.service';
 import { StockingService } from './data/stocking.service';
 import { SuggestLocationsService } from './data/suggestLocations.service';
 import { ScanTargetResolver } from './utils/resolver/scan-target.resolver';
-import { SortLocationResolver } from './utils/resolver/sort-location.resolver';
+import { SortLocationResolver } from './utils/resolver/location.resolver';
 import { StockingGuard } from './utils/stocking.guard';
 
 export const StockingRoutes: Routes = [
@@ -29,14 +28,14 @@ export const StockingRoutes: Routes = [
       },
       { path: '', pathMatch: 'full', redirectTo: 'menu' },
       {
-        path: 'sorting/itn',
+        path: 'itn',
         loadComponent: () =>
           import('./feature/sorting/scan-itn.component').then(
             (m) => m.ScanITNComponent
           ),
       },
       {
-        path: 'sorting/location',
+        path: 'location',
         resolve: { locations: SortLocationResolver },
         loadComponent: () =>
           import('./feature/sorting/location.component').then(
@@ -67,20 +66,17 @@ export const StockingRoutes: Routes = [
       },
       {
         path: 'checkitns',
-        providers: [CheckItnsService],
         loadComponent: () =>
           import('./feature/stocking/check-itns/scan-itn.component').then(
             (m) => m.ScanItnComponent
           ),
-        children: [
-          {
-            path: 'location',
-            loadComponent: () =>
-              import('./feature/stocking/check-itns/location.component').then(
-                (m) => m.LocationComponent
-              ),
-          },
-        ],
+      },
+      {
+        path: 'rescanitn',
+        loadComponent: () =>
+          import('./feature/stocking/check-itns/rescan-itn.component').then(
+            (m) => m.RescanItnComponent
+          ),
       },
     ],
   },

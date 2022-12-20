@@ -8,6 +8,7 @@ import {
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { StockingService } from './stocking.service';
 
 export interface SuggetionLocation {
   Bincode: string;
