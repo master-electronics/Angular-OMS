@@ -2,19 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import {
-  catchError,
-  combineLatest,
-  EMPTY,
-  filter,
-  map,
-  merge,
-  mergeMap,
-  of,
-  share,
-  take,
-  tap,
-} from 'rxjs';
+import { of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../../data/stocking.service';
@@ -57,12 +45,15 @@ export class RescanItnComponent implements OnInit {
 
   onSubmit(): void {
     const input = this.inputForm.value.itn;
-    // const isValid= input === this._stock.currentITN.ITN),
-    if (input === 'PH11111111') {
-      this._router.navigate(['../checkitns'], { relativeTo: this._actRoute });
+    const isValid = input === this._stock.currentITN.ITN;
+    if (!isValid) {
+      this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
       return;
     }
-    this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
+    if (this._stock.verifiedItns.length !== this._stock.ITNList.length) {
+      this._router.navigate(['../checkitns'], { relativeTo: this._actRoute });
+    }
+    this._router.navigate(['../user'], { relativeTo: this._actRoute });
   }
 
   onBack(): void {

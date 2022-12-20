@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
+  FetchInventoryInUserContainerGQL,
   FetchItnInfoByContainerforStockingGQL,
   FindorCreateUserContainerForStockingGQL,
   MoveInventoryToContainerForStockingGQL,
@@ -34,12 +35,16 @@ export class StockingService {
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
-    private _insertLog: Insert_UserEventLogsGQL
+    private _insertLog: Insert_UserEventLogsGQL,
+    private _ItnInUser: FetchInventoryInUserContainerGQL
   ) {}
 
-  private _containerID = new BehaviorSubject<number>(null);
-  public get containerID(): number {
-    return this._containerID.value;
+  /**
+   * User ContainerID
+   */
+  private _userContainerID = new BehaviorSubject<number>(null);
+  public get userContainerID(): number {
+    return this._userContainerID.value;
   }
 
   private _currentITN = new BehaviorSubject<ITNinfo>(null);
@@ -88,7 +93,7 @@ export class StockingService {
    * Fetch or create a container as user's username in Container table.
    */
   public get containerID$() {
-    return this._containerID.asObservable().pipe(
+    return this._userContainerID.asObservable().pipe(
       switchMap((res) => {
         if (res) {
           return of(res);
@@ -103,8 +108,10 @@ export class StockingService {
           })
           .pipe(
             map((res) => {
-              this._containerID.next(res.data.findOrCreateUserContainer._id);
-              return this._containerID.value;
+              this._userContainerID.next(
+                res.data.findOrCreateUserContainer._id
+              );
+              return this._userContainerID.value;
             })
           );
       })
@@ -128,7 +135,7 @@ export class StockingService {
           if (!res.data.findInventory) {
             throw new Error('ITN not found');
           }
-          if (!this._containerID.value) {
+          if (!this._userContainerID.value) {
             throw new Error('Container not found');
           }
         }),
@@ -147,7 +154,7 @@ export class StockingService {
           return this._move.mutate({
             ITN: this.currentITN.ITN,
             DC: environment.DistributionCenter,
-            ContainerID: this.containerID,
+            ContainerID: this.userContainerID,
           });
         }),
 
@@ -232,5 +239,19 @@ export class StockingService {
         DC: environment.DistributionCenter,
       })
       .pipe(switchMap(() => this._insertLog.mutate({ log })));
+  }
+
+  /**
+   * ItnInUserContainer
+   */
+  public ItnInUserContainer$() {
+    return this._ItnInUser.fetch({ ContainerID: this.userContainerID }).pipe(
+      map((res) => res.data.findContainer.INVENTORies),
+      tap((res) => {
+        if (!res.length) {
+          throw new Error('Not ITN  Under User');
+        }
+      })
+    );
   }
 }
