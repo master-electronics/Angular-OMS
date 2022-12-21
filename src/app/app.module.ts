@@ -18,7 +18,6 @@ import { AppRoutingModule } from './app.routing';
 import { HttpHeaderInterceptor } from './shared/interceptors/http-header.interceptor';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './pages/login/login.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { NavbarComponent } from './pages/shell/navbar/navbar.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -46,13 +45,7 @@ import { MenubarItemComponent } from './shared/ui/menubar-item.compenent';
 import { LoadingSpinnerComponent } from './shared/ui/loading-spinner.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    ShellComponent,
-    NavbarComponent,
-    HomeComponent,
-  ],
+  declarations: [AppComponent, ShellComponent, NavbarComponent, HomeComponent],
   imports: [
     CommonModule,
     ApolloModule,

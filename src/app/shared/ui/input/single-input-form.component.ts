@@ -20,7 +20,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
-import { AutoFocusDirective } from '../../directives/auto-focus.directive';
 import { LoaderButtonComponent } from '../button/loader-button.component';
 
 @Component({
@@ -35,7 +34,6 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
     LoaderButtonComponent,
     MessageBarComponent,
     NzIconModule,
-    AutoFocusDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'single-input-form',
@@ -48,7 +46,6 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
           </label>
           <div class="relative grow">
             <input
-              autofocus
               [formControlName]="controlName"
               oninput="this.value = this.value.toUpperCase()"
               [ngClass]="

@@ -158,7 +158,11 @@ const routes: Routes = [
       },
     ],
   },
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.component').then((m) => m.LoginComponent),
+  },
   {
     path: 'error',
     loadComponent: () =>

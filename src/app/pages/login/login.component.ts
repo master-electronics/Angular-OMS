@@ -1,154 +1,92 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   UntypedFormBuilder,
   Validators,
-  AbstractControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-import { Subscription, throwError } from 'rxjs';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { CommonModule } from '@angular/common';
+import { UserPasswordComponent } from 'src/app/shared/ui/input/user-password-form.component';
+import { of } from 'rxjs';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    UserPasswordComponent,
+  ],
+  template: `
+    <div
+      class="    
+      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-700 bg-cover bg-center"
+      style="background-image: url(../../../assets/img/bg_1.svg)"
+    >
+      <div
+        class="relative px-5 py-2  w-4/5 rounded-lg bg-gray-200 md:w2/3 lg:w-1/2 xl:w1/3"
+      >
+        <user-password-form
+          (formSubmit)="onSubmit()"
+          [formGroup]="loginForm"
+          [data]="login$ | async"
+        ></user-password-form>
+      </div>
+    </div>
+  `,
 })
-export class LoginComponent implements OnDestroy, OnInit {
-  passwordVisible = false;
-  isLoading = false;
-  login$;
-  message = '';
-  elem;
-  loginForm = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-  });
-  get f(): { [key: string]: AbstractControl } {
-    return this.loginForm.controls;
-  }
-  showCookieAlert: boolean;
-  showCookieModal: boolean;
-  hostnameValue;
-  hostnameIcon;
-  hostnameIconTitle;
-
-  private subscription: Subscription = new Subscription();
-
+export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private fb: UntypedFormBuilder,
     private authenticationService: AuthenticationService,
-    private userInfo: Find_Or_Create_UserInfoGQL,
-    private commonService: CommonService,
-    private titleService: Title
-  ) {
-    this.elem = document.documentElement;
+    private userInfo: Find_Or_Create_UserInfoGQL
+  ) {}
+  public login$;
+  public loginForm = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  ngOnInit(): void {
+    this.login$ = of(true);
     if (this.authenticationService.userInfo) {
       this.router.navigate(['home']);
     }
   }
 
-  ngOnInit(): void {
-    this.titleService.setTitle('Login');
-    this.hostnameValue = localStorage.getItem('hostname');
-
-    if (!this.hostnameValue) {
-      this.hostnameIcon = 'exclamation-circle';
-      this.hostnameIconTitle =
-        'Hostname is not set. Contact the help desk to have it set.';
-    } else {
-      this.hostnameIcon = 'check-circle';
-      this.hostnameIconTitle =
-        'Hostname is set. Contact the help desk to have it changed.';
-      localStorage.setItem('hostname', this.hostnameValue);
-    }
-  }
-
-  @ViewChild('username') username: ElementRef;
-  @ViewChild('password') password: ElementRef;
-  // convenience getter for easy access to form fields
-
-  openFullscreen(): void {
-    if (this.elem.requestFullscreen) {
-      this.elem.requestFullscreen();
-    } else if (this.elem.mozRequestFullScreen) {
-      /* Firefox */
-      this.elem.mozRequestFullScreen();
-    } else if (this.elem.webkitRequestFullscreen) {
-      /* Chrome, Safari and Opera */
-      this.elem.webkitRequestFullscreen();
-    } else if (this.elem.msRequestFullscreen) {
-      /* IE/Edge */
-      this.elem.msRequestFullscreen();
-    }
-  }
-
   onSubmit(): void {
-    this.message = '';
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.login$ = this.authenticationService
-        .checkUserAuth(
-          this.f.username.value.trim().toLowerCase(),
-          this.f.password.value
-        )
-        .pipe(
-          switchMap(() => {
-            const UserInfo = {
-              Name: this.authenticationService.userInfo.username,
-            };
-            return this.userInfo.mutate({ UserInfo: UserInfo });
-          }),
-          map((res) => {
-            const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
-            sessionStorage.setItem('userInfo', userInfo);
-            const returnUrl =
-              this.route.snapshot.queryParams['returnUrl'] || '/home';
-            this.router.navigateByUrl(returnUrl);
-
-            if (this.commonService.isMobile()) {
-              this.openFullscreen();
-            }
-          }),
-          catchError((error) => {
-            this.message = error.statusText;
-            if (typeof error.error === 'string') {
-              this.message = error.error;
-            }
-            this.isLoading = false;
-            return throwError(error);
-          })
-        );
-    }
-  }
-
-  verifyUser(): void {
-    this.message = '';
-  }
-
-  hideCookieModal(): void {
-    this.showCookieModal = false;
-  }
-
-  setHostnameCookie(): void {
-    localStorage.setItem('hostname', this.hostnameValue);
-    this.hostnameIcon = 'check-circle';
-    this.hostnameIconTitle =
-      'Hostname is set. Contact the help desk to have it changed.';
-    this.showCookieModal = false;
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.login$ = this.authenticationService
+      .checkUserAuth(
+        this.loginForm.value.username.trim().toLowerCase(),
+        this.loginForm.value.password
+      )
+      .pipe(
+        switchMap(() => {
+          const UserInfo = {
+            Name: this.authenticationService.userInfo.username,
+          };
+          return this.userInfo.mutate({ UserInfo: UserInfo });
+        }),
+        map((res) => {
+          const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
+          sessionStorage.setItem('userInfo', userInfo);
+          const returnUrl =
+            this.route.snapshot.queryParams['returnUrl'] || '/home';
+          this.router.navigateByUrl(returnUrl);
+        }),
+        catchError((error) => {
+          return of({
+            error: {
+              message: error.message,
+              name: 'error',
+            },
+          });
+        })
+      );
   }
 }
