@@ -79,9 +79,14 @@ export class PartComponent implements OnInit {
     }
     const url$ = this._actRoute.queryParams.pipe(
       map((res) => {
-        if (res.receipt) {
+        if (res.name === 'finish') {
           this._message.success(
             `Finished Receipt: ${res.receipt}, line: ${res.line}`
+          );
+        }
+        if (res.name === 'kickout') {
+          this._message.warning(
+            `Kickout Receipt: ${res.receipt}, Part: ${res.part}`
           );
         }
       })

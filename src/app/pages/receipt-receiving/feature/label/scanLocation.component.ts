@@ -95,6 +95,7 @@ export class ScanLocationComponent implements OnInit {
             queryParams: {
               receipt: this._log.receivingLog.ReceiptHeader,
               line: this._log.receivingLog.ReceiptLine,
+              name: 'finish',
             },
           });
         }),

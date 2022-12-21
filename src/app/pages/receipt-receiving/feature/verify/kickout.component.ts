@@ -14,6 +14,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { ReceivingService } from '../../data/receivingService';
 
@@ -98,7 +99,8 @@ export class KickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _step: ReceivingService,
-    private _receipt: ReceiptInfoService
+    private _receipt: ReceiptInfoService,
+    private _log: LogService
   ) {}
 
   ngOnInit(): void {
@@ -142,7 +144,13 @@ export class KickoutComponent implements OnInit {
     }
     this.print$ = this._receipt.printKickOutLabel$(list).pipe(
       map(() => {
-        this._router.navigateByUrl('receiptreceiving/part');
+        this._router.navigate(['receiptreceiving/part'], {
+          queryParams: {
+            receipt: this._log.receivingLog.ReceiptHeader,
+            part: this._log.receivingLog.PartNumber,
+            name: 'kickout',
+          },
+        });
       }),
       catchError((error) => {
         return of({
