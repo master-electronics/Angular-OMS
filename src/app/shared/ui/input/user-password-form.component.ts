@@ -32,14 +32,17 @@ import { MessageBarComponent } from '../message-bar.component';
     FocusInvlidInputDirective,
   ],
   selector: 'user-password-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <form [formGroup]="inputForm" focusInvalidInput (ngSubmit)="onSubmit()">
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <!-- User name -->
       <div>
         <label for="username" class="block font-medium ">Username</label>
         <input
+          formControlName="username"
           type="text"
           name="username"
+          autocomplete="off"
           id="username"
           [ngClass]="
             this.inputForm.get('username').invalid &&
@@ -56,8 +59,10 @@ import { MessageBarComponent } from '../message-bar.component';
       <div>
         <label for="password" class="block font-medium">Password</label>
         <input
+          formControlName="password"
           type="password"
           name="password"
+          autocomplete="off"
           id="password"
           [ngClass]="
             this.inputForm.get('password').invalid &&
@@ -68,8 +73,18 @@ import { MessageBarComponent } from '../message-bar.component';
           class="bg-gray-50 border text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
         />
       </div>
+      <!-- error message -->
+      <div *ngIf="data?.error; else space" class="h-16">
+        <message-bar
+          [message]="data?.error.message"
+          [name]="data?.error.name"
+        ></message-bar>
+      </div>
+      <ng-template #space>
+        <div class=" h-16"></div>
+      </ng-template>
       <!-- Button area -->
-      <div class="grid h-12 w-full sm:h-16 md:mt-6">
+      <div class="grid h-10 w-full sm:h-16">
         <submit-button
           buttonText="Login"
           (buttonClick)="onSubmit()"
@@ -79,13 +94,6 @@ import { MessageBarComponent } from '../message-bar.component';
         <ng-template #loading>
           <loader-button></loader-button>
         </ng-template>
-      </div>
-      <!-- error message -->
-      <div *ngIf="data?.error" class="mt-1 md:mt-3 lg:mt-6">
-        <message-bar
-          [message]="data?.error.message"
-          [name]="data?.error.name"
-        ></message-bar>
       </div>
     </form>
   `,
@@ -107,9 +115,7 @@ export class UserPasswordComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    if (this.inputForm.valid) {
-      this.formSubmit.emit();
-    }
+    this.formSubmit.emit();
     this.usernameFiled.nativeElement.select();
   }
 }

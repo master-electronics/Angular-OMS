@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
-  UntypedFormBuilder,
   Validators,
   ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  FormsModule,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
@@ -17,9 +19,11 @@ import { of } from 'rxjs';
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     ReactiveFormsModule,
     UserPasswordComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="    
@@ -27,11 +31,24 @@ import { of } from 'rxjs';
       style="background-image: url(../../../assets/img/bg_1.svg)"
     >
       <div
-        class="relative px-5 py-2  w-4/5 rounded-lg bg-gray-200 md:w2/3 lg:w-1/2 xl:w1/3"
+        class="relative px-5 py-4  w-4/5 rounded-lg bg-gray-200 sm:w2/3 md:1/2 lg:w-1/3 xl:w-1/4"
       >
+        <div class="text-center hidden md:block">
+          <img
+            class="mx-auto"
+            src="../../../assets/icon/master_logo.svg"
+            alt="logo"
+          />
+          <h4 class="text-xl font-semibold mt-1 mb-12 pb-1">
+            Master Electronics
+          </h4>
+        </div>
+        <h1 class=" font-semibold text-blue-800">
+          Please login to your account
+        </h1>
         <user-password-form
           (formSubmit)="onSubmit()"
-          [formGroup]="loginForm"
+          [formGroup]="inputForm"
           [data]="login$ | async"
         ></user-password-form>
       </div>
@@ -42,28 +59,28 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: UntypedFormBuilder,
     private authenticationService: AuthenticationService,
     private userInfo: Find_Or_Create_UserInfoGQL
   ) {}
   public login$;
-  public loginForm = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-  });
+  public inputForm: FormGroup;
 
   ngOnInit(): void {
     this.login$ = of(true);
     if (this.authenticationService.userInfo) {
       this.router.navigate(['home']);
     }
+    this.inputForm = new FormGroup({
+      username: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
+    });
   }
 
   onSubmit(): void {
     this.login$ = this.authenticationService
       .checkUserAuth(
-        this.loginForm.value.username.trim().toLowerCase(),
-        this.loginForm.value.password
+        this.inputForm.value.username.trim().toLowerCase(),
+        this.inputForm.value.password
       )
       .pipe(
         switchMap(() => {
@@ -82,7 +99,7 @@ export class LoginComponent implements OnInit {
         catchError((error) => {
           return of({
             error: {
-              message: error.message,
+              message: error.error,
               name: 'error',
             },
           });

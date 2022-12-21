@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginGuard } from './shared/route-guard/login.guard';
 import { RouterGuard } from './shared/route-guard/route-auth.guard';
 
-import { LoginComponent } from './pages/login/login.component';
 import { ShellComponent } from './pages/shell/shell.component';
 import { HomeComponent } from './pages/home/home.component';
 import { PrinterGuard } from './shared/route-guard/printer.guard';
