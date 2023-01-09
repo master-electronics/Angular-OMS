@@ -100,6 +100,18 @@ export type Equipment = {
   _id: Scalars['Int'];
 };
 
+export type EventLog = {
+  __typename?: 'EventLog';
+  CreateTime: Scalars['String'];
+  DateTime: Scalars['String'];
+  Event: Scalars['String'];
+  EventTypeID: Scalars['Int'];
+  Log: Scalars['String'];
+  Module: Scalars['String'];
+  UserName: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -389,6 +401,7 @@ export type Mutation = {
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
   holdQCOrder: Response;
+  insertEventLogs: Scalars['Boolean'];
   insertITNLevelLimit?: Maybe<ItnUserLevelLimit>;
   insertITNUserColumns?: Maybe<ItnUserColumns>;
   insertITNUserLevels?: Maybe<ItnUserLevels>;
@@ -606,6 +619,10 @@ export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
   Status: Scalars['String'];
+};
+
+export type MutationInsertEventLogsArgs = {
+  logs: Array<InputMaybe<InsertEventLog>>;
 };
 
 export type MutationInsertItnLevelLimitArgs = {
@@ -1121,6 +1138,7 @@ export type Query = {
   fetchZonesForUser?: Maybe<Array<Maybe<Zone>>>;
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
+  findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1288,6 +1306,15 @@ export type QueryFindContainerArgs = {
 export type QueryFindContainersArgs = {
   Container?: InputMaybe<SearchContainer>;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFindEventLogsArgs = {
+  Log?: InputMaybe<Scalars['String']>;
+  UserName?: InputMaybe<Scalars['String']>;
+  eventIdList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  timeFrame?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type QueryFindItnColumnsArgs = {
@@ -1617,7 +1644,7 @@ export type UserEvent = {
   Event: Scalars['String'];
   Module: Scalars['String'];
   USEREVENTLOGs?: Maybe<Array<Maybe<UserEventLog>>>;
-  _id: Scalars['String'];
+  _id: Scalars['Int'];
 };
 
 export type UserEventLog = {
@@ -1742,6 +1769,12 @@ export type InsertDcProduct = {
   DistributionCenterID: Scalars['Int'];
   ProductID: Scalars['Int'];
   Velocity?: InputMaybe<Scalars['String']>;
+};
+
+export type InsertEventLog = {
+  EventTypeID: Scalars['Int'];
+  Log: Scalars['String'];
+  UserName: Scalars['String'];
 };
 
 export type InsertItnUserColumnsInfo = {
@@ -2042,7 +2075,7 @@ export type SearchUser = {
 export type SearchUserEvent = {
   Event?: InputMaybe<Scalars['String']>;
   Module?: InputMaybe<Scalars['String']>;
-  _id?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchUserEventLog = {

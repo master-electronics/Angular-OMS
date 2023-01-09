@@ -94,22 +94,6 @@ query verifyITNForStocking($ITN: String!, $DC: String!) {
   }
 }
 
-mutation findorCreateUserContainerForStocking(
-  $Barcode: String!
-  $DistributionCenter: String!
-  $ContainerTypeID: Int!
-) {
-  findOrCreateUserContainer(
-    Container: {
-      ContainerTypeID: $ContainerTypeID
-      Barcode: $Barcode
-      DistributionCenter: $DistributionCenter
-    }
-  ) {
-    _id
-  }
-}
-
 mutation moveInventoryToContainerForStocking(
   $ITN: String!
   $DC: String!

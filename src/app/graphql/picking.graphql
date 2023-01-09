@@ -1,0 +1,28 @@
+mutation fetchInfoForPicking($ITN: String!, $DistributionCenter: String!) {
+  findInventory(
+    Inventory: {
+      DistributionCenter: $DistributionCenter
+      InventoryTrackingNumber: $InventoryTrackingNumber
+    }
+  ) {
+    ORDERLINEDETAILs {
+      _id
+      StatusID
+      Quantity
+      BinLocation
+      WMSPriority
+      Order {
+        DistributionCenter
+        OrderNumber
+        NOSINumber
+      }
+    }
+    Product {
+      ProductCode {
+        ProductCodeNumber
+      }
+      ProductTier
+      PartNumber
+    }
+  }
+}

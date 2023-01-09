@@ -52,3 +52,19 @@ mutation update_Merp_QCBin($ITN: String!) {
 mutation updateContainer($Container: updateContainer!, $ContainerID: Int!) {
   updateContainer(Container: $Container, _id: $ContainerID)
 }
+
+mutation findorCreateUserContainer(
+  $Barcode: String!
+  $DistributionCenter: String!
+  $ContainerTypeID: Int!
+) {
+  findOrCreateUserContainer(
+    Container: {
+      ContainerTypeID: $ContainerTypeID
+      Barcode: $Barcode
+      DistributionCenter: $DistributionCenter
+    }
+  ) {
+    _id
+  }
+}

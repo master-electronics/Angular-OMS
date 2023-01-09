@@ -4,7 +4,7 @@ import { catchError, of } from 'rxjs';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 
 @Injectable()
-export class ScanTargetResolver implements Resolve<any> {
+export class ItnResolver implements Resolve<any> {
   constructor(private _userC: UserContainerService) {}
   resolve() {
     return this._userC.userContainerID$.pipe(

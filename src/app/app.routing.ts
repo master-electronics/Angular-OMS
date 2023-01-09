@@ -137,6 +137,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'picking',
+        loadChildren: () =>
+          import('./pages/picking/picking.routing').then(
+            (m) => m.PickingRoutes
+          ),
+      },
+      {
         path: 'printersetting',
         loadComponent: () =>
           import('./pages/printer-setting/printer-setting.component').then(

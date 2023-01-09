@@ -3,12 +3,12 @@ import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   FetchInventoryInUserContainerGQL,
   FetchItnInfoByContainerforStockingGQL,
-  FindorCreateUserContainerForStockingGQL,
   MoveInventoryToContainerForStockingGQL,
   UpdateNotFoundForStockingGQL,
   VerifyItnForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { UserContainerService } from 'src/app/shared/data/user-container';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -30,7 +30,7 @@ export interface ITNinfo {
 @Injectable()
 export class StockingService {
   constructor(
-    private _userContainer: FindorCreateUserContainerForStockingGQL,
+    private _userC: UserContainerService,
     private _verifyITN: VerifyItnForStockingGQL,
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
@@ -38,14 +38,6 @@ export class StockingService {
     private _insertLog: Insert_UserEventLogsGQL,
     private _ItnInUser: FetchInventoryInUserContainerGQL
   ) {}
-
-  /**
-   * User ContainerID
-   */
-  private _userContainerID = new BehaviorSubject<number>(null);
-  public get userContainerID(): number {
-    return this._userContainerID.value;
-  }
 
   private _currentITN = new BehaviorSubject<ITNinfo>(null);
   public get currentITN() {
@@ -90,35 +82,6 @@ export class StockingService {
   }
 
   /**
-   * Fetch or create a container as user's username in Container table.
-   */
-  public get containerID$() {
-    return this._userContainerID.asObservable().pipe(
-      switchMap((res) => {
-        if (res) {
-          return of(res);
-        }
-        return this._userContainer
-          .mutate({
-            DistributionCenter: environment.DistributionCenter,
-            Barcode: String(
-              JSON.parse(sessionStorage.getItem('userInfo')).Name
-            ),
-            ContainerTypeID: sqlData.userType_ID,
-          })
-          .pipe(
-            map((res) => {
-              this._userContainerID.next(
-                res.data.findOrCreateUserContainer._id
-              );
-              return this._userContainerID.value;
-            })
-          );
-      })
-    );
-  }
-
-  /**
    * moveItnToUser: Verify itn first, then move this ITN to user container.
    */
   public moveItnToUser(ITN: string): Observable<any> {
@@ -135,7 +98,7 @@ export class StockingService {
           if (!res.data.findInventory) {
             throw new Error('ITN not found');
           }
-          if (!this._userContainerID.value) {
+          if (!this._userC.userContainerID) {
             throw new Error('Container not found');
           }
         }),
@@ -154,7 +117,7 @@ export class StockingService {
           return this._move.mutate({
             ITN: this.currentITN.ITN,
             DC: environment.DistributionCenter,
-            ContainerID: this.userContainerID,
+            ContainerID: this._userC.userContainerID,
           });
         }),
 
@@ -245,13 +208,15 @@ export class StockingService {
    * ItnInUserContainer
    */
   public ItnInUserContainer$() {
-    return this._ItnInUser.fetch({ ContainerID: this.userContainerID }).pipe(
-      map((res) => res.data.findContainer.INVENTORies),
-      tap((res) => {
-        if (!res.length) {
-          throw new Error('Not ITN  Under User');
-        }
-      })
-    );
+    return this._ItnInUser
+      .fetch({ ContainerID: this._userC.userContainerID })
+      .pipe(
+        map((res) => res.data.findContainer.INVENTORies),
+        tap((res) => {
+          if (!res.length) {
+            throw new Error('Not ITN  Under User');
+          }
+        })
+      );
   }
 }
