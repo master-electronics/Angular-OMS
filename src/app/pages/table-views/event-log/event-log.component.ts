@@ -69,7 +69,7 @@ export class EventLogComponent implements OnInit {
       map((res) => {
         return res.data.findUserEvents.map((res) => ({
           label: res.Module + '-' + res.Event,
-          value: res._id,
+          value: res._id.toString(),
           groupLabel: res.Module,
         }));
       })
