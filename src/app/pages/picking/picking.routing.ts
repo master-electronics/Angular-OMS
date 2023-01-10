@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
+import { PickingService } from './data/picking.service';
 import { PickingGuard } from './utils/picking.guard';
 import { ItnResolver } from './utils/resolver/itn.resolver';
 
 export const PickingRoutes: Routes = [
   {
     path: '',
-    providers: [],
+    providers: [PickingGuard, ItnResolver, PickingService],
     canActivateChild: [PickingGuard],
     loadComponent: () =>
       import('./shell.component').then((m) => m.StockingShell),

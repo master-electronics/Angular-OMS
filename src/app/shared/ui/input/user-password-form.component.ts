@@ -50,8 +50,8 @@ import { MessageBarComponent } from '../message-bar.component';
               ? 'border-red-500'
               : 'border-blue-500'
           "
-          class="bg-gray-50 border text-gray-900 rounded-lg focus:ring-primary-600
-        focus:border-primary-600 block w-full p-2.5"
+          class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg
+        border bg-gray-50 p-2.5 text-gray-900"
           #username
         />
       </div>
@@ -70,7 +70,7 @@ import { MessageBarComponent } from '../message-bar.component';
               ? 'border-red-500'
               : 'border-blue-500'
           "
-          class="bg-gray-50 border text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+          class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border bg-gray-50 p-2.5 text-gray-900 "
         />
       </div>
       <!-- error message -->
@@ -115,7 +115,9 @@ export class UserPasswordComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.formSubmit.emit();
+    if (this.inputForm.valid) {
+      this.formSubmit.emit();
+    }
     this.usernameFiled.nativeElement.select();
   }
 }
