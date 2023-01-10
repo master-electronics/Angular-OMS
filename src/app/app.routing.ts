@@ -138,6 +138,7 @@ const routes: Routes = [
       },
       {
         path: 'picking',
+        title: 'Picking',
         loadChildren: () =>
           import('./pages/picking/picking.routing').then(
             (m) => m.PickingRoutes

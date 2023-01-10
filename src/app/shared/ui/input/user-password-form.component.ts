@@ -16,7 +16,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { FocusInvlidInputDirective } from '../../directives/focusInvalidInput.directive';
 import { LoaderButtonComponent } from '../button/loader-button.component';
 import { MessageBarComponent } from '../message-bar.component';
 
@@ -29,7 +28,6 @@ import { MessageBarComponent } from '../message-bar.component';
     SubmitButtonComponent,
     LoaderButtonComponent,
     MessageBarComponent,
-    FocusInvlidInputDirective,
   ],
   selector: 'user-password-form',
   changeDetection: ChangeDetectionStrategy.OnPush,

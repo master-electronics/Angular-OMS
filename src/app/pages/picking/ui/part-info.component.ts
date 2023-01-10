@@ -1,47 +1,27 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'picking-info',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   template: `
-    <div>
-      <label for="ProductCode">Product Code</label>
+    <img width="600" height="600" [ngSrc]="MIC" priority />
+    <div *ngFor="let item of info | keyvalue">
+      <label for="ProductCode">{{ item.key }}</label>
       <input
         type="text"
         name="ProductCode"
         id="ProductCode"
         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         disabled
-        [value]="info.ProductCode"
+        [value]="item.value"
       />
-    </div>
-    <div>
-      <label for="PartNumber">Product Code</label>
-      <input
-        type="text"
-        name="PartNumber"
-        id="PartNumber"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        disabled
-        [value]="info.PartNumber"
-      />
-    </div>
-    <div>
-      <label for="message">Global Message</label>
-      <textarea
-        rows="3"
-        name="message"
-        id="message"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        disabled
-        [value]="info.message"
-      ></textarea>
     </div>
   `,
 })
 export class PickingInfoComponent {
   @Input() info;
+  @Input() MIC;
 }

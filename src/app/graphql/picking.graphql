@@ -8,6 +8,7 @@ query fetchInfoForPicking(
       InventoryTrackingNumber: $InventoryTrackingNumber
     }
   ) {
+    _id
     ORDERLINEDETAILs {
       _id
       StatusID
@@ -27,4 +28,22 @@ query fetchInfoForPicking(
       PartNumber
     }
   }
+}
+
+query fetchProductImgAndMessageFromMerp(
+  $ProductCode: String!
+  $PartNumber: String!
+  $ProductList: [String]!
+) {
+  fetchProductInfoFromMerp(ProductList: $ProductList) {
+    UnitOfMeasure
+    MICPartNumber
+  }
+  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+    comments
+  }
+}
+
+mutation updateInventoryToUser($InventoryID: Int!, $ContainerID: Int!) {
+  updateInventory(_id: $InventoryID, Inventory: { ContainerID: $ContainerID })
 }

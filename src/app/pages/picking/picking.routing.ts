@@ -18,6 +18,37 @@ export const PickingRoutes: Routes = [
           import('./feature/itn.component').then((m) => m.ItnComponent),
       },
       { path: '', pathMatch: 'full', redirectTo: 'itn' },
+      {
+        path: 'info',
+        loadComponent: () =>
+          import('./feature/info.component').then((m) => m.InfoComponent),
+      },
+      {
+        path: 'quantity',
+        loadComponent: () =>
+          import('./feature/quantity.component').then(
+            (m) => m.QuantityComponent
+          ),
+      },
+      {
+        path: 'comment',
+        loadComponent: () =>
+          import('./feature/comment.component').then((m) => m.CommentComponent),
+      },
+      {
+        path: 'isempty',
+        loadComponent: () =>
+          import('./feature/is-empty.component').then(
+            (m) => m.IsEmptyComponent
+          ),
+      },
+      {
+        path: 'isshort',
+        loadComponent: () =>
+          import('./feature/is-short.component').then(
+            (m) => m.IsShortComponent
+          ),
+      },
     ],
   },
 ];

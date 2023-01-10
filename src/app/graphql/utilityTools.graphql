@@ -43,6 +43,10 @@ mutation insert_UserEventLogs($log: [insertUserEventLog]!) {
   }
 }
 
+mutation insert_EventLogs($logs: [insertEventLog]!) {
+  insertEventLogs(logs: $logs)
+}
+
 mutation update_Merp_QCBin($ITN: String!) {
   updateMerpQCBin(ITN: $ITN) {
     success

@@ -2343,6 +2343,17 @@ export type Insert_UserEventLogsMutation = {
   } | null> | null;
 };
 
+export type Insert_EventLogsMutationVariables = Types.Exact<{
+  logs:
+    | Array<Types.InputMaybe<Types.InsertEventLog>>
+    | Types.InputMaybe<Types.InsertEventLog>;
+}>;
+
+export type Insert_EventLogsMutation = {
+  __typename?: 'Mutation';
+  insertEventLogs: boolean;
+};
+
 export type Update_Merp_QcBinMutationVariables = Types.Exact<{
   ITN: Types.Scalars['String'];
 }>;
@@ -2503,6 +2514,25 @@ export class Insert_UserEventLogsGQL extends Apollo.Mutation<
   Insert_UserEventLogsMutationVariables
 > {
   document = Insert_UserEventLogsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const Insert_EventLogsDocument = gql`
+  mutation insert_EventLogs($logs: [insertEventLog]!) {
+    insertEventLogs(logs: $logs)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class Insert_EventLogsGQL extends Apollo.Mutation<
+  Insert_EventLogsMutation,
+  Insert_EventLogsMutationVariables
+> {
+  document = Insert_EventLogsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

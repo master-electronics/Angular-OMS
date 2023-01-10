@@ -19,7 +19,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
     ></single-input-form>
   `,
 })
-export class QuantityComponent {
+export class IsShortComponent {
   constructor(
     private _router: Router,
     private _actRoute: ActivatedRoute,
