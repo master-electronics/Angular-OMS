@@ -1,4 +1,4 @@
-mutation fetchInfoForPicking($ITN: String!, $DistributionCenter: String!) {
+query fetchInfoForPicking($InventoryTrackingNumber: String!, $DistributionCenter: String!) {
   findInventory(
     Inventory: {
       DistributionCenter: $DistributionCenter

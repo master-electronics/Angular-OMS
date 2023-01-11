@@ -7,7 +7,7 @@
         <div nz-col nzSpan="4">
             Receipt ID
         </div>
-        <div nz-col nzSpan="2" *ngIf="receiptID"
+        <div nz-col nzSpan="3" *ngIf="receiptID"
             class="infoHeader">
             Vendor ID
         </div>
@@ -37,7 +37,7 @@
                 nzTheme="outline" class="icon"
                 (click)="addReceipt()"></span>
         </div>
-        <div *ngIf="receiptID" nz-col nzSpan="2" class="infoBox">
+        <div *ngIf="receiptID" nz-col nzSpan="3" class="infoBox">
             {{ vendorNumber }}
         </div>
         <div *ngIf="receiptID" nz-col nzSpan="2" class="infoBox">
@@ -267,36 +267,44 @@
         (nzOnOk)="onReceiptModalOk()" [nzStyle]="receiptModalStyle">
         <ng-container *nzModalContent>
             <div nz-row nzGutter="8" nzJustify="start">
-                <div nz-col nzSpan="8">
-                    Vendor ID
+                <div nz-col nzSpan="6">
+                    PO Number
                 </div>
                 <div nz-col nzSpan="6">
+                    Vendor ID
+                </div>
+                <div nz-col nzSpan="5">
                     Expected Arrival Date
                 </div>
-                <div nz-col nzSpan="9">
+                <div nz-col nzSpan="7">
                     Source
                 </div>
             </div>
             <div nz-row nzGutter="8" nzJustify="start">
-                <div nz-col nzSpan="8">
-                    <nz-select style="width: 100%" nzShowSearch nzAllowClear
-                        [(ngModel)]="vendorID" #vendorSelect id="vendorID"
-                        [class]="vendorSearchClass" nzPlaceHolder="Vendor ID">
-                        <nz-option *ngFor="let vendor of vendorList"
-                            nzLabel="{{ vendor.label }}"
-                            nzValue="{{ vendor.value }}"></nz-option>
+                <div nz-col nzSpan="6">
+                    <nz-select style="width: 100%" nzShowSearch
+                        nzPlaceHolder="PO Number" [nzShowArrow]="false"
+                        [nzFilterOption]="nzFilterOption"
+                        (nzOnSearch)="searchPONumbers($event)"
+                        [(ngModel)]="poNumber" nzAllowClear
+                        (ngModelChange)="onPONumberChange($event)">
+                        <nz-option *ngFor="let poNumber of poNumberList"
+                            [nzLabel]="poNumber.text" [nzValue]="poNumber.value">
+                        </nz-option>
                     </nz-select>
                 </div>
-                <div nz-col nzSpan="6">
+                <div nz-col nzSpan="6" class="detailsInfoBox">{{ this.vendorNumber }}</div>
+                <div nz-col nzSpan="5">
                     <nz-date-picker [(ngModel)]="expectedArrivalDate"></nz-date-picker>
                 </div>
-                <div nz-col nzSpan="9">
+                <div nz-col nzSpan="7">
                     <nz-select style="width: 90%" nzPlaceHolder="Source"
                         [(ngModel)]="sourceType" [nzOptions]="sourceTypeOptions"
                         nzAllowClear>
                     </nz-select>
                 </div>
             </div>
+            
         </ng-container> 
     </nz-modal>
 </div>
