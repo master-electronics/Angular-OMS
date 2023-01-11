@@ -103,6 +103,14 @@ query findPOLine($purchaseOrderLID: Int) {
   }
 }
 
+query findPOs($purchaseOrderNumber: String, $limit: Int) {
+  findPOs(PurchaseOrderNumber: $purchaseOrderNumber, limit: $limit) {
+    _id
+    PurchaseOrderNumber
+    VendorID
+  }
+}
+
 mutation insertReceipt($receipt: insertReceiptH) {
   insertReceipt(Receipt: $receipt) {
     _id

@@ -26,6 +26,7 @@ import {
   DeleteReceiptLineDetailGQL,
   InsertReceiptLineDetailsGQL,
   DeleteReceiptGQL,
+  FindPOsGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
 
 interface PartCode {
@@ -66,6 +67,7 @@ export class ReceiptEntry implements OnInit {
   receiptLineDetailMessage: string;
   receiptLineDetailAlertType = 'success';
   receiptList: Array<{ value: string; text: string }> = [];
+  poNumberList: Array<{ value: string; text: string }> = [];
   partList: Array<{ value: string; text: string }> = [];
   poLineList: Array<{ value: string; text: string }> = [];
   vendorList: { label: string; value: string }[];
@@ -129,7 +131,7 @@ export class ReceiptEntry implements OnInit {
   }> = [];
   receiptModalVisible: boolean;
   receiptModalOkDisabled = true;
-  receiptModalStyle = { width: '800px' };
+  receiptModalStyle = { width: '900px' };
   receiptModalTitle;
   editingReceipt: boolean;
   receiptLineDetailQuantityMax: number;
@@ -157,6 +159,7 @@ export class ReceiptEntry implements OnInit {
   private deleteReceiptLineDetailSubscription = new Subscription();
   private insertReceiptLineDetailsSubscription = new Subscription();
   private deleteReceiptSubscription = new Subscription();
+  private findPOsSubscription = new Subscription();
 
   constructor(
     private commonService: CommonService,
@@ -183,7 +186,8 @@ export class ReceiptEntry implements OnInit {
     private _updateReceiptLineDetail: UpdateReceiptLineDetailGQL,
     private _deleteReceiptLineDetail: DeleteReceiptLineDetailGQL,
     private _insertReceiptLineDetails: InsertReceiptLineDetailsGQL,
-    private _deleteReceipt: DeleteReceiptGQL
+    private _deleteReceipt: DeleteReceiptGQL,
+    private _findPOs: FindPOsGQL
   ) {
     this.commonService.changeNavbar('Receipt Entry');
     this.titleService.setTitle('Receipt Entry');
@@ -328,6 +332,42 @@ export class ReceiptEntry implements OnInit {
       );
     } else {
       this.receiptList = [];
+    }
+  }
+
+  searchPONumbers(value: string): void {
+    if (value) {
+      const pos: Array<{ text: string; value: string }> = [];
+
+      this.findPOsSubscription.add(
+        this._findPOs
+          .fetch(
+            {
+              purchaseOrderNumber: value.toUpperCase(),
+              limit: 20,
+            },
+            { fetchPolicy: 'network-only' }
+          )
+          .subscribe({
+            next: (res) => {
+              res.data.findPOs.map((po) => {
+                pos.push({
+                  text: po.PurchaseOrderNumber,
+                  value: po.VendorID.toString(),
+                });
+              });
+            },
+            error: (error) => {
+              this.alertType = 'error';
+              this.message = 'Error searching PO Numbers - ' + error;
+            },
+            complete: () => {
+              this.poNumberList = pos;
+            },
+          })
+      );
+    } else {
+      this.poNumberList = [];
     }
   }
 
@@ -520,7 +560,13 @@ export class ReceiptEntry implements OnInit {
           )
           .subscribe({
             next: (res) => {
-              this.vendorNumber = res.data.findVendor.VendorNumber;
+              this.vendorNumber =
+                (res.data.findVendor.VendorNumber
+                  ? res.data.findVendor.VendorNumber
+                  : '') +
+                (res.data.findVendor.VendorName
+                  ? ' - ' + res.data.findVendor.VendorName
+                  : '');
             },
             error: (error) => {
               this.alertType = 'error';
@@ -529,6 +575,29 @@ export class ReceiptEntry implements OnInit {
           })
       );
     }
+  }
+
+  getVendor(ID: number): void {
+    this.findVendorSubscription.add(
+      this._findVendor
+        .fetch({ vendor: { _id: ID } }, { fetchPolicy: 'network-only' })
+        .subscribe({
+          next: (res) => {
+            this.vendorNumber =
+              (res.data.findVendor.VendorNumber
+                ? res.data.findVendor.VendorNumber
+                : '') +
+              (res.data.findVendor.VendorName
+                ? ' - ' + res.data.findVendor.VendorName
+                : '');
+            this.vendorID = res.data.findVendor._id;
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = 'Error finding Vendor - ' + error;
+          },
+        })
+    );
   }
 
   getReceiptLines(): void {
@@ -783,6 +852,15 @@ export class ReceiptEntry implements OnInit {
     } else {
       this.receiptSelected = false;
       this.clearReceipt();
+    }
+  }
+
+  onPONumberChange(e: Event): void {
+    if (e) {
+      this.getVendor(Number(e));
+    } else {
+      this.vendorID = null;
+      this.vendorNumber = null;
     }
   }
 
@@ -1415,5 +1493,6 @@ export class ReceiptEntry implements OnInit {
     this.deleteReceiptLineDetailSubscription.unsubscribe();
     this.insertReceiptLineDetailsSubscription.unsubscribe();
     this.deleteReceiptSubscription.unsubscribe();
+    this.findPOsSubscription.unsubscribe();
   }
 }
