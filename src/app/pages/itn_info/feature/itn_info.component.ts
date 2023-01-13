@@ -28,7 +28,7 @@ interface IITN {
   QuantityOnHand: number;
   DateCode?: string;
   ParentITN?: string;
-  RHOS?: boolean;
+  ROHS?: boolean;
   OriginalQuantity?: number;
   BinLocation?: string;
   ProductID: number;
@@ -229,7 +229,7 @@ interface IITN {
               </li>
               <li *ngIf="itn.DateCode">Date Code: {{ itn.DateCode }}</li>
               <li *ngIf="itn.ParentITN">Parent ITN: {{ itn.ParentITN }}</li>
-              <li>RHOS: {{ itn.RHOS ? 'Y' : 'N' }}</li>
+              <li>ROHS: {{ itn.ROHS ? 'Y' : 'N' }}</li>
               <li *ngIf="itn.OriginalQuantity">
                 Original Quantity: {{ itn.OriginalQuantity }}
               </li>
@@ -409,15 +409,15 @@ export class INTInfoComponent implements OnInit {
           tempITN.QuantityOnHand = itn.QuantityOnHand;
           tempITN.DateCode = itn.DateCode ? itn.DateCode.trim() : null;
           tempITN.ParentITN = itn.ParentITN ? itn.ParentITN.trim() : null;
-          tempITN.RHOS = itn.RHOS ? itn.RHOS : false;
+          tempITN.ROHS = itn.ROHS ? itn.ROHS : false;
           tempITN.OriginalQuantity = itn.OriginalQuantity
             ? itn.OriginalQuantity
             : null;
           tempITN.BinLocation = itn.BinLocation ? itn.BinLocation.trim() : null;
           tempITN.ProductID = itn.ProductID;
           tempITN.ContainerID = itn.ContainerID;
-          tempITN.CountryOfOrigin = itn.CountryOfOrigin
-            ? itn.CountryOfOrigin.trim()
+          tempITN.CountryOfOrigin = itn.Country.ISO2
+            ? itn.Country.ISO2.trim()
             : null;
           tempITN.CountryID = itn.CountryID ? itn.CountryID : null;
           tempITN.NotFound = itn.NotFound ? itn.NotFound : null;

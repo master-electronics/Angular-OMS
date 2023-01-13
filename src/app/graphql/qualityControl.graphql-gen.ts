@@ -304,7 +304,6 @@ export type Inventory = {
   ContainerID: Scalars['Int'];
   Country?: Maybe<Country>;
   CountryID?: Maybe<Scalars['Int']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -315,7 +314,7 @@ export type Inventory = {
   Product: Product;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -2376,7 +2375,7 @@ export type VerifyItNforQcQueryVariables = Types.Exact<{
 }>;
 
 
-export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, RHOS?: boolean | null, DateCode?: string | null, Country?: { __typename?: 'Country', ISO2: string } | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type VerifyItNforQcQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, ParentITN?: string | null, ROHS?: boolean | null, DateCode?: string | null, Country?: { __typename?: 'Country', ISO2: string } | null, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, OrderLine: { __typename?: 'OrderLine', OrderLineNumber: number }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', CustomerNumber: string, CustomerTier: string } | null } } | null> | null, Product: { __typename?: 'Product', ProductTier?: string | null, PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
 
 export type FetchProductInfoFromMerpQueryVariables = Types.Exact<{
   ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
@@ -2504,7 +2503,7 @@ export const VerifyItNforQcDocument = gql`
   ) {
     _id
     ParentITN
-    RHOS
+    ROHS
     DateCode
     Country {
       ISO2

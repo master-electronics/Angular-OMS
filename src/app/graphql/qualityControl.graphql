@@ -14,7 +14,7 @@ query verifyITNforQc(
   ) {
     _id
     ParentITN
-    RHOS
+    ROHS
     DateCode
     Country {
       ISO2

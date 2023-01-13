@@ -304,7 +304,6 @@ export type Inventory = {
   ContainerID: Scalars['Int'];
   Country?: Maybe<Country>;
   CountryID?: Maybe<Scalars['Int']>;
-  CountryOfOrigin?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -315,7 +314,7 @@ export type Inventory = {
   Product: Product;
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -2371,7 +2370,7 @@ export type FindInventoryQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, DateCode?: string | null, ParentITN?: string | null, RHOS?: boolean | null, OriginalQuantity?: number | null, BinLocation?: string | null, ProductID: number, ContainerID: number, CountryOfOrigin?: string | null, CountryID?: number | null, NotFound: boolean, Country?: { __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null, Container: { __typename?: 'Container', _id: number, Barcode: string, Zone?: number | null, DistributionCenter: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', _id: number, Name: string, IsMobile: boolean }, USERINFOs?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null }, Product: { __typename?: 'Product', _id: number, ProductCodeID: number, PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, OrderID: number, OrderLineID: number, StatusID: number, Quantity: number, LastUpdated?: string | null, BinLocation?: string | null, WMSPriority: number, Status: { __typename?: 'OrderStatus', _id: number, Name: string }, OrderLine: { __typename?: 'OrderLine', _id: number, OrderLineNumber: number, Quantity?: number | null }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, OrderStatusCode?: string | null, ShipmentMethodID?: string | null, OrderType?: string | null, isSelected: number, CustomerID?: number | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', _id: number, CustomerNumber: string, CustomerTier: string } | null } } | null> | null } | null };
+export type FindInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, DateCode?: string | null, ParentITN?: string | null, ROHS?: boolean | null, OriginalQuantity?: number | null, BinLocation?: string | null, ProductID: number, ContainerID: number, CountryID?: number | null, NotFound: boolean, Country?: { __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null, Container: { __typename?: 'Container', _id: number, Barcode: string, Zone?: number | null, DistributionCenter: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', _id: number, Name: string, IsMobile: boolean }, USERINFOs?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null }, Product: { __typename?: 'Product', _id: number, ProductCodeID: number, PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, OrderID: number, OrderLineID: number, StatusID: number, Quantity: number, LastUpdated?: string | null, BinLocation?: string | null, WMSPriority: number, Status: { __typename?: 'OrderStatus', _id: number, Name: string }, OrderLine: { __typename?: 'OrderLine', _id: number, OrderLineNumber: number, Quantity?: number | null }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, OrderStatusCode?: string | null, ShipmentMethodID?: string | null, OrderType?: string | null, isSelected: number, CustomerID?: number | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', _id: number, CustomerNumber: string, CustomerTier: string } | null } } | null> | null } | null };
 
 export const FindInventoryDocument = gql`
     query findInventory($DistributionCenter: String!, $InventoryTrackingNumber: String!) {
@@ -2384,12 +2383,11 @@ export const FindInventoryDocument = gql`
     QuantityOnHand
     DateCode
     ParentITN
-    RHOS
+    ROHS
     OriginalQuantity
     BinLocation
     ProductID
     ContainerID
-    CountryOfOrigin
     CountryID
     NotFound
     Country {

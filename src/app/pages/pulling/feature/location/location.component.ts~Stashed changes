@@ -1,0 +1,238 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { catchError, map, Observable, of, pipe, switchMap, tap } from 'rxjs';
+import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
+import { InventoryService } from '../../data/inventory';
+import { VerifyContainerGQL } from 'src/app/graphql/pulling.graphql-gen';
+import { environment } from 'src/environments/environment';
+import { PullLogGQL } from 'src/app/graphql/pulling.graphql-gen';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { ShelfBarcodeBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+
+@Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    SingleInputformComponent,
+    ReactiveFormsModule,
+    PopupModalComponent,
+    NzGridModule,
+  ],
+  template: `
+    <single-input-form
+      (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
+      [data]="data$ | async"
+      [validator]="validator"
+      [formGroup]="inputForm"
+      controlName="location"
+      title="Location"
+      placeholder="Location"
+      [isvalid]="this.inputForm.valid"
+    ></single-input-form>
+    <div *ngIf="initData$ | async as data" nz-row nzJustify="center">
+      <div
+        nz-col
+        nzXs="20"
+        nzSm="16"
+        nzMd="12"
+        nzLg="10"
+        nzXXl="6"
+        style="font-size: 18px; line-height: 2.5;"
+      >
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Location:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>{{ data.BinLocation }}</div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">ITN:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>{{ data.ITN }}</div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Priority:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>
+            {{ data.Priority ? 'Y' : 'N' }}
+          </div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Type:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>
+            {{ data.ProductType }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="locationScan$ | async"></div>
+  `,
+})
+export class LocationComponent implements OnInit {
+  public inputForm: FormGroup;
+  public data$: Observable<any>;
+  public initData$: Observable<any>;
+  public locationScan$: Observable<any>;
+  public validator = {
+    name: 'filter',
+    message: 'Scanned Location is not correct!',
+  };
+
+  currentPullId;
+  pullList;
+  currentPull;
+
+  constructor(
+    private _router: Router,
+    private _actRoute: ActivatedRoute,
+    private _inventoryService: InventoryService,
+    private _verifyContainer: VerifyContainerGQL,
+    private _locationScanLog: PullLogGQL
+  ) {}
+
+  ngOnInit(): void {
+    this.data$ = of(true);
+    this.pullList = JSON.parse(sessionStorage.getItem('pullList'));
+    this.currentPull = this.pullList.find((item) => item.pulled == false);
+
+    if (!this.currentPull) {
+      this._router.navigate(['../..'], { relativeTo: this._actRoute });
+    }
+    this.currentPullId = this.currentPull.id;
+
+    this.initData$ = this._inventoryService.getOrderLineDetail$(
+      this.currentPull.id
+    );
+
+    this.inputForm = new FormGroup({
+      location: new FormControl('', [
+        Validators.required,
+        //Validators.pattern(ShelfBarcodeBarcodeRegex),
+        this.locationSearch(),
+      ]),
+    });
+  }
+
+  onSubmit(): void {
+    const barcode = this.inputForm.value.location.toString().replace(/-/g, '');
+
+    this.data$ = this._verifyContainer
+      .fetch(
+        {
+          Barcode: barcode,
+          DistributionCenter: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          if (!res.data.findContainer?._id) {
+            throw new Error('Can not find this Location!');
+          }
+          this._router.navigate(['../itnscan'], { relativeTo: this._actRoute });
+          return true;
+        }),
+        switchMap(() => {
+          const sm = 'switchmap';
+          this.logLocationScan();
+          return [];
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
+  }
+
+  logLocationScan(): void {
+    if (this.currentPull) {
+      this.locationScan$ = this._locationScanLog.mutate(
+        {
+          log: [
+            {
+              UserEventID: sqlData.Event_Pulling_SelectLocation,
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              DistributionCenter: environment.DistributionCenter,
+              OrderNumber: this.currentPull.OrderNumber
+                ? this.currentPull.OrderNumber.toString()
+                : '',
+              NOSINumber: this.currentPull.NOSINumber
+                ? this.currentPull.NOSINumber.toString()
+                : '',
+              InventoryTrackingNumber: this.currentPull.ITN
+                ? this.currentPull.ITN.toString()
+                : '',
+              PartNumber: this.currentPull.PartNumber
+                ? this.currentPull.PartNumber.toString()
+                : '',
+              ProductCode: this.currentPull.ProductCode
+                ? this.currentPull.ProductCode.toString()
+                : '',
+              OrderLineNumber: this.currentPull.OrderLineNumber
+                ? Number(this.currentPull.OrderLineNumber)
+                : null,
+              CustomerNumber: this.currentPull.CustomerNumber
+                ? this.currentPull.CustomerNumber.toString()
+                : '',
+              CustomerTier: this.currentPull.CustomerTier
+                ? this.currentPull.CustomerTier.toString()
+                : '',
+              ProductTier: this.currentPull.ProductTier
+                ? this.currentPull.ProductTier.toString()
+                : '',
+              Zone: this.currentPull.Zone
+                ? Number(this.currentPull.Zone)
+                : null,
+              WMSPriority: this.currentPull.WMSPriority
+                ? Number(this.currentPull.WMSPriority)
+                : null,
+              Priority: this.currentPull.Priority ? true : false,
+              Quantity: this.currentPull.Quantity
+                ? Number(this.currentPull.Quantity)
+                : null,
+              Message:
+                'Bin Location: ' +
+                this.inputForm.value.location.toString().replace(/-/g, ''),
+            },
+          ],
+        },
+        { fetchPolicy: 'network-only' }
+      );
+    }
+  }
+
+  locationSearch(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value.replace(/-/g, '');
+      const t = 'test';
+      if (!value) {
+        return null;
+      }
+
+      if (!ShelfBarcodeBarcodeRegex.test(control.value)) {
+        this.validator = { name: 'filter', message: 'Invalid Format!' };
+        return { filter: true };
+      }
+
+      this.validator = {
+        name: 'filter',
+        message: 'Scanned Location is not correct!',
+      };
+
+      const correctLocation = value == this.currentPull.BinLocation;
+      return !correctLocation ? { filter: true } : null;
+    };
+  }
+
+  onBack(): void {
+    this._router.navigate(['../scancart'], { relativeTo: this._actRoute });
+  }
+}

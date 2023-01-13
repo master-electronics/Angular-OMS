@@ -14,12 +14,11 @@ query findInventory(
         QuantityOnHand
         DateCode
         ParentITN
-        RHOS
+        ROHS
         OriginalQuantity
         BinLocation
         ProductID
         ContainerID
-        CountryOfOrigin
         CountryID
         NotFound
         Country {

@@ -1,0 +1,414 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
+import { CommonModule } from '@angular/common';
+import {
+  catchError,
+  tap,
+  map,
+  Observable,
+  of,
+  Subscription,
+  switchMap,
+} from 'rxjs';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { InventoryService } from '../../data/inventory';
+import {
+  VerifyInventoryGQL,
+  SetInventorySuspectGQL,
+  PullLogGQL,
+  OrderLinePulledGQL,
+  PullingNotFoundGQL,
+} from 'src/app/graphql/pulling.graphql-gen';
+import { environment } from 'src/environments/environment';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+
+@Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    SingleInputformComponent,
+    ReactiveFormsModule,
+    NzGridModule,
+    NormalButtonComponent,
+  ],
+  template: `
+    <single-input-form
+      (formBack)="onBack()"
+      (formSubmit)="onSubmit()"
+      [data]="data$ | async"
+      [validator]="validator"
+      [formGroup]="inputForm"
+      controlName="itn"
+      title="ITN"
+      placeholder="ITN"
+      [isvalid]="this.inputForm.valid"
+    ></single-input-form>
+    <div nz-row nzJustify="center">
+      <div nz-col style="height: 10px"></div>
+    </div>
+    <div nz-row nzJustify="center">
+      <div
+        nz-col
+        class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-40"
+      >
+        <normal-button
+          (buttonClick)="onNotFound()"
+          buttonText="Not Found"
+        ></normal-button>
+      </div>
+    </div>
+    <div *ngIf="initData$ | async as data" nz-row nzJustify="center">
+      <div
+        nz-col
+        nzXs="20"
+        nzSm="16"
+        nzMd="12"
+        nzLg="10"
+        nzXXl="6"
+        style="font-size: 18px; line-height: 2.5"
+      >
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Location:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>{{ data.BinLocation }}</div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">ITN:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>{{ data.ITN }}</div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Priority:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>
+            {{ data.Priority ? 'Y' : 'N' }}
+          </div>
+        </div>
+        <div nz-row nzJustify="start">
+          <div nz-col nzSpan="7" style="text-align: right">Type:&nbsp;</div>
+          <div style="font-weight: bold" nz-col>{{ data.ProductType }}</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="itnScanLog$ | async"></div>
+    <div *ngIf="orderLinePulled$ | async"></div>
+  `,
+})
+export class ITNScanComponent implements OnInit {
+  public inputForm: FormGroup;
+  public data$: Observable<any>;
+  public initData$: Observable<any>;
+  public itnScanLog$: Observable<any>;
+  public orderLinePulled$: Observable<any>;
+  public validator = {
+    name: 'filter',
+    message: 'Scanned ITN is not correct!',
+  };
+
+  pullList;
+  currentPull;
+
+  private setInventorySuspectSubscription = new Subscription();
+
+  constructor(
+    private _router: Router,
+    private _actRoute: ActivatedRoute,
+    private _inventoryService: InventoryService,
+    private _verifyInventory: VerifyInventoryGQL,
+    private _setInventorySuspect: SetInventorySuspectGQL,
+    private _itnScanLog: PullLogGQL,
+    private _orderLinePulled: OrderLinePulledGQL,
+    private _pullingNotFound: PullingNotFoundGQL
+  ) {}
+
+  ngOnInit(): void {
+    this.data$ = of(true);
+    this.pullList = JSON.parse(sessionStorage.getItem('pullList'));
+    this.currentPull = this.pullList.find((item) => item.pulled == false);
+
+    if (!this.currentPull) {
+      this._router.navigate(['../..'], { relativeTo: this._actRoute });
+    }
+
+    this.initData$ = this._inventoryService.getOrderLineDetail$(
+      this.currentPull.id
+    );
+
+    this.inputForm = new FormGroup({
+      itn: new FormControl('', [Validators.required, this.itnSearch()]),
+    });
+  }
+
+  onSubmit(): void {
+    this.data$ = this._verifyInventory
+      .fetch(
+        {
+          InventoryTrackingNumber: this.inputForm.value.itn,
+          DistributionCenter: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          if (!res.data.findInventory?._id) {
+            throw new Error('Can not find this ITN!');
+          }
+          this.orderLinePulled(res.data.findInventory._id);
+          return true;
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
+  }
+
+  orderLinePulled(invId: number): void {
+    this.orderLinePulled$ = this._orderLinePulled
+      .mutate({
+        inventoryID: invId,
+        userID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+        orderLineDetail: {
+          StatusID: sqlData.pulledToCart_ID,
+        },
+        id: Number(this.currentPull.id),
+      })
+      .pipe(
+        switchMap(() => {
+          this.logITNScan();
+
+          const pullList = JSON.parse(sessionStorage.getItem('pullList'));
+          const currentPull = pullList.find(
+            (item) => item.id == this.currentPull.id
+          );
+
+          if (currentPull) {
+            currentPull.pulled = true;
+            sessionStorage.setItem('pullList', JSON.stringify(pullList));
+          }
+
+          this._router.navigate(['../location'], {
+            relativeTo: this._actRoute,
+          });
+
+          return [];
+        }),
+        catchError((err) => {
+          return of({
+            error: { message: err.message, type: 'error' },
+          });
+        })
+      );
+  }
+
+  logITNScan(): void {
+    if (this.currentPull) {
+      this.itnScanLog$ = this._itnScanLog.mutate(
+        {
+          log: [
+            {
+              UserEventID: sqlData.Event_Pulling_PullITN,
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              DistributionCenter: environment.DistributionCenter,
+              OrderNumber: this.currentPull.OrderNumber
+                ? this.currentPull.OrderNumber.toString()
+                : '',
+              NOSINumber: this.currentPull.NOSINumber
+                ? this.currentPull.NOSINumber.toString()
+                : '',
+              InventoryTrackingNumber: this.currentPull.ITN
+                ? this.currentPull.ITN.toString()
+                : '',
+              PartNumber: this.currentPull.PartNumber
+                ? this.currentPull.PartNumber.toString()
+                : '',
+              ProductCode: this.currentPull.ProductCode
+                ? this.currentPull.ProductCode.toString()
+                : '',
+              OrderLineNumber: this.currentPull.OrderLineNumber
+                ? Number(this.currentPull.OrderLineNumber)
+                : null,
+              CustomerNumber: this.currentPull.CustomerNumber
+                ? this.currentPull.CustomerNumber.toString()
+                : '',
+              CustomerTier: this.currentPull.CustomerTier
+                ? this.currentPull.CustomerTier.toString()
+                : '',
+              ProductTier: this.currentPull.ProductTier
+                ? this.currentPull.ProductTier.toString()
+                : '',
+              Zone: this.currentPull.Zone
+                ? Number(this.currentPull.Zone)
+                : null,
+              WMSPriority: this.currentPull.WMSPriority
+                ? Number(this.currentPull.WMSPriority)
+                : null,
+              Priority: this.currentPull.Priority ? true : false,
+              Quantity: this.currentPull.Quantity
+                ? Number(this.currentPull.Quantity)
+                : null,
+            },
+          ],
+        },
+        { fetchPolicy: 'network-only' }
+      );
+    }
+  }
+
+  itnSearch(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+
+      const isValid = control.value == this.currentPull.ITN;
+
+      return !isValid ? { filter: true } : null;
+    };
+  }
+
+  onNotFound(): void {
+    let orderLineDetail = {};
+
+    if (JSON.parse(sessionStorage.getItem('userInfo')).PullerLevel == '2') {
+      orderLineDetail = {
+        InventoryID: null,
+        StatusID: sqlData.unplanned_ID,
+        LevelTwoRequired: false,
+      };
+    } else {
+      orderLineDetail = {
+        LevelTwoRequired: true,
+      };
+    }
+
+    this.orderLinePulled$ = this._pullingNotFound
+      .mutate({
+        orderLineDetail: orderLineDetail,
+        id: Number(this.currentPull.id),
+        log: [
+          {
+            UserEventID: sqlData.Event_Pulling_NotFound,
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            DistributionCenter: environment.DistributionCenter,
+            OrderNumber: this.currentPull.OrderNumber
+              ? this.currentPull.OrderNumber.toString()
+              : '',
+            NOSINumber: this.currentPull.NOSINumber
+              ? this.currentPull.NOSINumber.toString()
+              : '',
+            InventoryTrackingNumber: this.currentPull.ITN
+              ? this.currentPull.ITN.toString()
+              : '',
+            PartNumber: this.currentPull.PartNumber
+              ? this.currentPull.PartNumber.toString()
+              : '',
+            ProductCode: this.currentPull.ProductCode
+              ? this.currentPull.ProductCode.toString()
+              : '',
+            OrderLineNumber: this.currentPull.OrderLineNumber
+              ? Number(this.currentPull.OrderLineNumber)
+              : null,
+            CustomerNumber: this.currentPull.CustomerNumber
+              ? this.currentPull.CustomerNumber.toString()
+              : '',
+            CustomerTier: this.currentPull.CustomerTier
+              ? this.currentPull.CustomerTier.toString()
+              : '',
+            ProductTier: this.currentPull.ProductTier
+              ? this.currentPull.ProductTier.toString()
+              : '',
+            Zone: this.currentPull.Zone ? Number(this.currentPull.Zone) : null,
+            WMSPriority: this.currentPull.WMSPriority
+              ? Number(this.currentPull.WMSPriority)
+              : null,
+            Priority: this.currentPull.Priority ? true : false,
+            Quantity: this.currentPull.Quantity
+              ? Number(this.currentPull.Quantity)
+              : null,
+            Message:
+              'Bin Location: ' +
+              (this.currentPull.BinLocation
+                ? this.currentPull.BinLocation.toString()
+                : ''),
+          },
+        ],
+      })
+      .pipe(
+        switchMap(() => {
+          const pullList = JSON.parse(sessionStorage.getItem('pullList'));
+          const currentPull = pullList.find(
+            (item) => item.id == this.currentPull.id
+          );
+
+          if (currentPull) {
+            currentPull.pulled = 'nf';
+            sessionStorage.setItem('pullList', JSON.stringify(pullList));
+          }
+
+          if (
+            JSON.parse(sessionStorage.getItem('userInfo')).PullerLevel == '2'
+          ) {
+            this.setSuspect(Number(this.currentPull.InventoryID));
+          } else {
+            this._router.navigate(['../location'], {
+              relativeTo: this._actRoute,
+            });
+          }
+
+          return [];
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
+  }
+
+  setSuspect(inventoryID: number): void {
+    this.setInventorySuspectSubscription.add(
+      this._setInventorySuspect
+        .mutate({
+          updateInventory: {
+            Suspect: true,
+          },
+          id: inventoryID,
+        })
+        .subscribe({
+          complete: () => {
+            this._router.navigate(['../location'], {
+              relativeTo: this._actRoute,
+            });
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        })
+    );
+  }
+
+  onBack(): void {
+    this._router.navigate(['../location'], {
+      queryParams: {
+        orderLineDetailID:
+          this._actRoute.queryParams['_value']['orderLineDetailID'],
+      },
+      relativeTo: this._actRoute,
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.setInventorySuspectSubscription.unsubscribe();
+  }
+}
