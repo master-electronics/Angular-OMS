@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { catchError, filter, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { LabelService } from '../../data/label';
 import { LogService } from '../../data/eventLog';
 
@@ -52,7 +52,7 @@ export class ScanLocationComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _ui: ReceivingService,
+    private _ui: TabService,
     public _label: LabelService,
     private _log: LogService
   ) {}
@@ -100,7 +100,9 @@ export class ScanLocationComponent implements OnInit {
           });
         }),
         catchError((error) => {
-          return of(error);
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
         })
       );
   }

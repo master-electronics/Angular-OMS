@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
-import { ReceivingService } from './data/receivingService';
+import { TabService } from './data/tab';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { ReceiptGuard } from './utils/receipt.guard';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
@@ -16,7 +16,7 @@ export const ReceivingRoutes: Routes = [
       PartResolver,
       VerifyResolver,
       PrintItnResolver,
-      ReceivingService,
+      TabService,
       ReceiptInfoService,
       updateReceiptInfoService,
       LabelService,
@@ -25,13 +25,20 @@ export const ReceivingRoutes: Routes = [
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
-    canActivateChild: [ReceiptGuard],
+    // canActivateChild: [ReceiptGuard],
     children: [
       {
         path: 'receipt',
         loadComponent: () =>
           import('./feature/identify/receipt.component').then(
             (m) => m.ReceiptComponent
+          ),
+      },
+      {
+        path: 'search',
+        loadComponent: () =>
+          import('./feature/identify/search.component').then(
+            (m) => m.SearchComponent
           ),
       },
       {

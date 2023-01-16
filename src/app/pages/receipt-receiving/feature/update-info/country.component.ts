@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
 import { debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs';
@@ -68,7 +68,7 @@ export class CountryComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _info: updateReceiptInfoService,
-    private _step: ReceivingService,
+    private _step: TabService,
     private _country: CountryListService
   ) {}
 
@@ -85,7 +85,10 @@ export class CountryComponent implements OnInit {
               if (!searchQuery.length) {
                 return false;
               }
-              if (searchQuery.length < 4) {
+              if (searchQuery.length < 3) {
+                return country.ISO2.includes(searchQuery.trim().toUpperCase());
+              }
+              if (searchQuery.length === 3) {
                 return country.ISO3.includes(searchQuery.trim().toUpperCase());
               }
               return country.CountryName.trim()
@@ -96,6 +99,8 @@ export class CountryComponent implements OnInit {
           map((res) => {
             return res.slice(0, 5).map((country) => ({
               name:
+                country.ISO2 +
+                ' - ' +
                 country.ISO3 +
                 ' - ' +
                 country.CountryName +
@@ -115,14 +120,32 @@ export class CountryComponent implements OnInit {
         map((res) => {
           return res.map((country) => ({
             name:
-              country.ISO3 + ' - ' + country.CountryName + ' - ' + country._id,
+              country.ISO2 +
+              ' - ' +
+              country.ISO3 +
+              ' - ' +
+              country.CountryName +
+              ' - ' +
+              country._id,
           }));
         }),
         map((list) => {
+          if (control.value.trim().length === 2) {
+            return list.some((country) => {
+              if (
+                country.name.substring(0, 2).toLocaleUpperCase() ===
+                control.value.trim().toLocaleUpperCase()
+              ) {
+                this.countryInfo = country.name;
+                return true;
+              }
+              return false;
+            });
+          }
           if (control.value.trim().length === 3) {
             return list.some((country) => {
               if (
-                country.name.substring(0, 3).toLocaleUpperCase() ===
+                country.name.substring(5, 8).toLocaleUpperCase() ===
                 control.value.trim().toLocaleUpperCase()
               ) {
                 this.countryInfo = country.name;
@@ -154,7 +177,7 @@ export class CountryComponent implements OnInit {
     if (!this.countryInfo) {
       this.countryInfo = this.inputForm.value.country;
     }
-    const [iso3, , id] = this.countryInfo.split(' - ');
+    const [iso2, iso3, , id] = this.countryInfo.split(' - ');
     this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }

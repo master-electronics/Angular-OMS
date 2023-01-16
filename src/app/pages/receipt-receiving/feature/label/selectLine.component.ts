@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 
@@ -39,7 +39,7 @@ export class SelectLineComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _tab: ReceivingService,
+    private _tab: TabService,
     private _receipt: ReceiptInfoService
   ) {}
 

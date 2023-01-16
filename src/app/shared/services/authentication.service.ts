@@ -33,19 +33,20 @@ export class AuthenticationService {
   constructor(private router: Router, private http: HttpClient) {}
 
   public checkUserAuth(username: string, password: string): Observable<any> {
-    return this.http
-      .post(`${environment.apiUrl}/AuthJWT/login`, {
-        username,
-        password,
+    return this.http.post(`${environment.apiUrl}/AuthJWT/login`, {
+      username,
+      password,
+    });
+  }
+
+  public login(username: string, password: string): Observable<any> {
+    return this.checkUserAuth(username, password).pipe(
+      tap((res: { username: string; userGroups: string[] }) => {
+        const userToken = JSON.stringify(res);
+        sessionStorage.setItem('userToken', userToken);
+        this._user.next(res);
       })
-      .pipe(
-        tap((res: { username: string; userGroups: string[] }) => {
-          const userToken = JSON.stringify(res);
-          sessionStorage.setItem('userToken', userToken);
-          this._user.next(res);
-        }),
-        shareReplay(1)
-      );
+    );
   }
 
   public logout(): void {

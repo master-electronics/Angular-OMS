@@ -16,7 +16,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 
 @Component({
   standalone: true,
@@ -98,7 +98,7 @@ export class KickoutComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _step: ReceivingService,
+    private _step: TabService,
     private _receipt: ReceiptInfoService,
     private _log: LogService
   ) {}
@@ -133,7 +133,8 @@ export class KickoutComponent implements OnInit {
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
     const line1 = (kickoutReason + otherReason).substring(0, 20);
-    let reason = kickoutReason;
+    let reason = `ID:${this._receipt.headerID};`;
+    reason += kickoutReason;
     if (otherReason) {
       reason = kickoutReason + ': ' + otherReason;
     }

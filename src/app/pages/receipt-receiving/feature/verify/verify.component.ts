@@ -6,7 +6,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { ReceiptPartInfoComponent } from '../../ui/receipt-part-info.component';
 
 @Component({
@@ -43,7 +43,7 @@ export class VerifyComponent implements OnInit {
     private _router: Router,
     private _actRoute: ActivatedRoute,
     private _receipt: ReceiptInfoService,
-    private _step: ReceivingService
+    private _step: TabService
   ) {}
 
   ngOnInit(): void {

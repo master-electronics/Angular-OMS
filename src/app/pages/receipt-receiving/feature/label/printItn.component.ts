@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { LabelService, ITNinfo } from '../../data/label';
 
 @Component({
@@ -57,7 +57,7 @@ export class PrintITNComponent implements OnInit {
   constructor(
     private _router: Router,
     private _actRoute: ActivatedRoute,
-    private _ui: ReceivingService,
+    private _ui: TabService,
     public _label: LabelService
   ) {}
 

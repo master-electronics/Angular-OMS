@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
-import { ReceivingService, Tab } from './data/receivingService';
+import { TabService, Tab } from './data/tab';
 
 @Component({
   standalone: true,
@@ -27,7 +27,7 @@ export class ReceivingShell implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
     private commonService: CommonService,
-    private _service: ReceivingService
+    private _service: TabService
   ) {}
 
   ngOnInit(): void {

@@ -18,7 +18,8 @@ export class PrinterGuard implements CanActivate {
     _route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (localStorage.getItem('printerName')) {
+    localStorage.removeItem('printerName');
+    if (sessionStorage.getItem('printerName')) {
       return true;
     }
     // printerName have not set, then redirect to setting page

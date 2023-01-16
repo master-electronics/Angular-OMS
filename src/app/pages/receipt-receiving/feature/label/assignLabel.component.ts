@@ -24,7 +24,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { LabelService } from '../../data/label';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 
 @Component({
   standalone: true,
@@ -101,7 +101,7 @@ export class AssignLabelComponent implements OnInit {
     public receipt: ReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
-    private _step: ReceivingService,
+    private _step: TabService,
     private _label: LabelService
   ) {}
 

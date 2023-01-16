@@ -11,7 +11,7 @@ import { Observable, of } from 'rxjs';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
@@ -66,7 +66,7 @@ export class QuantityComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _ui: ReceivingService,
+    private _ui: TabService,
     private _receipt: ReceiptInfoService
   ) {}
 

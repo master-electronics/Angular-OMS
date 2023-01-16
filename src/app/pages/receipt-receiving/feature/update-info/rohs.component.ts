@@ -7,7 +7,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({
@@ -49,7 +49,7 @@ export class ROHSComponent implements OnInit {
     private _router: Router,
     private _update: updateReceiptInfoService,
     private _receipt: ReceiptInfoService,
-    private _steps: ReceivingService
+    private _steps: TabService
   ) {}
 
   ngOnInit(): void {

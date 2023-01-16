@@ -24,21 +24,6 @@ import { asapScheduler } from 'rxjs';
       <div class="relative h-full w-4/5 md:h-auto md:w-2/3 lg:w-1/2">
         <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
           <div class="p-6 text-center">
-            <svg
-              aria-hidden="true"
-              class="mx-auto mb-6 h-10 w-32 text-gray-400 dark:text-gray-200 lg:h-32"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
             <h1
               class="mb-6 text-base font-normal text-gray-500 dark:text-gray-400 md:text-lg lg:text-2xl"
             >

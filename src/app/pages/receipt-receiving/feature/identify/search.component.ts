@@ -11,10 +11,11 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
-import { filter, map, Observable, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, of, tap } from 'rxjs';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { TabService } from '../../data/tab';
 
 @Component({
   standalone: true,
@@ -24,9 +25,17 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     ReactiveFormsModule,
     SimpleKeyboardComponent,
     PopupModalComponent,
+    NzTabsModule,
   ],
 
   template: `
+    <nz-tabset>
+      <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
+      <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
+      <nz-tab style="font-size: xx-large;" nzTitle="Tab 1"
+        >Content of Tab Pane 1</nz-tab
+      >
+    </nz-tabset>
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
@@ -36,9 +45,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       title="Part Number"
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
-    <ng-container *ngIf="url$ | async as data">
-      <ng-container *ngIf="data">
-        <popup-modal (clickSubmit)="onBack()" [message]="data"></popup-modal>
+    <ng-container *ngIf="initData$ | async as data">
+      <ng-container *ngIf="data.checkLine">
+        <popup-modal
+          (clickSubmit)="onBack()"
+          [message]="data.checkLine"
+        ></popup-modal>
       </ng-container>
     </ng-container>
     <simple-keyboard
@@ -47,9 +59,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     ></simple-keyboard>
   `,
 })
-export class PartComponent implements OnInit {
+export class SearchComponent implements OnInit {
   public inputForm: FormGroup;
-  public url$: Observable<any>;
+  public initData$: Observable<any>;
   public validator = {
     name: 'filter',
     message: 'Not Found part number!',
@@ -71,34 +83,29 @@ export class PartComponent implements OnInit {
         this.partNumberSearch(),
       ]),
     });
-    this.url$ = this._actRoute.queryParams.pipe(
-      switchMap((url) => {
-        if (url.name === 'finish') {
+    const url$ = this._actRoute.queryParams.pipe(
+      map((res) => {
+        if (res.name === 'finish') {
           this._message.success(
-            `Finished Receipt: ${url.receipt}, line: ${url.line}`
+            `Finished Receipt: ${res.receipt}, line: ${res.line}`
           );
         }
-        if (url.name === 'kickout') {
+        if (res.name === 'kickout') {
           this._message.warning(
-            `Kickout Receipt: ${url.receipt}, Part: ${url.part}`
+            `Kickout Receipt: ${res.receipt}, Part: ${res.part}`
           );
         }
-        return this._actRoute.data.pipe(
-          filter((res) => res.lines?.error),
-          map((res) => res.lines.error.message),
-          map((res) => {
-            let message = res;
-            if (url.name === 'finish') {
-              message = `Finished Receipt: ${url.receipt}, line: ${url.line}\n${res}`;
-            }
-            if (url.name === 'kickout') {
-              message = `Kickout Receipt: ${url.receipt}, Part: ${url.part}\n${res}`;
-            }
-            return message;
-          })
-        );
       })
     );
+    const checkLine$ = this._actRoute.data.pipe(
+      map((res) => {
+        if (res.lines?.error) {
+          return res.lines.error.message;
+        }
+        return null;
+      })
+    );
+    this.initData$ = combineLatest({ url: url$, checkLine: checkLine$ });
   }
 
   partNumberSearch(): ValidatorFn {

@@ -84,7 +84,7 @@ import { MessageBarComponent } from '../message-bar.component';
       <!-- Button area -->
       <div class="grid h-10 w-full sm:h-16">
         <submit-button
-          buttonText="Login"
+          [buttonText]="buttonText"
           (buttonClick)="onSubmit()"
           *ngIf="data; else loading"
         >
@@ -100,6 +100,7 @@ export class UserPasswordComponent implements OnInit {
   public inputForm: FormGroup;
   public vaild;
   @Input() data = { error: null };
+  @Input() buttonText = 'Login';
   @Output() formSubmit: EventEmitter<null> = new EventEmitter();
   constructor(private controlContainer: ControlContainer) {}
 

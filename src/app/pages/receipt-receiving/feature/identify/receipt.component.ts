@@ -11,8 +11,9 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { catchError, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { ReceivingService } from '../../data/receivingService';
+import { TabService } from '../../data/tab';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 
 @Component({
   standalone: true,
@@ -22,6 +23,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     SimpleKeyboardComponent,
     ReactiveFormsModule,
     MessageBarComponent,
+    GreenButtonComponent,
   ],
   template: `
     <single-input-form
@@ -34,6 +36,14 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       title="Receipt"
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
+    <div
+      class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
+    >
+      <green-button
+        buttonText="Search"
+        (buttonClick)="onSearch()"
+      ></green-button>
+    </div>
     <simple-keyboard
       layout="number"
       [inputString]="inputForm.value.receipt"
@@ -48,7 +58,7 @@ export class ReceiptComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
-    private _ui: ReceivingService,
+    private _ui: TabService,
     private _actRoute: ActivatedRoute
   ) {}
 
@@ -66,6 +76,10 @@ export class ReceiptComponent implements OnInit {
 
   public onBack(): void {
     this._router.navigate(['/home']);
+  }
+
+  public onSearch(): void {
+    // this._router.navigate(['../search'], { relativeTo: this._actRoute });
   }
 
   public onSubmit(): void {

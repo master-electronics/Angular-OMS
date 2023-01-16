@@ -7,7 +7,7 @@ export interface Tab {
 }
 
 @Injectable()
-export class ReceivingService {
+export class TabService {
   /**
    * Tab
    */

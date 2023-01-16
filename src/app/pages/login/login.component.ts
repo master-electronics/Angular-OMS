@@ -31,15 +31,15 @@ import { of } from 'rxjs';
       style="background-image: url(../../../assets/img/bg_1.svg)"
     >
       <div
-        class="relative px-5 py-4  w-4/5 rounded-lg bg-gray-200 sm:w2/3 md:1/2 lg:w-1/3 xl:w-1/4"
+        class="sm:w2/3 md:1/2 relative  w-4/5 rounded-lg bg-gray-200 px-5 py-4 lg:w-1/3 xl:w-1/4"
       >
-        <div class="text-center hidden md:block">
+        <div class="hidden text-center md:block">
           <img
             class="mx-auto"
             src="../../../assets/icon/master_logo.svg"
             alt="logo"
           />
-          <h4 class="text-xl font-semibold mt-1 mb-12 pb-1">
+          <h4 class="mt-1 mb-12 pb-1 text-xl font-semibold">
             Master Electronics
           </h4>
         </div>
@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.login$ = this.authenticationService
-      .checkUserAuth(
+      .login(
         this.inputForm.value.username.trim().toLowerCase(),
         this.inputForm.value.password
       )
