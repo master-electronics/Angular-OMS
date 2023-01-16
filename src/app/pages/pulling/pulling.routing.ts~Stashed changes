@@ -1,0 +1,67 @@
+import { Routes } from '@angular/router';
+//import { ZoneList } from './feature/zone-list/zone-list.component';
+import { ZoneListResolver } from './utils/resolver/zone-list.resolver';
+import { MenuResolver } from './utils/resolver/menu.resolver';
+import { UserPullInfoService } from './data/user-pull-info';
+import { ZoneListService } from './data/zone-list';
+import { PullListService } from './data/pull-list';
+import { InventoryResolver } from './utils/resolver/inventory.resolver';
+import { InventoryService } from './data/inventory';
+//import { ScanCart } from './feature/scan-cart/scan-cart.component';
+
+export const PullingRoutes: Routes = [
+  {
+    path: '',
+    providers: [
+      ZoneListResolver,
+      ZoneListService,
+      InventoryResolver,
+      InventoryService,
+      PullListService,
+      MenuResolver,
+      UserPullInfoService,
+    ],
+    loadComponent: () =>
+      import('./shell.component').then((m) => m.PullingShell),
+    children: [
+      {
+        path: 'menu',
+        resolve: { userPullInfo: MenuResolver },
+        loadComponent: () =>
+          import('./feature/menu.component').then((m) => m.MenuComponent),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'menu' },
+      {
+        path: 'pulling',
+        resolve: { zones: ZoneListResolver },
+        loadComponent: () =>
+          import('./feature/zone-list/zone-list.component').then(
+            (m) => m.ZoneList
+          ),
+      },
+      {
+        path: 'pulling/scancart',
+        loadComponent: () =>
+          import('./feature/scan-cart/scan-cart.component').then(
+            (m) => m.ScanCart
+          ),
+      },
+      {
+        path: 'pulling/location',
+        resolve: { inventory: InventoryResolver },
+        loadComponent: () =>
+          import('./feature/location/location.component').then(
+            (m) => m.LocationComponent
+          ),
+      },
+      {
+        path: 'pulling/itnscan',
+        resolve: { inventory: InventoryResolver },
+        loadComponent: () =>
+          import('./feature/itn-scan/itn-scan.component').then(
+            (m) => m.ITNScanComponent
+          ),
+      },
+    ],
+  },
+];

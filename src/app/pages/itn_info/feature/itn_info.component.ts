@@ -74,6 +74,36 @@ interface IITN {
       _id: number;
       ProductCodeNumber: string;
     };
+    PURCHASEORDERLs?: {
+      _id: number;
+      PurchaseOrderH?: {
+        _id: number;
+        PurchaseOrderNumber: string;
+      };
+    }[];
+    RECEIPTLs?: {
+      _id: number;
+      LineNumber: number;
+      ExpectedQuantity: number;
+      ReceiptH: {
+        _id: number;
+        ExpectedArrivalDate: string;
+        ReceiptNumber: string;
+        Vendor: {
+          _id: number;
+          VendorName: string;
+          VendorNumber: string;
+        };
+      };
+      RECEIPTLDs: {
+        _id: number;
+        ExpectedQuantity: number;
+        ReceiptStatus: {
+          _id: number;
+          Name: string;
+        };
+      }[];
+    }[];
   };
   ORDERLINEDETAILs?: {
     _id: number;
@@ -246,6 +276,73 @@ interface IITN {
                 <li *ngIf="itn.Product.ProductTier">
                   Product Tier: {{ itn.Product.ProductTier }}
                 </li>
+                <li *ngIf="itn.Product.PURCHASEORDERLs.length > 0">
+                  Purchase Orders:
+                  <ul
+                    *ngFor="let po of itn.Product.PURCHASEORDERLs"
+                    style="margin-left: 10px !important;"
+                  >
+                    <li
+                      *ngIf="
+                        po.PurchaseOrderH &&
+                        po.PurchaseOrderH.PurchaseOrderNumber
+                      "
+                    >
+                      {{ po.PurchaseOrderH.PurchaseOrderNumber }}
+                    </li>
+                  </ul>
+                </li>
+                <li *ngIf="itn.Product.RECEIPTLs.length > 0">
+                  Receipts:
+                  <ul
+                    *ngFor="let receipt of itn.Product.RECEIPTLs"
+                    style="margin-left: 10px; !important;"
+                  >
+                    <li
+                      *ngIf="receipt.ReceiptH && receipt.ReceiptH.ReceiptNumber"
+                    >
+                      Receipt ID: {{ receipt.ReceiptH.ReceiptNumber }}
+                    </li>
+                    <li
+                      *ngIf="
+                        receipt.ReceiptH &&
+                        receipt.ReceiptH.Vendor &&
+                        receipt.ReceiptH.Vendor.VendorName
+                      "
+                    >
+                      Vendor: {{ receipt.ReceiptH.Vendor.VendorName }}
+                    </li>
+                    <li
+                      *ngIf="
+                        receipt.ReceiptH && receipt.ReceiptH.ExpectedArrivalDate
+                      "
+                    >
+                      Expected Arrival Date:
+                      {{ receipt.ReceiptH.ExpectedArrivalDate }}
+                    </li>
+                    <li *ngIf="receipt.LineNumber">
+                      Line Number: {{ receipt.LineNumber }}
+                    </li>
+                    <li *ngIf="receipt.RECEIPTLDs.length > 0">
+                      Receipt Line Details:
+                      <ul
+                        *ngFor="let detail of receipt.RECEIPTLDs"
+                        style="margin-left: 10px; !important;"
+                      >
+                        <li *ngIf="detail.ExpectedQuantity">
+                          Quantity: {{ detail.ExpectedQuantity }}
+                        </li>
+                        <li
+                          *ngIf="
+                            detail.ReceiptStatus && detail.ReceiptStatus.Name
+                          "
+                        >
+                          Status: {{ detail.ReceiptStatus.Name }}
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
               </div>
               <li *ngIf="itn.CountryOfOrigin">
                 COO: {{ itn.CountryOfOrigin
@@ -404,9 +501,15 @@ export class INTInfoComponent implements OnInit {
           const tempITN = {} as IITN;
           const itn = res.data.findInventory;
           tempITN._id = itn._id;
-          tempITN.DistributionCenter = itn.DistributionCenter.trim();
-          tempITN.InventoryTrackingNumber = itn.InventoryTrackingNumber.trim();
-          tempITN.QuantityOnHand = itn.QuantityOnHand;
+          tempITN.DistributionCenter = itn.DistributionCenter
+            ? itn.DistributionCenter.trim()
+            : null;
+          tempITN.InventoryTrackingNumber = itn.InventoryTrackingNumber
+            ? itn.InventoryTrackingNumber.trim()
+            : null;
+          tempITN.QuantityOnHand = itn.QuantityOnHand
+            ? itn.QuantityOnHand
+            : null;
           tempITN.DateCode = itn.DateCode ? itn.DateCode.trim() : null;
           tempITN.ParentITN = itn.ParentITN ? itn.ParentITN.trim() : null;
           tempITN.ROHS = itn.ROHS ? itn.ROHS : false;
@@ -414,8 +517,10 @@ export class INTInfoComponent implements OnInit {
             ? itn.OriginalQuantity
             : null;
           tempITN.BinLocation = itn.BinLocation ? itn.BinLocation.trim() : null;
-          tempITN.ProductID = itn.ProductID;
-          tempITN.ContainerID = itn.ContainerID;
+          tempITN.ProductID = itn.ProductID ? itn.ProductID : null;
+          tempITN.ContainerID = itn.ContainerID ? itn.ContainerID : null;
+          tempITN.CountryOfOrigin =
+            itn.Country && itn.Country.ISO2 ? itn.Country.ISO2.trim() : null;
           tempITN.CountryID = itn.CountryID ? itn.CountryID : null;
           tempITN.NotFound = itn.NotFound ? itn.NotFound : null;
 
@@ -439,29 +544,48 @@ export class INTInfoComponent implements OnInit {
             itn.Container.USERINFOs.map((user) => {
               users.push({
                 _id: user._id,
-                Name: user.Name.trim(),
+                Name: user.Name ? user.Name.trim() : null,
               });
             });
           }
 
           tempITN.Container = {
             _id: itn.Container._id,
-            Barcode: itn.Container.Barcode.trim(),
-            Zone: itn.Container.Zone ? itn.Container.Zone : null,
+            Barcode:
+              itn.Container && itn.Container.Barcode
+                ? itn.Container.Barcode.trim()
+                : null,
+            Zone:
+              itn.Container && itn.Container.Zone ? itn.Container.Zone : null,
             DistributionCenter: itn.Container.DistributionCenter.trim(),
-            Warehouse: itn.Container.Warehouse
-              ? itn.Container.Warehouse.trim()
-              : null,
-            Row: itn.Container.Row ? itn.Container.Row.trim() : null,
-            Aisle: itn.Container.Aisle ? itn.Container.Aisle.trim() : null,
-            Section: itn.Container.Section
-              ? itn.Container.Section.trim()
-              : null,
-            Shelf: itn.Container.Shelf ? itn.Container.Shelf.trim() : null,
-            ShelfDetail: itn.Container.ShelfDetail
-              ? itn.Container.ShelfDetail.trim()
-              : null,
-            ContainerTypeID: itn.Container.ContainerTypeID,
+            Warehouse:
+              itn.Container && itn.Container.Warehouse
+                ? itn.Container.Warehouse.trim()
+                : null,
+            Row:
+              itn.Container && itn.Container.Row
+                ? itn.Container.Row.trim()
+                : null,
+            Aisle:
+              itn.Container && itn.Container.Aisle
+                ? itn.Container.Aisle.trim()
+                : null,
+            Section:
+              itn.Container && itn.Container.Section
+                ? itn.Container.Section.trim()
+                : null,
+            Shelf:
+              itn.Container && itn.Container.Shelf
+                ? itn.Container.Shelf.trim()
+                : null,
+            ShelfDetail:
+              itn.Container && itn.Container.ShelfDetail
+                ? itn.Container.ShelfDetail.trim()
+                : null,
+            ContainerTypeID:
+              itn.Container && itn.Container.ContainerTypeID
+                ? itn.Container.ContainerTypeID
+                : null,
             ContainerType: {
               _id: itn.Container.ContainerType._id,
               Name: itn.Container.ContainerType.Name.trim(),
@@ -470,18 +594,165 @@ export class INTInfoComponent implements OnInit {
             USERINFOs: users ? users : null,
           };
 
+          let poList: {
+            _id: number;
+            PurchaseOrderH: {
+              _id: number;
+              PurchaseOrderNumber: string;
+            };
+          }[];
+
+          let receiptDetailList: {
+            _id: number;
+            ExpectedQuantity: number;
+            ReceiptStatus: {
+              _id: number;
+              Name: string;
+            };
+          }[];
+
+          let receiptList: {
+            _id: number;
+            LineNumber: number;
+            ExpectedQuantity: number;
+            ReceiptH: {
+              _id: number;
+              ExpectedArrivalDate: string;
+              ReceiptNumber: string;
+              Vendor: {
+                _id: number;
+                VendorName: string;
+                VendorNumber: string;
+              };
+            };
+            RECEIPTLDs: {
+              _id: number;
+              ExpectedQuantity: number;
+              ReceiptStatus: {
+                _id: number;
+                Name: string;
+              };
+            }[];
+          }[];
+
+          if (itn.Product.PURCHASEORDERLs) {
+            poList = [];
+            itn.Product.PURCHASEORDERLs.map((po) => {
+              poList.push({
+                _id: po._id,
+                PurchaseOrderH: {
+                  _id:
+                    po.PurchaseOrderH && po.PurchaseOrderH._id
+                      ? po.PurchaseOrderH._id
+                      : null,
+                  PurchaseOrderNumber:
+                    po.PurchaseOrderH && po.PurchaseOrderH.PurchaseOrderNumber
+                      ? po.PurchaseOrderH.PurchaseOrderNumber
+                      : null,
+                },
+              });
+            });
+          }
+
+          if (itn.Product.RECEIPTLs) {
+            receiptList = [];
+            itn.Product.RECEIPTLs.map((receipt) => {
+              if (receipt.RECEIPTLDs) {
+                receiptDetailList = [];
+                receipt.RECEIPTLDs.map((receiptDetail) => {
+                  receiptDetailList.push({
+                    _id: receiptDetail._id,
+                    ExpectedQuantity: receiptDetail.ExpectedQuantity
+                      ? receiptDetail.ExpectedQuantity
+                      : null,
+                    ReceiptStatus: {
+                      _id:
+                        receiptDetail.ReceiptStatus &&
+                        receiptDetail.ReceiptStatus._id
+                          ? receiptDetail.ReceiptStatus._id
+                          : null,
+                      Name:
+                        receiptDetail.ReceiptStatus &&
+                        receiptDetail.ReceiptStatus.Name
+                          ? receiptDetail.ReceiptStatus.Name
+                          : null,
+                    },
+                  });
+                });
+              }
+
+              receiptList.push({
+                _id: receipt._id,
+                LineNumber: receipt.LineNumber ? receipt.LineNumber : null,
+                ExpectedQuantity: receipt.ExpectedQuantity
+                  ? receipt.ExpectedQuantity
+                  : null,
+                ReceiptH: {
+                  _id:
+                    receipt.ReceiptH && receipt.ReceiptH._id
+                      ? receipt.ReceiptH._id
+                      : null,
+                  ExpectedArrivalDate:
+                    receipt.ReceiptH && receipt.ReceiptH.ExpectedArrivalDate
+                      ? new Date(
+                          Number(receipt.ReceiptH.ExpectedArrivalDate)
+                        ).toLocaleDateString()
+                      : null,
+                  ReceiptNumber:
+                    receipt.ReceiptH && receipt.ReceiptH.ReceiptNumber
+                      ? receipt.ReceiptH.ReceiptNumber
+                      : null,
+                  Vendor: {
+                    _id:
+                      receipt.ReceiptH &&
+                      receipt.ReceiptH.Vendor &&
+                      receipt.ReceiptH.Vendor._id
+                        ? receipt.ReceiptH.Vendor._id
+                        : null,
+                    VendorName:
+                      receipt.ReceiptH &&
+                      receipt.ReceiptH.Vendor &&
+                      receipt.ReceiptH.Vendor.VendorName
+                        ? receipt.ReceiptH.Vendor.VendorName
+                        : null,
+                    VendorNumber:
+                      receipt.ReceiptH &&
+                      receipt.ReceiptH.Vendor &&
+                      receipt.ReceiptH.Vendor.VendorNumber
+                        ? receipt.ReceiptH.Vendor.VendorNumber
+                        : null,
+                  },
+                },
+                RECEIPTLDs: receiptDetailList ? receiptDetailList : null,
+              });
+            });
+          }
+
           tempITN.Product = {
             _id: itn.Product._id,
-            ProductCodeID: itn.Product.ProductCodeID,
-            PartNumber: itn.Product.PartNumber.trim(),
-            ProductTier: itn.Product.ProductTier
-              ? itn.Product.ProductTier.trim()
-              : null,
+            ProductCodeID:
+              itn.Product && itn.Product.ProductCodeID
+                ? itn.Product.ProductCodeID
+                : null,
+            PartNumber:
+              itn.Product && itn.Product.PartNumber
+                ? itn.Product.PartNumber.trim()
+                : null,
+            ProductTier:
+              itn.Product && itn.Product.ProductTier
+                ? itn.Product.ProductTier.trim()
+                : null,
             ProductCode: {
               _id: itn.Product.ProductCode._id,
               ProductCodeNumber:
-                itn.Product.ProductCode.ProductCodeNumber.trim(),
+                itn.Product &&
+                itn.Product.ProductCode &&
+                itn.Product.ProductCode.ProductCodeNumber
+                  ? itn.Product.ProductCode.ProductCodeNumber.trim()
+                  : null,
             },
+            PURCHASEORDERLs: poList ? poList : null,
+            RECEIPTLs: receiptList ? receiptList : null,
           };
 
           let orderLines: {
@@ -530,64 +801,94 @@ export class INTInfoComponent implements OnInit {
             itn.ORDERLINEDETAILs.map((orderLine) => {
               orderLines.push({
                 _id: orderLine._id,
-                OrderID: orderLine.OrderID,
-                OrderLineID: orderLine.OrderLineID,
-                StatusID: orderLine.StatusID,
-                Quantity: orderLine.Quantity,
+                OrderID: orderLine.OrderID ? orderLine.OrderID : null,
+                OrderLineID: orderLine.OrderLineID
+                  ? orderLine.OrderLineID
+                  : null,
+                StatusID: orderLine.StatusID ? orderLine.StatusID : null,
+                Quantity: orderLine.Quantity ? orderLine.Quantity : null,
                 LastUpdated: orderLine.LastUpdated
                   ? new Date(Number(orderLine.LastUpdated)).toLocaleString()
                   : null,
                 BinLocation: orderLine.BinLocation
                   ? orderLine.BinLocation.trim()
                   : null,
-                WMSPriority: orderLine.WMSPriority,
+                WMSPriority: orderLine.WMSPriority
+                  ? orderLine.WMSPriority
+                  : null,
                 Status: {
                   _id: orderLine.Status._id,
-                  Name: orderLine.Status.Name.trim(),
+                  Name: orderLine ? orderLine.Status.Name.trim() : null,
                 },
                 OrderLine: {
                   _id: orderLine.OrderLine._id,
-                  OrderLineNumber: orderLine.OrderLine.OrderLineNumber,
-                  Quantity: orderLine.OrderLine.Quantity
-                    ? orderLine.OrderLine.Quantity
-                    : null,
+                  OrderLineNumber:
+                    orderLine.OrderLine && orderLine.OrderLine.OrderLineNumber
+                      ? orderLine.OrderLine.OrderLineNumber
+                      : null,
+                  Quantity:
+                    orderLine.OrderLine && orderLine.OrderLine.Quantity
+                      ? orderLine.OrderLine.Quantity
+                      : null,
                 },
                 Order: {
                   _id: orderLine.Order._id,
-                  DistributionCenter: orderLine.Order.DistributionCenter.trim(),
-                  OrderNumber: orderLine.Order.OrderNumber.trim(),
-                  NOSINumber: orderLine.Order.NOSINumber.trim(),
-                  OrderStatusCode: orderLine.Order.OrderStatusCode
-                    ? orderLine.Order.OrderStatusCode
-                    : null,
-                  ShipmentMethodID: orderLine.Order.ShipmentMethodID
-                    ? orderLine.Order.ShipmentMethodID
-                    : null,
-                  OrderType: orderLine.Order.OrderType
-                    ? orderLine.Order.OrderType
-                    : null,
-                  isSelected: orderLine.Order.isSelected,
-                  CustomerID: orderLine.Order.CustomerID
-                    ? orderLine.Order.CustomerID
-                    : null,
-                  ShipmentMethod: orderLine.Order.ShipmentMethod
-                    ? {
-                        _id: orderLine.Order.ShipmentMethod._id,
-                        ShippingMethod:
-                          orderLine.Order.ShipmentMethod.ShippingMethod.trim(),
-                        PriorityPinkPaper:
-                          orderLine.Order.ShipmentMethod.PriorityPinkPaper,
-                      }
-                    : null,
-                  Customer: orderLine.Order.Customer
-                    ? {
-                        _id: orderLine.Order.Customer._id,
-                        CustomerNumber:
-                          orderLine.Order.Customer.CustomerNumber.trim(),
-                        CustomerTier:
-                          orderLine.Order.Customer.CustomerTier.trim(),
-                      }
-                    : null,
+                  DistributionCenter:
+                    orderLine.Order && orderLine.Order.DistributionCenter
+                      ? orderLine.Order.DistributionCenter.trim()
+                      : null,
+                  OrderNumber:
+                    orderLine.Order && orderLine.Order.OrderNumber
+                      ? orderLine.Order.OrderNumber.trim()
+                      : null,
+                  NOSINumber:
+                    orderLine.Order && orderLine.Order.NOSINumber
+                      ? orderLine.Order.NOSINumber.trim()
+                      : null,
+                  OrderStatusCode:
+                    orderLine.Order && orderLine.Order.OrderStatusCode
+                      ? orderLine.Order.OrderStatusCode
+                      : null,
+                  ShipmentMethodID:
+                    orderLine.Order && orderLine.Order.ShipmentMethodID
+                      ? orderLine.Order.ShipmentMethodID
+                      : null,
+                  OrderType:
+                    orderLine.Order && orderLine.Order.OrderType
+                      ? orderLine.Order.OrderType
+                      : null,
+                  isSelected:
+                    orderLine.Order && orderLine.Order.isSelected
+                      ? orderLine.Order.isSelected
+                      : null,
+                  CustomerID:
+                    orderLine.Order && orderLine.Order.CustomerID
+                      ? orderLine.Order.CustomerID
+                      : null,
+                  ShipmentMethod:
+                    orderLine.Order && orderLine.Order.ShipmentMethod
+                      ? {
+                          _id: orderLine.Order.ShipmentMethod._id,
+                          ShippingMethod: orderLine.Order.ShipmentMethod
+                            .ShippingMethod
+                            ? orderLine.Order.ShipmentMethod.ShippingMethod.trim()
+                            : null,
+                          PriorityPinkPaper: orderLine.Order.ShipmentMethod
+                            .PriorityPinkPaper
+                            ? orderLine.Order.ShipmentMethod.PriorityPinkPaper
+                            : null,
+                        }
+                      : null,
+                  Customer:
+                    orderLine.Order && orderLine.Order.Customer
+                      ? {
+                          _id: orderLine.Order.Customer._id,
+                          CustomerNumber:
+                            orderLine.Order.Customer.CustomerNumber.trim(),
+                          CustomerTier:
+                            orderLine.Order.Customer.CustomerTier.trim(),
+                        }
+                      : null,
                 },
               });
             });
