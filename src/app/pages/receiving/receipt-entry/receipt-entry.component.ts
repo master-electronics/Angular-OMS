@@ -570,7 +570,7 @@ export class ReceiptEntry implements OnInit {
                 DateCode: receiptLine.DateCode,
                 CountryID: receiptLine.CountryID,
                 ISO3: '',
-                RHOS: receiptLine.RHOS,
+                RHOS: receiptLine.ROHS,
                 LineNumber: receiptLine.LineNumber,
                 ReceiptLineDetails: lineDetails,
                 Expanded: false,

@@ -695,7 +695,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -1689,7 +1689,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -2370,7 +2370,7 @@ export type FindInventoryQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, DateCode?: string | null, ParentITN?: string | null, ROHS?: boolean | null, OriginalQuantity?: number | null, BinLocation?: string | null, ProductID: number, ContainerID: number, CountryID?: number | null, NotFound: boolean, Country?: { __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null, Container: { __typename?: 'Container', _id: number, Barcode: string, Zone?: number | null, DistributionCenter: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', _id: number, Name: string, IsMobile: boolean }, USERINFOs?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null }, Product: { __typename?: 'Product', _id: number, ProductCodeID: number, PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string } }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, OrderID: number, OrderLineID: number, StatusID: number, Quantity: number, LastUpdated?: string | null, BinLocation?: string | null, WMSPriority: number, Status: { __typename?: 'OrderStatus', _id: number, Name: string }, OrderLine: { __typename?: 'OrderLine', _id: number, OrderLineNumber: number, Quantity?: number | null }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, OrderStatusCode?: string | null, ShipmentMethodID?: string | null, OrderType?: string | null, isSelected: number, CustomerID?: number | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', _id: number, CustomerNumber: string, CustomerTier: string } | null } } | null> | null } | null };
+export type FindInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, DateCode?: string | null, ParentITN?: string | null, ROHS?: boolean | null, OriginalQuantity?: number | null, BinLocation?: string | null, ProductID: number, ContainerID: number, CountryID?: number | null, NotFound: boolean, Country?: { __typename?: 'Country', _id: number, CountryCode: string, CountryName: string, ISO2: string, ISO3: string } | null, Container: { __typename?: 'Container', _id: number, Barcode: string, Zone?: number | null, DistributionCenter: string, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, ContainerTypeID: number, ContainerType: { __typename?: 'ContainerType', _id: number, Name: string, IsMobile: boolean }, USERINFOs?: Array<{ __typename?: 'UserInfo', _id: number, Name: string } | null> | null }, Product: { __typename?: 'Product', _id: number, ProductCodeID: number, PartNumber: string, ProductTier?: string | null, ProductCode: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string }, PURCHASEORDERLs?: Array<{ __typename?: 'PurchaseOrderL', _id: number, PurchaseOrderH: { __typename?: 'PurchaseOrderH', _id: number, PurchaseOrderNumber: string } } | null> | null, RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, LineNumber: number, ExpectedQuantity: number, ReceiptH: { __typename?: 'ReceiptH', _id: number, ExpectedArrivalDate?: string | null, ReceiptNumber?: string | null, Vendor: { __typename?: 'Vendor', _id: number, VendorName: string, VendorNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ExpectedQuantity: number, ReceiptStatus: { __typename?: 'ReceiptStatus', _id: number, Name: string } } | null> | null } | null> | null }, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, OrderID: number, OrderLineID: number, StatusID: number, Quantity: number, LastUpdated?: string | null, BinLocation?: string | null, WMSPriority: number, Status: { __typename?: 'OrderStatus', _id: number, Name: string }, OrderLine: { __typename?: 'OrderLine', _id: number, OrderLineNumber: number, Quantity?: number | null }, Order: { __typename?: 'Order', _id: number, DistributionCenter: string, OrderNumber: string, NOSINumber: string, OrderStatusCode?: string | null, ShipmentMethodID?: string | null, OrderType?: string | null, isSelected: number, CustomerID?: number | null, ShipmentMethod?: { __typename?: 'ShipmentMethod', _id: string, ShippingMethod: string, PriorityPinkPaper: boolean } | null, Customer?: { __typename?: 'Customer', _id: number, CustomerNumber: string, CustomerTier: string } | null } } | null> | null } | null };
 
 export const FindInventoryDocument = gql`
     query findInventory($DistributionCenter: String!, $InventoryTrackingNumber: String!) {
@@ -2427,6 +2427,36 @@ export const FindInventoryDocument = gql`
       ProductCode {
         _id
         ProductCodeNumber
+      }
+      PURCHASEORDERLs {
+        _id
+        PurchaseOrderH {
+          _id
+          PurchaseOrderNumber
+        }
+      }
+      RECEIPTLs {
+        _id
+        LineNumber
+        ExpectedQuantity
+        ReceiptH {
+          _id
+          ExpectedArrivalDate
+          ReceiptNumber
+          Vendor {
+            _id
+            VendorName
+            VendorNumber
+          }
+        }
+        RECEIPTLDs {
+          _id
+          ExpectedQuantity
+          ReceiptStatus {
+            _id
+            Name
+          }
+        }
       }
     }
     ORDERLINEDETAILs {

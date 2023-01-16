@@ -10,7 +10,7 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
       _id
       ExpectedQuantity
       DateCode
-      RHOS
+      ROHS
       LineNumber
       ProductID
       CountryID

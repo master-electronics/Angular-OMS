@@ -58,7 +58,7 @@ query fetchReceiptLines($receiptHID: Int) {
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id
@@ -77,7 +77,7 @@ query findReceiptLine($receiptLineId: Int) {
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id
@@ -127,7 +127,7 @@ mutation insertReceiptLine(
     ExpectedQuantity: $expectedQuantity
     DateCode: $dateCode
     CountryID: $countryID
-    RHOS: $rhos
+    ROHS: $rhos
   ) {
     _id
     ReceiptHID
@@ -135,7 +135,7 @@ mutation insertReceiptLine(
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
   }
 }
@@ -157,7 +157,7 @@ mutation deleteReceiptLine($receiptLineID: Int) {
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id

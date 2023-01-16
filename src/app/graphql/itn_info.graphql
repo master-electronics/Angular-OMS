@@ -59,6 +59,36 @@ query findInventory(
                 _id
                 ProductCodeNumber
             }
+            PURCHASEORDERLs {
+                _id
+                PurchaseOrderH {
+                    _id
+                    PurchaseOrderNumber
+                }
+            }
+            RECEIPTLs {
+                _id
+                LineNumber
+                ExpectedQuantity
+                ReceiptH {
+                    _id
+                    ExpectedArrivalDate
+                    ReceiptNumber
+                    Vendor {
+                        _id
+                        VendorName
+                        VendorNumber
+                    }
+                }
+                RECEIPTLDs {
+                    _id
+                    ExpectedQuantity
+                    ReceiptStatus {
+                        _id
+                        Name
+                    }
+                }
+            }
         }
         ORDERLINEDETAILs {
             _id

@@ -695,7 +695,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -1689,7 +1689,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -2377,7 +2377,7 @@ export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindReceiptHeaderForReceivingQuery = { __typename?: 'Query', findReceiptInfoByIdAndStatus?: { __typename?: 'ReceiptH', RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, ExpectedQuantity: number, DateCode?: string | null, RHOS?: boolean | null, LineNumber: number, ProductID: number, CountryID?: number | null, Country?: { __typename?: 'Country', ISO3: string } | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', PurchaseOrderL?: { __typename?: 'PurchaseOrderL', LineNumber: number, PurchaseOrderH: { __typename?: 'PurchaseOrderH', PurchaseOrderNumber: string } } | null } | null> | null } | null> | null } | null };
+export type FindReceiptHeaderForReceivingQuery = { __typename?: 'Query', findReceiptInfoByIdAndStatus?: { __typename?: 'ReceiptH', RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, ExpectedQuantity: number, DateCode?: string | null, ROHS?: boolean | null, LineNumber: number, ProductID: number, CountryID?: number | null, Country?: { __typename?: 'Country', ISO3: string } | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', PurchaseOrderL?: { __typename?: 'PurchaseOrderL', LineNumber: number, PurchaseOrderH: { __typename?: 'PurchaseOrderH', PurchaseOrderNumber: string } } | null } | null> | null } | null> | null } | null };
 
 export type FetchProductInfoForReceivingQueryVariables = Types.Exact<{
   ProductCode: Types.Scalars['String'];
@@ -2470,7 +2470,7 @@ export const FindReceiptHeaderForReceivingDocument = gql`
       _id
       ExpectedQuantity
       DateCode
-      RHOS
+      ROHS
       LineNumber
       ProductID
       CountryID

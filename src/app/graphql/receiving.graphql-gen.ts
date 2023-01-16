@@ -695,7 +695,7 @@ export type MutationInsertReceiptLineArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Int'];
   ProductID: Scalars['Int'];
-  RHOS?: InputMaybe<Scalars['Boolean']>;
+  ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID: Scalars['Int'];
 };
 
@@ -1689,7 +1689,7 @@ export type ReceiptL = {
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
-  RHOS?: Maybe<Scalars['Boolean']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
   ReceiptH: ReceiptH;
   ReceiptHID: Scalars['Int'];
   _id: Scalars['Int'];
@@ -2409,14 +2409,14 @@ export type FetchReceiptLinesQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchReceiptLinesQuery = { __typename?: 'Query', fetchReceiptLines?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, RHOS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null> | null };
+export type FetchReceiptLinesQuery = { __typename?: 'Query', fetchReceiptLines?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, ROHS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null> | null };
 
 export type FindReceiptLineQueryVariables = Types.Exact<{
   receiptLineId?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
-export type FindReceiptLineQuery = { __typename?: 'Query', findReceiptLine?: { __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, RHOS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null };
+export type FindReceiptLineQuery = { __typename?: 'Query', findReceiptLine?: { __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, ROHS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null };
 
 export type FindPoLinesQueryVariables = Types.Exact<{
   vendorID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -2450,7 +2450,7 @@ export type InsertReceiptLineMutationVariables = Types.Exact<{
 }>;
 
 
-export type InsertReceiptLineMutation = { __typename?: 'Mutation', insertReceiptLine?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, RHOS?: boolean | null, LineNumber: number } | null> | null };
+export type InsertReceiptLineMutation = { __typename?: 'Mutation', insertReceiptLine?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, ROHS?: boolean | null, LineNumber: number } | null> | null };
 
 export type InsertReceiptLineDetailMutationVariables = Types.Exact<{
   receiptLineDetail?: Types.InputMaybe<Types.InsertReceiptLd>;
@@ -2464,7 +2464,7 @@ export type DeleteReceiptLineMutationVariables = Types.Exact<{
 }>;
 
 
-export type DeleteReceiptLineMutation = { __typename?: 'Mutation', deleteReceiptLine?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, RHOS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null> | null };
+export type DeleteReceiptLineMutation = { __typename?: 'Mutation', deleteReceiptLine?: Array<{ __typename?: 'ReceiptL', _id: number, ReceiptHID: number, ProductID: number, ExpectedQuantity: number, DateCode?: string | null, CountryID?: number | null, ROHS?: boolean | null, LineNumber: number, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, ReceiptLID: number, ExpectedQuantity: number, PurchaseOrderLID?: number | null } | null> | null } | null> | null };
 
 export type DeleteReceiptLineDetailsMutationVariables = Types.Exact<{
   receiptLineID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -2658,7 +2658,7 @@ export const FetchReceiptLinesDocument = gql`
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id
@@ -2689,7 +2689,7 @@ export const FindReceiptLineDocument = gql`
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id
@@ -2780,7 +2780,7 @@ export const InsertReceiptLineDocument = gql`
     ExpectedQuantity: $expectedQuantity
     DateCode: $dateCode
     CountryID: $countryID
-    RHOS: $rhos
+    ROHS: $rhos
   ) {
     _id
     ReceiptHID
@@ -2788,7 +2788,7 @@ export const InsertReceiptLineDocument = gql`
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
   }
 }
@@ -2834,7 +2834,7 @@ export const DeleteReceiptLineDocument = gql`
     ExpectedQuantity
     DateCode
     CountryID
-    RHOS
+    ROHS
     LineNumber
     RECEIPTLDs {
       _id
