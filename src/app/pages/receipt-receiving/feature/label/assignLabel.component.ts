@@ -71,6 +71,7 @@ import { TabService } from '../../data/tab';
           </div>
         </div>
       </div>
+      <!-- button area -->
       <div class="mt-4 grid h-16 w-full grid-cols-4 gap-6 md:h-32 md:text-4xl">
         <green-button
           (buttonClick)="addField($event)"

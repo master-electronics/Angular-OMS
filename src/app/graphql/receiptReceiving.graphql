@@ -4,6 +4,19 @@ query checkReceiptHeader($id: Int!) {
   }
 }
 
+query findReceiptHeaderList($PartNumber: String, $VendorNumber: String) {
+  findReceiptInfoByPartorVendor(
+    PartNumber: $PartNumber
+    VendorNumber: $VendorNumber
+  ) {
+    _id
+    ExpectedArrivalDate
+    Vendor {
+      VendorName
+    }
+  }
+}
+
 query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
   findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
     RECEIPTLs {

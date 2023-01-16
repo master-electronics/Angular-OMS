@@ -25,7 +25,7 @@ export const ReceivingRoutes: Routes = [
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
-    // canActivateChild: [ReceiptGuard],
+    canActivateChild: [ReceiptGuard],
     children: [
       {
         path: 'receipt',

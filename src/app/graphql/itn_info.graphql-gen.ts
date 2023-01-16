@@ -1174,6 +1174,7 @@ export type Query = {
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
   findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
+  findReceiptInfoByPartorVendor?: Maybe<Array<Maybe<ReceiptH>>>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -1458,6 +1459,11 @@ export type QueryFindReceiptHsArgs = {
 export type QueryFindReceiptInfoByIdAndStatusArgs = {
   ReceiptHID: Scalars['Int'];
   statusID: Scalars['Int'];
+};
+
+export type QueryFindReceiptInfoByPartorVendorArgs = {
+  PartNumber?: InputMaybe<Scalars['String']>;
+  VendorNumber?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryFindReceiptLArgs = {

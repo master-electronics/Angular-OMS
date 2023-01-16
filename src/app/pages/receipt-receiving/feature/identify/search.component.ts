@@ -1,135 +1,146 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { combineLatest, map, Observable, of, tap } from 'rxjs';
-import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { TabService } from '../../data/tab';
+import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
+import { ReceiptHeaderTableComponent } from '../../ui/header-table.component';
+import { FindReceiptHeaderListGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
+import { map, Observable, of, shareReplay, tap } from 'rxjs';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
-    SingleInputformComponent,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
-    PopupModalComponent,
-    NzTabsModule,
+    SubmitButtonComponent,
+    ReceiptHeaderTableComponent,
+    NormalButtonComponent,
+    LoaderButtonComponent,
   ],
 
   template: `
-    <nz-tabset>
-      <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
-      <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
-      <nz-tab style="font-size: xx-large;" nzTitle="Tab 1"
-        >Content of Tab Pane 1</nz-tab
-      >
-    </nz-tabset>
-    <single-input-form
-      (formBack)="onBack()"
-      (formSubmit)="onSubmit()"
-      [validator]="validator"
-      [formGroup]="inputForm"
-      controlName="partNumber"
-      title="Part Number"
-      [isvalid]="this.inputForm.valid"
-    ></single-input-form>
-    <ng-container *ngIf="initData$ | async as data">
-      <ng-container *ngIf="data.checkLine">
-        <popup-modal
-          (clickSubmit)="onBack()"
-          [message]="data.checkLine"
-        ></popup-modal>
-      </ng-container>
-    </ng-container>
+    <form [formGroup]="inputForm" (ngSubmit)="onSearch()">
+      <div class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
+        <div class="grid w-full gap-10 md:grid-cols-2">
+          <!-- search form area -->
+          <div>
+            <!-- input area -->
+            <div>
+              <label for="partNumber" class="block font-medium "
+                >PartNumber</label
+              >
+              <input
+                formControlName="partNumber"
+                type="text"
+                name="partNumber"
+                autocomplete="off"
+                id="partNumber"
+                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg
+        border bg-gray-50 p-2.5 text-gray-900"
+                #partNumber
+              />
+            </div>
+            <div>
+              <label for="vendor" class="block font-medium">VendorNumber</label>
+              <input
+                formControlName="vendor"
+                type="vendor"
+                name="vendor"
+                autocomplete="off"
+                id="vendor"
+                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border bg-gray-50 p-2.5 text-gray-900 "
+              />
+            </div>
+            <!-- button area -->
+            <div
+              class="grid h-8 w-full grid-cols-3 sm:h-12 md:mt-6 md:h-16 lg:h-20"
+            >
+              <submit-button
+                *ngIf="search$; else loading"
+                [disabled]="!this.inputForm.valid"
+              >
+              </submit-button>
+              <ng-template #loading>
+                <loader-button></loader-button>
+              </ng-template>
+              <normal-button
+                class="col-start-3"
+                (buttonClick)="onBack()"
+              ></normal-button>
+            </div>
+          </div>
+          <!-- header list -->
+          <div class=" h-80 overflow-auto">
+            <receipt-header-table
+              [headerList]="search$ | async"
+              (selectCol)="onSelect($event)"
+            ></receipt-header-table>
+          </div>
+        </div>
+      </div>
+    </form>
     <simple-keyboard
-      [inputString]="inputForm.value.partNumber"
+      [inputString]="this.currentInputFied?.value"
       (outputString)="onChange($event)"
     ></simple-keyboard>
   `,
 })
 export class SearchComponent implements OnInit {
   public inputForm: FormGroup;
-  public initData$: Observable<any>;
-  public validator = {
-    name: 'filter',
-    message: 'Not Found part number!',
-  };
+  public search$: Observable<any>;
 
   constructor(
     private _router: Router,
-    private _receipt: ReceiptInfoService,
     private _ui: TabService,
-    private _message: NzMessageService,
-    private _actRoute: ActivatedRoute
+    private _actRoute: ActivatedRoute,
+    private _searchList: FindReceiptHeaderListGQL,
+    private receipt: ReceiptInfoService
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(0);
+    this.search$ = of(true);
     this.inputForm = new FormGroup({
-      partNumber: new FormControl('', [
-        Validators.required,
-        this.partNumberSearch(),
-      ]),
+      partNumber: new FormControl(''),
+      vendor: new FormControl(''),
     });
-    const url$ = this._actRoute.queryParams.pipe(
-      map((res) => {
-        if (res.name === 'finish') {
-          this._message.success(
-            `Finished Receipt: ${res.receipt}, line: ${res.line}`
-          );
-        }
-        if (res.name === 'kickout') {
-          this._message.warning(
-            `Kickout Receipt: ${res.receipt}, Part: ${res.part}`
-          );
-        }
-      })
-    );
-    const checkLine$ = this._actRoute.data.pipe(
-      map((res) => {
-        if (res.lines?.error) {
-          return res.lines.error.message;
-        }
-        return null;
-      })
-    );
-    this.initData$ = combineLatest({ url: url$, checkLine: checkLine$ });
   }
 
-  partNumberSearch(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      if (!value) {
-        return null;
-      }
-      const isVaild = this._receipt.receiptLines?.some(
-        (line) =>
-          line.Product.PartNumber.trim().toLowerCase() ===
-          value.trim().toLowerCase()
+  /**
+   * Select input fied for v-keyboard.
+   */
+  public currentInputFied;
+  onInputFocus(event) {
+    this.currentInputFied = this.inputForm.get(`field${event.target.id}`);
+  }
+  onChange(input) {
+    this.currentInputFied.setValue(input);
+  }
+
+  onSearch(): void {
+    this.search$ = this._searchList
+      .fetch({
+        VendorNumber: this.inputForm.value.VendorNumber,
+        PartNumber: this.inputForm.value.PartNumber,
+      })
+      .pipe(
+        map((res) => res.data.findReceiptInfoByPartorVendor),
+        shareReplay(1)
       );
-      return !isVaild ? { filter: true } : null;
-    };
   }
 
-  onChange = (input: string) => {
-    this.inputForm.setValue({ partNumber: input });
-  };
-
-  onSubmit(): void {
-    this._receipt.filterbyPartNumber(this.inputForm.value.partNumber);
-    this._router.navigate(['../part/verify'], { relativeTo: this._actRoute });
+  onSelect(id: number): void {
+    this.search$ = this.receipt.checkReceiptHeader(id).pipe(
+      tap(() => {
+        this._router.navigate(['../part'], { relativeTo: this._actRoute });
+      })
+    );
   }
 
   onBack(): void {

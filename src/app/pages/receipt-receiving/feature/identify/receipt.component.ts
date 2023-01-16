@@ -79,7 +79,7 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onSearch(): void {
-    // this._router.navigate(['../search'], { relativeTo: this._actRoute });
+    this._router.navigate(['../search'], { relativeTo: this._actRoute });
   }
 
   public onSubmit(): void {
