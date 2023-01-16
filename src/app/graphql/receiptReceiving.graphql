@@ -10,10 +10,7 @@ query findReceiptHeaderList($PartNumber: String, $VendorNumber: String) {
     VendorNumber: $VendorNumber
   ) {
     _id
-    ExpectedArrivalDate
-    Vendor {
-      VendorName
-    }
+    VendorName
   }
 }
 

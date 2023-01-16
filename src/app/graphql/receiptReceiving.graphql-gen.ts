@@ -1174,7 +1174,7 @@ export type Query = {
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
   findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
-  findReceiptInfoByPartorVendor?: Maybe<Array<Maybe<ReceiptH>>>;
+  findReceiptInfoByPartorVendor?: Maybe<Array<Maybe<ReceiptHInfo>>>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -1564,6 +1564,12 @@ export type ReceiptH = {
   SourceType?: Maybe<Scalars['String']>;
   Vendor: Vendor;
   VendorID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type ReceiptHInfo = {
+  __typename?: 'ReceiptHInfo';
+  VendorName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -2291,10 +2297,9 @@ export type FindReceiptHeaderListQueryVariables = Types.Exact<{
 export type FindReceiptHeaderListQuery = {
   __typename?: 'Query';
   findReceiptInfoByPartorVendor?: Array<{
-    __typename?: 'ReceiptH';
+    __typename?: 'ReceiptHInfo';
     _id: number;
-    ExpectedArrivalDate?: string | null;
-    Vendor: { __typename?: 'Vendor'; VendorName: string };
+    VendorName?: string | null;
   } | null> | null;
 };
 
@@ -2463,10 +2468,7 @@ export const FindReceiptHeaderListDocument = gql`
       VendorNumber: $VendorNumber
     ) {
       _id
-      ExpectedArrivalDate
-      Vendor {
-        VendorName
-      }
+      VendorName
     }
   }
 `;

@@ -35,7 +35,7 @@ import {
             >
               {{ node._id }}
             </th>
-            <td class="px-6 py-4">{{ node.Vendor.VendorName }}</td>
+            <td class="px-6 py-4">{{ node.VendorName }}</td>
           </tr>
         </tbody>
       </ng-container>

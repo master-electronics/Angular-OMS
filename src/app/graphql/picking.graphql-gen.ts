@@ -1174,7 +1174,7 @@ export type Query = {
   findReceiptH?: Maybe<ReceiptH>;
   findReceiptHs?: Maybe<Array<Maybe<ReceiptH>>>;
   findReceiptInfoByIdAndStatus?: Maybe<ReceiptH>;
-  findReceiptInfoByPartorVendor?: Maybe<Array<Maybe<ReceiptH>>>;
+  findReceiptInfoByPartorVendor?: Maybe<Array<Maybe<ReceiptHInfo>>>;
   findReceiptL?: Maybe<ReceiptL>;
   findReceiptLD?: Maybe<ReceiptLd>;
   findReceiptLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -1564,6 +1564,12 @@ export type ReceiptH = {
   SourceType?: Maybe<Scalars['String']>;
   Vendor: Vendor;
   VendorID: Scalars['Int'];
+  _id: Scalars['Int'];
+};
+
+export type ReceiptHInfo = {
+  __typename?: 'ReceiptHInfo';
+  VendorName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
