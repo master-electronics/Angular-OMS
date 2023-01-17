@@ -126,8 +126,8 @@ export class SearchComponent implements OnInit {
   onSearch(): void {
     this.search$ = this._searchList
       .fetch({
-        VendorNumber: this.inputForm.value.VendorNumber,
-        PartNumber: this.inputForm.value.PartNumber,
+        VendorNumber: this.inputForm.value.vendor,
+        PartNumber: this.inputForm.value.partNumber,
       })
       .pipe(
         map((res) => res.data.findReceiptInfoByPartorVendor),

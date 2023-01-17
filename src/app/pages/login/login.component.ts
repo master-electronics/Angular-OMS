@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
         catchError((error) => {
           return of({
             error: {
-              message: error.error,
+              message: error.message,
               name: 'error',
             },
           });
