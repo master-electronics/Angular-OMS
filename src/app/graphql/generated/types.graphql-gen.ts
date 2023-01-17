@@ -127,6 +127,7 @@ export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
   ITN: Scalars['String'];
+  datecode: Scalars['String'];
   quantity: Scalars['Float'];
 };
 

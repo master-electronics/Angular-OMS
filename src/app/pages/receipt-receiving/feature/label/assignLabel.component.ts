@@ -8,11 +8,14 @@ import {
   ViewChildren,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,9 +24,12 @@ import { map, Observable, startWith, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
+import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { LabelService } from '../../data/label';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { TabService } from '../../data/tab';
 
 @Component({
@@ -37,6 +43,7 @@ import { TabService } from '../../data/tab';
     GreenButtonComponent,
     SubmitButtonComponent,
     NormalButtonComponent,
+    AuthModalComponent,
   ],
 
   template: `
@@ -47,20 +54,43 @@ import { TabService } from '../../data/tab';
 
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
       <div
-        class="grid h-16 grid-cols-1 gap-5 overflow-auto md:h-32 md:grid-cols-3 lg:h-64"
+        class="grid h-16 grid-cols-1 gap-5 overflow-auto md:h-32 lg:h-64 lg:grid-cols-2"
       >
         <div *ngFor="let control of listOfControl; let i = index">
           <div class="relative">
-            <input
-              type="number"
-              placeholder="Quantity"
-              [attr.id]="control.id"
-              (focus)="onInputFocus($event)"
-              [formControlName]="control.controlInstance"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              required
-              #inputs
-            />
+            <div class="grid grid-cols-2 gap-3">
+              <input
+                type="number"
+                placeholder="Quantity"
+                [attr.id]="control.controlInstance.quantity"
+                (focus)="onInputFocus($event)"
+                [formControlName]="control.controlInstance.quantity"
+                class="w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                required
+                #quantity
+              />
+
+              <input
+                type="text"
+                [attr.id]="control.controlInstance.datecode"
+                [formControlName]="control.controlInstance.datecode"
+                class="w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                #datecode
+              />
+            </div>
+            <div
+              *ngIf="
+                inputForm.get(control.controlInstance.datecode).invalid &&
+                inputForm.get(control.controlInstance.datecode).dirty
+              "
+              class="text-lg italic text-red-500"
+            >
+              <div
+                *ngIf="inputForm.get(control.controlInstance.datecode).errors?.['datecode']"
+              >
+                Invalid DateCode Format!
+              </div>
+            </div>
             <button
               type="remove"
               (click)="removeField(control, $event)"
@@ -88,6 +118,14 @@ import { TabService } from '../../data/tab';
       [inputString]="this.currentInputFied?.value"
       (outputString)="onChange($event)"
     ></simple-keyboard>
+
+    <ng-container *ngIf="popup">
+      <auth-modal
+        message="Allow Empty DateCode!"
+        (clickClose)="this.popup = false"
+        (passAuth)="nextPage()"
+      ></auth-modal>
+    </ng-container>
   `,
 })
 export class AssignLabelComponent implements OnInit {
@@ -95,11 +133,16 @@ export class AssignLabelComponent implements OnInit {
   public currentInputFied;
   public total = 0;
   public remaining = 0;
+  public popup = false;
   public inputForm: FormGroup;
-  public listOfControl: Array<{ id: number; controlInstance: string }> = [];
+  public listOfControl: Array<{
+    id: number;
+    controlInstance: { quantity: string; datecode: string };
+  }> = [];
 
   constructor(
     public receipt: ReceiptInfoService,
+    private _updateInfo: updateReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService,
@@ -117,8 +160,10 @@ export class AssignLabelComponent implements OnInit {
       startWith(true),
       map((res) => {
         let sum = 0;
-        Object.values(res).forEach((element) => {
-          sum += Number(element);
+        Object.values(res).forEach((element, index) => {
+          if (index % 2 === 0) {
+            sum += Number(element);
+          }
         });
         this.remaining = this.total - sum;
         return this.remaining;
@@ -129,7 +174,7 @@ export class AssignLabelComponent implements OnInit {
     );
   }
 
-  @ViewChildren('inputs') inputFiledList: QueryList<ElementRef>;
+  @ViewChildren('quantity') inputFiledList: QueryList<ElementRef>;
 
   addField(e?: MouseEvent): void {
     if (e) {
@@ -142,16 +187,22 @@ export class AssignLabelComponent implements OnInit {
 
     const control = {
       id,
-      controlInstance: `field${id}`,
+      controlInstance: { quantity: `quantity${id}`, datecode: `datecode${id}` },
     };
     const index = this.listOfControl.push(control);
     this.inputForm.addControl(
-      this.listOfControl[index - 1].controlInstance,
+      this.listOfControl[index - 1].controlInstance.quantity,
       new FormControl(0, [Validators.required, Validators.min(1)])
+    );
+    this.inputForm.addControl(
+      this.listOfControl[index - 1].controlInstance.datecode,
+      new FormControl(this._updateInfo.receiptInfo.DateCode, [
+        this.checkDateCode(),
+      ])
     );
     setTimeout(() => {
       if (!id) {
-        this.inputForm.get(`field${id}`).setValue(this.total);
+        this.inputForm.get(`quantity${id}`).setValue(this.total);
       }
       this.inputFiledList
         .get(this.listOfControl.length - 1)
@@ -159,30 +210,59 @@ export class AssignLabelComponent implements OnInit {
     }, 0);
   }
 
-  removeField(i: { id: number; controlInstance: string }, e: MouseEvent): void {
+  public checkDateCode(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const isVaild = DefalutDateCode.test(value);
+      return !isVaild ? { datecode: true } : null;
+    };
+  }
+
+  removeField(
+    i: { id: number; controlInstance: { quantity: string; datecode: string } },
+    e: MouseEvent
+  ): void {
     e.preventDefault();
     if (this.listOfControl.length > 1) {
       const index = this.listOfControl.indexOf(i);
       this.listOfControl.splice(index, 1);
-      this.inputForm.removeControl(i.controlInstance);
+      this.inputForm.removeControl(i.controlInstance.quantity);
+      this.inputForm.removeControl(i.controlInstance.datecode);
     }
   }
 
   onInputFocus(event) {
-    this.currentInputFied = this.inputForm.get(`field${event.target.id}`);
+    this.currentInputFied = this.inputForm.get(event.target.id);
   }
 
   onChange(input) {
     this.currentInputFied.setValue(input);
   }
 
+  private quantityList = [];
+  private datecodeList = [];
   onSubmit(): void {
     if (this.inputForm.valid) {
-      const list = Object.values(this.inputForm.value).map((res) =>
-        Number(res)
-      );
-      this._label.changeQuantityList(list);
-      this._router.navigateByUrl('receiptreceiving/label/printitn');
+      this.quantityList = [];
+      this.datecodeList = [];
+      Object.values(this.inputForm.value).forEach((ele, index) => {
+        if (index % 2 === 0) {
+          this.quantityList.push(Number(ele));
+          return;
+        }
+        this.datecodeList.push(ele);
+      });
+      if (
+        this.datecodeList.some((ele) => ele === '') &&
+        this._updateInfo.receiptInfo.DateCode !== ''
+      ) {
+        this.popup = true;
+        return;
+      }
+      this.nextPage();
     } else {
       Object.values(this.inputForm.controls).forEach((control) => {
         if (control.invalid) {
@@ -191,6 +271,12 @@ export class AssignLabelComponent implements OnInit {
         }
       });
     }
+  }
+
+  public nextPage(): void {
+    this._label.changeQuantityList(this.quantityList);
+    this._label.changeDatecodeList(this.datecodeList);
+    this._router.navigateByUrl('receiptreceiving/label/printitn');
   }
 
   public onBack(): void {

@@ -28,6 +28,7 @@ import { updateReceiptInfoService } from './updateReceipt';
 export interface ITNinfo {
   ITN: string;
   quantity: number;
+  datecode: string;
   BinLocation: string;
   ContainerID: number;
 }
@@ -54,6 +55,17 @@ export class LabelService {
   }
   public changeQuantityList(list: number[]) {
     this._quantityList.next(list);
+  }
+
+  /**
+   * save datecode list after assign label
+   */
+  private _datecodeList = new BehaviorSubject<string[]>(null);
+  public get datecodeList(): string[] {
+    return this._datecodeList.value;
+  }
+  public changeDatecodeList(list: string[]) {
+    this._datecodeList.next(list);
   }
 
   private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
@@ -108,6 +120,7 @@ export class LabelService {
         tap((res) => {
           this.insertITNList({
             quantity: this.quantityList[this.ITNList?.length | 0],
+            datecode: this.datecodeList[this.ITNList?.length | 0],
             ITN: res.data.createITN,
             BinLocation: '',
             ContainerID: 0,
@@ -172,7 +185,6 @@ export class LabelService {
     const Inventory = {
       DistributionCenter: environment.DistributionCenter,
       ProductID: line.ProductID,
-      DateCode: this._partInfo.receiptInfo.DateCode,
       ROHS: this._partInfo.receiptInfo.ROHS,
       CountryID: this._partInfo.receiptInfo.CountryID,
     };

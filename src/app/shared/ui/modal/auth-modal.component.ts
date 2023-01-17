@@ -25,10 +25,10 @@ import { UserPasswordComponent } from '../input/user-password-form.component';
     <div
       id="auth-modal"
       class="    
-      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
+      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30"
     >
       <div class="relative h-full w-4/5 md:h-auto md:w-2/3 lg:w-1/2">
-        <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
+        <div class="relative rounded-lg bg-white shadow ">
           <!-- close button -->
           <button
             type="button"

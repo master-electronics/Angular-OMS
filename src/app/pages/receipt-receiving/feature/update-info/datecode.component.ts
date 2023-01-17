@@ -46,7 +46,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
     >
       <normal-button
         buttonText="Not Applicable"
-        (buttonClick)="auth()"
+        (buttonClick)="this.popup = true"
       ></normal-button>
       <div></div>
       <red-button buttonText="Kickout" (buttonClick)="kickOut()"></red-button>
@@ -59,7 +59,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
     <ng-container *ngIf="popup">
       <auth-modal
         message="Allow Empty DateCode!"
-        (clickClose)="onClose()"
+        (clickClose)="this.popup = false"
         (passAuth)="passAuth()"
       ></auth-modal>
     </ng-container>
@@ -106,14 +106,6 @@ export class DateCodeComponent implements OnInit {
   passAuth(): void {
     this._update.updateDateCode('');
     this._router.navigateByUrl('receiptreceiving/update/ROHS');
-  }
-
-  auth(): void {
-    this.popup = true;
-  }
-
-  onClose(): void {
-    this.popup = false;
   }
 
   onChange = (input: string) => {
