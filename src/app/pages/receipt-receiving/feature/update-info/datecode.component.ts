@@ -105,7 +105,7 @@ export class DateCodeComponent implements OnInit {
 
   passAuth(): void {
     this._update.updateDateCode('');
-    this._router.navigate(['../ROHS'], { relativeTo: this._actRoute });
+    this._router.navigateByUrl('receiptreceiving/update/ROHS');
   }
 
   auth(): void {
