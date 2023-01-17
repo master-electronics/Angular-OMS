@@ -58,7 +58,7 @@ export class ReceiptGuard implements CanActivateChild {
         isActive = this._info.receiptInfo?.CountryID;
         break;
       case '/receiptreceiving/update/ROHS':
-        isActive = this._info.receiptInfo?.DateCode;
+        isActive = this._info.receiptInfo?.DateCode !== null;
         break;
       case '/receiptreceiving/label/selectline':
         isActive = this._receipt.receiptLsAfterQuantity !== null;
