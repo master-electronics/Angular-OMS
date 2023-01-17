@@ -133,7 +133,9 @@ export class KickoutComponent implements OnInit {
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
     const line1 = (kickoutReason + otherReason).substring(0, 20);
-    let reason = `ID:${this._receipt.headerID};`;
+    let reason = `${
+      this._receipt.headerID
+    }|${this._receipt.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim()}|`;
     reason += kickoutReason;
     if (otherReason) {
       reason = kickoutReason + ': ' + otherReason;
