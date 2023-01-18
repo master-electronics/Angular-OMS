@@ -14,10 +14,14 @@ import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { TabService } from '../../data/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
+import { LogService } from '../../data/eventLog';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
+import { catchError, map, of, tap } from 'rxjs';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Component({
   standalone: true,
@@ -36,6 +40,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
       (formBack)="onBack()"
       [validator]="validator"
       [formGroup]="inputForm"
+      [data]="data$ | async"
       inputType="number"
       controlName="dateCode"
       title="Date Code"
@@ -60,7 +65,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
       <auth-modal
         message="Allow Empty DateCode!"
         (clickClose)="this.popup = false"
-        (passAuth)="passAuth()"
+        (passAuth)="passAuth($event)"
       ></auth-modal>
     </ng-container>
   `,
@@ -68,6 +73,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
 export class DateCodeComponent implements OnInit {
   public inputForm: FormGroup;
   public popup = false;
+  public data$;
   public validator = {
     name: 'dateCode',
     message: 'Format must be YYWW(2 digit year, 2 digit week)',
@@ -78,11 +84,14 @@ export class DateCodeComponent implements OnInit {
     private _router: Router,
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
-    private _update: updateReceiptInfoService
+    private _update: updateReceiptInfoService,
+    private _inserlog: Insert_UserEventLogsGQL,
+    private _log: LogService
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(2);
+    this.data$ = of(true);
     this.inputForm = this._fb.group({
       dateCode: ['', [Validators.required, this.checkDateCode()]],
     });
@@ -103,9 +112,23 @@ export class DateCodeComponent implements OnInit {
     this._router.navigate(['../../kickout'], { relativeTo: this._actRoute });
   }
 
-  passAuth(): void {
-    this._update.updateDateCode('');
-    this._router.navigateByUrl('receiptreceiving/update/ROHS');
+  passAuth(Supervisor: string): void {
+    this.data$ = this._inserlog
+      .mutate({
+        log: [
+          {
+            ...this._log.receivingLog,
+            UserEventID: sqlData.Event_Receiving_Datecode_NotApplicable,
+            Message: Supervisor,
+          },
+        ],
+      })
+      .pipe(
+        tap(() => {
+          this._update.updateDateCode('');
+          this._router.navigateByUrl('receiptreceiving/update/ROHS');
+        })
+      );
   }
 
   onChange = (input: string) => {

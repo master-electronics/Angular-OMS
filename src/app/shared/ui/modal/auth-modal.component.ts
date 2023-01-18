@@ -73,7 +73,7 @@ import { UserPasswordComponent } from '../input/user-password-form.component';
 export class AuthModalComponent {
   @Input() message = '';
   @Output() clickClose: EventEmitter<null> = new EventEmitter();
-  @Output() passAuth: EventEmitter<null> = new EventEmitter();
+  @Output() passAuth: EventEmitter<string> = new EventEmitter();
 
   constructor(private auth: AuthenticationService) {}
   public login$;
@@ -103,7 +103,7 @@ export class AuthModalComponent {
           }
         }),
         map(() => {
-          this.passAuth.emit();
+          this.passAuth.emit(this.inputForm.value.username);
           this.clickClose.emit();
         }),
         catchError((error) => {
