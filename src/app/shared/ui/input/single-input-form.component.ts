@@ -92,9 +92,9 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
         <div
           class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
         >
-          <submit-button *ngIf="data; else loading" [disabled]="!isvalid">
+          <submit-button *ngIf="data; else buttonLoading" [disabled]="!isvalid">
           </submit-button>
-          <ng-template #loading>
+          <ng-template #buttonLoading>
             <loader-button></loader-button>
           </ng-template>
           <normal-button
@@ -142,6 +142,7 @@ export class SingleInputformComponent implements OnInit {
   }
 
   public onSubmit(): void {
+    this.isvalid = false;
     if (this.inputForm.valid) {
       this.formSubmit.emit();
     }

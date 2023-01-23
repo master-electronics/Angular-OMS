@@ -78,6 +78,7 @@ import { TabService } from '../../data/tab';
                 </label>
                 <input
                   type="text"
+                  (focus)="onInputFocus($event)"
                   [attr.id]="control.controlInstance.datecode"
                   [formControlName]="control.controlInstance.datecode"
                   class="w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"

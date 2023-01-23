@@ -18,6 +18,7 @@ import { map } from 'rxjs/operators';
       class="    
       absolute z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-900 text-white opacity-30"
       *ngIf="loading$ | async"
+      #overlay
     >
       <loading-spinner></loading-spinner>
     </div>
