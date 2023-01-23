@@ -15,6 +15,7 @@ import { TabService } from '../../data/tab';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -60,11 +61,19 @@ export class PartComponent implements OnInit {
     private _receipt: ReceiptInfoService,
     private _ui: TabService,
     private _message: NzMessageService,
+    private location: LocationStrategy,
     private _actRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(0);
+
+    // preventing back button
+    history.pushState(null, null, window.location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, window.location.href);
+    });
+
     this.inputForm = new FormGroup({
       partNumber: new FormControl('', [
         Validators.required,
