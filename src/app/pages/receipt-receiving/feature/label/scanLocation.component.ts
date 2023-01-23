@@ -13,6 +13,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { TabService } from '../../data/tab';
 import { LabelService } from '../../data/label';
 import { LogService } from '../../data/eventLog';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -54,7 +55,8 @@ export class ScanLocationComponent implements OnInit {
     private _router: Router,
     private _ui: TabService,
     public _label: LabelService,
-    private _log: LogService
+    private _log: LogService,
+    private location: LocationStrategy
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +65,12 @@ export class ScanLocationComponent implements OnInit {
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       location: new FormControl('', [Validators.required]),
+    });
+
+    // preventing back button
+    history.pushState(null, null, window.location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, window.location.href);
     });
   }
 

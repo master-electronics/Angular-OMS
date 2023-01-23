@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { TabService } from '../../data/tab';
 import { LabelService, ITNinfo } from '../../data/label';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -58,7 +59,8 @@ export class PrintITNComponent implements OnInit {
     private _router: Router,
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
-    public _label: LabelService
+    public _label: LabelService,
+    private location: LocationStrategy
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +69,12 @@ export class PrintITNComponent implements OnInit {
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
+    });
+
+    // preventing back button
+    history.pushState(null, null, window.location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, window.location.href);
     });
   }
 

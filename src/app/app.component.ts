@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
   }
   @ViewChild('overlay') spinnerDOM;
 
-  @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (this.spinnerDOM && this.spinnerDOM.nativeElement) {
       event.preventDefault();

@@ -16,6 +16,7 @@ import { PickingService } from '../data/picking.service';
       (formBack)="onBack()"
       [data]="data$ | async"
       [formGroup]="inputForm"
+      [isvalid]="this.inputForm.valid"
       controlName="itn"
       title="ITN:"
     ></single-input-form>

@@ -18,15 +18,14 @@ import { PickingInfoComponent } from '../ui/part-info.component';
     NormalButtonComponent,
   ],
   template: `
-    <picking-info [info]="_picking.itnInfo" [MIC]="MIC" ]></picking-info>
     <div>
       <normal-button
         (buttonClick)="updatePhoto()"
-        title="Update Photo"
+        buttonText="Update Photo"
       ></normal-button>
       <normal-button
         (buttonClick)="updateProductType()"
-        title="Update Type"
+        buttonText="Update Type"
       ></normal-button>
       <red-button></red-button>
       <red-button></red-button>
@@ -35,6 +34,7 @@ import { PickingInfoComponent } from '../ui/part-info.component';
       <submit-button></submit-button>
       <normal-button></normal-button>
     </div>
+    <picking-info [info]="info" [MIC]="_picking.itnInfo.MIC"></picking-info>
   `,
 })
 export class InfoComponent implements OnInit {
@@ -44,10 +44,21 @@ export class InfoComponent implements OnInit {
     public _picking: PickingService
   ) {}
   public data$;
-  public MIC: string;
+  public info;
 
   ngOnInit(): void {
     this.data$ = of(true);
+    this.info = {
+      Order:
+        this._picking.itnInfo.OrderNumber +
+        '-' +
+        this._picking.itnInfo.NOSINumber,
+      ProductType: this._picking.itnInfo.ProductType || '',
+      PartNumber: this._picking.itnInfo.PartNumber,
+      ProductCode: this._picking.itnInfo.ProductCode,
+      Unit: this._picking.itnInfo.Unit,
+      Message: this._picking.itnInfo.GlobaleMessage,
+    };
   }
 
   updatePhoto(): void {
