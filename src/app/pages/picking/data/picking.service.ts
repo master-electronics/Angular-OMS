@@ -22,6 +22,7 @@ export interface ItnInfo {
   NOSINumber: string;
   PartNumber: string;
   ProductCode: string;
+  Quantity: number;
   ProductType?: string;
   GlobaleMessage?: string[];
   Unit?: string;
@@ -69,6 +70,7 @@ export class PickingService {
             NOSINumber: res.ORDERLINEDETAILs[0].Order.NOSINumber,
             PartNumber: res.Product.PartNumber,
             ProductCode: res.Product.ProductCode.ProductCodeNumber,
+            Quantity: res.ORDERLINEDETAILs[0].Quantity,
           });
           return this._fetchProductInfo.fetch({
             PartNumber: this.itnInfo.PartNumber,

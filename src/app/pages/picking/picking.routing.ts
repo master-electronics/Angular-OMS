@@ -35,20 +35,6 @@ export const PickingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/comment.component').then((m) => m.CommentComponent),
       },
-      {
-        path: 'isempty',
-        loadComponent: () =>
-          import('./feature/is-empty.component').then(
-            (m) => m.IsEmptyComponent
-          ),
-      },
-      {
-        path: 'isshort',
-        loadComponent: () =>
-          import('./feature/is-short.component').then(
-            (m) => m.IsShortComponent
-          ),
-      },
     ],
   },
 ];

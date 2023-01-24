@@ -118,14 +118,14 @@ export class DateCodeComponent implements OnInit {
         log: [
           {
             ...this._log.receivingLog,
-            UserEventID: sqlData.Event_Receiving_Datecode_NotApplicable,
-            Message: Supervisor,
+            UserEventID: sqlData.Event_Receiving_NotApplicable,
+            Message: 'DateCode ' + Supervisor,
           },
         ],
       })
       .pipe(
         tap(() => {
-          this._update.updateDateCode('');
+          this._update.updateDateCode(null);
           this._router.navigateByUrl('receiptreceiving/update/ROHS');
         })
       );

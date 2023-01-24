@@ -15,8 +15,22 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
 import { TabService } from '../../data/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
-import { debounceTime, distinctUntilChanged, map, switchMap, take } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 import { SearchListInputComponent } from '../../ui/search-list-input.component';
+import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
+import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { LogService } from '../../data/eventLog';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
 @Component({
   standalone: true,
@@ -28,6 +42,8 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
     SubmitButtonComponent,
     NormalButtonComponent,
     SearchListInputComponent,
+    AuthModalComponent,
+    MessageBarComponent,
   ],
   template: `
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
@@ -43,11 +59,17 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
           ></search-list-input>
         </div>
       </div>
-      <div class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl">
+      <div
+        class="grid h-32 grid-cols-3  gap-10 text-2xl md:mx-16 md:mt-10 md:h-64 md:text-4xl"
+      >
         <submit-button [disabled]="inputForm.invalid"> </submit-button>
         <normal-button
           class="col-start-3"
           (buttonClick)="onBack()"
+        ></normal-button>
+        <normal-button
+          buttonText="Not Applicable"
+          (buttonClick)="this.popup = true"
         ></normal-button>
       </div>
     </form>
@@ -55,11 +77,23 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
       [inputString]="inputForm.value.country"
       (outputString)="onChange($event)"
     ></simple-keyboard>
+    <ng-container *ngIf="popup">
+      <auth-modal
+        message="Allow Empty DateCode!"
+        (clickClose)="this.popup = false"
+        (passAuth)="passAuth($event)"
+      ></auth-modal>
+    </ng-container>
+    <ng-container *ngIf="data$ | async as data">
+      <message-bar [message]="data.message" [name]="data.name"></message-bar>
+    </ng-container>
   `,
 })
 export class CountryComponent implements OnInit {
   public countryList$;
   public countryInfo;
+  public data$: Observable<any>;
+  public popup = false;
   public inputForm = this._fb.group({
     country: ['', [Validators.required], [this.countryValidator()]],
   });
@@ -69,7 +103,9 @@ export class CountryComponent implements OnInit {
     private _router: Router,
     private _info: updateReceiptInfoService,
     private _step: TabService,
-    private _country: CountryListService
+    private _country: CountryListService,
+    private _inserlog: Insert_UserEventLogsGQL,
+    private _log: LogService
   ) {}
 
   ngOnInit(): void {
@@ -184,5 +220,30 @@ export class CountryComponent implements OnInit {
 
   public onBack(): void {
     this._router.navigateByUrl('receiptreceiving/part/quantity');
+  }
+
+  passAuth(Supervisor: string): void {
+    this.data$ = this._inserlog
+      .mutate({
+        log: [
+          {
+            ...this._log.receivingLog,
+            UserEventID: sqlData.Event_Receiving_NotApplicable,
+            Message: 'Country' + Supervisor,
+          },
+        ],
+      })
+      .pipe(
+        map(() => {
+          this._info.updateCountry(null);
+          this._router.navigateByUrl('receiptreceiving/update/datecode');
+          return null;
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
   }
 }

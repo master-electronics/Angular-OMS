@@ -2375,8 +2375,8 @@ export type ReceivingUpdateReceiptLMutationVariables = Types.Exact<{
   idList:
     | Array<Types.InputMaybe<Types.Scalars['Int']>>
     | Types.InputMaybe<Types.Scalars['Int']>;
-  CountryID: Types.Scalars['Int'];
-  DateCode: Types.Scalars['String'];
+  CountryID?: Types.InputMaybe<Types.Scalars['Int']>;
+  DateCode?: Types.InputMaybe<Types.Scalars['String']>;
   ROHS: Types.Scalars['Boolean'];
 }>;
 
@@ -2586,8 +2586,8 @@ export class FindPartForReceivingGQL extends Apollo.Query<
 export const ReceivingUpdateReceiptLDocument = gql`
   mutation ReceivingUpdateReceiptL(
     $idList: [Int]!
-    $CountryID: Int!
-    $DateCode: String!
+    $CountryID: Int
+    $DateCode: String
     $ROHS: Boolean!
   ) {
     updateReceiptLsByID(

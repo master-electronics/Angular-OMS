@@ -38,14 +38,14 @@ import { asapScheduler } from 'rxjs';
                 type="submit"
                 #submit
               >
-                OK
+                {{ buttonOne }}
               </button>
               <button
                 (click)="onCancel()"
                 class="col-start-3 h-full w-full rounded-lg border border-gray-200 bg-gray-100 font-medium text-gray-900 hover:bg-gray-200 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
                 type="button"
               >
-                Cancel
+                {{ buttonTwo }}
               </button>
             </div>
           </div>
@@ -56,6 +56,8 @@ import { asapScheduler } from 'rxjs';
 })
 export class PopupModalComponent {
   @Input() message = '';
+  @Input() buttonOne = 'OK';
+  @Input() buttonTwo = 'Cancel';
   @Output() clickSubmit: EventEmitter<null> = new EventEmitter();
   @Output() clickCancel: EventEmitter<null> = new EventEmitter();
 

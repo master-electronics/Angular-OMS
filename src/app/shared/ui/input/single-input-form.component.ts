@@ -90,7 +90,7 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
         </div>
         <!-- Button area -->
         <div
-          class="grid h-12 w-full grid-cols-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
+          class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
         >
           <submit-button *ngIf="data; else buttonLoading" [disabled]="!isvalid">
           </submit-button>

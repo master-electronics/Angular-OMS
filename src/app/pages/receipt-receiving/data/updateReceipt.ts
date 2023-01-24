@@ -49,7 +49,7 @@ export class updateReceiptInfoService {
     });
   }
 
-  public updateDateCode(DateCode: string): void {
+  public updateDateCode(DateCode?: string): void {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
       DateCode,
@@ -58,7 +58,7 @@ export class updateReceiptInfoService {
   /**
    * updateCountryID
    */
-  public updateCountry(CountryID: number, ISO3: string): void {
+  public updateCountry(CountryID?: number, ISO3?: string): void {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
       CountryID,

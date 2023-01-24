@@ -82,7 +82,7 @@ export const sqlData = {
   Event_Receiving_UpdateInventory: 1140,
   Event_Receiving_ReceiptLineDone: 1160,
   Event_Receiving_KickOut: 1170,
-  Event_Receiving_Datecode_NotApplicable: 1180,
+  Event_Receiving_NotApplicable: 1180,
   // Receipt Status
   Receipt_Entered: 10,
   Receipt_Received: 20,

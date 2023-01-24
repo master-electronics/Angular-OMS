@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -13,26 +14,24 @@ import { PickingInfoComponent } from '../ui/part-info.component';
   imports: [
     CommonModule,
     PickingInfoComponent,
+    GreenButtonComponent,
     SubmitButtonComponent,
     RedButtonComponent,
     NormalButtonComponent,
   ],
   template: `
-    <div>
-      <normal-button
+    <div class="grid grid-cols-2 gap-2">
+      <green-button
         (buttonClick)="updatePhoto()"
         buttonText="Update Photo"
-      ></normal-button>
-      <normal-button
+      ></green-button>
+      <green-button
         (buttonClick)="updateProductType()"
         buttonText="Update Type"
-      ></normal-button>
-      <red-button></red-button>
-      <red-button></red-button>
-    </div>
-    <div>
-      <submit-button></submit-button>
-      <normal-button></normal-button>
+      ></green-button>
+      <submit-button (buttonClick)="onSubmit()"></submit-button>
+      <normal-button (buttonClick)="onBack()"></normal-button>
+      <red-button buttonText="Kickout"></red-button>
     </div>
     <picking-info [info]="info" [MIC]="_picking.itnInfo.MIC"></picking-info>
   `,
@@ -70,7 +69,7 @@ export class InfoComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // this.data$ =
+    this._router.navigate(['../quantity'], { relativeTo: this._actRoute });
   }
 
   onBack(): void {

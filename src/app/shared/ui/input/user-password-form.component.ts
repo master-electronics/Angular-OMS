@@ -32,12 +32,15 @@ import { MessageBarComponent } from '../message-bar.component';
   selector: 'user-password-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <form autocomplete="off" [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+      <div class="hidden">
+        <input type="password" />
+      </div>
       <!-- User name -->
       <div>
         <label for="username" class="block font-medium ">Username</label>
         <input
-          autocomplete="false"
+          autocomplete="off"
           formControlName="username"
           type="text"
           name="username"
@@ -57,7 +60,7 @@ import { MessageBarComponent } from '../message-bar.component';
       <div>
         <label for="password" class="block font-medium">Password</label>
         <input
-          autocomplete="false"
+          autocomplete="off"
           formControlName="password"
           type="password"
           name="password"
