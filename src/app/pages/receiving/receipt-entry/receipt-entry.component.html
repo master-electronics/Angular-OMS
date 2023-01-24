@@ -3,7 +3,7 @@
     <div nz-col nzSpan="24" style="height: 30px"></div>
   </div>
   <div nz-row nzGutter="8" nzJustify="start">
-    <div nz-cogit sl nzSpan="4">Receipt ID</div>
+    <div nz-col nzSpan="4">Receipt ID</div>
     <div nz-col nzSpan="3" *ngIf="receiptID" class="infoHeader">Vendor ID</div>
     <div nz-col nzSpan="2" *ngIf="receiptID" class="infoHeader">
       Expected Arrival Date
@@ -15,6 +15,7 @@
       <nz-select
         style="width: 80%; float: left"
         nzShowSearch
+        [nzSelectOnTab]="selectOnTab"
         nzPlaceHolder="Receipt ID"
         [nzShowArrow]="false"
         [nzFilterOption]="nzFilterOption"
@@ -23,7 +24,7 @@
         #receiptSearch
         name="receiptSearchSel"
         nzAllowClear
-        (ngModelChange)="onReceiptIDChange($event)"
+        (ngModelChange)="onReceiptIDChange($event)"    
       >
         <nz-option
           *ngFor="let receipt of receiptList"
@@ -81,11 +82,14 @@
         (nzOnSearch)="searchPartNumbers($event)"
         [(ngModel)]="partNumberID"
         nzAllowClear
+        [nzSelectOnTab]="selectOnTab"
         #partSearch
         name="partSearchSel"
         [disabled]="!receiptSelected"
         [class]="partNumberClass"
         (ngModelChange)="onPartNumberClick($event)"
+        (nzFocus)="onPartNumberFocus()"
+        [nzOpen]="partNumberSelectOpen"
       >
         <nz-option
           *ngFor="let part of partList"
@@ -259,6 +263,7 @@
         <div nz-col nzSpan="10">
           <nz-select
             nzShowSearch
+            [nzSelectOnTab]="selectOnTab"
             nzPlaceHolder="PO Line"
             [(ngModel)]="poLineID"
             (ngModelChange)="onPONumberLineChange()"
@@ -343,6 +348,7 @@
           <nz-select
             style="width: 100%"
             nzShowSearch
+            [nzSelectOnTab]="selectOnTab"
             nzPlaceHolder="PO Number"
             [nzShowArrow]="false"
             [nzFilterOption]="nzFilterOption"
