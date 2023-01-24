@@ -14,6 +14,14 @@ query findVendor($vendor: searchVendor!) {
   }
 }
 
+query findVendorByPO($purchaseOrder: searchPurchaseOrderH!) {
+  findVendorByPO(PurchaseOrder: $purchaseOrder) {
+    _id
+    VendorName
+    VendorNumber
+  }
+}
+
 query findReceipt($receiptID: Int) {
   findReceipt(ReceiptID: $receiptID) {
     _id
@@ -34,8 +42,8 @@ query findReceipts($receiptID: String) {
   }
 }
 
-query findPartCodes($searchString: String) {
-  findPartCodes(SearchString: $searchString) {
+query findPartCodes($searchString: String, $vendorID: Int) {
+  findPartCodes(SearchString: $searchString, VendorID: $vendorID) {
     _id
     PRC
   }
@@ -47,6 +55,10 @@ query findPart($productID: Int) {
     PartNumber
     ProductCodeID
     ProductTier
+    ProductCode {
+      _id
+      ProductCodeNumber
+    }
   }
 }
 

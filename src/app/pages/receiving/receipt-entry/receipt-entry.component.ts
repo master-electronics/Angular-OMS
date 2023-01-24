@@ -1,5 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Subscription,
+  map,
+  tap,
+  Observable,
+  of,
+  catchError,
+  reduce,
+} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
 import {
@@ -27,7 +35,10 @@ import {
   InsertReceiptLineDetailsGQL,
   DeleteReceiptGQL,
   FindPOsGQL,
+  FindVendorByPoGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
+import { HttpClient } from '@angular/common/http';
+import { isThisHour } from 'date-fns';
 
 interface PartCode {
   _id: number;
@@ -135,6 +146,9 @@ export class ReceiptEntry implements OnInit {
   receiptModalTitle;
   editingReceipt: boolean;
   receiptLineDetailQuantityMax: number;
+  selectOnTab = true;
+  partNumberSelectOpen: boolean;
+  poNumberLineSelectOpen: boolean;
 
   private vendorListSubscription = new Subscription();
   private findVendorSubscription = new Subscription();
@@ -160,6 +174,7 @@ export class ReceiptEntry implements OnInit {
   private insertReceiptLineDetailsSubscription = new Subscription();
   private deleteReceiptSubscription = new Subscription();
   private findPOsSubscription = new Subscription();
+  private findVendorByPOSubscription = new Subscription();
 
   constructor(
     private commonService: CommonService,
@@ -187,7 +202,8 @@ export class ReceiptEntry implements OnInit {
     private _deleteReceiptLineDetail: DeleteReceiptLineDetailGQL,
     private _insertReceiptLineDetails: InsertReceiptLineDetailsGQL,
     private _deleteReceipt: DeleteReceiptGQL,
-    private _findPOs: FindPOsGQL
+    private _findPOs: FindPOsGQL,
+    private _findVendorByPO: FindVendorByPoGQL
   ) {
     this.commonService.changeNavbar('Receipt Entry');
     this.titleService.setTitle('Receipt Entry');
@@ -233,6 +249,7 @@ export class ReceiptEntry implements OnInit {
 
   clearReceiptModal(): void {
     this.editingReceipt = false;
+    this.poNumber = null;
     this.vendorID = null;
     this.expectedArrivalDate = null;
     this.sourceType = null;
@@ -353,7 +370,7 @@ export class ReceiptEntry implements OnInit {
               res.data.findPOs.map((po) => {
                 pos.push({
                   text: po.PurchaseOrderNumber,
-                  value: po.VendorID.toString(),
+                  value: po._id.toString(),
                 });
               });
             },
@@ -372,33 +389,44 @@ export class ReceiptEntry implements OnInit {
   }
 
   searchPartNumbers(value: string): void {
-    if (value) {
-      const parts: Array<{ text: string; value: string }> = [];
+    this.getPartNumbers(value);
+  }
 
-      this.partCodeListSubscription.add(
-        this._findPartCodes
-          .fetch({ searchString: value }, { fetchPolicy: 'network-only' })
-          .subscribe({
-            next: (res) => {
-              res.data.findPartCodes.map((part) => {
-                parts.push({
-                  text: part.PRC,
-                  value: part._id.toString(),
-                });
+  onPartNumberFocus(): void {
+    this.getPartNumbers(null);
+    this.partNumberSelectOpen = true;
+  }
+
+  getPartNumbers(value: string): void {
+    const parts: Array<{ text: string; value: string }> = [];
+
+    this.partCodeListSubscription.add(
+      this._findPartCodes
+        .fetch(
+          {
+            searchString: value ? value : '',
+            vendorID: Number(this.vendorID),
+          },
+          { fetchPolicy: 'network-only' }
+        )
+        .subscribe({
+          next: (res) => {
+            res.data.findPartCodes.map((part) => {
+              parts.push({
+                text: part.PRC,
+                value: part._id.toString(),
               });
-            },
-            error: (error) => {
-              this.alertType = 'error';
-              this.message = 'Error searching Part Numbers - ' + error;
-            },
-            complete: () => {
-              this.partList = parts;
-            },
-          })
-      );
-    } else {
-      this.partList = [];
-    }
+            });
+          },
+          error: (error) => {
+            this.alertType = 'error';
+            this.message = 'Error searching Part Numbers - ' + error;
+          },
+          complete: () => {
+            this.partList = parts;
+          },
+        })
+    );
   }
 
   searchPOLines(value: string): void {
@@ -513,6 +541,11 @@ export class ReceiptEntry implements OnInit {
     }
   }
 
+  // findPOLine(): void {
+  //   const t = this.poLineID;
+
+  // }
+
   onReceiptLineDetailQuantityChange(e: Event): void {
     this.receiptLineDetailAlertType = 'success';
     this.receiptLineDetailMessage = null;
@@ -567,6 +600,9 @@ export class ReceiptEntry implements OnInit {
                 (res.data.findVendor.VendorName
                   ? ' - ' + res.data.findVendor.VendorName
                   : '');
+              this.vendorID = res.data.findVendor._id
+                ? res.data.findVendor._id
+                : null;
             },
             error: (error) => {
               this.alertType = 'error';
@@ -578,19 +614,19 @@ export class ReceiptEntry implements OnInit {
   }
 
   getVendor(ID: number): void {
-    this.findVendorSubscription.add(
-      this._findVendor
-        .fetch({ vendor: { _id: ID } }, { fetchPolicy: 'network-only' })
+    this.findVendorByPOSubscription.add(
+      this._findVendorByPO
+        .fetch({ purchaseOrder: { _id: ID } }, { fetchPolicy: 'network-only' })
         .subscribe({
           next: (res) => {
             this.vendorNumber =
-              (res.data.findVendor.VendorNumber
-                ? res.data.findVendor.VendorNumber
+              (res.data.findVendorByPO.VendorNumber
+                ? res.data.findVendorByPO.VendorNumber
                 : '') +
-              (res.data.findVendor.VendorName
-                ? ' - ' + res.data.findVendor.VendorName
+              (res.data.findVendorByPO.VendorName
+                ? ' - ' + res.data.findVendorByPO.VendorName
                 : '');
-            this.vendorID = res.data.findVendor._id;
+            this.vendorID = res.data.findVendorByPO._id;
           },
           error: (error) => {
             this.alertType = 'error';
@@ -598,6 +634,27 @@ export class ReceiptEntry implements OnInit {
           },
         })
     );
+
+    // this.findVendorSubscription.add(
+    //   this._findVendor
+    //     .fetch({ vendor: { _id: ID } }, { fetchPolicy: 'network-only' })
+    //     .subscribe({
+    //       next: (res) => {
+    //         this.vendorNumber =
+    //           (res.data.findVendor.VendorNumber
+    //             ? res.data.findVendor.VendorNumber
+    //             : '') +
+    //           (res.data.findVendor.VendorName
+    //             ? ' - ' + res.data.findVendor.VendorName
+    //             : '');
+    //         this.vendorID = res.data.findVendor._id;
+    //       },
+    //       error: (error) => {
+    //         this.alertType = 'error';
+    //         this.message = 'Error finding Vendor - ' + error;
+    //       },
+    //     })
+    // );
   }
 
   getReceiptLines(): void {
@@ -659,7 +716,14 @@ export class ReceiptEntry implements OnInit {
                   )
                   .subscribe({
                     next: (res) => {
-                      partNumber = res.data.findPart.PartNumber;
+                      partNumber =
+                        (res.data.findPart.ProductCode.ProductCodeNumber
+                          ? res.data.findPart.ProductCode.ProductCodeNumber.trim() +
+                            ' '
+                          : '') +
+                        (res.data.findPart.PartNumber
+                          ? res.data.findPart.PartNumber.trim()
+                          : '');
                     },
                     complete: () => {
                       receiptLine.PartNumber = partNumber;
@@ -908,7 +972,14 @@ export class ReceiptEntry implements OnInit {
                   )
                   .subscribe({
                     next: (res) => {
-                      this.partNumber = res.data.findPart.PartNumber.trim();
+                      this.partNumber =
+                        (res.data.findPart.ProductCode.ProductCodeNumber
+                          ? res.data.findPart.ProductCode.ProductCodeNumber.trim() +
+                            ' '
+                          : '') +
+                        (res.data.findPart.PartNumber
+                          ? res.data.findPart.PartNumber.trim()
+                          : '');
                     },
                     complete: () => {
                       this.partList = [
@@ -971,12 +1042,6 @@ export class ReceiptEntry implements OnInit {
 
                         this.receiptLines = receiptLines;
                         this.clearReceiptLine();
-
-                        // this.receiptLineID = null;
-                        // this.partNumber = null;
-                        // this.partNumberID = null;
-                        // this.partList = [];
-                        // this.quantity = null;
 
                         this.alertType = 'success';
                         this.message = 'Receipt Line deleted';
@@ -1494,5 +1559,6 @@ export class ReceiptEntry implements OnInit {
     this.insertReceiptLineDetailsSubscription.unsubscribe();
     this.deleteReceiptSubscription.unsubscribe();
     this.findPOsSubscription.unsubscribe();
+    this.findVendorByPOSubscription.unsubscribe();
   }
 }
