@@ -133,6 +133,12 @@ mutation insertReceipt($receipt: insertReceiptH) {
   }
 }
 
+mutation receiptEntryLog($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+
 mutation insertReceiptLine(
   $receiptHID: Int!
   $productID: Int!

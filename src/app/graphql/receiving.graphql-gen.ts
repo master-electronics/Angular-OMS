@@ -2531,6 +2531,13 @@ export type InsertReceiptMutationVariables = Types.Exact<{
 
 export type InsertReceiptMutation = { __typename?: 'Mutation', insertReceipt?: { __typename?: 'ReceiptH', _id: number, VendorID: number, ExpectedArrivalDate?: string | null, SourceType?: string | null, ReceiptNumber?: string | null } | null };
 
+export type ReceiptEntryLogMutationVariables = Types.Exact<{
+  log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+
+export type ReceiptEntryLogMutation = { __typename?: 'Mutation', insertUserEventLogs?: Array<{ __typename?: 'UserEventLog', _id: number } | null> | null };
+
 export type InsertReceiptLineMutationVariables = Types.Exact<{
   receiptHID: Types.Scalars['Int'];
   productID: Types.Scalars['Int'];
@@ -2902,6 +2909,24 @@ export const InsertReceiptDocument = gql`
   })
   export class InsertReceiptGQL extends Apollo.Mutation<InsertReceiptMutation, InsertReceiptMutationVariables> {
     document = InsertReceiptDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ReceiptEntryLogDocument = gql`
+    mutation receiptEntryLog($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ReceiptEntryLogGQL extends Apollo.Mutation<ReceiptEntryLogMutation, ReceiptEntryLogMutationVariables> {
+    document = ReceiptEntryLogDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

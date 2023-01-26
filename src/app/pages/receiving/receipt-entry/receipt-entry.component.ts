@@ -36,6 +36,7 @@ import {
   DeleteReceiptGQL,
   FindPOsGQL,
   FindVendorByPoGQL,
+  ReceiptEntryLogGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
 import { HttpClient } from '@angular/common/http';
 import { isThisHour } from 'date-fns';
@@ -73,6 +74,7 @@ interface ReceiptLine {
   styleUrls: ['./receipt-entry.component.css'],
 })
 export class ReceiptEntry implements OnInit {
+  log$: Observable<any>;
   message: string;
   alertType = 'success';
   receiptLineDetailMessage: string;
@@ -203,7 +205,8 @@ export class ReceiptEntry implements OnInit {
     private _insertReceiptLineDetails: InsertReceiptLineDetailsGQL,
     private _deleteReceipt: DeleteReceiptGQL,
     private _findPOs: FindPOsGQL,
-    private _findVendorByPO: FindVendorByPoGQL
+    private _findVendorByPO: FindVendorByPoGQL,
+    private _receiptEntryLog: ReceiptEntryLogGQL
   ) {
     this.commonService.changeNavbar('Receipt Entry');
     this.titleService.setTitle('Receipt Entry');
@@ -1532,6 +1535,12 @@ export class ReceiptEntry implements OnInit {
         this.lineDetailOkDisabled = true;
       }
     }
+  }
+
+  insertLog(log): void {
+    this.log$ = this._receiptEntryLog.mutate({
+      log: log,
+    });
   }
 
   ngOnDestroy(): void {
