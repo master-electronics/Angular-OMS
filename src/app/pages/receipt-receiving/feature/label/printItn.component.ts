@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { LabelService, ITNinfo } from '../../data/label';
 import { LocationStrategy } from '@angular/common';
 

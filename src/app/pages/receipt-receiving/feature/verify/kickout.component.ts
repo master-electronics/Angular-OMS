@@ -16,7 +16,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 
 @Component({
   standalone: true,

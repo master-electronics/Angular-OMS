@@ -7,6 +7,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, NgOptimizedImage],
   template: `
+    <img width="600" height="600" [ngSrc]="MIC" priority />
     <div *ngFor="let item of info | keyvalue">
       <label for="ProductCode">{{ item.key }}</label>
       <input
@@ -18,7 +19,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
         [value]="item.value"
       />
     </div>
-    <img width="600" height="600" [ngSrc]="MIC" priority />
   `,
 })
 export class PickingInfoComponent {

@@ -13,11 +13,6 @@ import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 
-export interface Tab {
-  steps: { title: string; subtitle?: string; description?: string }[];
-  currentStep: number;
-}
-
 export interface ITNinfo {
   _id: number;
   ITN: string;

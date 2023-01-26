@@ -11,7 +11,7 @@ import { Observable, of } from 'rxjs';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 

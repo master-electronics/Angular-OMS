@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { catchError, filter, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { LabelService } from '../../data/label';
 import { LogService } from '../../data/eventLog';
 import { LocationStrategy } from '@angular/common';

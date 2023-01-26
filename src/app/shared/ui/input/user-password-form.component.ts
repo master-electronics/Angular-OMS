@@ -33,9 +33,6 @@ import { MessageBarComponent } from '../message-bar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-      <div class="hidden">
-        <input type="password" />
-      </div>
       <!-- User name -->
       <div>
         <label for="username" class="block font-medium ">Username</label>

@@ -18,6 +18,8 @@ import { environment } from 'src/environments/environment';
 
 export interface ItnInfo {
   InventoryID: number;
+  OrderLineDetailID: number;
+  QuantityOnHand: number;
   OrderNumber: string;
   NOSINumber: string;
   PartNumber: string;
@@ -66,6 +68,8 @@ export class PickingService {
         switchMap((res) => {
           this._itnInfo.next({
             InventoryID: res._id,
+            QuantityOnHand: res.QuantityOnHand,
+            OrderLineDetailID: res.ORDERLINEDETAILs[0]._id,
             OrderNumber: res.ORDERLINEDETAILs[0].Order.OrderNumber,
             NOSINumber: res.ORDERLINEDETAILs[0].Order.NOSINumber,
             PartNumber: res.Product.PartNumber,

@@ -7,7 +7,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 
 @Component({

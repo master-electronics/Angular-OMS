@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { LogService } from '../../data/eventLog';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
@@ -22,6 +22,7 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
 import { catchError, map, of, tap } from 'rxjs';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { DatecodeService } from 'src/app/shared/data/datecode';
 
 @Component({
   standalone: true,
@@ -82,6 +83,7 @@ export class DateCodeComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
+    private _datecode: DatecodeService,
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
     private _update: updateReceiptInfoService,
@@ -103,7 +105,9 @@ export class DateCodeComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = DefalutDateCode.test(value);
+      const isVaild =
+        DefalutDateCode.test(value) &&
+        Number(value) <= this._datecode.currentDatecode;
       return !isVaild ? { dateCode: true } : null;
     };
   }

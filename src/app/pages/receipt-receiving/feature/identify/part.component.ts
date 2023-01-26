@@ -11,7 +11,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { NzMessageService } from 'ng-zorro-antd/message';

@@ -25,9 +25,9 @@ import { PickingService } from '../data/picking.service';
       title="Quantity:"
       inputType="number"
     ></single-input-form>
-    <ng-container *ngIf="data$ | async as check">
+    <ng-container *ngIf="isPopup">
       <popup-modal
-        [message]="check"
+        [message]="message"
         buttonOne="Yes"
         buttonTwo="No"
         (clickSubmit)="clickYes()"
@@ -45,36 +45,74 @@ export class QuantityComponent implements OnInit {
   ) {}
   public data$: Observable<any>;
   public isPopup = 0;
+  public message = '';
   public inputForm = this._fb.nonNullable.group({
-    quantity: ['', [Validators.required]],
+    quantity: [null, [Validators.required]],
   });
+  private updateInfo = {
+    InputQuantity: null,
+    isSuspect: false,
+    InventoryID: this._pick.itnInfo.InventoryID,
+    OrderLineDetailID: this._pick.itnInfo.OrderLineDetailID,
+  };
 
   ngOnInit(): void {
     this.data$ = of({ message: null });
   }
 
   onSubmit(): void {
-    if (Number(this.inputForm.value.quantity) === this._pick.itnInfo.Quantity) {
+    this.updateInfo.InputQuantity = Number(this.inputForm.value.quantity);
+    const quantityDiff =
+      this._pick.itnInfo.Quantity - Number(this.inputForm.value.quantity);
+    if (quantityDiff === 0) {
+      this.checkEmpty();
       return;
     }
+    if (quantityDiff > 0) {
+      this.message = `Confirm the quantity is short.`;
+      this.isPopup = 1;
+      return;
+    }
+    this.data$ = of({
+      error: { message: `Can not pick more items.`, error: 'error' },
+    });
   }
   onBack(): void {
-    this._router.navigate(['../../'], { relativeTo: this._actRoute });
+    this._router.navigate(['../info'], { relativeTo: this._actRoute });
   }
 
   clickYes(): void {
     if (this.isPopup === 1) {
-      this.isShort();
-      return;
+      this.checkEmpty();
     }
     if (this.isPopup === 2) {
-      this.isEmpty();
-      return;
+      this.update();
     }
+    this.isPopup = 0;
   }
 
   clickNo(): void {
-    //
+    if (this.isPopup === 1) {
+      this._router.navigate(['../info'], { relativeTo: this._actRoute });
+    }
+    if (this.isPopup === 2) {
+      this.updateInfo.isSuspect = true;
+      this.update();
+    }
+    this.isPopup = 0;
+  }
+
+  update(): void {
+    // this.data$ = this.
+  }
+
+  checkEmpty(): void {
+    if (this._pick.itnInfo.Quantity === this._pick.itnInfo.QuantityOnHand) {
+      this.message = 'Confirm the ITN is empty.';
+      this.isPopup = 2;
+      return;
+    }
+    this.update();
   }
 
   isShort(): void {

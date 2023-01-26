@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
 import {

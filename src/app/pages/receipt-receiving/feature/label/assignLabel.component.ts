@@ -30,7 +30,7 @@ import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { LabelService } from '../../data/label';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 
 @Component({
   standalone: true,

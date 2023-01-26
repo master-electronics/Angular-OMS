@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 

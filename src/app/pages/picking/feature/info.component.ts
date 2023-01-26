@@ -20,7 +20,8 @@ import { PickingInfoComponent } from '../ui/part-info.component';
     NormalButtonComponent,
   ],
   template: `
-    <div class="grid grid-cols-2 gap-2">
+    <picking-info [info]="info" [MIC]="_picking.itnInfo.MIC"></picking-info>
+    <div class="grid grid-cols-2 gap-2 md:h-48 lg:h-64">
       <green-button
         (buttonClick)="updatePhoto()"
         buttonText="Update Photo"
@@ -33,7 +34,6 @@ import { PickingInfoComponent } from '../ui/part-info.component';
       <normal-button (buttonClick)="onBack()"></normal-button>
       <red-button buttonText="Kickout"></red-button>
     </div>
-    <picking-info [info]="info" [MIC]="_picking.itnInfo.MIC"></picking-info>
   `,
 })
 export class InfoComponent implements OnInit {

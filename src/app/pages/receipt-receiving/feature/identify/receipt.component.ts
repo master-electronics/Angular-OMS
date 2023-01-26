@@ -11,7 +11,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { catchError, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 

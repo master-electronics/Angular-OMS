@@ -126,6 +126,7 @@ export class ReceiptInfoService {
         map((res) => res.data.findReceiptInfoByIdAndStatus.RECEIPTLs),
         map((res) => {
           Logger.devOnly('ReceiptInfo', 'findLines', res[0].Product.PartNumber);
+          Logger.devOnly('ReceiptInfo', 'findLines', res[0].ExpectedQuantity);
           this._receiptLines.next(res);
           return true;
         })

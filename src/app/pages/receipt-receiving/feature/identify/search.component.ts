@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { TabService } from '../../data/tab';
+import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';

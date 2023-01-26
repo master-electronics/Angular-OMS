@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { StepBarComponent } from 'src/app/shared/ui/step-bar.component';
-import { TabService, Tab } from './data/tab';
+import { StepBarComponent } from 'src/app/shared/ui/step-bar/step-bar.component';
+import { TabService, Tab } from '../../shared/ui/step-bar/tab';
 
 @Component({
   standalone: true,

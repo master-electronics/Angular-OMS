@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LabelService } from './data/label';
 import { ReceiptInfoService } from './data/ReceiptInfo';
-import { TabService } from './data/tab';
+import { TabService } from '../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { ReceiptGuard } from './utils/receipt.guard';
 import { VerifyResolver } from './utils/resolver/verify.resolver';

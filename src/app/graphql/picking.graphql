@@ -9,6 +9,7 @@ query fetchInfoForPicking(
     }
   ) {
     _id
+    QuantityOnHand
     ORDERLINEDETAILs {
       _id
       StatusID
