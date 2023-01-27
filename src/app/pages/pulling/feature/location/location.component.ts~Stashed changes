@@ -33,7 +33,7 @@ import { ShelfBarcodeBarcodeRegex } from 'src/app/shared/utils/dataRegex';
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
       [data]="data$ | async"
-      [validator]="validator"
+      [validators]="validators"
       [formGroup]="inputForm"
       controlName="location"
       title="Location"
@@ -80,10 +80,10 @@ export class LocationComponent implements OnInit {
   public data$: Observable<any>;
   public initData$: Observable<any>;
   public locationScan$: Observable<any>;
-  public validator = {
+  public validators = [{
     name: 'filter',
     message: 'Scanned Location is not correct!',
-  };
+  }];
 
   currentPullId;
   pullList;

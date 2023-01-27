@@ -39,7 +39,7 @@ import { DatecodeService } from 'src/app/shared/data/datecode';
     <single-input-form
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
-      [validator]="validator"
+      [validators]="validators"
       [formGroup]="inputForm"
       [data]="data$ | async"
       inputType="number"
@@ -75,10 +75,16 @@ export class DateCodeComponent implements OnInit {
   public inputForm: FormGroup;
   public popup = false;
   public data$;
-  public validator = {
-    name: 'dateCode',
-    message: 'Format must be YYWW(2 digit year, 2 digit week)',
-  };
+  public validators = [
+    {
+      name: 'format',
+      message: 'Format must be YYWW(2 digit year, 2 digit week)',
+    },
+    {
+      name: 'value',
+      message: `Input can't greater than current date!`,
+    },
+  ];
 
   constructor(
     private _fb: FormBuilder,
@@ -105,10 +111,13 @@ export class DateCodeComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild =
-        DefalutDateCode.test(value) &&
-        Number(value) <= this._datecode.currentDatecode;
-      return !isVaild ? { dateCode: true } : null;
+      if (!DefalutDateCode.test(value)) {
+        return { format: true };
+      }
+      if (Number(value) > this._datecode.currentDatecode) {
+        return { value: true };
+      }
+      return null;
     };
   }
 

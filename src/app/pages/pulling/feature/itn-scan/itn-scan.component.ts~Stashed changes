@@ -47,7 +47,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
       [data]="data$ | async"
-      [validator]="validator"
+      [validators]="validators"
       [formGroup]="inputForm"
       controlName="itn"
       title="ITN"
@@ -108,10 +108,10 @@ export class ITNScanComponent implements OnInit {
   public initData$: Observable<any>;
   public itnScanLog$: Observable<any>;
   public orderLinePulled$: Observable<any>;
-  public validator = {
+  public validators = [{
     name: 'filter',
     message: 'Scanned ITN is not correct!',
-  };
+  }];
 
   pullList;
   currentPull;

@@ -37,7 +37,7 @@ import { LocationStrategy } from '@angular/common';
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"
       [data]="data$ | async"
-      [validator]="validator"
+      [validators]="validators"
       [formGroup]="inputForm"
       controlName="label"
       title="Label"
@@ -50,10 +50,12 @@ export class PrintITNComponent implements OnInit {
   public data$: Observable<any>;
   public ITNList$ = new Observable<Array<ITNinfo>>();
   public scanAll = false;
-  public validator = {
-    name: 'label',
-    message: 'Not match the current label!',
-  };
+  public validators = [
+    {
+      name: 'label',
+      message: 'Not match the current label!',
+    },
+  ];
 
   constructor(
     private _router: Router,

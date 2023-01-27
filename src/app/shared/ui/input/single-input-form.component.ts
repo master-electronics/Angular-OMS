@@ -79,8 +79,12 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
               <div *ngIf="inputForm.get(controlName).errors?.['pattern']">
                 Invalid Format!
               </div>
-              <div *ngIf="inputForm.get(controlName).errors?.[validator.name]">
-                {{ validator.message }}
+              <div *ngFor="let validator of validators">
+                <div
+                  *ngIf="inputForm.get(controlName).errors?.[validator.name]"
+                >
+                  {{ validator.message }}
+                </div>
               </div>
             </div>
             <ng-template #NonError>
@@ -116,7 +120,7 @@ export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
   public vaild;
   @Input() data = { error: null };
-  @Input() validator = { name: '', message: '' };
+  @Input() validators = [{ name: '', message: '' }];
   @Input() controlName = 'input';
   @Input() inputType = 'text';
   @Input() placeholder = '';

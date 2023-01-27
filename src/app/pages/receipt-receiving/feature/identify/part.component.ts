@@ -31,7 +31,7 @@ import { LocationStrategy } from '@angular/common';
     <single-input-form
       (formBack)="onBack()"
       (formSubmit)="onSubmit()"
-      [validator]="validator"
+      [validators]="validators"
       [formGroup]="inputForm"
       controlName="partNumber"
       title="Part Number"
@@ -51,10 +51,12 @@ import { LocationStrategy } from '@angular/common';
 export class PartComponent implements OnInit {
   public inputForm: FormGroup;
   public url$: Observable<any>;
-  public validator = {
-    name: 'filter',
-    message: 'Not Found part number!',
-  };
+  public validators = [
+    {
+      name: 'filter',
+      message: 'Not Found part number!',
+    },
+  ];
 
   constructor(
     private _router: Router,
