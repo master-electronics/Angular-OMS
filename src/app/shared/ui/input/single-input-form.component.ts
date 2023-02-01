@@ -8,6 +8,8 @@ import {
   ViewChild,
   ElementRef,
   ChangeDetectionStrategy,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -17,6 +19,7 @@ import {
 } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { tap } from 'rxjs';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
@@ -118,7 +121,6 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
 })
 export class SingleInputformComponent implements OnInit {
   public inputForm: FormGroup;
-  public vaild;
   @Input() data = { error: null };
   @Input() validators = [{ name: '', message: '' }];
   @Input() controlName = 'input';
@@ -146,7 +148,6 @@ export class SingleInputformComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.isvalid = false;
     if (this.inputForm.valid) {
       this.formSubmit.emit();
     }

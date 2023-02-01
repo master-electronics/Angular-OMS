@@ -72,3 +72,7 @@ mutation findorCreateUserContainer(
     _id
   }
 }
+
+mutation sendMail($Subject: String!, $Text: String!, $Recipients: String!) {
+  sendMail(Subject: $Subject, Text: $Text, Recipients: $Recipients)
+}

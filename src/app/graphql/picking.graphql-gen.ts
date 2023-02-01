@@ -423,6 +423,7 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
+  sendMail?: Maybe<Scalars['Boolean']>;
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -711,6 +712,12 @@ export type MutationInsertValueMapArgs = {
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
+};
+
+export type MutationSendMailArgs = {
+  Recipients: Scalars['String'];
+  Subject: Scalars['String'];
+  Text: Scalars['String'];
 };
 
 export type MutationUpdateAfterReceivingArgs = {

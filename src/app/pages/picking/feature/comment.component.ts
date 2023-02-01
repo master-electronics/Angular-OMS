@@ -38,16 +38,16 @@ export class CommentComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.data$ = this._picking.fetchItnInfo$(this.inputForm.value.comment).pipe(
-      tap(() => {
-        this._router.navigate(['../info'], { relativeTo: this._actRoute });
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      })
-    );
+    // this.data$ = this._picking.sendUpdateTicketToSamanage$.pipe(
+    //   tap(() => {
+    //     this._router.navigate(['../info'], { relativeTo: this._actRoute });
+    //   }),
+    //   catchError((error) => {
+    //     return of({
+    //       error: { message: error.message, type: 'error' },
+    //     });
+    //   })
+    // );
   }
 
   onBack(): void {

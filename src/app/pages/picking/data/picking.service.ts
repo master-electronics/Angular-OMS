@@ -12,7 +12,10 @@ import {
   FetchProductImgAndMessageFromMerpGQL,
   UpdateInventoryToUserGQL,
 } from 'src/app/graphql/picking.graphql-gen';
-import { Insert_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import {
+  Insert_EventLogsGQL,
+  SendMailGQL,
+} from 'src/app/graphql/utilityTools.graphql-gen';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 import { environment } from 'src/environments/environment';
 
@@ -38,7 +41,8 @@ export class PickingService {
     private _fetchITNInfo: FetchInfoForPickingGQL,
     private _fetchProductInfo: FetchProductImgAndMessageFromMerpGQL,
     private _eventLog: Insert_EventLogsGQL,
-    private _move: UpdateInventoryToUserGQL
+    private _move: UpdateInventoryToUserGQL,
+    private _mail: SendMailGQL
   ) {}
 
   private _itnInfo = new BehaviorSubject<ItnInfo>(null);
@@ -107,5 +111,16 @@ export class PickingService {
         InventoryID: this.itnInfo.InventoryID,
       }),
     ]).pipe(map(() => true));
+  }
+
+  /**
+   * send update ticket to Samanage
+   */
+  public sendUpdateTicketToSamanage$(): Observable<any> {
+    return this._mail.mutate({ Text: ``, Subject: ``, Recipients: `` });
+    // switchMap(() => {
+    //   const log = {};
+    //   return this._eventLog.mutate(log);
+    // })
   }
 }
