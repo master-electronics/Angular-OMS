@@ -12,6 +12,7 @@ export const sqlData = {
   Container_Drop: 8,
   Container_User: 9,
   //WMS Status table
+  inPickQueue: 0,
   pickComplete_ID: 10,
   notFound_ID: 15,
   droppedQC_ID: 20,

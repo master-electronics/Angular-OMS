@@ -55,7 +55,6 @@ import { DatecodeService } from 'src/app/shared/data/datecode';
         (buttonClick)="this.popup = true"
       ></normal-button>
       <div></div>
-      <red-button buttonText="Kickout" (buttonClick)="kickOut()"></red-button>
     </div>
     <simple-keyboard
       layout="number"
@@ -121,10 +120,6 @@ export class DateCodeComponent implements OnInit {
     };
   }
 
-  kickOut(): void {
-    this._router.navigate(['../../kickout'], { relativeTo: this._actRoute });
-  }
-
   passAuth(Supervisor: string): void {
     this.data$ = this._inserlog
       .mutate({
@@ -152,8 +147,6 @@ export class DateCodeComponent implements OnInit {
     this._update.updateDateCode(this.inputForm.value.dateCode);
     this._router.navigateByUrl('receiptreceiving/update/ROHS');
   }
-
-  kickout;
 
   public onBack(): void {
     this._router.navigateByUrl('receiptreceiving/update/country');

@@ -8,6 +8,7 @@ import { VerifyResolver } from './utils/resolver/verify.resolver';
 import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { PartResolver } from './utils/resolver/part.resolver';
 import { LogService } from './data/eventLog';
+import { kickoutService } from './data/kickout';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -21,6 +22,7 @@ export const ReceivingRoutes: Routes = [
       updateReceiptInfoService,
       LabelService,
       LogService,
+      kickoutService,
       ReceiptGuard,
     ],
     loadComponent: () =>
@@ -66,13 +68,6 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/verify/quantity.component').then(
             (mod) => mod.QuantityComponent
-          ),
-      },
-      {
-        path: 'kickout',
-        loadComponent: () =>
-          import('./feature/verify/kickout.component').then(
-            (m) => m.KickoutComponent
           ),
       },
       {
@@ -125,6 +120,20 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/label/scanLocation.component').then(
             (mod) => mod.ScanLocationComponent
+          ),
+      },
+      {
+        path: 'itnkickout',
+        loadComponent: () =>
+          import('./feature/kickout/itnKickout.component').then(
+            (mod) => mod.ItnKickoutComponent
+          ),
+      },
+      {
+        path: 'kickout',
+        loadComponent: () =>
+          import('./feature/kickout/kickout.component').then(
+            (m) => m.KickoutComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },

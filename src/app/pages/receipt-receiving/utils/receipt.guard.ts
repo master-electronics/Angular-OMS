@@ -48,8 +48,8 @@ export class ReceiptGuard implements CanActivateChild {
       case '/receiptreceiving/part/quantity':
         isActive = this._receipt.lineAfterPart !== null;
         break;
-      case '/receiptreceiving/kickout':
-        isActive = this._receipt.lineAfterPart !== null;
+        // case '/receiptreceiving/kickout':
+        //   isActive = this._receipt.lineAfterPart !== null;
         break;
       case '/receiptreceiving/update/country':
         isActive = this._receipt.receiptLsAfterQuantity !== null;

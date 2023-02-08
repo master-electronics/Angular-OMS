@@ -133,3 +133,11 @@ query checkBinLocation($Barcode: String!, $DistributionCenter: String!) {
     Barcode
   }
 }
+
+mutation suspectInventory($ITN: String!, $DC: String!) {
+  updateInventory(
+    DistributionCenter: $DC
+    InventoryTrackingNumber: $ITN
+    Inventory: { Suspect: true }
+  )
+}

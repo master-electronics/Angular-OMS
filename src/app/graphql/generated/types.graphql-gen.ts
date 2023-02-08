@@ -329,6 +329,7 @@ export type Inventory = {
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
+  Suspect?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -1999,6 +2000,7 @@ export type SearchInventory = {
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2198,6 +2200,7 @@ export type UpdateInventory = {
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOrder = {

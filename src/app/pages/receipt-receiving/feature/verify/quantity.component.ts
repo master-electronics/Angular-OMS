@@ -22,7 +22,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     SingleInputformComponent,
     ReactiveFormsModule,
     SimpleKeyboardComponent,
-    RedButtonComponent,
     MessageBarComponent,
   ],
   template: `
@@ -38,11 +37,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     <div
       class="mt-6 grid h-16 grid-cols-3 text-2xl md:mx-16 md:h-32 md:text-4xl"
     >
-      <red-button
-        *ngIf="showKickout"
-        (buttonClick)="onKickout()"
-        buttonText="Kickout"
-      ></red-button>
       <ng-container *ngIf="data$ | async as error">
         <message-bar
           class="col-span-2"
@@ -61,7 +55,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 export class QuantityComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<{ error: { message: string; name: string } }>;
-  public showKickout = false;
 
   constructor(
     private _fb: FormBuilder,
@@ -81,10 +74,6 @@ export class QuantityComponent implements OnInit {
     this.inputForm.get('quantity').setValue(input);
   };
 
-  onKickout(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout');
-  }
-
   onSubmit(): void {
     const vaild = this._receipt.lineAfterPart.some(
       (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
@@ -94,7 +83,6 @@ export class QuantityComponent implements OnInit {
       this._router.navigateByUrl('receiptreceiving/update/country');
       return;
     }
-    this.showKickout = true;
     this.data$ = of({
       error: {
         message: `Not found receipt line with this quantity!`,

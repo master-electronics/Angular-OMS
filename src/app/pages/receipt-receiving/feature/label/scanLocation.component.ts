@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
@@ -53,6 +53,7 @@ export class ScanLocationComponent implements OnInit {
 
   constructor(
     private _router: Router,
+    private _actRoute: ActivatedRoute,
     private _ui: TabService,
     public _label: LabelService,
     private _log: LogService,
@@ -99,12 +100,8 @@ export class ScanLocationComponent implements OnInit {
         }),
         switchMap(() => this._label.updateAfterReceving()),
         tap(() => {
-          this._router.navigate(['receiptreceiving/part'], {
-            queryParams: {
-              receipt: this._log.receivingLog.ReceiptHeader,
-              line: this._log.receivingLog.ReceiptLine,
-              name: 'finish',
-            },
+          this._router.navigate(['../../itnkickout'], {
+            relativeTo: this._actRoute,
           });
         }),
         catchError((error) => {

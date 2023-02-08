@@ -11,6 +11,7 @@ import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
+  SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
@@ -25,6 +26,7 @@ export class ReceiptInfoService {
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
     private _checkHeader: CheckReceiptHeaderGQL,
+    private _suspect: SuspectInventoryGQL,
     private _log: LogService,
     private _insertLog: Insert_UserEventLogsGQL,
     private _printer: PrinterService
@@ -173,20 +175,30 @@ export class ReceiptInfoService {
     );
   }
 
-  public printKickOutLabel$(list: string[]) {
+  public printKickOutLabel$(list: string[], itn: string, reason: string) {
     const log = this._lineAfterPart.value.map((line) => {
       return {
         ...this._log.receivingLog,
+        InventoryTrackingNumber: itn,
         UserEventID: sqlData.Event_Receiving_KickOut,
         ReceiptLine: line.LineNumber,
         Quantity: line.ExpectedQuantity,
-        Message: list[0],
+        Message: reason,
       };
     });
-    return combineLatest({
-      log: this._insertLog.mutate({ log }),
-      print: this._printer.printText$(list),
-    });
+    return this._suspect
+      .mutate({
+        DC: environment.DistributionCenter,
+        ITN: itn,
+      })
+      .pipe(
+        switchMap(() => {
+          return combineLatest({
+            log: this._insertLog.mutate({ log }),
+            print: this._printer.printText$(list),
+          });
+        })
+      );
   }
 
   /**

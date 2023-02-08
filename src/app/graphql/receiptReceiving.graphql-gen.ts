@@ -334,6 +334,7 @@ export type Inventory = {
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
+  Suspect?: Maybe<Scalars['Boolean']>;
   _id: Scalars['Int'];
 };
 
@@ -2004,6 +2005,7 @@ export type SearchInventory = {
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2203,6 +2205,7 @@ export type UpdateInventory = {
   ProductID?: InputMaybe<Scalars['Int']>;
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOrder = {
@@ -2452,6 +2455,16 @@ export type CheckBinLocationQuery = {
     _id: number;
     Barcode: string;
   } | null;
+};
+
+export type SuspectInventoryMutationVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+export type SuspectInventoryMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
 };
 
 export const CheckReceiptHeaderDocument = gql`
@@ -2739,6 +2752,29 @@ export class CheckBinLocationGQL extends Apollo.Query<
   CheckBinLocationQueryVariables
 > {
   document = CheckBinLocationDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SuspectInventoryDocument = gql`
+  mutation suspectInventory($ITN: String!, $DC: String!) {
+    updateInventory(
+      DistributionCenter: $DC
+      InventoryTrackingNumber: $ITN
+      Inventory: { Suspect: true }
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SuspectInventoryGQL extends Apollo.Mutation<
+  SuspectInventoryMutation,
+  SuspectInventoryMutationVariables
+> {
+  document = SuspectInventoryDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

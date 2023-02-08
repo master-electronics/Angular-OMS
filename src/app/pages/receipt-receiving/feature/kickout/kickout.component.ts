@@ -9,7 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, Observable, of, shareReplay, tap } from 'rxjs';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
@@ -17,6 +17,7 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
 import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
+import { kickoutService } from '../../data/kickout';
 
 @Component({
   standalone: true,
@@ -36,8 +37,12 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
       *ngIf="print$ | async as print; else loading"
       [formGroup]="kickoutForm"
       (ngSubmit)="onSubmit()"
-      class="text-xl md:mx-16"
+      class="text-4xl md:mx-16"
     >
+      <p>
+        ITN: {{ this._kickout.kickoutItns[index] }} ({{ index + 1 }} of
+        {{ this._kickout.kickoutItns.length }})
+      </p>
       <nz-radio-group
         id="kickoutReason"
         nzSize="large"
@@ -94,13 +99,15 @@ export class KickoutComponent implements OnInit {
   public kickoutOptions = [];
   public kickoutForm: FormGroup;
   public print$: Observable<any>;
+  public index = 0;
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService,
     private _receipt: ReceiptInfoService,
-    private _log: LogService
+    private _log: LogService,
+    public _kickout: kickoutService
   ) {}
 
   ngOnInit(): void {
@@ -127,7 +134,7 @@ export class KickoutComponent implements OnInit {
   };
 
   onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/part/verify');
+    this._router.navigateByUrl('receiptreceiving/itnkickout');
   }
 
   onSubmit(): void {
@@ -145,21 +152,32 @@ export class KickoutComponent implements OnInit {
       const tmp = reason.substring(list.length * 20, (list.length + 1) * 20);
       list.push(tmp);
     }
-    this.print$ = this._receipt.printKickOutLabel$(list).pipe(
-      map(() => {
-        this._router.navigate(['receiptreceiving/part'], {
-          queryParams: {
-            receipt: this._log.receivingLog.ReceiptHeader,
-            part: this._log.receivingLog.PartNumber,
-            name: 'kickout',
-          },
-        });
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      })
-    );
+    this.print$ = this._receipt
+      .printKickOutLabel$(
+        list,
+        this._kickout.kickoutItns[this.index],
+        kickoutReason
+      )
+      .pipe(
+        tap(() => {
+          this.index++;
+          if (this._kickout.kickoutItns.length - this.index > 0) {
+            return;
+          }
+          this._router.navigate(['receiptreceiving/part'], {
+            queryParams: {
+              receipt: this._log.receivingLog.ReceiptHeader,
+              part: this._log.receivingLog.PartNumber,
+              name: 'kickout',
+            },
+          });
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        }),
+        shareReplay(1)
+      );
   }
 }
