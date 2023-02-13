@@ -134,10 +134,14 @@ query checkBinLocation($Barcode: String!, $DistributionCenter: String!) {
   }
 }
 
-mutation suspectInventory($ITN: String!, $DC: String!) {
-  updateInventory(
+mutation suspectInventory($ITN: String!, $DC: String!, $reasonIDList: [Int]!) {
+  suspectInventory(
     DistributionCenter: $DC
     InventoryTrackingNumber: $ITN
-    Inventory: { Suspect: true }
+    reasonIDList: $reasonIDList
   )
+}
+
+mutation clearSuspectInventory($ITN: String!, $DC: String!) {
+  clearSuspectInventory(InventoryTrackingNumber: $ITN, DistributionCenter: $DC)
 }

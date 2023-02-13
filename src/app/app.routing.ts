@@ -159,6 +159,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'clearsuspect',
+        loadComponent: () =>
+          import(
+            './pages/clear-suspect-inventory/clear-suspect-inventory.component'
+          ).then((m) => m.ClearSuspectInventoryComponent),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',

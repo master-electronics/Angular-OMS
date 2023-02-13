@@ -175,7 +175,12 @@ export class ReceiptInfoService {
     );
   }
 
-  public printKickOutLabel$(list: string[], itn: string, reason: string) {
+  public printKickOutLabel$(
+    list: string[],
+    itn: string,
+    reason: string,
+    reasonID: number
+  ) {
     const log = this._lineAfterPart.value.map((line) => {
       return {
         ...this._log.receivingLog,
@@ -190,6 +195,7 @@ export class ReceiptInfoService {
       .mutate({
         DC: environment.DistributionCenter,
         ITN: itn,
+        reasonIDList: [reasonID],
       })
       .pipe(
         switchMap(() => {

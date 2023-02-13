@@ -52,7 +52,7 @@ import { kickoutService } from '../../data/kickout';
       >
         <div class="mb-4 grid grid-cols-3 justify-center gap-5">
           <div *ngFor="let option of kickoutOptions">
-            <label nz-radio-button [nzValue]="option.content">{{
+            <label nz-radio-button [nzValue]="option.value">{{
               option.content
             }}</label>
           </div>
@@ -114,14 +114,13 @@ export class KickoutComponent implements OnInit {
     this._step.changeSteps(1);
     this.print$ = of(true);
     this.kickoutOptions = [
-      { content: 'Missing/Incorrect Picture' },
-      { content: 'Missing/Incorrect Piece Kit' },
-      { content: 'Part Number Verification' },
-      { content: 'Date Code Verification' },
-      { content: 'Wrong PO/No Open PO/No Open Line' },
-      { content: 'Damaged Parts' },
-      { content: 'Over PO Quantity' },
-      { content: 'Wrong Parts' },
+      { content: 'Missing/Incorrect Picture', value: 7 },
+      { content: 'Missing/Incorrect Piece Kit', value: 8 },
+      { content: 'Part Number Verification', value: 9 },
+      { content: 'Date Code Verification', value: 10 },
+      { content: 'Wrong PO/No Open PO/No Open Line', value: 11 },
+      { content: 'Damaged Parts', value: 12 },
+      { content: 'Over PO Quantity', value: 13 },
     ];
     this.kickoutForm = this._fb.group({
       kickoutReason: ['', Validators.required],
@@ -139,23 +138,26 @@ export class KickoutComponent implements OnInit {
 
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
-    const line1 = (kickoutReason + otherReason).substring(0, 20);
+    const kickoutText = this.kickoutOptions[kickoutReason - 7].content;
+    const line1 = (kickoutText + otherReason).substring(0, 20);
     let reason = `${
       this._receipt.headerID
     }|${this._receipt.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim()}|`;
-    reason += kickoutReason;
+    reason += kickoutText;
     if (otherReason) {
-      reason = kickoutReason + ': ' + otherReason;
+      reason = kickoutText + ': ' + otherReason;
     }
     const list = [];
     while (list.length < 4) {
       const tmp = reason.substring(list.length * 20, (list.length + 1) * 20);
       list.push(tmp);
     }
+    // update suspect flag and reason then print current label for current ITN.
     this.print$ = this._receipt
       .printKickOutLabel$(
         list,
         this._kickout.kickoutItns[this.index],
+        kickoutText,
         kickoutReason
       )
       .pipe(

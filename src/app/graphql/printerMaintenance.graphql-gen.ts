@@ -326,6 +326,8 @@ export type Inventory = {
   DateCode?: Maybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+  Inventory_SuspectReasons?: Maybe<Array<Maybe<Inventory_SuspectReason>>>;
+  LocatedInAutostore?: Maybe<Scalars['Boolean']>;
   NotFound: Scalars['Boolean'];
   ORDERLINEDETAILs?: Maybe<Array<Maybe<OrderLineDetail>>>;
   OriginalQuantity?: Maybe<Scalars['Float']>;
@@ -334,7 +336,7 @@ export type Inventory = {
   ProductID: Scalars['Int'];
   QuantityOnHand: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
-  Suspect?: Maybe<Scalars['Boolean']>;
+  Suspect: Scalars['Boolean'];
   _id: Scalars['Int'];
 };
 
@@ -346,6 +348,15 @@ export type InventoryForMerp = {
   PurchaseOrderLine?: InputMaybe<Scalars['String']>;
   PurchaseOrderNumber?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
+};
+
+export type Inventory_SuspectReason = {
+  __typename?: 'Inventory_SuspectReason';
+  Inventory: Inventory;
+  InventoryID: Scalars['Int'];
+  SuspectReason: SuspectReason;
+  SuspectReasonID: Scalars['Int'];
+  _id: Scalars['Int'];
 };
 
 export type Menu = {
@@ -378,6 +389,7 @@ export type Mutation = {
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
+  clearSuspectInventory: Scalars['Boolean'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -385,6 +397,8 @@ export type Mutation = {
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   deleteInventoryFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteInventorySuspectReason: Scalars['Int'];
+  deleteInventorySuspectReasonFromMerp?: Maybe<Scalars['Boolean']>;
   deleteOrder?: Maybe<Scalars['Boolean']>;
   deleteOrderLine?: Maybe<Scalars['Boolean']>;
   deleteOrderLineDetail?: Maybe<Scalars['Boolean']>;
@@ -413,6 +427,8 @@ export type Mutation = {
   insertITNUserColumns?: Maybe<ItnUserColumns>;
   insertITNUserLevels?: Maybe<ItnUserLevels>;
   insertITNUserTemplate?: Maybe<ItnUserTemplate>;
+  insertInventorySuspectReason?: Maybe<Scalars['Boolean']>;
+  insertInventorySuspectReasonFromMerp?: Maybe<Scalars['Boolean']>;
   insertPrinter?: Maybe<Printer>;
   insertReceipt?: Maybe<ReceiptH>;
   insertReceiptLine?: Maybe<Array<Maybe<ReceiptL>>>;
@@ -425,6 +441,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   sendMail?: Maybe<Scalars['Boolean']>;
+  suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateContainerList?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -484,6 +501,11 @@ export type MutationClearMerpToteArgs = {
   OrderNumber: Scalars['String'];
 };
 
+export type MutationClearSuspectInventoryArgs = {
+  DistributionCenter: Scalars['String'];
+  InventoryTrackingNumber: Scalars['String'];
+};
+
 export type MutationCreateInventoryFromOmsArgs = {
   ITNList: Array<InputMaybe<ItnAndQuantity>>;
   Inventory: UpdateInventory;
@@ -515,6 +537,16 @@ export type MutationDeleteInventoryFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
+};
+
+export type MutationDeleteInventorySuspectReasonArgs = {
+  InventorySuspect?: InputMaybe<SearchInventorySuspectReason>;
+};
+
+export type MutationDeleteInventorySuspectReasonFromMerpArgs = {
+  DC: Scalars['String'];
+  ITN: Scalars['String'];
+  ReasonID: Scalars['Int'];
 };
 
 export type MutationDeleteOrderArgs = {
@@ -656,6 +688,16 @@ export type MutationInsertItnUserTemplateArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
+export type MutationInsertInventorySuspectReasonArgs = {
+  linkList?: InputMaybe<Array<InputMaybe<InsertInventorySuspectReason>>>;
+};
+
+export type MutationInsertInventorySuspectReasonFromMerpArgs = {
+  DC: Scalars['String'];
+  ITN: Scalars['String'];
+  ReasonID: Scalars['Int'];
+};
+
 export type MutationInsertPrinterArgs = {
   Active?: InputMaybe<Scalars['Boolean']>;
   DPI?: InputMaybe<Scalars['Int']>;
@@ -721,6 +763,12 @@ export type MutationSendMailArgs = {
   Text: Scalars['String'];
 };
 
+export type MutationSuspectInventoryArgs = {
+  DistributionCenter: Scalars['String'];
+  InventoryTrackingNumber: Scalars['String'];
+  reasonIDList: Array<InputMaybe<Scalars['Int']>>;
+};
+
 export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
@@ -758,6 +806,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
+  LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
@@ -765,6 +814,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   ProductTier?: InputMaybe<Scalars['String']>;
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
@@ -1652,6 +1702,13 @@ export type ShipmentMethod = {
   _id: Scalars['String'];
 };
 
+export type SuspectReason = {
+  __typename?: 'SuspectReason';
+  Inventory_SuspectReasons?: Maybe<Array<Maybe<Inventory_SuspectReason>>>;
+  Reason: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
 export type TableData = {
   __typename?: 'TableData';
   Results?: Maybe<Scalars['String']>;
@@ -1837,6 +1894,11 @@ export type InsertInventory = {
   ROHS?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type InsertInventorySuspectReason = {
+  InventoryID: Scalars['Int'];
+  SuspectReasonID: Scalars['Int'];
+};
+
 export type InsertOrder = {
   BranchID?: InputMaybe<Scalars['String']>;
   CustomerNumber?: InputMaybe<Scalars['String']>;
@@ -1999,6 +2061,7 @@ export type SearchInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
   NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
@@ -2007,6 +2070,11 @@ export type SearchInventory = {
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
   _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchInventorySuspectReason = {
+  InventoryID: Scalars['Int'];
+  SuspectReasonID?: InputMaybe<Scalars['Int']>;
 };
 
 export type SearchOrder = {
@@ -2199,6 +2267,7 @@ export type UpdateInventory = {
   DateCode?: InputMaybe<Scalars['String']>;
   DistributionCenter?: InputMaybe<Scalars['String']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
   NotFound?: InputMaybe<Scalars['Boolean']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
