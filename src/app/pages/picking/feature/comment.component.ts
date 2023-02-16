@@ -3,11 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
-import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
-import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
-import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { PickingService } from '../data/picking.service';
 
