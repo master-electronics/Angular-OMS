@@ -66,7 +66,7 @@ export class ScanTargetComponent implements OnInit {
   private moveItnToUser(ITN: string) {
     this.data$ = this._stock.moveItnToUser(ITN).pipe(
       map(() => {
-        this._router.navigate(['../'], { relativeTo: this._actRoute });
+        this._router.navigate(['../location'], { relativeTo: this._actRoute });
       }),
       catchError((error) => {
         return of({

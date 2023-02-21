@@ -49,15 +49,8 @@ query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
   }
 }
 
-mutation updateInventoryAfterSorting(
-  $ContainerID: Int!
-  $InventoryID: Int!
-  $log: [insertUserEventLog]!
-) {
+mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!) {
   updateInventory(Inventory: { ContainerID: $ContainerID }, _id: $InventoryID)
-  insertUserEventLogs(log: $log) {
-    _id
-  }
 }
 
 # stocking

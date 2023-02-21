@@ -2431,18 +2431,11 @@ export type FetchSuggetionLocationForSortingQuery = {
 export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
   InventoryID: Types.Scalars['Int'];
-  log:
-    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
-    | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 export type UpdateInventoryAfterSortingMutation = {
   __typename?: 'Mutation';
   updateInventory?: Array<number | null> | null;
-  insertUserEventLogs?: Array<{
-    __typename?: 'UserEventLog';
-    _id: number;
-  } | null> | null;
 };
 
 export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
@@ -2621,15 +2614,8 @@ export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<
   }
 }
 export const UpdateInventoryAfterSortingDocument = gql`
-  mutation updateInventoryAfterSorting(
-    $ContainerID: Int!
-    $InventoryID: Int!
-    $log: [insertUserEventLog]!
-  ) {
+  mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!) {
     updateInventory(Inventory: { ContainerID: $ContainerID }, _id: $InventoryID)
-    insertUserEventLogs(log: $log) {
-      _id
-    }
   }
 `;
 

@@ -55,7 +55,7 @@ export class SortingService {
 
   /**
    * @param ITN User input ITN
-   * @returns result of http request.
+   * @returns observable of http request.
    */
   public verifyITN$(ITN: string) {
     return this._verifyITN
@@ -119,6 +119,10 @@ export class SortingService {
           return this._updateInventory.mutate({
             InventoryID: this.sortingInfo.InventoryID,
             ContainerID: res.data.findContainer._id,
+          });
+        }),
+        switchMap(() => {
+          return this._insertLog.mutate({
             log: {
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               UserEventID: sqlData.Event_Stocking_SortingDone,

@@ -95,6 +95,6 @@ export class LocationComponent implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../itn'], { relativeTo: this._actRoute });
+    this._router.navigate(['../'], { relativeTo: this._actRoute });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Resolve, Router } from '@angular/router';
-import { catchError, EmptyError, of } from 'rxjs';
+import { catchError } from 'rxjs';
 import { StockingService } from '../../data/stocking.service';
 
 @Injectable()
