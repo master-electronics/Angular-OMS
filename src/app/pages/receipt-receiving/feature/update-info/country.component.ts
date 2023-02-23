@@ -68,7 +68,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           (buttonClick)="onBack()"
         ></normal-button>
         <normal-button
-          buttonText="Not Applicable"
+          buttonText="Unknown"
           (buttonClick)="this.popup = true"
         ></normal-button>
       </div>
@@ -214,6 +214,10 @@ export class CountryComponent implements OnInit {
       this.countryInfo = this.inputForm.value.country;
     }
     const [iso2, iso3, , id] = this.countryInfo.split(' - ');
+    if (iso2 === 'UN') {
+      this.popup = true;
+      return;
+    }
     this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }
@@ -235,7 +239,8 @@ export class CountryComponent implements OnInit {
       })
       .pipe(
         map(() => {
-          this._info.updateCountry(null);
+          // Unknown country id is 253
+          this._info.updateCountry(253, 'UNK');
           this._router.navigateByUrl('receiptreceiving/update/datecode');
           return null;
         }),

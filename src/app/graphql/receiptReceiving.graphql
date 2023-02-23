@@ -67,7 +67,7 @@ query findPartForReceiving($PartNumber: String!) {
 
 mutation ReceivingUpdateReceiptL(
   $idList: [Int]!
-  $CountryID: Int
+  $CountryID: Int!
   $DateCode: String
   $ROHS: Boolean!
 ) {

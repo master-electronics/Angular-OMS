@@ -191,7 +191,7 @@ export class LabelService {
     const info = {
       PartNumber: line.Product?.PartNumber || 'null',
       ProductCode: line.Product?.ProductCode.ProductCodeNumber || 'null',
-      CountryOfOrigin: this._partInfo.receiptInfo.ISO3 || 'USA',
+      CountryOfOrigin: this._partInfo.receiptInfo.ISO3,
       User: JSON.parse(userinfo)?.username,
       CreatingProgram: 'OMS-Receiving',
       PurchaseOrderNumber:
