@@ -117,11 +117,7 @@ mutation updateAfterReceiving(
   $info: InventoryForMerp!
   $ReceiptLID: Int!
 ) {
-  updateAfterReceiving(
-    ITNList: $ITNList
-    Inventory: $Inventory
-    ReceiptLID: $ReceiptLID
-  )
+  updateReceiptLD(ReceiptLID: $ReceiptLID, ReceiptLD: { ReceiptStatusID: 20 })
   createInventoryFromOMS(ITNList: $ITNList, Inventory: $Inventory, info: $info)
 }
 

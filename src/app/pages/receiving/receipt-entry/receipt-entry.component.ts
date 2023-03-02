@@ -1390,7 +1390,7 @@ export class ReceiptEntry implements OnInit {
         ReceiptLID: number;
         PurchaseOrderLID: number;
         ExpectedQuantity: number;
-        StatusID: number;
+        ReceiptStatusID: number;
       }> = [];
 
       this.deleteReceiptLineDetailsSubscription.add(
@@ -1403,7 +1403,7 @@ export class ReceiptEntry implements OnInit {
                   ReceiptLID: Number(this.receiptLineID),
                   PurchaseOrderLID: lineDetail.PurchaseOrderLID,
                   ExpectedQuantity: lineDetail.Quantity,
-                  StatusID: 10,
+                  ReceiptStatusID: 10,
                 });
               });
 

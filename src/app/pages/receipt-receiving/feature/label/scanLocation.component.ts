@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, filter, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
@@ -99,7 +99,7 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         switchMap(() => this._label.updateAfterReceving()),
-        tap(() => {
+        tap((res) => {
           this._router.navigate(['../../itnkickout'], {
             relativeTo: this._actRoute,
           });

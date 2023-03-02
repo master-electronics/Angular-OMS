@@ -221,9 +221,15 @@ export class LabelService {
       ...this._log.receivingLog,
       UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
     });
-    return combineLatest({
-      log: this._insertLog.mutate({ log }),
-      update,
-    });
+    return update.pipe(
+      tap((res) => {
+        if (res.data.createInventoryFromOMS !== true) {
+          throw new Error("Can't update Invenotry to MERP!");
+        }
+      }),
+      switchMap(() => {
+        return this._insertLog.mutate({ log });
+      })
+    );
   }
 }

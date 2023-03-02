@@ -100,7 +100,7 @@ export class PartComponent implements OnInit {
           map((res) => {
             let message = res;
             if (url.name === 'finish') {
-              message = `Finished Receipt: ${url.receipt}, line: ${url.line}\n${res}`;
+              message = `Receipt Complete`;
             }
             if (url.name === 'kickout') {
               message = `Kickout Receipt: ${url.receipt}, Part: ${url.part}\n${res}`;

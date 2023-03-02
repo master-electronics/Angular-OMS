@@ -435,7 +435,6 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
-  sendMail?: Maybe<Scalars['Boolean']>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -752,12 +751,6 @@ export type MutationPrintItnLabelArgs = {
   Station: Scalars['String'];
 };
 
-export type MutationSendMailArgs = {
-  Recipients: Scalars['String'];
-  Subject: Scalars['String'];
-  Text: Scalars['String'];
-};
-
 export type MutationSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -848,8 +841,8 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   ProductCode: Scalars['String'];
   ProductTier?: InputMaybe<Scalars['String']>;
   PurchaseOrderNumber: Scalars['String'];
-  QuantityOnOrder?: InputMaybe<Scalars['Int']>;
-  QuantityReceived?: InputMaybe<Scalars['Int']>;
+  QuantityOnOrder?: InputMaybe<Scalars['Float']>;
+  QuantityReceived?: InputMaybe<Scalars['Float']>;
   VendorName: Scalars['String'];
   VendorNumber: Scalars['String'];
 };
@@ -955,6 +948,8 @@ export type MutationUpdateReceiptArgs = {
 
 export type MutationUpdateReceiptLdArgs = {
   ReceiptLD: UpdateReceiptLd;
+  ReceiptLID?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationUpdateReceiptLineArgs = {
@@ -1947,7 +1942,7 @@ export type InsertReceiptLd = {
   ExpectedQuantity: Scalars['Float'];
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID: Scalars['Int'];
-  StatusID: Scalars['Int'];
+  ReceiptStatusID: Scalars['Int'];
 };
 
 export type InsertUserEventLog = {
@@ -2159,7 +2154,7 @@ export type SearchReceiptLd = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID?: InputMaybe<Scalars['Int']>;
-  StatusID?: InputMaybe<Scalars['Int']>;
+  ReceiptStatusID?: InputMaybe<Scalars['Int']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2337,7 +2332,7 @@ export type UpdateReceiptLd = {
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   PurchaseOrderLID?: InputMaybe<Scalars['Int']>;
   ReceiptLID?: InputMaybe<Scalars['Int']>;
-  StatusID?: InputMaybe<Scalars['Int']>;
+  ReceiptStatusID?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateUserInfo = {
