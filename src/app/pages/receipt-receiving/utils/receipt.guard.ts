@@ -67,7 +67,7 @@ export class ReceiptGuard implements CanActivateChild {
         isActive = this._receipt.selectedReceiptLine !== null;
         break;
       case '/receiptreceiving/label/printitn':
-        isActive = this._label.quantityList !== null;
+        isActive = this._label.quantityList?.length > 0;
         break;
       case '/receiptreceiving/label/sacnlocation':
         isActive = this._label.ITNList !== null;

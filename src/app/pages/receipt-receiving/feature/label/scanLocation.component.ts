@@ -96,6 +96,12 @@ export class ScanLocationComponent implements OnInit {
             this._router.navigate(['receiptreceiving/label/printitn']);
             return false;
           }
+          if (this._label.ITNList?.length > this._label.quantityList?.length) {
+            this._router.navigate(['../assign'], {
+              relativeTo: this._actRoute,
+            });
+            return false;
+          }
           return true;
         }),
         switchMap(() => this._label.updateAfterReceving()),
