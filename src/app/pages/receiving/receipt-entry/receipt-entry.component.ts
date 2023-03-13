@@ -38,8 +38,11 @@ import {
   FindVendorByPoGQL,
   ReceiptEntryLogGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
+import { Insert_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { HttpClient } from '@angular/common/http';
 import { isThisHour } from 'date-fns';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { environment } from 'src/environments/environment';
 
 interface PartCode {
   _id: number;
@@ -75,6 +78,7 @@ interface ReceiptLine {
 })
 export class ReceiptEntry implements OnInit {
   log$: Observable<any>;
+  newLog$: Observable<any>;
   message: string;
   alertType = 'success';
   receiptLineDetailMessage: string;
@@ -206,7 +210,8 @@ export class ReceiptEntry implements OnInit {
     private _deleteReceipt: DeleteReceiptGQL,
     private _findPOs: FindPOsGQL,
     private _findVendorByPO: FindVendorByPoGQL,
-    private _receiptEntryLog: ReceiptEntryLogGQL
+    private _receiptEntryLog: ReceiptEntryLogGQL,
+    private _eventLog: Insert_EventLogsGQL
   ) {
     this.commonService.changeNavbar('Receipt Entry');
     this.titleService.setTitle('Receipt Entry');
@@ -293,13 +298,44 @@ export class ReceiptEntry implements OnInit {
 
       this.deleteReceiptSubscription.add(
         this._deleteReceipt
-          .mutate({ receiptID: Number(this.receiptID) })
+          .mutate({
+            receiptID: Number(this.receiptID),
+            receiptLineDeleteEventID: sqlData.Event_ReceiptEntry_LineDelete,
+            receiptLineDetailDeleteEventID:
+              sqlData.Event_ReceiptEntry_LineDetailDelete,
+            distributionCenter: environment.DistributionCenter,
+            username: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          })
           .subscribe({
             next: (res) => {
               result = Number(res.data.deleteReceipt[0].result);
             },
             complete: () => {
               if (result == 1) {
+                this.insertLog([
+                  {
+                    UserEventID: sqlData.Event_ReceiptEntry_HeaderDelete,
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    DistributionCenter: environment.DistributionCenter,
+                    ReceiptHeader: Number(this.receiptID),
+                  },
+                ]);
+
+                const log = {
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                };
+
+                this.insertNewLog([
+                  {
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    EventTypeID: sqlData.Event_ReceiptEntry_HeaderDelete,
+                    Log: JSON.stringify(log),
+                  },
+                ]);
+
                 this.clearReceipt();
                 this.clearReceiptLine();
                 this.clearReceiptLineDetail();
@@ -792,6 +828,32 @@ export class ReceiptEntry implements OnInit {
             })
             .subscribe({
               complete: () => {
+                this.insertLog([
+                  {
+                    UserEventID: sqlData.Event_ReceiptEntry_HeaderUpdate,
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    DistributionCenter: environment.DistributionCenter,
+                    ReceiptHeader: Number(this.receiptID),
+                    VendorName: this.vendorNumber.toString(),
+                  },
+                ]);
+
+                const log = {
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                  VendorName: this.vendorNumber.toString(),
+                };
+
+                this.insertNewLog([
+                  {
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    EventTypeID: sqlData.Event_ReceiptEntry_HeaderUpdate,
+                    Log: JSON.stringify(log),
+                  },
+                ]);
+
                 this.clearReceiptModal();
                 this.findReceipt();
                 this.alertType = 'success';
@@ -838,6 +900,30 @@ export class ReceiptEntry implements OnInit {
               this.message = 'Error inserting Receipt - ' + error;
             },
             complete: () => {
+              this.insertLog([
+                {
+                  UserEventID: sqlData.Event_ReceiptEntry_HeaderCreating,
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                  VendorName: this.vendorNumber.toString(),
+                },
+              ]);
+
+              const log = {
+                DistributionCenter: environment.DistributionCenter,
+                ReceiptHeader: Number(this.receiptID),
+                VendorName: this.vendorNumber.toString(),
+              };
+
+              this.insertNewLog([
+                {
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  EventTypeID: sqlData.Event_ReceiptEntry_HeaderCreating,
+                  Log: JSON.stringify(log),
+                },
+              ]);
+
               this.alertType = 'success';
               this.message = 'Receipt added';
               this.clearReceiptModal();
@@ -1024,12 +1110,69 @@ export class ReceiptEntry implements OnInit {
         this._deleteReceiptLineDetails
           .mutate({ receiptLineID: Number(this.receiptLineID) })
           .subscribe({
+            next: (res) => {
+              res.data.deleteReceiptLineDetails.map((receiptLineDetail) => {
+                this.insertLog([
+                  {
+                    UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    DistributionCenter: environment.DistributionCenter,
+                    ReceiptHeader: Number(this.receiptID),
+                    ReceiptLine: Number(this.receiptLineID),
+                  },
+                ]);
+
+                const log = {
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                  ReceiptLine: Number(this.receiptLineID),
+                };
+
+                this.insertNewLog([
+                  {
+                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                      .Name,
+                    EventTypeID: sqlData.Event_ReceiptEntry_LineDetailDelete,
+                    Log: JSON.stringify(log),
+                  },
+                ]);
+              });
+            },
             complete: () => {
               this.deleteReceiptLineSubscription.add(
                 this._deleteReceiptLine
                   .mutate({ receiptLineID: Number(this.receiptLineID) })
                   .subscribe({
                     complete: () => {
+                      this.insertLog([
+                        {
+                          UserEventID: sqlData.Event_ReceiptEntry_LineDelete,
+                          UserName: JSON.parse(
+                            sessionStorage.getItem('userInfo')
+                          ).Name,
+                          DistributionCenter: environment.DistributionCenter,
+                          ReceiptHeader: Number(this.receiptID),
+                          ReceiptLine: Number(this.receiptLineID),
+                        },
+                      ]);
+
+                      const log = {
+                        DistributionCenter: environment.DistributionCenter,
+                        ReceiptHeader: Number(this.receiptID),
+                        ReceiptLine: Number(this.receiptLineID),
+                      };
+
+                      this.insertNewLog([
+                        {
+                          UserName: JSON.parse(
+                            sessionStorage.getItem('userInfo')
+                          ).Name,
+                          EventTypeID: sqlData.Event_ReceiptEntry_LineDelete,
+                          Log: JSON.stringify(log),
+                        },
+                      ]);
+
                       const index = this.receiptLines.findIndex(
                         (item) => item._id === this.receiptLineID
                       );
@@ -1300,6 +1443,30 @@ export class ReceiptEntry implements OnInit {
               newLineNumber = res.data.insertReceiptLine[0].LineNumber;
             },
             complete: () => {
+              this.insertLog([
+                {
+                  UserEventID: sqlData.Event_ReceiptEntry_LineCreating,
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                  ReceiptLine: Number(this.receiptLineID),
+                },
+              ]);
+
+              const log = {
+                DistributionCenter: environment.DistributionCenter,
+                ReceiptHeader: Number(this.receiptID),
+                ReceiptLine: Number(this.receiptLineID),
+              };
+
+              this.insertNewLog([
+                {
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  EventTypeID: sqlData.Event_ReceiptEntry_LineCreating,
+                  Log: JSON.stringify(log),
+                },
+              ]);
+
               const newReceiptLine: ReceiptLine = {
                 _id: Number(this.receiptLineID),
                 ReceiptHID: Number(this.receiptID),
@@ -1349,6 +1516,30 @@ export class ReceiptEntry implements OnInit {
           })
           .subscribe({
             complete: () => {
+              this.insertLog([
+                {
+                  UserEventID: sqlData.Event_ReceiptEntry_Lineupdate,
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  DistributionCenter: environment.DistributionCenter,
+                  ReceiptHeader: Number(this.receiptID),
+                  ReceiptLine: Number(this.receiptLineID),
+                },
+              ]);
+
+              const log = {
+                DistributionCenter: environment.DistributionCenter,
+                ReceiptHeader: Number(this.receiptID),
+                ReceiptLine: Number(this.receiptLineID),
+              };
+
+              this.insertNewLog([
+                {
+                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  EventTypeID: sqlData.Event_ReceiptEntry_Lineupdate,
+                  Log: JSON.stringify(log),
+                },
+              ]);
+
               if (
                 Number(this.quantity) != Number(this.receiptLineDetailsTotal)
               ) {
@@ -1400,6 +1591,20 @@ export class ReceiptEntry implements OnInit {
         this._deleteReceiptLineDetails
           .mutate({ receiptLineID: Number(this.receiptLineID) })
           .subscribe({
+            // next: (res) => {
+            //   res.data.deleteReceiptLineDetails.map((receiptLineDetail) => {
+            //     this.insertLog([
+            //       {
+            //         UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
+            //         UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+            //           .Name,
+            //         DistributionCenter: environment.DistributionCenter,
+            //         ReceiptHeader: Number(this.receiptID),
+            //         ReceiptLine: Number(this.receiptLineID),
+            //       },
+            //     ]);
+            //   });
+            // },
             complete: () => {
               this.lineDetails.map((lineDetail) => {
                 lineDetails.push({
@@ -1420,6 +1625,57 @@ export class ReceiptEntry implements OnInit {
                       this.receiptLineDetailAlertType = 'error';
                       this.receiptLineDetailMessage =
                         'Error inserting Receipt Line Details - ' + error;
+                    },
+                    next: (res) => {
+                      res.data.insertReceiptLineDetails.map(
+                        (receiptLineDetail) => {
+                          this.insertLog([
+                            {
+                              UserEventID:
+                                this.receiptLineDetailOkText == 'Save'
+                                  ? sqlData.Event_ReceiptEntry_LineDetailUpdate
+                                  : sqlData.Event_ReceiptEntry_LineDetailCreating,
+                              UserName: JSON.parse(
+                                sessionStorage.getItem('userInfo')
+                              ).Name,
+                              DistributionCenter:
+                                environment.DistributionCenter,
+                              ReceiptHeader: Number(this.receiptID),
+                              ReceiptLine: Number(this.receiptLineID),
+                              Message:
+                                'ReceiptLineDetailID: ' +
+                                receiptLineDetail._id +
+                                ', PurchaseOrderLID: ' +
+                                receiptLineDetail.PurchaseOrderLID +
+                                ', Quantity: ' +
+                                receiptLineDetail.ExpectedQuantity,
+                            },
+                          ]);
+
+                          const log = {
+                            DistributionCenter: environment.DistributionCenter,
+                            ReceiptHeader: Number(this.receiptID),
+                            ReceiptLine: Number(this.receiptLineID),
+                            ReceiptLineDetail: receiptLineDetail._id,
+                            PurchaseOrderLID:
+                              receiptLineDetail.PurchaseOrderLID,
+                            Quantity: receiptLineDetail.ExpectedQuantity,
+                          };
+
+                          this.insertNewLog([
+                            {
+                              UserName: JSON.parse(
+                                sessionStorage.getItem('userInfo')
+                              ).Name,
+                              EventTypeID:
+                                this.receiptLineDetailOkText == 'Save'
+                                  ? sqlData.Event_ReceiptEntry_LineDetailUpdate
+                                  : sqlData.Event_ReceiptEntry_LineDetailCreating,
+                              Log: JSON.stringify(log),
+                            },
+                          ]);
+                        }
+                      );
                     },
                     complete: () => {
                       this.getReceiptLines();
@@ -1540,6 +1796,12 @@ export class ReceiptEntry implements OnInit {
   insertLog(log): void {
     this.log$ = this._receiptEntryLog.mutate({
       log: log,
+    });
+  }
+
+  insertNewLog(log): void {
+    this.newLog$ = this._eventLog.mutate({
+      logs: log,
     });
   }
 

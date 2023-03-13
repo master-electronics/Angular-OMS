@@ -44,7 +44,7 @@
         <tr>
           <th *ngFor="let column of columnsVisible" [nzWidth]="column.width" nzCustomFilter [nzSortOrder]="null"
             [nzSortDirections]="['ascend', 'descend']" [nzSortFn]="column.sortFn">
-            {{ column.title }}
+            {{ column.title + ' - ' + column.searchable }}
             <nz-filter-trigger *ngIf="column.searchable" [(nzVisible)]="column.searchVisible"
               [nzActive]="column.searchActive" [nzDropdownMenu]="menu">
               <i nz-icon nzType="search"></i>

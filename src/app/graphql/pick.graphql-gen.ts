@@ -17,6 +17,19 @@ export type Scalars = {
   Float: number;
 };
 
+export type Autostoremessage = {
+  __typename?: 'AUTOSTOREMESSAGE';
+  Action?: Maybe<Scalars['String']>;
+  Endpoint?: Maybe<Scalars['String']>;
+  ErrorCount?: Maybe<Scalars['Int']>;
+  Message?: Maybe<Scalars['String']>;
+  Status?: Maybe<Scalars['String']>;
+  Timestamp?: Maybe<Scalars['String']>;
+  Type: Scalars['String'];
+  TypeID?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
+};
+
 export type Container = {
   __typename?: 'Container';
   Aisle?: Maybe<Scalars['String']>;
@@ -572,7 +585,11 @@ export type MutationDeletePurchaseOrderLineFromMerpArgs = {
 
 
 export type MutationDeleteReceiptArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ReceiptID?: InputMaybe<Scalars['Int']>;
+  ReceiptLineDeleteEventID?: InputMaybe<Scalars['Int']>;
+  ReceiptLineDetailDeleteEventID?: InputMaybe<Scalars['Int']>;
+  Username?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1189,6 +1206,7 @@ export type Query = {
   countOrderItns: Scalars['Int'];
   createITN: Scalars['String'];
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
+  fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1282,6 +1300,11 @@ export type QueryCountOrderItnsArgs = {
 
 export type QueryCreateItnArgs = {
   LocationCode: Scalars['String'];
+};
+
+
+export type QueryFetchAutostoreMessageArgs = {
+  MaxRetries?: InputMaybe<Scalars['Int']>;
 };
 
 
