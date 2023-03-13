@@ -2783,56 +2783,25 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchInfoForPickingQueryVariables = Types.Exact<{
-  InventoryTrackingNumber: Types.Scalars['String'];
-  DistributionCenter: Types.Scalars['String'];
+export type FetchAutostoreMessageQueryVariables = Types.Exact<{
+  maxRetries?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
-export type FetchInfoForPickingQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, QuantityOnHand: number, ORDERLINEDETAILs?: Array<{ __typename?: 'OrderLineDetail', _id: number, StatusID: number, Quantity: number, BinLocation?: string | null, WMSPriority: number, Order: { __typename?: 'Order', DistributionCenter: string, OrderNumber: string, NOSINumber: string } } | null> | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null };
+export type FetchAutostoreMessageQuery = { __typename?: 'Query', fetchAutostoreMessage?: Array<{ __typename?: 'AUTOSTOREMESSAGE', _id: number, Type: string, TypeID?: number | null, Action?: string | null, Endpoint?: string | null, Status?: string | null, Timestamp?: string | null, Message?: string | null, ErrorCount?: number | null } | null> | null };
 
-export type FetchProductImgAndMessageFromMerpQueryVariables = Types.Exact<{
-  ProductCode: Types.Scalars['String'];
-  PartNumber: Types.Scalars['String'];
-  ProductList: Array<Types.InputMaybe<Types.Scalars['String']>> | Types.InputMaybe<Types.Scalars['String']>;
-}>;
-
-
-export type FetchProductImgAndMessageFromMerpQuery = { __typename?: 'Query', fetchProductInfoFromMerp?: Array<{ __typename?: 'ProdunctInfoFromMerp', UnitOfMeasure?: string | null, MICPartNumber?: string | null } | null> | null, fetchPartMessage?: { __typename?: 'GlobalMessage', comments?: Array<string | null> | null } | null };
-
-export type UpdateInventoryToUserMutationVariables = Types.Exact<{
-  InventoryID: Types.Scalars['Int'];
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-
-export type UpdateInventoryToUserMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
-
-export const FetchInfoForPickingDocument = gql`
-    query fetchInfoForPicking($InventoryTrackingNumber: String!, $DistributionCenter: String!) {
-  findInventory(
-    Inventory: {DistributionCenter: $DistributionCenter, InventoryTrackingNumber: $InventoryTrackingNumber}
-  ) {
+export const FetchAutostoreMessageDocument = gql`
+    query fetchAutostoreMessage($maxRetries: Int) {
+  fetchAutostoreMessage(MaxRetries: $maxRetries) {
     _id
-    QuantityOnHand
-    ORDERLINEDETAILs {
-      _id
-      StatusID
-      Quantity
-      BinLocation
-      WMSPriority
-      Order {
-        DistributionCenter
-        OrderNumber
-        NOSINumber
-      }
-    }
-    Product {
-      ProductCode {
-        ProductCodeNumber
-      }
-      PartNumber
-    }
+    Type
+    TypeID
+    Action
+    Endpoint
+    Status
+    Timestamp
+    Message
+    ErrorCount
   }
 }
     `;
@@ -2840,46 +2809,8 @@ export const FetchInfoForPickingDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchInfoForPickingGQL extends Apollo.Query<FetchInfoForPickingQuery, FetchInfoForPickingQueryVariables> {
-    document = FetchInfoForPickingDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const FetchProductImgAndMessageFromMerpDocument = gql`
-    query fetchProductImgAndMessageFromMerp($ProductCode: String!, $PartNumber: String!, $ProductList: [String]!) {
-  fetchProductInfoFromMerp(ProductList: $ProductList) {
-    UnitOfMeasure
-    MICPartNumber
-  }
-  fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
-    comments
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class FetchProductImgAndMessageFromMerpGQL extends Apollo.Query<FetchProductImgAndMessageFromMerpQuery, FetchProductImgAndMessageFromMerpQueryVariables> {
-    document = FetchProductImgAndMessageFromMerpDocument;
-    client = 'wmsNodejs';
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const UpdateInventoryToUserDocument = gql`
-    mutation updateInventoryToUser($InventoryID: Int!, $ContainerID: Int!) {
-  updateInventory(_id: $InventoryID, Inventory: {ContainerID: $ContainerID})
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class UpdateInventoryToUserGQL extends Apollo.Mutation<UpdateInventoryToUserMutation, UpdateInventoryToUserMutationVariables> {
-    document = UpdateInventoryToUserDocument;
+  export class FetchAutostoreMessageGQL extends Apollo.Query<FetchAutostoreMessageQuery, FetchAutostoreMessageQueryVariables> {
+    document = FetchAutostoreMessageDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

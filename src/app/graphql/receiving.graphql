@@ -133,6 +133,12 @@ mutation insertReceipt($receipt: insertReceiptH) {
   }
 }
 
+mutation receiptEntryLog($log: [insertUserEventLog]!) {
+  insertUserEventLogs(log: $log) {
+    _id
+  }
+}
+
 mutation insertReceiptLine(
   $receiptHID: Int!
   $productID: Int!
@@ -259,8 +265,18 @@ mutation updateReceipt(
   )
 }
 
-mutation deleteReceipt($receiptID: Int) {
-  deleteReceipt(ReceiptID: $receiptID) {
+mutation deleteReceipt(
+  $receiptID: Int
+  $receiptLineDeleteEventID: Int
+  $receiptLineDetailDeleteEventID: Int
+  $distributionCenter: String
+  $username: String) {
+  deleteReceipt(
+    ReceiptID: $receiptID
+    ReceiptLineDeleteEventID: $receiptLineDeleteEventID
+    ReceiptLineDetailDeleteEventID: $receiptLineDetailDeleteEventID
+    DistributionCenter: $distributionCenter
+    Username: $username) {
     result
   }
 }
