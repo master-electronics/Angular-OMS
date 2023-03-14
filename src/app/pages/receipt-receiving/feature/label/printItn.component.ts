@@ -16,6 +16,7 @@ import { SingleInputformComponent } from '../../../../shared/ui/input/single-inp
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { LabelService, ITNinfo } from '../../data/label';
 import { LocationStrategy } from '@angular/common';
+import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 
 @Component({
   standalone: true,
@@ -24,6 +25,7 @@ import { LocationStrategy } from '@angular/common';
     FormsModule,
     ReactiveFormsModule,
     SingleInputformComponent,
+    PrinterButtomComponent,
   ],
   template: `
     <div
@@ -43,6 +45,10 @@ import { LocationStrategy } from '@angular/common';
       title="Label"
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
+    <printer-button
+      class=" absolute bottom-1 right-1"
+      [ITN]="this._label.ITNList.slice(-1)[0].ITN"
+    ></printer-button>
   `,
 })
 export class PrintITNComponent implements OnInit {

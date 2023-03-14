@@ -104,33 +104,27 @@ export class ItnKickoutComponent implements OnInit {
     this._step.changeSteps(3);
     this.print$ = of(true);
     this.selectITN = this._fb.group({
-      itnList: new FormArray([]),
+      itnList: new FormArray([], [Validators.required]),
     });
     this.formArray = this.selectITN.get('itnList') as FormArray;
   }
 
   onCheckChange(event) {
-    /* Selected */
     if (event.target.checked) {
       // Add a new control in the arrayForm
       this.formArray.push(new FormControl(event.target.value));
+    } else {
+      let i = 0;
+      this.formArray.controls.forEach((ctrl: FormControl) => {
+        if (ctrl.value == event.target.value) {
+          // Remove the unselected element from the arrayForm
+          this.formArray.removeAt(i);
+          return;
+        }
+        i++;
+      });
     }
     this._kickout.updatekickoutItns(this.formArray.value);
-    // /* unselected */
-    // else{
-    //   // find the unselected element
-    //   let i: number = 0;
-
-    //   formArray.controls.forEach((ctrl: FormControl) => {
-    //     if(ctrl.value == event.target.value) {
-    //       // Remove the unselected element from the arrayForm
-    //       formArray.removeAt(i);
-    //       return;
-    //     }
-
-    //     i++;
-    //   });
-    // }
   }
 
   skip(): void {

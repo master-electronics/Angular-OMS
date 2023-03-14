@@ -56,11 +56,11 @@ import { kickoutService } from '../../data/kickout';
               option.content
             }}</label>
           </div>
-          <label nz-radio-button nzValue="Other"> Other... </label>
+          <!-- <label nz-radio-button nzValue="Other"> Other... </label> -->
         </div>
       </nz-radio-group>
       <textarea
-        *ngIf="kickoutForm.value.kickoutReason === 'Other'"
+        *ngIf="kickoutForm.value.kickoutReason === 14"
         id="otherReason"
         name="otherReason"
         formControlName="otherReason"
@@ -121,6 +121,7 @@ export class KickoutComponent implements OnInit {
       { content: 'Wrong PO/No Open PO/No Open Line', value: 11 },
       { content: 'Damaged Parts', value: 12 },
       { content: 'Over PO Quantity', value: 13 },
+      { content: 'Other', value: 14 },
     ];
     this.kickoutForm = this._fb.group({
       kickoutReason: ['', Validators.required],
@@ -138,14 +139,13 @@ export class KickoutComponent implements OnInit {
 
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
-    const kickoutText = this.kickoutOptions[kickoutReason - 7].content;
-    const line1 = (kickoutText + otherReason).substring(0, 20);
+    const kickoutText = this.kickoutOptions[kickoutReason - 7]?.content;
     let reason = `${
       this._receipt.headerID
     }|${this._receipt.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim()}|`;
     reason += kickoutText;
-    if (otherReason) {
-      reason = kickoutText + ': ' + otherReason;
+    if (kickoutReason === 14) {
+      reason = reason + ': ' + otherReason;
     }
     const list = [];
     while (list.length < 4) {
