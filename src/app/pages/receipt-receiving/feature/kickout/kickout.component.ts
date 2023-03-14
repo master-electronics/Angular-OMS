@@ -89,10 +89,10 @@ import { kickoutService } from '../../data/kickout';
     <ng-template #loading>
       <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }"></nz-skeleton>
     </ng-template>
-    <simple-keyboard
+    <!-- <simple-keyboard
       [inputString]="kickoutForm.value.otherReason"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class KickoutComponent implements OnInit {

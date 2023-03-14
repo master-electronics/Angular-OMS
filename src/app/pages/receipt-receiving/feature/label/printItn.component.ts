@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -46,8 +46,9 @@ import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.co
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <printer-button
-      class=" absolute bottom-1 right-1"
+      class=" absolute bottom-1 right-1 h-64 w-64"
       [ITN]="this._label.ITNList.slice(-1)[0].ITN"
+      (buttonClick)="focusInput()"
     ></printer-button>
   `,
 })
@@ -84,6 +85,11 @@ export class PrintITNComponent implements OnInit {
     this.location.onPopState(() => {
       history.pushState(null, null, window.location.href);
     });
+  }
+
+  @ViewChild(SingleInputformComponent) singleInput: SingleInputformComponent;
+  public focusInput() {
+    this.singleInput.inputFiled.nativeElement.focus();
   }
 
   public checKLabel(): ValidatorFn {

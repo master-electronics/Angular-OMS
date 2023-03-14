@@ -31,7 +31,7 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
     <ng-container *ngIf="info$ | async as info">
       <itn-info [sortingInfo]="info"></itn-info>
       <printer-button
-        class=" absolute bottom-1 right-1"
+        class=" absolute bottom-2 right-2 h-10 w-10"
         [ITN]="info.info.ITN"
       ></printer-button>
     </ng-container>
