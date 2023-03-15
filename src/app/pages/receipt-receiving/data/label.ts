@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  combineLatest,
   delay,
-  forkJoin,
   map,
   Observable,
-  shareReplay,
   switchMap,
   tap,
 } from 'rxjs';
@@ -134,8 +133,13 @@ export class LabelService {
           );
         }),
         switchMap((res) => {
-          return forkJoin({
-            print: this._printer.printITN$(res.data.createITN),
+          return combineLatest({
+            print: this._printer.printITN$(
+              res.data.createITN,
+              this._receipt.receiptLsAfterQuantity[0].Product.ProductCode
+                .ProductCodeNumber,
+              this._receipt.receiptLsAfterQuantity[0].Product.PartNumber
+            ),
             log: this._insertLog.mutate({
               oldLogs: {
                 ...this._log.receivingLog,

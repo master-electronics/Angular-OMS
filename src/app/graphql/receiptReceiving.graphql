@@ -77,16 +77,20 @@ mutation ReceivingUpdateReceiptL(
   )
 }
 
-query printReceivingLabel(
+query printReceivingITNLabel(
   $PRINTER: String!
   $ITN: String!
+  $PRODUCTCODE: String!
+  $PARTNUMBER: String!
   $DPI: String!
   $ORIENTATION: String!
 ) {
-  printReceivingLabel(
+  printReceivingITNLabel(
     PRINTER: $PRINTER
     ITN: $ITN
     DPI: $DPI
+    PRODUCTCODE: $PRODUCTCODE
+    PARTNUMBER: $PARTNUMBER
     ORIENTATION: $ORIENTATION
   )
 }

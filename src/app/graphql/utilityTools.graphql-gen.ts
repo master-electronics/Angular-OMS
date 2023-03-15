@@ -1383,7 +1383,7 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
-  printReceivingLabel?: Maybe<Scalars['Boolean']>;
+  printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
 };
 
@@ -1745,11 +1745,13 @@ export type QueryFindVendorByPoArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
 };
 
-export type QueryPrintReceivingLabelArgs = {
+export type QueryPrintReceivingItnLabelArgs = {
   DPI: Scalars['String'];
   ITN: Scalars['String'];
   ORIENTATION: Scalars['String'];
+  PARTNUMBER: Scalars['String'];
   PRINTER: Scalars['String'];
+  PRODUCTCODE: Scalars['String'];
 };
 
 export type QueryPrintTextLabelArgs = {

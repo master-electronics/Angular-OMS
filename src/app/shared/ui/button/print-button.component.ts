@@ -58,6 +58,8 @@ import { PrinterService } from '../../data/printer';
 export class PrinterButtomComponent implements OnInit {
   constructor(private _print: PrinterService) {}
   @Input() ITN: string;
+  @Input() PRODUCTCODE: string;
+  @Input() PARTNUMBER: string;
   public printer$;
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 
@@ -68,7 +70,9 @@ export class PrinterButtomComponent implements OnInit {
   public onClick(): void {
     this.buttonClick.emit();
     if (this.ITN) {
-      this.printer$ = this._print.printITN$(this.ITN).pipe(map(() => false));
+      this.printer$ = this._print
+        .printITN$(this.ITN, this.PRODUCTCODE, this.PARTNUMBER)
+        .pipe(map(() => false));
     }
   }
 }

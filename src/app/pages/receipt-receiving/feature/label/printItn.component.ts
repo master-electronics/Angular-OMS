@@ -17,6 +17,7 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { LabelService, ITNinfo } from '../../data/label';
 import { LocationStrategy } from '@angular/common';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -33,7 +34,7 @@ import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.co
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Label</h1>
-      <h1>({{ list.length }} of {{ _label.quantityList?.length }})</h1>
+      <h1>({{ list.length }} of {{ label.quantityList?.length }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
@@ -47,7 +48,12 @@ import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.co
     ></single-input-form>
     <printer-button
       class=" absolute bottom-1 right-1 h-64 w-64"
-      [ITN]="this._label.ITNList.slice(-1)[0].ITN"
+      [ITN]="this.label.ITNList.slice(-1)[0].ITN"
+      [PARTNUMBER]="this.receipt.receiptLsAfterQuantity[0].Product.PartNumber"
+      [PRODUCTCODE]="
+        this.receipt.receiptLsAfterQuantity[0].Product.ProductCode
+          .ProductCodeNumber
+      "
       (buttonClick)="focusInput()"
     ></printer-button>
   `,
@@ -65,17 +71,18 @@ export class PrintITNComponent implements OnInit {
   ];
 
   constructor(
+    public label: LabelService,
+    public receipt: ReceiptInfoService,
     private _router: Router,
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
-    public _label: LabelService,
     private location: LocationStrategy
   ) {}
 
   ngOnInit(): void {
     this._ui.changeSteps(3);
     this.data$ = this._actRoute.data.pipe(map((res) => res.print));
-    this.ITNList$ = this._label.ITNList$;
+    this.ITNList$ = this.label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
     });
@@ -98,7 +105,7 @@ export class PrintITNComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = this._label.ITNList.slice(-1)[0].ITN === value;
+      const isVaild = this.label.ITNList.slice(-1)[0].ITN === value;
       return !isVaild ? { label: true } : null;
     };
   }

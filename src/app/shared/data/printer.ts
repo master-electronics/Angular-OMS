@@ -9,7 +9,7 @@ import {
   tap,
 } from 'rxjs';
 import {
-  PrintReceivingLabelGQL,
+  PrintReceivingItnLabelGQL,
   PrintTextLabelGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { FindBindedPrinterGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -27,7 +27,7 @@ export interface PrinterInfo {
 export class PrinterService {
   constructor(
     private _find: FindBindedPrinterGQL,
-    private _itn: PrintReceivingLabelGQL,
+    private _itn: PrintReceivingItnLabelGQL,
     private _text: PrintTextLabelGQL
   ) {
     //
@@ -93,12 +93,14 @@ export class PrinterService {
     );
   }
 
-  public printITN$(ITN: string) {
+  public printITN$(ITN: string, PRODUCTCODE: string, PARTNUMBER: string) {
     return this.printer$.pipe(
       switchMap((printer) => {
         return this._itn.fetch(
           {
             ITN,
+            PRODUCTCODE,
+            PARTNUMBER,
             PRINTER: printer.Name,
             DPI: String(printer.DPI),
             ORIENTATION: printer.Orientation,

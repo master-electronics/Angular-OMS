@@ -162,6 +162,15 @@ export class ReceiptInfoService {
       PartNumber: tmp[0].Product.PartNumber,
       ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
     });
+    this._eventLog.initEventLog({
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      EventTypeID: sqlData.Event_Receiving_Start,
+      Log: JSON.stringify({
+        ReceiptHeader: this.headerID,
+        PartNumber: tmp[0].Product.PartNumber,
+        ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
+      }),
+    });
   }
 
   /**
@@ -177,18 +186,6 @@ export class ReceiptInfoService {
           })
           .pipe(
             map((info) => {
-              console.log(JSON.stringify(this._eventLog.eventLog));
-
-              this._eventLog.initEventLog({
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                EventTypeID: sqlData.Event_Receiving_Start,
-                Log: JSON.stringify({
-                  ReceiptHeader: this.headerID,
-                  ProductID: line[0].Product.ProductID,
-                  ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
-                  PartNumber: line[0].Product.PartNumber,
-                }),
-              });
               return {
                 ProductID: line[0].Product.ProductID,
                 ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
@@ -276,6 +273,14 @@ export class ReceiptInfoService {
     this._log.updateReceivingLog({
       ReceiptLine: line.LineNumber,
       Quantity: line.ExpectedQuantity,
+    });
+    this._eventLog.updateEventLog({
+      ...this._eventLog.eventLog,
+      Log: JSON.stringify({
+        ...JSON.parse(this._eventLog.eventLog.Log),
+        ReceiptLine: line.LineNumber,
+        ExpectedQuantity: line.ExpectedQuantity,
+      }),
     });
   }
 }
