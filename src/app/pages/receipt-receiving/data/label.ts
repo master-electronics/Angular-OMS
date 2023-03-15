@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
-  combineLatest,
   delay,
+  forkJoin,
   map,
   Observable,
   shareReplay,
@@ -15,8 +15,9 @@ import {
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import {
   CreateItnGQL,
-  Insert_UserEventLogsGQL,
+  Create_EventLogsGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 import { PrinterService } from 'src/app/shared/data/printer';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -42,8 +43,9 @@ export class LabelService {
     private _itn: CreateItnGQL,
     private _update: UpdateAfterReceivingGQL,
     private _printer: PrinterService,
-    private _insertLog: Insert_UserEventLogsGQL,
-    private _log: LogService
+    private _insertLog: Create_EventLogsGQL,
+    private _log: LogService,
+    private _eventLog: EventLogService
   ) {}
 
   /**
@@ -132,14 +134,22 @@ export class LabelService {
           );
         }),
         switchMap((res) => {
-          return combineLatest({
+          return forkJoin({
             print: this._printer.printITN$(res.data.createITN),
             log: this._insertLog.mutate({
-              log: {
+              oldLogs: {
                 ...this._log.receivingLog,
                 InventoryTrackingNumber: res.data.createITN,
                 Quantity: null,
                 UserEventID: sqlData.Event_Receiving_GenerateITN,
+              },
+              eventLogs: {
+                ...this._eventLog.eventLog,
+                EventTypeID: sqlData.Event_Receiving_GenerateITN,
+                Log: JSON.stringify({
+                  ...JSON.parse(this._eventLog.eventLog.Log),
+                  InventoryTrackingNumber: res.data.createITN,
+                }),
               },
             }),
           });
@@ -208,7 +218,7 @@ export class LabelService {
       info,
     });
     // collect info for log
-    const log: any = this._ITNList.value.map((itn) => {
+    const oldLogs: any = this._ITNList.value.map((itn) => {
       return {
         ...this._log.receivingLog,
         UserEventID: sqlData.Event_Receiving_UpdateInventory,
@@ -217,9 +227,25 @@ export class LabelService {
         Message: itn.BinLocation,
       };
     });
-    log.push({
+    oldLogs.push({
       ...this._log.receivingLog,
       UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
+    });
+    const eventLogs = this._ITNList.value.map((itn) => {
+      return {
+        ...this._eventLog.eventLog,
+        EventTypeID: sqlData.Event_Receiving_UpdateInventory,
+        Log: JSON.stringify({
+          ...JSON.parse(this._eventLog.eventLog.Log),
+          InventoryTrackingNumber: itn.ITN,
+          Quantity: itn.quantity,
+          BinLocation: itn.BinLocation,
+        }),
+      };
+    });
+    eventLogs.push({
+      ...this._eventLog.eventLog,
+      EventTypeID: sqlData.Event_Receiving_ReceiptLineDone,
     });
     return update.pipe(
       tap((res) => {
@@ -228,7 +254,7 @@ export class LabelService {
         }
       }),
       switchMap(() => {
-        return this._insertLog.mutate({ log });
+        return this._insertLog.mutate({ oldLogs, eventLogs });
       })
     );
   }

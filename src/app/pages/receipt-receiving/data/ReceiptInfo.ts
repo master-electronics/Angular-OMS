@@ -13,12 +13,16 @@ import {
   FindReceiptHeaderForReceivingGQL,
   SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import {
+  Create_EventLogsGQL,
+  Insert_UserEventLogsGQL,
+} from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { LogService } from './eventLog';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Injectable()
 export class ReceiptInfoService {
@@ -28,7 +32,8 @@ export class ReceiptInfoService {
     private _checkHeader: CheckReceiptHeaderGQL,
     private _suspect: SuspectInventoryGQL,
     private _log: LogService,
-    private _insertLog: Insert_UserEventLogsGQL,
+    private _eventLog: EventLogService,
+    private _insertLog: Create_EventLogsGQL,
     private _printer: PrinterService
   ) {}
 
@@ -83,6 +88,7 @@ export class ReceiptInfoService {
     this._lineAfterPart.next(null);
     this._receiptLsAfterQuantity.next(null);
     this._selectedReceiptLine.next(null);
+    this._eventLog.initEventLog(null);
   }
 
   public checkReceiptHeader(id: number): Observable<any> {
@@ -99,7 +105,17 @@ export class ReceiptInfoService {
           UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           UserEventID: sqlData.Event_Receiving_Start,
         });
-        return this._insertLog.mutate({ log: this._log.receivingLog });
+        this._eventLog.initEventLog({
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          EventTypeID: sqlData.Event_Receiving_Start,
+          Log: JSON.stringify({
+            ReceiptHeader: id,
+          }),
+        });
+        return this._insertLog.mutate({
+          oldLogs: this._log.receivingLog,
+          eventLogs: this._eventLog.eventLog,
+        });
       })
     );
   }
@@ -161,6 +177,18 @@ export class ReceiptInfoService {
           })
           .pipe(
             map((info) => {
+              console.log(JSON.stringify(this._eventLog.eventLog));
+
+              this._eventLog.initEventLog({
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                EventTypeID: sqlData.Event_Receiving_Start,
+                Log: JSON.stringify({
+                  ReceiptHeader: this.headerID,
+                  ProductID: line[0].Product.ProductID,
+                  ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
+                  PartNumber: line[0].Product.PartNumber,
+                }),
+              });
               return {
                 ProductID: line[0].Product.ProductID,
                 ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
@@ -181,7 +209,7 @@ export class ReceiptInfoService {
     reason: string,
     reasonID: number
   ) {
-    const log = this._lineAfterPart.value.map((line) => {
+    const oldLogs = this._lineAfterPart.value.map((line) => {
       return {
         ...this._log.receivingLog,
         InventoryTrackingNumber: itn,
@@ -189,6 +217,19 @@ export class ReceiptInfoService {
         ReceiptLine: line.LineNumber,
         Quantity: line.ExpectedQuantity,
         Message: reason,
+      };
+    });
+    const eventLogs = this._lineAfterPart.value.map((line) => {
+      return {
+        ...this._eventLog.eventLog,
+        EventTypeID: sqlData.Event_Receiving_KickOut,
+        Log: JSON.stringify({
+          ...JSON.parse(this._eventLog.eventLog.Log),
+          InventoryTrackingNumber: itn,
+          ReceiptLine: line.LineNumber,
+          ExpectedQuantity: line.ExpectedQuantity,
+          Reason: reason,
+        }),
       };
     });
     return this._suspect
@@ -199,10 +240,10 @@ export class ReceiptInfoService {
       })
       .pipe(
         switchMap(() => {
-          return combineLatest({
-            log: this._insertLog.mutate({ log }),
-            print: this._printer.printText$(list),
-          });
+          return this._printer.printText$(list);
+        }),
+        map(() => {
+          return this._insertLog.mutate({ oldLogs, eventLogs });
         })
       );
   }

@@ -59,11 +59,6 @@ export class ROHSComponent implements OnInit {
   public onUpdate(ROHS: boolean): void {
     this._update.updateROHS(ROHS);
     this.update$ = this._update.updateReceiptLSQL().pipe(
-      tap((res) => {
-        if (!res.update.data.updateReceiptLsByID) {
-          throw new Error('Fail to updat to SQL!');
-        }
-      }),
       map(() => {
         switch (this._receipt.receiptLsAfterQuantity?.length) {
           case 1:

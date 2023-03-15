@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { ReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
@@ -20,7 +21,8 @@ export class updateReceiptInfoService {
     private _update: ReceivingUpdateReceiptLGQL,
     private _receipt: ReceiptInfoService,
     private _log: LogService,
-    private _insertLog: Insert_UserEventLogsGQL
+    private _insertLog: Create_EventLogsGQL,
+    private _eventLog: EventLogService
   ) {}
   /**
    * Store info for update receipt
@@ -82,7 +84,7 @@ export class updateReceiptInfoService {
       CountryID: this.receiptInfo.CountryID,
       ROHS: this.receiptInfo.ROHS,
     });
-    const log = this._receipt.receiptLsAfterQuantity.map((line) => {
+    const oldLogs = this._receipt.receiptLsAfterQuantity.map((line) => {
       return {
         ...this._log.receivingLog,
         UserEventID: sqlData.Event_Receiving_UpdateInfo,
@@ -90,9 +92,21 @@ export class updateReceiptInfoService {
         Quantity: line.ExpectedQuantity,
       };
     });
-    return combineLatest({
-      update,
-      log: this._insertLog.mutate({ log }),
+    const eventLogs = this._receipt.receiptLsAfterQuantity.map((line) => {
+      return {
+        ...this._eventLog.eventLog,
+        EventTypeID: sqlData.Event_Receiving_UpdateInfo,
+        Log: JSON.stringify({
+          ...JSON.parse(this._eventLog.eventLog.Log),
+          ReceiptLine: line.LineNumber,
+          ExpectedQuantity: line.ExpectedQuantity,
+        }),
+      };
     });
+    return update.pipe(
+      switchMap((res) => {
+        return this._insertLog.mutate({ oldLogs, eventLogs });
+      })
+    );
   }
 }
