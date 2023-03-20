@@ -2728,9 +2728,6 @@ export type HoldQcOrderMutationVariables = Types.Exact<{
   Status: Types.Scalars['String'];
   Station: Types.Scalars['String'];
   StatusID: Types.Scalars['Int'];
-  log:
-    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
-    | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
 export type HoldQcOrderMutation = {
@@ -2741,10 +2738,6 @@ export type HoldQcOrderMutation = {
     success: boolean;
     message?: string | null;
   };
-  insertUserEventLogs?: Array<{
-    __typename?: 'UserEventLog';
-    _id: number;
-  } | null> | null;
 };
 
 export type UpdateAfterQcVerifyMutationVariables = Types.Exact<{
@@ -3053,7 +3046,6 @@ export const HoldQcOrderDocument = gql`
     $Status: String!
     $Station: String!
     $StatusID: Int!
-    $log: [insertUserEventLog]!
   ) {
     holdQCOrder(
       InternalTrackingNumber: $InventoryTrackingNumber
@@ -3067,9 +3059,6 @@ export const HoldQcOrderDocument = gql`
       _id: $OrderLineDetailID
       OrderLineDetail: { StatusID: $StatusID }
     )
-    insertUserEventLogs(log: $log) {
-      _id
-    }
   }
 `;
 

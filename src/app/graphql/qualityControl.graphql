@@ -99,7 +99,6 @@ mutation holdQCOrder(
   $Status: String!
   $Station: String!
   $StatusID: Int!
-  $log: [insertUserEventLog]!
 ) {
   holdQCOrder(
     InternalTrackingNumber: $InventoryTrackingNumber
@@ -109,15 +108,10 @@ mutation holdQCOrder(
     success
     message
   }
-
   updateOrderLineDetail(
     _id: $OrderLineDetailID
     OrderLineDetail: { StatusID: $StatusID }
   )
-
-  insertUserEventLogs(log: $log) {
-    _id
-  }
 }
 
 mutation updateAfterQcVerify(

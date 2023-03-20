@@ -15,11 +15,13 @@ import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import {
+  Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'scan-itn',
@@ -38,6 +40,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private titleService: Title,
     private qcService: QualityControlService,
     private insertUserEventLog: Insert_UserEventLogsGQL,
+    private logService: EventLogService,
+    private eventLog: Create_EventLogsGQL,
     private updateQCBin: Update_Merp_QcBinGQL,
     private verifyITNQC: VerifyItNforQcGQL
   ) {
@@ -53,12 +57,19 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.alertType = this.route.snapshot.queryParams['type'];
     this.alertMessage = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(['process', 'wait', 'wait', 'wait']);
+    this.logService.initEventLog({
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      EventTypeID: sqlData.Event_QC_Start,
+      Log: '',
+    });
     this.qcService.changeGlobalMessages(null);
     this.qcService.changeItemParams(null);
   }
 
   ngAfterViewInit(): void {
-    this.ITNInput.nativeElement.select();
+    setTimeout(() => {
+      this.ITNInput.nativeElement.select();
+    });
   }
 
   onSubmit(): void {
@@ -148,7 +159,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
-            const log = [
+            const oldLogs = [
               {
                 UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 OrderNumber: Order.OrderNumber.trim(),
@@ -172,7 +183,33 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 Priority: this.itemInfo.Priority,
               },
             ];
-            const updateLog = this.insertUserEventLog.mutate({ log });
+            this.logService.updateEventLog({
+              ...this.logService.eventLog,
+              Log: JSON.stringify({
+                OrderNumber: Order.OrderNumber.trim(),
+                NOSINumber: Order.NOSINumber.trim(),
+                OrderLineNumber:
+                  detail.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+                InventoryTrackingNumber: ITN,
+                CustomerNumber: this.itemInfo.CustomerNumber,
+                CustomerTier: this.itemInfo.CustomerTier,
+                DistributionCenter: this.itemInfo.DistributionCenter,
+                PartNumber: this.itemInfo.PartNumber,
+                ProductCode: this.itemInfo.ProductCode,
+                ProductTier: this.itemInfo.ProductTier,
+                Quantity: this.itemInfo.Quantity,
+                ParentITN: this.itemInfo.ParentITN,
+                ShipmentMethod: this.itemInfo.ShipmentMethod,
+                ShipmentMethodDescription:
+                  this.itemInfo.ShipmentMethodDescription,
+                WMSPriority: this.itemInfo.WMSPriority,
+                Priority: this.itemInfo.Priority,
+              }),
+            });
+            const updateLog = this.eventLog.mutate({
+              oldLogs,
+              eventLogs: this.logService.eventLog,
+            });
             const updateMerpQCBin = this.updateQCBin.mutate({ ITN });
             // update QCBin when bin is hold
             const updateQueries = this.itemInfo.isHold
@@ -181,19 +218,19 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             return forkJoin(updateQueries);
           })
         )
-        .subscribe(
-          () => {
+        .subscribe({
+          next: () => {
             this.qcService.changeItemParams(this.itemInfo);
             this.router.navigate(['/qc/globalmessages']);
             this.isLoading = false;
           },
-          (error) => {
+          error: (error) => {
             this.isLoading = false;
             this.alertType = 'error';
             this.alertMessage = error;
             this.ITNInput.nativeElement.select();
-          }
-        )
+          },
+        })
     );
   }
 

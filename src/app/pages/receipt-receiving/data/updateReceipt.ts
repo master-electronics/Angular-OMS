@@ -100,9 +100,13 @@ export class updateReceiptInfoService {
           ...JSON.parse(this._eventLog.eventLog.Log),
           ReceiptLine: line.LineNumber,
           ExpectedQuantity: line.ExpectedQuantity,
+          DateCode: this.receiptInfo.DateCode,
+          ROHS: this.receiptInfo.ROHS,
+          CountryOfOrigin: this.receiptInfo.ISO3,
         }),
       };
     });
+    this._eventLog.updateEventLog(eventLogs[0]);
     return update.pipe(
       switchMap((res) => {
         return this._insertLog.mutate({ oldLogs, eventLogs });

@@ -21,9 +21,11 @@ import {
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { catchError, delay, map, tap } from 'rxjs/operators';
+import { catchError, delay, map, switchMap, tap } from 'rxjs/operators';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import countries from 'src/app/shared/utils/countyList';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'verify-pack',
@@ -107,7 +109,9 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateAfterQc: UpdateAfterQcVerifyGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
-    private holdQCOrder: HoldQcOrderGQL
+    private holdQCOrder: HoldQcOrderGQL,
+    private insertEventLog: Create_EventLogsGQL,
+    private evenLog: EventLogService
   ) {
     this.titleService.setTitle('qc/verifypack');
   }
@@ -218,8 +222,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     //check if change then update info to wms
     if (this.isEditable) {
       this.subscription.add(
-        updateAfterQc.subscribe(
-          (res) => {
+        updateAfterQc.subscribe({
+          next: (res) => {
             let type = '';
             let message = '';
             if (!res.data.updateInventory[0]) {
@@ -235,7 +239,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
               queryParams: { type, message },
             });
           },
-          (error) => {
+          error: (error) => {
             this.isLoading = false;
             this.router.navigate(['qc'], {
               queryParams: {
@@ -243,8 +247,8 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
                 message: `${this.itemInfo.InventoryTrackingNumber} failed\n${error}`,
               },
             });
-          }
-        )
+          },
+        })
       );
     }
     this.router.navigate(['qc/repack']);
@@ -331,71 +335,78 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       Status: String(Status).padStart(2, '3'),
       Station: this.commonService.printerStation,
       StatusID: sqlData.warehouseHold_ID,
-      log: [
-        {
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-          OrderNumber: this.itemInfo.OrderNumber,
-          NOSINumber: this.itemInfo.NOSI,
-          UserEventID: sqlData.Event_QC_Hold,
-          OrderLineNumber: this.itemInfo.OrderLineNumber,
-          InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-          Message: `Hold on ${String(Status).padStart(2, '3')}`,
-          CustomerNumber: this.itemInfo.CustomerNumber,
-          CustomerTier: this.itemInfo.CustomerTier,
-          DistributionCenter: this.itemInfo.DistributionCenter,
-          PartNumber: this.itemInfo.PartNumber,
-          ProductCode: this.itemInfo.ProductCode,
-          ProductTier: this.itemInfo.ProductTier,
-          Quantity: this.itemInfo.Quantity,
-          ParentITN: this.itemInfo.ParentITN,
-          ShipmentMethod: this.itemInfo.ShipmentMethod,
-          ShipmentMethodDescription: this.itemInfo.ShipmentMethodDescription,
-          WMSPriority: this.itemInfo.WMSPriority,
-          Priority: this.itemInfo.Priority,
-        },
-      ],
     };
     this.isLoading = true;
     this.writeInfoToMerp(qcHoldOrderInfo);
   }
 
+  private type = '';
+  private message = '';
   writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): void {
+    const oldLogs = [
+      {
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        OrderNumber: this.itemInfo.OrderNumber,
+        NOSINumber: this.itemInfo.NOSI,
+        UserEventID: sqlData.Event_QC_Hold,
+        OrderLineNumber: this.itemInfo.OrderLineNumber,
+        InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+        Message: `Hold on ${String(holdInfo.Status).padStart(2, '3')}`,
+        CustomerNumber: this.itemInfo.CustomerNumber,
+        CustomerTier: this.itemInfo.CustomerTier,
+        DistributionCenter: this.itemInfo.DistributionCenter,
+        PartNumber: this.itemInfo.PartNumber,
+        ProductCode: this.itemInfo.ProductCode,
+        ProductTier: this.itemInfo.ProductTier,
+        Quantity: this.itemInfo.Quantity,
+        ParentITN: this.itemInfo.ParentITN,
+        ShipmentMethod: this.itemInfo.ShipmentMethod,
+        ShipmentMethodDescription: this.itemInfo.ShipmentMethodDescription,
+        WMSPriority: this.itemInfo.WMSPriority,
+        Priority: this.itemInfo.Priority,
+      },
+    ];
+    const eventLogs = {
+      ...this.evenLog.eventLog,
+      EventTypeID: sqlData.Event_QC_Hold,
+      Log: JSON.stringify({
+        ...JSON.parse(this.evenLog.eventLog.Log),
+        Message: `Hold on ${String(holdInfo.Status).padStart(2, '3')}`,
+      }),
+    };
     this.subscription.add(
-      this.holdQCOrder.mutate(holdInfo).subscribe(
-        (res) => {
-          let type = '';
-          let message = '';
-          this.isLoading = false;
-          if (!res.data.holdQCOrder.success) {
-            type = 'error';
-            message = `HOLDORDER api: ${res.data.holdQCOrder.message}\n`;
-          }
-          if (!res.data.updateOrderLineDetail) {
-            type = 'error';
-            message = message.concat(`Fail to update SQL`);
-          }
-          message =
-            `${this.itemInfo.InventoryTrackingNumber} hold failed\n`.concat(
-              message
-            );
-          if (!type) {
-            type = `warning`;
-            message = `${this.itemInfo.InventoryTrackingNumber} is on hold.`;
-          }
-          this.router.navigate(['qc'], {
-            queryParams: { type, message },
-          });
-        },
-        (error) => {
-          this.router.navigate(['qc'], {
-            queryParams: {
-              type: `error`,
-              message: `${this.itemInfo.InventoryTrackingNumber} hold failed.\n${error}`,
-            },
-          });
-          this.isLoading = false;
-        }
-      )
+      this.holdQCOrder
+        .mutate(holdInfo)
+        .pipe(
+          switchMap((res) => {
+            this.isLoading = false;
+            if (!res.data.holdQCOrder.success) {
+              throw `HOLDORDER api: ${res.data.holdQCOrder.message}\n`;
+            }
+            if (!res.data.updateOrderLineDetail) {
+              throw `Fail to update SQL`;
+            }
+            this.type = `warning`;
+            this.message = `${this.itemInfo.InventoryTrackingNumber} is on hold.`;
+            return this.insertEventLog.mutate({ oldLogs, eventLogs });
+          }),
+          map(() => {
+            this.router.navigate(['qc'], {
+              queryParams: { type: this.type, message: this.message },
+            });
+          }),
+          catchError((error) => {
+            this.router.navigate(['qc'], {
+              queryParams: {
+                type: `error`,
+                message: `${this.itemInfo.InventoryTrackingNumber} hold failed.\n${error}`,
+              },
+            });
+            this.isLoading = false;
+            return error;
+          })
+        )
+        .subscribe()
     );
   }
 

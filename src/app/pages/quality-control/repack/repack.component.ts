@@ -23,10 +23,13 @@ import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
+  Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
   UpdateContainerGQL,
 } from '../../../graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { EventLogService } from 'src/app/shared/data/eventLog';
+import { type } from 'os';
 
 @Component({
   selector: 'repack',
@@ -41,6 +44,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
   alertMessage = '';
   itemInfo: itemParams;
   updateDetail;
+  insertlogQuery;
   submit$;
   fetchID$;
   constructor(
@@ -54,7 +58,8 @@ export class RepackComponent implements OnInit, AfterViewInit {
     private cleanContainer: CleanContainerFromPrevOrderGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
-    private insertUserEventLog: Insert_UserEventLogsGQL,
+    private insertUserEventLog: Create_EventLogsGQL,
+    private eventLog: EventLogService,
     private findNewID: FindNewAfterUpdateBinGQL
   ) {
     this.titleService.setTitle('qc/repack');
@@ -206,7 +211,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
             CountMethod: this.itemInfo.CountMethod,
           });
 
-          const UserEventLog = [
+          const oldLogs = [
             {
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               OrderNumber: this.itemInfo.OrderNumber,
@@ -230,8 +235,18 @@ export class RepackComponent implements OnInit, AfterViewInit {
               Priority: this.itemInfo.Priority,
             },
           ];
+          const eventLogs = [
+            {
+              ...this.eventLog.eventLog,
+              EventTypeID: sqlData.Event_QC_Done,
+              Log: JSON.stringify({
+                ...JSON.parse(this.eventLog.eventLog.Log),
+                Message: `Repack to ${this.containerForm.value.container}`,
+              }),
+            },
+          ];
           if (!inProcess) {
-            UserEventLog.push({
+            oldLogs.push({
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               OrderNumber: this.itemInfo.OrderNumber,
               NOSINumber: this.itemInfo.NOSI,
@@ -253,9 +268,26 @@ export class RepackComponent implements OnInit, AfterViewInit {
               Priority: this.itemInfo.Priority,
               WMSPriority: null,
             });
+            eventLogs.push({
+              ...this.eventLog.eventLog,
+              EventTypeID: sqlData.Event_QC_OrderComplete,
+              Log: JSON.stringify({
+                OrderNumber: this.itemInfo.OrderNumber,
+                NOSINumber: this.itemInfo.NOSI,
+                OrderLineNumber: this.itemInfo.OrderLineNumber,
+                CustomerNumber: this.itemInfo.CustomerNumber,
+                CustomerTier: this.itemInfo.CustomerTier,
+                DistributionCenter: this.itemInfo.DistributionCenter,
+                ShipmentMethod: this.itemInfo.ShipmentMethod,
+                ShipmentMethodDescription:
+                  this.itemInfo.ShipmentMethodDescription,
+                Priority: this.itemInfo.Priority,
+              }),
+            });
           }
-          const insertUserEventLog = this.insertUserEventLog.mutate({
-            log: UserEventLog,
+          this.insertlogQuery = this.insertUserEventLog.mutate({
+            oldLogs,
+            eventLogs,
           });
           this.updateDetail = this.updateInventoryDetail.mutate({
             InventoryID: this.itemInfo.InventoryID,
@@ -300,7 +332,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
 
           // Send different query combination
           updateQueries = {
-            insertUserEventLog,
             updateTargetConatiner,
             updateSourceConatiner,
             updateMerpLog,
@@ -353,28 +384,28 @@ export class RepackComponent implements OnInit, AfterViewInit {
           }
           if (error) throw error;
         }),
-
         switchMap(() => {
           return this.updateDetail;
         }),
-
         tap((res: any) => {
           if (!res.data.updateOrderLineDetail[0]) {
             throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
           }
         }),
-
-        map((res: any) => {
-          let type = 'info';
-          let message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
+        switchMap((res: any) => {
+          this.type = 'info';
+          this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
           if (res.updateMerpLog) {
-            type = 'success';
-            message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
+            this.type = 'success';
+            this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
           }
+          return this.insertlogQuery;
+        }),
+        map(() => {
           this.router.navigate(['/qc'], {
             queryParams: {
-              type,
-              message,
+              type: this.type,
+              message: this.message,
             },
           });
         }),
@@ -387,4 +418,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
         })
       );
   }
+  type;
+  message;
 }

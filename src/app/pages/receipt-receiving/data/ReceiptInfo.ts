@@ -13,10 +13,7 @@ import {
   FindReceiptHeaderForReceivingGQL,
   SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import {
-  Create_EventLogsGQL,
-  Insert_UserEventLogsGQL,
-} from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -162,11 +159,11 @@ export class ReceiptInfoService {
       PartNumber: tmp[0].Product.PartNumber,
       ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
     });
-    this._eventLog.initEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+    this._eventLog.updateEventLog({
+      ...this._eventLog.eventLog,
       EventTypeID: sqlData.Event_Receiving_Start,
       Log: JSON.stringify({
-        ReceiptHeader: this.headerID,
+        ...JSON.parse(this._eventLog.eventLog.Log),
         PartNumber: tmp[0].Product.PartNumber,
         ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
       }),
