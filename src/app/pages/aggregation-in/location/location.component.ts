@@ -36,6 +36,8 @@ import {
   endContainer,
   outsetContainer,
 } from '../aggregation-in.server';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'location',
@@ -90,7 +92,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _verifyContainer: VerifyContainerForAggregationInGQL,
     private _countOrderItns: CountOrderItnsFromMerpGQL,
-    private _agInService: AggregationInService
+    private _agInService: AggregationInService,
+    private _insertLog: Create_EventLogsGQL,
+    private _eventLog: EventLogService
   ) {
     this._titleService.setTitle('agin/location');
   }
@@ -230,31 +234,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
               DistributionCenter: environment.DistributionCenter,
               // toteList: [this.outsetContainer.Barcode],
-              log: [
-                {
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                  OrderNumber: this.OrderNumber,
-                  NOSINumber: this.NOSINumber,
-                  InventoryTrackingNumber: singleITN,
-                  UserEventID: sqlData.Event_AgIn_SingleITNAgOut,
-                  Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
-                  CustomerNumber: this.outsetContainer.CustomerNumber,
-                  CustomerTier: this.outsetContainer.CustomerTier,
-                  DistributionCenter: environment.DistributionCenter,
-                  OrderLineNumber:
-                    this.outsetContainer.ITNsInTote[0].OrderLineNumber,
-                  PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
-                  ProductCode: this.outsetContainer.ITNsInTote[0].ProductCode,
-                  ProductTier: this.outsetContainer.ITNsInTote[0].ProductTier,
-                  Quantity: this.outsetContainer.ITNsInTote[0].Quantity,
-                  ParentITN: this.outsetContainer.ITNsInTote[0].ParentITN,
-                  ShipmentMethod: this.outsetContainer.ShipmentMethod,
-                  ShipmentMethodDescription:
-                    this.outsetContainer.ShipmentMethodDescription,
-                  Priority: this.outsetContainer.Priority,
-                  WMSPriority: this.outsetContainer.ITNsInTote[0].WMSPriority,
-                },
-              ],
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               UserOrStatus: 'Packing',
@@ -270,19 +249,53 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }),
 
-        // Emite errors
-        // tap((res) => {
-        // let error = '';
-        // if (!res.updateOrder.data.updateMerpOrderStatus.success) {
-        //   error += res.updateOrder.data.updateMerpOrderStatus.message;
-        // }
-        // if (error) throw error;
-        // }),
-
         // Back to first page after ag out success
-        map((res) => {
-          let type = 'success';
-          let message = `Order complete ${this.OrderNumber}-${this.NOSINumber}`;
+        switchMap((res) => {
+          const oldLogs = [
+            {
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+              InventoryTrackingNumber: singleITN,
+              UserEventID: sqlData.Event_AgIn_SingleITNAgOut,
+              Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
+              CustomerNumber: this.outsetContainer.CustomerNumber,
+              CustomerTier: this.outsetContainer.CustomerTier,
+              DistributionCenter: environment.DistributionCenter,
+              OrderLineNumber:
+                this.outsetContainer.ITNsInTote[0].OrderLineNumber,
+              PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
+              ProductCode: this.outsetContainer.ITNsInTote[0].ProductCode,
+              ProductTier: this.outsetContainer.ITNsInTote[0].ProductTier,
+              Quantity: this.outsetContainer.ITNsInTote[0].Quantity,
+              ParentITN: this.outsetContainer.ITNsInTote[0].ParentITN,
+              ShipmentMethod: this.outsetContainer.ShipmentMethod,
+              ShipmentMethodDescription:
+                this.outsetContainer.ShipmentMethodDescription,
+              Priority: this.outsetContainer.Priority,
+              WMSPriority: this.outsetContainer.ITNsInTote[0].WMSPriority,
+            },
+          ];
+          const eventLogs = {
+            ...this._eventLog.eventLog,
+            EventTypeID: sqlData.Event_AgIn_SingleITNAgOut,
+            Log: JSON.stringify({
+              ...JSON.parse(this._eventLog.eventLog.Log),
+              InventoryTrackingNumber: singleITN,
+              OrderLineNumber:
+                this.outsetContainer.ITNsInTote[0].OrderLineNumber,
+              PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
+              ProductCode: this.outsetContainer.ITNsInTote[0].ProductCode,
+              ProductTier: this.outsetContainer.ITNsInTote[0].ProductTier,
+              Quantity: this.outsetContainer.ITNsInTote[0].Quantity,
+              ParentITN: this.outsetContainer.ITNsInTote[0].ParentITN,
+              WMSPriority: this.outsetContainer.ITNsInTote[0].WMSPriority,
+              Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
+            }),
+          };
+          // return the first step
+          this.type = 'success';
+          this.message = `Order complete ${this.OrderNumber}-${this.NOSINumber}`;
           if (
             res.checkHazmzd.data.fetchProductInfoFromMerp.some(
               (node) =>
@@ -290,21 +303,21 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 node.HazardMaterialLevel.trim() !== 'N'
             )
           ) {
-            type = 'warning';
-            message = message + `\nThis order contains hazardous materials`;
+            this.type = 'warning';
+            this.message += `\nThis order contains hazardous materials`;
           }
-
-          // return the first step
+          return this._insertLog.mutate({ oldLogs, eventLogs });
+        }),
+        map(() => {
+          this.isLoading = false;
           this._router.navigate(['agin'], {
             queryParams: {
-              type,
-              message,
+              type: this.type,
+              message: this.message,
             },
           });
-          this.isLoading = false;
           return true;
         }),
-
         catchError((error) => {
           this.alertMessage = error;
           this.isLoading = false;
@@ -313,6 +326,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         })
       );
   }
+  private type;
+  private message;
 
   ngAfterViewInit(): void {
     this.locationInput.nativeElement.focus();

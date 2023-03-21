@@ -21,8 +21,13 @@ import {
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { AggregationOutService } from '../aggregation-out.server';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import {
+  Create_EventLogsGQL,
+  Insert_UserEventLogsGQL,
+} from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { type } from 'os';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'pick-tote',
@@ -58,8 +63,9 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _titleService: Title,
     private _fetchLocation: FetchContainerForAgoutPickGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
-    private _insertUserEvnetLog: Insert_UserEventLogsGQL,
-    private _updateAfterQC: UpdateAfterAgOutGQL
+    private _insertUserEvnetLog: Create_EventLogsGQL,
+    private _updateAfterQC: UpdateAfterAgOutGQL,
+    private _eventLog: EventLogService
   ) {
     this._titleService.setTitle('agout/pick');
   }
@@ -87,7 +93,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             this.agOutService.changeITNsInOrder(res.data.findOrderLineDetails);
             const containerSet = new Set();
             const ITNSet = new Set<string>();
-            const log = res.data.findOrderLineDetails.map((node) => {
+            const oldLogs = res.data.findOrderLineDetails.map((node) => {
               ITNSet.add(node.Inventory.InventoryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
@@ -113,9 +119,36 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 WMSPriority: node.WMSPriority,
               };
             });
+            const eventLogs = res.data.findOrderLineDetails.map((node) => {
+              return {
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                EventTypeID: sqlData.Event_AgOut_Start,
+                Log: JSON.stringify({
+                  OrderNumber: this.urlParams.OrderNumber,
+                  NOSINumber: this.urlParams.NOSINumber,
+                  InventoryTrackingNumber:
+                    node.Inventory.InventoryTrackingNumber,
+                  OrderLineNumber: node.OrderLine.OrderLineNumber,
+                  CustomerNumber: node.Order.Customer?.CustomerNumber,
+                  CustomerTier: node.Order.Customer?.CustomerTier,
+                  DistributionCenter: environment.DistributionCenter,
+                  PartNumber: node.Inventory.Product?.PartNumber,
+                  ProductCode:
+                    node.Inventory.Product?.ProductCode.ProductCodeNumber,
+                  ProductTier: node.Inventory.Product?.ProductTier,
+                  Quantity: node.Quantity,
+                  ParentITN: node.Inventory.ParentITN,
+                  ShipmentMethod: node.Order.ShipmentMethod?._id,
+                  ShipmentMethodDescription:
+                    node.Order.ShipmentMethod?.ShippingMethod,
+                  Priority: node.Order.ShipmentMethod?.PriorityPinkPaper,
+                  WMSPriority: node.WMSPriority,
+                }),
+              };
+            });
             this.containerList = [...containerSet];
             this.totalTotes = this.containerList.length;
-            return this._insertUserEvnetLog.mutate({ log });
+            return this._insertUserEvnetLog.mutate({ oldLogs, eventLogs });
           }),
           map(() => {
             //
@@ -204,7 +237,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     const toteSet = new Set<string>();
     this.agOutService.selectedList.forEach((node) => toteSet.add(node.Barcode));
     this.isLoading = true;
-    const log = this.agOutService.ITNsInOrder.map((node) => {
+    const oldLogs = this.agOutService.ITNsInOrder.map((node) => {
       return {
         UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         OrderNumber: this.urlParams.OrderNumber,
@@ -226,6 +259,30 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         WMSPriority: node.WMSPriority,
       };
     });
+    const eventLogs = this.agOutService.ITNsInOrder.map((node) => {
+      return {
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        EventTypeID: sqlData.Event_AgOut_Done,
+        Log: JSON.stringify({
+          OrderNumber: this.urlParams.OrderNumber,
+          NOSINumber: this.urlParams.NOSINumber,
+          InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
+          OrderLineNumber: node.OrderLine.OrderLineNumber,
+          CustomerNumber: node.Order.Customer?.CustomerNumber,
+          CustomerTier: node.Order.Customer?.CustomerTier,
+          DistributionCenter: environment.DistributionCenter,
+          PartNumber: node.Inventory.Product?.PartNumber,
+          ProductCode: node.Inventory.Product?.ProductCode.ProductCodeNumber,
+          ProductTier: node.Inventory.Product?.ProductTier,
+          Quantity: node.Quantity,
+          ParentITN: node.Inventory.ParentITN,
+          ShipmentMethod: node.Order.ShipmentMethod?._id,
+          ShipmentMethodDescription: node.Order.ShipmentMethod?.ShippingMethod,
+          Priority: node.Order.ShipmentMethod?.PriorityPinkPaper,
+          WMSPriority: node.WMSPriority,
+        }),
+      };
+    });
     this.updateSQL$ = forkJoin({
       updateOrder: this._updateAfterQC.mutate({
         OrderID: Number(this.urlParams.OrderID),
@@ -233,7 +290,6 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           StatusID: sqlData.agOutComplete_ID,
         },
         // toteList: [...toteSet],
-        log: log,
         DistributionCenter: environment.DistributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
@@ -248,19 +304,10 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         { fetchPolicy: 'network-only' }
       ),
     }).pipe(
-      // // throw errors
-      // tap((res) => {
-      //   let error = '';
-      //   if (!res.updateOrder.data.updateMerpOrderStatus.success) {
-      //     error += res.updateOrder.data.updateMerpOrderStatus.message;
-      //   }
-      //   if (error) throw error;
-      // }),
-
       // navgate to first page if success
-      map((res) => {
-        let type = 'success';
-        let message = `Order complete: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
+      switchMap((res) => {
+        this.type = 'success';
+        this.message = `Order complete: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`;
         if (
           res.checkHazmzd.data.fetchProductInfoFromMerp.some(
             (node) =>
@@ -268,20 +315,21 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               node.HazardMaterialLevel.trim() !== 'N'
           )
         ) {
-          type = 'warning';
-          message = message + `\nThis order contains hazardous materials`;
+          this.type = 'warning';
+          this.message += `\nThis order contains hazardous materials`;
         }
-
+        return this._insertUserEvnetLog.mutate({ eventLogs, oldLogs });
+      }),
+      map(() => {
+        this.isLoading = false;
         this._router.navigate(['/agout'], {
           queryParams: {
-            type,
-            message,
+            type: this.type,
+            message: this.message,
           },
         });
-        this.isLoading = false;
         return true;
       }),
-
       catchError((error) => {
         this.alertMessage = error;
         this.isLoading = false;
@@ -290,6 +338,8 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     );
   }
+  private type;
+  private message;
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

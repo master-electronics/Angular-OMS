@@ -24,6 +24,7 @@ import { environment } from 'src/environments/environment';
 import { of, throwError } from 'rxjs';
 import { AggregationOutService } from './aggregation-out.server';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'aggregation-out',
@@ -55,7 +56,8 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     private titleService: Title,
     private pickOrder: PickOrderForAgOutGQL,
     private verifyOrder: VerifyOrderForAgOutGQL,
-    private agOutService: AggregationOutService
+    private agOutService: AggregationOutService,
+    private eventLog: EventLogService
   ) {
     this.commonService.changeNavbar(this.title);
     this.titleService.setTitle(this.title);
@@ -70,6 +72,11 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     this.agOutService.changeselectedITNs(null);
     this.agOutService.changePickedContainer(null);
     this.agOutService.changeITNsInOrder(null);
+    this.eventLog.initEventLog({
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      EventTypeID: sqlData.Event_AgOut_Start,
+      Log: '',
+    });
     // read info from previous page.
     this.alertType = this.route.snapshot.queryParams['type'];
     this.alertMessage = this.route.snapshot.queryParams['message'];

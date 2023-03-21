@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import {
   UpdateContainerAfterAgInGQL,
-  UpdateLocationAndLogAfterAgInGQL,
+  UpdateLocationAfterAgInGQL,
   UpdateMerpOrderStatusGQL,
   UpdateMerpWmsLogGQL,
   UpdateStatusAfterAgInGQL,
@@ -23,7 +23,9 @@ import {
   outsetContainer,
 } from '../aggregation-in.server';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'verify-itn',
@@ -51,11 +53,13 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _agInService: AggregationInService,
-    private _updateLog: UpdateLocationAndLogAfterAgInGQL,
+    private _updatelocation: UpdateLocationAfterAgInGQL,
     private _updateContainer: UpdateContainerAfterAgInGQL,
     private _updateStatus: UpdateStatusAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,
-    private _updateMerpOrder: UpdateMerpOrderStatusGQL
+    private _updateMerpOrder: UpdateMerpOrderStatusGQL,
+    private _insertEventLog: Create_EventLogsGQL,
+    private _eventLog: EventLogService
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -141,8 +145,12 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       delete updatequery.updateContainer;
     }
     // update orderlineDetail's containerID to new input container, and update StatusID as ag in complete.
-    // set query for updateSql
-    const log = this.outsetContainer.ITNsInTote.map((node) => {
+    const updateSqlQuery = {
+      ContainerID: Number(this.outsetContainer.toteID),
+      Container: sourceTote,
+    };
+    // log info
+    const oldLogs = this.outsetContainer.ITNsInTote.map((node) => {
       return {
         UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
         OrderNumber: this.endContainer.OrderNumber,
@@ -166,16 +174,37 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         WMSPriority: node.WMSPriority,
       };
     });
-    const updateSqlQuery = {
-      ContainerID: Number(this.outsetContainer.toteID),
-      Container: sourceTote,
-      log: log,
-    };
+    const eventLogs = this.outsetContainer.ITNsInTote.map((node) => {
+      return {
+        ...this._eventLog.eventLog,
+        EventTypeID: sqlData.Event_AgIn_Relocate,
+        Log: JSON.stringify({
+          ...JSON.parse(this._eventLog.eventLog.Log),
+          InventoryTrackingNumber: node.ITN,
+          OrderLineNumber: node.OrderLineNumber,
+          Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
+          PartNumber: node.PartNumber,
+          ProductCode: node.ProductCode,
+          ProductTier: node.ProductTier,
+          Quantity: node.Quantity,
+          ParentITN: node.ParentITN,
+          WMSPriority: node.WMSPriority,
+        }),
+      };
+    });
     // set query for merp update.
     if (!this.outsetContainer.isRelocation) {
-      log.forEach((node) => {
+      oldLogs.forEach((node) => {
         node.Message = node.Message.substring(9);
         node.UserEventID = sqlData.Event_AgIn_Done;
+      });
+      eventLogs.forEach((node) => {
+        node.EventTypeID = sqlData.Event_AgIn_Done;
+        const message = JSON.parse(node.Log).Message;
+        node.Log = JSON.stringify({
+          ...JSON.parse(node.Log),
+          Message: message.substring(9),
+        });
       });
       updatequery['updateMerpLog'] = this._updateMerpLog.mutate({
         DistributionCenter: environment.DistributionCenter,
@@ -184,7 +213,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Action: 'line_aggregation_in',
       });
       if (this.endContainer.isLastLine) {
-        log.push({
+        oldLogs.push({
           UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
@@ -206,6 +235,10 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           WMSPriority: null,
           Priority: this.outsetContainer.Priority,
         });
+        eventLogs.push({
+          ...this._eventLog.eventLog,
+          EventTypeID: sqlData.Event_AgIn_OrderComplete,
+        });
         updatequery['updateMerpOrder'] = this._updateMerpOrder.mutate({
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
@@ -214,12 +247,11 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         });
       }
     }
-    updatequery['updateSql'] = this._updateLog.mutate(updateSqlQuery);
+    updatequery['updateSql'] = this._updatelocation.mutate(updateSqlQuery);
     // update infor to sql and merp
     this.isLoading = true;
     this.updateAfterAgIn$ = forkJoin(updatequery).pipe(
       // Emit Errors
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tap((res: any) => {
         let error: string;
         if (!res.updateStatus.data.updateOrderLineDetailList.length) {
@@ -228,18 +260,14 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         if (!res.updateSql.data.updateContainer.length) {
           error += `\nFail to update SQL Container.`;
         }
-        // if (
-        //   res.updateMerpOrder &&
-        //   !res.updateMerpOrder.data.updateMerpOrderStatus.success
-        // ) {
-        //   error += res.updateMerpOrder.data.updateMerpOrderStatus.message;
-        // }
         if (error)
           throw `${this.endContainer.OrderNumber}-${this.endContainer.NOSINumber}`.concat(
             error
           );
       }),
-
+      switchMap(() => {
+        return this._insertEventLog.mutate({ oldLogs, eventLogs });
+      }),
       // Navgate to first after update success
       map(() => {
         this._router.navigate(['agin'], {

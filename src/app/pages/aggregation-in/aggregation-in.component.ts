@@ -23,7 +23,8 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 @Component({
   selector: 'aggregation-in',
@@ -55,8 +56,9 @@ export class AggregationInComponent
     private _router: Router,
     private _titleService: Title,
     private _verifyContainer: VerifyContainerForAggregationInGQL,
-    private _insertEventlog: Insert_UserEventLogsGQL,
-    private _agInService: AggregationInService
+    private _insertEventlog: Create_EventLogsGQL,
+    private _agInService: AggregationInService,
+    private _eventLog: EventLogService
   ) {
     this._agInService.changeOutsetContainer(null);
     this._agInService.changeEndContainer(null);
@@ -68,6 +70,11 @@ export class AggregationInComponent
   ngOnInit(): void {
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
+    this._eventLog.initEventLog({
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      EventTypeID: sqlData.Event_AgIn_Start,
+      Log: '',
+    });
   }
   ngAfterViewInit(): void {
     this.containerInput.nativeElement.select();
@@ -131,7 +138,8 @@ export class AggregationInComponent
           return container;
         }),
         switchMap((container) => {
-          const logList = [];
+          const oldLogs = [];
+          const eventLogs = [];
           const outsetContainer: outsetContainer = {
             toteID: container._id,
             Barcode: container.Barcode,
@@ -173,8 +181,23 @@ export class AggregationInComponent
               });
             }
           });
+          this._eventLog.updateEventLog({
+            ...this._eventLog.eventLog,
+            Log: JSON.stringify({
+              OrderNumber: outsetContainer.OrderNumber,
+              NOSINumber: outsetContainer.NOSINumber,
+              CustomerNumber: outsetContainer.CustomerNumber,
+              CustomerTier: outsetContainer.CustomerTier,
+              DistributionCenter: environment.DistributionCenter,
+              ShipmentMethod: outsetContainer.ShipmentMethod,
+              ShipmentMethodDescription:
+                outsetContainer.ShipmentMethodDescription,
+              Priority: outsetContainer.Priority,
+              Message: `Start ${container.Barcode}`,
+            }),
+          });
           outsetContainer.ITNsInTote.forEach((item) => {
-            logList.push({
+            oldLogs.push({
               UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
               OrderNumber: outsetContainer.OrderNumber,
               NOSINumber: outsetContainer.NOSINumber,
@@ -196,11 +219,26 @@ export class AggregationInComponent
               Priority: outsetContainer.Priority,
               WMSPriority: item.WMSPriority,
             });
+            eventLogs.push({
+              ...this._eventLog.eventLog,
+              Log: JSON.stringify({
+                ...JSON.parse(this._eventLog.eventLog.Log),
+                OrderLineNumber: item.OrderLineNumber,
+                InventoryTrackingNumber: item.ITN,
+                PartNumber: item.PartNumber,
+                ProductCode: item.ProductCode,
+                ProductTier: item.ProductTier,
+                Quantity: item.Quantity,
+                ParentITN: item.ParentITN,
+                WMSPriority: item.WMSPriority,
+              }),
+            });
           });
           // if pass all naveigate to next page
           this._agInService.changeOutsetContainer(outsetContainer);
           return this._insertEventlog.mutate({
-            log: logList,
+            oldLogs,
+            eventLogs,
           });
         }),
         map(() => {

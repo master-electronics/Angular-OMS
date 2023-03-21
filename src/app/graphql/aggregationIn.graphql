@@ -100,7 +100,6 @@ mutation updateAfterAgOut(
   $DistributionCenter: String!
   $OrderNumber: String!
   $NOSINumber: String!
-  $log: [insertUserEventLog]!
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
@@ -109,15 +108,8 @@ mutation updateAfterAgOut(
   $Action: String!
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
-
   updateOrder(_id: $OrderID, Order: { isSelected: 0 })
-
-  insertUserEventLogs(log: $log) {
-    _id
-  }
-
   # deleteAndInsertRouteTable(lpnList: $toteList)
-
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber
@@ -156,15 +148,11 @@ mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
   )
 }
 
-mutation updateLocationAndLogAfterAgIn(
+mutation updateLocationAfterAgIn(
   $ContainerID: Int!
   $Container: updateContainer!
-  $log: [insertUserEventLog]!
 ) {
   updateContainer(_id: $ContainerID, Container: $Container)
-  insertUserEventLogs(log: $log) {
-    _id
-  }
 }
 
 mutation updateMerpWMSLog(

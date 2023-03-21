@@ -2731,9 +2731,6 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   DistributionCenter: Types.Scalars['String'];
   OrderNumber: Types.Scalars['String'];
   NOSINumber: Types.Scalars['String'];
-  log:
-    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
-    | Types.InputMaybe<Types.InsertUserEventLog>;
   MerpStatus: Types.Scalars['String'];
   UserOrStatus: Types.Scalars['String'];
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
@@ -2745,10 +2742,6 @@ export type UpdateAfterAgOutMutation = {
   __typename?: 'Mutation';
   updateOrderLineDetail?: Array<number | null> | null;
   updateOrder?: Array<number | null> | null;
-  insertUserEventLogs?: Array<{
-    __typename?: 'UserEventLog';
-    _id: number;
-  } | null> | null;
   updateMerpOrderStatus: {
     __typename?: 'Response';
     success: boolean;
@@ -2783,21 +2776,14 @@ export type UpdateStatusAfterAgInMutation = {
   updateOrderLineDetailList?: Array<number | null> | null;
 };
 
-export type UpdateLocationAndLogAfterAgInMutationVariables = Types.Exact<{
+export type UpdateLocationAfterAgInMutationVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
   Container: Types.UpdateContainer;
-  log:
-    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
-    | Types.InputMaybe<Types.InsertUserEventLog>;
 }>;
 
-export type UpdateLocationAndLogAfterAgInMutation = {
+export type UpdateLocationAfterAgInMutation = {
   __typename?: 'Mutation';
   updateContainer?: Array<number | null> | null;
-  insertUserEventLogs?: Array<{
-    __typename?: 'UserEventLog';
-    _id: number;
-  } | null> | null;
 };
 
 export type UpdateMerpWmsLogMutationVariables = Types.Exact<{
@@ -3080,7 +3066,6 @@ export const UpdateAfterAgOutDocument = gql`
     $DistributionCenter: String!
     $OrderNumber: String!
     $NOSINumber: String!
-    $log: [insertUserEventLog]!
     $MerpStatus: String!
     $UserOrStatus: String!
     $FileKeyList: [String!]!
@@ -3089,9 +3074,6 @@ export const UpdateAfterAgOutDocument = gql`
   ) {
     updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
     updateOrder(_id: $OrderID, Order: { isSelected: 0 })
-    insertUserEventLogs(log: $log) {
-      _id
-    }
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
@@ -3173,27 +3155,23 @@ export class UpdateStatusAfterAgInGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
-export const UpdateLocationAndLogAfterAgInDocument = gql`
-  mutation updateLocationAndLogAfterAgIn(
+export const UpdateLocationAfterAgInDocument = gql`
+  mutation updateLocationAfterAgIn(
     $ContainerID: Int!
     $Container: updateContainer!
-    $log: [insertUserEventLog]!
   ) {
     updateContainer(_id: $ContainerID, Container: $Container)
-    insertUserEventLogs(log: $log) {
-      _id
-    }
   }
 `;
 
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateLocationAndLogAfterAgInGQL extends Apollo.Mutation<
-  UpdateLocationAndLogAfterAgInMutation,
-  UpdateLocationAndLogAfterAgInMutationVariables
+export class UpdateLocationAfterAgInGQL extends Apollo.Mutation<
+  UpdateLocationAfterAgInMutation,
+  UpdateLocationAfterAgInMutationVariables
 > {
-  document = UpdateLocationAndLogAfterAgInDocument;
+  document = UpdateLocationAfterAgInDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
