@@ -9,6 +9,7 @@ import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { PartResolver } from './utils/resolver/part.resolver';
 import { LogService } from './data/eventLog';
 import { kickoutService } from './data/kickout';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -24,6 +25,7 @@ export const ReceivingRoutes: Routes = [
       LogService,
       kickoutService,
       ReceiptGuard,
+      EventLogService,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),

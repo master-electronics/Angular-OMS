@@ -160,10 +160,10 @@ export class ReceiptInfoService {
       ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
     });
     this._eventLog.updateEventLog({
-      ...this._eventLog.eventLog,
+      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
       EventTypeID: sqlData.Event_Receiving_Start,
       Log: JSON.stringify({
-        ...JSON.parse(this._eventLog.eventLog.Log),
+        ReceiptHeader: this.headerID,
         PartNumber: tmp[0].Product.PartNumber,
         ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
       }),
