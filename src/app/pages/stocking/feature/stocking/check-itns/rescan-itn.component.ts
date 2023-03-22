@@ -50,8 +50,9 @@ export class RescanItnComponent implements OnInit {
       this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
       return;
     }
-    if (this._stock.verifiedItns.length !== this._stock.ITNList.length) {
+    if (this._stock.verifiedItns?.length !== this._stock.ITNList.length) {
       this._router.navigate(['../checkitns'], { relativeTo: this._actRoute });
+      return;
     }
     this._router.navigate(['../user'], { relativeTo: this._actRoute });
   }

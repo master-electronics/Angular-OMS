@@ -5,13 +5,14 @@ import {
   FetchItnInfoByContainerforStockingGQL,
   MoveInventoryToContainerForStockingGQL,
   UpdateNotFoundForStockingGQL,
-  VerifyItnForStockingGQL,
+  VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { SortingService } from './sorting.service';
 
 export interface ITNinfo {
   _id: number;
@@ -26,12 +27,13 @@ export interface ITNinfo {
 export class StockingService {
   constructor(
     private _userC: UserContainerService,
-    private _verifyITN: VerifyItnForStockingGQL,
+    private _verifyITN: VerifyItnForSortingGQL,
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
     private _insertLog: Insert_UserEventLogsGQL,
-    private _ItnInUser: FetchInventoryInUserContainerGQL
+    private _ItnInUser: FetchInventoryInUserContainerGQL,
+    private _sort: SortingService
   ) {}
 
   private _currentITN = new BehaviorSubject<ITNinfo>(null);
@@ -53,7 +55,7 @@ export class StockingService {
     this._ITNList.next(list);
   }
 
-  private _verifiedItns = new BehaviorSubject<ITNinfo[]>([]);
+  private _verifiedItns = new BehaviorSubject<string[]>([]);
   public get verifiedItns() {
     return this._verifiedItns.value;
   }
@@ -61,13 +63,14 @@ export class StockingService {
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
   public addVerifiedItns(itn: ITNinfo) {
-    const currentList = this._verifiedItns.value;
-    if (!currentList?.length) {
-      this._verifiedItns.next([itn]);
+    if (!this.verifiedItns?.length) {
+      this._verifiedItns.next([itn.ITN]);
       return;
     }
-    const set = [...new Map(currentList.map((itn) => [itn.ITN, itn])).values()];
-    this._verifiedItns.next(set);
+    const tmp = this.verifiedItns;
+    tmp.push(itn.ITN);
+    const set = new Set(tmp);
+    this._verifiedItns.next([...set]);
   }
 
   public reset(): void {
@@ -97,7 +100,6 @@ export class StockingService {
             throw new Error('Container not found');
           }
         }),
-
         switchMap((res) => {
           const inventory = res.data.findInventory;
           const ITNInfo = {
@@ -109,13 +111,29 @@ export class StockingService {
             ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
           };
           this._currentITN.next(ITNInfo);
+          // insert itn to list when input ITN as target.
+          if (!this.ITNList) {
+            this._verifiedItns.next([ITNInfo.ITN]);
+            this.updateItnList([ITNInfo]);
+          }
+          // update sorting info
+          this._sort.changeSortingInfo({
+            ITN,
+            ProductID: inventory.Product._id,
+            InventoryID: inventory._id,
+            ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
+            PartNumber: inventory.Product.PartNumber,
+            QuantityOnHand: inventory.QuantityOnHand,
+            Velocity: inventory.Product.DCPRODUCTs[0]?.Velocity,
+            Remaining: null,
+            ProductType: null,
+          });
           return this._move.mutate({
             ITN: this.currentITN.ITN,
             DC: environment.DistributionCenter,
             ContainerID: this._userC.userContainerID,
           });
         }),
-
         switchMap(() =>
           this._insertLog.mutate({
             log: {
@@ -170,6 +188,11 @@ export class StockingService {
               productID: item.Product._id,
             };
           });
+          Logger.devOnly(
+            'stockingService',
+            'findITNsInLocation',
+            ITNList.length
+          );
           const log = {
             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
             UserEventID: sqlData.Event_Stocking_ScanLocation,

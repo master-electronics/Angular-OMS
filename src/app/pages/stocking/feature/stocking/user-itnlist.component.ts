@@ -14,7 +14,6 @@ import { ItnListComponent } from '../../ui/itn-list.component';
     <submit-button
       buttonText="Continue"
       (buttonClick)="onSubmit()"
-      )
     ></submit-button>
   `,
 })

@@ -6,7 +6,6 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { StockingService } from '../../data/stocking.service';
 import { of } from 'rxjs';
-import { Logger } from 'src/app/shared/services/logger.service';
 
 @Component({
   standalone: true,

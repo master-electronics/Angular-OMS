@@ -2705,26 +2705,6 @@ export type FetchItnInfoByContainerforStockingQuery = {
   } | null;
 };
 
-export type VerifyItnForStockingQueryVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-}>;
-
-export type VerifyItnForStockingQuery = {
-  __typename?: 'Query';
-  findInventory?: {
-    __typename?: 'Inventory';
-    _id: number;
-    QuantityOnHand: number;
-    Product: {
-      __typename?: 'Product';
-      _id: number;
-      PartNumber: string;
-      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
-    };
-  } | null;
-};
-
 export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
   ITN: Types.Scalars['String'];
   DC: Types.Scalars['String'];
@@ -2905,37 +2885,6 @@ export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<
   FetchItnInfoByContainerforStockingQueryVariables
 > {
   document = FetchItnInfoByContainerforStockingDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const VerifyItnForStockingDocument = gql`
-  query verifyITNForStocking($ITN: String!, $DC: String!) {
-    findInventory(
-      Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
-    ) {
-      _id
-      QuantityOnHand
-      Product {
-        _id
-        ProductCode {
-          ProductCodeNumber
-        }
-        PartNumber
-      }
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class VerifyItnForStockingGQL extends Apollo.Query<
-  VerifyItnForStockingQuery,
-  VerifyItnForStockingQueryVariables
-> {
-  document = VerifyItnForStockingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

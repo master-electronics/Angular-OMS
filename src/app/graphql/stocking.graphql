@@ -71,22 +71,6 @@ query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
   }
 }
 
-query verifyITNForStocking($ITN: String!, $DC: String!) {
-  findInventory(
-    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
-  ) {
-    _id
-    QuantityOnHand
-    Product {
-      _id
-      ProductCode {
-        ProductCodeNumber
-      }
-      PartNumber
-    }
-  }
-}
-
 mutation moveInventoryToContainerForStocking(
   $ITN: String!
   $DC: String!

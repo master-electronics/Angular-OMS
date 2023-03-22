@@ -82,7 +82,7 @@ export class MismatchComponent implements OnInit {
     this.unverifiedITNs = this.unverifiedITNs.filter((itn) => {
       const isequal = itn.ITN !== input;
       if (isequal) {
-        this.verifiedITNs.push(itn);
+        this.verifiedITNs.push(itn.ITN);
       }
       return isequal;
     });

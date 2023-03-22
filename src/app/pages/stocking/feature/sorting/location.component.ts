@@ -77,7 +77,6 @@ export class LocationComponent implements OnInit {
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
     this.data$ = this._sort.moveItn$(Barcode).pipe(
       map(() => {
-        // if there ITNList is not null, move to rescanitn page.
         if (this._stock.ITNList) {
           this._router.navigate(['../rescanitn'], {
             relativeTo: this._actRoute,

@@ -23,7 +23,7 @@ import { StockingService } from '../../../data/stocking.service';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title="Scan ITN: {{ _stock.verifiedItns?.length || 0 + 1 }} of {{
+      title="Scan ITN: {{ _stock.verifiedItns?.length + 1 }} of {{
         _stock.ITNList.length
       }}"
     ></single-input-form>
@@ -53,21 +53,23 @@ export class ScanItnComponent implements OnInit {
      * Search itn in the location itn list, If found unpdate current itn.
      * Then go to location page.
      */
+    let tmp;
     const isInList = this._stock.ITNList.some((itn, index) => {
       if (itn.ITN === input) {
-        this._stock.addVerifiedItns(itn);
-        this._stock.updateCurrentItn(itn);
+        tmp = itn;
         return true;
       }
       return false;
     });
     if (isInList) {
       this.data$ = this._sort.verifyITN$(input).pipe(
-        map(() =>
+        map(() => {
+          this._stock.addVerifiedItns(tmp);
+          this._stock.updateCurrentItn(tmp);
           this._router.navigate(['../location'], {
             relativeTo: this._actRoute,
-          })
-        ),
+          });
+        }),
         catchError((error) =>
           of({
             error: { message: error.message, name: 'error' },
