@@ -131,6 +131,7 @@ const routes: Routes = [
       },
       {
         path: 'stocking',
+        canActivate: [PrinterGuard],
         loadChildren: () =>
           import('./pages/stocking/stocking.routing').then(
             (m) => m.StockingRoutes

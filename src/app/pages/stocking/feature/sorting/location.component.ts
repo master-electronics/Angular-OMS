@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
+import { catchError, combineLatest, map, of, shareReplay, tap } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { SortingService } from '../../data/sorting.service';
@@ -33,8 +33,8 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
       <printer-button
         class=" absolute bottom-2 right-2 h-10 w-10"
         [ITN]="info.info.ITN"
-        [PRODUCTCODE]="info.info.ProductCode"
-        [PARTNUMBER]="info.info.PartNumber"
+        [PRODUCTCODE]="this.ProductCode"
+        [PARTNUMBER]="info.info.PN"
       ></printer-button>
     </ng-container>
   `,
@@ -49,21 +49,19 @@ export class LocationComponent implements OnInit {
   ) {}
 
   public data$;
+  public ProductCode = '';
   public inputForm = this._fb.nonNullable.group({
     location: ['', [Validators.required]],
   });
   public info$ = combineLatest([
     this._sort.sortingInfo$.pipe(
+      tap((res) => (this.ProductCode = res.ProductCode)),
       map((res) => ({
         ITN: res.ITN,
-        ProductCode: res.ProductCode,
-        PartNumber: res.PartNumber,
-        Quantity: res.QuantityOnHand,
-        ProductType: res.ProductType,
-        Velocity: res.Velocity,
-        // Remaining: res.Remaining,
-        // Autostore Months Supply: ''
-        // OMS Months Supply: ''
+        PN: res.PartNumber,
+        PT: res.ProductType,
+        Qty: res.QuantityOnHand,
+        Vty: res.Velocity,
       }))
     ),
     this._actRoute.data.pipe(map((res) => res.locations)),
