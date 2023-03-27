@@ -33,6 +33,8 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
       <printer-button
         class=" absolute bottom-2 right-2 h-10 w-10"
         [ITN]="info.info.ITN"
+        [PRODUCTCODE]="info.info.ProductCode"
+        [PARTNUMBER]="info.info.PartNumber"
       ></printer-button>
     </ng-container>
   `,

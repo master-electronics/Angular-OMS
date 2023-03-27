@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Resolve, Router } from '@angular/router';
-import { catchError } from 'rxjs';
+import { catchError, tap } from 'rxjs';
 import { StockingService } from '../../data/stocking.service';
 
 @Injectable()
@@ -12,8 +12,11 @@ export class UserItnlistResolver implements Resolve<any> {
   ) {}
   resolve() {
     return this._stocking.ItnInUserContainer$().pipe(
+      tap((res) => {
+        console.log(res);
+      }),
       catchError((error) => {
-        this._router.navigate(['../scantarget'], {
+        this._router.navigate(['../stocking/scantarget'], {
           relativeTo: this._actRoute,
         });
         return error;

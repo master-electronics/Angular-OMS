@@ -15,8 +15,8 @@ import { Component, Input } from '@angular/core';
         *ngFor="let itn of ItnList"
         class="grid grid-cols-2 justify-items-center"
       >
-        <td>{{ itn.ITN }}</td>
-        <td>{{ itn.Quantity }}</td>
+        <td>{{ itn.InventoryTrackingNumber }}</td>
+        <td>{{ itn.QuantityOnHand }}</td>
       </tr>
     </table>
   `,
