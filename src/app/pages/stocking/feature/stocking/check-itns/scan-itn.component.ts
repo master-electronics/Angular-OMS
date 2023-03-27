@@ -17,6 +17,7 @@ import { StockingService } from '../../../data/stocking.service';
     ReactiveFormsModule,
   ],
   template: `
+    <h1 class="flex justify-center text-xl font-bold lg:text-4xl">Put Away</h1>
     <single-input-form
       (formSubmit)="onSubmit()"
       (formBack)="onBack()"

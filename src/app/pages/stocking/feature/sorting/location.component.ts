@@ -58,9 +58,12 @@ export class LocationComponent implements OnInit {
         ITN: res.ITN,
         ProductCode: res.ProductCode,
         PartNumber: res.PartNumber,
-        Remaining: res.Remaining,
+        Quantity: res.QuantityOnHand,
         ProductType: res.ProductType,
         Velocity: res.Velocity,
+        // Remaining: res.Remaining,
+        // Autostore Months Supply: ''
+        // OMS Months Supply: ''
       }))
     ),
     this._actRoute.data.pipe(map((res) => res.locations)),
