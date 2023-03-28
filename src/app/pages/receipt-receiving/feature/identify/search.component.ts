@@ -85,10 +85,10 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
         </div>
       </div>
     </form>
-    <simple-keyboard
+    <!-- <simple-keyboard
       [inputString]="this.currentInputFied?.value"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class SearchComponent implements OnInit {

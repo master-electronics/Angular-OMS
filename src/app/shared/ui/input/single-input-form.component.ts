@@ -19,7 +19,6 @@ import {
 } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { tap } from 'rxjs';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
@@ -50,13 +49,12 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
           <div class="relative grow">
             <input
               [formControlName]="controlName"
-              oninput="this.value = this.value.toUpperCase()"
-              [ngClass]="
+              [ngClass]="[
                 inputForm.get(controlName).invalid &&
                 inputForm.get(controlName).dirty
                   ? 'border-red-500'
                   : 'border-blue-500'
-              "
+              ]"
               class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
               [id]="controlName"
               [type]="inputType"
@@ -156,5 +154,9 @@ export class SingleInputformComponent implements OnInit {
 
   public onBack(): void {
     this.formBack.emit();
+  }
+
+  public textTrans(event) {
+    console.log(event);
   }
 }

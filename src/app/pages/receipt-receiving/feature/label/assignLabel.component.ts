@@ -121,11 +121,11 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
         <normal-button (buttonClick)="onBack()"></normal-button>
       </div>
     </form>
-    <simple-keyboard
+    <!-- <simple-keyboard
       layout="number"
       [inputString]="this.currentInputFied?.value"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
 
     <ng-container *ngIf="popup">
       <auth-modal

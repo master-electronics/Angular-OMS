@@ -44,11 +44,11 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
         (buttonClick)="onSearch()"
       ></green-button>
     </div>
-    <simple-keyboard
+    <!-- <simple-keyboard
       layout="number"
       [inputString]="inputForm.value.receipt"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class ReceiptComponent implements OnInit {

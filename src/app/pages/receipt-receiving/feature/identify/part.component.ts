@@ -42,10 +42,10 @@ import { LocationStrategy } from '@angular/common';
         <popup-modal (clickSubmit)="onBack()" [message]="data"></popup-modal>
       </ng-container>
     </ng-container>
-    <simple-keyboard
+    <!-- <simple-keyboard
       [inputString]="inputForm.value.partNumber"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class PartComponent implements OnInit {

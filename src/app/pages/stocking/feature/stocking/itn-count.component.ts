@@ -26,11 +26,11 @@ import { of } from 'rxjs';
       inputType="number"
       title="Enter ITN Count"
     ></single-input-form>
-    <simple-keyboard
+    <!-- <simple-keyboard
       layout="number"
       [inputString]="inputForm.value.itn"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class ITNCountComponent implements OnInit {

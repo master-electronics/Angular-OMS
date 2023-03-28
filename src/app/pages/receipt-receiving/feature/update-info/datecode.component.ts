@@ -56,11 +56,11 @@ import { DatecodeService } from 'src/app/shared/data/datecode';
       ></normal-button>
       <div></div>
     </div>
-    <simple-keyboard
+    <!-- <simple-keyboard
       layout="number"
       [inputString]="inputForm.value.dateCode"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
     <ng-container *ngIf="popup">
       <auth-modal
         message="Allow Empty DateCode!"

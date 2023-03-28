@@ -45,11 +45,11 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         ></message-bar>
       </ng-container>
     </div>
-    <simple-keyboard
+    <!-- <simple-keyboard
       [inputString]="inputForm.value.quantity"
       layout="number"
       (outputString)="onChange($event)"
-    ></simple-keyboard>
+    ></simple-keyboard> -->
   `,
 })
 export class QuantityComponent implements OnInit {
