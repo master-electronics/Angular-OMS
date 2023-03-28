@@ -1,16 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
@@ -88,7 +84,6 @@ export class DateCodeComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _datecode: DatecodeService,
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
     private _update: updateReceiptInfoService,
@@ -100,24 +95,8 @@ export class DateCodeComponent implements OnInit {
     this._ui.changeSteps(2);
     this.data$ = of(true);
     this.inputForm = this._fb.group({
-      dateCode: ['', [Validators.required, this.checkDateCode()]],
+      dateCode: ['', [Validators.required, this._update.checkDateCode()]],
     });
-  }
-
-  public checkDateCode(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      if (!value) {
-        return null;
-      }
-      if (!DefalutDateCode.test(value)) {
-        return { format: true };
-      }
-      if (Number(value) > this._datecode.currentDatecode) {
-        return { value: true };
-      }
-      return null;
-    };
   }
 
   passAuth(Supervisor: string): void {

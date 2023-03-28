@@ -8,8 +8,6 @@ import {
   ViewChild,
   ElementRef,
   ChangeDetectionStrategy,
-  OnChanges,
-  SimpleChanges,
 } from '@angular/core';
 import {
   ControlContainer,

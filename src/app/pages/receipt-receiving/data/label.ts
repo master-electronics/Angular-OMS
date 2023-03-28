@@ -28,9 +28,19 @@ import { updateReceiptInfoService } from './updateReceipt';
 export interface ITNinfo {
   ITN: string;
   quantity: number;
-  datecode: string;
   BinLocation: string;
   ContainerID: number;
+  datecode: string;
+  countryID: number;
+  ISO3: string;
+}
+
+export interface AssignLabelInfo {
+  datecode: string;
+  country: {
+    countryID: number;
+    ISO3: string;
+  };
 }
 
 @Injectable()
@@ -59,16 +69,19 @@ export class LabelService {
   }
 
   /**
-   * save datecode list after assign label
+   * save itn info list after assign label
    */
-  private _datecodeList = new BehaviorSubject<string[]>(null);
-  public get datecodeList(): string[] {
-    return this._datecodeList.value;
+  private _assignLabelInfo = new BehaviorSubject<AssignLabelInfo[]>(null);
+  public get assignLabelInfo(): AssignLabelInfo[] {
+    return this._assignLabelInfo.value;
   }
-  public changeDatecodeList(list: string[]) {
-    this._datecodeList.next(list);
+  public changeassignLabelInfo(list: AssignLabelInfo[]) {
+    this._assignLabelInfo.next(list);
   }
 
+  /**
+   * insert itninfo after each itn number is created
+   */
   private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
   public get ITNList$() {
     return this._ITNList.asObservable();
@@ -121,7 +134,10 @@ export class LabelService {
         tap((res) => {
           this.insertITNList({
             quantity: this.quantityList[this.ITNList?.length | 0],
-            datecode: this.datecodeList[this.ITNList?.length | 0],
+            datecode: this.assignLabelInfo[this.ITNList?.length | 0].datecode,
+            countryID:
+              this.assignLabelInfo[this.ITNList?.length | 0].country.countryID,
+            ISO3: this.assignLabelInfo[this.ITNList?.length | 0].country.ISO3,
             ITN: res.data.createITN,
             BinLocation: '',
             ContainerID: 0,
@@ -200,12 +216,10 @@ export class LabelService {
       DistributionCenter: environment.DistributionCenter,
       ProductID: line.ProductID,
       ROHS: this._partInfo.receiptInfo.ROHS,
-      CountryID: this._partInfo.receiptInfo.CountryID,
     };
     const info = {
       PartNumber: line.Product?.PartNumber || 'null',
       ProductCode: line.Product?.ProductCode.ProductCodeNumber || 'null',
-      CountryOfOrigin: this._partInfo.receiptInfo.ISO3,
       User: JSON.parse(userinfo)?.username,
       CreatingProgram: 'OMS-Receiving',
       PurchaseOrderNumber:

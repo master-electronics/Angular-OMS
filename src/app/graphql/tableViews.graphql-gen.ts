@@ -193,8 +193,10 @@ export type HoldOnCounter = {
 export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
+  ISO3: Scalars['String'];
   ITN: Scalars['String'];
-  datecode?: InputMaybe<Scalars['String']>;
+  countryID: Scalars['Int'];
+  datecode: Scalars['String'];
   quantity: Scalars['Float'];
 };
 
@@ -403,7 +405,6 @@ export type Inventory = {
 };
 
 export type InventoryForMerp = {
-  CountryOfOrigin: Scalars['String'];
   CreatingProgram: Scalars['String'];
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];

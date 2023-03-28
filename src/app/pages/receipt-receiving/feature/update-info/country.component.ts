@@ -24,6 +24,7 @@ import {
   of,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { SearchListInputComponent } from '../../ui/search-list-input.component';
 import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
@@ -91,11 +92,11 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 })
 export class CountryComponent implements OnInit {
   public countryList$;
-  public countryInfo;
+  private countryInfo;
   public data$: Observable<any>;
   public popup = false;
   public inputForm = this._fb.group({
-    country: ['', [Validators.required], [this.countryValidator()]],
+    country: ['', [Validators.required], [this._info.countryValidator()]],
   });
 
   constructor(
@@ -109,10 +110,11 @@ export class CountryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this._step.changeSteps(2);
     this._info.initReceiptInfo();
     this.countryList$ = this.inputForm.valueChanges.pipe(
       map((res) => res.country),
-      debounceTime(300),
+      debounceTime(100),
       distinctUntilChanged(),
       switchMap((searchQuery) => {
         return this._country.countryList$.pipe(
@@ -133,6 +135,8 @@ export class CountryComponent implements OnInit {
             });
           }),
           map((res) => {
+            // save value for upate info
+            this.countryInfo = res[0];
             return res.slice(0, 5).map((country) => ({
               name:
                 country.ISO2 +
@@ -147,62 +151,6 @@ export class CountryComponent implements OnInit {
         );
       })
     );
-    this._step.changeSteps(2);
-  }
-
-  countryValidator(): AsyncValidatorFn {
-    return (control: AbstractControl) => {
-      return this._country.countryList$.pipe(
-        map((res) => {
-          return res.map((country) => ({
-            name:
-              country.ISO2 +
-              ' - ' +
-              country.ISO3 +
-              ' - ' +
-              country.CountryName +
-              ' - ' +
-              country._id,
-          }));
-        }),
-        map((list) => {
-          if (control.value.trim().length === 2) {
-            return list.some((country) => {
-              if (
-                country.name.substring(0, 2).toLocaleUpperCase() ===
-                control.value.trim().toLocaleUpperCase()
-              ) {
-                this.countryInfo = country.name;
-                return true;
-              }
-              return false;
-            });
-          }
-          if (control.value.trim().length === 3) {
-            return list.some((country) => {
-              if (
-                country.name.substring(5, 8).toLocaleUpperCase() ===
-                control.value.trim().toLocaleUpperCase()
-              ) {
-                this.countryInfo = country.name;
-                return true;
-              }
-              return false;
-            });
-          }
-          if (control.value.trim().length > 6) {
-            return list.some(
-              (country) =>
-                country.name.trim().toLocaleUpperCase() ===
-                control.value.trim().toLocaleUpperCase()
-            );
-          }
-          return false;
-        }),
-        map((res) => (!res ? { notExist: true } : null)),
-        take(1)
-      );
-    };
   }
 
   onChange(input: string) {
@@ -210,15 +158,16 @@ export class CountryComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.countryInfo) {
-      this.countryInfo = this.inputForm.value.country;
+    if (this.countryInfo) {
+      this._info.updateCountry(this.countryInfo._id, this.countryInfo.ISO3);
+    } else {
+      const [iso2, iso3, , id] = this.inputForm.value.country.split(' - ');
+      this._info.updateCountry(Number(id), iso3);
     }
-    const [iso2, iso3, , id] = this.countryInfo.split(' - ');
-    if (iso2 === 'UN') {
+    if (this._info.receiptInfo.ISO3 === 'UNK') {
       this.popup = true;
       return;
     }
-    this._info.updateCountry(Number(id), iso3);
     this._router.navigateByUrl('receiptreceiving/update/datecode');
   }
 

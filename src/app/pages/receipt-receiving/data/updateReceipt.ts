@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
+import { BehaviorSubject, map, switchMap, take } from 'rxjs';
 import { ReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { CountryListService } from 'src/app/shared/data/countryList';
+import { DatecodeService } from 'src/app/shared/data/datecode';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
@@ -22,7 +31,9 @@ export class updateReceiptInfoService {
     private _receipt: ReceiptInfoService,
     private _log: LogService,
     private _insertLog: Create_EventLogsGQL,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _country: CountryListService,
+    private _datecode: DatecodeService
   ) {}
   /**
    * Store info for update receipt
@@ -75,6 +86,75 @@ export class updateReceiptInfoService {
       ...this._receiptInfo.value,
       ROHS,
     });
+  }
+
+  public checkDateCode(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      if (!DefalutDateCode.test(value)) {
+        return { format: true };
+      }
+      if (Number(value) > this._datecode.currentDatecode) {
+        return { value: true };
+      }
+      return null;
+    };
+  }
+
+  public countryValidator(): AsyncValidatorFn {
+    return (control: AbstractControl) => {
+      return this._country.countryList$.pipe(
+        map((res) => {
+          return res.map((country) => ({
+            name:
+              country.ISO2 +
+              ' - ' +
+              country.ISO3 +
+              ' - ' +
+              country.CountryName +
+              ' - ' +
+              country._id,
+          }));
+        }),
+        map((list) => {
+          if (control.value.length === 2) {
+            return list.some((country) => {
+              if (
+                country.name.substring(0, 2).toLocaleUpperCase() ===
+                control.value.toLocaleUpperCase()
+              ) {
+                return true;
+              }
+              return false;
+            });
+          }
+          if (control.value.length === 3) {
+            return list.some((country) => {
+              if (
+                country.name.substring(5, 8).toLocaleUpperCase() ===
+                control.value.trim().toLocaleUpperCase()
+              ) {
+                return true;
+              }
+              return false;
+            });
+          }
+          if (control.value.length > 6) {
+            return list.some(
+              (country) =>
+                country.name.toLocaleUpperCase() ===
+                control.value.toLocaleUpperCase()
+            );
+          }
+          return false;
+        }),
+        map((res) => (!res ? { notExist: true } : null)),
+        take(1)
+      );
+    };
   }
 
   public updateReceiptLSQL() {
