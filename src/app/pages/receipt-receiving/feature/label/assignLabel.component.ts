@@ -215,6 +215,7 @@ export class AssignLabelComponent implements OnInit {
     if (this.listOfControl.length > 1) {
       const index = this.listOfControl.indexOf(i);
       this.listOfControl.splice(index, 1);
+      this.listOfInfo.splice(index, 1);
       this.inputForm.removeControl(i.controlInstance.quantity);
     }
   }
