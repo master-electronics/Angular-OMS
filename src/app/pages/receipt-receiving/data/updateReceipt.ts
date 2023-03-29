@@ -19,9 +19,9 @@ import { ReceiptInfoService } from './ReceiptInfo';
 interface ReceiptInfo {
   ReceiptLIDs: number[];
   DateCode?: string;
-  CountryID?: number;
-  ROHS?: boolean;
-  ISO3?: string;
+  CountryID: number;
+  ROHS: boolean;
+  ISO3: string;
 }
 
 @Injectable()
@@ -59,6 +59,10 @@ export class updateReceiptInfoService {
     );
     this._receiptInfo.next({
       ReceiptLIDs,
+      DateCode: '',
+      CountryID: null,
+      ROHS: null,
+      ISO3: '',
     });
   }
 
@@ -71,7 +75,7 @@ export class updateReceiptInfoService {
   /**
    * updateCountryID
    */
-  public updateCountry(CountryID?: number, ISO3?: string): void {
+  public updateCountry(CountryID: number, ISO3: string): void {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
       CountryID,

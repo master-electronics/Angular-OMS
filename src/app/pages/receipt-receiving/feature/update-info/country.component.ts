@@ -162,6 +162,9 @@ export class CountryComponent implements OnInit {
       this._info.updateCountry(this.countryInfo._id, this.countryInfo.ISO3);
     } else {
       const [iso2, iso3, , id] = this.inputForm.value.country.split(' - ');
+      if (!iso3 || !id) {
+        return;
+      }
       this._info.updateCountry(Number(id), iso3);
     }
     if (this._info.receiptInfo.ISO3 === 'UNK') {

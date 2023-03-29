@@ -41,65 +41,67 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
       absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
     >
       <div class="relative h-full w-4/5 text-lg md:h-auto md:w-2/3 lg:w-1/2">
-        <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
-          <!-- Date code input field -->
-          <div class="flex gap-2 md:grid">
-            <!-- Datecode -->
-            <label class="mb-0.5 font-bold text-gray-700" for="datecode">
-              DateCode:
-            </label>
-            <div class="relative grow">
-              <input
-                formControlName="datecode"
-                class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-                id="datecode"
-                type="text"
-                autocomplete="off"
-                placeholder="DateCode"
-                #datecode
-              />
-              <!-- error mesage -->
-              <div
-                *ngIf="
-                  editForm.get('datecode').invalid &&
-                    editForm.get('datecode').dirty;
-                  else NonError
-                "
-                class="italic text-red-500"
-              >
-                <div *ngFor="let validator of datecodeValidators">
-                  <div
-                    *ngIf="editForm.get('datecode').errors?.[validator.name]"
-                  >
-                    {{ validator.message }}
+        <div class="relative rounded-lg bg-white shadow">
+          <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="p-6">
+            <!-- Date code input field -->
+            <div class="flex gap-2 md:grid">
+              <!-- Datecode -->
+              <label class="mb-0.5 font-bold text-gray-700" for="datecode">
+                DateCode:
+              </label>
+              <div class="relative grow">
+                <input
+                  formControlName="datecode"
+                  class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                  id="datecode"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="DateCode"
+                  #datecode
+                />
+                <!-- error mesage -->
+                <div
+                  *ngIf="
+                    editForm.get('datecode').invalid &&
+                      editForm.get('datecode').dirty;
+                    else NonError
+                  "
+                  class="italic text-red-500"
+                >
+                  <div *ngFor="let validator of datecodeValidators">
+                    <div
+                      *ngIf="editForm.get('datecode').errors?.[validator.name]"
+                    >
+                      {{ validator.message }}
+                    </div>
                   </div>
                 </div>
+                <ng-template #NonError>
+                  <div class="opacity-0 ">no error</div>
+                </ng-template>
               </div>
-              <ng-template #NonError>
-                <div class="opacity-0 ">no error</div>
-              </ng-template>
+
+              <!-- Country input field -->
+              <label class="mb-0.5 block font-bold text-gray-700" for="country">
+                Country
+              </label>
+              <search-list-input
+                (formSubmit)="onSubmit()"
+                controlName="country"
+                [dataSource]="countryList$ | async"
+              ></search-list-input>
             </div>
 
-            <!-- Country input field -->
-            <label class="mb-0.5 block font-bold text-gray-700" for="country">
-              Country
-            </label>
-            <search-list-input
-              (formSubmit)="onSubmit()"
-              controlName="country"
-              [dataSource]="countryList$ | async"
-            ></search-list-input>
-          </div>
-
-          <!-- button area -->
-          <div class="grid h-16 grid-cols-3  gap-10 text-xl">
-            <submit-button [disabled]="editForm.invalid"> </submit-button>
-            <normal-button
-              class="col-start-3"
-              (buttonClick)="onCancel()"
-            ></normal-button>
-          </div>
-        </form>
+            <!-- button area -->
+            <div class="grid h-16 grid-cols-3  gap-10 text-xl">
+              <submit-button [disabled]="editForm.invalid"> </submit-button>
+              <normal-button
+                class="col-start-3"
+                (buttonClick)="onCancel()"
+              ></normal-button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   `,

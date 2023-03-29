@@ -134,7 +134,8 @@ export class LabelService {
         tap((res) => {
           this.insertITNList({
             quantity: this.quantityList[this.ITNList?.length | 0],
-            datecode: this.assignLabelInfo[this.ITNList?.length | 0].datecode,
+            datecode:
+              this.assignLabelInfo[this.ITNList?.length | 0].datecode || '',
             countryID:
               this.assignLabelInfo[this.ITNList?.length | 0].country.countryID,
             ISO3: this.assignLabelInfo[this.ITNList?.length | 0].country.ISO3,

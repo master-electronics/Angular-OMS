@@ -183,11 +183,11 @@ export class AssignLabelComponent implements OnInit {
       },
     };
     this.listOfInfo.push({
-      datecode: this.updateInfo.receiptInfo.DateCode,
       country: {
         ISO3: this.updateInfo.receiptInfo.ISO3,
         countryID: this.updateInfo.receiptInfo.CountryID,
       },
+      datecode: this.updateInfo.receiptInfo.DateCode,
     });
     const index = this.listOfControl.push(control);
     this.inputForm.addControl(
