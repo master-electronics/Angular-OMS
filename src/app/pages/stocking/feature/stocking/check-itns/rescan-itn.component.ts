@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { ItnInfoService } from '../../../data/itn-info.service';
 import { StockingService } from '../../../data/stocking.service';
 
 @Component({
@@ -31,7 +32,8 @@ export class RescanItnComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _stock: StockingService
+    private _stock: StockingService,
+    private _itn: ItnInfoService
   ) {}
 
   public data$;
@@ -45,7 +47,7 @@ export class RescanItnComponent implements OnInit {
 
   onSubmit(): void {
     const input = this.inputForm.value.itn;
-    const isValid = input === this._stock.currentITN.ITN;
+    const isValid = input === this._itn.itnInfo.ITN;
     if (!isValid) {
       this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
       return;

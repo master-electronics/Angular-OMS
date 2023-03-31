@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { ItnInfoService } from '../../data/itn-info.service';
 import { SortingService } from '../../data/sorting.service';
-import { StockingService } from '../../data/stocking.service';
 
 @Component({
   standalone: true,
@@ -37,7 +38,8 @@ export class ScanITNComponent implements OnInit {
     private _actRoute: ActivatedRoute,
     private _router: Router,
     private _sort: SortingService,
-    private _stock: StockingService
+    private _itn: ItnInfoService,
+    private _eventLog: EventLogService
   ) {}
 
   public data$;
@@ -49,7 +51,8 @@ export class ScanITNComponent implements OnInit {
     this.title.setTitle('Sorting');
     this.navbar.changeNavbar('Sorting');
     this.data$ = of(true);
-    this._stock.reset();
+    this._itn.resetItnInfo();
+    this._eventLog.initEventLog(null);
   }
 
   onSubmit(): void {
@@ -57,7 +60,7 @@ export class ScanITNComponent implements OnInit {
       map(() => {
         this._router.navigate(['../location'], {
           relativeTo: this._actRoute,
-          queryParams: { ProductID: this._sort.sortingInfo.ProductID },
+          queryParams: { ProductID: this._itn.itnInfo.ProductID },
         });
       }),
       catchError((error) => {

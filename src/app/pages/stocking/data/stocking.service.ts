@@ -4,24 +4,18 @@ import {
   FetchInventoryInUserContainerGQL,
   FetchItnInfoByContainerforStockingGQL,
   MoveInventoryToContainerForStockingGQL,
+  UpdateInventoryAfterSortingGQL,
   UpdateNotFoundForStockingGQL,
+  VerifyContainerForSortingGQL,
   VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { EventLogService } from 'src/app/shared/data/eventLog';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
-import { SortingService } from './sorting.service';
-
-export interface ITNinfo {
-  _id: number;
-  ITN: string;
-  Quantity: number;
-  productID: number;
-  PartNumber?: string;
-  ProductCode?: string;
-}
+import { ItnInfo, ItnInfoService } from './itn-info.service';
 
 @Injectable()
 export class StockingService {
@@ -31,27 +25,19 @@ export class StockingService {
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
-    private _insertLog: Insert_UserEventLogsGQL,
+    private _insertLog: Create_EventLogsGQL,
     private _ItnInUser: FetchInventoryInUserContainerGQL,
-    private _sort: SortingService
+    private _verifyContainer: VerifyContainerForSortingGQL,
+    private _updateInventory: UpdateInventoryAfterSortingGQL,
+    private _itn: ItnInfoService,
+    private _log: EventLogService
   ) {}
 
-  private _currentITN = new BehaviorSubject<ITNinfo>(null);
-  public get currentITN() {
-    return this._currentITN.value;
-  }
-  public get currentITN$() {
-    return this._currentITN.asObservable();
-  }
-  public updateCurrentItn(itn: ITNinfo) {
-    this._currentITN.next(itn);
-  }
-
-  private _ITNList = new BehaviorSubject<ITNinfo[]>([]);
+  private _ITNList = new BehaviorSubject<ItnInfo[]>([]);
   public get ITNList() {
     return this._ITNList.value;
   }
-  public updateItnList(list: ITNinfo[]): void {
+  public updateItnList(list: ItnInfo[]): void {
     this._ITNList.next(list);
   }
 
@@ -62,7 +48,7 @@ export class StockingService {
   /**
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
-  public addVerifiedItns(itn: ITNinfo) {
+  public addVerifiedItns(itn: ItnInfo) {
     if (!this.verifiedItns?.length) {
       this._verifiedItns.next([itn.ITN]);
       return;
@@ -74,7 +60,7 @@ export class StockingService {
   }
 
   public reset(): void {
-    this._currentITN.next(null);
+    this._itn.resetItnInfo();
     this._ITNList.next(null);
     this._verifiedItns.next(null);
   }
@@ -102,22 +88,8 @@ export class StockingService {
         }),
         switchMap((res) => {
           const inventory = res.data.findInventory;
-          const ITNInfo = {
-            _id: inventory._id,
-            ITN,
-            Quantity: inventory.QuantityOnHand,
-            productID: inventory.Product._id,
-            PartNumber: inventory.Product.PartNumber,
-            ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
-          };
-          this._currentITN.next(ITNInfo);
-          // insert itn to list when input ITN as target.
-          if (!this.ITNList) {
-            this._verifiedItns.next([ITNInfo.ITN]);
-            this.updateItnList([ITNInfo]);
-          }
-          // update sorting info
-          this._sort.changeSortingInfo({
+          // update itn info
+          this._itn.changeItnInfo({
             ITN,
             ProductID: inventory.Product._id,
             InventoryID: inventory._id,
@@ -128,24 +100,44 @@ export class StockingService {
             Remaining: null,
             ProductType: null,
           });
+          // init evetlog
+          this._log.initEventLog({
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            EventTypeID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
+            Log: JSON.stringify({
+              InventoryTrackingNumber: ITN,
+              PartNumber: this._itn.itnInfo.PartNumber,
+              ProductCode: this._itn.itnInfo.ProductCode,
+              QuantityOnHand: this._itn.itnInfo.QuantityOnHand,
+              Velocity: this._itn.itnInfo.Velocity,
+            }),
+          });
+          // insert itn to list when input ITN as target.
+          if (!this.ITNList) {
+            this._verifiedItns.next([this._itn.itnInfo.ITN]);
+            this.updateItnList([this._itn.itnInfo]);
+          }
           return this._move.mutate({
-            ITN: this.currentITN.ITN,
+            ITN: this._itn.itnInfo.ITN,
             DC: environment.DistributionCenter,
             ContainerID: this._userC.userContainerID,
           });
         }),
-        switchMap(() =>
-          this._insertLog.mutate({
-            log: {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-              UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
-              InventoryTrackingNumber: this.currentITN.ITN,
-              PartNumber: this.currentITN.PartNumber,
-              ProductCode: this.currentITN.ProductCode,
-              Message: ``,
-            },
-          })
-        )
+        switchMap(() => {
+          const oldLogs = {
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
+            InventoryTrackingNumber: this._itn.itnInfo.ITN,
+            PartNumber: this._itn.itnInfo.PartNumber,
+            ProductCode: this._itn.itnInfo.ProductCode,
+            Message: ``,
+          };
+
+          return this._insertLog.mutate({
+            oldLogs,
+            eventLogs: this._log.eventLog,
+          });
+        })
       );
   }
 
@@ -182,10 +174,15 @@ export class StockingService {
               item.InventoryTrackingNumber
             );
             return {
-              _id: item._id,
+              ProductCode: null,
+              PartNumber: null,
+              Remaining: null,
+              ProductType: null,
+              Velocity: null,
               ITN: item.InventoryTrackingNumber,
-              Quantity: item.QuantityOnHand,
-              productID: item.Product._id,
+              InventoryID: item._id,
+              ProductID: item.Product._id,
+              QuantityOnHand: item.QuantityOnHand,
             };
           });
           Logger.devOnly(
@@ -193,13 +190,24 @@ export class StockingService {
             'findITNsInLocation',
             ITNList.length
           );
-          const log = {
+          this._ITNList.next(ITNList);
+          // insert log
+          const oldLogs = {
             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
             UserEventID: sqlData.Event_Stocking_ScanLocation,
-            Message: `Barcode`,
+            Message: Barcode,
           };
-          this._ITNList.next(ITNList);
-          return this._insertLog.mutate({ log });
+          this._log.initEventLog({
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            EventTypeID: sqlData.Event_Stocking_ScanLocation,
+            Log: JSON.stringify({
+              Source: Barcode,
+            }),
+          });
+          return this._insertLog.mutate({
+            oldLogs,
+            eventLogs: this._log.eventLog,
+          });
         })
       );
   }
@@ -208,18 +216,26 @@ export class StockingService {
    * notFound
    */
   public addNotFoundFlag$(ITNList: string[]) {
-    const log = ITNList.map((itn) => ({
+    const oldLogs = ITNList.map((itn) => ({
       UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
       UserEventID: sqlData.Event_Stocking_NotFound,
       InventoryTrackingNumber: itn,
       Message: ``,
+    }));
+    const eventLogs = ITNList.map((itn) => ({
+      ...this._log.eventLog,
+      EventTypeID: sqlData.Event_Stocking_NotFound,
+      Log: JSON.stringify({
+        ...JSON.parse(this._log.eventLog.Log),
+        InventoryTrackingNumber: itn,
+      }),
     }));
     return this._noFound
       .mutate({
         ITNList,
         DC: environment.DistributionCenter,
       })
-      .pipe(switchMap(() => this._insertLog.mutate({ log })));
+      .pipe(switchMap(() => this._insertLog.mutate({ oldLogs, eventLogs })));
   }
 
   /**
@@ -234,6 +250,78 @@ export class StockingService {
           if (!res.length) {
             throw new Error('Not ITN  Under User');
           }
+        })
+      );
+  }
+
+  public verifyITN$(ITN: string) {
+    return this._itn.verifyITN$(ITN).pipe(
+      switchMap((res) => {
+        const oldLogs = {
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserEventID: sqlData.Event_Stocking_SortingStart,
+          InventoryTrackingNumber: ITN,
+          PartNumber: this._itn.itnInfo.PartNumber,
+          ProductCode: this._itn.itnInfo.ProductCode,
+          Quantity: this._itn.itnInfo.QuantityOnHand,
+          Message: ``,
+        };
+        this._log.initEventLog({
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          EventTypeID: sqlData.Event_Stocking_SortingStart,
+          Log: JSON.stringify({
+            InventoryTrackingNumber: ITN,
+            PartNumber: this._itn.itnInfo.PartNumber,
+            ProductCode: this._itn.itnInfo.ProductCode,
+            QuantityOnHand: this._itn.itnInfo.QuantityOnHand,
+            Velocity: this._itn.itnInfo.Velocity,
+          }),
+        });
+        return this._insertLog.mutate({
+          oldLogs,
+          eventLogs: this._log.eventLog,
+        });
+      })
+    );
+  }
+
+  public putAway$(Barcode: string) {
+    return this._verifyContainer
+      .fetch(
+        { Barcode, DistributionCenter: environment.DistributionCenter },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          if (!res.data.findContainer._id) {
+            throw new Error('Container not found!');
+          }
+        }),
+        switchMap((res) => {
+          return this._updateInventory.mutate({
+            InventoryID: this._itn.itnInfo.InventoryID,
+            ContainerID: res.data.findContainer._id,
+          });
+        }),
+        switchMap(() => {
+          const oldLogs = {
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
+            ProductCode: this._itn.itnInfo.ProductCode,
+            PartNumber: this._itn.itnInfo.PartNumber,
+            Quantity: this._itn.itnInfo.QuantityOnHand,
+            InventoryTrackingNumber: this._itn.itnInfo.ITN,
+            Message: Barcode,
+          };
+          const eventLogs = {
+            ...this._log.eventLog,
+            EventTypeID: sqlData.Event_Stocking_StockingRelocation_Location,
+            Log: JSON.stringify({
+              ...JSON.parse(this._log.eventLog.Log),
+              Target: Barcode,
+            }),
+          };
+          return this._insertLog.mutate({ oldLogs, eventLogs });
         })
       );
   }

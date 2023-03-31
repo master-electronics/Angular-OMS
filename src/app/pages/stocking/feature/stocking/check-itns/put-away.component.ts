@@ -5,10 +5,11 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, combineLatest, map, of, shareReplay, tap } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
-import { ItnInfoService } from '../../data/itn-info.service';
-import { SortingService } from '../../data/sorting.service';
-import { SortInfoComponent } from '../../ui/sort-info.component';
-import { SuggetionLocationComponent } from '../../ui/suggetion-location.component';
+import { ItnInfoService } from '../../../data/itn-info.service';
+import { SortingService } from '../../../data/sorting.service';
+import { StockingService } from '../../../data/stocking.service';
+import { StockInfoComponent } from '../../../ui/stock-info.component';
+import { SuggetionLocationComponent } from '../../../ui/suggetion-location.component';
 
 @Component({
   standalone: true,
@@ -18,7 +19,7 @@ import { SuggetionLocationComponent } from '../../ui/suggetion-location.componen
     SingleInputformComponent,
     ReactiveFormsModule,
     PrinterButtomComponent,
-    SortInfoComponent,
+    StockInfoComponent,
     SuggetionLocationComponent,
   ],
   template: `
@@ -31,7 +32,7 @@ import { SuggetionLocationComponent } from '../../ui/suggetion-location.componen
       title="Location:"
     ></single-input-form>
     <ng-container *ngIf="info$ | async as info">
-      <sort-info [sortingInfo]="info.info"></sort-info>
+      <stock-info [stockingInfo]="info.info"></stock-info>
       <suggetion-location [locations]="info.locations"></suggetion-location>
       <printer-button
         class=" absolute bottom-2 right-2 h-10 w-10"
@@ -42,12 +43,12 @@ import { SuggetionLocationComponent } from '../../ui/suggetion-location.componen
     </ng-container>
   `,
 })
-export class LocationComponent implements OnInit {
+export class PutAwayComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _sort: SortingService,
+    private _stock: StockingService,
     private _itn: ItnInfoService
   ) {}
 
@@ -81,9 +82,11 @@ export class LocationComponent implements OnInit {
     const tmp = this.inputForm.value.location;
     const Barcode =
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
-    this.data$ = this._sort.moveItn$(Barcode).pipe(
+    this.data$ = this._stock.putAway$(Barcode).pipe(
       map(() => {
-        this._router.navigate(['../itn'], { relativeTo: this._actRoute });
+        this._router.navigate(['../rescanitn'], {
+          relativeTo: this._actRoute,
+        });
       }),
       catchError((error) => {
         return of({

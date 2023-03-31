@@ -6,6 +6,7 @@ import { ScanTargetResolver } from './utils/resolver/scan-target.resolver';
 import { SortLocationResolver } from './utils/resolver/location.resolver';
 import { StockingGuard } from './utils/stocking.guard';
 import { UserItnlistResolver } from './utils/resolver/user-itnlist.resolver';
+import { ItnInfoService } from './data/itn-info.service';
 
 export const StockingRoutes: Routes = [
   {
@@ -13,6 +14,7 @@ export const StockingRoutes: Routes = [
     providers: [
       SortingService,
       StockingService,
+      ItnInfoService,
       SuggestLocationsService,
       SortLocationResolver,
       ScanTargetResolver,
@@ -71,6 +73,14 @@ export const StockingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/stocking/check-itns/scan-itn.component').then(
             (m) => m.ScanItnComponent
+          ),
+      },
+      {
+        path: 'putaway',
+        resolve: { putAway: SortLocationResolver },
+        loadComponent: () =>
+          import('./feature/stocking/check-itns/put-away.component').then(
+            (m) => m.PutAwayComponent
           ),
       },
       {

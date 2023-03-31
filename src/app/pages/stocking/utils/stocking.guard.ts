@@ -7,13 +7,13 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SortingService } from '../data/sorting.service';
+import { ItnInfoService } from '../data/itn-info.service';
 
 @Injectable()
 export class StockingGuard implements CanActivateChild {
   public routeAuthorized: boolean;
 
-  constructor(private router: Router, private sort: SortingService) {}
+  constructor(private router: Router, private _itn: ItnInfoService) {}
 
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
@@ -25,8 +25,8 @@ export class StockingGuard implements CanActivateChild {
     | Promise<boolean | UrlTree> {
     let isActive: boolean;
     switch (state.url) {
-      case '/stocking/sorting/location':
-        isActive = this.sort.sortingInfo !== null;
+      case '/stocking/location':
+        isActive = this._itn.itnInfo !== null;
         break;
 
       default:

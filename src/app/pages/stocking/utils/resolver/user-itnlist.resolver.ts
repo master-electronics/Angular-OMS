@@ -12,9 +12,6 @@ export class UserItnlistResolver implements Resolve<any> {
   ) {}
   resolve() {
     return this._stocking.ItnInUserContainer$().pipe(
-      tap((res) => {
-        console.log(res);
-      }),
       catchError((error) => {
         this._router.navigate(['../stocking/scantarget'], {
           relativeTo: this._actRoute,

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { ItnInfoService } from '../../../data/itn-info.service';
 import { SortingService } from '../../../data/sorting.service';
 import { StockingService } from '../../../data/stocking.service';
 
@@ -36,7 +37,7 @@ export class ScanItnComponent implements OnInit {
     private _actRoute: ActivatedRoute,
     private _router: Router,
     public _stock: StockingService,
-    public _sort: SortingService
+    private _itn: ItnInfoService
   ) {}
 
   public data$;
@@ -63,11 +64,10 @@ export class ScanItnComponent implements OnInit {
       return false;
     });
     if (isInList) {
-      this.data$ = this._sort.verifyITN$(input).pipe(
+      this.data$ = this._stock.verifyITN$(input).pipe(
         map(() => {
           this._stock.addVerifiedItns(tmp);
-          this._stock.updateCurrentItn(tmp);
-          this._router.navigate(['../location'], {
+          this._router.navigate(['../putaway'], {
             relativeTo: this._actRoute,
           });
         }),

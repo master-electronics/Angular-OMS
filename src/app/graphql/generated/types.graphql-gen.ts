@@ -396,6 +396,7 @@ export type Inventory = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   Suspect: Scalars['Boolean'];
+  Velocity?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -924,6 +925,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
+  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationUpdateForOrderLineDetailFromMerpArgs = {
@@ -1318,6 +1320,7 @@ export type Query = {
   fetchProductMICFromMerp?: Maybe<Scalars['String']>;
   fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchReceiptLines?: Maybe<Array<Maybe<ReceiptL>>>;
+  fetchSuggetionLocationForSorting?: Maybe<Array<Maybe<SuggetionLocation>>>;
   fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserList?: Maybe<Array<Maybe<User>>>;
@@ -1474,6 +1477,11 @@ export type QueryFetchProductMicFromMerpArgs = {
 
 export type QueryFetchReceiptLinesArgs = {
   ReceiptHID?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchSuggetionLocationForSortingArgs = {
+  ProductID: Scalars['Int'];
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFetchTableDataArgs = {
@@ -1844,6 +1852,13 @@ export type ShipmentMethod = {
   PriorityPinkPaper: Scalars['Boolean'];
   ShippingMethod: Scalars['String'];
   _id: Scalars['String'];
+};
+
+export type SuggetionLocation = {
+  __typename?: 'SuggetionLocation';
+  Barcode: Scalars['String'];
+  Quantity: Scalars['Float'];
+  Zone?: Maybe<Scalars['String']>;
 };
 
 export type SuspectReason = {
@@ -2301,6 +2316,7 @@ export type SearchInventory = {
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
+  Velocity?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2512,6 +2528,7 @@ export type UpdateInventory = {
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
+  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOrder = {
