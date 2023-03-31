@@ -132,13 +132,18 @@ export class LabelService {
       )
       .pipe(
         tap((res) => {
+          if (
+            !this.assignLabelInfo[this.ITNList?.length || 0].country.countryID
+          ) {
+            throw new Error('Invaild country!');
+          }
           this.insertITNList({
-            quantity: this.quantityList[this.ITNList?.length | 0],
+            quantity: this.quantityList[this.ITNList?.length || 0],
             datecode:
-              this.assignLabelInfo[this.ITNList?.length | 0].datecode || '',
+              this.assignLabelInfo[this.ITNList?.length || 0].datecode || '',
             countryID:
-              this.assignLabelInfo[this.ITNList?.length | 0].country.countryID,
-            ISO3: this.assignLabelInfo[this.ITNList?.length | 0].country.ISO3,
+              this.assignLabelInfo[this.ITNList?.length || 0].country.countryID,
+            ISO3: this.assignLabelInfo[this.ITNList?.length || 0].country.ISO3,
             ITN: res.data.createITN,
             BinLocation: '',
             ContainerID: 0,

@@ -167,6 +167,7 @@ export class CountryComponent implements OnInit {
       }
       this._info.updateCountry(Number(id), iso3);
     }
+    // pop out auth window when UNK
     if (this._info.receiptInfo.ISO3 === 'UNK') {
       this.popup = true;
       return;
