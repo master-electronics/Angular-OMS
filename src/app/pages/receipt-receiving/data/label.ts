@@ -135,6 +135,7 @@ export class LabelService {
           if (
             !this.assignLabelInfo[this.ITNList?.length || 0].country.countryID
           ) {
+            console.log(JSON.stringify(this.assignLabelInfo));
             throw new Error('Invaild country!');
           }
           this.insertITNList({
