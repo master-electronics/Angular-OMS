@@ -1,0 +1,65 @@
+query verifyASNLocation($barcode: String, $container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+  }
+  verifyASNLocation(Barcode: $barcode) {
+    InventoryTrackingNumber
+  }
+}
+
+query verifyITNForASN($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+  ) {
+    _id
+  }
+}
+
+query fetchASNInventory($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    INVENTORies {
+      _id
+      DistributionCenter
+      InventoryTrackingNumber
+      QuantityOnHand
+      Product {
+        _id
+        PartNumber
+        UOM
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
+  }
+}
+
+query verifyASNLocationStatus($asn: autostoreAsnHeader) {
+  verifyASNLocationStatus(ASN: $asn) {
+    _id
+    tuId
+  }
+}
+
+mutation insertAutostoreASN($asn: autostoreAsnHeader) {
+  insertAutostoreASN(ASN: $asn) {
+    _id
+  }
+}
+
+mutation moveInventoryToContainerForASN(
+  $ITN: String!
+  $DC: String!
+  $ContainerID: Int!
+  $boundForAutostore: Boolean
+) {
+  updateInventory(
+    Inventory: { 
+      ContainerID: $ContainerID
+      BoundForAutostore: $boundForAutostore
+    }
+    DistributionCenter: $DC
+    InventoryTrackingNumber: $ITN
+  )
+}

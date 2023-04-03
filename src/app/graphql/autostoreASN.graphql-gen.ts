@@ -2815,52 +2815,60 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchDataTableListQueryVariables = Types.Exact<{ [key: string]: never; }>;
-
-
-export type FetchDataTableListQuery = { __typename?: 'Query', fetchDataTableList?: Array<{ __typename?: 'DataTable', TABLE_NAME?: string | null } | null> | null };
-
-export type FetchDataColumnListQueryVariables = Types.Exact<{
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
+export type VerifyAsnLocationQueryVariables = Types.Exact<{
+  barcode?: Types.InputMaybe<Types.Scalars['String']>;
+  container?: Types.InputMaybe<Types.SearchContainer>;
 }>;
 
 
-export type FetchDataColumnListQuery = { __typename?: 'Query', fetchDataColumnList?: Array<{ __typename?: 'DataColumn', COLUMN_NAME?: string | null, IS_NULLABLE?: string | null, DATA_TYPE?: string | null, CHARACTER_MAXIMUM_LENGTH?: number | null, IS_PRIMARY_KEY?: string | null } | null> | null };
+export type VerifyAsnLocationQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number } | null, verifyASNLocation?: Array<{ __typename?: 'Inventory', InventoryTrackingNumber: string } | null> | null };
 
-export type FetchTableDataQueryVariables = Types.Exact<{
-  columnList?: Types.InputMaybe<Types.Scalars['String']>;
-  tableName?: Types.InputMaybe<Types.Scalars['String']>;
-  where?: Types.InputMaybe<Types.Scalars['String']>;
+export type VerifyItnForAsnQueryVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
 }>;
 
 
-export type FetchTableDataQuery = { __typename?: 'Query', fetchTableData?: Array<{ __typename?: 'TableData', Results?: string | null } | null> | null };
+export type VerifyItnForAsnQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number } | null };
 
-export type InsertTableDataMutationVariables = Types.Exact<{
-  insertQuery?: Types.InputMaybe<Types.Scalars['String']>;
+export type FetchAsnInventoryQueryVariables = Types.Exact<{
+  container?: Types.InputMaybe<Types.SearchContainer>;
 }>;
 
 
-export type InsertTableDataMutation = { __typename?: 'Mutation', insertTableData?: Array<{ __typename?: 'TableData', Results?: string | null } | null> | null };
+export type FetchAsnInventoryQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, UOM?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
 
-export type UpdateTableDataMutationVariables = Types.Exact<{
-  updateQuery?: Types.InputMaybe<Types.Scalars['String']>;
+export type VerifyAsnLocationStatusQueryVariables = Types.Exact<{
+  asn?: Types.InputMaybe<Types.AutostoreAsnHeader>;
 }>;
 
 
-export type UpdateTableDataMutation = { __typename?: 'Mutation', updateTableData?: { __typename?: 'TableData', Results?: string | null } | null };
+export type VerifyAsnLocationStatusQuery = { __typename?: 'Query', verifyASNLocationStatus?: Array<{ __typename?: 'AUTOSTOREASNHEADER', _id?: number | null, tuId?: string | null } | null> | null };
 
-export type DeleteTableDataMutationVariables = Types.Exact<{
-  deleteQuery?: Types.InputMaybe<Types.Scalars['String']>;
+export type InsertAutostoreAsnMutationVariables = Types.Exact<{
+  asn?: Types.InputMaybe<Types.AutostoreAsnHeader>;
 }>;
 
 
-export type DeleteTableDataMutation = { __typename?: 'Mutation', deleteTableData?: { __typename?: 'TableData', Results?: string | null } | null };
+export type InsertAutostoreAsnMutation = { __typename?: 'Mutation', insertAutostoreASN?: { __typename?: 'AUTOSTOREASNHEADER', _id?: number | null } | null };
 
-export const FetchDataTableListDocument = gql`
-    query fetchDataTableList {
-  fetchDataTableList {
-    TABLE_NAME
+export type MoveInventoryToContainerForAsnMutationVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+  ContainerID: Types.Scalars['Int'];
+  boundForAutostore?: Types.InputMaybe<Types.Scalars['Boolean']>;
+}>;
+
+
+export type MoveInventoryToContainerForAsnMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+
+export const VerifyAsnLocationDocument = gql`
+    query verifyASNLocation($barcode: String, $container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+  }
+  verifyASNLocation(Barcode: $barcode) {
+    InventoryTrackingNumber
   }
 }
     `;
@@ -2868,21 +2876,19 @@ export const FetchDataTableListDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchDataTableListGQL extends Apollo.Query<FetchDataTableListQuery, FetchDataTableListQueryVariables> {
-    document = FetchDataTableListDocument;
+  export class VerifyAsnLocationGQL extends Apollo.Query<VerifyAsnLocationQuery, VerifyAsnLocationQueryVariables> {
+    document = VerifyAsnLocationDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchDataColumnListDocument = gql`
-    query fetchDataColumnList($tableName: String) {
-  fetchDataColumnList(TABLE_NAME: $tableName) {
-    COLUMN_NAME
-    IS_NULLABLE
-    DATA_TYPE
-    CHARACTER_MAXIMUM_LENGTH
-    IS_PRIMARY_KEY
+export const VerifyItnForAsnDocument = gql`
+    query verifyITNForASN($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: {InventoryTrackingNumber: $ITN, DistributionCenter: $DC}
+  ) {
+    _id
   }
 }
     `;
@@ -2890,17 +2896,31 @@ export const FetchDataColumnListDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchDataColumnListGQL extends Apollo.Query<FetchDataColumnListQuery, FetchDataColumnListQueryVariables> {
-    document = FetchDataColumnListDocument;
+  export class VerifyItnForAsnGQL extends Apollo.Query<VerifyItnForAsnQuery, VerifyItnForAsnQueryVariables> {
+    document = VerifyItnForAsnDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const FetchTableDataDocument = gql`
-    query fetchTableData($columnList: String, $tableName: String, $where: String) {
-  fetchTableData(ColumnList: $columnList, TableName: $tableName, Where: $where) {
-    Results
+export const FetchAsnInventoryDocument = gql`
+    query fetchASNInventory($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    INVENTORies {
+      _id
+      DistributionCenter
+      InventoryTrackingNumber
+      QuantityOnHand
+      Product {
+        _id
+        PartNumber
+        UOM
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
   }
 }
     `;
@@ -2908,17 +2928,18 @@ export const FetchTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchTableDataGQL extends Apollo.Query<FetchTableDataQuery, FetchTableDataQueryVariables> {
-    document = FetchTableDataDocument;
+  export class FetchAsnInventoryGQL extends Apollo.Query<FetchAsnInventoryQuery, FetchAsnInventoryQueryVariables> {
+    document = FetchAsnInventoryDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const InsertTableDataDocument = gql`
-    mutation insertTableData($insertQuery: String) {
-  insertTableData(InsertQuery: $insertQuery) {
-    Results
+export const VerifyAsnLocationStatusDocument = gql`
+    query verifyASNLocationStatus($asn: autostoreAsnHeader) {
+  verifyASNLocationStatus(ASN: $asn) {
+    _id
+    tuId
   }
 }
     `;
@@ -2926,17 +2947,17 @@ export const InsertTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class InsertTableDataGQL extends Apollo.Mutation<InsertTableDataMutation, InsertTableDataMutationVariables> {
-    document = InsertTableDataDocument;
+  export class VerifyAsnLocationStatusGQL extends Apollo.Query<VerifyAsnLocationStatusQuery, VerifyAsnLocationStatusQueryVariables> {
+    document = VerifyAsnLocationStatusDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const UpdateTableDataDocument = gql`
-    mutation updateTableData($updateQuery: String) {
-  updateTableData(UpdateQuery: $updateQuery) {
-    Results
+export const InsertAutostoreAsnDocument = gql`
+    mutation insertAutostoreASN($asn: autostoreAsnHeader) {
+  insertAutostoreASN(ASN: $asn) {
+    _id
   }
 }
     `;
@@ -2944,26 +2965,28 @@ export const UpdateTableDataDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class UpdateTableDataGQL extends Apollo.Mutation<UpdateTableDataMutation, UpdateTableDataMutationVariables> {
-    document = UpdateTableDataDocument;
+  export class InsertAutostoreAsnGQL extends Apollo.Mutation<InsertAutostoreAsnMutation, InsertAutostoreAsnMutationVariables> {
+    document = InsertAutostoreAsnDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const DeleteTableDataDocument = gql`
-    mutation deleteTableData($deleteQuery: String) {
-  deleteTableData(DeleteQuery: $deleteQuery) {
-    Results
-  }
+export const MoveInventoryToContainerForAsnDocument = gql`
+    mutation moveInventoryToContainerForASN($ITN: String!, $DC: String!, $ContainerID: Int!, $boundForAutostore: Boolean) {
+  updateInventory(
+    Inventory: {ContainerID: $ContainerID, BoundForAutostore: $boundForAutostore}
+    DistributionCenter: $DC
+    InventoryTrackingNumber: $ITN
+  )
 }
     `;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class DeleteTableDataGQL extends Apollo.Mutation<DeleteTableDataMutation, DeleteTableDataMutationVariables> {
-    document = DeleteTableDataDocument;
+  export class MoveInventoryToContainerForAsnGQL extends Apollo.Mutation<MoveInventoryToContainerForAsnMutation, MoveInventoryToContainerForAsnMutationVariables> {
+    document = MoveInventoryToContainerForAsnDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -11,3 +11,9 @@ query fetchAutostoreMessage($maxRetries: Int) {
     ErrorCount
   }
 }
+
+mutation insertAutostoreMessage($message: autostoreMessage) {
+  insertAutostoreMessage(AutostoreMessage: $message) {
+    _id
+  }
+}
