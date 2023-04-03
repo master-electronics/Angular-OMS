@@ -270,6 +270,9 @@ export class ReceiptInfoService {
     this._log.updateReceivingLog({
       ReceiptLine: line.LineNumber,
       Quantity: line.ExpectedQuantity,
+      PurchaseOrderNumber:
+        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
+      PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
     });
     this._eventLog.updateEventLog({
       ...this._eventLog.eventLog,
@@ -277,6 +280,9 @@ export class ReceiptInfoService {
         ...JSON.parse(this._eventLog.eventLog.Log),
         ReceiptLine: line.LineNumber,
         ExpectedQuantity: line.ExpectedQuantity,
+        PurchaseOrderNumber:
+          line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
+        PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
       }),
     });
   }
