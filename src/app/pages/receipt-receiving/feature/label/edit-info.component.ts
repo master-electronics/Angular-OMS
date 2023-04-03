@@ -192,7 +192,7 @@ export class EditInfoComponent implements OnInit {
     } else {
       [, ISO3, , countryID] = this.editForm.value.country.split(' - ');
     }
-    if (!Number(countryID)) {
+    if (!Number(countryID) || !ISO3) {
       return;
     }
     this.clickSubmit.emit({

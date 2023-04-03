@@ -114,7 +114,7 @@ export class CountryComponent implements OnInit {
     this._info.initReceiptInfo();
     this.countryList$ = this.inputForm.valueChanges.pipe(
       map((res) => res.country),
-      debounceTime(100),
+      // debounceTime(100),
       distinctUntilChanged(),
       switchMap((searchQuery) => {
         return this._country.countryList$.pipe(
