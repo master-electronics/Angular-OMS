@@ -1,0 +1,23 @@
+query fetchEventLog(
+  $limit: Int
+  $offset: Int
+  $UserName: String
+  $eventIdList: [Int]
+  $timeFrame: [String]
+  $Log: String
+) {
+  findEventLogs(
+    limit: $limit
+    offset: $offset
+    UserName: $UserName
+    eventIdList: $eventIdList
+    timeFrame: $timeFrame
+    Log: $Log
+  ) {
+    UserName
+    Event
+    Module
+    CreateTime
+    Log
+  }
+}

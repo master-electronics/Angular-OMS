@@ -167,6 +167,13 @@ const routes: Routes = [
           ).then((m) => m.ClearSuspectInventoryComponent),
       },
       {
+        path: 'eventlog',
+        loadComponent: () =>
+          import('./pages/table-view/event-log/event-log.component').then(
+            (m) => m.EventLogComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',

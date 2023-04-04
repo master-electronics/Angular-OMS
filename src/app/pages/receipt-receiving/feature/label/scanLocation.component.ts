@@ -105,10 +105,11 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         switchMap(() => this._label.updateAfterReceving()),
-        tap((res) => {
+        map(() => {
           this._router.navigate(['../../itnkickout'], {
             relativeTo: this._actRoute,
           });
+          return true;
         }),
         catchError((error) => {
           return of({
