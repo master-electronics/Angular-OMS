@@ -147,6 +147,7 @@ export class SingleInputformComponent implements OnInit {
     if (this.inputForm.valid) {
       this.formSubmit.emit();
     }
+    this.inputForm.reset();
     this.inputFiled.nativeElement.select();
   }
 

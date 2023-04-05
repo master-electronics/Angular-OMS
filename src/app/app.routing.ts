@@ -101,13 +101,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'logviewer',
-        loadChildren: () =>
-          import('./pages/log-viewer/log-viewer.module').then(
-            (m) => m.LogViewerModule
-          ),
-      },
-      {
         path: 'demo',
         loadChildren: () =>
           import('./pages/picker-manage/picker-manage.module').then(

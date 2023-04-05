@@ -101,7 +101,7 @@ export class PrintITNComponent implements OnInit {
 
   public checKLabel(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value.trim();
+      const value = control.value?.trim();
       if (!value) {
         return null;
       }

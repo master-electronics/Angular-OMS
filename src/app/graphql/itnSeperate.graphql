@@ -1,0 +1,8 @@
+query verifyITNForSeperate($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+  ) {
+    _id
+    QuantityOnHand
+  }
+}

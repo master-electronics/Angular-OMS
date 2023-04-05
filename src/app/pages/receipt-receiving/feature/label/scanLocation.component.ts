@@ -38,12 +38,13 @@ import { LocationStrategy } from '@angular/common';
       [formGroup]="inputForm"
       controlName="location"
       title="Location"
-      [isvalid]="this.inputForm.valid"
+      [isvalid]="this.isvalid"
     ></single-input-form>
   `,
 })
 export class ScanLocationComponent implements OnInit {
   public inputForm: FormGroup;
+  public isvalid = true;
   public data$: Observable<any>;
   public ITNList$: Observable<any>;
   // public validator = {
@@ -86,6 +87,7 @@ export class ScanLocationComponent implements OnInit {
   }
 
   public onSubmit(): void {
+    this.isvalid = false;
     this.data$ = this._label
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
@@ -112,6 +114,7 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         catchError((error) => {
+          this.isvalid = true;
           return of({
             error: { message: error.message, type: 'error' },
           });
