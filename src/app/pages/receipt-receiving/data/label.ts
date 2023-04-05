@@ -146,8 +146,8 @@ export class LabelService {
               this.assignLabelInfo[this.ITNList?.length || 0].country.countryID,
             ISO3: this.assignLabelInfo[this.ITNList?.length || 0].country.ISO3,
             ITN: res.data.createITN,
-            BinLocation: '',
-            ContainerID: 0,
+            BinLocation: null,
+            ContainerID: null,
           });
           Logger.devOnly(
             'LabelService',
@@ -196,7 +196,10 @@ export class LabelService {
       })
       .pipe(
         tap((res) => {
-          if (!res.data.findContainer?._id) {
+          if (
+            !res.data.findContainer?._id ||
+            !res.data.findContainer?.Barcode
+          ) {
             throw new Error('Can not find this Location!');
           }
         }),
@@ -208,7 +211,12 @@ export class LabelService {
             ContainerID: res.data.findContainer._id,
           };
           this.updateLastITN(itn);
-          return true;
+          return this._ITNList.value;
+        }),
+        tap((res) => {
+          if (!res[res.length - 1].BinLocation) {
+            throw new Error('BinLocation invalid!');
+          }
         })
       );
   }
