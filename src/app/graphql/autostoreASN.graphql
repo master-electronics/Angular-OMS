@@ -30,6 +30,7 @@ query fetchASNInventory($container: searchContainer) {
         ProductCode {
           ProductCodeNumber
         }
+        LastAutostoreSync
       }
     }
   }
@@ -39,6 +40,21 @@ query verifyASNLocationStatus($asn: autostoreAsnHeader) {
   verifyASNLocationStatus(ASN: $asn) {
     _id
     tuId
+  }
+}
+
+query findProduct($product: searchProduct) {
+  findProduct(Product: $product) {
+    _id
+    ProductCode {
+      ProductCodeNumber
+    }
+    PartNumber
+    LastAutostoreSync
+    Description
+    Velocity
+    UOM
+    MICPartNumber
   }
 }
 
@@ -62,4 +78,22 @@ mutation moveInventoryToContainerForASN(
     DistributionCenter: $DC
     InventoryTrackingNumber: $ITN
   )
+}
+
+mutation updateAutostoreASN($asn: autostoreAsnHeader, $asnid: Int) {
+  updateAutostoreASN(ASN: $asn, ASNID: $asnid) {
+    _id
+  }
+}
+
+mutation updateAutostoreMessage($autostoreMessage: autostoreMessage, $id: Int) {
+  updateAutostoreMessage(AutostoreMessage: $autostoreMessage, _id: $id) {
+    TypeID
+  }
+}
+
+mutation updateProductLastSync($product: updateProduct) {
+  updateProductLastSync(Product: $product) {
+    LastAutostoreSync
+  }
 }

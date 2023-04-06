@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 import { ASNService } from './data/asn.service';
+import { ProductService } from './data/product.service';
 import { ITNResolver } from './utils/resolver/itn.resolver';
 import { LocationResolver } from './utils/resolver/location.resolver';
 
 export const AutostoreASNRoutes: Routes = [
   {
     path: '',
-    providers: [ASNService, LocationResolver, ITNResolver],
+    providers: [ASNService, ProductService, LocationResolver, ITNResolver],
     loadComponent: () =>
       import('./shell.component').then((m) => m.AutostoreASNShell),
     children: [

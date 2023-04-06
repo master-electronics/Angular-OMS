@@ -45,6 +45,7 @@ export type Autostoremessage = {
   ErrorCount?: Maybe<Scalars['Int']>;
   Message?: Maybe<Scalars['String']>;
   Method?: Maybe<Scalars['String']>;
+  OrderLines?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
   Timestamp?: Maybe<Scalars['String']>;
   Type: Scalars['String'];
@@ -509,6 +510,7 @@ export type Mutation = {
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
+  updateAutostoreASN?: Maybe<Autostoreasnheader>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
   updateAutostoreProcess?: Maybe<Autostoreprocess>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -942,6 +944,12 @@ export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
+};
+
+
+export type MutationUpdateAutostoreAsnArgs = {
+  ASN?: InputMaybe<AutostoreAsnHeader>;
+  ASNID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2836,7 +2844,7 @@ export type FetchAsnInventoryQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchAsnInventoryQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, UOM?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
+export type FetchAsnInventoryQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, UOM?: string | null, LastAutostoreSync?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
 
 export type VerifyAsnLocationStatusQueryVariables = Types.Exact<{
   asn?: Types.InputMaybe<Types.AutostoreAsnHeader>;
@@ -2844,6 +2852,13 @@ export type VerifyAsnLocationStatusQueryVariables = Types.Exact<{
 
 
 export type VerifyAsnLocationStatusQuery = { __typename?: 'Query', verifyASNLocationStatus?: Array<{ __typename?: 'AUTOSTOREASNHEADER', _id?: number | null, tuId?: string | null } | null> | null };
+
+export type FindProductQueryVariables = Types.Exact<{
+  product?: Types.InputMaybe<Types.SearchProduct>;
+}>;
+
+
+export type FindProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, LastAutostoreSync?: string | null, Description?: string | null, Velocity?: string | null, UOM?: string | null, MICPartNumber?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null };
 
 export type InsertAutostoreAsnMutationVariables = Types.Exact<{
   asn?: Types.InputMaybe<Types.AutostoreAsnHeader>;
@@ -2861,6 +2876,29 @@ export type MoveInventoryToContainerForAsnMutationVariables = Types.Exact<{
 
 
 export type MoveInventoryToContainerForAsnMutation = { __typename?: 'Mutation', updateInventory?: Array<number | null> | null };
+
+export type UpdateAutostoreAsnMutationVariables = Types.Exact<{
+  asn?: Types.InputMaybe<Types.AutostoreAsnHeader>;
+  asnid?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type UpdateAutostoreAsnMutation = { __typename?: 'Mutation', updateAutostoreASN?: { __typename?: 'AUTOSTOREASNHEADER', _id?: number | null } | null };
+
+export type UpdateAutostoreMessageMutationVariables = Types.Exact<{
+  autostoreMessage?: Types.InputMaybe<Types.AutostoreMessage>;
+  id?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type UpdateAutostoreMessageMutation = { __typename?: 'Mutation', updateAutostoreMessage?: { __typename?: 'AUTOSTOREMESSAGE', TypeID?: number | null } | null };
+
+export type UpdateProductLastSyncMutationVariables = Types.Exact<{
+  product?: Types.InputMaybe<Types.UpdateProduct>;
+}>;
+
+
+export type UpdateProductLastSyncMutation = { __typename?: 'Mutation', updateProductLastSync?: { __typename?: 'UpdatedProduct', LastAutostoreSync?: string | null } | null };
 
 export const VerifyAsnLocationDocument = gql`
     query verifyASNLocation($barcode: String, $container: searchContainer) {
@@ -2919,6 +2957,7 @@ export const FetchAsnInventoryDocument = gql`
         ProductCode {
           ProductCodeNumber
         }
+        LastAutostoreSync
       }
     }
   }
@@ -2949,6 +2988,33 @@ export const VerifyAsnLocationStatusDocument = gql`
   })
   export class VerifyAsnLocationStatusGQL extends Apollo.Query<VerifyAsnLocationStatusQuery, VerifyAsnLocationStatusQueryVariables> {
     document = VerifyAsnLocationStatusDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindProductDocument = gql`
+    query findProduct($product: searchProduct) {
+  findProduct(Product: $product) {
+    _id
+    ProductCode {
+      ProductCodeNumber
+    }
+    PartNumber
+    LastAutostoreSync
+    Description
+    Velocity
+    UOM
+    MICPartNumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindProductGQL extends Apollo.Query<FindProductQuery, FindProductQueryVariables> {
+    document = FindProductDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -2987,6 +3053,60 @@ export const MoveInventoryToContainerForAsnDocument = gql`
   })
   export class MoveInventoryToContainerForAsnGQL extends Apollo.Mutation<MoveInventoryToContainerForAsnMutation, MoveInventoryToContainerForAsnMutationVariables> {
     document = MoveInventoryToContainerForAsnDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateAutostoreAsnDocument = gql`
+    mutation updateAutostoreASN($asn: autostoreAsnHeader, $asnid: Int) {
+  updateAutostoreASN(ASN: $asn, ASNID: $asnid) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateAutostoreAsnGQL extends Apollo.Mutation<UpdateAutostoreAsnMutation, UpdateAutostoreAsnMutationVariables> {
+    document = UpdateAutostoreAsnDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateAutostoreMessageDocument = gql`
+    mutation updateAutostoreMessage($autostoreMessage: autostoreMessage, $id: Int) {
+  updateAutostoreMessage(AutostoreMessage: $autostoreMessage, _id: $id) {
+    TypeID
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateAutostoreMessageGQL extends Apollo.Mutation<UpdateAutostoreMessageMutation, UpdateAutostoreMessageMutationVariables> {
+    document = UpdateAutostoreMessageDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateProductLastSyncDocument = gql`
+    mutation updateProductLastSync($product: updateProduct) {
+  updateProductLastSync(Product: $product) {
+    LastAutostoreSync
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateProductLastSyncGQL extends Apollo.Mutation<UpdateProductLastSyncMutation, UpdateProductLastSyncMutationVariables> {
+    document = UpdateProductLastSyncDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

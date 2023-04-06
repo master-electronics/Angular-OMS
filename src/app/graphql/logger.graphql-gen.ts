@@ -45,6 +45,7 @@ export type Autostoremessage = {
   ErrorCount?: Maybe<Scalars['Int']>;
   Message?: Maybe<Scalars['String']>;
   Method?: Maybe<Scalars['String']>;
+  OrderLines?: Maybe<Scalars['String']>;
   Status?: Maybe<Scalars['String']>;
   Timestamp?: Maybe<Scalars['String']>;
   Type: Scalars['String'];
@@ -509,6 +510,7 @@ export type Mutation = {
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
+  updateAutostoreASN?: Maybe<Autostoreasnheader>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
   updateAutostoreProcess?: Maybe<Autostoreprocess>;
   updateContainer?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -942,6 +944,12 @@ export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
+};
+
+
+export type MutationUpdateAutostoreAsnArgs = {
+  ASN?: InputMaybe<AutostoreAsnHeader>;
+  ASNID?: InputMaybe<Scalars['Int']>;
 };
 
 

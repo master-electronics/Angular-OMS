@@ -19,10 +19,13 @@ import {
   InsertAutostoreAsnGQL,
   VerifyAsnLocationGQL,
   VerifyAsnLocationStatusGQL,
+  UpdateAutostoreAsnGQL,
+  UpdateAutostoreMessageGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
 import { InsertAutostoreMessageGQL } from 'src/app/graphql/autostore.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ProductService } from './product.service';
 
 interface ASNLine {
   lineNumber?: number;
@@ -66,10 +69,14 @@ export class ASNService {
     private _verifyLocation: VerifyAsnLocationGQL,
     private _verifyLocatoinStatus: VerifyAsnLocationStatusGQL,
     private _insertMessage: InsertAutostoreMessageGQL,
-    private http: HttpClient
+    private http: HttpClient,
+    private _productService: ProductService,
+    private _updateASN: UpdateAutostoreAsnGQL,
+    private _updateMessage: UpdateAutostoreMessageGQL
   ) {}
 
   inventoryList;
+  productList;
   asn: ASN;
   asnID: number;
   data$;
@@ -158,17 +165,23 @@ export class ASNService {
           return this.fetchASNInventory$(containerID);
         }),
         switchMap((res) => {
-          this.asnID = Number(res._id);
+          //this.asnID = Number(res._id);
           this.data$ = this.insertASN$();
           return this.data$;
         }),
         switchMap((res) => {
-          //return of(true);
-          const result = this.insertMessage$();
-          return result;
-          //return this.data$;
+          const product$ =
+            this.productList.length > 0
+              ? this._productService.sendToAutostore$(this.productList)
+              : of(true);
+
+          return combineLatest({
+            product: product$,
+            message: this.insertMessage$(),
+          });
         }),
         switchMap((res) => {
+          console.log(res);
           const tMsg = JSON.parse(JSON.stringify(this.message));
           const nMsg = {
             pattern: 'ASN_message',
@@ -177,8 +190,14 @@ export class ASNService {
             },
           };
 
-          const msgResult = this.sendMessage(nMsg); //this.message);
-          return msgResult;
+          return combineLatest({
+            message: this.sendMessage(nMsg),
+            AsnStatus: this.updateASNStatus('Sent', this.asnID),
+            MessageStatus: this.updateMessageStatus(
+              'sent',
+              res.message.data.insertAutostoreMessage._id
+            ),
+          });
         }),
         switchMap((res) => {
           return of(this.asnID);
@@ -236,13 +255,6 @@ export class ASNService {
     return this._insertMessage.mutate({
       message: this.message,
     });
-    // .pipe(
-    //   switchMap((res) => {
-    //     console.log(res.data.insertAutostoreMessage._id);
-    //     const msgResult = this.sendMessage(message);
-    //     return msgResult;
-    //   })
-    // );
   }
 
   insertASN$() {
@@ -265,6 +277,7 @@ export class ASNService {
 
   fetchASNInventory$(ContainerID: number): Observable<any> {
     this.inventoryList = [];
+    this.productList = [];
     this.asn = {};
 
     return this._asnInventory
@@ -289,6 +302,12 @@ export class ASNService {
           let i = 1;
 
           this.inventoryList.map((inventory) => {
+            //if product hasn't been sent to Autostore add it to list for sending
+            if (!inventory.Product.LastAutostoreSync) {
+              this.productList.push(inventory.Product._id);
+              console.log('send product');
+            }
+
             asnLines.push({
               lineNumber: lineNumber,
               productId:
@@ -326,10 +345,9 @@ export class ASNService {
   };
 
   sendMessage(message) {
-    const t = { test: 'testing10' };
     try {
       const msgResult = this.http.post(
-        `${environment.apiUrl}/Autostore/asn`,
+        `${environment.apiUrl}/Autostore/message`,
         message,
         this.httpOptions
       );
@@ -338,5 +356,27 @@ export class ASNService {
     } catch (error) {
       return of(error);
     }
+  }
+
+  updateASNStatus(Status: string, ASNID: number) {
+    return this._updateASN
+      .mutate({
+        asn: {
+          Status: Status,
+        },
+        asnid: ASNID,
+      })
+      .pipe((res) => res);
+  }
+
+  updateMessageStatus(Status: string, MessageID: number) {
+    return this._updateMessage
+      .mutate({
+        autostoreMessage: {
+          Status: Status,
+        },
+        id: MessageID,
+      })
+      .pipe((res) => res);
   }
 }
