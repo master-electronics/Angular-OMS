@@ -77,7 +77,7 @@ export const StockingRoutes: Routes = [
       },
       {
         path: 'putaway',
-        resolve: { putAway: SortLocationResolver },
+        resolve: { locations: SortLocationResolver },
         loadComponent: () =>
           import('./feature/stocking/check-itns/put-away.component').then(
             (m) => m.PutAwayComponent

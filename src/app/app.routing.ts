@@ -167,6 +167,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'itnseperate',
+        loadChildren: () =>
+          import('./pages/itn-seperate/itn-seperate.routing').then(
+            (m) => m.ItnSeperateRoutes
+          ),
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',

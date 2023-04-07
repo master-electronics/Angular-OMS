@@ -49,16 +49,15 @@ export class ScanComponent implements OnInit {
     this.title.setTitle('Sorting');
     this.navbar.changeNavbar('Sorting');
     this.data$ = of(true);
-    this._itn.resetItnInfo();
+    this._itn.resetItnQuantity();
     this._eventLog.initEventLog(null);
   }
 
   onSubmit(): void {
-    this.data$ = this._sort.verifyITN$(this.inputForm.value.itn).pipe(
+    this.data$ = this._itn.verifyItn(this.inputForm.value.itn).pipe(
       map(() => {
-        this._router.navigate(['../location'], {
+        this._router.navigate(['../assign'], {
           relativeTo: this._actRoute,
-          queryParams: { ProductID: this._itn.itnInfo.ProductID },
         });
       }),
       catchError((error) => {
@@ -70,6 +69,6 @@ export class ScanComponent implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../'], { relativeTo: this._actRoute });
+    this._router.navigate(['../../'], { relativeTo: this._actRoute });
   }
 }

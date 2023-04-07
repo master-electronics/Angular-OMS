@@ -80,11 +80,11 @@ export class MismatchComponent implements OnInit {
     }
     // If itn in the list, move this itn from unverified to verified list.
     this.unverifiedITNs = this.unverifiedITNs.filter((itn) => {
-      const isequal = itn.ITN !== input;
+      const isequal = itn.ITN === input;
       if (isequal) {
         this.verifiedITNs.push(itn.ITN);
       }
-      return isequal;
+      return !isequal;
     });
     this.data$ = of({
       error: {
@@ -116,6 +116,7 @@ export class MismatchComponent implements OnInit {
 
   onDone(): void {
     if (!this.unverifiedITNs.length) {
+      this._stock.updateItnList(this.verifiedITNs);
       this._router.navigate(['../checkitns'], {
         relativeTo: this._actRoute,
       });

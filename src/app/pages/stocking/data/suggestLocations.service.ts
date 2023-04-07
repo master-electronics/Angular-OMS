@@ -14,14 +14,16 @@ export class SuggestLocationsService {
   //
 
   public suggestLocation$(ProductID: number) {
-    return this._suggetLocation.fetch({ ProductID, limit: 5 }).pipe(
-      map((res) => {
-        return res.data.fetchSuggetionLocationForSorting.map((container) => ({
-          Quantity: container.Quantity,
-          Zone: container.Zone,
-          Bincode: container.Barcode,
-        }));
-      })
-    );
+    return this._suggetLocation
+      .fetch({ ProductID, limit: 5 }, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => {
+          return res.data.fetchSuggetionLocationForSorting.map((container) => ({
+            Quantity: container.Quantity,
+            Zone: container.Zone,
+            Bincode: container.Barcode,
+          }));
+        })
+      );
   }
 }

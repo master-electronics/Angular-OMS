@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { ItnSeperateService } from './data/itn-seperate.service';
 
-export const StockingRoutes: Routes = [
+export const ItnSeperateRoutes: Routes = [
   {
     path: '',
     providers: [ItnSeperateService],
@@ -14,10 +14,15 @@ export const StockingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/scan.component').then((m) => m.ScanComponent),
       },
+      // {
+      //   path: 'assign',
+      //   loadComponent: () =>
+      //     import('./feature/assign.component').then((m) => m.AssignComponent),
+      // },
       {
-        path: 'seperate',
-        loadComponent: () =>
-          import('./feature/assign.component').then((m) => m.AssignComponent),
+        path: '',
+        redirectTo: 'scan',
+        pathMatch: 'full',
       },
     ],
   },
