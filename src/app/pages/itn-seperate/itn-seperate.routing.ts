@@ -14,11 +14,11 @@ export const ItnSeperateRoutes: Routes = [
         loadComponent: () =>
           import('./feature/scan.component').then((m) => m.ScanComponent),
       },
-      // {
-      //   path: 'assign',
-      //   loadComponent: () =>
-      //     import('./feature/assign.component').then((m) => m.AssignComponent),
-      // },
+      {
+        path: 'assign',
+        loadComponent: () =>
+          import('./feature/assign.component').then((m) => m.AssignComponent),
+      },
       {
         path: '',
         redirectTo: 'scan',

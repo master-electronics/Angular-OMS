@@ -175,7 +175,6 @@ export class AssignLabelComponent implements OnInit {
       this.listOfControl.length > 0
         ? this.listOfControl[this.listOfControl.length - 1].id + 1
         : 0;
-
     const control = {
       id,
       controlInstance: {

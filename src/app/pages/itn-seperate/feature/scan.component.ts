@@ -49,7 +49,7 @@ export class ScanComponent implements OnInit {
     this.title.setTitle('Sorting');
     this.navbar.changeNavbar('Sorting');
     this.data$ = of(true);
-    this._itn.resetItnQuantity();
+    this._itn.resetitnInfo();
     this._eventLog.initEventLog(null);
   }
 

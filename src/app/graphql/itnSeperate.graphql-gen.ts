@@ -512,6 +512,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
+  separateITN?: Maybe<Scalars['Boolean']>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -866,6 +867,13 @@ export type MutationPrintItnLabelArgs = {
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationSeparateItnArgs = {
+  ITN: Scalars['String'];
+  Printer: Scalars['String'];
+  QuantityList: Array<InputMaybe<Scalars['Float']>>;
+  UserName?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationSuspectInventoryArgs = {
@@ -2644,6 +2652,20 @@ export type VerifyItnForSeperateQuery = {
   } | null;
 };
 
+export type SeparateItnMutationVariables = Types.Exact<{
+  QuantityList:
+    | Array<Types.InputMaybe<Types.Scalars['Float']>>
+    | Types.InputMaybe<Types.Scalars['Float']>;
+  Printer: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+  UserName: Types.Scalars['String'];
+}>;
+
+export type SeparateItnMutation = {
+  __typename?: 'Mutation';
+  separateITN?: boolean | null;
+};
+
 export const VerifyItnForSeperateDocument = gql`
   query verifyITNForSeperate($ITN: String!, $DC: String!) {
     findInventory(
@@ -2663,6 +2685,35 @@ export class VerifyItnForSeperateGQL extends Apollo.Query<
   VerifyItnForSeperateQueryVariables
 > {
   document = VerifyItnForSeperateDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SeparateItnDocument = gql`
+  mutation separateITN(
+    $QuantityList: [Float]!
+    $Printer: String!
+    $ITN: String!
+    $UserName: String!
+  ) {
+    separateITN(
+      QuantityList: $QuantityList
+      Printer: $Printer
+      ITN: $ITN
+      UserName: $UserName
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SeparateItnGQL extends Apollo.Mutation<
+  SeparateItnMutation,
+  SeparateItnMutationVariables
+> {
+  document = SeparateItnDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

@@ -6,3 +6,17 @@ query verifyITNForSeperate($ITN: String!, $DC: String!) {
     QuantityOnHand
   }
 }
+
+mutation separateITN(
+  $QuantityList: [Float]!
+  $Printer: String!
+  $ITN: String!
+  $UserName: String!
+) {
+  separateITN(
+    QuantityList: $QuantityList
+    Printer: $Printer
+    ITN: $ITN
+    UserName: $UserName
+  )
+}

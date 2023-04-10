@@ -1,38 +1,50 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
-import { VerifyItnForSeperateGQL } from 'src/app/graphql/itnSeperate.graphql-gen';
+import {
+  SeparateItnGQL,
+  VerifyItnForSeperateGQL,
+} from 'src/app/graphql/itnSeperate.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { PrinterService } from 'src/app/shared/data/printer';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+
+interface ItnInfo {
+  ITN: string;
+  Quantity: number;
+}
 
 @Injectable()
 export class ItnSeperateService {
   constructor(
     private readonly _itn: VerifyItnForSeperateGQL,
+    private readonly _separate: SeparateItnGQL,
+    private readonly _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,
     private _eventLog: EventLogService
   ) {
     //
   }
 
-  private _itnQuantity = new BehaviorSubject<number>(null);
-  public get itnQuantity() {
-    return this._itnQuantity.value;
+  private _itnInfo = new BehaviorSubject<ItnInfo>(null);
+  public get itnInfo() {
+    return this._itnInfo.value;
   }
   /**
    *
    * @param date Update itnInfo
    */
-  public changeItnQuantity(date: number): void {
-    this._itnQuantity.next(date);
+  public changeitnInfo(date: ItnInfo): void {
+    this._itnInfo.next(date);
   }
 
   /**
    * resetItnInfo
    */
-  public resetItnQuantity(): void {
-    this._itnQuantity.next(null);
+  public resetitnInfo(): void {
+    this._itnInfo.next(null);
+    this._eventLog.initEventLog(null);
   }
 
   public verifyItn(ITN: string) {
@@ -40,6 +52,9 @@ export class ItnSeperateService {
       tap((res) => {
         if (!res.data.findInventory?._id) {
           throw new Error("Can't find this ITN!");
+        }
+        if (!res.data.findInventory?.QuantityOnHand) {
+          throw new Error("Can't find the Quantity of ITN!");
         }
       }),
       switchMap((res) => {
@@ -57,11 +72,34 @@ export class ItnSeperateService {
             QuantityOnHand: res.data.findInventory.QuantityOnHand,
           }),
         });
+        this.changeitnInfo({
+          Quantity: res.data.findInventory.QuantityOnHand,
+          ITN,
+        });
         return this._insertLog.mutate({
           oldLogs,
           eventLogs: this._eventLog.eventLog,
         });
       })
+    );
+  }
+
+  public seperateITN(QuantityList: number[]): void {
+    this._printer.printer$.pipe(
+      switchMap((res) => {
+        return this._separate.mutate({
+          ITN: this.itnInfo.ITN,
+          QuantityList,
+          Printer: res.Name,
+          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        });
+      })
+      // switchMap(() => {
+      //   return this._insertLog.mutate({
+      //     oldLogs,
+      //     eventLogs: this._eventLog.eventLog,
+      //   });
+      // })
     );
   }
 }
