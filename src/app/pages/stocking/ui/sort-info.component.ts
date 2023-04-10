@@ -24,7 +24,7 @@ import { Component, Input } from '@angular/core';
         class="grid grid-cols-3 justify-items-end gap-0 text-black md:text-lg lg:text-xl"
       >
         <span class="mr-2 font-medium">AutoStore:</span>
-        <span class="col-span-2 justify-self-start text-blue-600"> F</span>
+        <span class="col-span-2 justify-self-start text-blue-600"> No</span>
 
         <span class="mr-2 font-medium">In:</span>
         <span class="col-span-2 justify-self-start text-blue-600"> 00</span>

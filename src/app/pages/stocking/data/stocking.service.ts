@@ -165,7 +165,16 @@ export class StockingService {
             throw new Error(`${Barcode} has no ITN!`);
           }
         }),
-        map((res) => res.data.findContainer.INVENTORies),
+        map((res) => {
+          return res.data.findContainer.INVENTORies.filter((itn) => {
+            return itn.NotFound === false;
+          });
+        }),
+        tap((res) => {
+          if (!res.length) {
+            throw new Error(`${Barcode} has no vaild ITN!`);
+          }
+        }),
         switchMap((res) => {
           const ITNList = res.map((item) => {
             Logger.devOnly(
@@ -243,7 +252,10 @@ export class StockingService {
    */
   public ItnInUserContainer$() {
     return this._ItnInUser
-      .fetch({ ContainerID: this._userC.userContainerID })
+      .fetch(
+        { ContainerID: this._userC.userContainerID },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         map((res) => res.data.findContainer.INVENTORies),
         tap((res) => {

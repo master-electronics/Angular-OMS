@@ -6,7 +6,6 @@ import { catchError, combineLatest, map, of, shareReplay, tap } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ItnInfoService } from '../../../data/itn-info.service';
-import { SortingService } from '../../../data/sorting.service';
 import { StockingService } from '../../../data/stocking.service';
 import { StockInfoComponent } from '../../../ui/stock-info.component';
 import { SuggetionLocationComponent } from '../../../ui/suggetion-location.component';
