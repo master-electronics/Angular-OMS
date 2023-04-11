@@ -166,9 +166,7 @@ export class StockingService {
           }
         }),
         map((res) => {
-          return res.data.findContainer.INVENTORies.filter((itn) => {
-            return itn.NotFound === false;
-          });
+          return res.data.findContainer.INVENTORies;
         }),
         tap((res) => {
           if (!res.length) {

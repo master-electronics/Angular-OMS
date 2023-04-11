@@ -13,14 +13,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
-import { EventLogService } from 'src/app/shared/data/eventLog';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
-import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { ItnSeperateService } from '../data/itn-seperate.service';
+import { ItnSeparateService } from '../data/itn-separate.service';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -76,7 +72,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
         <div></div>
         <submit-button
           [disabled]="validator$ | async"
-          buttonText="Seperate"
+          buttonText="separate"
           (buttonClick)="onSubmit()"
         >
         </submit-button>
@@ -95,16 +91,15 @@ export class AssignComponent implements OnInit {
   }> = [];
 
   constructor(
-    public itn: ItnSeperateService,
+    public itn: ItnSeparateService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router,
-    private _itn: ItnSeperateService
+    private _router: Router
   ) {}
 
   @ViewChildren('quantity') inputFiledList: QueryList<ElementRef>;
   ngOnInit(): void {
-    this.remaining = this._itn.itnInfo.Quantity;
+    this.remaining = this.itn.itnInfo.Quantity;
     this.inputForm = this._fb.group({});
     this.addField();
     this.validator$ = this.inputForm.valueChanges.pipe(
@@ -114,7 +109,7 @@ export class AssignComponent implements OnInit {
         Object.values(res).forEach((element, index) => {
           sum += Number(element);
         });
-        this.remaining = this._itn.itnInfo.Quantity - sum;
+        this.remaining = this.itn.itnInfo.Quantity - sum;
         return this.remaining;
       }),
       map((res) => {
@@ -143,15 +138,57 @@ export class AssignComponent implements OnInit {
       new FormControl(0, [Validators.required, Validators.min(1)])
     );
     setTimeout(() => {
-      if (!id) {
-        this.inputForm
-          .get(`quantity${id}`)
-          .setValue(this._itn.itnInfo.Quantity);
-      }
+      this.setITNQuantity(id);
       this.inputFiledList
         .get(this.listOfControl.length - 1)
         .nativeElement.select();
     }, 0);
+  }
+
+  public splitInteger(num: number, parts: number): number[] {
+    const result: number[] = [];
+    const quotient = Math.floor(num / parts);
+    const remainder = num % parts;
+
+    // add the quotient to the result array `parts` times
+    for (let i = 0; i < parts; i++) {
+      result.push(quotient);
+    }
+
+    // distribute the remainder across the result array
+    for (let i = 0; i < remainder; i++) {
+      result[i]++;
+    }
+
+    return result;
+  }
+
+  public setITNQuantity(id: number): void {
+    // If only one ITN, set value as total
+    if (id === 0) {
+      this.inputForm.get(`quantity${id}`).setValue(this.itn.itnInfo.Quantity);
+      return;
+    }
+
+    const preQuantity = this.splitInteger(this.itn.itnInfo.Quantity, id);
+    // check if the defualt qty is changed. If yes, do not auto split quantity.
+    if (
+      Object.values(this.inputForm.value).some((ele, index) => {
+        // ignore the last ITN
+        if (index === id) {
+          return false;
+        }
+        return ele !== preQuantity[index];
+      })
+    ) {
+      return;
+    } else {
+      const curQuantity = this.splitInteger(this.itn.itnInfo.Quantity, id + 1);
+      // if not change, re-assign quantity into ITN list.
+      curQuantity.forEach((qty, index) => {
+        this.inputForm.get(`quantity${index}`).setValue(qty);
+      });
+    }
   }
 
   removeField(
@@ -175,13 +212,8 @@ export class AssignComponent implements OnInit {
       Object.values(this.inputForm.value).forEach((ele, index) => {
         quantityList.push(Number(ele));
       });
-      this._itn.seperateITN(quantityList);
-      this._router.navigate(['../scan'], {
-        relativeTo: this._actRoute,
-        queryParams: {
-          ITN: this._itn.itnInfo,
-        },
-      });
+      this.itn.separateITN(quantityList);
+      this._router.navigate(['../itnlist'], { relativeTo: this._actRoute });
     } else {
       Object.values(this.inputForm.controls).forEach((control) => {
         if (control.invalid) {

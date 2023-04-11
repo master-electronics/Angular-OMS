@@ -13,10 +13,12 @@ import { environment } from 'src/environments/environment';
 interface ItnInfo {
   ITN: string;
   Quantity: number;
+  PartNumber: string;
+  ProductCode: string;
 }
 
 @Injectable()
-export class ItnSeperateService {
+export class ItnSeparateService {
   constructor(
     private readonly _itn: VerifyItnForSeperateGQL,
     private readonly _separate: SeparateItnGQL,
@@ -39,11 +41,24 @@ export class ItnSeperateService {
     this._itnInfo.next(date);
   }
 
+  private _newItnList = new BehaviorSubject<ItnInfo[]>(null);
+  public get newItnList() {
+    return this._newItnList.value;
+  }
+  /**
+   *
+   * @param date Update itnInfo
+   */
+  public changeItnList(list: ItnInfo[]): void {
+    this._newItnList.next(list);
+  }
+
   /**
    * resetItnInfo
    */
   public resetitnInfo(): void {
     this._itnInfo.next(null);
+    this._newItnList.next(null);
     this._eventLog.initEventLog(null);
   }
 
@@ -75,6 +90,9 @@ export class ItnSeperateService {
         this.changeitnInfo({
           Quantity: res.data.findInventory.QuantityOnHand,
           ITN,
+          PartNumber: res.data.findInventory.Product.PartNumber,
+          ProductCode:
+            res.data.findInventory.Product.ProductCode.ProductCodeNumber,
         });
         return this._insertLog.mutate({
           oldLogs,
@@ -84,22 +102,24 @@ export class ItnSeperateService {
     );
   }
 
-  public seperateITN(QuantityList: number[]): void {
-    this._printer.printer$.pipe(
-      switchMap((res) => {
-        return this._separate.mutate({
-          ITN: this.itnInfo.ITN,
-          QuantityList,
-          Printer: res.Name,
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-        });
-      })
-      // switchMap(() => {
-      //   return this._insertLog.mutate({
-      //     oldLogs,
-      //     eventLogs: this._eventLog.eventLog,
-      //   });
-      // })
-    );
+  public separateITN(QuantityList: number[]) {
+    console.log(QuantityList);
+
+    // return this._printer.printer$.pipe(
+    //   switchMap((res) => {
+    //     return this._separate.mutate({
+    //       ITN: this.itnInfo.ITN,
+    //       QuantityList,
+    //       Printer: res.Name,
+    //       UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+    //     });
+    //   }),
+    //   switchMap(() => {
+    //     return this._insertLog.mutate({
+    //       oldLogs,
+    //       eventLogs: this._eventLog.eventLog,
+    //     });
+    //   })
+    // );
   }
 }

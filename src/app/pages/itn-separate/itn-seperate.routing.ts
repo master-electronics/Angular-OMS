@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { ItnSeperateService } from './data/itn-seperate.service';
+import { ItnSeparateService } from './data/itn-separate.service';
 
 export const ItnSeperateRoutes: Routes = [
   {
     path: '',
-    providers: [ItnSeperateService],
+    providers: [ItnSeparateService],
     canActivateChild: [],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ItnSeperateShell),
@@ -18,6 +18,11 @@ export const ItnSeperateRoutes: Routes = [
         path: 'assign',
         loadComponent: () =>
           import('./feature/assign.component').then((m) => m.AssignComponent),
+      },
+      {
+        path: 'itnlist',
+        loadComponent: () =>
+          import('./feature/itList.component').then((m) => m.ItnListComponent),
       },
       {
         path: '',

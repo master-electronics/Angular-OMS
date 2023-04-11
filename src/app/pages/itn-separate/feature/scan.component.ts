@@ -8,7 +8,7 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { ItnSeperateService } from '../data/itn-seperate.service';
+import { ItnSeparateService } from '../data/itn-separate.service';
 
 @Component({
   standalone: true,
@@ -36,7 +36,7 @@ export class ScanComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _itn: ItnSeperateService,
+    private _itn: ItnSeparateService,
     private _eventLog: EventLogService
   ) {}
 

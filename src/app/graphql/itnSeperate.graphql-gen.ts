@@ -512,7 +512,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
-  separateITN?: Maybe<Scalars['Boolean']>;
+  separateITN: Array<Maybe<Scalars['String']>>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -873,7 +873,7 @@ export type MutationSeparateItnArgs = {
   ITN: Scalars['String'];
   Printer: Scalars['String'];
   QuantityList: Array<InputMaybe<Scalars['Float']>>;
-  UserName?: InputMaybe<Scalars['String']>;
+  UserName: Scalars['String'];
 };
 
 export type MutationSuspectInventoryArgs = {
@@ -2649,6 +2649,11 @@ export type VerifyItnForSeperateQuery = {
     __typename?: 'Inventory';
     _id: number;
     QuantityOnHand: number;
+    Product: {
+      __typename?: 'Product';
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
   } | null;
 };
 
@@ -2663,7 +2668,7 @@ export type SeparateItnMutationVariables = Types.Exact<{
 
 export type SeparateItnMutation = {
   __typename?: 'Mutation';
-  separateITN?: boolean | null;
+  separateITN: Array<string | null>;
 };
 
 export const VerifyItnForSeperateDocument = gql`
@@ -2673,6 +2678,12 @@ export const VerifyItnForSeperateDocument = gql`
     ) {
       _id
       QuantityOnHand
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
     }
   }
 `;

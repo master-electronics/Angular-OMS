@@ -170,7 +170,7 @@ const routes: Routes = [
         path: 'itnseperate',
         canActivate: [PrinterGuard],
         loadChildren: () =>
-          import('./pages/itn-seperate/itn-seperate.routing').then(
+          import('./pages/itn-separate/itn-seperate.routing').then(
             (m) => m.ItnSeperateRoutes
           ),
       },

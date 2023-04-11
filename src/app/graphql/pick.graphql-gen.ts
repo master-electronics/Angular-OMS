@@ -512,7 +512,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
-  separateITN?: Maybe<Scalars['Boolean']>;
+  separateITN: Array<Maybe<Scalars['String']>>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -873,7 +873,7 @@ export type MutationSeparateItnArgs = {
   ITN: Scalars['String'];
   Printer: Scalars['String'];
   QuantityList: Array<InputMaybe<Scalars['Float']>>;
-  UserName?: InputMaybe<Scalars['String']>;
+  UserName: Scalars['String'];
 };
 
 export type MutationSuspectInventoryArgs = {

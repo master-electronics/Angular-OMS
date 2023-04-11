@@ -4,6 +4,12 @@ query verifyITNForSeperate($ITN: String!, $DC: String!) {
   ) {
     _id
     QuantityOnHand
+    Product {
+      PartNumber
+      ProductCode {
+        ProductCodeNumber
+      }
+    }
   }
 }
 
