@@ -598,6 +598,7 @@ export type MutationDeleteAutostoreOrderLinesArgs = {
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
+  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationDeleteCustomerFromMerpArgs = {
@@ -1609,11 +1610,13 @@ export type QueryFindPoLineArgs = {
 };
 
 export type QueryFindPoLinesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFindPOsArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   PurchaseOrderNumber?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
 };
@@ -1623,6 +1626,7 @@ export type QueryFindPartArgs = {
 };
 
 export type QueryFindPartCodesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   SearchString?: InputMaybe<Scalars['String']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
@@ -1986,6 +1990,7 @@ export type UserInfo = {
   Cart?: Maybe<Container>;
   CartID?: Maybe<Scalars['Int']>;
   CartLastUpdated?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   PullerLevel?: Maybe<Scalars['Int']>;

@@ -42,8 +42,11 @@ query findReceipts($receiptID: String) {
   }
 }
 
-query findPartCodes($searchString: String, $vendorID: Int) {
-  findPartCodes(SearchString: $searchString, VendorID: $vendorID) {
+query findPartCodes($searchString: String, $vendorID: Int, $distributionCenter: String) {
+  findPartCodes(
+    SearchString: $searchString, 
+    VendorID: $vendorID, 
+    DistributionCenter: $distributionCenter) {
     _id
     PRC
   }
@@ -100,8 +103,8 @@ query findReceiptLine($receiptLineId: Int) {
   }
 }
 
-query findPOLines($vendorID: Int, $productID: Int) {
-  findPOLines(VendorID: $vendorID, ProductID: $productID) {
+query findPOLines($vendorID: Int, $productID: Int, $distributionCenter: String) {
+  findPOLines(VendorID: $vendorID, ProductID: $productID, DistributionCenter: $distributionCenter) {
     _id
     PurchaseOrderNumberLine
   }
@@ -115,8 +118,11 @@ query findPOLine($purchaseOrderLID: Int) {
   }
 }
 
-query findPOs($purchaseOrderNumber: String, $limit: Int) {
-  findPOs(PurchaseOrderNumber: $purchaseOrderNumber, limit: $limit) {
+query findPOs($purchaseOrderNumber: String, $distributionCenter: String, $limit: Int) {
+  findPOs(
+    PurchaseOrderNumber: $purchaseOrderNumber, 
+    DistributionCenter: $distributionCenter, 
+    limit: $limit) {
     _id
     PurchaseOrderNumber
     VendorID

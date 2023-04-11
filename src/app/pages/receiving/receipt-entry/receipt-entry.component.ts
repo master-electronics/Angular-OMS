@@ -400,6 +400,8 @@ export class ReceiptEntry implements OnInit {
           .fetch(
             {
               purchaseOrderNumber: value.toUpperCase(),
+              distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
+                .DistributionCenter,
               limit: 20,
             },
             { fetchPolicy: 'network-only' }
@@ -445,6 +447,8 @@ export class ReceiptEntry implements OnInit {
           {
             searchString: value ? value : '',
             vendorID: Number(this.vendorID),
+            distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
+              .DistributionCenter,
           },
           { fetchPolicy: 'network-only' }
         )
@@ -515,6 +519,8 @@ export class ReceiptEntry implements OnInit {
             {
               vendorID: Number(this.receiptVendorID),
               productID: Number(this.partNumberID),
+              distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
+                .DistributionCenter,
             },
             { fetchPolicy: 'network-only' }
           )
