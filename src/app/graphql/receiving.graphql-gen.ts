@@ -1540,12 +1540,14 @@ export type QueryFindPoLineArgs = {
 
 
 export type QueryFindPoLinesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryFindPOsArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   PurchaseOrderNumber?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
 };
@@ -1557,6 +1559,7 @@ export type QueryFindPartArgs = {
 
 
 export type QueryFindPartCodesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   SearchString?: InputMaybe<Scalars['String']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
@@ -1890,6 +1893,7 @@ export type UserInfo = {
   Cart?: Maybe<Container>;
   CartID?: Maybe<Scalars['Int']>;
   CartLastUpdated?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   PullerLevel?: Maybe<Scalars['Int']>;
@@ -2498,6 +2502,7 @@ export type FindReceiptsQuery = { __typename?: 'Query', findReceipts?: Array<{ _
 export type FindPartCodesQueryVariables = Types.Exact<{
   searchString?: Types.InputMaybe<Types.Scalars['String']>;
   vendorID?: Types.InputMaybe<Types.Scalars['Int']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -2527,6 +2532,7 @@ export type FindReceiptLineQuery = { __typename?: 'Query', findReceiptLine?: { _
 export type FindPoLinesQueryVariables = Types.Exact<{
   vendorID?: Types.InputMaybe<Types.Scalars['Int']>;
   productID?: Types.InputMaybe<Types.Scalars['Int']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -2541,6 +2547,7 @@ export type FindPoLineQuery = { __typename?: 'Query', findPOLine?: Array<{ __typ
 
 export type FindPOsQueryVariables = Types.Exact<{
   purchaseOrderNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
@@ -2755,8 +2762,12 @@ export const FindReceiptsDocument = gql`
     }
   }
 export const FindPartCodesDocument = gql`
-    query findPartCodes($searchString: String, $vendorID: Int) {
-  findPartCodes(SearchString: $searchString, VendorID: $vendorID) {
+    query findPartCodes($searchString: String, $vendorID: Int, $distributionCenter: String) {
+  findPartCodes(
+    SearchString: $searchString
+    VendorID: $vendorID
+    DistributionCenter: $distributionCenter
+  ) {
     _id
     PRC
   }
@@ -2861,8 +2872,12 @@ export const FindReceiptLineDocument = gql`
     }
   }
 export const FindPoLinesDocument = gql`
-    query findPOLines($vendorID: Int, $productID: Int) {
-  findPOLines(VendorID: $vendorID, ProductID: $productID) {
+    query findPOLines($vendorID: Int, $productID: Int, $distributionCenter: String) {
+  findPOLines(
+    VendorID: $vendorID
+    ProductID: $productID
+    DistributionCenter: $distributionCenter
+  ) {
     _id
     PurchaseOrderNumberLine
   }
@@ -2900,8 +2915,12 @@ export const FindPoLineDocument = gql`
     }
   }
 export const FindPOsDocument = gql`
-    query findPOs($purchaseOrderNumber: String, $limit: Int) {
-  findPOs(PurchaseOrderNumber: $purchaseOrderNumber, limit: $limit) {
+    query findPOs($purchaseOrderNumber: String, $distributionCenter: String, $limit: Int) {
+  findPOs(
+    PurchaseOrderNumber: $purchaseOrderNumber
+    DistributionCenter: $distributionCenter
+    limit: $limit
+  ) {
     _id
     PurchaseOrderNumber
     VendorID

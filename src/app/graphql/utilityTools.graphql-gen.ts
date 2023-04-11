@@ -1540,12 +1540,14 @@ export type QueryFindPoLineArgs = {
 
 
 export type QueryFindPoLinesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryFindPOsArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   PurchaseOrderNumber?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
 };
@@ -1557,6 +1559,7 @@ export type QueryFindPartArgs = {
 
 
 export type QueryFindPartCodesArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   SearchString?: InputMaybe<Scalars['String']>;
   VendorID?: InputMaybe<Scalars['Int']>;
 };
@@ -1890,6 +1893,7 @@ export type UserInfo = {
   Cart?: Maybe<Container>;
   CartID?: Maybe<Scalars['Int']>;
   CartLastUpdated?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
   Name: Scalars['String'];
   PriorityCutoff?: Maybe<Scalars['Int']>;
   PullerLevel?: Maybe<Scalars['Int']>;
@@ -2493,7 +2497,7 @@ export type Find_Or_Create_UserInfoMutationVariables = Types.Exact<{
 }>;
 
 
-export type Find_Or_Create_UserInfoMutation = { __typename?: 'Mutation', findOrCreateUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string } | null };
+export type Find_Or_Create_UserInfoMutation = { __typename?: 'Mutation', findOrCreateUserInfo?: { __typename?: 'UserInfo', _id: number, Name: string, DistributionCenter?: string | null } | null };
 
 export type Insert_UserEventLogsMutationVariables = Types.Exact<{
   log: Array<Types.InputMaybe<Types.InsertUserEventLog>> | Types.InputMaybe<Types.InsertUserEventLog>;
@@ -2618,6 +2622,7 @@ export const Find_Or_Create_UserInfoDocument = gql`
   findOrCreateUserInfo(UserInfo: $UserInfo) {
     _id
     Name
+    DistributionCenter
   }
 }
     `;

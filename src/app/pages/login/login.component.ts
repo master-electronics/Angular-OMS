@@ -13,6 +13,7 @@ import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql
 import { CommonModule } from '@angular/common';
 import { UserPasswordComponent } from 'src/app/shared/ui/input/user-password-form.component';
 import { of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: true,
@@ -90,7 +91,15 @@ export class LoginComponent implements OnInit {
           return this.userInfo.mutate({ UserInfo: UserInfo });
         }),
         map((res) => {
-          const userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
+          let userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
+          const userInfoObj = JSON.parse(userInfo);
+
+          if (!userInfoObj.DistributionCenter) {
+            userInfoObj.DistributionCenter = environment.DistributionCenter;
+          }
+
+          userInfo = JSON.stringify(userInfoObj);
+
           sessionStorage.setItem('userInfo', userInfo);
           const returnUrl =
             this.route.snapshot.queryParams['returnUrl'] || '/home';
