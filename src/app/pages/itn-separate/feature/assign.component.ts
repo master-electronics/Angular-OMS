@@ -102,6 +102,7 @@ export class AssignComponent implements OnInit {
     this.remaining = this.itn.itnInfo.Quantity;
     this.inputForm = this._fb.group({});
     this.addField();
+    this.addField();
     this.validator$ = this.inputForm.valueChanges.pipe(
       startWith(true),
       map((res) => {

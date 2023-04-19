@@ -29,26 +29,24 @@ export class ItnSeparateService {
     //
   }
 
+  /**
+   * Fetch source ITN's info
+   */
   private _itnInfo = new BehaviorSubject<ItnInfo>(null);
   public get itnInfo() {
     return this._itnInfo.value;
   }
-  /**
-   *
-   * @param date Update itnInfo
-   */
-  public changeitnInfo(date: ItnInfo): void {
-    this._itnInfo.next(date);
+  public changeitnInfo(itn: ItnInfo): void {
+    this._itnInfo.next(itn);
   }
 
+  /**
+   * Store new ITNs back from API
+   */
   private _newItnList = new BehaviorSubject<ItnInfo[]>(null);
   public get newItnList() {
     return this._newItnList.value;
   }
-  /**
-   *
-   * @param date Update itnInfo
-   */
   public changeItnList(list: ItnInfo[]): void {
     this._newItnList.next(list);
   }
@@ -102,9 +100,7 @@ export class ItnSeparateService {
     );
   }
 
-  public separateITN(QuantityList: number[]) {
-    console.log(QuantityList);
-
+  public separateITN(QuantityList: number[]): void {
     // return this._printer.printer$.pipe(
     //   switchMap((res) => {
     //     return this._separate.mutate({

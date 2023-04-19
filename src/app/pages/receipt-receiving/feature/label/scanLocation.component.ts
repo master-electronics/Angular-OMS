@@ -7,7 +7,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  delay,
+  filter,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
@@ -38,13 +47,11 @@ import { LocationStrategy } from '@angular/common';
       [formGroup]="inputForm"
       controlName="location"
       title="Location"
-      [isvalid]="this.isvalid"
     ></single-input-form>
   `,
 })
 export class ScanLocationComponent implements OnInit {
   public inputForm: FormGroup;
-  public isvalid = true;
   public data$: Observable<any>;
   public ITNList$: Observable<any>;
   // public validator = {
@@ -57,18 +64,16 @@ export class ScanLocationComponent implements OnInit {
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
     public _label: LabelService,
-    private _log: LogService,
     private location: LocationStrategy
   ) {}
 
   ngOnInit(): void {
-    this.data$ = of(true);
+    this.data$ = of(true).pipe(delay(500));
     this._ui.changeSteps(3);
     this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       location: new FormControl('', [Validators.required]),
     });
-
     // preventing back button
     history.pushState(null, null, window.location.href);
     this.location.onPopState(() => {
@@ -87,7 +92,9 @@ export class ScanLocationComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.isvalid = false;
+    if (!this.inputForm.value.location.trim()) {
+      return;
+    }
     this.data$ = this._label
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
@@ -114,7 +121,6 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         catchError((error) => {
-          this.isvalid = true;
           return of({
             error: { message: error.message, type: 'error' },
           });
