@@ -41,8 +41,6 @@ export class ProductService {
   ) {}
 
   public sendToAutostore$(IDList: number[]) {
-    console.log('heretoo');
-
     return combineLatest(
       IDList.map((ID) => {
         const message: Message = {};
@@ -118,8 +116,6 @@ export class ProductService {
               return res;
             }),
             switchMap((res) => {
-              console.log('hereii - ');
-              console.log(message);
 
               return combineLatest({
                 productDataMessage: this._insertMessage.mutate({

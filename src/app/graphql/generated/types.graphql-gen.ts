@@ -12,9 +12,26 @@ export type Scalars = {
   Float: number;
 };
 
+export type Asnreplenishmentitem = {
+  __typename?: 'ASNREPLENISHMENTITEM';
+  Aisle?: Maybe<Scalars['String']>;
+  Barcode?: Maybe<Scalars['String']>;
+  InventoryID?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  Row?: Maybe<Scalars['String']>;
+  Section?: Maybe<Scalars['String']>;
+  Shelf?: Maybe<Scalars['String']>;
+  ShelfDetail?: Maybe<Scalars['String']>;
+  Status?: Maybe<Scalars['String']>;
+  Warehouse?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Autostoreasnheader = {
   __typename?: 'AUTOSTOREASNHEADER';
   AUTOSTOREASNLINEs?: Maybe<Array<Maybe<Autostoreasnline>>>;
+  Container?: Maybe<Container>;
+  ContainerID?: Maybe<Scalars['Int']>;
   Status?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
   tuId?: Maybe<Scalars['String']>;
@@ -24,6 +41,7 @@ export type Autostoreasnheader = {
 export type Autostoreasnline = {
   __typename?: 'AUTOSTOREASNLINE';
   ASNID?: Maybe<Scalars['Int']>;
+  Inventory?: Maybe<Inventory>;
   InventoryID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
   lineNumber?: Maybe<Scalars['Int']>;
@@ -504,6 +522,8 @@ export type Mutation = {
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
+  updateASNInventory?: Maybe<Scalars['Boolean']>;
+  updateASNReplenishmentItem?: Maybe<Asnreplenishmentitem>;
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreASN?: Maybe<Autostoreasnheader>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -932,6 +952,21 @@ export type MutationSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
   reasonIDList: Array<InputMaybe<Scalars['Int']>>;
+};
+
+
+export type MutationUpdateAsnInventoryArgs = {
+  BoundForAutostore?: InputMaybe<Scalars['Boolean']>;
+  ContainerID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['Boolean']>;
+  SuspectReasonID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateAsnReplenishmentItemArgs = {
+  ReplenishmentItem?: InputMaybe<AsnReplenishmentItem>;
 };
 
 
@@ -1437,6 +1472,9 @@ export type Query = {
   fetchWMSStatusView?: Maybe<Array<Maybe<WmsStatusView>>>;
   fetchZoneList?: Maybe<Array<Maybe<Zone>>>;
   fetchZonesForUser?: Maybe<Array<Maybe<Zone>>>;
+  findASN?: Maybe<Autostoreasnheader>;
+  findASNByITN?: Maybe<Array<Maybe<Autostoreasnheader>>>;
+  findASNReplenishmentInventory?: Maybe<Array<Maybe<Asnreplenishmentitem>>>;
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
@@ -1490,9 +1528,11 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
+  verifyASNLocationNotInProcess?: Maybe<Array<Maybe<Autostoreasnheader>>>;
   verifyASNLocationStatus?: Maybe<Array<Maybe<Autostoreasnheader>>>;
 };
 
@@ -1641,6 +1681,21 @@ export type QueryFetchZoneListArgs = {
 
 export type QueryFetchZonesForUserArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFindAsnArgs = {
+  ASN?: InputMaybe<AutostoreAsnHeader>;
+};
+
+
+export type QueryFindAsnByItnArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFindAsnReplenishmentInventoryArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1936,6 +1991,14 @@ export type QueryFindVendorByPoArgs = {
 };
 
 
+export type QueryPrintQrCodeLabelArgs = {
+  DPI: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PRINTER: Scalars['String'];
+  TEXT: Scalars['String'];
+};
+
+
 export type QueryPrintReceivingItnLabelArgs = {
   DPI: Scalars['String'];
   ITN: Scalars['String'];
@@ -1959,6 +2022,12 @@ export type QueryPrintTextLabelArgs = {
 
 export type QueryVerifyAsnLocationArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryVerifyAsnLocationNotInProcessArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+  StatusList?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 
@@ -2209,6 +2278,11 @@ export type Zone = {
   Type?: Maybe<Scalars['String']>;
   Zone?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
+};
+
+export type AsnReplenishmentItem = {
+  Status?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
 };
 
 export type AutostoreAsnHeader = {

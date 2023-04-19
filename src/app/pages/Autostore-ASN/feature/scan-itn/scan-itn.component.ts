@@ -12,7 +12,13 @@ import {
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ASNService } from '../../data/asn.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
+import { EventLogService } from 'src/app/shared/services/eventLog.service';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { environment } from 'src/environments/environment';
+import { ReplenishmentItem } from '../../utils/interfaces';
+import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
+import { ITNInfoComponent } from '../../ui/itn-info.component';
 
 @Component({
   standalone: true,
@@ -21,10 +27,13 @@ import { catchError, map, of } from 'rxjs';
     SingleInputformComponent,
     ReactiveFormsModule,
     GreenButtonComponent,
+    PopupModalComponent,
+    ITNInfoComponent,
   ],
   template: `
     <single-input-form
       (formSubmit)="onSubmit()"
+      (formBack)="onBack()"
       [data]="data$ | async"
       [formGroup]="inputForm"
       iputType="string"
@@ -32,28 +41,16 @@ import { catchError, map, of } from 'rxjs';
       title="Scan ITN:"
     >
     </single-input-form>
-    <div class="text-base sm:text-lg md:mx-16 md:text-2xl lg:text-4xl">
-      <div
-        class="grid h-12 w-full grid-cols-4 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
-      ></div>
-      <div
-        class="grid h-12 w-full grid-cols-4 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
-      ></div>
-      <div
-        class="grid h-12 w-full grid-cols-4 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
-      >
-        <div></div>
-        <div class="col-span-2">
-          <green-button
-            buttonText="Send to Autostore"
-            (buttonClick)="sendToAutostore()"
-          >
-          </green-button>
-        </div>
-        <div></div>
-      </div>
-    </div>
+    <div style="height: 20px"></div>
+    <ng-container *ngIf="info$ | async as info">
+      <itn-info [itnInfo]="replenishmentItem"></itn-info>
+    </ng-container>
+    <div style="height: 20px"></div>
+    <ng-container *ngIf="error">
+      <popup-modal (clickSubmit)="onBack()" [message]="error"></popup-modal>
+    </ng-container>
     <div *ngIf="test$ | async"></div>
+    <div *ngIf="log$ | async"></div>
   `,
 })
 export class ScanITN implements OnInit {
@@ -61,24 +58,84 @@ export class ScanITN implements OnInit {
     private _fb: FormBuilder,
     private _asn: ASNService,
     private _actRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _eventLog: EventLogService
   ) {}
 
   public data$;
   public test$;
+  public log$;
+  public info$;
   public inputForm = this._fb.nonNullable.group({
     ITN: ['', [Validators.required]],
   });
 
+  replenishmentItem: ReplenishmentItem;
+  error;
+
   ngOnInit(): void {
-    this.data$ = this._actRoute.queryParamMap;
+    this.replenishmentItem = null;
+
+    this.info$ = this._actRoute.data.pipe(
+      map((res) => {
+        if (!res.ReplenishmentItem.InventoryTrackingNumber) {
+          this.error = 'There are no more replenishment ITNs';
+          return of(false);
+        }
+        this.replenishmentItem = res.ReplenishmentItem;
+        sessionStorage.setItem(
+          'asnReplenishmentItem',
+          JSON.stringify(this.replenishmentItem)
+        );
+        return of(true);
+      })
+    );
+
+    this.data$ = of(true);
+    sessionStorage.removeItem('asnLocation');
+    sessionStorage.removeItem('asn-itn');
   }
 
   public onSubmit(): void {
     const input = this.inputForm.value.ITN.trim();
-    console.log(input);
+
     if (ITNBarcodeRegex.test(input)) {
-      this.moveItnToUser(input);
+      if (this.replenishmentItem.InventoryTrackingNumber != input) {
+        this.data$ = of({
+          error: { message: 'Incorrect ITN!', type: 'error' },
+        });
+
+        return;
+      }
+
+      sessionStorage.setItem('asnLocation', this.replenishmentItem.Barcode);
+      sessionStorage.setItem('asn-itn', input);
+
+      this.log$ = this._eventLog.insertLog(
+        [
+          {
+            UserEventID: sqlData.Event_Autostore_ASN_ITN_Scanned,
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            DistributionCenter: environment.DistributionCenter,
+            InventoryTrackingNumber: input,
+          },
+        ],
+        [
+          {
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            EventTypeID: sqlData.Event_Autostore_ASN_ITN_Scanned,
+            Log: JSON.stringify({
+              DistributionCenter: environment.DistributionCenter,
+              InventoryTrackingNumber: input,
+            }),
+          },
+        ]
+      );
+
+      this._router.navigate(['../scan-location'], {
+        relativeTo: this._actRoute,
+      });
+
       return;
     } else {
       this.data$ = of({
@@ -87,23 +144,14 @@ export class ScanITN implements OnInit {
     }
   }
 
-  private moveItnToUser(ITN: string) {
-    this.data$ = this._asn.moveItnToUser(ITN).pipe(
-      map(() => {
-        this._router.navigate(['../scan-location'], {
-          relativeTo: this._actRoute,
-        });
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      })
-    );
-  }
+  // sendToAutostore() {
+  //   this._router.navigate(['../create/scan-location'], {
+  //     relativeTo: this._actRoute,
+  //   });
+  // }
 
-  sendToAutostore() {
-    this._router.navigate(['../create/scan-location'], {
+  onBack() {
+    this._router.navigate(['../start-location'], {
       relativeTo: this._actRoute,
     });
   }

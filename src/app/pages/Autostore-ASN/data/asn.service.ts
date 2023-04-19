@@ -17,15 +17,21 @@ import {
   MoveInventoryToContainerForAsnGQL,
   FetchAsnInventoryGQL,
   InsertAutostoreAsnGQL,
-  VerifyAsnLocationGQL,
+  VerifyAsnLocationCreateGQL,
   VerifyAsnLocationStatusGQL,
   UpdateAutostoreAsnGQL,
   UpdateAutostoreMessageGQL,
+  FindAsnReplenishmentInventoryGQL,
+  UpdateAsnReplenishmentItemGQL,
+  FindAsnByItnGQL,
+  UpdateAsnParentContainerGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
 import { InsertAutostoreMessageGQL } from 'src/app/graphql/autostore.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ProductService } from './product.service';
+import { ReplenishmentItem } from '../utils/interfaces';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 interface ASNLine {
   lineNumber?: number;
@@ -66,13 +72,17 @@ export class ASNService {
     private _move: MoveInventoryToContainerForAsnGQL,
     private _asnInventory: FetchAsnInventoryGQL,
     private _insertASN: InsertAutostoreAsnGQL,
-    private _verifyLocation: VerifyAsnLocationGQL,
-    private _verifyLocatoinStatus: VerifyAsnLocationStatusGQL,
+    private _verifyLocation: VerifyAsnLocationCreateGQL,
+    private _verifyLocationStatus: VerifyAsnLocationStatusGQL,
     private _insertMessage: InsertAutostoreMessageGQL,
     private http: HttpClient,
     private _productService: ProductService,
     private _updateASN: UpdateAutostoreAsnGQL,
-    private _updateMessage: UpdateAutostoreMessageGQL
+    private _updateMessage: UpdateAutostoreMessageGQL,
+    private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL,
+    private _updateReplenishmentitem: UpdateAsnReplenishmentItemGQL,
+    private _findASN: FindAsnByItnGQL,
+    private _updateParentContainer: UpdateAsnParentContainerGQL
   ) {}
 
   inventoryList;
@@ -118,6 +128,8 @@ export class ASNService {
         DC: environment.DistributionCenter,
         ContainerID: ContainerID,
         boundForAutostore: true,
+        suspect: true,
+        suspectReason: sqlData.ASN_Inventory_Suspect_Reason,
       })
       .pipe(
         catchError((error) => {
@@ -126,13 +138,23 @@ export class ASNService {
       );
   }
 
+  public findContainer(Barcode: string) {
+    return this._verifyLocation
+      .fetch(
+        {
+          container: { Barcode },
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(map((res) => res));
+  }
+
   public sendToAutostore$(Barcode: string) {
     let containerID: number;
     return this._verifyLocation
       .fetch(
         {
           container: { Barcode },
-          barcode: Barcode,
         },
         { fetchPolicy: 'network-only' }
       )
@@ -144,7 +166,7 @@ export class ASNService {
           containerID = res.data.findContainer._id;
         }),
         switchMap((res) => {
-          return this._verifyLocatoinStatus
+          return this._verifyLocationStatus
             .fetch(
               {
                 asn: { ContainerID: containerID, Status: 'Open' },
@@ -378,5 +400,87 @@ export class ASNService {
         id: MessageID,
       })
       .pipe((res) => res);
+  }
+
+  private _replenishmentItem = new BehaviorSubject<ReplenishmentItem>(null);
+  public get nextReplenishmentItem$(): Observable<ReplenishmentItem> {
+    return this._findReplenishmentItem
+      .fetch(
+        {
+          barcode: sessionStorage.getItem('asnLocation'),
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          const data = res.data.findASNReplenishmentInventory[0];
+          const Item: ReplenishmentItem = {
+            _id: data._id,
+            InventoryID: data.InventoryID,
+            Status: data.Status,
+            Barcode: data.Barcode,
+            Warehouse: data.Warehouse,
+            Row: data.Row,
+            Aisle: data.Aisle,
+            Section: data.Section,
+            Shelf: data.Shelf,
+            ShelfDetail: data.ShelfDetail,
+            InventoryTrackingNumber: data.InventoryTrackingNumber,
+          };
+          return Item;
+        })
+      );
+  }
+
+  fetchASN(ITN: string) {
+    return this._findASN
+      .fetch(
+        {
+          itn: ITN,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  updateASNReplenishmentItem(ID: number, Status: string) {
+    const replenishmentItem = {
+      _id: ID,
+      Status: Status,
+    };
+
+    return this._updateReplenishmentitem
+      .mutate({
+        replenishmentItem: replenishmentItem,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  updateASNParentContainer(ASNContainerID: number, ParentContainerID: number) {
+    const container = {
+      ParentContainerID: ParentContainerID,
+    };
+
+    return this._updateParentContainer
+      .mutate({
+        container: container,
+        id: ASNContainerID,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
   }
 }

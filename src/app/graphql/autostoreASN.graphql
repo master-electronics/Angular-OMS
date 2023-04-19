@@ -1,5 +1,8 @@
-query verifyASNLocation($barcode: String, $container: searchContainer) {
+query verifyASNLocation($barcode: String, $container: searchContainer, $statusList: [String]) {
   findContainer(Container: $container) {
+    _id
+  }
+  verifyASNLocationNotInProcess(Barcode: $barcode, StatusList: $statusList) {
     _id
   }
   verifyASNLocation(Barcode: $barcode) {
@@ -36,6 +39,26 @@ query fetchASNInventory($container: searchContainer) {
   }
 }
 
+query verifyASNLocationCreate($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    Barcode
+    ContainerType {
+      IsMobile
+    }
+  }
+}
+
+query verifyASNLocationDropOff($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    Barcode
+    ContainerType {
+      IsMobile
+    }
+  }
+}
+
 query verifyASNLocationStatus($asn: autostoreAsnHeader) {
   verifyASNLocationStatus(ASN: $asn) {
     _id
@@ -58,6 +81,46 @@ query findProduct($product: searchProduct) {
   }
 }
 
+query printQRCodeLabel(
+  $PRINTER: String!
+  $DPI: String!
+  $ORIENTATION: String!
+  $TEXT: String!
+) {
+  printQRCodeLabel(
+    PRINTER: $PRINTER
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
+    TEXT: $TEXT
+  )
+}
+
+query findASNReplenishmentInventory(
+  $barcode: String
+) {
+  findASNReplenishmentInventory(
+    Barcode: $barcode
+  ) {
+    _id
+    InventoryID
+    Status
+    Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    InventoryTrackingNumber
+  }
+}
+
+query findASNByITN($itn: String) {
+  findASNByITN(ITN: $itn) {
+    _id
+  }
+}
+
 mutation insertAutostoreASN($asn: autostoreAsnHeader) {
   insertAutostoreASN(ASN: $asn) {
     _id
@@ -69,15 +132,27 @@ mutation moveInventoryToContainerForASN(
   $DC: String!
   $ContainerID: Int!
   $boundForAutostore: Boolean
+  $suspect: Boolean
+  $suspectReason: Int
 ) {
-  updateInventory(
-    Inventory: { 
+  # updateInventory(
+  #   Inventory: { 
+  #     ContainerID: $ContainerID
+  #     BoundForAutostore: $boundForAutostore
+  #     Suspect: $suspect
+  #   }
+  # )
+    updateASNInventory(
+      InventoryTrackingNumber: $ITN
+      DistributionCenter: $DC
       ContainerID: $ContainerID
+      Suspect: $suspect
+      SuspectReasonID: $suspectReason
       BoundForAutostore: $boundForAutostore
-    }
-    DistributionCenter: $DC
-    InventoryTrackingNumber: $ITN
-  )
+    )
+    
+    
+
 }
 
 mutation updateAutostoreASN($asn: autostoreAsnHeader, $asnid: Int) {
@@ -96,4 +171,18 @@ mutation updateProductLastSync($product: updateProduct) {
   updateProductLastSync(Product: $product) {
     LastAutostoreSync
   }
+}
+
+mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
+  updateASNReplenishmentItem(ReplenishmentItem: $replenishmentItem) {
+    _id
+    Status
+  }
+}
+
+mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
+  updateContainer(
+    Container: $container,
+    _id: $id
+  )
 }
