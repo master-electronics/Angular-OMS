@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, switchMap, tap } from 'rxjs';
-import { ItnSplitAndPrintLabelsGQL } from 'src/app/graphql/itnSeperate.graphql-gen';
-import { VerifyItnForSeperateGQL } from 'src/app/graphql/itnSeperate.graphql-gen';
+import { ItnSplitAndPrintLabelsGQL } from 'src/app/graphql/itnSeparate.graphql-gen';
+import { VerifyItnForSeparateGQL } from 'src/app/graphql/itnSeparate.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { PrinterService } from 'src/app/shared/data/printer';
@@ -18,7 +18,7 @@ interface ItnInfo {
 @Injectable()
 export class ItnSeparateService {
   constructor(
-    private readonly _itn: VerifyItnForSeperateGQL,
+    private readonly _itn: VerifyItnForSeparateGQL,
     private readonly _separate: ItnSplitAndPrintLabelsGQL,
     private readonly _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,

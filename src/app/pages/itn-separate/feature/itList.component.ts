@@ -27,12 +27,12 @@ import { map } from 'rxjs';
         <div class="grid grid-cols-3">
           <span class="mr-2 font-medium">{{ itn.ITN }}:</span>
           <span class="text-blue-600">{{ itn.Quantity }}</span>
-          <green-button
+          <!-- <green-button
             class="h-8"
             buttonText="Re-print"
             [disabled]="print$ | async"
             (buttonClick)="printITN(itn.ITN)"
-          ></green-button>
+          ></green-button> -->
         </div>
       </div>
       <div class="mt-8 grid h-16 w-full gap-6 md:h-32 md:text-4xl">

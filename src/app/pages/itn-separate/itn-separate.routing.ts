@@ -2,13 +2,13 @@ import { Routes } from '@angular/router';
 import { ItnSeparateService } from './data/itn-separate.service';
 import { ItnListResolver } from './utils/resolver/itn-list.resolver';
 
-export const ItnSeperateRoutes: Routes = [
+export const ItnSeparateRoutes: Routes = [
   {
     path: '',
     providers: [ItnSeparateService, ItnListResolver],
     canActivateChild: [],
     loadComponent: () =>
-      import('./shell.component').then((m) => m.ItnSeperateShell),
+      import('./shell.component').then((m) => m.ItnSeparateShell),
     children: [
       {
         path: 'scan',

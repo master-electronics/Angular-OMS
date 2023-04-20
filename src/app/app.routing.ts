@@ -167,11 +167,11 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'itnseperate',
+        path: 'itnseparate',
         canActivate: [PrinterGuard],
         loadChildren: () =>
-          import('./pages/itn-separate/itn-seperate.routing').then(
-            (m) => m.ItnSeperateRoutes
+          import('./pages/itn-separate/itn-separate.routing').then(
+            (m) => m.ItnSeparateRoutes
           ),
       },
       {

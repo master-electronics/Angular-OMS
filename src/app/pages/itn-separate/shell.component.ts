@@ -11,4 +11,4 @@ import { RouterModule } from '@angular/router';
     </div>
   `,
 })
-export class ItnSeperateShell {}
+export class ItnSeparateShell {}

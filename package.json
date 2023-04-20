@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:dev": "ng build --configuration=dev",
+    "build:qa": "ng build --configuration=qa",
     "watch": "ng build --watch --configuration development",
     "cypress:run": "cypress run --record --key 44dfdd28-8118-4667-832f-96dcd359110d",
     "docker": "docker-compose up --build -d",
