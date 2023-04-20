@@ -213,7 +213,7 @@ export class AssignComponent implements OnInit {
       Object.values(this.inputForm.value).forEach((ele, index) => {
         quantityList.push(Number(ele));
       });
-      this.itn.separateITN(quantityList);
+      this.itn.changeQuantityList(quantityList);
       this._router.navigate(['../itnlist'], { relativeTo: this._actRoute });
     } else {
       Object.values(this.inputForm.controls).forEach((control) => {

@@ -4,6 +4,9 @@ query verifyITNForSeperate($ITN: String!, $DC: String!) {
   ) {
     _id
     QuantityOnHand
+    ORDERLINEDETAILs {
+      StatusID
+    }
     Product {
       PartNumber
       ProductCode {
@@ -13,16 +16,24 @@ query verifyITNForSeperate($ITN: String!, $DC: String!) {
   }
 }
 
-mutation separateITN(
+mutation ITNSplitAndPrintLabels(
   $QuantityList: [Float]!
-  $Printer: String!
+  $PRINTER: String!
+  $DPI: String!
+  $ORIENTATION: String!
+  $PRODUCTCODE: String!
+  $PARTNUMBER: String!
   $ITN: String!
-  $UserName: String!
+  $User: String!
 ) {
-  separateITN(
+  ITNSplitAndPrintLabels(
     QuantityList: $QuantityList
-    Printer: $Printer
+    PRINTER: $PRINTER
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
+    PRODUCTCODE: $PRODUCTCODE
+    PARTNUMBER: $PARTNUMBER
     ITN: $ITN
-    UserName: $UserName
+    User: $User
   )
 }

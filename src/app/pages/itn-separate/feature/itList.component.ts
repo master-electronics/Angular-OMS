@@ -52,26 +52,7 @@ export class ItnListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.itn.changeItnList([
-      {
-        ITN: 'PH11111111',
-        Quantity: 1,
-        PartNumber: '1234',
-        ProductCode: 'abc',
-      },
-      {
-        ITN: 'PH11111111',
-        Quantity: 1,
-        PartNumber: '1234',
-        ProductCode: 'abc',
-      },
-      {
-        ITN: 'PH11111111',
-        Quantity: 1,
-        PartNumber: '1234',
-        ProductCode: 'abc',
-      },
-    ]);
+    //
   }
 
   printITN(ITN: string): void {

@@ -449,6 +449,7 @@ export type MenuGroup = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -512,7 +513,6 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
-  separateITN: Array<Maybe<Scalars['String']>>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -552,6 +552,17 @@ export type Mutation = {
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateValueMap?: Maybe<ValueMap>;
   updateVendorFromMerp?: Maybe<Scalars['Boolean']>;
+};
+
+export type MutationItnSplitAndPrintLabelsArgs = {
+  DPI: Scalars['String'];
+  ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PARTNUMBER: Scalars['String'];
+  PRINTER: Scalars['String'];
+  PRODUCTCODE: Scalars['String'];
+  QuantityList: Array<InputMaybe<Scalars['Float']>>;
+  User: Scalars['String'];
 };
 
 export type MutationChangeQcLineInfoArgs = {
@@ -603,7 +614,6 @@ export type MutationDeleteAutostoreOrderLinesArgs = {
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
-  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationDeleteCustomerFromMerpArgs = {
@@ -870,13 +880,6 @@ export type MutationRollbackAutostoreOrderLinesArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
 };
 
-export type MutationSeparateItnArgs = {
-  ITN: Scalars['String'];
-  Printer: Scalars['String'];
-  QuantityList: Array<InputMaybe<Scalars['Float']>>;
-  UserName: Scalars['String'];
-};
-
 export type MutationSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -916,6 +919,7 @@ export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   Type: Scalars['String'];
+  Velocity?: InputMaybe<Scalars['String']>;
   Zone?: InputMaybe<Scalars['String']>;
 };
 
@@ -2654,6 +2658,10 @@ export type VerifyItnForSeperateQuery = {
     __typename?: 'Inventory';
     _id: number;
     QuantityOnHand: number;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      StatusID: number;
+    } | null> | null;
     Product: {
       __typename?: 'Product';
       PartNumber: string;
@@ -2662,18 +2670,22 @@ export type VerifyItnForSeperateQuery = {
   } | null;
 };
 
-export type SeparateItnMutationVariables = Types.Exact<{
+export type ItnSplitAndPrintLabelsMutationVariables = Types.Exact<{
   QuantityList:
     | Array<Types.InputMaybe<Types.Scalars['Float']>>
     | Types.InputMaybe<Types.Scalars['Float']>;
-  Printer: Types.Scalars['String'];
+  PRINTER: Types.Scalars['String'];
+  DPI: Types.Scalars['String'];
+  ORIENTATION: Types.Scalars['String'];
+  PRODUCTCODE: Types.Scalars['String'];
+  PARTNUMBER: Types.Scalars['String'];
   ITN: Types.Scalars['String'];
-  UserName: Types.Scalars['String'];
+  User: Types.Scalars['String'];
 }>;
 
-export type SeparateItnMutation = {
+export type ItnSplitAndPrintLabelsMutation = {
   __typename?: 'Mutation';
-  separateITN: Array<string | null>;
+  ITNSplitAndPrintLabels: Array<string | null>;
 };
 
 export const VerifyItnForSeperateDocument = gql`
@@ -2683,6 +2695,9 @@ export const VerifyItnForSeperateDocument = gql`
     ) {
       _id
       QuantityOnHand
+      ORDERLINEDETAILs {
+        StatusID
+      }
       Product {
         PartNumber
         ProductCode {
@@ -2706,18 +2721,26 @@ export class VerifyItnForSeperateGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const SeparateItnDocument = gql`
-  mutation separateITN(
+export const ItnSplitAndPrintLabelsDocument = gql`
+  mutation ITNSplitAndPrintLabels(
     $QuantityList: [Float]!
-    $Printer: String!
+    $PRINTER: String!
+    $DPI: String!
+    $ORIENTATION: String!
+    $PRODUCTCODE: String!
+    $PARTNUMBER: String!
     $ITN: String!
-    $UserName: String!
+    $User: String!
   ) {
-    separateITN(
+    ITNSplitAndPrintLabels(
       QuantityList: $QuantityList
-      Printer: $Printer
+      PRINTER: $PRINTER
+      DPI: $DPI
+      ORIENTATION: $ORIENTATION
+      PRODUCTCODE: $PRODUCTCODE
+      PARTNUMBER: $PARTNUMBER
       ITN: $ITN
-      UserName: $UserName
+      User: $User
     )
   }
 `;
@@ -2725,11 +2748,11 @@ export const SeparateItnDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class SeparateItnGQL extends Apollo.Mutation<
-  SeparateItnMutation,
-  SeparateItnMutationVariables
+export class ItnSplitAndPrintLabelsGQL extends Apollo.Mutation<
+  ItnSplitAndPrintLabelsMutation,
+  ItnSplitAndPrintLabelsMutationVariables
 > {
-  document = SeparateItnDocument;
+  document = ItnSplitAndPrintLabelsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

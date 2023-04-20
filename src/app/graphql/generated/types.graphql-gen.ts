@@ -444,6 +444,7 @@ export type MenuGroup = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -507,7 +508,6 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
-  separateITN: Array<Maybe<Scalars['String']>>;
   suspectInventory: Scalars['Boolean'];
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
@@ -547,6 +547,17 @@ export type Mutation = {
   updateUserInfo?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateValueMap?: Maybe<ValueMap>;
   updateVendorFromMerp?: Maybe<Scalars['Boolean']>;
+};
+
+export type MutationItnSplitAndPrintLabelsArgs = {
+  DPI: Scalars['String'];
+  ITN: Scalars['String'];
+  ORIENTATION: Scalars['String'];
+  PARTNUMBER: Scalars['String'];
+  PRINTER: Scalars['String'];
+  PRODUCTCODE: Scalars['String'];
+  QuantityList: Array<InputMaybe<Scalars['Float']>>;
+  User: Scalars['String'];
 };
 
 export type MutationChangeQcLineInfoArgs = {
@@ -598,7 +609,6 @@ export type MutationDeleteAutostoreOrderLinesArgs = {
 export type MutationDeleteContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
-  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationDeleteCustomerFromMerpArgs = {
@@ -865,13 +875,6 @@ export type MutationRollbackAutostoreOrderLinesArgs = {
   OrderID?: InputMaybe<Scalars['Int']>;
 };
 
-export type MutationSeparateItnArgs = {
-  ITN: Scalars['String'];
-  Printer: Scalars['String'];
-  QuantityList: Array<InputMaybe<Scalars['Float']>>;
-  UserName: Scalars['String'];
-};
-
 export type MutationSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
@@ -911,6 +914,7 @@ export type MutationUpdateForContainerFromMerpArgs = {
   BinLocation: Scalars['String'];
   DistributionCenter: Scalars['String'];
   Type: Scalars['String'];
+  Velocity?: InputMaybe<Scalars['String']>;
   Zone?: InputMaybe<Scalars['String']>;
 };
 

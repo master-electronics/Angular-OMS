@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
-import {
-  SeparateItnGQL,
-  VerifyItnForSeperateGQL,
-} from 'src/app/graphql/itnSeperate.graphql-gen';
+import { BehaviorSubject, Observable, map, switchMap, tap } from 'rxjs';
+import { ItnSplitAndPrintLabelsGQL } from 'src/app/graphql/itnSeperate.graphql-gen';
+import { VerifyItnForSeperateGQL } from 'src/app/graphql/itnSeperate.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { PrinterService } from 'src/app/shared/data/printer';
@@ -21,7 +19,7 @@ interface ItnInfo {
 export class ItnSeparateService {
   constructor(
     private readonly _itn: VerifyItnForSeperateGQL,
-    private readonly _separate: SeparateItnGQL,
+    private readonly _separate: ItnSplitAndPrintLabelsGQL,
     private readonly _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,
     private _eventLog: EventLogService
@@ -38,6 +36,17 @@ export class ItnSeparateService {
   }
   public changeitnInfo(itn: ItnInfo): void {
     this._itnInfo.next(itn);
+  }
+
+  /**
+   * Store new ITN's quantity
+   */
+  private _quantityList = new BehaviorSubject<number[]>(null);
+  public get quantityList() {
+    return this._quantityList.value;
+  }
+  public changeQuantityList(list: number[]): void {
+    this._quantityList.next(list);
   }
 
   /**
@@ -68,6 +77,13 @@ export class ItnSeparateService {
         }
         if (!res.data.findInventory?.QuantityOnHand) {
           throw new Error("Can't find the Quantity of ITN!");
+        }
+        if (
+          res.data.findInventory.ORDERLINEDETAILs.length &&
+          res.data.findInventory.ORDERLINEDETAILs[0].StatusID !==
+            sqlData.pickComplete_ID
+        ) {
+          throw new Error("Can't split this ITN!");
         }
       }),
       switchMap((res) => {
@@ -100,22 +116,38 @@ export class ItnSeparateService {
     );
   }
 
-  public separateITN(QuantityList: number[]): void {
-    // return this._printer.printer$.pipe(
-    //   switchMap((res) => {
-    //     return this._separate.mutate({
-    //       ITN: this.itnInfo.ITN,
-    //       QuantityList,
-    //       Printer: res.Name,
-    //       UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-    //     });
-    //   }),
-    //   switchMap(() => {
-    //     return this._insertLog.mutate({
-    //       oldLogs,
-    //       eventLogs: this._eventLog.eventLog,
-    //     });
-    //   })
-    // );
+  public separateITN$() {
+    return this._printer.printer$.pipe(
+      switchMap((res) => {
+        return this._separate.mutate({
+          ITN: this.itnInfo.ITN,
+          QuantityList: this.quantityList,
+          PRINTER: res.Name,
+          DPI: res.DPI.toString(),
+          ORIENTATION: res.Orientation,
+          PARTNUMBER: this.itnInfo.PartNumber,
+          PRODUCTCODE: this.itnInfo.ProductCode,
+          User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        });
+      }),
+      map((res) => {
+        const itnList = res.data.ITNSplitAndPrintLabels.map((itn, index) => {
+          return {
+            ITN: itn,
+            Quantity: this.quantityList[index],
+            PartNumber: this.itnInfo.PartNumber,
+            ProductCode: this.itnInfo.ProductCode,
+          };
+        });
+        this._newItnList.next(itnList);
+        return true;
+      })
+      // switchMap(() => {
+      //   return this._insertLog.mutate({
+      //     oldLogs,
+      //     eventLogs: this._eventLog.eventLog,
+      //   });
+      // })
+    );
   }
 }
