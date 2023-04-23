@@ -72,7 +72,7 @@ import { Component, Input } from '@angular/core';
           clip-rule="evenodd"
         ></path>
       </svg>
-      <div class="ml-3 font-medium">{{ message }}</div>
+      <div class="ml-3 font-medium" [innerHTML]="message"></div>
     </ng-template>
   `,
 })

@@ -1,0 +1,214 @@
+query verifyASNLocation($barcode: String, $container: searchContainer, $statusList: [String]) {
+  findContainer(Container: $container) {
+    _id
+  }
+  verifyASNLocationNotInProcess(Barcode: $barcode, StatusList: $statusList) {
+    _id
+  }
+  verifyASNLocation(Barcode: $barcode) {
+    InventoryTrackingNumber
+  }
+}
+
+query verifyITNForASN($ITN: String!, $DC: String!) {
+  findInventory(
+    Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+  ) {
+    _id
+  }
+}
+
+query fetchASNInventory($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    INVENTORies {
+      _id
+      DistributionCenter
+      InventoryTrackingNumber
+      QuantityOnHand
+      Product {
+        _id
+        PartNumber
+        UOM
+        ProductCode {
+          ProductCodeNumber
+        }
+        LastAutostoreSync
+      }
+    }
+  }
+}
+
+query verifyASNLocationCreate($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    Barcode
+    ContainerType {
+      IsMobile
+    }
+  }
+}
+
+query verifyASNLocationDropOff($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+    Barcode
+    ContainerType {
+      IsMobile
+    }
+  }
+}
+
+query verifyASNLocationStatus($asn: autostoreAsnHeader) {
+  verifyASNLocationStatus(ASN: $asn) {
+    _id
+    tuId
+  }
+}
+
+query findProduct($product: searchProduct) {
+  findProduct(Product: $product) {
+    _id
+    ProductCode {
+      ProductCodeNumber
+    }
+    PartNumber
+    LastAutostoreSync
+    Description
+    Velocity
+    UOM
+    MICPartNumber
+  }
+}
+
+query printQRCodeLabel(
+  $PRINTER: String!
+  $DPI: String!
+  $ORIENTATION: String!
+  $TEXT: String!
+) {
+  printQRCodeLabel(
+    PRINTER: $PRINTER
+    DPI: $DPI
+    ORIENTATION: $ORIENTATION
+    TEXT: $TEXT
+  )
+}
+
+query itnLocationChange(
+  $user: String!
+  $itn: String!
+  $binLocation: String!
+) {
+  itnLocationChange(
+    User: $user
+    ITN: $itn
+    BinLocation: $binLocation
+  )
+}
+
+query itnChange(
+  $user: String!
+  $itn: String!
+  $suspect: String
+  $locatedInAutostore: String
+) {
+  itnChange(
+    User: $user
+    ITN: $itn
+    Suspect: $suspect
+    LocatedInAutostore: $locatedInAutostore
+  )
+}
+
+query findASNReplenishmentInventory(
+  $barcode: String
+) {
+  findASNReplenishmentInventory(
+    Barcode: $barcode
+  ) {
+    _id
+    InventoryID
+    Status
+    Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    InventoryTrackingNumber
+  }
+}
+
+query findASNByITN($itn: String) {
+  findASNByITN(ITN: $itn) {
+    _id
+  }
+}
+
+mutation insertAutostoreASN($asn: autostoreAsnHeader) {
+  insertAutostoreASN(ASN: $asn) {
+    _id
+  }
+}
+
+mutation moveInventoryToContainerForASN(
+  $ITN: String!
+  $DC: String!
+  $ContainerID: Int!
+  $boundForAutostore: Boolean
+  $suspect: Boolean
+  $suspectReason: Int
+) {
+  # updateInventory(
+  #   Inventory: { 
+  #     ContainerID: $ContainerID
+  #     BoundForAutostore: $boundForAutostore
+  #     Suspect: $suspect
+  #   }
+  # )
+    updateASNInventory(
+      InventoryTrackingNumber: $ITN
+      DistributionCenter: $DC
+      ContainerID: $ContainerID
+      Suspect: $suspect
+      SuspectReasonID: $suspectReason
+      BoundForAutostore: $boundForAutostore
+    )
+    
+    
+
+}
+
+mutation updateAutostoreASN($asn: autostoreAsnHeader, $asnid: Int) {
+  updateAutostoreASN(ASN: $asn, ASNID: $asnid) {
+    _id
+  }
+}
+
+mutation updateAutostoreMessage($autostoreMessage: autostoreMessage, $id: Int) {
+  updateAutostoreMessage(AutostoreMessage: $autostoreMessage, _id: $id) {
+    TypeID
+  }
+}
+
+mutation updateProductLastSync($product: updateProduct) {
+  updateProductLastSync(Product: $product) {
+    LastAutostoreSync
+  }
+}
+
+mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
+  updateASNReplenishmentItem(ReplenishmentItem: $replenishmentItem) {
+    _id
+    Status
+  }
+}
+
+mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
+  updateContainer(
+    Container: $container,
+    _id: $id
+  )
+}

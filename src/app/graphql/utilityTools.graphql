@@ -30,6 +30,12 @@ query createITN($LocationCode: String!) {
   createITN(LocationCode: $LocationCode)
 }
 
+query findInventoryByUser($username: String) {
+  findInventoryByUser(Username: $username) {
+    InventoryTrackingNumber
+  }
+}
+
 mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {
   findOrCreateUserInfo(UserInfo: $UserInfo) {
     _id

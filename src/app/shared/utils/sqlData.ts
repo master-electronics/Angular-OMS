@@ -88,4 +88,12 @@ export const sqlData = {
   Receipt_Entered: 10,
   Receipt_Received: 20,
   Receipt_Confirmed: 30,
+  // Autostore
+  Event_Autostore_PRODUCT: 3000,
+  Event_Autostore_ORDER: 3010,
+  Event_Autostore_ASN: 3020,
+  Event_Autostore_ASN_ITN_Scanned: 3025,
+  Event_Autostore_ASN_Location_Scanned: 3030,
+  Event_Autostore_ASN_Submitted: 3035,
+  ASN_Inventory_Suspect_Reason: 15,
 };

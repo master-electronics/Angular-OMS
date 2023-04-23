@@ -123,6 +123,14 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'autostore-asn',
+        canActivate: [PrinterGuard],
+        loadChildren: () =>
+          import('./pages/Autostore-ASN/autostore-asn.routing').then(
+            (m) => m.AutostoreASNRoutes
+          ),
+      },
+      {
         path: 'stocking',
         canActivate: [PrinterGuard],
         loadChildren: () =>

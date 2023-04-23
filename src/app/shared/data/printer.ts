@@ -13,6 +13,7 @@ import {
   PrintTextLabelGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { FindBindedPrinterGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { PrintQrCodeLabelGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
 
 export interface PrinterInfo {
   Name: string;
@@ -28,7 +29,8 @@ export class PrinterService {
   constructor(
     private _find: FindBindedPrinterGQL,
     private _itn: PrintReceivingItnLabelGQL,
-    private _text: PrintTextLabelGQL
+    private _text: PrintTextLabelGQL,
+    private _qrCode: PrintQrCodeLabelGQL
   ) {
     //
   }
@@ -123,6 +125,22 @@ export class PrinterService {
             LINE2: list[1],
             LINE3: list[2],
             LINE4: list[3],
+          },
+          { fetchPolicy: 'network-only' }
+        );
+      })
+    );
+  }
+
+  public printQRCode$(text: string) {
+    return this.printer$.pipe(
+      switchMap((printer) => {
+        return this._qrCode.fetch(
+          {
+            PRINTER: printer.Name,
+            DPI: String(printer.DPI),
+            ORIENTATION: printer.Orientation,
+            TEXT: text,
           },
           { fetchPolicy: 'network-only' }
         );
