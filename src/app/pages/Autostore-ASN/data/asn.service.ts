@@ -25,6 +25,8 @@ import {
   UpdateAsnReplenishmentItemGQL,
   FindAsnByItnGQL,
   UpdateAsnParentContainerGQL,
+  ItnLocationChangeGQL,
+  ItnChangeGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
 import { InsertAutostoreMessageGQL } from 'src/app/graphql/autostore.graphql-gen';
 import { environment } from 'src/environments/environment';
@@ -82,7 +84,9 @@ export class ASNService {
     private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL,
     private _updateReplenishmentitem: UpdateAsnReplenishmentItemGQL,
     private _findASN: FindAsnByItnGQL,
-    private _updateParentContainer: UpdateAsnParentContainerGQL
+    private _updateParentContainer: UpdateAsnParentContainerGQL,
+    private _itnLocationChange: ItnLocationChangeGQL,
+    private _itnChange: ItnChangeGQL
   ) {}
 
   inventoryList;
@@ -121,21 +125,30 @@ export class ASNService {
       );
   }
 
-  public moveItnToLocation(ITN: string, ContainerID: number): Observable<any> {
-    return this._move
-      .mutate({
-        ITN: ITN,
-        DC: environment.DistributionCenter,
-        ContainerID: ContainerID,
-        boundForAutostore: true,
-        suspect: true,
-        suspectReason: sqlData.ASN_Inventory_Suspect_Reason,
-      })
-      .pipe(
-        catchError((error) => {
-          throw new Error(error);
+  public moveItnToLocation(
+    ITN: string,
+    ContainerID: number,
+    User: string,
+    BinLocation: string
+  ): Observable<any> {
+    return combineLatest({
+      move: this._move
+        .mutate({
+          ITN: ITN,
+          DC: environment.DistributionCenter,
+          ContainerID: ContainerID,
+          boundForAutostore: true,
+          suspect: true,
+          suspectReason: sqlData.ASN_Inventory_Suspect_Reason,
         })
-      );
+        .pipe(
+          catchError((error) => {
+            throw new Error(error);
+          })
+        ),
+      itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
+      itnChange: this.itnChange(User, ITN, 'true', ''),
+    });
   }
 
   public findContainer(Barcode: string) {
@@ -203,8 +216,12 @@ export class ASNService {
           });
         }),
         switchMap((res) => {
+          console.log('***');
           console.log(res);
+          console.log('###');
           const tMsg = JSON.parse(JSON.stringify(this.message));
+          tMsg._id = res.message.data.insertAutostoreMessage._id;
+
           const nMsg = {
             pattern: 'ASN_message',
             data: {
@@ -482,5 +499,33 @@ export class ASNService {
           throw new Error(error);
         })
       );
+  }
+
+  itnLocationChange(User: string, ITN: string, BinLocation: string) {
+    return this._itnLocationChange.fetch(
+      {
+        user: User,
+        itn: ITN,
+        binLocation: BinLocation,
+      },
+      { fetchPolicy: 'network-only' }
+    );
+  }
+
+  itnChange(
+    User: string,
+    ITN: string,
+    Suspect: string,
+    LocatedInAutostore: string
+  ) {
+    return this._itnChange.fetch(
+      {
+        user: User,
+        itn: ITN,
+        suspect: Suspect,
+        locatedInAutostore: LocatedInAutostore,
+      },
+      { fetchPolicy: 'network-only' }
+    );
   }
 }

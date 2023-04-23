@@ -70,6 +70,7 @@ export type Autostoremessageattempt = {
   __typename?: 'AUTOSTOREMESSAGEATTEMPT';
   MessageID: Scalars['Int'];
   Response: Scalars['String'];
+  ResponseCode?: Maybe<Scalars['String']>;
   Source?: Maybe<Scalars['String']>;
   Status: Scalars['String'];
   Tiemstamp: Scalars['String'];
@@ -1528,6 +1529,8 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  itnChange?: Maybe<Scalars['Boolean']>;
+  itnLocationChange?: Maybe<Scalars['Boolean']>;
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
@@ -1991,6 +1994,21 @@ export type QueryFindVendorByPoArgs = {
 };
 
 
+export type QueryItnChangeArgs = {
+  ITN: Scalars['String'];
+  LocatedInAutostore?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['String']>;
+  User: Scalars['String'];
+};
+
+
+export type QueryItnLocationChangeArgs = {
+  BinLocation: Scalars['String'];
+  ITN: Scalars['String'];
+  User: Scalars['String'];
+};
+
+
 export type QueryPrintQrCodeLabelArgs = {
   DPI: Scalars['String'];
   ORIENTATION: Scalars['String'];
@@ -2317,6 +2335,7 @@ export type AutostoreMessage = {
 export type AutostoreMessageAttempt = {
   MessageID: Scalars['Int'];
   Response: Scalars['String'];
+  ResponseCode?: InputMaybe<Scalars['String']>;
   Source?: InputMaybe<Scalars['String']>;
   Status: Scalars['String'];
   Timestamp?: InputMaybe<Scalars['String']>;

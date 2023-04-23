@@ -95,6 +95,32 @@ query printQRCodeLabel(
   )
 }
 
+query itnLocationChange(
+  $user: String!
+  $itn: String!
+  $binLocation: String!
+) {
+  itnLocationChange(
+    User: $user
+    ITN: $itn
+    BinLocation: $binLocation
+  )
+}
+
+query itnChange(
+  $user: String!
+  $itn: String!
+  $suspect: String
+  $locatedInAutostore: String
+) {
+  itnChange(
+    User: $user
+    ITN: $itn
+    Suspect: $suspect
+    LocatedInAutostore: $locatedInAutostore
+  )
+}
+
 query findASNReplenishmentInventory(
   $barcode: String
 ) {

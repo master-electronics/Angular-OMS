@@ -137,10 +137,10 @@ export class ASNLocation implements OnInit {
   }
 
   onOk() {
-    this._router.navigate(['../../scan-itn'], { relativeTo: this._actRoute });
+    this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
   }
 
   onBack() {
-    this._router.navigate(['../../scan-itn'], { relativeTo: this._actRoute });
+    this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
   }
 }

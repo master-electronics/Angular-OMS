@@ -75,6 +75,7 @@ export type Autostoremessageattempt = {
   __typename?: 'AUTOSTOREMESSAGEATTEMPT';
   MessageID: Scalars['Int'];
   Response: Scalars['String'];
+  ResponseCode?: Maybe<Scalars['String']>;
   Source?: Maybe<Scalars['String']>;
   Status: Scalars['String'];
   Tiemstamp: Scalars['String'];
@@ -1533,6 +1534,8 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  itnChange?: Maybe<Scalars['Boolean']>;
+  itnLocationChange?: Maybe<Scalars['Boolean']>;
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
@@ -1996,6 +1999,21 @@ export type QueryFindVendorByPoArgs = {
 };
 
 
+export type QueryItnChangeArgs = {
+  ITN: Scalars['String'];
+  LocatedInAutostore?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['String']>;
+  User: Scalars['String'];
+};
+
+
+export type QueryItnLocationChangeArgs = {
+  BinLocation: Scalars['String'];
+  ITN: Scalars['String'];
+  User: Scalars['String'];
+};
+
+
 export type QueryPrintQrCodeLabelArgs = {
   DPI: Scalars['String'];
   ORIENTATION: Scalars['String'];
@@ -2322,6 +2340,7 @@ export type AutostoreMessage = {
 export type AutostoreMessageAttempt = {
   MessageID: Scalars['Int'];
   Response: Scalars['String'];
+  ResponseCode?: InputMaybe<Scalars['String']>;
   Source?: InputMaybe<Scalars['String']>;
   Status: Scalars['String'];
   Timestamp?: InputMaybe<Scalars['String']>;
@@ -2959,6 +2978,25 @@ export type PrintQrCodeLabelQueryVariables = Types.Exact<{
 
 export type PrintQrCodeLabelQuery = { __typename?: 'Query', printQRCodeLabel?: boolean | null };
 
+export type ItnLocationChangeQueryVariables = Types.Exact<{
+  user: Types.Scalars['String'];
+  itn: Types.Scalars['String'];
+  binLocation: Types.Scalars['String'];
+}>;
+
+
+export type ItnLocationChangeQuery = { __typename?: 'Query', itnLocationChange?: boolean | null };
+
+export type ItnChangeQueryVariables = Types.Exact<{
+  user: Types.Scalars['String'];
+  itn: Types.Scalars['String'];
+  suspect?: Types.InputMaybe<Types.Scalars['String']>;
+  locatedInAutostore?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type ItnChangeQuery = { __typename?: 'Query', itnChange?: boolean | null };
+
 export type FindAsnReplenishmentInventoryQueryVariables = Types.Exact<{
   barcode?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
@@ -3213,6 +3251,43 @@ export const PrintQrCodeLabelDocument = gql`
   })
   export class PrintQrCodeLabelGQL extends Apollo.Query<PrintQrCodeLabelQuery, PrintQrCodeLabelQueryVariables> {
     document = PrintQrCodeLabelDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ItnLocationChangeDocument = gql`
+    query itnLocationChange($user: String!, $itn: String!, $binLocation: String!) {
+  itnLocationChange(User: $user, ITN: $itn, BinLocation: $binLocation)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ItnLocationChangeGQL extends Apollo.Query<ItnLocationChangeQuery, ItnLocationChangeQueryVariables> {
+    document = ItnLocationChangeDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ItnChangeDocument = gql`
+    query itnChange($user: String!, $itn: String!, $suspect: String, $locatedInAutostore: String) {
+  itnChange(
+    User: $user
+    ITN: $itn
+    Suspect: $suspect
+    LocatedInAutostore: $locatedInAutostore
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ItnChangeGQL extends Apollo.Query<ItnChangeQuery, ItnChangeQueryVariables> {
+    document = ItnChangeDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

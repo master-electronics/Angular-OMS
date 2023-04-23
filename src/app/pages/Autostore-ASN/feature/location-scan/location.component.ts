@@ -136,7 +136,12 @@ export class ASNLocation implements OnInit {
 
           this.data$ = combineLatest({
             location: this._asn
-              .moveItnToLocation(this.selectedITN, containerID)
+              .moveItnToLocation(
+                this.selectedITN,
+                containerID,
+                JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                this.inputForm.value.location.toString()
+              )
               .pipe(
                 map(() => {
                   this._router.navigate(['../scan-itn'], {
