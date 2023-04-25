@@ -131,6 +131,7 @@ export class ASNService {
     User: string,
     BinLocation: string
   ): Observable<any> {
+    console.log('BL-' + BinLocation);
     return combineLatest({
       move: this._move
         .mutate({
@@ -505,10 +506,9 @@ export class ASNService {
   }
 
   itnLocationChange(User: string, ITN: string, BinLocation: string) {
-    console.log(User);
-    console.log(ITN);
-    console.log(BinLocation);
-    return of(true);
+    // console.log(User);
+    // console.log(ITN);
+    // console.log(BinLocation);
     return this._itnLocationChange.fetch(
       {
         user: User,
