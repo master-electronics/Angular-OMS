@@ -149,6 +149,7 @@ export class ASNLocation implements OnInit {
                   });
                 }),
                 catchError((error) => {
+                  this.error = error;
                   return of({
                     error: { message: error.message, type: 'error' },
                   });

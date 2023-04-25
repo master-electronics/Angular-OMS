@@ -384,6 +384,9 @@ export class ASNService {
   };
 
   sendMessage(message) {
+    const t = environment.apiUrl;
+    const w = 'woot';
+    
     try {
       const msgResult = this.http.post(
         `${environment.apiUrl}/Autostore/message`,
