@@ -521,6 +521,10 @@ export class ASNService {
     Suspect: string,
     LocatedInAutostore: string
   ) {
+    console.log(User);
+    console.log(ITN);
+    console.log(Suspect);
+    console.log(LocatedInAutostore);
     return this._itnChange.fetch(
       {
         user: User,
