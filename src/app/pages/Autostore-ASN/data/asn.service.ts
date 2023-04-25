@@ -508,6 +508,7 @@ export class ASNService {
     console.log(User);
     console.log(ITN);
     console.log(BinLocation);
+    return of(true);
     return this._itnLocationChange.fetch(
       {
         user: User,
