@@ -60,8 +60,8 @@ export class ProductService {
               const PartNumber: string = res.data.findProduct.PartNumber.trim();
               const ProductCodeNumber: string =
                 res.data.findProduct.ProductCode.ProductCodeNumber.trim();
-              const Description: string =
-                res.data.findProduct.Description.trim();
+              const Description: string = (res.data.findProduct.Description) ?
+                res.data.findProduct.Description.trim() : null;
               const Velocity =
                 res.data.findProduct.Velocity == 'A'
                   ? 'A'
@@ -69,7 +69,7 @@ export class ProductService {
                     res.data.findProduct.Velocity == 'C'
                   ? 'B'
                   : 'C';
-              const UOM: string = res.data.findProduct.UOM.trim();
+              const UOM: string = (res.data.findProduct.UOM) ?  res.data.findProduct.UOM.trim() : 'EACH';
               // const MICPartNumber: string =
               //   res.data.findProduct.MICPartNumber.trim();
 
