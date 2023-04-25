@@ -77,7 +77,6 @@ query findProduct($product: searchProduct) {
     Description
     Velocity
     UOM
-    MICPartNumber
   }
 }
 

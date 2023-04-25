@@ -3003,7 +3003,7 @@ export type FindProductQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, LastAutostoreSync?: string | null, Description?: string | null, Velocity?: string | null, UOM?: string | null, MICPartNumber?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null };
+export type FindProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, LastAutostoreSync?: string | null, Description?: string | null, Velocity?: string | null, UOM?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null };
 
 export type PrintQrCodeLabelQueryVariables = Types.Exact<{
   PRINTER: Types.Scalars['String'];
@@ -3257,7 +3257,6 @@ export const FindProductDocument = gql`
     Description
     Velocity
     UOM
-    MICPartNumber
   }
 }
     `;

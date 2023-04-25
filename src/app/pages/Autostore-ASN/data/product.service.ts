@@ -70,8 +70,8 @@ export class ProductService {
                   ? 'B'
                   : 'C';
               const UOM: string = res.data.findProduct.UOM.trim();
-              const MICPartNumber: string =
-                res.data.findProduct.MICPartNumber.trim();
+              // const MICPartNumber: string =
+              //   res.data.findProduct.MICPartNumber.trim();
 
               message.Type = 'PRODUCT';
               message.TypeID = ID;
@@ -83,8 +83,7 @@ export class ProductService {
               message.Timestamp = new Date(Date.now()).toISOString();
 
               let msgTxt = '{';
-              msgTxt += `"productId": "${ProductCodeNumber + PartNumber}",
-              "owner": "MasterElectronics",`;
+              msgTxt += `"productId": "${ProductCodeNumber + PartNumber}", "owner": "MasterElectronics",`;
 
               if (Description) {
                 msgTxt += `"description": "${Description}",`;
@@ -94,20 +93,15 @@ export class ProductService {
                 msgTxt += `"velocity": "${Velocity}",`;
               }
 
-              msgTxt += `"productUom": [ {
-                "uomId": "${UOM}",`;
+              msgTxt += `"productUom": [ {"uomId": "${UOM}",`;
 
-              if (MICPartNumber) {
-                msgTxt += `"imagePath": "${
-                  environment.productImgSource + MICPartNumber
-                }",`;
-              }
+              // if (MICPartNumber) {
+              //   msgTxt += `"imagePath": "${
+              //     environment.productImgSource + MICPartNumber
+              //   }",`;
+              // }
 
-              msgTxt += `"ratio": 1,
-              "baseUomFlag": true,
-              "pickUomFlag": false,
-              putawayUomFlag": false
-            } ] }`;
+              msgTxt += `"ratio": 1, "baseUomFlag": true, "pickUomFlag": false, "putawayUomFlag": false} ] }`;
 
               message.Message = msgTxt;
 
