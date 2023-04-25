@@ -146,7 +146,7 @@ export class ASNService {
             throw new Error(error);
           })
         ),
-      itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
+      //itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
       itnChange: this.itnChange(User, ITN, 'true', ''),
     });
   }
