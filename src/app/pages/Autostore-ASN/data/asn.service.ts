@@ -505,10 +505,10 @@ export class ASNService {
   }
 
   itnLocationChange(User: string, ITN: string, BinLocation: string) {
-    console.log(User);
-    console.log(ITN);
-    console.log(BinLocation);
-    return of(true);
+    // console.log(User);
+    // console.log(ITN);
+    // console.log(BinLocation);
+
     return this._itnLocationChange.fetch(
       {
         user: User,

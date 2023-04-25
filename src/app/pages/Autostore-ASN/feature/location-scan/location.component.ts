@@ -74,6 +74,7 @@ export class ASNLocation implements OnInit {
   }
 
   public onSubmit(): void {
+    const barcode = this.inputForm.value.location.toString();
     this.itnList = [];
 
     let containerID: number;
@@ -140,7 +141,7 @@ export class ASNLocation implements OnInit {
                 this.selectedITN,
                 containerID,
                 JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                this.inputForm.value.location.toString()
+                barcode
               )
               .pipe(
                 map(() => {
