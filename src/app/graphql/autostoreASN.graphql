@@ -1,4 +1,8 @@
-query verifyASNLocation($barcode: String, $container: searchContainer, $statusList: [String]) {
+query verifyASNLocation(
+  $barcode: String
+  $container: searchContainer
+  $statusList: [String]
+) {
   findContainer(Container: $container) {
     _id
   }
@@ -94,19 +98,15 @@ query printQRCodeLabel(
   )
 }
 
-query itnLocationChange(
+mutation itnLocationChange(
   $user: String!
   $itn: String!
   $binLocation: String!
 ) {
-  itnLocationChange(
-    User: $user
-    ITN: $itn
-    BinLocation: $binLocation
-  )
+  itnLocationChange(User: $user, ITN: $itn, BinLocation: $binLocation)
 }
 
-query itnChange(
+mutation itnChange(
   $user: String!
   $itn: String!
   $suspect: String
@@ -120,12 +120,8 @@ query itnChange(
   )
 }
 
-query findASNReplenishmentInventory(
-  $barcode: String
-) {
-  findASNReplenishmentInventory(
-    Barcode: $barcode
-  ) {
+query findASNReplenishmentInventory($barcode: String) {
+  findASNReplenishmentInventory(Barcode: $barcode) {
     _id
     InventoryID
     Status
@@ -161,23 +157,20 @@ mutation moveInventoryToContainerForASN(
   $suspectReason: Int
 ) {
   # updateInventory(
-  #   Inventory: { 
+  #   Inventory: {
   #     ContainerID: $ContainerID
   #     BoundForAutostore: $boundForAutostore
   #     Suspect: $suspect
   #   }
   # )
-    updateASNInventory(
-      InventoryTrackingNumber: $ITN
-      DistributionCenter: $DC
-      ContainerID: $ContainerID
-      Suspect: $suspect
-      SuspectReasonID: $suspectReason
-      BoundForAutostore: $boundForAutostore
-    )
-    
-    
-
+  updateASNInventory(
+    InventoryTrackingNumber: $ITN
+    DistributionCenter: $DC
+    ContainerID: $ContainerID
+    Suspect: $suspect
+    SuspectReasonID: $suspectReason
+    BoundForAutostore: $boundForAutostore
+  )
 }
 
 mutation updateAutostoreASN($asn: autostoreAsnHeader, $asnid: Int) {
@@ -206,8 +199,5 @@ mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
 }
 
 mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
-  updateContainer(
-    Container: $container,
-    _id: $id
-  )
+  updateContainer(Container: $container, _id: $id)
 }

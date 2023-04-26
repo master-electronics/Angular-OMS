@@ -26,14 +26,14 @@ query findBindedPrinter($Name: String!) {
   }
 }
 
-query createITN($LocationCode: String!) {
-  createITN(LocationCode: $LocationCode)
-}
-
 query findInventoryByUser($username: String) {
   findInventoryByUser(Username: $username) {
     InventoryTrackingNumber
   }
+}
+
+mutation createITN($LocationCode: String!) {
+  createITN(LocationCode: $LocationCode)
 }
 
 mutation find_or_create_userInfo($UserInfo: insertUserInfo!) {

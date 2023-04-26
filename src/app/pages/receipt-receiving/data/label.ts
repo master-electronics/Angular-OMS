@@ -126,7 +126,7 @@ export class LabelService {
    */
   public printReceivingLabel$() {
     return this._itn
-      .fetch(
+      .mutate(
         { LocationCode: environment.DistributionCenter },
         { fetchPolicy: 'network-only' }
       )

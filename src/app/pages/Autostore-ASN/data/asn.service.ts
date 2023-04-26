@@ -388,7 +388,7 @@ export class ASNService {
   sendMessage(message) {
     const t = environment.apiUrl;
     const w = 'woot';
-    
+
     try {
       const msgResult = this.http.post(
         `${environment.apiUrl}/Autostore/message`,
@@ -510,7 +510,7 @@ export class ASNService {
     // console.log(User);
     // console.log(ITN);
     // console.log(BinLocation);
-    return this._itnLocationChange.fetch(
+    return this._itnLocationChange.mutate(
       {
         user: User,
         itn: ITN,
@@ -530,7 +530,7 @@ export class ASNService {
     // console.log(ITN);
     // console.log(Suspect);
     // console.log(LocatedInAutostore);
-    return this._itnChange.fetch(
+    return this._itnChange.mutate(
       {
         user: User,
         itn: ITN,
