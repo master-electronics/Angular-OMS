@@ -57,9 +57,9 @@ export class ProductService {
           .pipe(
             map((res) => {
               const ID: number = res.data.findProduct._id;
-              const PartNumber: string = res.data.findProduct.PartNumber.trim();
+              const PartNumber: string = res.data.findProduct.PartNumber;
               const ProductCodeNumber: string =
-                res.data.findProduct.ProductCode.ProductCodeNumber.trim();
+                res.data.findProduct.ProductCode.ProductCodeNumber;
               const Description: string = (res.data.findProduct.Description) ?
                 res.data.findProduct.Description.trim() : null;
               const Velocity =
@@ -75,7 +75,7 @@ export class ProductService {
 
               message.Type = 'PRODUCT';
               message.TypeID = ID;
-              message.AutostoreID = ProductCodeNumber + PartNumber;
+              message.AutostoreID = ProductCodeNumber + '-' + PartNumber;
               message.Action = 'insert';
               message.Endpoint = '/products';
               message.Method = 'POST';
@@ -83,7 +83,9 @@ export class ProductService {
               message.Timestamp = new Date(Date.now()).toISOString();
 
               let msgTxt = '{';
-              msgTxt += `"productId": "${ProductCodeNumber + PartNumber}", "owner": "MasterElectronics",`;
+              msgTxt += `"productId": "${
+                ProductCodeNumber + '-' + PartNumber
+              }", "owner": "MasterElectronics",`;
 
               if (Description) {
                 msgTxt += `"description": "${Description}",`;
@@ -110,7 +112,6 @@ export class ProductService {
               return res;
             }),
             switchMap((res) => {
-
               return combineLatest({
                 productDataMessage: this._insertMessage.mutate({
                   message: message,

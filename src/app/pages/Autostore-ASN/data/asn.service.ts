@@ -352,6 +352,7 @@ export class ASNService {
               lineNumber: lineNumber,
               productId:
                 inventory.Product.ProductCode.ProductCodeNumber.toString() +
+                '-' +
                 inventory.Product.PartNumber.toString(),
               packagingUom: inventory.packagingUom,
               quantityExpected: Number(inventory.QuantityOnHand),
