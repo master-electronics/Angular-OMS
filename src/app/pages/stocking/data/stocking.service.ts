@@ -243,7 +243,7 @@ export class StockingService {
         }),
       });
       ITNList.push(itn.ITN);
-      linkList.push({ InventoryID: itn.InventoryID, SuspectReason: 1 });
+      linkList.push({ InventoryID: itn.InventoryID, SuspectReasonID: 1 });
     });
     return this._noFound
       .mutate({
