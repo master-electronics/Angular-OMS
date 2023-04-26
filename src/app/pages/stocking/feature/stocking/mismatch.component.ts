@@ -127,7 +127,10 @@ export class MismatchComponent implements OnInit {
   }
 
   notFound(): void {
-    const list = this.unverifiedITNs.map((itn) => itn.ITN);
+    const list = this.unverifiedITNs.map((itn) => ({
+      ITN: itn.ITN,
+      InventoryID: itn.InventoryID,
+    }));
     this.data$ = this._stock.addNotFoundFlag$(list).pipe(
       map(() => {
         // check if current location is empty, back to first page.

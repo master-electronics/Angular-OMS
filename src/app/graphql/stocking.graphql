@@ -47,11 +47,6 @@ query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
   }
 }
 
-mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!) {
-  updateInventory(Inventory: { ContainerID: $ContainerID }, _id: $InventoryID)
-}
-
-# stocking
 query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
   findContainer(Container: { Barcode: $Barcode, DistributionCenter: $DC }) {
     _id
@@ -69,26 +64,6 @@ query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
   }
 }
 
-mutation moveInventoryToContainerForStocking(
-  $ITN: String!
-  $DC: String!
-  $ContainerID: Int!
-) {
-  updateInventory(
-    Inventory: { ContainerID: $ContainerID }
-    DistributionCenter: $DC
-    InventoryTrackingNumber: $ITN
-  )
-}
-
-mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
-  updateInventoryList(
-    ITNList: $ITNList
-    DistributionCenter: $DC
-    Inventory: { NotFound: true }
-  )
-}
-
 query fetchInventoryInUserContainer($ContainerID: Int!) {
   findContainer(Container: { _id: $ContainerID }) {
     INVENTORies {
@@ -96,4 +71,28 @@ query fetchInventoryInUserContainer($ContainerID: Int!) {
       InventoryTrackingNumber
     }
   }
+}
+
+mutation updateInventoryAfterSorting(
+  $User: String!
+  $BinLocation: String!
+  $ITN: String!
+) {
+  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+}
+
+mutation moveInventoryToContainerForStocking(
+  $User: String!
+  $ITN: String!
+  $BinLocation: String!
+) {
+  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+}
+
+mutation updateNotFoundForStocking(
+  $ITNList: [String]!
+  $linkList: [insertInventorySuspectReason]!
+) {
+  updateNotFoundForStocking(ITNList: $ITNList)
+  insertInventorySuspectReason(linkList: $linkList)
 }

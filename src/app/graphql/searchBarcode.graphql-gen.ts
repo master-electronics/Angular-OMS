@@ -562,6 +562,7 @@ export type Mutation = {
   updateMerpOrderStatus: Response;
   updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
+  updateNotFoundForStocking?: Maybe<Scalars['Boolean']>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLastSync?: Maybe<UpdatedOrder>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1106,6 +1107,10 @@ export type MutationUpdateMerpWmsLogArgs = {
   ActionType: Scalars['String'];
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
+};
+
+export type MutationUpdateNotFoundForStockingArgs = {
+  ITNList: Array<InputMaybe<Scalars['String']>>;
 };
 
 export type MutationUpdateOrderArgs = {

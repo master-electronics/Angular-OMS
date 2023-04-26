@@ -562,6 +562,7 @@ export type Mutation = {
   updateMerpOrderStatus: Response;
   updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
+  updateNotFoundForStocking?: Maybe<Scalars['Boolean']>;
   updateOrder?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateOrderLastSync?: Maybe<UpdatedOrder>;
   updateOrderLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1106,6 +1107,10 @@ export type MutationUpdateMerpWmsLogArgs = {
   ActionType: Scalars['String'];
   FileKeyList: Array<Scalars['String']>;
   LocationCode: Scalars['String'];
+};
+
+export type MutationUpdateNotFoundForStockingArgs = {
+  ITNList: Array<InputMaybe<Scalars['String']>>;
 };
 
 export type MutationUpdateOrderArgs = {
@@ -2823,16 +2828,6 @@ export type FetchSuggetionLocationForSortingQuery = {
   } | null> | null;
 };
 
-export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
-  ContainerID: Types.Scalars['Int'];
-  InventoryID: Types.Scalars['Int'];
-}>;
-
-export type UpdateInventoryAfterSortingMutation = {
-  __typename?: 'Mutation';
-  updateInventory?: Array<number | null> | null;
-};
-
 export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
   Barcode: Types.Scalars['String'];
   DC: Types.Scalars['String'];
@@ -2854,29 +2849,6 @@ export type FetchItnInfoByContainerforStockingQuery = {
   } | null;
 };
 
-export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
-  ITN: Types.Scalars['String'];
-  DC: Types.Scalars['String'];
-  ContainerID: Types.Scalars['Int'];
-}>;
-
-export type MoveInventoryToContainerForStockingMutation = {
-  __typename?: 'Mutation';
-  updateInventory?: Array<number | null> | null;
-};
-
-export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
-  ITNList?: Types.InputMaybe<
-    Array<Types.Scalars['String']> | Types.Scalars['String']
-  >;
-  DC: Types.Scalars['String'];
-}>;
-
-export type UpdateNotFoundForStockingMutation = {
-  __typename?: 'Mutation';
-  updateInventoryList?: Array<number | null> | null;
-};
-
 export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
   ContainerID: Types.Scalars['Int'];
 }>;
@@ -2891,6 +2863,43 @@ export type FetchInventoryInUserContainerQuery = {
       InventoryTrackingNumber: string;
     } | null> | null;
   } | null;
+};
+
+export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
+  User: Types.Scalars['String'];
+  BinLocation: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+}>;
+
+export type UpdateInventoryAfterSortingMutation = {
+  __typename?: 'Mutation';
+  itnLocationChange?: boolean | null;
+};
+
+export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
+  User: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+  BinLocation: Types.Scalars['String'];
+}>;
+
+export type MoveInventoryToContainerForStockingMutation = {
+  __typename?: 'Mutation';
+  itnLocationChange?: boolean | null;
+};
+
+export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
+  ITNList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
+  linkList:
+    | Array<Types.InputMaybe<Types.InsertInventorySuspectReason>>
+    | Types.InputMaybe<Types.InsertInventorySuspectReason>;
+}>;
+
+export type UpdateNotFoundForStockingMutation = {
+  __typename?: 'Mutation';
+  updateNotFoundForStocking?: boolean | null;
+  insertInventorySuspectReason?: boolean | null;
 };
 
 export const VerifyItnForSortingDocument = gql`
@@ -2986,25 +2995,6 @@ export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const UpdateInventoryAfterSortingDocument = gql`
-  mutation updateInventoryAfterSorting($ContainerID: Int!, $InventoryID: Int!) {
-    updateInventory(Inventory: { ContainerID: $ContainerID }, _id: $InventoryID)
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<
-  UpdateInventoryAfterSortingMutation,
-  UpdateInventoryAfterSortingMutationVariables
-> {
-  document = UpdateInventoryAfterSortingDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
 export const FetchItnInfoByContainerforStockingDocument = gql`
   query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
     findContainer(Container: { Barcode: $Barcode, DistributionCenter: $DC }) {
@@ -3037,56 +3027,6 @@ export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<
     super(apollo);
   }
 }
-export const MoveInventoryToContainerForStockingDocument = gql`
-  mutation moveInventoryToContainerForStocking(
-    $ITN: String!
-    $DC: String!
-    $ContainerID: Int!
-  ) {
-    updateInventory(
-      Inventory: { ContainerID: $ContainerID }
-      DistributionCenter: $DC
-      InventoryTrackingNumber: $ITN
-    )
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<
-  MoveInventoryToContainerForStockingMutation,
-  MoveInventoryToContainerForStockingMutationVariables
-> {
-  document = MoveInventoryToContainerForStockingDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const UpdateNotFoundForStockingDocument = gql`
-  mutation updateNotFoundForStocking($ITNList: [String!], $DC: String!) {
-    updateInventoryList(
-      ITNList: $ITNList
-      DistributionCenter: $DC
-      Inventory: { NotFound: true }
-    )
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<
-  UpdateNotFoundForStockingMutation,
-  UpdateNotFoundForStockingMutationVariables
-> {
-  document = UpdateNotFoundForStockingDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
 export const FetchInventoryInUserContainerDocument = gql`
   query fetchInventoryInUserContainer($ContainerID: Int!) {
     findContainer(Container: { _id: $ContainerID }) {
@@ -3106,6 +3046,75 @@ export class FetchInventoryInUserContainerGQL extends Apollo.Query<
   FetchInventoryInUserContainerQueryVariables
 > {
   document = FetchInventoryInUserContainerDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateInventoryAfterSortingDocument = gql`
+  mutation updateInventoryAfterSorting(
+    $User: String!
+    $BinLocation: String!
+    $ITN: String!
+  ) {
+    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<
+  UpdateInventoryAfterSortingMutation,
+  UpdateInventoryAfterSortingMutationVariables
+> {
+  document = UpdateInventoryAfterSortingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MoveInventoryToContainerForStockingDocument = gql`
+  mutation moveInventoryToContainerForStocking(
+    $User: String!
+    $ITN: String!
+    $BinLocation: String!
+  ) {
+    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<
+  MoveInventoryToContainerForStockingMutation,
+  MoveInventoryToContainerForStockingMutationVariables
+> {
+  document = MoveInventoryToContainerForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateNotFoundForStockingDocument = gql`
+  mutation updateNotFoundForStocking(
+    $ITNList: [String]!
+    $linkList: [insertInventorySuspectReason]!
+  ) {
+    updateNotFoundForStocking(ITNList: $ITNList)
+    insertInventorySuspectReason(linkList: $linkList)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<
+  UpdateNotFoundForStockingMutation,
+  UpdateNotFoundForStockingMutationVariables
+> {
+  document = UpdateNotFoundForStockingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

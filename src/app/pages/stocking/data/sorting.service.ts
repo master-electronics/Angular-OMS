@@ -74,8 +74,9 @@ export class SortingService {
         }),
         switchMap((res) => {
           return this._updateInventory.mutate({
-            InventoryID: this._itn.itnInfo.InventoryID,
-            ContainerID: res.data.findContainer._id,
+            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            ITN: this._itn.itnInfo.ITN,
+            BinLocation: Barcode,
           });
         }),
         switchMap(() => {
