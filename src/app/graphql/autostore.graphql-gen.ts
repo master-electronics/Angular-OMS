@@ -436,6 +436,14 @@ export type InventoryForMerp = {
   User: Scalars['String'];
 };
 
+export type InventoryUpdateForMerp = {
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ITN: Scalars['String'];
+  LocatedInAutostore?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['String']>;
+  User: Scalars['String'];
+};
+
 export type Inventory_SuspectReason = {
   __typename?: 'Inventory_SuspectReason';
   Inventory: Inventory;
@@ -472,6 +480,7 @@ export type MenuGroup = {
 export type Mutation = {
   __typename?: 'Mutation';
   ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
+  changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -593,6 +602,10 @@ export type MutationItnSplitAndPrintLabelsArgs = {
   PRODUCTCODE: Scalars['String'];
   QuantityList: Array<InputMaybe<Scalars['Float']>>;
   User: Scalars['String'];
+};
+
+export type MutationChangeItnListForMerpArgs = {
+  ITNList: Array<InputMaybe<InventoryUpdateForMerp>>;
 };
 
 export type MutationChangeQcLineInfoArgs = {
@@ -910,6 +923,7 @@ export type MutationInsertValueMapArgs = {
 };
 
 export type MutationItnChangeArgs = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ITN: Scalars['String'];
   LocatedInAutostore?: InputMaybe<Scalars['String']>;
   Suspect?: InputMaybe<Scalars['String']>;
@@ -1012,6 +1026,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
+  UOM?: InputMaybe<Scalars['String']>;
   Velocity?: InputMaybe<Scalars['String']>;
 };
 
@@ -1491,7 +1506,7 @@ export type QueryCountOrderItnsArgs = {
 };
 
 export type QueryFetchAutostoreMessageArgs = {
-  MaxRetries?: InputMaybe<Scalars['Int']>;
+  Message?: InputMaybe<AutostoreMessage>;
 };
 
 export type QueryFetchAutostoreMessagesArgs = {
@@ -2182,6 +2197,7 @@ export type AutostoreMessage = {
   Endpoint?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   Method?: InputMaybe<Scalars['String']>;
+  OrderLines?: InputMaybe<Scalars['String']>;
   Status?: InputMaybe<Scalars['String']>;
   Timestamp?: InputMaybe<Scalars['String']>;
   Type?: InputMaybe<Scalars['String']>;
@@ -2769,13 +2785,13 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchAutostoreMessageQueryVariables = Types.Exact<{
+export type FetchAutostoreMessagesQueryVariables = Types.Exact<{
   maxRetries?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
-export type FetchAutostoreMessageQuery = {
+export type FetchAutostoreMessagesQuery = {
   __typename?: 'Query';
-  fetchAutostoreMessage?: Array<{
+  fetchAutostoreMessages?: Array<{
     __typename?: 'AUTOSTOREMESSAGE';
     _id: number;
     Type: string;
@@ -2801,9 +2817,9 @@ export type InsertAutostoreMessageMutation = {
   } | null;
 };
 
-export const FetchAutostoreMessageDocument = gql`
-  query fetchAutostoreMessage($maxRetries: Int) {
-    fetchAutostoreMessage(MaxRetries: $maxRetries) {
+export const FetchAutostoreMessagesDocument = gql`
+  query fetchAutostoreMessages($maxRetries: Int) {
+    fetchAutostoreMessages(MaxRetries: $maxRetries) {
       _id
       Type
       TypeID
@@ -2820,11 +2836,11 @@ export const FetchAutostoreMessageDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class FetchAutostoreMessageGQL extends Apollo.Query<
-  FetchAutostoreMessageQuery,
-  FetchAutostoreMessageQueryVariables
+export class FetchAutostoreMessagesGQL extends Apollo.Query<
+  FetchAutostoreMessagesQuery,
+  FetchAutostoreMessagesQueryVariables
 > {
-  document = FetchAutostoreMessageDocument;
+  document = FetchAutostoreMessagesDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

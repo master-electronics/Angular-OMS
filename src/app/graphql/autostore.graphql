@@ -1,5 +1,5 @@
-query fetchAutostoreMessage($maxRetries: Int) {
-  fetchAutostoreMessage(MaxRetries: $maxRetries) {
+query fetchAutostoreMessages($maxRetries: Int) {
+  fetchAutostoreMessages(MaxRetries: $maxRetries) {
     _id
     Type
     TypeID

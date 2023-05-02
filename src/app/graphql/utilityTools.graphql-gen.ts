@@ -436,6 +436,14 @@ export type InventoryForMerp = {
   User: Scalars['String'];
 };
 
+export type InventoryUpdateForMerp = {
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ITN: Scalars['String'];
+  LocatedInAutostore?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['String']>;
+  User: Scalars['String'];
+};
+
 export type Inventory_SuspectReason = {
   __typename?: 'Inventory_SuspectReason';
   Inventory: Inventory;
@@ -472,6 +480,7 @@ export type MenuGroup = {
 export type Mutation = {
   __typename?: 'Mutation';
   ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
+  changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -593,6 +602,10 @@ export type MutationItnSplitAndPrintLabelsArgs = {
   PRODUCTCODE: Scalars['String'];
   QuantityList: Array<InputMaybe<Scalars['Float']>>;
   User: Scalars['String'];
+};
+
+export type MutationChangeItnListForMerpArgs = {
+  ITNList: Array<InputMaybe<InventoryUpdateForMerp>>;
 };
 
 export type MutationChangeQcLineInfoArgs = {
@@ -910,6 +923,7 @@ export type MutationInsertValueMapArgs = {
 };
 
 export type MutationItnChangeArgs = {
+  BinLocation?: InputMaybe<Scalars['String']>;
   ITN: Scalars['String'];
   LocatedInAutostore?: InputMaybe<Scalars['String']>;
   Suspect?: InputMaybe<Scalars['String']>;
@@ -1012,6 +1026,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
+  UOM?: InputMaybe<Scalars['String']>;
   Velocity?: InputMaybe<Scalars['String']>;
 };
 
@@ -1491,7 +1506,7 @@ export type QueryCountOrderItnsArgs = {
 };
 
 export type QueryFetchAutostoreMessageArgs = {
-  MaxRetries?: InputMaybe<Scalars['Int']>;
+  Message?: InputMaybe<AutostoreMessage>;
 };
 
 export type QueryFetchAutostoreMessagesArgs = {
@@ -2182,6 +2197,7 @@ export type AutostoreMessage = {
   Endpoint?: InputMaybe<Scalars['String']>;
   Message?: InputMaybe<Scalars['String']>;
   Method?: InputMaybe<Scalars['String']>;
+  OrderLines?: InputMaybe<Scalars['String']>;
   Status?: InputMaybe<Scalars['String']>;
   Timestamp?: InputMaybe<Scalars['String']>;
   Type?: InputMaybe<Scalars['String']>;
@@ -2922,6 +2938,17 @@ export type FindorCreateUserContainerMutation = {
   findOrCreateUserContainer?: { __typename?: 'Container'; _id: number } | null;
 };
 
+export type ChangeItnListForMerpMutationVariables = Types.Exact<{
+  ITNList:
+    | Array<Types.InputMaybe<Types.InventoryUpdateForMerp>>
+    | Types.InputMaybe<Types.InventoryUpdateForMerp>;
+}>;
+
+export type ChangeItnListForMerpMutation = {
+  __typename?: 'Mutation';
+  changeItnListForMerp?: boolean | null;
+};
+
 export const FindItNsByShelfDocument = gql`
   query findITNsByShelf($Container: searchContainer!) {
     findContainers(Container: $Container) {
@@ -3189,6 +3216,25 @@ export class FindorCreateUserContainerGQL extends Apollo.Mutation<
   FindorCreateUserContainerMutationVariables
 > {
   document = FindorCreateUserContainerDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ChangeItnListForMerpDocument = gql`
+  mutation changeItnListForMerp($ITNList: [InventoryUpdateForMerp]!) {
+    changeItnListForMerp(ITNList: $ITNList)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ChangeItnListForMerpGQL extends Apollo.Mutation<
+  ChangeItnListForMerpMutation,
+  ChangeItnListForMerpMutationVariables
+> {
+  document = ChangeItnListForMerpDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

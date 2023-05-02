@@ -175,15 +175,9 @@ query verifyQCRepack(
   }
 }
 
-mutation updateInventoryAndDetailAfterRepack(
-  $InventoryID: Int!
-  $OrderLineDetailID: Int!
-  $Inventory: updateInventory!
-  $OrderLineDetail: updateOrderLineDetail!
-) {
-  updateInventory(_id: $InventoryID, Inventory: $Inventory)
+mutation updatStatusAfterRepack($OrderLineDetailID: Int!, $Status: Int!) {
   updateOrderLineDetail(
-    OrderLineDetail: $OrderLineDetail
+    OrderLineDetail: { StatusID: $Status }
     _id: $OrderLineDetailID
   )
 }

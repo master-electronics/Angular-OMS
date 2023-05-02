@@ -16,13 +16,14 @@ import {
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
   FindNewAfterUpdateBinGQL,
-  UpdateInventoryAndDetailAfterRepackGQL,
   CleanContainerFromPrevOrderGQL,
+  UpdatStatusAfterRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
+  ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
   UpdateContainerGQL,
@@ -43,7 +44,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
   buttonLabel = 'submit';
   alertMessage = '';
   itemInfo: itemParams;
-  updateDetail;
   insertlogQuery;
   submit$;
   fetchID$;
@@ -54,13 +54,14 @@ export class RepackComponent implements OnInit, AfterViewInit {
     private qcService: QualityControlService,
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateContainer: UpdateContainerGQL,
-    private updateInventoryDetail: UpdateInventoryAndDetailAfterRepackGQL,
+    private updateStatus: UpdatStatusAfterRepackGQL,
     private cleanContainer: CleanContainerFromPrevOrderGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Create_EventLogsGQL,
     private eventLog: EventLogService,
-    private findNewID: FindNewAfterUpdateBinGQL
+    private findNewID: FindNewAfterUpdateBinGQL,
+    private _location: ChangeItnListForMerpGQL
   ) {
     this.titleService.setTitle('qc/repack');
   }
@@ -149,6 +150,8 @@ export class RepackComponent implements OnInit, AfterViewInit {
     let inProcess = 0;
     let sourceContainer: number;
     let updateQueries;
+    let targetContainer;
+
     this.submit$ = this.verifyQCRepack
       .fetch(
         {
@@ -160,7 +163,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
       )
       .pipe(
         tap((res) => {
-          const targetContainer = res.data.findContainer;
+          targetContainer = res.data.findContainer;
           const returnOrder = res.data.findOrder;
           if (!targetContainer) throw 'This barcode is not exist.';
           if (!returnOrder) throw 'This order is not exist.';
@@ -289,16 +292,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
             oldLogs,
             eventLogs,
           });
-          this.updateDetail = this.updateInventoryDetail.mutate({
-            InventoryID: this.itemInfo.InventoryID,
-            OrderLineDetailID: this.itemInfo.OrderLineDetailID,
-            OrderLineDetail: {
-              StatusID: sqlData.qcComplete_ID,
-            },
-            Inventory: {
-              ContainerID: targetContainer._id,
-            },
-          });
 
           const updateTargetConatiner = this.updateContainer.mutate({
             ContainerID: targetContainer._id,
@@ -343,26 +336,29 @@ export class RepackComponent implements OnInit, AfterViewInit {
             delete updateQueries.updateSourceConatiner;
           }
           if (inProcess) delete updateQueries.updateMerpLog;
-          // if target container has other order's item in it and these items's status is after aggregation out, then clean up Container ID from previous order detail table
-          const cleanupInventoryList = [];
+          // if target container has other order's item in it and these items's status is after aggregation out, then updaet Binlocation for M1binloc
+          const cleanupItnList = [];
           if (targetContainer.INVENTORies.length) {
             targetContainer.INVENTORies.forEach((itn) => {
               if (!itn.ORDERLINEDETAILs[0]) {
-                cleanupInventoryList.push(itn._id);
+                cleanupItnList.push({
+                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  ITN: this.itemInfo.InventoryTrackingNumber,
+                  BinLocation: 'packing',
+                });
                 return;
               }
               if (
                 itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                 itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
               ) {
-                cleanupInventoryList.push(itn._id);
+                cleanupItnList.push(itn.InventoryTrackingNumber);
               }
             });
-            if (cleanupInventoryList.length) {
+            if (cleanupItnList.length) {
               updateQueries['cleanContainerFromPrevOrder'] =
-                this.cleanContainer.mutate({
-                  idList: cleanupInventoryList,
-                  Inventory: { ContainerID: sqlData.DC_PH_ID },
+                this._location.mutate({
+                  ITNList: cleanupItnList,
                 });
             }
           }
@@ -385,11 +381,27 @@ export class RepackComponent implements OnInit, AfterViewInit {
           if (error) throw error;
         }),
         switchMap(() => {
-          return this.updateDetail;
+          const updateDetail = this.updateStatus.mutate({
+            OrderLineDetailID: this.itemInfo.OrderLineDetailID,
+            Status: sqlData.qcComplete_ID,
+          });
+          const updateBin = this._location.mutate({
+            ITNList: [
+              {
+                ITN: this.itemInfo.InventoryTrackingNumber,
+                User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                BinLocation: this.containerForm.value.container,
+              },
+            ],
+          });
+          return forkJoin({ updateDetail, updateBin });
         }),
         tap((res: any) => {
-          if (!res.data.updateOrderLineDetail[0]) {
+          if (!res.updateDetail.data.updateOrderLineDetail[0]) {
             throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
+          }
+          if (!res.updateBin.data.changeItnListForMerp) {
+            throw `${this.itemInfo.InventoryTrackingNumber} Fail to update Binlocation in Merp`;
           }
         }),
         switchMap((res: any) => {
