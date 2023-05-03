@@ -82,7 +82,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   verfiyITN(ITN: string): void {
     this.isLoading = true;
-    const regex = /^hld*/g;
+    const holdRegex = /^hld*/gi;
+    const autostoreRegex = /^autostore*/gi;
     this.subscription.add(
       this.verifyITNQC
         .fetch(
@@ -107,11 +108,14 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               !['qc'].includes(
                 res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
               ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
-                .trim()
-                .match(regex)
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                holdRegex
+              ) &&
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                autostoreRegex
+              )
             ) {
-              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
+              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
             }
             if (
               ![
@@ -151,7 +155,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               CountMethod: '',
               isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
-                .match(regex),
+                .match(holdRegex),
               CustomerTier: Order.Customer?.CustomerTier,
               ProductTier: detail.Product?.ProductTier,
               ShipmentMethod: Order.ShipmentMethod._id,
