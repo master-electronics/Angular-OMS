@@ -1,16 +1,16 @@
-query fetchAutostoreMessage($maxRetries: Int) {
-  fetchAutostoreMessage(MaxRetries: $maxRetries) {
-    _id
-    Type
-    TypeID
-    Action
-    Endpoint
-    Status
-    Timestamp
-    Message
-    ErrorCount
-  }
-}
+# query fetchAutostoreMessage($maxRetries: Int) {
+#   fetchAutostoreMessage(MaxRetries: $maxRetries) {
+#     _id
+#     Type
+#     TypeID
+#     Action
+#     Endpoint
+#     Status
+#     Timestamp
+#     Message
+#     ErrorCount
+#   }
+# }
 
 mutation insertAutostoreMessage($message: autostoreMessage) {
   insertAutostoreMessage(AutostoreMessage: $message) {
