@@ -122,7 +122,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 sqlData.droppedQC_ID,
                 sqlData.warehouseHold_ID,
                 sqlData.qcComplete_ID,
-              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID)
+              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID) &&
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                autostoreRegex
+              )
             ) {
               error += `Invalid order line status ${res.data.findInventory.ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
