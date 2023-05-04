@@ -160,8 +160,13 @@ export class ASNLocation implements OnInit {
               Number(
                 JSON.parse(sessionStorage.getItem('asnReplenishmentItem'))._id
               ),
-              'in-process'
+              'In-process'
             ),
+            // delete: this._asn.deleteASNReplenishmentItem(
+            //   Number(
+            //     JSON.parse(sessionStorage.getItem('asnReplenishmentItem'))._id
+            //   )
+            // ),
           });
 
           sessionStorage.removeItem('asnReplenishmentItem');

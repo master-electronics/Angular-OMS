@@ -27,6 +27,7 @@ import {
   UpdateAsnParentContainerGQL,
   ItnLocationChangeGQL,
   ItnChangeGQL,
+  //DeleteAsnReplenishmentItemGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
 import { InsertAutostoreMessageGQL } from 'src/app/graphql/autostore.graphql-gen';
 import { environment } from 'src/environments/environment';
@@ -42,6 +43,7 @@ interface ASNLine {
   quantityExpected?: number;
   InventoryID?: number;
   InventoryTrackingNumber?: string;
+  //DateCode?: string;
 }
 
 interface ASN {
@@ -87,6 +89,7 @@ export class ASNService {
     private _updateParentContainer: UpdateAsnParentContainerGQL,
     private _itnLocationChange: ItnLocationChangeGQL,
     private _itnChange: ItnChangeGQL
+    //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
   ) {}
 
   inventoryList;
@@ -358,6 +361,7 @@ export class ASNService {
               quantityExpected: Number(inventory.QuantityOnHand),
               InventoryID: Number(inventory._id),
               InventoryTrackingNumber: inventory.InventoryTrackingNumber,
+              //DateCode: inventory.DateCode,
             });
             lineNumber++;
             i++;
@@ -488,6 +492,18 @@ export class ASNService {
         })
       );
   }
+
+  // deleteASNReplenishmentItem(ID: number) {
+  //   return this._deleteReplenishmentItem
+  //     .mutate({
+  //       _id: ID,
+  //     })
+  //     .pipe(
+  //       catchError((error) => {
+  //         throw new Error(error);
+  //       })
+  //     );
+  // }
 
   updateASNParentContainer(ASNContainerID: number, ParentContainerID: number) {
     const container = {
