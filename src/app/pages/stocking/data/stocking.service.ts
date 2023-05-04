@@ -119,8 +119,8 @@ export class StockingService {
           }
           return this._move.mutate({
             ITN: this._itn.itnInfo.ITN,
-            DC: environment.DistributionCenter,
-            ContainerID: this._userC.userContainerID,
+            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            BinLocation: JSON.parse(sessionStorage.getItem('userInfo')).Name,
           });
         }),
         switchMap(() => {
@@ -222,25 +222,33 @@ export class StockingService {
   /**
    * notFound
    */
-  public addNotFoundFlag$(ITNList: string[]) {
-    const oldLogs = ITNList.map((itn) => ({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-      UserEventID: sqlData.Event_Stocking_NotFound,
-      InventoryTrackingNumber: itn,
-      Message: ``,
-    }));
-    const eventLogs = ITNList.map((itn) => ({
-      ...this._log.eventLog,
-      EventTypeID: sqlData.Event_Stocking_NotFound,
-      Log: JSON.stringify({
-        ...JSON.parse(this._log.eventLog.Log),
-        InventoryTrackingNumber: itn,
-      }),
-    }));
+  public addNotFoundFlag$(list: { ITN: string; InventoryID: number }[]) {
+    const oldLogs = [];
+    const eventLogs = [];
+    const ITNList = [];
+    const linkList = [];
+    list.forEach((itn) => {
+      oldLogs.push({
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserEventID: sqlData.Event_Stocking_NotFound,
+        InventoryTrackingNumber: itn.ITN,
+        Message: ``,
+      });
+      eventLogs.push({
+        ...this._log.eventLog,
+        EventTypeID: sqlData.Event_Stocking_NotFound,
+        Log: JSON.stringify({
+          ...JSON.parse(this._log.eventLog.Log),
+          InventoryTrackingNumber: itn.ITN,
+        }),
+      });
+      ITNList.push(itn.ITN);
+      linkList.push({ InventoryID: itn.InventoryID, SuspectReasonID: 1 });
+    });
     return this._noFound
       .mutate({
         ITNList,
-        DC: environment.DistributionCenter,
+        linkList,
       })
       .pipe(switchMap(() => this._insertLog.mutate({ oldLogs, eventLogs })));
   }
@@ -309,8 +317,9 @@ export class StockingService {
         }),
         switchMap((res) => {
           return this._updateInventory.mutate({
-            InventoryID: this._itn.itnInfo.InventoryID,
-            ContainerID: res.data.findContainer._id,
+            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            BinLocation: Barcode,
+            ITN: this._itn.itnInfo.ITN,
           });
         }),
         switchMap(() => {

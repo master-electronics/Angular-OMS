@@ -8,16 +8,16 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { switchMap, tap } from 'rxjs/operators';
 import { VerifyItNforQcGQL } from 'src/app/graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import {
+  ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
-  Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -42,8 +42,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private insertUserEventLog: Insert_UserEventLogsGQL,
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
-    private updateQCBin: Update_Merp_QcBinGQL,
-    private verifyITNQC: VerifyItNforQcGQL
+    private verifyITNQC: VerifyItNforQcGQL,
+    private _location: ChangeItnListForMerpGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
   }
@@ -82,7 +82,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
 
   verfiyITN(ITN: string): void {
     this.isLoading = true;
-    const regex = /^hld*/g;
+    const holdRegex = /^hld*/gi;
+    const autostoreRegex = /^autostore*/gi;
     this.subscription.add(
       this.verifyITNQC
         .fetch(
@@ -107,11 +108,14 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               !['qc'].includes(
                 res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
               ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
-                .trim()
-                .match(regex)
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                holdRegex
+              ) &&
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                autostoreRegex
+              )
             ) {
-              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold\n`;
+              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
             }
             if (
               ![
@@ -151,7 +155,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               CountMethod: '',
               isHold: !!detail.ORDERLINEDETAILs[0].BinLocation.toLowerCase()
                 .trim()
-                .match(regex),
+                .match(holdRegex),
               CustomerTier: Order.Customer?.CustomerTier,
               ProductTier: detail.Product?.ProductTier,
               ShipmentMethod: Order.ShipmentMethod._id,
@@ -159,13 +163,26 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
+            if (this.itemInfo.isHold) {
+              return this._location.mutate({
+                ITNList: [
+                  {
+                    ITN,
+                    User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                    BinLocation: 'qc',
+                  },
+                ],
+              });
+            }
+            return of(true);
+          }),
+          switchMap(() => {
             const oldLogs = [
               {
                 UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                OrderNumber: Order.OrderNumber.trim(),
-                NOSINumber: Order.NOSINumber.trim(),
-                OrderLineNumber:
-                  detail.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+                OrderNumber: this.itemInfo.OrderNumber,
+                NOSINumber: this.itemInfo.NOSI,
+                OrderLineNumber: this.itemInfo.OrderLineNumber,
                 InventoryTrackingNumber: ITN,
                 UserEventID: sqlData.Event_QC_Start,
                 CustomerNumber: this.itemInfo.CustomerNumber,
@@ -186,10 +203,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
             this.logService.updateEventLog({
               ...this.logService.eventLog,
               Log: JSON.stringify({
-                OrderNumber: Order.OrderNumber.trim(),
-                NOSINumber: Order.NOSINumber.trim(),
-                OrderLineNumber:
-                  detail.ORDERLINEDETAILs[0].OrderLine.OrderLineNumber,
+                OrderNumber: this.itemInfo.OrderNumber,
+                NOSINumber: this.itemInfo.NOSI,
+                OrderLineNumber: this.itemInfo.OrderLineNumber,
                 InventoryTrackingNumber: ITN,
                 CustomerNumber: this.itemInfo.CustomerNumber,
                 CustomerTier: this.itemInfo.CustomerTier,
@@ -206,16 +222,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
                 Priority: this.itemInfo.Priority,
               }),
             });
-            const updateLog = this.eventLog.mutate({
+            return this.eventLog.mutate({
               oldLogs,
               eventLogs: this.logService.eventLog,
             });
-            const updateMerpQCBin = this.updateQCBin.mutate({ ITN });
-            // update QCBin when bin is hold
-            const updateQueries = this.itemInfo.isHold
-              ? { updateLog, updateMerpQCBin }
-              : { updateLog };
-            return forkJoin(updateQueries);
           })
         )
         .subscribe({
