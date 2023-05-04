@@ -98,7 +98,7 @@ export class AggregationInComponent
       )
 
       .pipe(
-        map((res) => {
+        tap((res) => {
           // const container = JSON.parse(JSON.stringify(res.data.findContainer));
           const container = res.data.findContainer;
           if (!container) throw 'Container not found!';
@@ -135,9 +135,9 @@ export class AggregationInComponent
             ITNList[0].ORDERLINEDETAILs[0]?.StatusID >= sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
-          return container;
         }),
-        switchMap((container) => {
+        switchMap((res) => {
+          const container = res.data.findContainer;
           const oldLogs = [];
           const eventLogs = [];
           const outsetContainer: outsetContainer = {

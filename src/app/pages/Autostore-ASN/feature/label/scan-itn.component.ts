@@ -53,7 +53,12 @@ export class ScanITN implements OnInit {
     if (ITNBarcodeRegex.test(input)) {
       this.data$ = this._asn.fetchASN(input).pipe(
         switchMap((res) => {
-          console.log(res);
+          if (res.data.findASNByITN.length == 0) {
+            this.data$ = of({
+              error: { message: 'An ASN for this ITN was not found!' },
+            });
+            return of(false);
+          }
           const asnId = res.data.findASNByITN[0]._id;
           return this._printer.printQRCode$(asnId.toString());
         })

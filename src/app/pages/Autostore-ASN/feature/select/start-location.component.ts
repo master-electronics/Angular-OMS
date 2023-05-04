@@ -45,7 +45,7 @@ export class ASNStartLocation implements OnInit {
       .fetch(
         {
           container: {
-            Barcode: this.inputForm.value.location.toString(),
+            Barcode: this.inputForm.value.location.toString().replace(/-/g, ''),
           },
         },
         { fetchPolicy: 'network-only' }

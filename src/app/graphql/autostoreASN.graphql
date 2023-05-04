@@ -29,6 +29,7 @@ query fetchASNInventory($container: searchContainer) {
       _id
       DistributionCenter
       InventoryTrackingNumber
+      #DateCode
       QuantityOnHand
       Product {
         _id
@@ -197,6 +198,12 @@ mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
     Status
   }
 }
+
+# mutation deleteASNReplenishmentItem($_id: Int) {
+#   deleteASNReplenishmentItem(_id: $_id) {
+#     _id
+#   }
+# }
 
 mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
   updateContainer(Container: $container, _id: $id)

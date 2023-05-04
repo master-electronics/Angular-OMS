@@ -12,13 +12,23 @@ import {
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ASNService } from '../../data/asn.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, catchError, map, of } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { ReplenishmentItem } from '../../utils/interfaces';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ITNInfoComponent } from '../../ui/itn-info.component';
+import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
+import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
 
 @Component({
   standalone: true,
@@ -29,6 +39,7 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
     GreenButtonComponent,
     PopupModalComponent,
     ITNInfoComponent,
+    RedButtonComponent,
   ],
   template: `
     <single-input-form
@@ -46,6 +57,15 @@ import { ITNInfoComponent } from '../../ui/itn-info.component';
       <itn-info [itnInfo]="replenishmentItem"></itn-info>
     </ng-container>
     <div style="height: 20px"></div>
+    <div
+      class="grid h-12 w-full grid-cols-4 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
+    >
+      <div></div>
+      <div class="col-span-2">
+        <red-button buttonText="Skip" (buttonClick)="skipITN()"></red-button>
+      </div>
+      <div></div>
+    </div>
     <ng-container *ngIf="error">
       <popup-modal (clickSubmit)="onBack()" [message]="error"></popup-modal>
     </ng-container>
@@ -59,7 +79,8 @@ export class ScanITN implements OnInit {
     private _asn: ASNService,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL
   ) {}
 
   public data$;
@@ -154,5 +175,53 @@ export class ScanITN implements OnInit {
     this._router.navigate(['../start-location'], {
       relativeTo: this._actRoute,
     });
+  }
+
+  skipITN() {
+    this.data$ = of(true);
+    sessionStorage.setItem('asnLocation', this.replenishmentItem.Barcode);
+    this.info$ = this._asn
+      .updateASNReplenishmentItem(
+        Number(JSON.parse(sessionStorage.getItem('asnReplenishmentItem'))._id),
+        'skipped'
+      )
+      .pipe(
+        switchMap(() => {
+          return this._findReplenishmentItem.fetch(
+            {
+              barcode: sessionStorage.getItem('asnLocation'),
+            },
+            { fetchPolicy: 'network-only' }
+          );
+        }),
+        map((res) => {
+          if (res.data.findASNReplenishmentInventory.length == 0) {
+            this.error = 'There are no more replenishment ITNs';
+            return of(false);
+          }
+          this.replenishmentItem = {
+            _id: res.data.findASNReplenishmentInventory[0]._id,
+            InventoryID: res.data.findASNReplenishmentInventory[0].InventoryID,
+            Status: res.data.findASNReplenishmentInventory[0].Status,
+            Barcode: res.data.findASNReplenishmentInventory[0].Barcode,
+            Warehouse: res.data.findASNReplenishmentInventory[0].Warehouse,
+            Row: res.data.findASNReplenishmentInventory[0].Row,
+            Aisle: res.data.findASNReplenishmentInventory[0].Aisle,
+            Section: res.data.findASNReplenishmentInventory[0].Section,
+            Shelf: res.data.findASNReplenishmentInventory[0].Shelf,
+            ShelfDetail: res.data.findASNReplenishmentInventory[0].ShelfDetail,
+            InventoryTrackingNumber:
+              res.data.findASNReplenishmentInventory[0].InventoryTrackingNumber,
+          };
+          sessionStorage.setItem(
+            'asnReplenishmentItem',
+            JSON.stringify(this.replenishmentItem)
+          );
+          return of(true);
+        }),
+        catchError((error) => {
+          return of({ error });
+        })
+      );
   }
 }

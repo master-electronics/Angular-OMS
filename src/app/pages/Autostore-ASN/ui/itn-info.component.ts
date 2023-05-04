@@ -8,6 +8,25 @@ import { Component, Input } from '@angular/core';
   template: `
     <div *ngIf="itnInfo">
       <div
+        class="grid grid-cols-1 justify-items-center gap-0 text-black md:text-lg lg:text-xl"
+        *ngIf="
+          itnInfo.Warehouse &&
+          itnInfo.Row &&
+          itnInfo.Aisle &&
+          itnInfo.Section &&
+          itnInfo.Shelf &&
+          itnInfo.ShelfDetail
+        "
+      >
+        <span></span>
+        <span class="mr-2 font-medium">
+          {{ itnInfo.Warehouse }}-{{ itnInfo.Row }}-{{ itnInfo.Aisle }}-{{
+            itnInfo.Section
+          }}-{{ itnInfo.Shelf }}-{{ itnInfo.ShelfDetail }}
+        </span>
+        <span></span>
+      </div>
+      <div
         class="grid grid-cols-5 justify-items-end gap-0 text-black md:text-lg lg:text-xl"
         *ngIf="itnInfo.Warehouse || itnInfo.Row"
       >
