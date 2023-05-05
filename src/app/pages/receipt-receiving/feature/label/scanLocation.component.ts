@@ -54,6 +54,7 @@ export class ScanLocationComponent implements OnInit {
   public inputForm: FormGroup;
   public data$: Observable<any>;
   public ITNList$: Observable<any>;
+  public isloading = false;
   // public validator = {
   //   name: 'label',
   //   message: 'Not match the current label!',
@@ -95,6 +96,10 @@ export class ScanLocationComponent implements OnInit {
     if (!this.inputForm.value.location.trim()) {
       return;
     }
+    if (this.isloading) {
+      return;
+    }
+    this.isloading = true;
     this.data$ = this._label
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
@@ -121,6 +126,7 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         catchError((error) => {
+          this.isloading = false;
           return of({
             error: { message: error.message, type: 'error' },
           });
