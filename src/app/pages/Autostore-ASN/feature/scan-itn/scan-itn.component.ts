@@ -54,7 +54,13 @@ import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.g
     >
       <div></div>
       <div class="col-span-2">
-        <red-button buttonText="Skip" (buttonClick)="skipITN()"></red-button>
+        <button
+          (click)="skipITN()"
+          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+          type="button"
+        >
+          Skip
+        </button>
       </div>
       <div></div>
     </div>
