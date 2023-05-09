@@ -80,9 +80,9 @@ export class RepackComponent implements OnInit, AfterViewInit {
       this.router.navigate(['qc']);
       return;
     }
-    if (this.itemInfo.isHold) {
-      this.findDetailID();
-    }
+    // if (this.itemInfo.isHold) {
+    //   this.findDetailID();
+    // }
   }
 
   @ViewChild('container') containerInput!: ElementRef;
@@ -91,51 +91,51 @@ export class RepackComponent implements OnInit, AfterViewInit {
     this.containerInput.nativeElement.select();
   }
 
-  findDetailID(): void {
-    this.isLoading = true;
-    this.fetchID$ = this.findNewID
-      .fetch(
-        {
-          DistributionCenter: environment.DistributionCenter,
-          InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-        },
-        { fetchPolicy: 'network-only' }
-      )
-      .pipe(
-        map((res) => {
-          this.isLoading = false;
-          let message = '';
-          if (
-            res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() !==
-            'qc'
-          ) {
-            this.needSearch = true;
-            message = `Bin location is not qc, Click search button again!`;
-          }
-          if (res.data.findInventory.ORDERLINEDETAILs.length > 1) {
-            this.needSearch = true;
-            message = `More than one record, Click search button again!`;
-          }
-          if (this.needSearch) {
-            this.needSearch = true;
-            this.alertType = 'error';
-            this.alertMessage = message;
-            this.containerInput.nativeElement.select();
-          }
-          this.itemInfo.OrderLineDetailID =
-            res.data.findInventory.ORDERLINEDETAILs[0]._id;
-          this.itemInfo.InventoryID = res.data.findInventory._id;
-        }),
-        catchError((error) => {
-          this.isLoading = false;
-          this.needSearch = true;
-          this.alertType = 'error';
-          this.alertMessage = error;
-          this.containerInput.nativeElement.select();
-          return error;
-        })
-      );
-  }
+  // findDetailID(): void {
+  //   this.isLoading = true;
+  //   this.fetchID$ = this.findNewID
+  //     .fetch(
+  //       {
+  //         DistributionCenter: environment.DistributionCenter,
+  //         InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+  //       },
+  //       { fetchPolicy: 'network-only' }
+  //     )
+  //     .pipe(
+  //       map((res) => {
+  //         this.isLoading = false;
+  //         let message = '';
+  //         if (
+  //           res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() !==
+  //           'qc'
+  //         ) {
+  //           this.needSearch = true;
+  //           message = `Bin location is not qc, Click search button again!`;
+  //         }
+  //         if (res.data.findInventory.ORDERLINEDETAILs.length > 1) {
+  //           this.needSearch = true;
+  //           message = `More than one record, Click search button again!`;
+  //         }
+  //         if (this.needSearch) {
+  //           this.needSearch = true;
+  //           this.alertType = 'error';
+  //           this.alertMessage = message;
+  //           this.containerInput.nativeElement.select();
+  //         }
+  //         this.itemInfo.OrderLineDetailID =
+  //           res.data.findInventory.ORDERLINEDETAILs[0]._id;
+  //         this.itemInfo.InventoryID = res.data.findInventory._id;
+  //       }),
+  //       catchError((error) => {
+  //         this.isLoading = false;
+  //         this.needSearch = true;
+  //         this.alertType = 'error';
+  //         this.alertMessage = error;
+  //         this.containerInput.nativeElement.select();
+  //         return error;
+  //       })
+  //     );
+  // }
 
   onSubmit(): void {
     this.alertMessage = '';
@@ -344,7 +344,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 cleanupItnList.push({
                   User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                   ITN: this.itemInfo.InventoryTrackingNumber,
-                  BinLocation: 'packing',
+                  BinLocation: 'qc',
                 });
                 return;
               }

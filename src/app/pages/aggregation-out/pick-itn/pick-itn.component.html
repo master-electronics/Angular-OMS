@@ -62,16 +62,16 @@
 
         <!-- ITN list -->
         <table class="w-full">
-          <thead class="grid grid-cols-3 gap-3 justify-items-start">
+          <thead class="grid grid-cols-3 justify-items-start gap-3">
             <th>ITN</th>
           </thead>
           <tbody>
             <tr *ngFor="let item of itemList" class="text-lg">
-              <td>{{ item }}</td>
+              <td class="select-none">{{ item }}</td>
             </tr>
             <tr
               *ngFor="let item of selectedList"
-              class="text-green-500 text-lg"
+              class="text-lg text-green-500"
             >
               <td>{{ item }}</td>
             </tr>

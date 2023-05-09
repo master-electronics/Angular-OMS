@@ -18,6 +18,7 @@ import {
   ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
+  Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -43,6 +44,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
     private verifyITNQC: VerifyItNforQcGQL,
+    private updateQCBin: Update_Merp_QcBinGQL,
     private _location: ChangeItnListForMerpGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
@@ -167,15 +169,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
             if (this.itemInfo.isHold) {
-              return this._location.mutate({
-                ITNList: [
-                  {
-                    ITN,
-                    User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                    BinLocation: 'qc',
-                  },
-                ],
-              });
+              return this.updateQCBin.mutate({ ITN });
             }
             return of(true);
           }),

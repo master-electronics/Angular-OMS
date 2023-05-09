@@ -2909,12 +2909,16 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
   ActionType: Types.Scalars['String'];
   Action: Types.Scalars['String'];
+  ITNList:
+    | Array<Types.InputMaybe<Types.InventoryUpdateForMerp>>
+    | Types.InputMaybe<Types.InventoryUpdateForMerp>;
 }>;
 
 export type UpdateAfterAgOutMutation = {
   __typename?: 'Mutation';
   updateOrderLineDetail?: Array<number | null> | null;
   updateOrder?: Array<number | null> | null;
+  changeItnListForMerp?: boolean | null;
   updateMerpOrderStatus: {
     __typename?: 'Response';
     success: boolean;
@@ -3244,6 +3248,7 @@ export const UpdateAfterAgOutDocument = gql`
     $FileKeyList: [String!]!
     $ActionType: String!
     $Action: String!
+    $ITNList: [InventoryUpdateForMerp]!
   ) {
     updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
     updateOrder(_id: $OrderID, Order: { isSelected: 0 })
@@ -3265,6 +3270,7 @@ export const UpdateAfterAgOutDocument = gql`
       success
       message
     }
+    changeItnListForMerp(ITNList: $ITNList)
   }
 `;
 
