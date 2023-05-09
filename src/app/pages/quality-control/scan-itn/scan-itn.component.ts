@@ -106,19 +106,19 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid Order Line Detail';
             }
             let error = '';
-            if (
-              !['qc'].includes(
-                res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-              ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-                holdRegex
-              ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-                autostoreRegex
-              )
-            ) {
-              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
-            }
+            // if (
+            //   !['qc'].includes(
+            //     res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
+            //   ) &&
+            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+            //     holdRegex
+            //   ) &&
+            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+            //     autostoreRegex
+            //   )
+            // ) {
+            //   error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
+            // }
             if (
               ![
                 sqlData.droppedQC_ID,
