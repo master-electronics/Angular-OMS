@@ -343,7 +343,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               if (!itn.ORDERLINEDETAILs[0]) {
                 cleanupItnList.push({
                   User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                  ITN: this.itemInfo.InventoryTrackingNumber,
+                  ITN: itn.InventoryTrackingNumber,
                   BinLocation: 'PACKING',
                 });
                 return;
