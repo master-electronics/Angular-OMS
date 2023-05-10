@@ -352,7 +352,11 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 itn.ORDERLINEDETAILs[0].OrderID !== this.itemInfo.OrderID &&
                 itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
               ) {
-                cleanupItnList.push(itn.InventoryTrackingNumber);
+                cleanupItnList.push({
+                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  ITN: itn.InventoryTrackingNumber,
+                  BinLocation: 'qc',
+                });
               }
             });
             if (cleanupItnList.length) {
