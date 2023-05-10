@@ -344,7 +344,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 cleanupItnList.push({
                   User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                   ITN: this.itemInfo.InventoryTrackingNumber,
-                  BinLocation: 'qc',
+                  BinLocation: 'PACKING',
                 });
                 return;
               }
@@ -355,7 +355,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 cleanupItnList.push({
                   User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                   ITN: itn.InventoryTrackingNumber,
-                  BinLocation: 'qc',
+                  BinLocation: 'PACKING',
                 });
               }
             });
