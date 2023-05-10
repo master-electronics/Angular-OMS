@@ -28,6 +28,7 @@ import {
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { type } from 'os';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { InventoryUpdateForMerp } from 'src/app/graphql/route.graphql-gen';
 
 @Component({
   selector: 'pick-tote',
@@ -283,6 +284,13 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         }),
       };
     });
+    const ITNList = this.agOutService.ITNsInOrder.map((node) => {
+      return {
+        User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        ITN: node.Inventory.InventoryTrackingNumber,
+        BinLocation: 'PACKING',
+      };
+    });
     this.updateSQL$ = forkJoin({
       updateOrder: this._updateAfterQC.mutate({
         OrderID: Number(this.urlParams.OrderID),
@@ -297,6 +305,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         MerpStatus: String(sqlData.agOutComplete_ID),
         FileKeyList,
         ActionType: 'A',
+        ITNList,
         Action: 'line_aggregation_out',
       }),
       checkHazmzd: this._fetchHazard.fetch(

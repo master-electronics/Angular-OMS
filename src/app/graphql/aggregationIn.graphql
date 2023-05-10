@@ -103,9 +103,9 @@ mutation updateAfterAgOut(
   $MerpStatus: String!
   $UserOrStatus: String!
   $FileKeyList: [String!]!
-  # $toteList: [String!]!
   $ActionType: String!
   $Action: String!
+  $ITNList: [InventoryUpdateForMerp]!
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: { isSelected: 0 })
@@ -129,16 +129,8 @@ mutation updateAfterAgOut(
     success
     message
   }
-}
 
-mutation updateContainerAfterAgIn(
-  $sourceContainerID: Int!
-  $endContainerID: Int!
-) {
-  updateInventory(
-    ContainerID: $sourceContainerID
-    Inventory: { ContainerID: $endContainerID }
-  )
+  changeItnListForMerp(ITNList: $ITNList)
 }
 
 mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {

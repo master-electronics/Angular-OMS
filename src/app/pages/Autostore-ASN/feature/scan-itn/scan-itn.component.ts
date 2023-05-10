@@ -12,7 +12,15 @@ import {
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ASNService } from '../../data/asn.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';

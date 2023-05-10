@@ -90,6 +90,10 @@ mutation findorCreateUserContainer(
   }
 }
 
+mutation changeItnListForMerp($ITNList: [InventoryUpdateForMerp]!) {
+  changeItnListForMerp(ITNList: $ITNList)
+}
+
 # mutation sendMail($Subject: String!, $Text: String!, $Recipients: String!) {
 #   sendMail(Subject: $Subject, Text: $Text, Recipients: $Recipients)
 # }

@@ -290,7 +290,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isLoading = false;
           this.alertMessage = error;
           this.alertType = 'error';
-          return throwError(error);
+          return of(error);
         })
       );
   }
