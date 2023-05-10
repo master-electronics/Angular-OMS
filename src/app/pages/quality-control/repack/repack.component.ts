@@ -340,12 +340,8 @@ export class RepackComponent implements OnInit, AfterViewInit {
           const cleanupItnList = [];
           if (targetContainer.INVENTORies.length) {
             targetContainer.INVENTORies.forEach((itn) => {
+              // if no orderlinedetail, means that inventory is old.
               if (!itn.ORDERLINEDETAILs[0]) {
-                cleanupItnList.push({
-                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                  ITN: itn.InventoryTrackingNumber,
-                  BinLocation: 'PACKING',
-                });
                 return;
               }
               if (
