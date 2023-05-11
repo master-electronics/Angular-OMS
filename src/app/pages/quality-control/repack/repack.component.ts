@@ -397,9 +397,9 @@ export class RepackComponent implements OnInit, AfterViewInit {
           return forkJoin({ updateDetail, updateBin });
         }),
         tap((res: any) => {
-          if (!res.updateDetail.data.updateOrderLineDetail[0]) {
-            throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
-          }
+          // if (!res.updateDetail.data.updateOrderLineDetail[0]) {
+          //   throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
+          // }
           if (!res.updateBin.data.changeItnListForMerp) {
             throw `${this.itemInfo.InventoryTrackingNumber} Fail to update Binlocation in Merp`;
           }
