@@ -168,9 +168,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
-            if (this.itemInfo.isHold) {
-              return this.updateQCBin.mutate({ ITN });
-            }
+            // if (this.itemInfo.isHold) {
+            //   return this.updateQCBin.mutate({ ITN });
+            // }
             return of(true);
           }),
           switchMap(() => {
