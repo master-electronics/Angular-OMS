@@ -206,13 +206,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
         switchMap((res) => {
           const targetContainer = res.data.findContainer;
           // Setup graphql queries
-          const updatQCComplete = this.updateMerp.mutate({
-            InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-            DateCode: this.itemInfo.DateCode,
-            CountryOfOrigin: this.itemInfo.CountryISO2,
-            ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
-            CountMethod: this.itemInfo.CountMethod,
-          });
 
           const oldLogs = [
             {
@@ -320,7 +313,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
           updateQueries = {
             updateTargetConatiner,
             updateSourceConatiner,
-            updatQCComplete,
           };
           sqlData.qcComplete_ID;
           if (targetContainer._id === sourceContainer) {
@@ -396,20 +388,29 @@ export class RepackComponent implements OnInit, AfterViewInit {
           }
         }),
         switchMap((res: any) => {
-          if (inProcess) {
-            return of(false);
-          }
-          return this.updateMerpLastLine.mutate({
+          const updatInfo = this.updateMerp.mutate({
+            InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+            DateCode: this.itemInfo.DateCode,
+            CountryOfOrigin: this.itemInfo.CountryISO2,
+            ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
+            CountMethod: this.itemInfo.CountMethod,
+          });
+          const updateStatus = this.updateMerpLastLine.mutate({
             OrderNumber: this.itemInfo.OrderNumber,
             NOSINumber: this.itemInfo.NOSI,
             Status: '60',
             UserOrStatus: 'AGGREGATION-IN',
           });
+          const query = { updateStatus, updatInfo };
+          if (inProcess) {
+            delete query['updateStatus'];
+          }
+          return forkJoin(query);
         }),
         switchMap((res: any) => {
           this.type = 'info';
           this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
-          if (res) {
+          if (res.updateStatus) {
             this.type = 'success';
             this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
           }
