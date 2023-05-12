@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
 import { itemParams, QualityControlService } from '../quality-control.server';
@@ -316,18 +316,10 @@ export class RepackComponent implements OnInit, AfterViewInit {
             },
           });
 
-          const updateMerpLog = this.updateMerpLastLine.mutate({
-            OrderNumber: this.itemInfo.OrderNumber,
-            NOSINumber: this.itemInfo.NOSI,
-            Status: '60',
-            UserOrStatus: 'AGGREGATION-IN',
-          });
-
           // Send different query combination
           updateQueries = {
             updateTargetConatiner,
             updateSourceConatiner,
-            updateMerpLog,
             updatQCComplete,
           };
           sqlData.qcComplete_ID;
@@ -335,7 +327,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
             delete updateQueries.updateTargetConatiner;
             delete updateQueries.updateSourceConatiner;
           }
-          if (inProcess) delete updateQueries.updateMerpLog;
           // if target container has other order's item in it and these items's status is after aggregation out, then updaet Binlocation for M1binloc
           const cleanupItnList = [];
           if (targetContainer.INVENTORies.length) {
@@ -405,9 +396,20 @@ export class RepackComponent implements OnInit, AfterViewInit {
           }
         }),
         switchMap((res: any) => {
+          if (inProcess) {
+            return of(false);
+          }
+          return this.updateMerpLastLine.mutate({
+            OrderNumber: this.itemInfo.OrderNumber,
+            NOSINumber: this.itemInfo.NOSI,
+            Status: '60',
+            UserOrStatus: 'AGGREGATION-IN',
+          });
+        }),
+        switchMap((res: any) => {
           this.type = 'info';
           this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
-          if (res.updateMerpLog) {
+          if (res) {
             this.type = 'success';
             this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
           }
