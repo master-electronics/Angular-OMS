@@ -345,6 +345,9 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 });
             }
           }
+          if (Object.keys(updateQueries).length === 0) {
+            return of(true);
+          }
           return forkJoin(updateQueries);
         }),
         tap((res: any) => {
