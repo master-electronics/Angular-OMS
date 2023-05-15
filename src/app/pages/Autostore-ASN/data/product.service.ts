@@ -73,8 +73,8 @@ export class ProductService {
               const UOM: string = res.data.findProduct.UOM
                 ? res.data.findProduct.UOM.trim()
                 : 'EACH';
-              // const MICPartNumber: string =
-              //   res.data.findProduct.MICPartNumber.trim();
+              const MICPartNumber: string =
+                res.data.findProduct.MICPartNumber.trim();
 
               message.Type = 'PRODUCT';
               message.TypeID = ID;
@@ -100,11 +100,11 @@ export class ProductService {
 
               msgTxt += `"productUom": [ {"uomId": "${UOM}",`;
 
-              // if (MICPartNumber) {
-              //   msgTxt += `"imagePath": "${
-              //     environment.productImgSource + MICPartNumber
-              //   }",`;
-              // }
+              if (MICPartNumber) {
+                msgTxt += `"imagePath": "${
+                  environment.productImgSource + MICPartNumber + '.jpg'
+                }",`;
+              }
 
               msgTxt += `"ratio": 1, "baseUomFlag": true, "pickUomFlag": false, "putawayUomFlag": false} ] }`;
 

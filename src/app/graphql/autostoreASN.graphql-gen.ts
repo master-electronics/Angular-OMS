@@ -968,9 +968,9 @@ export type MutationInsertValueMapArgs = {
 
 
 export type MutationItnChangeArgs = {
+  BinLocation: Scalars['String'];
+  BoundForAutostore?: InputMaybe<Scalars['String']>;
   ITN: Scalars['String'];
-  LocatedInAutostore?: InputMaybe<Scalars['String']>;
-  Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
 };
 
@@ -3011,7 +3011,7 @@ export type FindProductQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, LastAutostoreSync?: string | null, Description?: string | null, Velocity?: string | null, UOM?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null };
+export type FindProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, LastAutostoreSync?: string | null, Description?: string | null, Velocity?: string | null, UOM?: string | null, MICPartNumber?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } | null };
 
 export type PrintQrCodeLabelQueryVariables = Types.Exact<{
   PRINTER: Types.Scalars['String'];
@@ -3035,8 +3035,8 @@ export type ItnLocationChangeMutation = { __typename?: 'Mutation', itnLocationCh
 export type ItnChangeMutationVariables = Types.Exact<{
   user: Types.Scalars['String'];
   itn: Types.Scalars['String'];
-  suspect?: Types.InputMaybe<Types.Scalars['String']>;
-  locatedInAutostore?: Types.InputMaybe<Types.Scalars['String']>;
+  binLocation: Types.Scalars['String'];
+  boundForAutostore?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -3265,6 +3265,7 @@ export const FindProductDocument = gql`
     Description
     Velocity
     UOM
+    MICPartNumber
   }
 }
     `;
@@ -3317,12 +3318,12 @@ export const ItnLocationChangeDocument = gql`
     }
   }
 export const ItnChangeDocument = gql`
-    mutation itnChange($user: String!, $itn: String!, $suspect: String, $locatedInAutostore: String) {
+    mutation itnChange($user: String!, $itn: String!, $binLocation: String!, $boundForAutostore: String) {
   itnChange(
     User: $user
     ITN: $itn
-    Suspect: $suspect
-    LocatedInAutostore: $locatedInAutostore
+    BinLocation: $binLocation
+    BoundForAutostore: $boundForAutostore
   )
 }
     `;

@@ -968,9 +968,9 @@ export type MutationInsertValueMapArgs = {
 
 
 export type MutationItnChangeArgs = {
+  BinLocation: Scalars['String'];
+  BoundForAutostore?: InputMaybe<Scalars['String']>;
   ITN: Scalars['String'];
-  LocatedInAutostore?: InputMaybe<Scalars['String']>;
-  Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
 };
 
