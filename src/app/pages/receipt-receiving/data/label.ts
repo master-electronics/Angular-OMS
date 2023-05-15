@@ -196,6 +196,9 @@ export class LabelService {
       })
       .pipe(
         tap((res) => {
+          if (!Barcode) {
+            throw new Error("Can't be empty location.");
+          }
           if (
             !res.data.findContainer?._id ||
             !res.data.findContainer?.Barcode

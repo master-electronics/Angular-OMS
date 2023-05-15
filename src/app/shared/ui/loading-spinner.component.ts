@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'loading-spinner',
@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
       fill="currentColor"
       class="bi bi-arrow-repeat z-50 animate-spin"
       viewBox="0 0 16 16"
+      #loadingSpinner
     >
       <path
         d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
@@ -21,4 +22,10 @@ import { Component } from '@angular/core';
     </svg>
   `,
 })
-export class LoadingSpinnerComponent {}
+export class LoadingSpinnerComponent implements AfterViewInit {
+  @ViewChild('loadingSpinner') icon: ElementRef;
+
+  ngAfterViewInit(): void {
+    this.icon.nativeElement.focus();
+  }
+}
