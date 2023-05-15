@@ -185,6 +185,12 @@ export class ScanITN implements OnInit {
 
   skipITN() {
     this.data$ = of(true);
+    this.data$ = this._asn.clearSuspect(
+      JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      this.replenishmentItem.InventoryTrackingNumber,
+      this.replenishmentItem.Barcode,
+      'false'
+    );
     sessionStorage.setItem('asnLocation', this.replenishmentItem.Barcode);
     this.info$ = this._asn
       .updateASNReplenishmentItem(
