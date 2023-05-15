@@ -149,8 +149,8 @@ export class ASNService {
             throw new Error(error);
           })
         ),
-      itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
-      itnChange: this.itnChange(User, ITN, 'true', ''),
+      //itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
+      itnChange: this.itnChange(User, ITN, BinLocation, 'true'),
     });
   }
 
@@ -538,8 +538,8 @@ export class ASNService {
   itnChange(
     User: string,
     ITN: string,
-    Suspect: string,
-    LocatedInAutostore: string
+    BinLocation: string,
+    BoundForAutostore: string
   ) {
     // console.log(User);
     // console.log(ITN);
@@ -549,8 +549,8 @@ export class ASNService {
       {
         user: User,
         itn: ITN,
-        suspect: Suspect,
-        locatedInAutostore: LocatedInAutostore,
+        binLocation: BinLocation,
+        boundForAutostore: BoundForAutostore,
       },
       { fetchPolicy: 'network-only' }
     );

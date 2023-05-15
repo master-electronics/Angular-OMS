@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import {
-  UpdateContainerAfterAgInGQL,
   UpdateLocationAfterAgInGQL,
   UpdateMerpOrderStatusGQL,
   UpdateMerpWmsLogGQL,
@@ -55,7 +54,6 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _router: Router,
     private _agInService: AggregationInService,
     private _updatelocation: UpdateLocationAfterAgInGQL,
-    private _updateContainer: UpdateContainerAfterAgInGQL,
     private _updateBin: ChangeItnListForMerpGQL,
     private _updateStatus: UpdateStatusAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,

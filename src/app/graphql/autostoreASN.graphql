@@ -82,6 +82,7 @@ query findProduct($product: searchProduct) {
     Description
     Velocity
     UOM
+    MICPartNumber
   }
 }
 
@@ -110,14 +111,14 @@ mutation itnLocationChange(
 mutation itnChange(
   $user: String!
   $itn: String!
-  $suspect: String
-  $locatedInAutostore: String
+  $binLocation: String!
+  $boundForAutostore: String
 ) {
   itnChange(
     User: $user
     ITN: $itn
-    Suspect: $suspect
-    LocatedInAutostore: $locatedInAutostore
+    BinLocation: $binLocation
+    BoundForAutostore: $boundForAutostore
   )
 }
 
