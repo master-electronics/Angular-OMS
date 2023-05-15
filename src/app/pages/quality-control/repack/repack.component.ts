@@ -145,7 +145,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
     if (this.needSearch) {
       return;
     }
-
+    const barcode = this.containerForm.value.container;
     this.isLoading = true;
     let inProcess = 0;
     let sourceContainer: number;
@@ -156,7 +156,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
       .fetch(
         {
           DistributionCenter: environment.DistributionCenter,
-          Barcode: this.containerForm.value.container,
+          Barcode: barcode,
           OrderID: this.itemInfo.OrderID,
         },
         { fetchPolicy: 'no-cache' }
@@ -215,7 +215,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
               UserEventID: sqlData.Event_QC_Done,
               OrderLineNumber: this.itemInfo.OrderLineNumber,
-              Message: `Repack to ${this.containerForm.value.container}`,
+              Message: `Repack to ${barcode}`,
               CustomerNumber: this.itemInfo.CustomerNumber,
               CustomerTier: this.itemInfo.CustomerTier,
               DistributionCenter: this.itemInfo.DistributionCenter,
@@ -237,7 +237,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               EventTypeID: sqlData.Event_QC_Done,
               Log: JSON.stringify({
                 ...JSON.parse(this.eventLog.eventLog.Log),
-                Message: `Repack to ${this.containerForm.value.container}`,
+                Message: `Repack to ${barcode}`,
               }),
             },
           ];
@@ -376,7 +376,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               {
                 ITN: this.itemInfo.InventoryTrackingNumber,
                 User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                BinLocation: this.containerForm.value.container,
+                BinLocation: barcode,
               },
             ],
           });
