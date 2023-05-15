@@ -122,6 +122,20 @@ mutation itnChange(
   )
 }
 
+mutation clearSuspect(
+  $user: String!
+  $itn: String!
+  $binLocation: String!
+  $suspect: String
+) {
+  itnChange(
+    User: $user
+    ITN: $itn
+    BinLocation: $binLocation
+    Suspect: $suspect
+  )
+}
+
 query findASNReplenishmentInventory($barcode: String) {
   findASNReplenishmentInventory(Barcode: $barcode) {
     _id

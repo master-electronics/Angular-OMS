@@ -971,6 +971,7 @@ export type MutationItnChangeArgs = {
   BinLocation: Scalars['String'];
   BoundForAutostore?: InputMaybe<Scalars['String']>;
   ITN: Scalars['String'];
+  Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
 };
 
@@ -3042,6 +3043,16 @@ export type ItnChangeMutationVariables = Types.Exact<{
 
 export type ItnChangeMutation = { __typename?: 'Mutation', itnChange?: boolean | null };
 
+export type ClearSuspectMutationVariables = Types.Exact<{
+  user: Types.Scalars['String'];
+  itn: Types.Scalars['String'];
+  binLocation: Types.Scalars['String'];
+  suspect?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type ClearSuspectMutation = { __typename?: 'Mutation', itnChange?: boolean | null };
+
 export type FindAsnReplenishmentInventoryQueryVariables = Types.Exact<{
   barcode?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
@@ -3333,6 +3344,22 @@ export const ItnChangeDocument = gql`
   })
   export class ItnChangeGQL extends Apollo.Mutation<ItnChangeMutation, ItnChangeMutationVariables> {
     document = ItnChangeDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ClearSuspectDocument = gql`
+    mutation clearSuspect($user: String!, $itn: String!, $binLocation: String!, $suspect: String) {
+  itnChange(User: $user, ITN: $itn, BinLocation: $binLocation, Suspect: $suspect)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ClearSuspectGQL extends Apollo.Mutation<ClearSuspectMutation, ClearSuspectMutationVariables> {
+    document = ClearSuspectDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
