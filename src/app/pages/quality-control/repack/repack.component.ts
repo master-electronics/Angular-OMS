@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
 import { itemParams, QualityControlService } from '../quality-control.server';
@@ -145,7 +145,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
     if (this.needSearch) {
       return;
     }
-
+    const barcode = this.containerForm.value.container;
     this.isLoading = true;
     let inProcess = 0;
     let sourceContainer: number;
@@ -156,7 +156,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
       .fetch(
         {
           DistributionCenter: environment.DistributionCenter,
-          Barcode: this.containerForm.value.container,
+          Barcode: barcode,
           OrderID: this.itemInfo.OrderID,
         },
         { fetchPolicy: 'no-cache' }
@@ -206,13 +206,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
         switchMap((res) => {
           const targetContainer = res.data.findContainer;
           // Setup graphql queries
-          const updatQCComplete = this.updateMerp.mutate({
-            InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-            DateCode: this.itemInfo.DateCode,
-            CountryOfOrigin: this.itemInfo.CountryISO2,
-            ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
-            CountMethod: this.itemInfo.CountMethod,
-          });
 
           const oldLogs = [
             {
@@ -222,7 +215,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
               UserEventID: sqlData.Event_QC_Done,
               OrderLineNumber: this.itemInfo.OrderLineNumber,
-              Message: `Repack to ${this.containerForm.value.container}`,
+              Message: `Repack to ${barcode}`,
               CustomerNumber: this.itemInfo.CustomerNumber,
               CustomerTier: this.itemInfo.CustomerTier,
               DistributionCenter: this.itemInfo.DistributionCenter,
@@ -244,7 +237,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               EventTypeID: sqlData.Event_QC_Done,
               Log: JSON.stringify({
                 ...JSON.parse(this.eventLog.eventLog.Log),
-                Message: `Repack to ${this.containerForm.value.container}`,
+                Message: `Repack to ${barcode}`,
               }),
             },
           ];
@@ -316,26 +309,16 @@ export class RepackComponent implements OnInit, AfterViewInit {
             },
           });
 
-          const updateMerpLog = this.updateMerpLastLine.mutate({
-            OrderNumber: this.itemInfo.OrderNumber,
-            NOSINumber: this.itemInfo.NOSI,
-            Status: '60',
-            UserOrStatus: 'AGGREGATION-IN',
-          });
-
           // Send different query combination
           updateQueries = {
             updateTargetConatiner,
             updateSourceConatiner,
-            updateMerpLog,
-            updatQCComplete,
           };
           sqlData.qcComplete_ID;
           if (targetContainer._id === sourceContainer) {
             delete updateQueries.updateTargetConatiner;
             delete updateQueries.updateSourceConatiner;
           }
-          if (inProcess) delete updateQueries.updateMerpLog;
           // if target container has other order's item in it and these items's status is after aggregation out, then updaet Binlocation for M1binloc
           const cleanupItnList = [];
           if (targetContainer.INVENTORies.length) {
@@ -361,6 +344,9 @@ export class RepackComponent implements OnInit, AfterViewInit {
                   ITNList: cleanupItnList,
                 });
             }
+          }
+          if (Object.keys(updateQueries).length === 0) {
+            return of(true);
           }
           return forkJoin(updateQueries);
         }),
@@ -390,7 +376,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
               {
                 ITN: this.itemInfo.InventoryTrackingNumber,
                 User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                BinLocation: this.containerForm.value.container,
+                BinLocation: barcode,
               },
             ],
           });
@@ -405,9 +391,29 @@ export class RepackComponent implements OnInit, AfterViewInit {
           }
         }),
         switchMap((res: any) => {
+          const updatInfo = this.updateMerp.mutate({
+            InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
+            DateCode: this.itemInfo.DateCode,
+            CountryOfOrigin: this.itemInfo.CountryISO2,
+            ROHS: this.itemInfo.ROHS ? 'Y' : 'N',
+            CountMethod: this.itemInfo.CountMethod,
+          });
+          const updateStatus = this.updateMerpLastLine.mutate({
+            OrderNumber: this.itemInfo.OrderNumber,
+            NOSINumber: this.itemInfo.NOSI,
+            Status: '60',
+            UserOrStatus: 'AGGREGATION-IN',
+          });
+          const query = { updateStatus, updatInfo };
+          if (inProcess) {
+            delete query['updateStatus'];
+          }
+          return forkJoin(query);
+        }),
+        switchMap((res: any) => {
           this.type = 'info';
           this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
-          if (res.updateMerpLog) {
+          if (res.updateStatus) {
             this.type = 'success';
             this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
           }

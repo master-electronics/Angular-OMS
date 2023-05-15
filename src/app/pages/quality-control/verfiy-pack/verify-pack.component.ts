@@ -90,12 +90,11 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     ],
     ROHS: [{ value: '', disabled: true }, [Validators.required]],
     countryISO2: [{ value: '', disabled: true }, [Validators.required]],
-    countMethods: [1, [Validators.required]],
+    countMethods: ['', [Validators.required]],
   });
 
   @ViewChild('DateCode') dateCodeInput: ElementRef;
   @ViewChild('countMethodError') countMethodError: ElementRef;
-  @ViewChild('countMethods') countMethodsInput: ElementRef;
   @ViewChild('holdInput') holdInput: ElementRef;
   @ViewChild('quantity') quantityInput: ElementRef;
 
