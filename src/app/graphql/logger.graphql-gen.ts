@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,32 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchLocalLogsQueryVariables = Types.Exact<{
+  Date: Types.Scalars['String'];
+}>;
+
+export type FetchLocalLogsQuery = {
+  __typename?: 'Query';
+  findLocalErrorLogs?: Array<string | null> | null;
+};
+
+export const FetchLocalLogsDocument = gql`
+  query fetchLocalLogs($Date: String!) {
+    findLocalErrorLogs(Date: $Date)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchLocalLogsGQL extends Apollo.Query<
+  FetchLocalLogsQuery,
+  FetchLocalLogsQueryVariables
+> {
+  document = FetchLocalLogsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

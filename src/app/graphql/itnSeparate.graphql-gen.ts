@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,115 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type VerifyItnForSeparateQueryVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+export type VerifyItnForSeparateQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    _id: number;
+    QuantityOnHand: number;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      StatusID: number;
+    } | null> | null;
+    Product: {
+      __typename?: 'Product';
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
+  } | null;
+};
+
+export type ItnSplitAndPrintLabelsMutationVariables = Types.Exact<{
+  QuantityList:
+    | Array<Types.InputMaybe<Types.Scalars['Float']>>
+    | Types.InputMaybe<Types.Scalars['Float']>;
+  PRINTER: Types.Scalars['String'];
+  DPI: Types.Scalars['String'];
+  ORIENTATION: Types.Scalars['String'];
+  PRODUCTCODE: Types.Scalars['String'];
+  PARTNUMBER: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+  User: Types.Scalars['String'];
+}>;
+
+export type ItnSplitAndPrintLabelsMutation = {
+  __typename?: 'Mutation';
+  ITNSplitAndPrintLabels: Array<string | null>;
+};
+
+export const VerifyItnForSeparateDocument = gql`
+  query verifyITNForSeparate($ITN: String!, $DC: String!) {
+    findInventory(
+      Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+    ) {
+      _id
+      QuantityOnHand
+      ORDERLINEDETAILs {
+        StatusID
+      }
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyItnForSeparateGQL extends Apollo.Query<
+  VerifyItnForSeparateQuery,
+  VerifyItnForSeparateQueryVariables
+> {
+  document = VerifyItnForSeparateDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ItnSplitAndPrintLabelsDocument = gql`
+  mutation ITNSplitAndPrintLabels(
+    $QuantityList: [Float]!
+    $PRINTER: String!
+    $DPI: String!
+    $ORIENTATION: String!
+    $PRODUCTCODE: String!
+    $PARTNUMBER: String!
+    $ITN: String!
+    $User: String!
+  ) {
+    ITNSplitAndPrintLabels(
+      QuantityList: $QuantityList
+      PRINTER: $PRINTER
+      DPI: $DPI
+      ORIENTATION: $ORIENTATION
+      PRODUCTCODE: $PRODUCTCODE
+      PARTNUMBER: $PARTNUMBER
+      ITN: $ITN
+      User: $User
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ItnSplitAndPrintLabelsGQL extends Apollo.Mutation<
+  ItnSplitAndPrintLabelsMutation,
+  ItnSplitAndPrintLabelsMutationVariables
+> {
+  document = ItnSplitAndPrintLabelsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

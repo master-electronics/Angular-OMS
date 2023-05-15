@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,466 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type VerifyCartAndUpdateMutationVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+  UserID: Types.Scalars['Int'];
+}>;
+
+export type VerifyCartAndUpdateMutation = {
+  __typename?: 'Mutation';
+  updateUserCart?: { __typename?: 'Container'; _id: number } | null;
+};
+
+export type VerifyCartAndUpdateForDropOffMutationVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+  UserID: Types.Scalars['Int'];
+}>;
+
+export type VerifyCartAndUpdateForDropOffMutation = {
+  __typename?: 'Mutation';
+  updateUserCartForDropOff?: { __typename?: 'Container'; _id: number } | null;
+};
+
+export type VerifyPositionBarcodeForPullingQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+}>;
+
+export type VerifyPositionBarcodeForPullingQuery = {
+  __typename?: 'Query';
+  findContainer?: { __typename?: 'Container'; _id: number } | null;
+};
+
+export type FetchPickingSettingsQueryVariables = Types.Exact<{
+  UserInfo: Types.SearchUserInfo;
+}>;
+
+export type FetchPickingSettingsQuery = {
+  __typename?: 'Query';
+  findUserInfo?: {
+    __typename?: 'UserInfo';
+    StrictPriority?: boolean | null;
+    PriorityCutoff?: number | null;
+    CartID?: number | null;
+  } | null;
+};
+
+export type FindNextItnForPullingQueryVariables = Types.Exact<{
+  Zone: Types.Scalars['Int'];
+  StrictPriority: Types.Scalars['Boolean'];
+  PriorityCutoff: Types.Scalars['Int'];
+  Barcode: Types.Scalars['String'];
+}>;
+
+export type FindNextItnForPullingQuery = {
+  __typename?: 'Query';
+  findNextITNForPulling?: {
+    __typename?: 'ITNInfoforPulling';
+    InventoryID?: number | null;
+    InventoryTrackingNumber?: string | null;
+    OrderNumber?: string | null;
+    NOSINumber?: string | null;
+    Barcode?: string | null;
+  } | null;
+};
+
+export type UpdateAfterPullingMutationVariables = Types.Exact<{
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+  Inventory: Types.UpdateInventory;
+  InventoryID: Types.Scalars['Int'];
+  log:
+    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
+    | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+export type UpdateAfterPullingMutation = {
+  __typename?: 'Mutation';
+  updateOrderLineDetail?: Array<number | null> | null;
+  updateInventory?: Array<number | null> | null;
+  insertUserEventLogs?: Array<{
+    __typename?: 'UserEventLog';
+    _id: number;
+  } | null> | null;
+};
+
+export type UpdatePullingNotFoundMutationVariables = Types.Exact<{
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+  InventoryID: Types.Scalars['Int'];
+  log:
+    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
+    | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+export type UpdatePullingNotFoundMutation = {
+  __typename?: 'Mutation';
+  updateOrderLineDetail?: Array<number | null> | null;
+  insertUserEventLogs?: Array<{
+    __typename?: 'UserEventLog';
+    _id: number;
+  } | null> | null;
+};
+
+export type FindItNsInCartForDropOffQueryVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+export type FindItNsInCartForDropOffQuery = {
+  __typename?: 'Query';
+  findInventorys?: Array<{
+    __typename?: 'Inventory';
+    InventoryTrackingNumber: string;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      _id: number;
+      Order: { __typename?: 'Order'; OrderNumber: string; NOSINumber: string };
+    } | null> | null;
+  } | null> | null;
+};
+
+export type UpdateAfterDropOffMutationVariables = Types.Exact<{
+  Inventory: Types.UpdateInventory;
+  ContainerID: Types.Scalars['Int'];
+  UserID: Types.Scalars['Int'];
+  UserInfo: Types.UpdateUserInfo;
+  log:
+    | Array<Types.InputMaybe<Types.InsertUserEventLog>>
+    | Types.InputMaybe<Types.InsertUserEventLog>;
+}>;
+
+export type UpdateAfterDropOffMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
+  updateUserInfo?: Array<number | null> | null;
+  insertUserEventLogs?: Array<{
+    __typename?: 'UserEventLog';
+    _id: number;
+  } | null> | null;
+};
+
+export type FindContainerQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+}>;
+
+export type FindContainerQuery = {
+  __typename?: 'Query';
+  findContainer?: { __typename?: 'Container'; _id: number } | null;
+};
+
+export type FetchPickingCalendarSettingsQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchPickingCalendarSettingsQuery = {
+  __typename?: 'Query';
+  fetchPickingCalendarSettings?: string | null;
+};
+
+export type UpdatePickingCalendarSettingsMutationVariables = Types.Exact<{
+  events?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type UpdatePickingCalendarSettingsMutation = {
+  __typename?: 'Mutation';
+  updatePickingCalendarSettings: boolean;
+};
+
+export const VerifyCartAndUpdateDocument = gql`
+  mutation verifyCartAndUpdate($Container: searchContainer!, $UserID: Int!) {
+    updateUserCart(Container: $Container, UserID: $UserID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyCartAndUpdateGQL extends Apollo.Mutation<
+  VerifyCartAndUpdateMutation,
+  VerifyCartAndUpdateMutationVariables
+> {
+  document = VerifyCartAndUpdateDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const VerifyCartAndUpdateForDropOffDocument = gql`
+  mutation verifyCartAndUpdateForDropOff(
+    $Container: searchContainer!
+    $UserID: Int!
+  ) {
+    updateUserCartForDropOff(Container: $Container, UserID: $UserID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyCartAndUpdateForDropOffGQL extends Apollo.Mutation<
+  VerifyCartAndUpdateForDropOffMutation,
+  VerifyCartAndUpdateForDropOffMutationVariables
+> {
+  document = VerifyCartAndUpdateForDropOffDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const VerifyPositionBarcodeForPullingDocument = gql`
+  query verifyPositionBarcodeForPulling($Container: searchContainer!) {
+    findContainer(Container: $Container) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyPositionBarcodeForPullingGQL extends Apollo.Query<
+  VerifyPositionBarcodeForPullingQuery,
+  VerifyPositionBarcodeForPullingQueryVariables
+> {
+  document = VerifyPositionBarcodeForPullingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPickingSettingsDocument = gql`
+  query fetchPickingSettings($UserInfo: searchUserInfo!) {
+    findUserInfo(UserInfo: $UserInfo) {
+      StrictPriority
+      PriorityCutoff
+      CartID
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPickingSettingsGQL extends Apollo.Query<
+  FetchPickingSettingsQuery,
+  FetchPickingSettingsQueryVariables
+> {
+  document = FetchPickingSettingsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindNextItnForPullingDocument = gql`
+  query findNextITNForPulling(
+    $Zone: Int!
+    $StrictPriority: Boolean!
+    $PriorityCutoff: Int!
+    $Barcode: String!
+  ) {
+    findNextITNForPulling(
+      Zone: $Zone
+      StrictPriority: $StrictPriority
+      PriorityCutoff: $PriorityCutoff
+      Barcode: $Barcode
+    ) {
+      InventoryID
+      InventoryTrackingNumber
+      OrderNumber
+      NOSINumber
+      Barcode
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindNextItnForPullingGQL extends Apollo.Query<
+  FindNextItnForPullingQuery,
+  FindNextItnForPullingQueryVariables
+> {
+  document = FindNextItnForPullingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateAfterPullingDocument = gql`
+  mutation updateAfterPulling(
+    $OrderLineDetail: updateOrderLineDetail!
+    $Inventory: updateInventory!
+    $InventoryID: Int!
+    $log: [insertUserEventLog]!
+  ) {
+    updateOrderLineDetail(
+      OrderLineDetail: $OrderLineDetail
+      InventoryID: $InventoryID
+    )
+    updateInventory(_id: $InventoryID, Inventory: $Inventory)
+    insertUserEventLogs(log: $log) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateAfterPullingGQL extends Apollo.Mutation<
+  UpdateAfterPullingMutation,
+  UpdateAfterPullingMutationVariables
+> {
+  document = UpdateAfterPullingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdatePullingNotFoundDocument = gql`
+  mutation updatePullingNotFound(
+    $OrderLineDetail: updateOrderLineDetail!
+    $InventoryID: Int!
+    $log: [insertUserEventLog]!
+  ) {
+    updateOrderLineDetail(
+      OrderLineDetail: $OrderLineDetail
+      InventoryID: $InventoryID
+    )
+    insertUserEventLogs(log: $log) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdatePullingNotFoundGQL extends Apollo.Mutation<
+  UpdatePullingNotFoundMutation,
+  UpdatePullingNotFoundMutationVariables
+> {
+  document = UpdatePullingNotFoundDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindItNsInCartForDropOffDocument = gql`
+  query findITNsInCartForDropOff($ContainerID: Int!) {
+    findInventorys(Inventory: { ContainerID: $ContainerID }) {
+      InventoryTrackingNumber
+      ORDERLINEDETAILs {
+        _id
+        Order {
+          OrderNumber
+          NOSINumber
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindItNsInCartForDropOffGQL extends Apollo.Query<
+  FindItNsInCartForDropOffQuery,
+  FindItNsInCartForDropOffQueryVariables
+> {
+  document = FindItNsInCartForDropOffDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateAfterDropOffDocument = gql`
+  mutation updateAfterDropOff(
+    $Inventory: updateInventory!
+    $ContainerID: Int!
+    $UserID: Int!
+    $UserInfo: updateUserInfo!
+    $log: [insertUserEventLog]!
+  ) {
+    updateInventory(Inventory: $Inventory, ContainerID: $ContainerID)
+    updateUserInfo(UserInfo: $UserInfo, _id: $UserID)
+    insertUserEventLogs(log: $log) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateAfterDropOffGQL extends Apollo.Mutation<
+  UpdateAfterDropOffMutation,
+  UpdateAfterDropOffMutationVariables
+> {
+  document = UpdateAfterDropOffDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindContainerDocument = gql`
+  query findContainer($Container: searchContainer!) {
+    findContainer(Container: $Container) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindContainerGQL extends Apollo.Query<
+  FindContainerQuery,
+  FindContainerQueryVariables
+> {
+  document = FindContainerDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPickingCalendarSettingsDocument = gql`
+  query fetchPickingCalendarSettings {
+    fetchPickingCalendarSettings
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPickingCalendarSettingsGQL extends Apollo.Query<
+  FetchPickingCalendarSettingsQuery,
+  FetchPickingCalendarSettingsQueryVariables
+> {
+  document = FetchPickingCalendarSettingsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdatePickingCalendarSettingsDocument = gql`
+  mutation updatePickingCalendarSettings($events: String) {
+    updatePickingCalendarSettings(events: $events)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdatePickingCalendarSettingsGQL extends Apollo.Mutation<
+  UpdatePickingCalendarSettingsMutation,
+  UpdatePickingCalendarSettingsMutationVariables
+> {
+  document = UpdatePickingCalendarSettingsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

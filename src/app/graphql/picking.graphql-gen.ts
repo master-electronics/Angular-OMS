@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,164 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchInfoForPickingQueryVariables = Types.Exact<{
+  InventoryTrackingNumber: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+}>;
+
+export type FetchInfoForPickingQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    _id: number;
+    QuantityOnHand: number;
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      _id: number;
+      StatusID: number;
+      Quantity: number;
+      BinLocation?: string | null;
+      WMSPriority: number;
+      Order: {
+        __typename?: 'Order';
+        DistributionCenter: string;
+        OrderNumber: string;
+        NOSINumber: string;
+      };
+    } | null> | null;
+    Product: {
+      __typename?: 'Product';
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
+  } | null;
+};
+
+export type FetchProductImgAndMessageFromMerpQueryVariables = Types.Exact<{
+  ProductCode: Types.Scalars['String'];
+  PartNumber: Types.Scalars['String'];
+  ProductList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchProductImgAndMessageFromMerpQuery = {
+  __typename?: 'Query';
+  fetchProductInfoFromMerp?: Array<{
+    __typename?: 'ProdunctInfoFromMerp';
+    UnitOfMeasure?: string | null;
+    MICPartNumber?: string | null;
+  } | null> | null;
+  fetchPartMessage?: {
+    __typename?: 'GlobalMessage';
+    comments?: Array<string | null> | null;
+  } | null;
+};
+
+export type UpdateInventoryToUserMutationVariables = Types.Exact<{
+  InventoryID: Types.Scalars['Int'];
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+export type UpdateInventoryToUserMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
+};
+
+export const FetchInfoForPickingDocument = gql`
+  query fetchInfoForPicking(
+    $InventoryTrackingNumber: String!
+    $DistributionCenter: String!
+  ) {
+    findInventory(
+      Inventory: {
+        DistributionCenter: $DistributionCenter
+        InventoryTrackingNumber: $InventoryTrackingNumber
+      }
+    ) {
+      _id
+      QuantityOnHand
+      ORDERLINEDETAILs {
+        _id
+        StatusID
+        Quantity
+        BinLocation
+        WMSPriority
+        Order {
+          DistributionCenter
+          OrderNumber
+          NOSINumber
+        }
+      }
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchInfoForPickingGQL extends Apollo.Query<
+  FetchInfoForPickingQuery,
+  FetchInfoForPickingQueryVariables
+> {
+  document = FetchInfoForPickingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchProductImgAndMessageFromMerpDocument = gql`
+  query fetchProductImgAndMessageFromMerp(
+    $ProductCode: String!
+    $PartNumber: String!
+    $ProductList: [String]!
+  ) {
+    fetchProductInfoFromMerp(ProductList: $ProductList) {
+      UnitOfMeasure
+      MICPartNumber
+    }
+    fetchPartMessage(ProductCode: $ProductCode, PartNumber: $PartNumber) {
+      comments
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchProductImgAndMessageFromMerpGQL extends Apollo.Query<
+  FetchProductImgAndMessageFromMerpQuery,
+  FetchProductImgAndMessageFromMerpQueryVariables
+> {
+  document = FetchProductImgAndMessageFromMerpDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateInventoryToUserDocument = gql`
+  mutation updateInventoryToUser($InventoryID: Int!, $ContainerID: Int!) {
+    updateInventory(_id: $InventoryID, Inventory: { ContainerID: $ContainerID })
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateInventoryToUserGQL extends Apollo.Mutation<
+  UpdateInventoryToUserMutation,
+  UpdateInventoryToUserMutationVariables
+> {
+  document = UpdateInventoryToUserDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

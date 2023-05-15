@@ -18,6 +18,7 @@ import {
   ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
   Insert_UserEventLogsGQL,
+  Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -43,6 +44,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
     private verifyITNQC: VerifyItNforQcGQL,
+    private updateQCBin: Update_Merp_QcBinGQL,
     private _location: ChangeItnListForMerpGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
@@ -104,25 +106,28 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid Order Line Detail';
             }
             let error = '';
-            if (
-              !['qc'].includes(
-                res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-              ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-                holdRegex
-              ) &&
-              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-                autostoreRegex
-              )
-            ) {
-              error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
-            }
+            // if (
+            //   !['qc'].includes(
+            //     res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
+            //   ) &&
+            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+            //     holdRegex
+            //   ) &&
+            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+            //     autostoreRegex
+            //   )
+            // ) {
+            //   error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
+            // }
             if (
               ![
                 sqlData.droppedQC_ID,
                 sqlData.warehouseHold_ID,
                 sqlData.qcComplete_ID,
-              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID)
+              ].includes(res.data.findInventory.ORDERLINEDETAILs[0].StatusID) &&
+              !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
+                autostoreRegex
+              )
             ) {
               error += `Invalid order line status ${res.data.findInventory.ORDERLINEDETAILs[0].StatusID}. Must be 20, 30, or 60`;
             }
@@ -163,17 +168,9 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
-            if (this.itemInfo.isHold) {
-              return this._location.mutate({
-                ITNList: [
-                  {
-                    ITN,
-                    User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-                    BinLocation: 'qc',
-                  },
-                ],
-              });
-            }
+            // if (this.itemInfo.isHold) {
+            //   return this.updateQCBin.mutate({ ITN });
+            // }
             return of(true);
           }),
           switchMap(() => {

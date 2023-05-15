@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,310 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FindContainerForSearchBarcodeQueryVariables = Types.Exact<{
+  Container: Types.SearchContainer;
+}>;
+
+export type FindContainerForSearchBarcodeQuery = {
+  __typename?: 'Query';
+  findContainers?: Array<{
+    __typename?: 'Container';
+    Barcode: string;
+    Warehouse?: string | null;
+    Row?: string | null;
+    Aisle?: string | null;
+    Section?: string | null;
+    Shelf?: string | null;
+    ShelfDetail?: string | null;
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      _id: number;
+      InventoryTrackingNumber: string;
+      Product: {
+        __typename?: 'Product';
+        PartNumber: string;
+        ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+      };
+      ORDERLINEDETAILs?: Array<{
+        __typename?: 'OrderLineDetail';
+        _id: number;
+        Status: { __typename?: 'OrderStatus'; Name: string };
+        OrderLine: { __typename?: 'OrderLine'; OrderLineNumber: number };
+        Order: {
+          __typename?: 'Order';
+          OrderNumber: string;
+          NOSINumber: string;
+          ShipmentMethod?: {
+            __typename?: 'ShipmentMethod';
+            PriorityPinkPaper: boolean;
+          } | null;
+        };
+      } | null> | null;
+    } | null> | null;
+  } | null> | null;
+};
+
+export type FindItNforSearchBarcodeQueryVariables = Types.Exact<{
+  InventoryTrackingNumber: Types.Scalars['String'];
+}>;
+
+export type FindItNforSearchBarcodeQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    InventoryTrackingNumber: string;
+    Product: {
+      __typename?: 'Product';
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
+    Container: {
+      __typename?: 'Container';
+      Barcode: string;
+      Warehouse?: string | null;
+      Row?: string | null;
+      Aisle?: string | null;
+      Section?: string | null;
+      Shelf?: string | null;
+      ShelfDetail?: string | null;
+    };
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      _id: number;
+      Status: { __typename?: 'OrderStatus'; Name: string };
+      OrderLine: { __typename?: 'OrderLine'; OrderLineNumber: number };
+      Order: {
+        __typename?: 'Order';
+        OrderNumber: string;
+        NOSINumber: string;
+        ShipmentMethod?: {
+          __typename?: 'ShipmentMethod';
+          PriorityPinkPaper: boolean;
+        } | null;
+      };
+    } | null> | null;
+  } | null;
+};
+
+export type FindOrderForSearchBarcodeQueryVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+}>;
+
+export type FindOrderForSearchBarcodeQuery = {
+  __typename?: 'Query';
+  findOrder?: {
+    __typename?: 'Order';
+    OrderNumber: string;
+    NOSINumber: string;
+    ShipmentMethod?: {
+      __typename?: 'ShipmentMethod';
+      PriorityPinkPaper: boolean;
+    } | null;
+    ORDERLINEs?: Array<{
+      __typename?: 'OrderLine';
+      OrderLineNumber: number;
+      ORDERLINEDETAILs?: Array<{
+        __typename?: 'OrderLineDetail';
+        _id: number;
+        Quantity: number;
+        Inventory?: {
+          __typename?: 'Inventory';
+          InventoryTrackingNumber: string;
+          Product: {
+            __typename?: 'Product';
+            PartNumber: string;
+            ProductCode: {
+              __typename?: 'ProductCode';
+              ProductCodeNumber: string;
+            };
+          };
+          Container: {
+            __typename?: 'Container';
+            Barcode: string;
+            Warehouse?: string | null;
+            Row?: string | null;
+            Aisle?: string | null;
+            Section?: string | null;
+            Shelf?: string | null;
+            ShelfDetail?: string | null;
+          };
+        } | null;
+        Status: { __typename?: 'OrderStatus'; Name: string };
+      } | null> | null;
+    } | null> | null;
+  } | null;
+};
+
+export const FindContainerForSearchBarcodeDocument = gql`
+  query findContainerForSearchBarcode($Container: searchContainer!) {
+    findContainers(Container: $Container) {
+      Barcode
+      Warehouse
+      Row
+      Aisle
+      Section
+      Shelf
+      ShelfDetail
+      INVENTORies {
+        _id
+        InventoryTrackingNumber
+        Product {
+          ProductCode {
+            ProductCodeNumber
+          }
+          PartNumber
+        }
+        ORDERLINEDETAILs {
+          _id
+          Status {
+            Name
+          }
+          OrderLine {
+            OrderLineNumber
+          }
+          Order {
+            OrderNumber
+            NOSINumber
+            ShipmentMethod {
+              PriorityPinkPaper
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindContainerForSearchBarcodeGQL extends Apollo.Query<
+  FindContainerForSearchBarcodeQuery,
+  FindContainerForSearchBarcodeQueryVariables
+> {
+  document = FindContainerForSearchBarcodeDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindItNforSearchBarcodeDocument = gql`
+  query findITNforSearchBarcode($InventoryTrackingNumber: String!) {
+    findInventory(
+      Inventory: { InventoryTrackingNumber: $InventoryTrackingNumber }
+    ) {
+      InventoryTrackingNumber
+      Product {
+        ProductCode {
+          ProductCodeNumber
+        }
+        PartNumber
+      }
+      Container {
+        Barcode
+        Warehouse
+        Row
+        Aisle
+        Section
+        Shelf
+        ShelfDetail
+      }
+      ORDERLINEDETAILs {
+        _id
+        Status {
+          Name
+        }
+        OrderLine {
+          OrderLineNumber
+        }
+        Order {
+          OrderNumber
+          NOSINumber
+          ShipmentMethod {
+            PriorityPinkPaper
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindItNforSearchBarcodeGQL extends Apollo.Query<
+  FindItNforSearchBarcodeQuery,
+  FindItNforSearchBarcodeQueryVariables
+> {
+  document = FindItNforSearchBarcodeDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindOrderForSearchBarcodeDocument = gql`
+  query findOrderForSearchBarcode(
+    $DistributionCenter: String!
+    $OrderNumber: String!
+    $NOSINumber: String!
+  ) {
+    findOrder(
+      Order: {
+        DistributionCenter: $DistributionCenter
+        OrderNumber: $OrderNumber
+        NOSINumber: $NOSINumber
+      }
+    ) {
+      OrderNumber
+      NOSINumber
+      ShipmentMethod {
+        PriorityPinkPaper
+      }
+      ORDERLINEs {
+        OrderLineNumber
+        ORDERLINEDETAILs {
+          _id
+          Inventory {
+            InventoryTrackingNumber
+            Product {
+              ProductCode {
+                ProductCodeNumber
+              }
+              PartNumber
+            }
+            Container {
+              Barcode
+              Warehouse
+              Row
+              Aisle
+              Section
+              Shelf
+              ShelfDetail
+            }
+          }
+          Status {
+            Name
+          }
+          Quantity
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindOrderForSearchBarcodeGQL extends Apollo.Query<
+  FindOrderForSearchBarcodeQuery,
+  FindOrderForSearchBarcodeQueryVariables
+> {
+  document = FindOrderForSearchBarcodeDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

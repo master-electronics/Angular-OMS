@@ -241,6 +241,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               FileKeyList: FileKeyListforAgOut,
               ActionType: 'A',
               Action: 'line_aggregation_out',
+              ITNList: [
+                {
+                  ITN: singleITN,
+                  BinLocation: 'PACKING',
+                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                },
+              ],
             }),
             checkHazmzd: this._fetchHazard.fetch(
               { ProductList: ProductList },
@@ -378,7 +385,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       )
       .pipe(
         // Emite Errors
-        map((res) => {
+        tap((res) => {
           const container = res.data.findContainer;
           if (!container) {
             throw 'Can not find this container';
@@ -409,9 +416,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             });
           }
-          return container;
         }),
-        map((container) => {
+        // store the end container info
+        map((res) => {
+          const container = res.data.findContainer;
           const endContainer: endContainer = {
             Barcode: barcodeInput,
             type,

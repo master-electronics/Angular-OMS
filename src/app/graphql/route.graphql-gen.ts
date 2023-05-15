@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,44 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FindAllRoutesQueryVariables = Types.Exact<{ [key: string]: never }>;
+
+export type FindAllRoutesQuery = {
+  __typename?: 'Query';
+  findRoutes?: Array<{
+    __typename?: 'Route';
+    Route: string;
+    ADGroupProtected?: boolean | null;
+    ROUTEGROUPs?: Array<{
+      __typename?: 'RouteGroup';
+      ADGroup: string;
+    } | null> | null;
+  }> | null;
+};
+
+export const FindAllRoutesDocument = gql`
+  query findAllRoutes {
+    findRoutes {
+      Route
+      ADGroupProtected
+      ROUTEGROUPs {
+        ADGroup
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindAllRoutesGQL extends Apollo.Query<
+  FindAllRoutesQuery,
+  FindAllRoutesQueryVariables
+> {
+  document = FindAllRoutesDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

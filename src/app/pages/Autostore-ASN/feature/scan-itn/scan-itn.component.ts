@@ -12,7 +12,15 @@ import {
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ASNService } from '../../data/asn.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -54,7 +62,13 @@ import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.g
     >
       <div></div>
       <div class="col-span-2">
-        <red-button buttonText="Skip" (buttonClick)="skipITN()"></red-button>
+        <button
+          (click)="skipITN()"
+          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+          type="button"
+        >
+          Skip
+        </button>
       </div>
       <div></div>
     </div>

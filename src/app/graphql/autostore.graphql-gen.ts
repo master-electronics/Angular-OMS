@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,86 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchAutostoreMessagesQueryVariables = Types.Exact<{
+  maxRetries?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchAutostoreMessagesQuery = {
+  __typename?: 'Query';
+  fetchAutostoreMessages?: Array<{
+    __typename?: 'AUTOSTOREMESSAGE';
+    _id: number;
+    Type: string;
+    TypeID?: number | null;
+    Action?: string | null;
+    Endpoint?: string | null;
+    Status?: string | null;
+    Timestamp?: string | null;
+    Message?: string | null;
+    ErrorCount?: number | null;
+  } | null> | null;
+};
+
+export type InsertAutostoreMessageMutationVariables = Types.Exact<{
+  message?: Types.InputMaybe<Types.AutostoreMessage>;
+}>;
+
+export type InsertAutostoreMessageMutation = {
+  __typename?: 'Mutation';
+  insertAutostoreMessage?: {
+    __typename?: 'AUTOSTOREMESSAGE';
+    _id: number;
+  } | null;
+};
+
+export const FetchAutostoreMessagesDocument = gql`
+  query fetchAutostoreMessages($maxRetries: Int) {
+    fetchAutostoreMessages(MaxRetries: $maxRetries) {
+      _id
+      Type
+      TypeID
+      Action
+      Endpoint
+      Status
+      Timestamp
+      Message
+      ErrorCount
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchAutostoreMessagesGQL extends Apollo.Query<
+  FetchAutostoreMessagesQuery,
+  FetchAutostoreMessagesQueryVariables
+> {
+  document = FetchAutostoreMessagesDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const InsertAutostoreMessageDocument = gql`
+  mutation insertAutostoreMessage($message: autostoreMessage) {
+    insertAutostoreMessage(AutostoreMessage: $message) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class InsertAutostoreMessageGQL extends Apollo.Mutation<
+  InsertAutostoreMessageMutation,
+  InsertAutostoreMessageMutationVariables
+> {
+  document = InsertAutostoreMessageDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

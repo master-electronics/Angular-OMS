@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,420 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchProductTypesQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchProductTypesQuery = {
+  __typename?: 'Query';
+  fetchProductTypes?: Array<{
+    __typename?: 'ProductType';
+    _id?: number | null;
+    ProductType?: string | null;
+    Description?: string | null;
+  } | null> | null;
+};
+
+export type FetchUserListQueryVariables = Types.Exact<{
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchUserListQuery = {
+  __typename?: 'Query';
+  fetchUserList?: Array<{
+    __typename?: 'User';
+    _id?: number | null;
+    Name?: string | null;
+    DateCreated?: string | null;
+    StrictPriority?: number | null;
+    PriorityCutoff?: number | null;
+    CartLastUpdated?: string | null;
+    PullerLevel?: number | null;
+    DistributionCenter?: string | null;
+    Equipment?: string | null;
+    ZoneCount?: number | null;
+  } | null> | null;
+};
+
+export type FindUserQueryVariables = Types.Exact<{
+  userInfo?: Types.InputMaybe<Types.SearchUser>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FindUserQuery = {
+  __typename?: 'Query';
+  findUser?: {
+    __typename?: 'User';
+    _id?: number | null;
+    Name?: string | null;
+    DateCreated?: string | null;
+    StrictPriority?: number | null;
+    PriorityCutoff?: number | null;
+    CartID?: number | null;
+    CartLastUpdated?: string | null;
+    PullerLevel?: number | null;
+    DistributionCenter?: string | null;
+    Equipment?: string | null;
+    ZoneCount?: number | null;
+  } | null;
+};
+
+export type FindUsersQueryVariables = Types.Exact<{
+  name?: Types.InputMaybe<Types.Scalars['String']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FindUsersQuery = {
+  __typename?: 'Query';
+  findUsers?: Array<{
+    __typename?: 'User';
+    _id?: number | null;
+    Name?: string | null;
+    DateCreated?: string | null;
+    StrictPriority?: number | null;
+    PriorityCutoff?: number | null;
+    CartLastUpdated?: string | null;
+    PullerLevel?: number | null;
+    DistributionCenter?: string | null;
+    Equipment?: string | null;
+    ZoneCount?: number | null;
+  } | null> | null;
+};
+
+export type FetchZoneListQueryVariables = Types.Exact<{
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchZoneListQuery = {
+  __typename?: 'Query';
+  fetchZoneList?: Array<{
+    __typename?: 'Zone';
+    _id?: number | null;
+    DistributionCenter?: string | null;
+    Zone?: number | null;
+    Type?: string | null;
+    Description?: string | null;
+    Equipment?: string | null;
+    PullCount?: number | null;
+    PullsStarted?: number | null;
+    PriorityPulls?: number | null;
+    CustAPulls?: number | null;
+  } | null> | null;
+};
+
+export type FetchUsersForZoneQueryVariables = Types.Exact<{
+  zoneID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchUsersForZoneQuery = {
+  __typename?: 'Query';
+  fetchUsersForZone?: Array<{
+    __typename?: 'User';
+    _id?: number | null;
+    Name?: string | null;
+  } | null> | null;
+};
+
+export type FetchZonesForUserQueryVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchZonesForUserQuery = {
+  __typename?: 'Query';
+  fetchZonesForUser?: Array<{
+    __typename?: 'Zone';
+    _id?: number | null;
+    DistributionCenter?: string | null;
+    Zone?: number | null;
+    Description?: string | null;
+    Equipment?: string | null;
+  } | null> | null;
+};
+
+export type FetchDistributionCenterListQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchDistributionCenterListQuery = {
+  __typename?: 'Query';
+  fetchDistributionCenterList?: Array<{
+    __typename?: 'DistributionCenter';
+    DistributionCenter?: string | null;
+  } | null> | null;
+};
+
+export type InsertUserZoneMutationVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+  zoneID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type InsertUserZoneMutation = {
+  __typename?: 'Mutation';
+  insertUserZone?: { __typename?: 'Zone'; _id?: number | null } | null;
+};
+
+export type DeleteUserZoneMutationVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+  zoneID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type DeleteUserZoneMutation = {
+  __typename?: 'Mutation';
+  deleteUserZone?: { __typename?: 'Zone'; _id?: number | null } | null;
+};
+
+export const FetchProductTypesDocument = gql`
+  query fetchProductTypes {
+    fetchProductTypes {
+      _id
+      ProductType
+      Description
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchProductTypesGQL extends Apollo.Query<
+  FetchProductTypesQuery,
+  FetchProductTypesQueryVariables
+> {
+  document = FetchProductTypesDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchUserListDocument = gql`
+  query fetchUserList($distributionCenter: String) {
+    fetchUserList(DistributionCenter: $distributionCenter) {
+      _id
+      Name
+      DateCreated
+      StrictPriority
+      PriorityCutoff
+      CartLastUpdated
+      PullerLevel
+      DistributionCenter
+      Equipment
+      ZoneCount
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchUserListGQL extends Apollo.Query<
+  FetchUserListQuery,
+  FetchUserListQueryVariables
+> {
+  document = FetchUserListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindUserDocument = gql`
+  query findUser($userInfo: searchUser, $distributionCenter: String) {
+    findUser(User: $userInfo, DistributionCenter: $distributionCenter) {
+      _id
+      Name
+      DateCreated
+      StrictPriority
+      PriorityCutoff
+      CartID
+      CartLastUpdated
+      PullerLevel
+      DistributionCenter
+      Equipment
+      ZoneCount
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindUserGQL extends Apollo.Query<
+  FindUserQuery,
+  FindUserQueryVariables
+> {
+  document = FindUserDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindUsersDocument = gql`
+  query findUsers($name: String, $distributionCenter: String) {
+    findUsers(Name: $name, DistributionCenter: $distributionCenter) {
+      _id
+      Name
+      DateCreated
+      StrictPriority
+      PriorityCutoff
+      CartLastUpdated
+      PullerLevel
+      DistributionCenter
+      Equipment
+      ZoneCount
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindUsersGQL extends Apollo.Query<
+  FindUsersQuery,
+  FindUsersQueryVariables
+> {
+  document = FindUsersDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchZoneListDocument = gql`
+  query fetchZoneList($distributionCenter: String) {
+    fetchZoneList(DistributionCenter: $distributionCenter) {
+      _id
+      DistributionCenter
+      Zone
+      Type
+      Description
+      Equipment
+      PullCount
+      PullsStarted
+      PriorityPulls
+      CustAPulls
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchZoneListGQL extends Apollo.Query<
+  FetchZoneListQuery,
+  FetchZoneListQueryVariables
+> {
+  document = FetchZoneListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchUsersForZoneDocument = gql`
+  query fetchUsersForZone($zoneID: Int) {
+    fetchUsersForZone(ZoneID: $zoneID) {
+      _id
+      Name
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchUsersForZoneGQL extends Apollo.Query<
+  FetchUsersForZoneQuery,
+  FetchUsersForZoneQueryVariables
+> {
+  document = FetchUsersForZoneDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchZonesForUserDocument = gql`
+  query fetchZonesForUser($userID: Int) {
+    fetchZonesForUser(UserID: $userID) {
+      _id
+      DistributionCenter
+      Zone
+      Description
+      Equipment
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchZonesForUserGQL extends Apollo.Query<
+  FetchZonesForUserQuery,
+  FetchZonesForUserQueryVariables
+> {
+  document = FetchZonesForUserDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchDistributionCenterListDocument = gql`
+  query fetchDistributionCenterList {
+    fetchDistributionCenterList {
+      DistributionCenter
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchDistributionCenterListGQL extends Apollo.Query<
+  FetchDistributionCenterListQuery,
+  FetchDistributionCenterListQueryVariables
+> {
+  document = FetchDistributionCenterListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const InsertUserZoneDocument = gql`
+  mutation insertUserZone($userID: Int, $zoneID: Int) {
+    insertUserZone(UserID: $userID, ZoneID: $zoneID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class InsertUserZoneGQL extends Apollo.Mutation<
+  InsertUserZoneMutation,
+  InsertUserZoneMutationVariables
+> {
+  document = InsertUserZoneDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const DeleteUserZoneDocument = gql`
+  mutation deleteUserZone($userID: Int, $zoneID: Int) {
+    deleteUserZone(UserID: $userID, ZoneID: $zoneID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeleteUserZoneGQL extends Apollo.Mutation<
+  DeleteUserZoneMutation,
+  DeleteUserZoneMutationVariables
+> {
+  document = DeleteUserZoneDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

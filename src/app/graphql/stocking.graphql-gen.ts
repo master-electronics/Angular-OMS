@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,355 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type VerifyItnForSortingQueryVariables = Types.Exact<{
+  ITN: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+export type VerifyItnForSortingQuery = {
+  __typename?: 'Query';
+  findInventory?: {
+    __typename?: 'Inventory';
+    _id: number;
+    QuantityOnHand: number;
+    Container: {
+      __typename?: 'Container';
+      _id: number;
+      ContainerType: { __typename?: 'ContainerType'; IsMobile: boolean };
+    };
+    Product: {
+      __typename?: 'Product';
+      _id: number;
+      PartNumber: string;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+      DCPRODUCTs?: Array<{
+        __typename?: 'DCProduct';
+        Velocity?: string | null;
+      } | null> | null;
+    };
+  } | null;
+};
+
+export type VerifyContainerForSortingQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+}>;
+
+export type VerifyContainerForSortingQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    _id: number;
+    ContainerTypeID: number;
+    ContainerType: { __typename?: 'ContainerType'; IsMobile: boolean };
+  } | null;
+};
+
+export type FetchSuggetionLocationForSortingQueryVariables = Types.Exact<{
+  ProductID: Types.Scalars['Int'];
+  limit?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchSuggetionLocationForSortingQuery = {
+  __typename?: 'Query';
+  fetchSuggetionLocationForSorting?: Array<{
+    __typename?: 'SuggetionLocation';
+    Quantity: number;
+    Barcode: string;
+    Zone?: string | null;
+  } | null> | null;
+};
+
+export type FetchItnInfoByContainerforStockingQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DC: Types.Scalars['String'];
+}>;
+
+export type FetchItnInfoByContainerforStockingQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    _id: number;
+    ContainerType: { __typename?: 'ContainerType'; IsMobile: boolean };
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      _id: number;
+      InventoryTrackingNumber: string;
+      QuantityOnHand: number;
+      Product: { __typename?: 'Product'; _id: number };
+    } | null> | null;
+  } | null;
+};
+
+export type FetchInventoryInUserContainerQueryVariables = Types.Exact<{
+  ContainerID: Types.Scalars['Int'];
+}>;
+
+export type FetchInventoryInUserContainerQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      QuantityOnHand: number;
+      InventoryTrackingNumber: string;
+    } | null> | null;
+  } | null;
+};
+
+export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
+  User: Types.Scalars['String'];
+  BinLocation: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+}>;
+
+export type UpdateInventoryAfterSortingMutation = {
+  __typename?: 'Mutation';
+  itnLocationChange?: boolean | null;
+};
+
+export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
+  User: Types.Scalars['String'];
+  ITN: Types.Scalars['String'];
+  BinLocation: Types.Scalars['String'];
+}>;
+
+export type MoveInventoryToContainerForStockingMutation = {
+  __typename?: 'Mutation';
+  itnLocationChange?: boolean | null;
+};
+
+export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
+  ITNList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
+  linkList:
+    | Array<Types.InputMaybe<Types.InsertInventorySuspectReason>>
+    | Types.InputMaybe<Types.InsertInventorySuspectReason>;
+}>;
+
+export type UpdateNotFoundForStockingMutation = {
+  __typename?: 'Mutation';
+  updateNotFoundForStocking?: boolean | null;
+  insertInventorySuspectReason?: boolean | null;
+};
+
+export const VerifyItnForSortingDocument = gql`
+  query verifyITNForSorting($ITN: String!, $DC: String!) {
+    findInventory(
+      Inventory: { InventoryTrackingNumber: $ITN, DistributionCenter: $DC }
+    ) {
+      _id
+      QuantityOnHand
+      Container {
+        _id
+        ContainerType {
+          IsMobile
+        }
+      }
+      Product {
+        _id
+        ProductCode {
+          ProductCodeNumber
+        }
+        DCPRODUCTs {
+          Velocity
+        }
+        PartNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyItnForSortingGQL extends Apollo.Query<
+  VerifyItnForSortingQuery,
+  VerifyItnForSortingQueryVariables
+> {
+  document = VerifyItnForSortingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const VerifyContainerForSortingDocument = gql`
+  query verifyContainerForSorting(
+    $Barcode: String!
+    $DistributionCenter: String!
+  ) {
+    findContainer(
+      Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
+    ) {
+      _id
+      ContainerTypeID
+      ContainerType {
+        IsMobile
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyContainerForSortingGQL extends Apollo.Query<
+  VerifyContainerForSortingQuery,
+  VerifyContainerForSortingQueryVariables
+> {
+  document = VerifyContainerForSortingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchSuggetionLocationForSortingDocument = gql`
+  query fetchSuggetionLocationForSorting($ProductID: Int!, $limit: Int) {
+    fetchSuggetionLocationForSorting(ProductID: $ProductID, limit: $limit) {
+      Quantity
+      Barcode
+      Zone
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchSuggetionLocationForSortingGQL extends Apollo.Query<
+  FetchSuggetionLocationForSortingQuery,
+  FetchSuggetionLocationForSortingQueryVariables
+> {
+  document = FetchSuggetionLocationForSortingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchItnInfoByContainerforStockingDocument = gql`
+  query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
+    findContainer(Container: { Barcode: $Barcode, DistributionCenter: $DC }) {
+      _id
+      ContainerType {
+        IsMobile
+      }
+      INVENTORies {
+        _id
+        InventoryTrackingNumber
+        QuantityOnHand
+        Product {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchItnInfoByContainerforStockingGQL extends Apollo.Query<
+  FetchItnInfoByContainerforStockingQuery,
+  FetchItnInfoByContainerforStockingQueryVariables
+> {
+  document = FetchItnInfoByContainerforStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchInventoryInUserContainerDocument = gql`
+  query fetchInventoryInUserContainer($ContainerID: Int!) {
+    findContainer(Container: { _id: $ContainerID }) {
+      INVENTORies {
+        QuantityOnHand
+        InventoryTrackingNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchInventoryInUserContainerGQL extends Apollo.Query<
+  FetchInventoryInUserContainerQuery,
+  FetchInventoryInUserContainerQueryVariables
+> {
+  document = FetchInventoryInUserContainerDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateInventoryAfterSortingDocument = gql`
+  mutation updateInventoryAfterSorting(
+    $User: String!
+    $BinLocation: String!
+    $ITN: String!
+  ) {
+    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateInventoryAfterSortingGQL extends Apollo.Mutation<
+  UpdateInventoryAfterSortingMutation,
+  UpdateInventoryAfterSortingMutationVariables
+> {
+  document = UpdateInventoryAfterSortingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MoveInventoryToContainerForStockingDocument = gql`
+  mutation moveInventoryToContainerForStocking(
+    $User: String!
+    $ITN: String!
+    $BinLocation: String!
+  ) {
+    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<
+  MoveInventoryToContainerForStockingMutation,
+  MoveInventoryToContainerForStockingMutationVariables
+> {
+  document = MoveInventoryToContainerForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateNotFoundForStockingDocument = gql`
+  mutation updateNotFoundForStocking(
+    $ITNList: [String]!
+    $linkList: [insertInventorySuspectReason]!
+  ) {
+    updateNotFoundForStocking(ITNList: $ITNList)
+    insertInventorySuspectReason(linkList: $linkList)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<
+  UpdateNotFoundForStockingMutation,
+  UpdateNotFoundForStockingMutationVariables
+> {
+  document = UpdateNotFoundForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

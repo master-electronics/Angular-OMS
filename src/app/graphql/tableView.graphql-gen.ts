@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,70 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchEventLogQueryVariables = Types.Exact<{
+  limit?: Types.InputMaybe<Types.Scalars['Int']>;
+  offset?: Types.InputMaybe<Types.Scalars['Int']>;
+  UserName?: Types.InputMaybe<Types.Scalars['String']>;
+  eventIdList?: Types.InputMaybe<
+    | Array<Types.InputMaybe<Types.Scalars['Int']>>
+    | Types.InputMaybe<Types.Scalars['Int']>
+  >;
+  timeFrame?: Types.InputMaybe<
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>
+  >;
+  Log?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchEventLogQuery = {
+  __typename?: 'Query';
+  findEventLogs?: Array<{
+    __typename?: 'EventLog';
+    UserName: string;
+    Event: string;
+    Module: string;
+    CreateTime: string;
+    Log: string;
+  } | null> | null;
+};
+
+export const FetchEventLogDocument = gql`
+  query fetchEventLog(
+    $limit: Int
+    $offset: Int
+    $UserName: String
+    $eventIdList: [Int]
+    $timeFrame: [String]
+    $Log: String
+  ) {
+    findEventLogs(
+      limit: $limit
+      offset: $offset
+      UserName: $UserName
+      eventIdList: $eventIdList
+      timeFrame: $timeFrame
+      Log: $Log
+    ) {
+      UserName
+      Event
+      Module
+      CreateTime
+      Log
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchEventLogGQL extends Apollo.Query<
+  FetchEventLogQuery,
+  FetchEventLogQueryVariables
+> {
+  document = FetchEventLogDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

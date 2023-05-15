@@ -88,8 +88,7 @@ export class ASNService {
     private _findASN: FindAsnByItnGQL,
     private _updateParentContainer: UpdateAsnParentContainerGQL,
     private _itnLocationChange: ItnLocationChangeGQL,
-    private _itnChange: ItnChangeGQL
-    //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
+    private _itnChange: ItnChangeGQL //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
   ) {}
 
   inventoryList;

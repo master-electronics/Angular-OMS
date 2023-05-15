@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   AfterViewInit,
   ViewChild,
   ElementRef,
@@ -9,17 +8,17 @@ import {
 import { Title } from '@angular/platform-browser';
 import {
   AbstractControl,
-  UntypedFormControl,
-  UntypedFormGroup,
+  FormControl,
+  FormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/utils/dataRegex';
 import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
@@ -30,17 +29,15 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
   selector: 'aggregation-in',
   templateUrl: './aggregation-in.component.html',
 })
-export class AggregationInComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class AggregationInComponent implements OnInit, AfterViewInit {
   title = 'Aggregation In';
   isLoading = false;
   alertType = 'error';
   alertMessage = '';
   query$ = new Observable();
 
-  containerForm = new UntypedFormGroup({
-    containerNumber: new UntypedFormControl('', [
+  containerForm = new FormGroup({
+    containerNumber: new FormControl('', [
       Validators.required,
       Validators.pattern(ToteBarcodeRegex),
     ]),
@@ -49,7 +46,6 @@ export class AggregationInComponent
     return this.containerForm.controls;
   }
 
-  private subscription: Subscription = new Subscription();
   constructor(
     private _commonService: CommonService,
     private _route: ActivatedRoute,
@@ -98,7 +94,8 @@ export class AggregationInComponent
       )
 
       .pipe(
-        map((res) => {
+        take(1),
+        tap((res) => {
           // const container = JSON.parse(JSON.stringify(res.data.findContainer));
           const container = res.data.findContainer;
           if (!container) throw 'Container not found!';
@@ -135,9 +132,9 @@ export class AggregationInComponent
             ITNList[0].ORDERLINEDETAILs[0]?.StatusID >= sqlData.agOutComplete_ID
           )
             throw "OrderLine's status is invalid.";
-          return container;
         }),
-        switchMap((container) => {
+        switchMap((res) => {
+          const container = res.data.findContainer;
           const oldLogs = [];
           const eventLogs = [];
           const outsetContainer: outsetContainer = {
@@ -253,9 +250,5 @@ export class AggregationInComponent
           return [];
         })
       );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

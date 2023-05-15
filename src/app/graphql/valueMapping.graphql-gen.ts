@@ -1,3 +1,8 @@
+import * as Types from './generated/types.graphql-gen';
+
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -2780,3 +2785,277 @@ export type ValueMap = {
   TargetValue?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
+
+export type FetchValueMapViewQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchValueMapViewQuery = {
+  __typename?: 'Query';
+  fetchValueMapView?: Array<{
+    __typename?: 'valueMap';
+    _id?: number | null;
+    SourceSystemName?: string | null;
+    SourceTableName?: string | null;
+    SourceColumnName?: string | null;
+    TargetSystemName?: string | null;
+    TargetTableName?: string | null;
+    TargetColumnName?: string | null;
+    SourceValue?: string | null;
+    TargetValue?: string | null;
+  } | null> | null;
+};
+
+export type FetchEntityListQueryVariables = Types.Exact<{
+  type?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchEntityListQuery = {
+  __typename?: 'Query';
+  fetchEntityList?: Array<{
+    __typename?: 'entity';
+    SystemID?: number | null;
+    SystemName?: string | null;
+    TableID?: number | null;
+    TableName?: string | null;
+    ColumnID?: number | null;
+    ColumnName?: string | null;
+  } | null> | null;
+};
+
+export type InsertValueMapMutationVariables = Types.Exact<{
+  sourceSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceValue?: Types.InputMaybe<Types.Scalars['String']>;
+  targetValue?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type InsertValueMapMutation = {
+  __typename?: 'Mutation';
+  insertValueMap?: {
+    __typename?: 'valueMap';
+    _id?: number | null;
+    SourceSystemName?: string | null;
+    SourceTableName?: string | null;
+    SourceColumnName?: string | null;
+    TargetSystemName?: string | null;
+    TargetTableName?: string | null;
+    TargetColumnName?: string | null;
+    SourceValue?: string | null;
+    TargetValue?: string | null;
+  } | null;
+};
+
+export type UpdateValueMapMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  sourceSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetSystemName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetTableName?: Types.InputMaybe<Types.Scalars['String']>;
+  targetColumnName?: Types.InputMaybe<Types.Scalars['String']>;
+  sourceValue?: Types.InputMaybe<Types.Scalars['String']>;
+  targetValue?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type UpdateValueMapMutation = {
+  __typename?: 'Mutation';
+  updateValueMap?: {
+    __typename?: 'valueMap';
+    _id?: number | null;
+    SourceSystemName?: string | null;
+    SourceTableName?: string | null;
+    SourceColumnName?: string | null;
+    TargetSystemName?: string | null;
+    TargetTableName?: string | null;
+    TargetColumnName?: string | null;
+    SourceValue?: string | null;
+    TargetValue?: string | null;
+  } | null;
+};
+
+export type DeleteValueMapMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+}>;
+
+export type DeleteValueMapMutation = {
+  __typename?: 'Mutation';
+  deleteValueMap?: { __typename?: 'valueMap'; _id?: number | null } | null;
+};
+
+export const FetchValueMapViewDocument = gql`
+  query fetchValueMapView {
+    fetchValueMapView {
+      _id
+      SourceSystemName
+      SourceTableName
+      SourceColumnName
+      TargetSystemName
+      TargetTableName
+      TargetColumnName
+      SourceValue
+      TargetValue
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchValueMapViewGQL extends Apollo.Query<
+  FetchValueMapViewQuery,
+  FetchValueMapViewQueryVariables
+> {
+  document = FetchValueMapViewDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchEntityListDocument = gql`
+  query fetchEntityList($type: String) {
+    fetchEntityList(type: $type) {
+      SystemID
+      SystemName
+      TableID
+      TableName
+      ColumnID
+      ColumnName
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchEntityListGQL extends Apollo.Query<
+  FetchEntityListQuery,
+  FetchEntityListQueryVariables
+> {
+  document = FetchEntityListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const InsertValueMapDocument = gql`
+  mutation insertValueMap(
+    $sourceSystemName: String
+    $sourceTableName: String
+    $sourceColumnName: String
+    $targetSystemName: String
+    $targetTableName: String
+    $targetColumnName: String
+    $sourceValue: String
+    $targetValue: String
+  ) {
+    insertValueMap(
+      SourceSystemName: $sourceSystemName
+      SourceTableName: $sourceTableName
+      SourceColumnName: $sourceColumnName
+      TargetSystemName: $targetSystemName
+      TargetTableName: $targetTableName
+      TargetColumnName: $targetColumnName
+      SourceValue: $sourceValue
+      TargetValue: $targetValue
+    ) {
+      _id
+      SourceSystemName
+      SourceTableName
+      SourceColumnName
+      TargetSystemName
+      TargetTableName
+      TargetColumnName
+      SourceValue
+      TargetValue
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class InsertValueMapGQL extends Apollo.Mutation<
+  InsertValueMapMutation,
+  InsertValueMapMutationVariables
+> {
+  document = InsertValueMapDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateValueMapDocument = gql`
+  mutation updateValueMap(
+    $_id: Int!
+    $sourceSystemName: String
+    $sourceTableName: String
+    $sourceColumnName: String
+    $targetSystemName: String
+    $targetTableName: String
+    $targetColumnName: String
+    $sourceValue: String
+    $targetValue: String
+  ) {
+    updateValueMap(
+      _id: $_id
+      SourceSystemName: $sourceSystemName
+      SourceTableName: $sourceTableName
+      SourceColumnName: $sourceColumnName
+      TargetSystemName: $targetSystemName
+      TargetTableName: $targetTableName
+      TargetColumnName: $targetColumnName
+      SourceValue: $sourceValue
+      TargetValue: $targetValue
+    ) {
+      _id
+      SourceSystemName
+      SourceTableName
+      SourceColumnName
+      TargetSystemName
+      TargetTableName
+      TargetColumnName
+      SourceValue
+      TargetValue
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateValueMapGQL extends Apollo.Mutation<
+  UpdateValueMapMutation,
+  UpdateValueMapMutationVariables
+> {
+  document = UpdateValueMapDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const DeleteValueMapDocument = gql`
+  mutation deleteValueMap($_id: Int!) {
+    deleteValueMap(_id: $_id) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeleteValueMapGQL extends Apollo.Mutation<
+  DeleteValueMapMutation,
+  DeleteValueMapMutationVariables
+> {
+  document = DeleteValueMapDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}

@@ -26,6 +26,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { ChangeItnListForMerpGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 
 @Component({
   selector: 'verify-itn',
@@ -55,6 +56,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _agInService: AggregationInService,
     private _updatelocation: UpdateLocationAfterAgInGQL,
     private _updateContainer: UpdateContainerAfterAgInGQL,
+    private _updateBin: ChangeItnListForMerpGQL,
     private _updateStatus: UpdateStatusAfterAgInGQL,
     private _updateMerpLog: UpdateMerpWmsLogGQL,
     private _updateMerpOrder: UpdateMerpOrderStatusGQL,
@@ -112,11 +114,15 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
 
   updateForAgIn(): void {
     // preper query for update info to sql and merp
+    const ITNList = this._agInService.outsetContainer.ITNsInTote.map((itn) => {
+      return {
+        User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        ITN: itn.ITN,
+        BinLocation: this._agInService.endContainer.Barcode,
+      };
+    });
     const updatequery = {
-      updateContainer: this._updateContainer.mutate({
-        sourceContainerID: this.outsetContainer.toteID,
-        endContainerID: this.endContainer.containerID,
-      }),
+      updateContainer: this._updateBin.mutate({ ITNList }),
       updateStatus: this._updateStatus.mutate({
         StatusID: sqlData.agInComplete_ID,
         InventoryIDList: this._agInService.outsetContainer.ITNsInTote.map(
