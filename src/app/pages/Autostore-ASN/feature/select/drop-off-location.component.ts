@@ -63,7 +63,6 @@ export class ASNDropOffLocation implements OnInit {
 
   public onSubmit(): void {
     const asnContainer = JSON.parse(sessionStorage.getItem('asnContainer'));
-
     this.data$ = this._findContainer
       .fetch(
         {

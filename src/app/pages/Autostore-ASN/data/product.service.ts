@@ -73,8 +73,9 @@ export class ProductService {
               const UOM: string = res.data.findProduct.UOM
                 ? res.data.findProduct.UOM.trim()
                 : 'EACH';
-              const MICPartNumber: string =
-                res.data.findProduct.MICPartNumber.trim();
+              const MICPartNumber: string = res.data.findProduct.MICPartNumber
+                ? res.data.findProduct.MICPartNumber.trim()
+                : null;
 
               message.Type = 'PRODUCT';
               message.TypeID = ID;
@@ -162,6 +163,7 @@ export class ProductService {
         this.httpOptions
       );
 
+      console.log(msgResult);
       return msgResult;
     } catch (error) {
       return of(error);
