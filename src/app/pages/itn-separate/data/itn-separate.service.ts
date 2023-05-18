@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
 import { ItnSplitAndPrintLabelsGQL } from 'src/app/graphql/itnSeparate.graphql-gen';
 import { VerifyItnForSeparateGQL } from 'src/app/graphql/itnSeparate.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -77,6 +77,9 @@ export class ItnSeparateService {
         }
         if (!res.data.findInventory?.QuantityOnHand) {
           throw new Error("Can't find the Quantity of ITN!");
+        }
+        if (res.data.findInventory?.QuantityOnHand === 1) {
+          throw new Error('This ITN only has 1 quantity on hand!');
         }
         if (
           res.data.findInventory.ORDERLINEDETAILs.length &&

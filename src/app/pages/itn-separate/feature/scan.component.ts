@@ -46,8 +46,8 @@ export class ScanComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.title.setTitle('Sorting');
-    this.navbar.changeNavbar('Sorting');
+    this.title.setTitle('ITN Split');
+    this.navbar.changeNavbar('ITN Split');
     this.data$ = of(true);
     this._itn.resetitnInfo();
     this._eventLog.initEventLog(null);
