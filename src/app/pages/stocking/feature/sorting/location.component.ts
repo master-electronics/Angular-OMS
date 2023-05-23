@@ -31,7 +31,10 @@ import { SuggetionLocationComponent } from '../../ui/suggetion-location.componen
       title="Location:"
     ></single-input-form>
     <ng-container *ngIf="info$ | async as info">
-      <sort-info [sortingInfo]="info.info"></sort-info>
+      <sort-info
+        [sortingInfo]="info.info"
+        [Autostore]="info.autostore"
+      ></sort-info>
       <suggetion-location [locations]="info.locations"></suggetion-location>
       <printer-button
         class=" absolute bottom-2 right-2 h-10 w-10"
@@ -67,9 +70,14 @@ export class LocationComponent implements OnInit {
         Vty: res.Velocity,
       }))
     ),
+    this._itn.itnInfo$.pipe(
+      map((res) => ({
+        flag: res.Autostore,
+      }))
+    ),
     this._actRoute.data.pipe(map((res) => res.locations)),
   ]).pipe(
-    map(([info, locations]) => ({ info, locations })),
+    map(([info, autostore, locations]) => ({ info, autostore, locations })),
     shareReplay(1)
   );
 

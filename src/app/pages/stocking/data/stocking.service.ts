@@ -97,6 +97,7 @@ export class StockingService {
             PartNumber: inventory.Product.PartNumber,
             QuantityOnHand: inventory.QuantityOnHand,
             Velocity: inventory.Product.DCPRODUCTs[0]?.Velocity,
+            Autostore: inventory.Product.Autostore,
             Remaining: null,
             ProductType: null,
           });
@@ -186,6 +187,7 @@ export class StockingService {
               Remaining: null,
               ProductType: null,
               Velocity: null,
+              Autostore: item.Product.Autostore,
               ITN: item.InventoryTrackingNumber,
               InventoryID: item._id,
               ProductID: item.Product._id,

@@ -1012,6 +1012,7 @@ export type MutationUpdateForCustomerFromMerpArgs = {
 };
 
 export type MutationUpdateForInventoryFromMerpArgs = {
+  Autostore?: InputMaybe<Scalars['Boolean']>;
   BinLocation: Scalars['String'];
   BoundForAutostore?: InputMaybe<Scalars['Boolean']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
@@ -1336,6 +1337,7 @@ export type Printer = {
 
 export type Product = {
   __typename?: 'Product';
+  Autostore?: Maybe<Scalars['Boolean']>;
   DCPRODUCTs?: Maybe<Array<Maybe<DcProduct>>>;
   Description?: Maybe<Scalars['String']>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
@@ -2185,6 +2187,7 @@ export type AutostoreAsnHeader = {
 
 export type AutostoreAsnLine = {
   ASNID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   lineNumber?: InputMaybe<Scalars['Int']>;
   packagingUom?: InputMaybe<Scalars['String']>;
@@ -2806,6 +2809,7 @@ export type VerifyItnForSortingQuery = {
       __typename?: 'Product';
       _id: number;
       PartNumber: string;
+      Autostore?: boolean | null;
       ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
       DCPRODUCTs?: Array<{
         __typename?: 'DCProduct';
@@ -2861,7 +2865,11 @@ export type FetchItnInfoByContainerforStockingQuery = {
       _id: number;
       InventoryTrackingNumber: string;
       QuantityOnHand: number;
-      Product: { __typename?: 'Product'; _id: number };
+      Product: {
+        __typename?: 'Product';
+        _id: number;
+        Autostore?: boolean | null;
+      };
     } | null> | null;
   } | null;
 };
@@ -2941,6 +2949,7 @@ export const VerifyItnForSortingDocument = gql`
           Velocity
         }
         PartNumber
+        Autostore
       }
     }
   }
@@ -3025,6 +3034,7 @@ export const FetchItnInfoByContainerforStockingDocument = gql`
         QuantityOnHand
         Product {
           _id
+          Autostore
         }
       }
     }

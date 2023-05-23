@@ -13,6 +13,7 @@ export interface ItnInfo {
   Remaining: number;
   ProductType: string;
   Velocity: string;
+  Autostore: boolean;
 }
 
 @Injectable()
@@ -65,6 +66,7 @@ export class ItnInfoService {
             PartNumber: inventory.Product.PartNumber,
             QuantityOnHand: inventory.QuantityOnHand,
             Velocity: inventory.Product.DCPRODUCTs[0]?.Velocity,
+            Autostore: inventory.Product.Autostore,
             Remaining: null,
             ProductType: null,
           });

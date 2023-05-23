@@ -20,6 +20,7 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
         Velocity
       }
       PartNumber
+      Autostore
     }
   }
 }
@@ -59,6 +60,7 @@ query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
       QuantityOnHand
       Product {
         _id
+        Autostore
       }
     }
   }

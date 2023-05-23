@@ -1007,6 +1007,7 @@ export type MutationUpdateForCustomerFromMerpArgs = {
 };
 
 export type MutationUpdateForInventoryFromMerpArgs = {
+  Autostore?: InputMaybe<Scalars['Boolean']>;
   BinLocation: Scalars['String'];
   BoundForAutostore?: InputMaybe<Scalars['Boolean']>;
   CountryOfOrigin?: InputMaybe<Scalars['String']>;
@@ -1331,6 +1332,7 @@ export type Printer = {
 
 export type Product = {
   __typename?: 'Product';
+  Autostore?: Maybe<Scalars['Boolean']>;
   DCPRODUCTs?: Maybe<Array<Maybe<DcProduct>>>;
   Description?: Maybe<Scalars['String']>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
@@ -2180,6 +2182,7 @@ export type AutostoreAsnHeader = {
 
 export type AutostoreAsnLine = {
   ASNID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   lineNumber?: InputMaybe<Scalars['Int']>;
   packagingUom?: InputMaybe<Scalars['String']>;
