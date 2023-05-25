@@ -143,9 +143,19 @@ export class MismatchComponent implements OnInit {
           relativeTo: this._actRoute,
         });
       }),
-      catchError((error) =>
-        of({ error: { message: error.message, name: 'error' } })
-      )
+      catchError((error) => {
+        // check if current location is empty, back to first page.
+        let url = '../checkitns';
+        if (this.unverifiedITNs.length === this._stock.ITNList.length) {
+          url = '../scantarget';
+        }
+        this._stock.updateItnList(this.verifiedITNs);
+        this._router.navigate([url], {
+          relativeTo: this._actRoute,
+        });
+        // return of({ error: { message: error.message, name: 'error' } });
+        return of(false);
+      })
     );
   }
 
