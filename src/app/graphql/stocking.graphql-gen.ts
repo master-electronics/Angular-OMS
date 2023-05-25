@@ -486,6 +486,7 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
+  createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
@@ -634,6 +635,10 @@ export type MutationClearMerpToteArgs = {
 export type MutationClearSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+};
+
+export type MutationCreateContainerArgs = {
+  BinLocation: Scalars['String'];
 };
 
 export type MutationCreateItnArgs = {
@@ -1020,6 +1025,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
   LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
+  MICPartNumber?: InputMaybe<Scalars['String']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
@@ -2808,13 +2814,10 @@ export type VerifyItnForSortingQuery = {
     Product: {
       __typename?: 'Product';
       _id: number;
+      Velocity?: string | null;
       PartNumber: string;
       Autostore?: boolean | null;
       ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
-      DCPRODUCTs?: Array<{
-        __typename?: 'DCProduct';
-        Velocity?: string | null;
-      } | null> | null;
     };
   } | null;
 };
@@ -2945,9 +2948,7 @@ export const VerifyItnForSortingDocument = gql`
         ProductCode {
           ProductCodeNumber
         }
-        DCPRODUCTs {
-          Velocity
-        }
+        Velocity
         PartNumber
         Autostore
       }

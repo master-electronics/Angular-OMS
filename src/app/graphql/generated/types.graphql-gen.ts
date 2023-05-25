@@ -481,6 +481,7 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
+  createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
@@ -629,6 +630,10 @@ export type MutationClearMerpToteArgs = {
 export type MutationClearSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+};
+
+export type MutationCreateContainerArgs = {
+  BinLocation: Scalars['String'];
 };
 
 export type MutationCreateItnArgs = {
@@ -1015,6 +1020,7 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   DistributionCenter: Scalars['String'];
   ITN: Scalars['String'];
   LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
+  MICPartNumber?: InputMaybe<Scalars['String']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
