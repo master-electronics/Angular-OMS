@@ -1351,6 +1351,8 @@ export type Product = {
   ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
   ProductTier?: Maybe<Scalars['String']>;
+  ProductType: ProductType;
+  ProductTypeID: Scalars['Int'];
   RECEIPTLs?: Maybe<Array<Maybe<ReceiptL>>>;
   UOM?: Maybe<Scalars['String']>;
   Velocity?: Maybe<Scalars['String']>;
@@ -1368,7 +1370,7 @@ export type ProductType = {
   __typename?: 'ProductType';
   Description?: Maybe<Scalars['String']>;
   ProductType?: Maybe<Scalars['String']>;
-  _id?: Maybe<Scalars['Int']>;
+  _id: Scalars['Int'];
 };
 
 export type ProdunctInfoFromMerp = {

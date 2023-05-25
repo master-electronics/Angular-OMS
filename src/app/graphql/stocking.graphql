@@ -16,6 +16,9 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
       ProductCode {
         ProductCodeNumber
       }
+      ProductType {
+        ProductType
+      }
       Velocity
       PartNumber
       Autostore
