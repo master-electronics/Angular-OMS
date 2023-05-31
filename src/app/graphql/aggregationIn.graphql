@@ -106,10 +106,11 @@ mutation updateAfterAgOut(
   $ActionType: String!
   $Action: String!
   $ITNList: [InventoryUpdateForMerp]!
+  $toteList: [String]!
 ) {
   updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
   updateOrder(_id: $OrderID, Order: { isSelected: 0 })
-  # deleteAndInsertRouteTable(lpnList: $toteList)
+  deleteAndInsertRouteTable(lpnList: $toteList)
   updateMerpOrderStatus(
     OrderNumber: $OrderNumber
     NOSINumber: $NOSINumber

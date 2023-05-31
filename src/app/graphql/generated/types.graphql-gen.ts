@@ -1369,6 +1369,7 @@ export type ProductCode = {
 export type ProductType = {
   __typename?: 'ProductType';
   Description?: Maybe<Scalars['String']>;
+  PRODUCTs?: Maybe<Array<Maybe<Product>>>;
   ProductType?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };

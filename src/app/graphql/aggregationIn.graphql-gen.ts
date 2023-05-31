@@ -1374,6 +1374,7 @@ export type ProductCode = {
 export type ProductType = {
   __typename?: 'ProductType';
   Description?: Maybe<Scalars['String']>;
+  PRODUCTs?: Maybe<Array<Maybe<Product>>>;
   ProductType?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
@@ -2924,12 +2925,16 @@ export type UpdateAfterAgOutMutationVariables = Types.Exact<{
   ITNList:
     | Array<Types.InputMaybe<Types.InventoryUpdateForMerp>>
     | Types.InputMaybe<Types.InventoryUpdateForMerp>;
+  toteList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 export type UpdateAfterAgOutMutation = {
   __typename?: 'Mutation';
   updateOrderLineDetail?: Array<number | null> | null;
   updateOrder?: Array<number | null> | null;
+  deleteAndInsertRouteTable: boolean;
   changeItnListForMerp?: boolean | null;
   updateMerpOrderStatus: {
     __typename?: 'Response';
@@ -3251,9 +3256,11 @@ export const UpdateAfterAgOutDocument = gql`
     $ActionType: String!
     $Action: String!
     $ITNList: [InventoryUpdateForMerp]!
+    $toteList: [String]!
   ) {
     updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
     updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+    deleteAndInsertRouteTable(lpnList: $toteList)
     updateMerpOrderStatus(
       OrderNumber: $OrderNumber
       NOSINumber: $NOSINumber
