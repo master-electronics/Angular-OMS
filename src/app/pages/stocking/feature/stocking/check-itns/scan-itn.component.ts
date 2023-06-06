@@ -97,6 +97,6 @@ export class ScanItnComponent implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../'], { relativeTo: this._actRoute });
+    // this._router.navigate(['../'], { relativeTo: this._actRoute });
   }
 }
