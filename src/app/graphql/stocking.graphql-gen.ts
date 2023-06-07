@@ -88,6 +88,13 @@ export type Autostoremessageattempt = {
   _id: Scalars['Int'];
 };
 
+export type Autostoreorderheader = {
+  __typename?: 'AUTOSTOREORDERHEADER';
+  AutostoreOrderNumber?: Maybe<Scalars['String']>;
+  OrderID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Autostoreorderline = {
   __typename?: 'AUTOSTOREORDERLINE';
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
@@ -526,6 +533,7 @@ export type Mutation = {
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
   insertAutostoreMessage?: Maybe<Autostoremessage>;
   insertAutostoreMessageAttempt?: Maybe<Autostoremessageattempt>;
+  insertAutostoreOrderHeader?: Maybe<Autostoreorderheader>;
   insertAutostoreOrderLine?: Maybe<Autostoreorderline>;
   insertAutostoreOrderLineHistory?: Maybe<Array<Maybe<Autostoreorderline>>>;
   insertEventLogs: Scalars['Boolean'];
@@ -656,11 +664,11 @@ export type MutationDeleteAndInsertRouteTableArgs = {
 };
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationDeleteAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationDeleteContainerFromMerpArgs = {
@@ -828,12 +836,16 @@ export type MutationInsertAutostoreMessageAttemptArgs = {
   AutostoreMessageAttempt?: InputMaybe<AutostoreMessageAttempt>;
 };
 
+export type MutationInsertAutostoreOrderHeaderArgs = {
+  OrderHeader?: InputMaybe<AutostoreOrderHeader>;
+};
+
 export type MutationInsertAutostoreOrderLineArgs = {
   OrderLine?: InputMaybe<AutostoreOrderLine>;
 };
 
 export type MutationInsertAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationInsertEventLogsArgs = {
@@ -947,7 +959,7 @@ export type MutationPrintItnLabelArgs = {
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationSuspectInventoryArgs = {
@@ -2040,6 +2052,7 @@ export type TableKey = {
 
 export type UpdatedOrder = {
   __typename?: 'UpdatedOrder';
+  AutostoreOrderCount?: Maybe<Scalars['Int']>;
   DateCreated?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   ExpectedShipDate?: Maybe<Scalars['String']>;
@@ -2226,7 +2239,13 @@ export type AutostoreMessageAttempt = {
   Timestamp?: InputMaybe<Scalars['String']>;
 };
 
+export type AutostoreOrderHeader = {
+  AutostoreOrderNumber: Scalars['String'];
+  OrderID: Scalars['Int'];
+};
+
 export type AutostoreOrderLine = {
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetailID?: InputMaybe<Scalars['Int']>;
@@ -2821,7 +2840,6 @@ export type VerifyItnForSortingQuery = {
       PartNumber: string;
       Autostore?: boolean | null;
       ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
-      ProductType: { __typename?: 'ProductType'; ProductType?: string | null };
     };
   } | null;
 };
@@ -2951,9 +2969,6 @@ export const VerifyItnForSortingDocument = gql`
         _id
         ProductCode {
           ProductCodeNumber
-        }
-        ProductType {
-          ProductType
         }
         Velocity
         PartNumber

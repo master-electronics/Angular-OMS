@@ -67,7 +67,7 @@ export class ItnInfoService {
             QuantityOnHand: inventory.QuantityOnHand,
             Velocity: inventory.Product.Velocity,
             Autostore: inventory.Product.Autostore,
-            ProductType: inventory.Product.ProductType.ProductType,
+            ProductType: 'STANDARD',
             Remaining: null,
           });
         })
