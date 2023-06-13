@@ -2890,6 +2890,8 @@ export type FetchItnInfoByContainerforStockingQuery = {
       _id: number;
       InventoryTrackingNumber: string;
       QuantityOnHand: number;
+      NotFound: boolean;
+      Suspect: boolean;
       Product: {
         __typename?: 'Product';
         _id: number;
@@ -3055,6 +3057,8 @@ export const FetchItnInfoByContainerforStockingDocument = gql`
         _id
         InventoryTrackingNumber
         QuantityOnHand
+        NotFound
+        Suspect
         Product {
           _id
           Autostore

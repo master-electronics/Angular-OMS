@@ -143,7 +143,7 @@ export class StockingService {
   }
 
   /**
-   * Verify the location Barcode, then find all itns in this location
+   * Verify the location Barcode, then find all itns in this location, then remove suspect and notFound.
    */
   public findITNsInLocation(Barcode: string) {
     return this._verifyBarcode
@@ -167,7 +167,9 @@ export class StockingService {
           }
         }),
         map((res) => {
-          return res.data.findContainer.INVENTORies;
+          return res.data.findContainer.INVENTORies.filter((itn) => {
+            return !itn.NotFound && !itn.Suspect;
+          });
         }),
         tap((res) => {
           if (!res.length) {

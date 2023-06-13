@@ -59,6 +59,8 @@ query fetchITNInfoByContainerforStocking($Barcode: String!, $DC: String!) {
       _id
       InventoryTrackingNumber
       QuantityOnHand
+      NotFound
+      Suspect
       Product {
         _id
         Autostore
