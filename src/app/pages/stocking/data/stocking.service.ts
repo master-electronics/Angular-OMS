@@ -50,8 +50,8 @@ export class StockingService {
     const verifiedItns = JSON.parse(
       localStorage.getItem('stockingVerifiedItns') || 'null'
     );
-    if (verifiedItns.length) {
-      localStorage.setItem('stockingVerifiedItns', JSON.stringify([itn]));
+    if (!verifiedItns) {
+      localStorage.setItem('stockingVerifiedItns', JSON.stringify([itn.ITN]));
       return;
     }
     verifiedItns.push(itn.ITN);
