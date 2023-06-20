@@ -33,36 +33,36 @@ export class StockingService {
     private _log: EventLogService
   ) {}
 
-  private _ITNList = new BehaviorSubject<ItnInfo[]>([]);
   public get ITNList() {
-    return this._ITNList.value;
+    return JSON.parse(localStorage.getItem('stockingItnList') || 'null');
   }
   public updateItnList(list: ItnInfo[]): void {
-    this._ITNList.next(list);
+    localStorage.setItem('stockingItnList', JSON.stringify(list));
   }
 
-  private _verifiedItns = new BehaviorSubject<string[]>([]);
   public get verifiedItns() {
-    return this._verifiedItns.value;
+    return JSON.parse(localStorage.getItem('stockingVerifiedItns') || 'null');
   }
   /**
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
   public addVerifiedItns(itn: ItnInfo) {
-    if (!this.verifiedItns?.length) {
-      this._verifiedItns.next([itn.ITN]);
+    const verifiedItns = JSON.parse(
+      localStorage.getItem('stockingVerifiedItns') || 'null'
+    );
+    if (verifiedItns.length) {
+      localStorage.setItem('stockingVerifiedItns', JSON.stringify([itn]));
       return;
     }
-    const tmp = this.verifiedItns;
-    tmp.push(itn.ITN);
-    const set = new Set(tmp);
-    this._verifiedItns.next([...set]);
+    verifiedItns.push(itn.ITN);
+    const set = new Set(verifiedItns);
+    localStorage.setItem('stockingVerifiedItns', JSON.stringify([...set]));
   }
 
   public reset(): void {
     this._itn.resetItnInfo();
-    this._ITNList.next(null);
-    this._verifiedItns.next(null);
+    localStorage.removeItem('stockingItnList');
+    localStorage.removeItem('stockingVerifiedItns');
   }
 
   /**
@@ -115,8 +115,9 @@ export class StockingService {
           });
           // insert itn to list when input ITN as target.
           if (!this.ITNList) {
-            this._verifiedItns.next([this._itn.itnInfo.ITN]);
             this.updateItnList([this._itn.itnInfo]);
+            localStorage.removeItem('stockingVerifiedItns');
+            this.addVerifiedItns(this._itn.itnInfo);
           }
           return this._move.mutate({
             ITN: this._itn.itnInfo.ITN,
@@ -166,11 +167,7 @@ export class StockingService {
             throw new Error(`${Barcode} has no ITN!`);
           }
         }),
-        map((res) => {
-          return res.data.findContainer.INVENTORies.filter((itn) => {
-            return !itn.NotFound && !itn.Suspect;
-          });
-        }),
+        map((res) => res.data.findContainer.INVENTORies),
         tap((res) => {
           if (!res.length) {
             throw new Error(`${Barcode} has no vaild ITN!`);
@@ -201,7 +198,7 @@ export class StockingService {
             'findITNsInLocation',
             ITNList.length
           );
-          this._ITNList.next(ITNList);
+          this.updateItnList(ITNList);
           // insert log
           const oldLogs = {
             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,

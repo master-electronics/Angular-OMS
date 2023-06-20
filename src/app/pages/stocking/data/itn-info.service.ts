@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
 import { environment } from 'src/environments/environment';
 
@@ -20,12 +20,12 @@ export interface ItnInfo {
 export class ItnInfoService {
   constructor(private _verifyITN: VerifyItnForSortingGQL) {}
 
-  private _itnInfo = new BehaviorSubject<ItnInfo>(null);
   public get itnInfo() {
-    return this._itnInfo.value;
+    return JSON.parse(localStorage.getItem('stockingItnInfo') || 'null');
   }
   public get itnInfo$() {
-    return this._itnInfo.asObservable();
+    const info = JSON.parse(localStorage.getItem('stockingItnInfo') || 'null');
+    return of(info);
   }
 
   /**
@@ -33,14 +33,14 @@ export class ItnInfoService {
    * @param date Update itnInfo
    */
   public changeItnInfo(date: ItnInfo): void {
-    this._itnInfo.next(date);
+    localStorage.setItem('stockingItnInfo', JSON.stringify(date));
   }
 
   /**
    * resetItnInfo
    */
   public resetItnInfo(): void {
-    this._itnInfo.next(null);
+    localStorage.removeItem('stockingItnInfo');
   }
 
   public verifyITN$(ITN: string): Observable<any> {
