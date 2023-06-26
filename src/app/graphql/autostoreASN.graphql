@@ -29,7 +29,7 @@ query fetchASNInventory($container: searchContainer) {
       _id
       DistributionCenter
       InventoryTrackingNumber
-      #DateCode
+      DateCode
       QuantityOnHand
       Product {
         _id

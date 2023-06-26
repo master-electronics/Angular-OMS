@@ -2356,6 +2356,7 @@ export type AutostoreAsnHeader = {
 
 export type AutostoreAsnLine = {
   ASNID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   lineNumber?: InputMaybe<Scalars['Int']>;
   packagingUom?: InputMaybe<Scalars['String']>;

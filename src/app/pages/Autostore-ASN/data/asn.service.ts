@@ -288,6 +288,11 @@ export class ASNService {
         value: line.InventoryTrackingNumber,
       });
 
+      // asnLineDetailArray.push({
+      //   name: 'dateCode',
+      //   value: line.DateCode,
+      // });
+
       asnLineObj.attributeValue = asnLineDetailArray;
       asnLineArray.push(asnLineObj);
 
@@ -349,8 +354,8 @@ export class ASNService {
           this.inventoryList.map((inventory) => {
             //if product hasn't been sent to Autostore add it to list for sending
             //if (!inventory.Product.LastAutostoreSync) {
-              this.productList.push(inventory.Product._id);
-              console.log('send product');
+            this.productList.push(inventory.Product._id);
+            console.log('send product');
             //}
 
             asnLines.push({

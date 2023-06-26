@@ -2361,6 +2361,7 @@ export type AutostoreAsnHeader = {
 
 export type AutostoreAsnLine = {
   ASNID?: InputMaybe<Scalars['Int']>;
+  DateCode?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
   lineNumber?: InputMaybe<Scalars['Int']>;
   packagingUom?: InputMaybe<Scalars['String']>;
@@ -2984,7 +2985,7 @@ export type FetchAsnInventoryQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchAsnInventoryQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, UOM?: string | null, LastAutostoreSync?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
+export type FetchAsnInventoryQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number, INVENTORies?: Array<{ __typename?: 'Inventory', _id: number, DistributionCenter: string, InventoryTrackingNumber: string, DateCode?: string | null, QuantityOnHand: number, Product: { __typename?: 'Product', _id: number, PartNumber: string, UOM?: string | null, LastAutostoreSync?: string | null, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
 
 export type VerifyAsnLocationCreateQueryVariables = Types.Exact<{
   container?: Types.InputMaybe<Types.SearchContainer>;
@@ -3176,6 +3177,7 @@ export const FetchAsnInventoryDocument = gql`
       _id
       DistributionCenter
       InventoryTrackingNumber
+      DateCode
       QuantityOnHand
       Product {
         _id
