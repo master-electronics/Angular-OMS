@@ -15,6 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   Observable,
   catchError,
+  forkJoin,
   map,
   mergeMap,
   of,
@@ -28,7 +29,15 @@ import { ReplenishmentItem } from '../../utils/interfaces';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ITNInfoComponent } from '../../ui/itn-info.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
-import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
+import {
+  FindAsnReplenishmentInventoryGQL,
+  FetchAsnRejectionReasonsGQL,
+} from 'src/app/graphql/autostoreASN.graphql-gen';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { FormsModule } from '@angular/forms';
+import { readJsonConfigFile } from 'typescript';
 
 @Component({
   standalone: true,
@@ -40,6 +49,10 @@ import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.g
     PopupModalComponent,
     ITNInfoComponent,
     RedButtonComponent,
+    NzModalModule,
+    NzGridModule,
+    NzRadioModule,
+    FormsModule,
   ],
   template: `
     <single-input-form
@@ -63,7 +76,7 @@ import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.g
       <div></div>
       <div class="col-span-2">
         <button
-          (click)="skipITN()"
+          (click)="showRejectReasons()"
           class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
           type="button"
         >
@@ -77,7 +90,30 @@ import { FindAsnReplenishmentInventoryGQL } from 'src/app/graphql/autostoreASN.g
     </ng-container>
     <div *ngIf="test$ | async"></div>
     <div *ngIf="log$ | async"></div>
+    <div *ngIf="rejectReasons$ | async"></div>
+    <nz-modal
+      [(nzVisible)]="rejectVisible"
+      [nzTitle]="rejectReasonTitleTemplate"
+      (nzOnCancel)="hideRejectReasons()"
+      (nzOnOk)="onOk()"
+      [nzOkDisabled]="!rejectValue"
+      [nzStyle]="{ top: '5px' }"
+    >
+      <ng-template #rejectReasonTitleTemplate>Reject Reason</ng-template>
+      <ng-container *nzModalContent>
+        <nz-radio-group [(ngModel)]="rejectValue">
+          <label
+            *ngFor="let reason of rejectReasonList"
+            nz-radio
+            nzValue="{{ reason.value }}"
+            (click)="setGlobal(reason.global)"
+            >{{ reason.label }}</label
+          >
+        </nz-radio-group>
+      </ng-container>
+    </nz-modal>
   `,
+  styleUrls: ['./scan-itn.component.css'],
 })
 export class ScanITN implements OnInit {
   constructor(
@@ -86,13 +122,20 @@ export class ScanITN implements OnInit {
     private _actRoute: ActivatedRoute,
     private _router: Router,
     private _eventLog: EventLogService,
-    private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL
+    private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL,
+    private _fetchRejectReasons: FetchAsnRejectionReasonsGQL
   ) {}
 
+  rejectVisible: boolean;
+  rejectValue: string;
+  rejectReasonList: { label: string; value: string; global: boolean }[];
+  rejectReasonIsGlobal: boolean;
+  test;
   public data$;
   public test$;
   public log$;
   public info$;
+  public rejectReasons$;
   public inputForm = this._fb.nonNullable.group({
     ITN: ['', [Validators.required]],
   });
@@ -101,6 +144,9 @@ export class ScanITN implements OnInit {
   error;
 
   ngOnInit(): void {
+    this.rejectReasonList = [];
+
+    this.rejectVisible = false;
     this.replenishmentItem = null;
 
     this.info$ = this._actRoute.data.pipe(
@@ -117,6 +163,20 @@ export class ScanITN implements OnInit {
         return of(true);
       })
     );
+
+    this.rejectReasons$ = this._fetchRejectReasons
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => {
+          res.data.fetchASNRejectionReasons.map((reason) => {
+            this.rejectReasonList.push({
+              label: reason.Reason,
+              value: reason._id.toString(),
+              global: reason.Global,
+            });
+          });
+        })
+      );
 
     this.data$ = of(true);
     sessionStorage.removeItem('asnLocation');
@@ -183,14 +243,59 @@ export class ScanITN implements OnInit {
     });
   }
 
+  showRejectReasons() {
+    this.rejectVisible = true;
+  }
+
+  hideRejectReasons() {
+    this.rejectValue = null;
+    this.rejectReasonIsGlobal = null;
+    this.rejectVisible = false;
+  }
+
+  setGlobal(IsGlobal: boolean) {
+    this.rejectReasonIsGlobal = IsGlobal;
+  }
+
+  async onOk() {
+    const t = this.rejectReasonIsGlobal;
+    if (this.rejectReasonIsGlobal) {
+      this.data$ = forkJoin({
+        globalReject: this._asn.globalASNRejection(
+          Number(
+            JSON.parse(sessionStorage.getItem('asnReplenishmentItem'))
+              .InventoryID
+          )
+        ),
+        skip: this._asn.clearSuspect(
+          JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          this.replenishmentItem.InventoryTrackingNumber,
+          this.replenishmentItem.Barcode,
+          'false'
+        ),
+      });
+    } else {
+      this.data$ = this._asn.clearSuspect(
+        JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        this.replenishmentItem.InventoryTrackingNumber,
+        this.replenishmentItem.Barcode,
+        'false'
+      );
+    }
+
+    this.skipITN();
+
+    this.hideRejectReasons();
+  }
+
   skipITN() {
-    this.data$ = of(true);
-    this.data$ = this._asn.clearSuspect(
-      JSON.parse(sessionStorage.getItem('userInfo')).Name,
-      this.replenishmentItem.InventoryTrackingNumber,
-      this.replenishmentItem.Barcode,
-      'false'
-    );
+    // this.data$ = of(true);
+    // this.data$ = this._asn.clearSuspect(
+    //   JSON.parse(sessionStorage.getItem('userInfo')).Name,
+    //   this.replenishmentItem.InventoryTrackingNumber,
+    //   this.replenishmentItem.Barcode,
+    //   'false'
+    // );
     sessionStorage.setItem('asnLocation', this.replenishmentItem.Barcode);
     this.info$ = this._asn
       .updateASNReplenishmentItem(

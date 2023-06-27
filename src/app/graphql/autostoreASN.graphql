@@ -29,7 +29,7 @@ query fetchASNInventory($container: searchContainer) {
       _id
       DistributionCenter
       InventoryTrackingNumber
-      #DateCode
+      DateCode
       QuantityOnHand
       Product {
         _id
@@ -98,6 +98,14 @@ query printQRCodeLabel(
     ORIENTATION: $ORIENTATION
     TEXT: $TEXT
   )
+}
+
+query fetchASNRejectionReasons {
+  fetchASNRejectionReasons {
+    _id
+    Reason
+    Global
+  }
 }
 
 mutation itnLocationChange(
@@ -222,4 +230,10 @@ mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
 
 mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
   updateContainer(Container: $container, _id: $id)
+}
+
+mutation globalASNRejection($inventoryID: Int) {
+  globalASNRejection(InventoryID: $inventoryID) {
+    _id
+  }
 }

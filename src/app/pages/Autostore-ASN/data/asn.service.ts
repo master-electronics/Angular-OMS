@@ -28,6 +28,7 @@ import {
   ItnLocationChangeGQL,
   ItnChangeGQL,
   ClearSuspectGQL,
+  GlobalAsnRejectionGQL,
   //DeleteAsnReplenishmentItemGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
 import { InsertAutostoreMessageGQL } from 'src/app/graphql/autostore.graphql-gen';
@@ -90,7 +91,9 @@ export class ASNService {
     private _updateParentContainer: UpdateAsnParentContainerGQL,
     private _itnLocationChange: ItnLocationChangeGQL,
     private _itnChange: ItnChangeGQL,
-    private _clearSuspect: ClearSuspectGQL //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
+    private _clearSuspect: ClearSuspectGQL,
+    private _globalASNReject: GlobalAsnRejectionGQL
+    //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
   ) {}
 
   inventoryList;
@@ -287,6 +290,11 @@ export class ASNService {
         value: line.InventoryTrackingNumber,
       });
 
+      // asnLineDetailArray.push({
+      //   name: 'dateCode',
+      //   value: line.DateCode,
+      // });
+
       asnLineObj.attributeValue = asnLineDetailArray;
       asnLineArray.push(asnLineObj);
 
@@ -348,8 +356,8 @@ export class ASNService {
           this.inventoryList.map((inventory) => {
             //if product hasn't been sent to Autostore add it to list for sending
             //if (!inventory.Product.LastAutostoreSync) {
-              this.productList.push(inventory.Product._id);
-              console.log('send product');
+            this.productList.push(inventory.Product._id);
+            console.log('send product');
             //}
 
             asnLines.push({
@@ -485,6 +493,18 @@ export class ASNService {
     return this._updateReplenishmentitem
       .mutate({
         replenishmentItem: replenishmentItem,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  globalASNRejection(InventoryID: number) {
+    return this._globalASNReject
+      .mutate({
+        inventoryID: InventoryID,
       })
       .pipe(
         catchError((error) => {
