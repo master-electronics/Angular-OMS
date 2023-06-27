@@ -17,6 +17,20 @@ export type Scalars = {
   Float: number;
 };
 
+export type Asnrejectionreason = {
+  __typename?: 'ASNREJECTIONREASON';
+  Global?: Maybe<Scalars['Boolean']>;
+  Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Asnreplenishment = {
+  __typename?: 'ASNREPLENISHMENT';
+  InventoryID?: Maybe<Scalars['Int']>;
+  Status?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Asnreplenishmentitem = {
   __typename?: 'ASNREPLENISHMENTITEM';
   Aisle?: Maybe<Scalars['String']>;
@@ -80,6 +94,13 @@ export type Autostoremessageattempt = {
   Status: Scalars['String'];
   Tiemstamp: Scalars['String'];
   _id: Scalars['Int'];
+};
+
+export type Autostoreorderheader = {
+  __typename?: 'AUTOSTOREORDERHEADER';
+  AutostoreOrderNumber?: Maybe<Scalars['String']>;
+  OrderID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Autostoreorderline = {
@@ -505,11 +526,13 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
+  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishment>>>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
   insertAutostoreMessage?: Maybe<Autostoremessage>;
   insertAutostoreMessageAttempt?: Maybe<Autostoremessageattempt>;
+  insertAutostoreOrderHeader?: Maybe<Autostoreorderheader>;
   insertAutostoreOrderLine?: Maybe<Autostoreorderline>;
   insertAutostoreOrderLineHistory?: Maybe<Array<Maybe<Autostoreorderline>>>;
   insertEventLogs: Scalars['Boolean'];
@@ -642,12 +665,12 @@ export type MutationDeleteAndInsertRouteTableArgs = {
 
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationDeleteAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -823,6 +846,11 @@ export type MutationFindOrCreateUserInfoArgs = {
 };
 
 
+export type MutationGlobalAsnRejectionArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
@@ -850,13 +878,18 @@ export type MutationInsertAutostoreMessageAttemptArgs = {
 };
 
 
+export type MutationInsertAutostoreOrderHeaderArgs = {
+  OrderHeader?: InputMaybe<AutostoreOrderHeader>;
+};
+
+
 export type MutationInsertAutostoreOrderLineArgs = {
   OrderLine?: InputMaybe<AutostoreOrderLine>;
 };
 
 
 export type MutationInsertAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -990,7 +1023,7 @@ export type MutationPrintItnLabelArgs = {
 
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1492,9 +1525,11 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchASNRejectionReasons?: Maybe<Array<Maybe<Asnrejectionreason>>>;
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1604,6 +1639,11 @@ export type QueryFetchAutostoreMessageArgs = {
 
 
 export type QueryFetchAutostoreMessagesArgs = {
+  MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2205,6 +2245,7 @@ export type TableKey = {
 
 export type UpdatedOrder = {
   __typename?: 'UpdatedOrder';
+  AutostoreOrderCount?: Maybe<Scalars['Int']>;
   DateCreated?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   ExpectedShipDate?: Maybe<Scalars['String']>;
@@ -2391,7 +2432,13 @@ export type AutostoreMessageAttempt = {
   Timestamp?: InputMaybe<Scalars['String']>;
 };
 
+export type AutostoreOrderHeader = {
+  AutostoreOrderNumber: Scalars['String'];
+  OrderID: Scalars['Int'];
+};
+
 export type AutostoreOrderLine = {
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetailID?: InputMaybe<Scalars['Int']>;
@@ -3025,6 +3072,11 @@ export type PrintQrCodeLabelQueryVariables = Types.Exact<{
 
 export type PrintQrCodeLabelQuery = { __typename?: 'Query', printQRCodeLabel?: boolean | null };
 
+export type FetchAsnRejectionReasonsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchAsnRejectionReasonsQuery = { __typename?: 'Query', fetchASNRejectionReasons?: Array<{ __typename?: 'ASNREJECTIONREASON', _id?: number | null, Reason?: string | null, Global?: boolean | null } | null> | null };
+
 export type ItnLocationChangeMutationVariables = Types.Exact<{
   user: Types.Scalars['String'];
   itn: Types.Scalars['String'];
@@ -3124,6 +3176,13 @@ export type UpdateAsnParentContainerMutationVariables = Types.Exact<{
 
 
 export type UpdateAsnParentContainerMutation = { __typename?: 'Mutation', updateContainer?: Array<number | null> | null };
+
+export type GlobalAsnRejectionMutationVariables = Types.Exact<{
+  inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type GlobalAsnRejectionMutation = { __typename?: 'Mutation', globalASNRejection?: Array<{ __typename?: 'ASNREPLENISHMENT', _id?: number | null } | null> | null };
 
 export const VerifyAsnLocationDocument = gql`
     query verifyASNLocation($barcode: String, $container: searchContainer, $statusList: [String]) {
@@ -3309,6 +3368,26 @@ export const PrintQrCodeLabelDocument = gql`
   })
   export class PrintQrCodeLabelGQL extends Apollo.Query<PrintQrCodeLabelQuery, PrintQrCodeLabelQueryVariables> {
     document = PrintQrCodeLabelDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchAsnRejectionReasonsDocument = gql`
+    query fetchASNRejectionReasons {
+  fetchASNRejectionReasons {
+    _id
+    Reason
+    Global
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchAsnRejectionReasonsGQL extends Apollo.Query<FetchAsnRejectionReasonsQuery, FetchAsnRejectionReasonsQueryVariables> {
+    document = FetchAsnRejectionReasonsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -3538,6 +3617,24 @@ export const UpdateAsnParentContainerDocument = gql`
   })
   export class UpdateAsnParentContainerGQL extends Apollo.Mutation<UpdateAsnParentContainerMutation, UpdateAsnParentContainerMutationVariables> {
     document = UpdateAsnParentContainerDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GlobalAsnRejectionDocument = gql`
+    mutation globalASNRejection($inventoryID: Int) {
+  globalASNRejection(InventoryID: $inventoryID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GlobalAsnRejectionGQL extends Apollo.Mutation<GlobalAsnRejectionMutation, GlobalAsnRejectionMutationVariables> {
+    document = GlobalAsnRejectionDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -100,6 +100,14 @@ query printQRCodeLabel(
   )
 }
 
+query fetchASNRejectionReasons {
+  fetchASNRejectionReasons {
+    _id
+    Reason
+    Global
+  }
+}
+
 mutation itnLocationChange(
   $user: String!
   $itn: String!
@@ -222,4 +230,10 @@ mutation updateASNReplenishmentItem($replenishmentItem: asnReplenishmentItem) {
 
 mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
   updateContainer(Container: $container, _id: $id)
+}
+
+mutation globalASNRejection($inventoryID: Int) {
+  globalASNRejection(InventoryID: $inventoryID) {
+    _id
+  }
 }

@@ -12,6 +12,20 @@ export type Scalars = {
   Float: number;
 };
 
+export type Asnrejectionreason = {
+  __typename?: 'ASNREJECTIONREASON';
+  Global?: Maybe<Scalars['Boolean']>;
+  Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Asnreplenishment = {
+  __typename?: 'ASNREPLENISHMENT';
+  InventoryID?: Maybe<Scalars['Int']>;
+  Status?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Asnreplenishmentitem = {
   __typename?: 'ASNREPLENISHMENTITEM';
   Aisle?: Maybe<Scalars['String']>;
@@ -75,6 +89,13 @@ export type Autostoremessageattempt = {
   Status: Scalars['String'];
   Tiemstamp: Scalars['String'];
   _id: Scalars['Int'];
+};
+
+export type Autostoreorderheader = {
+  __typename?: 'AUTOSTOREORDERHEADER';
+  AutostoreOrderNumber?: Maybe<Scalars['String']>;
+  OrderID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type Autostoreorderline = {
@@ -500,11 +521,13 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
+  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishment>>>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
   insertAutostoreMessage?: Maybe<Autostoremessage>;
   insertAutostoreMessageAttempt?: Maybe<Autostoremessageattempt>;
+  insertAutostoreOrderHeader?: Maybe<Autostoreorderheader>;
   insertAutostoreOrderLine?: Maybe<Autostoreorderline>;
   insertAutostoreOrderLineHistory?: Maybe<Array<Maybe<Autostoreorderline>>>;
   insertEventLogs: Scalars['Boolean'];
@@ -637,12 +660,12 @@ export type MutationDeleteAndInsertRouteTableArgs = {
 
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationDeleteAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -818,6 +841,11 @@ export type MutationFindOrCreateUserInfoArgs = {
 };
 
 
+export type MutationGlobalAsnRejectionArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationHoldQcOrderArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
@@ -845,13 +873,18 @@ export type MutationInsertAutostoreMessageAttemptArgs = {
 };
 
 
+export type MutationInsertAutostoreOrderHeaderArgs = {
+  OrderHeader?: InputMaybe<AutostoreOrderHeader>;
+};
+
+
 export type MutationInsertAutostoreOrderLineArgs = {
   OrderLine?: InputMaybe<AutostoreOrderLine>;
 };
 
 
 export type MutationInsertAutostoreOrderLineHistoryArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -985,7 +1018,7 @@ export type MutationPrintItnLabelArgs = {
 
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
-  OrderID?: InputMaybe<Scalars['Int']>;
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1487,9 +1520,11 @@ export type PurchaseOrderL = {
 export type Query = {
   __typename?: 'Query';
   countOrderItns: Scalars['Int'];
+  fetchASNRejectionReasons?: Maybe<Array<Maybe<Asnrejectionreason>>>;
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1599,6 +1634,11 @@ export type QueryFetchAutostoreMessageArgs = {
 
 
 export type QueryFetchAutostoreMessagesArgs = {
+  MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2200,6 +2240,7 @@ export type TableKey = {
 
 export type UpdatedOrder = {
   __typename?: 'UpdatedOrder';
+  AutostoreOrderCount?: Maybe<Scalars['Int']>;
   DateCreated?: Maybe<Scalars['String']>;
   DistributionCenter?: Maybe<Scalars['String']>;
   ExpectedShipDate?: Maybe<Scalars['String']>;
@@ -2386,7 +2427,13 @@ export type AutostoreMessageAttempt = {
   Timestamp?: InputMaybe<Scalars['String']>;
 };
 
+export type AutostoreOrderHeader = {
+  AutostoreOrderNumber: Scalars['String'];
+  OrderID: Scalars['Int'];
+};
+
 export type AutostoreOrderLine = {
+  AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   OrderID?: InputMaybe<Scalars['Int']>;
   OrderLineDetailID?: InputMaybe<Scalars['Int']>;
