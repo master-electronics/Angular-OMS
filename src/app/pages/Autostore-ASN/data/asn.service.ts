@@ -507,6 +507,9 @@ export class ASNService {
         inventoryID: InventoryID,
       })
       .pipe(
+        map((res) => {
+          return res;
+        }),
         catchError((error) => {
           throw new Error(error);
         })

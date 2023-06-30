@@ -235,5 +235,15 @@ mutation updateASNParentContainer($container: updateContainer!, $id: Int) {
 mutation globalASNRejection($inventoryID: Int) {
   globalASNRejection(InventoryID: $inventoryID) {
     _id
+    InventoryID
+    Status
+    Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    InventoryTrackingNumber
   }
 }

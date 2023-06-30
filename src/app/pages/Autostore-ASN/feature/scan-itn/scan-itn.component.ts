@@ -37,7 +37,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { FormsModule } from '@angular/forms';
-import { readJsonConfigFile } from 'typescript';
+import { isTemplateExpression, readJsonConfigFile } from 'typescript';
 
 @Component({
   standalone: true,
@@ -105,9 +105,10 @@ import { readJsonConfigFile } from 'typescript';
           <label
             *ngFor="let reason of rejectReasonList"
             nz-radio
-            nzValue="{{ reason.value }}"
+            nzValue="{{ reason.label }}"
             (click)="setGlobal(reason.global)"
-            >{{ reason.label }}</label
+            >{{ reason.label
+            }}<span *ngIf="reason.global"> - Global</span></label
           >
         </nz-radio-group>
       </ng-container>
@@ -160,6 +161,29 @@ export class ScanITN implements OnInit {
           'asnReplenishmentItem',
           JSON.stringify(this.replenishmentItem)
         );
+
+        this.log$ = this._eventLog.insertLog(
+          [
+            {
+              UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              DistributionCenter: environment.DistributionCenter,
+              InventoryTrackingNumber:
+                this.replenishmentItem.InventoryTrackingNumber,
+            },
+          ],
+          [
+            {
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
+              Log: JSON.stringify({
+                DistributionCenter: environment.DistributionCenter,
+                data: this.replenishmentItem,
+              }),
+            },
+          ]
+        );
+
         return of(true);
       })
     );
@@ -258,9 +282,33 @@ export class ScanITN implements OnInit {
   }
 
   async onOk() {
+    const rejectReason = this.rejectValue;
     const t = this.rejectReasonIsGlobal;
     if (this.rejectReasonIsGlobal) {
-      this.data$ = forkJoin({
+      const userEventLogs = [];
+      const eventLogs = [];
+
+      userEventLogs.push({
+        UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        DistributionCenter: environment.DistributionCenter,
+        InventoryTrackingNumber: JSON.parse(
+          sessionStorage.getItem('asnReplenishmentItem')
+        ).InventoryTrackingNumber,
+        Message: rejectReason,
+      });
+
+      eventLogs.push({
+        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+        Log: JSON.stringify({
+          DistributionCenter: environment.DistributionCenter,
+          data: sessionStorage.getItem('asnReplenishmentItem'),
+          RejectReason: rejectReason,
+        }),
+      });
+
+      this.data$ = await forkJoin({
         globalReject: this._asn.globalASNRejection(
           Number(
             JSON.parse(sessionStorage.getItem('asnReplenishmentItem'))
@@ -273,13 +321,64 @@ export class ScanITN implements OnInit {
           this.replenishmentItem.Barcode,
           'false'
         ),
-      });
+      }).pipe(
+        map(async (res) => {
+          res.globalReject.data.globalASNRejection.forEach((item) => {
+            userEventLogs.push({
+              UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              DistributionCenter: environment.DistributionCenter,
+              InventoryTrackingNumber: item.InventoryTrackingNumber,
+              Message: rejectReason,
+            });
+
+            eventLogs.push({
+              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+              Log: JSON.stringify({
+                DistributionCenter: environment.DistributionCenter,
+                data: item,
+                RejectReason: rejectReason,
+              }),
+            });
+          });
+
+          this.log$ = await this._eventLog.insertLog(userEventLogs, eventLogs);
+
+          return res;
+        })
+      );
     } else {
       this.data$ = this._asn.clearSuspect(
         JSON.parse(sessionStorage.getItem('userInfo')).Name,
         this.replenishmentItem.InventoryTrackingNumber,
         this.replenishmentItem.Barcode,
         'false'
+      );
+
+      this.log$ = await this._eventLog.insertLog(
+        [
+          {
+            UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            DistributionCenter: environment.DistributionCenter,
+            InventoryTrackingNumber: JSON.parse(
+              sessionStorage.getItem('asnReplenishmentItem')
+            ).InventoryTrackingNumber,
+            Message: rejectReason,
+          },
+        ],
+        [
+          {
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
+            Log: JSON.stringify({
+              DistributionCenter: environment.DistributionCenter,
+              data: sessionStorage.getItem('asnReplenishmentItem'),
+              RejectReason: rejectReason,
+            }),
+          },
+        ]
       );
     }
 
@@ -289,13 +388,6 @@ export class ScanITN implements OnInit {
   }
 
   skipITN() {
-    // this.data$ = of(true);
-    // this.data$ = this._asn.clearSuspect(
-    //   JSON.parse(sessionStorage.getItem('userInfo')).Name,
-    //   this.replenishmentItem.InventoryTrackingNumber,
-    //   this.replenishmentItem.Barcode,
-    //   'false'
-    // );
     sessionStorage.setItem('asnLocation', this.replenishmentItem.Barcode);
     this.info$ = this._asn
       .updateASNReplenishmentItem(
@@ -334,6 +426,29 @@ export class ScanITN implements OnInit {
             'asnReplenishmentItem',
             JSON.stringify(this.replenishmentItem)
           );
+
+          this.log$ = this._eventLog.insertLog(
+            [
+              {
+                UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber:
+                  this.replenishmentItem.InventoryTrackingNumber,
+              },
+            ],
+            [
+              {
+                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  data: this.replenishmentItem,
+                }),
+              },
+            ]
+          );
+
           return of(true);
         }),
         catchError((error) => {
