@@ -531,7 +531,7 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
-  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishment>>>;
+  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishmentitem>>>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;

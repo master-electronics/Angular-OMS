@@ -536,7 +536,7 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
-  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishment>>>;
+  globalASNRejection?: Maybe<Array<Maybe<Asnreplenishmentitem>>>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
@@ -3209,7 +3209,7 @@ export type GlobalAsnRejectionMutationVariables = Types.Exact<{
 }>;
 
 
-export type GlobalAsnRejectionMutation = { __typename?: 'Mutation', globalASNRejection?: Array<{ __typename?: 'ASNREPLENISHMENT', _id?: number | null } | null> | null };
+export type GlobalAsnRejectionMutation = { __typename?: 'Mutation', globalASNRejection?: Array<{ __typename?: 'ASNREPLENISHMENTITEM', _id?: number | null, InventoryID?: number | null, Status?: string | null, Barcode?: string | null, Warehouse?: string | null, Row?: string | null, Aisle?: string | null, Section?: string | null, Shelf?: string | null, ShelfDetail?: string | null, InventoryTrackingNumber?: string | null } | null> | null };
 
 export const VerifyAsnLocationDocument = gql`
     query verifyASNLocation($barcode: String, $container: searchContainer, $statusList: [String]) {
@@ -3653,6 +3653,16 @@ export const GlobalAsnRejectionDocument = gql`
     mutation globalASNRejection($inventoryID: Int) {
   globalASNRejection(InventoryID: $inventoryID) {
     _id
+    InventoryID
+    Status
+    Barcode
+    Warehouse
+    Row
+    Aisle
+    Section
+    Shelf
+    ShelfDetail
+    InventoryTrackingNumber
   }
 }
     `;

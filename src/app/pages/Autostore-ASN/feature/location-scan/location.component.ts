@@ -118,8 +118,7 @@ export class ASNLocation implements OnInit {
                 UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
                 DistributionCenter: environment.DistributionCenter,
                 InventoryTrackingNumber: this.selectedITN,
-                Message:
-                  'Location: ' + this.inputForm.value.location.toString(),
+                Message: 'Location: ' + barcode,
               },
             ],
             [
@@ -129,7 +128,7 @@ export class ASNLocation implements OnInit {
                 Log: JSON.stringify({
                   DistributionCenter: environment.DistributionCenter,
                   InventoryTrackingNumber: this.selectedITN,
-                  Location: this.inputForm.value.location.toString(),
+                  Location: barcode,
                 }),
               },
             ]
