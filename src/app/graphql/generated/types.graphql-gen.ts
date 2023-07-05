@@ -523,6 +523,7 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
+  generateReceiptForReceiving?: Maybe<Scalars['Int']>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
@@ -807,6 +808,12 @@ export type MutationFindOrCreateUserContainerArgs = {
 
 export type MutationFindOrCreateUserInfoArgs = {
   UserInfo: InsertUserInfo;
+};
+
+export type MutationGenerateReceiptForReceivingArgs = {
+  LineNumber: Scalars['Int'];
+  PurchaseOrderNumber: Scalars['String'];
+  Quantity: Scalars['Float'];
 };
 
 export type MutationHoldQcOrderArgs = {
@@ -1423,6 +1430,7 @@ export type Query = {
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1529,6 +1537,10 @@ export type QueryFetchAutostoreMessageArgs = {
 };
 
 export type QueryFetchAutostoreMessagesArgs = {
+  MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
 };
 

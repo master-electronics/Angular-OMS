@@ -40,7 +40,7 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
       class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
       <green-button
-        buttonText="Search"
+        buttonText="Create"
         (buttonClick)="onSearch()"
       ></green-button>
     </div>
@@ -75,11 +75,13 @@ export class ReceiptComponent implements OnInit {
   };
 
   public onBack(): void {
-    this._router.navigate(['/home']);
+    this._router.navigate(['/receiptreceiving']);
   }
 
   public onSearch(): void {
-    this._router.navigate(['../search'], { relativeTo: this._actRoute });
+    this._router.navigate(['../generatereceipt'], {
+      relativeTo: this._actRoute,
+    });
   }
 
   public onSubmit(): void {

@@ -528,6 +528,7 @@ export type Mutation = {
   findOrCreateReceiptLD: ReceiptLd;
   findOrCreateUserContainer?: Maybe<Container>;
   findOrCreateUserInfo?: Maybe<UserInfo>;
+  generateReceiptForReceiving?: Maybe<Scalars['Int']>;
   holdQCOrder: Response;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
@@ -812,6 +813,12 @@ export type MutationFindOrCreateUserContainerArgs = {
 
 export type MutationFindOrCreateUserInfoArgs = {
   UserInfo: InsertUserInfo;
+};
+
+export type MutationGenerateReceiptForReceivingArgs = {
+  LineNumber: Scalars['Int'];
+  PurchaseOrderNumber: Scalars['String'];
+  Quantity: Scalars['Float'];
 };
 
 export type MutationHoldQcOrderArgs = {
@@ -1428,6 +1435,7 @@ export type Query = {
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1534,6 +1542,10 @@ export type QueryFetchAutostoreMessageArgs = {
 };
 
 export type QueryFetchAutostoreMessagesArgs = {
+  MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2826,6 +2838,17 @@ export type CheckReceiptHeaderQuery = {
   findReceiptH?: { __typename?: 'ReceiptH'; _id: number } | null;
 };
 
+export type GenerateReceiptForReceivingMutationVariables = Types.Exact<{
+  PurchaseOrderNumber: Types.Scalars['String'];
+  LineNumber: Types.Scalars['Int'];
+  Quantity: Types.Scalars['Float'];
+}>;
+
+export type GenerateReceiptForReceivingMutation = {
+  __typename?: 'Mutation';
+  generateReceiptForReceiving?: number | null;
+};
+
 export type FindReceiptHeaderListQueryVariables = Types.Exact<{
   PartNumber?: Types.InputMaybe<Types.Scalars['String']>;
   VendorNumber?: Types.InputMaybe<Types.Scalars['String']>;
@@ -3018,6 +3041,33 @@ export class CheckReceiptHeaderGQL extends Apollo.Query<
   CheckReceiptHeaderQueryVariables
 > {
   document = CheckReceiptHeaderDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GenerateReceiptForReceivingDocument = gql`
+  mutation generateReceiptForReceiving(
+    $PurchaseOrderNumber: String!
+    $LineNumber: Int!
+    $Quantity: Float!
+  ) {
+    generateReceiptForReceiving(
+      PurchaseOrderNumber: $PurchaseOrderNumber
+      LineNumber: $LineNumber
+      Quantity: $Quantity
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GenerateReceiptForReceivingGQL extends Apollo.Mutation<
+  GenerateReceiptForReceivingMutation,
+  GenerateReceiptForReceivingMutationVariables
+> {
+  document = GenerateReceiptForReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

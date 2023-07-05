@@ -30,6 +30,13 @@ export const ReceivingRoutes: Routes = [
     canActivateChild: [ReceiptGuard],
     children: [
       {
+        path: 'generatereceipt',
+        loadComponent: () =>
+          import('./feature/receipt/generate-receipt.component').then(
+            (m) => m.GenerateReceiptComponent
+          ),
+      },
+      {
         path: 'receipt',
         loadComponent: () =>
           import('./feature/identify/receipt.component').then(

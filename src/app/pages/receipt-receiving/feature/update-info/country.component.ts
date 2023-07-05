@@ -74,10 +74,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         ></normal-button>
       </div>
     </form>
-    <!-- <simple-keyboard
-      [inputString]="inputForm.value.country"
-      (outputString)="onChange($event)"
-    ></simple-keyboard> -->
     <ng-container *ngIf="popup">
       <auth-modal
         message="Allow Empty DateCode!"
