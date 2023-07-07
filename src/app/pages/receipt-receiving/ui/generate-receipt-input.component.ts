@@ -40,7 +40,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       <!-- PurchaseOrder -->
       <div>
         <label for="purchaseOrder" class="block font-medium "
-          >purchaseOrder</label
+          >Purchase Order</label
         >
         <input
           autocomplete="off"
@@ -61,7 +61,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       </div>
       <!-- LineNumber -->
       <div>
-        <label for="lineNumber" class="block font-medium">lineNumber</label>
+        <label for="lineNumber" class="block font-medium">Line Number</label>
         <input
           autocomplete="off"
           formControlName="lineNumber"
@@ -80,7 +80,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       </div>
       <!-- Quantity -->
       <div>
-        <label for="quantity" class="block font-medium">quantity</label>
+        <label for="quantity" class="block font-medium">Quantity</label>
         <input
           autocomplete="off"
           formControlName="quantity"
