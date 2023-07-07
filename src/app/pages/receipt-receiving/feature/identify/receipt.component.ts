@@ -14,6 +14,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 
 @Component({
   standalone: true,
@@ -24,6 +25,7 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
     ReactiveFormsModule,
     MessageBarComponent,
     GreenButtonComponent,
+    NormalButtonComponent,
   ],
   template: `
     <single-input-form
@@ -39,10 +41,12 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
     <div
       class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
-      <green-button
-        buttonText="Search"
+      <green-button buttonText="Create" (buttonClick)="create()"></green-button>
+      <normal-button
+        class=" col-start-3"
+        buttonText="search"
         (buttonClick)="onSearch()"
-      ></green-button>
+      ></normal-button>
     </div>
     <!-- <simple-keyboard
       layout="number"
@@ -75,11 +79,19 @@ export class ReceiptComponent implements OnInit {
   };
 
   public onBack(): void {
-    this._router.navigate(['/home']);
+    this._router.navigate(['/receiptreceiving']);
+  }
+
+  public create(): void {
+    this._router.navigate(['../generatereceipt'], {
+      relativeTo: this._actRoute,
+    });
   }
 
   public onSearch(): void {
-    this._router.navigate(['../search'], { relativeTo: this._actRoute });
+    this._router.navigate(['../search'], {
+      relativeTo: this._actRoute,
+    });
   }
 
   public onSubmit(): void {

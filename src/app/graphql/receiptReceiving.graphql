@@ -4,6 +4,18 @@ query checkReceiptHeader($id: Int!) {
   }
 }
 
+mutation generateReceiptForReceiving(
+  $PurchaseOrderNumber: String!
+  $LineNumber: Int!
+  $Quantity: Float!
+) {
+  generateReceiptForReceiving(
+    PurchaseOrderNumber: $PurchaseOrderNumber
+    LineNumber: $LineNumber
+    Quantity: $Quantity
+  )
+}
+
 query findReceiptHeaderList($PartNumber: String, $VendorNumber: String) {
   findReceiptInfoByPartorVendor(
     PartNumber: $PartNumber

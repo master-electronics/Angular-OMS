@@ -11,6 +11,7 @@ import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
+  GenerateReceiptForReceivingGQL,
   SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -31,6 +32,7 @@ export class ReceiptInfoService {
     private _log: LogService,
     private _eventLog: EventLogService,
     private _insertLog: Create_EventLogsGQL,
+    private _generateReceipt: GenerateReceiptForReceivingGQL,
     private _printer: PrinterService
   ) {}
 
@@ -88,6 +90,47 @@ export class ReceiptInfoService {
     this._eventLog.initEventLog(null);
   }
 
+  /**
+   * GenerateRecipt: Use puchase order number, lineNumber to find information to create receipt header, line and detail.
+   */
+  public generateReceipt$(
+    PurchaseOrderNumber: string,
+    LineNumber: number,
+    Quantity: number
+  ): Observable<any> {
+    return this._generateReceipt
+      .mutate({
+        PurchaseOrderNumber,
+        LineNumber,
+        Quantity,
+      })
+      .pipe(
+        switchMap((res) => {
+          const id = res.data.generateReceiptForReceiving;
+          this._headerID.next(id);
+          this._log.initReceivingLog({
+            ReceiptHeader: id,
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserEventID: sqlData.Event_Receiving_Start,
+          });
+          this._eventLog.initEventLog({
+            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            EventTypeID: sqlData.Event_Receiving_Start,
+            Log: JSON.stringify({
+              ReceiptHeader: id,
+            }),
+          });
+          return this._insertLog.mutate({
+            oldLogs: this._log.receivingLog,
+            eventLogs: this._eventLog.eventLog,
+          });
+        })
+      );
+  }
+
+  /**
+   * checkReceiptHeader: Search receiptHeader by id, check if this header id is vaild.
+   */
   public checkReceiptHeader(id: number): Observable<any> {
     return this._checkHeader.fetch({ id }).pipe(
       tap((res) => {
