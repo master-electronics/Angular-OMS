@@ -24,6 +24,9 @@ import {
   styleUrls: ['./itn-lifecycle.component.css'],
 })
 export class ITNLifecycleComponent implements OnInit {
+  calendarStartDate: Date;
+  calendarEndDate: Date;
+  defaultDate: Date[];
   isLoading = false;
   dateRange: [];
   startDate: string;
@@ -78,6 +81,51 @@ export class ITNLifecycleComponent implements OnInit {
   singleDate;
   testValue;
 
+  disabledDate = (endValue: Date): boolean => {
+    if (!this.calendarStartDate && !this.calendarEndDate) {
+      return false;
+    }
+
+    if (!this.calendarEndDate) {
+      return (
+        endValue.getTime() <
+          this.adjustDate(this.calendarStartDate, -7).getTime() ||
+        endValue.getTime() >
+          this.adjustDate(this.calendarStartDate, 6).getTime()
+      );
+    }
+
+    return (
+      endValue.getTime() <
+        this.adjustDate(this.calendarEndDate, -7).getTime() ||
+      endValue.getTime() > this.adjustDate(this.calendarStartDate, 6).getTime()
+    );
+  };
+
+  adjustDate(date, days) {
+    const nDate = new Date(date.getTime());
+    nDate.setDate(nDate.getDate() + days);
+    return nDate;
+  }
+
+  onDatePickerOpen(open: boolean): void {
+    if (!open) {
+      this.calendarStartDate = null;
+      this.calendarEndDate = null;
+    } else {
+      const range: Date[] = this.filterForm.get('testDateRange').value;
+      if (range) {
+        if (range.length >= 1) {
+          this.calendarStartDate = range[0];
+        }
+
+        if (range.length == 2) {
+          this.calendarEndDate = range[1];
+        }
+      }
+    }
+  }
+
   constructor(
     private commonService: CommonService,
     private fb: UntypedFormBuilder,
@@ -95,10 +143,29 @@ export class ITNLifecycleComponent implements OnInit {
 
   filterForm = this.fb.group({
     startDatePicker: ['', [Validators.required]],
-    endDatePicker: ['', [Validators.required]],
   });
 
+  onCalendarChange(result: Array<Date | null>) {
+    if (result) {
+      if (result.length >= 1) {
+        this.calendarStartDate = result[0];
+        this.calendarEndDate = null;
+      }
+
+      if (result.length == 2) {
+        this.calendarEndDate = result[1];
+      }
+    }
+  }
+
   ngOnInit(): void {
+    const sDate: Date = new Date(Date.now());
+    const eDate: Date = new Date(Date.now());
+    sDate.setDate(eDate.getDate() - 7);
+    this.defaultDate = [];
+    this.defaultDate.push(sDate);
+    this.defaultDate.push(eDate);
+
     this.dateRange = [];
     this.drillDownColumns = [
       {
@@ -354,89 +421,6 @@ export class ITNLifecycleComponent implements OnInit {
     });
   }
 
-  //On user changed Start Date update style based on valid/invalid entries
-  //also set End Date to the same value and update End Date style to valid
-  onStartDateChange(e): void {
-    if (!e) {
-      const startDateElement = <HTMLInputElement>(
-        document.getElementById('startDatePicker')
-      );
-      const endDateElement = <HTMLInputElement>(
-        document.getElementById('endDatePicker')
-      );
-      const startDateFormField = this.filterForm.get('startDatePicker');
-      const endDateFormField = this.filterForm.get('endDatePicker');
-
-      if (startDateFormField.invalid) {
-        startDateElement.parentElement.parentElement.setAttribute(
-          'notvalid',
-          'true'
-        );
-      } else {
-        startDateElement.parentElement.parentElement.setAttribute(
-          'notvalid',
-          'false'
-        );
-        endDateElement.parentElement.parentElement.setAttribute(
-          'notvalid',
-          'false'
-        );
-
-        setTimeout(() => {
-          endDateFormField.setValue(startDateFormField.value);
-        }, 100);
-      }
-    }
-  }
-
-  //On user changed End Date update style based on valid/invalid entries
-  //also check if entry is before Start Date, if so change End Date value to Start Date value
-  onEndDateChange(e): void {
-    if (!e) {
-      const startDateElement = <HTMLInputElement>(
-        document.getElementById('startDatePicker')
-      );
-      const endDateElement = <HTMLInputElement>(
-        document.getElementById('endDatePicker')
-      );
-      const startDateFormField = this.filterForm.get('startDatePicker');
-      const endDateFormField = this.filterForm.get('endDatePicker');
-
-      if (endDateFormField.invalid) {
-        endDateElement.parentElement.parentElement.setAttribute(
-          'notvalid',
-          'true'
-        );
-      } else {
-        if (startDateElement.value) {
-          startDateElement.parentElement.parentElement.setAttribute(
-            'notvalid',
-            'false'
-          );
-        } else {
-          startDateElement.parentElement.parentElement.setAttribute(
-            'notvalid',
-            'true'
-          );
-        }
-
-        endDateElement.parentElement.parentElement.setAttribute(
-          'notvalid',
-          'false'
-        );
-
-        setTimeout(() => {
-          const sDate = new Date(startDateElement.value);
-          const eDate = new Date(endDateElement.value);
-
-          if (eDate < sDate) {
-            endDateFormField.setValue(startDateFormField.value);
-          }
-        });
-      }
-    }
-  }
-
   //Get records for search date
   onSubmit(): void {
     //format start and end dates
@@ -452,14 +436,6 @@ export class ITNLifecycleComponent implements OnInit {
       sDate.parentElement.parentElement.setAttribute('notvalid', 'false');
     }
 
-    if (this.filterForm.get('endDatePicker').invalid) {
-      const eDate = <HTMLInputElement>document.getElementById('endDatePicker');
-      eDate.parentElement.parentElement.setAttribute('notvalid', 'true');
-    } else {
-      const eDate = <HTMLInputElement>document.getElementById('endDatePicker');
-      eDate.parentElement.parentElement.setAttribute('notvalid', 'false');
-    }
-
     if (this.filterForm.invalid || this.isLoading) return;
     const startDate = new Date(
       new Date(
@@ -467,15 +443,12 @@ export class ITNLifecycleComponent implements OnInit {
       ).setHours(0, 0, 0, 0)
     ).toISOString();
     const endDate = new Date(
-      new Date(this.filterForm.get('endDatePicker').value.toString()).setHours(
-        23,
-        59,
-        59,
-        999
-      )
+      new Date(
+        this.filterForm.get('startDatePicker').value.toString()
+      ).setHours(23, 59, 59, 999)
     ).toISOString();
+
     this.startDate = startDate;
-    this.endDate = endDate;
 
     // prepare query data then send
     this.isLoading = true;

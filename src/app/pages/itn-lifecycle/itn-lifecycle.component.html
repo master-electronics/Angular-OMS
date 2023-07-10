@@ -1,14 +1,13 @@
 <div style="position: absolute; width: 100%; left: 0px;">
   <div class="px-4 py-4" style="max-width: 200%">
+    
     <form nz-form [formGroup]="filterForm">
       <div nz-row nzGutter="8" nzJustify="space-between">
         <nz-form-item nz-col nzSpan="8">
           <nz-form-label nzRequired> Date </nz-form-label>
-          <nz-form-control>
+          <nz-form-control> 
             <nz-date-picker formControlName="startDatePicker" nzPlaceHolder="Start Date" nzId="startDatePicker"
-              (nzOnOpenChange)="onStartDateChange($event)" notvalid="false"></nz-date-picker>
-            <nz-date-picker formControlName="endDatePicker" nzPlaceHolder="End Date" nzId="endDatePicker"
-              (nzOnOpenChange)="onEndDateChange($event)"></nz-date-picker>
+              ></nz-date-picker> 
             <nz-select class="templateSelect" [(ngModel)]="templateIdName" [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
               <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"

@@ -19,6 +19,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 import { ITNLifecycleComponent } from './itn-lifecycle.component';
 import { ColumnSelectorComponent } from './column-selector.component';
@@ -57,6 +58,7 @@ import { TemplateSettings } from './template-settings.component';
     NzRadioModule,
     NzSpinModule,
     ITNLifecycleRoutingModule,
+    NzIconModule,
   ],
 })
 export class ITNLifeCycleModule {}
