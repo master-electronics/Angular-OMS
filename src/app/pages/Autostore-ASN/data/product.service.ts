@@ -129,7 +129,7 @@ export class ProductService {
             }),
             switchMap((res) => {
               const tMsg = JSON.parse(JSON.stringify(message));
-              tMsg.id = res.productDataMessage.data.insertAutostoreMessage._id;
+              tMsg._id = res.productDataMessage.data.insertAutostoreMessage._id;
               const nMsg = {
                 pattern: 'PRODUCT_message',
                 data: {
