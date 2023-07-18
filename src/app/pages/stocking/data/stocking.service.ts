@@ -278,7 +278,7 @@ export class StockingService {
       switchMap((res) => {
         const oldLogs = {
           UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-          UserEventID: sqlData.Event_Stocking_SortingStart,
+          UserEventID: sqlData.Event_Stocking_ScanITN,
           InventoryTrackingNumber: ITN,
           PartNumber: this._itn.itnInfo.PartNumber,
           ProductCode: this._itn.itnInfo.ProductCode,
@@ -287,7 +287,7 @@ export class StockingService {
         };
         this._log.initEventLog({
           UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-          EventTypeID: sqlData.Event_Stocking_SortingStart,
+          EventTypeID: sqlData.Event_Stocking_ScanITN,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
             PartNumber: this._itn.itnInfo.PartNumber,

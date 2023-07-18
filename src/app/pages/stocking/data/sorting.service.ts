@@ -26,7 +26,7 @@ export class SortingService {
    * @param ITN User input ITN
    * @returns observable of http request.
    */
-  public verifyITN$(ITN: string) {
+  public sortingStart$(ITN: string) {
     return this._itn.verifyITN$(ITN).pipe(
       switchMap((res) => {
         const oldLogs = {

@@ -56,7 +56,7 @@ export class ScanITNComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.data$ = this._sort.verifyITN$(this.inputForm.value.itn).pipe(
+    this.data$ = this._sort.sortingStart$(this.inputForm.value.itn).pipe(
       map(() => {
         this._router.navigate(['../location'], {
           relativeTo: this._actRoute,
