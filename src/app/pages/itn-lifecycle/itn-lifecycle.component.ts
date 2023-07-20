@@ -18,6 +18,7 @@ import {
   FetchItnLifecycleDrillDownGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
 
+
 @Component({
   selector: 'itn-lifecycle',
   templateUrl: './itn-lifecycle.component.html',
