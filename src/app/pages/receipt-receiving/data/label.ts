@@ -258,6 +258,9 @@ export class LabelService {
         validIndex.push(index);
       }
     });
+    if (!validIndex.length) {
+      throw new Error('Invalid ITN information!');
+    }
     if (emptyIndex.length) {
       const tmpBin = this.ITNList[validIndex[0]].BinLocation;
       const tmpContainerID = this.ITNList[validIndex[0]].ContainerID;
@@ -266,9 +269,6 @@ export class LabelService {
         itnInfo[i].ContainerID = tmpContainerID;
       });
       this._ITNList.next(itnInfo);
-    }
-    if (!validIndex.length) {
-      throw new Error('Invalid ITN information!');
     }
     // generate request
     const update = this._update.mutate({
