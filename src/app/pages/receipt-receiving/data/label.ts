@@ -196,7 +196,7 @@ export class LabelService {
       })
       .pipe(
         tap((res) => {
-          if (!Barcode) {
+          if (!Barcode.trim()) {
             throw new Error("Can't be empty location.");
           }
           if (
@@ -247,8 +247,32 @@ export class LabelService {
         line.RECEIPTLDs[0].PurchaseOrderL?.LineNumber.toString() || 'null',
     };
     const ReceiptLID = line._id;
+    // check if any binlocation is empty.
+    const itnInfo = this.ITNList;
+    const emptyIndex = [];
+    const validIndex = [];
+    this._ITNList.value.map((itn, index) => {
+      if (!itn.BinLocation || !itn.ContainerID) {
+        emptyIndex.push(index);
+      } else {
+        validIndex.push(index);
+      }
+    });
+    if (emptyIndex.length) {
+      const tmpBin = this.ITNList[validIndex[0]].BinLocation;
+      const tmpContainerID = this.ITNList[validIndex[0]].ContainerID;
+      emptyIndex.map((i) => {
+        itnInfo[i].BinLocation = tmpBin;
+        itnInfo[i].ContainerID = tmpContainerID;
+      });
+      this._ITNList.next(itnInfo);
+    }
+    if (!validIndex.length) {
+      throw new Error('Invalid ITN information!');
+    }
+    // generate request
     const update = this._update.mutate({
-      ITNList: this._ITNList.value,
+      ITNList: itnInfo,
       ReceiptLID,
       Inventory,
       info,
