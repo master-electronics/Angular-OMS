@@ -75,9 +75,6 @@ export class LineSelecterComponent implements OnInit {
     this.createreceipt.updateLeftQuantity(
       data.QuantityOnOrder - data.QuantityReceived
     );
-    if (this.createreceipt.purchaseInfo.LineNumber) {
-      console.log('111');
-    }
     this._router.navigate(['../receiptquantity'], {
       relativeTo: this._actRoute,
     });
