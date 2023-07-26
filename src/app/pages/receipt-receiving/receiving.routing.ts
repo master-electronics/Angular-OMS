@@ -9,6 +9,7 @@ import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { PartResolver } from './utils/resolver/part.resolver';
 import { LogService } from './data/eventLog';
 import { kickoutService } from './data/kickout';
+import { CreateReceiptService } from './data/createReceipt';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -23,6 +24,7 @@ export const ReceivingRoutes: Routes = [
       LabelService,
       LogService,
       kickoutService,
+      CreateReceiptService,
       ReceiptGuard,
     ],
     loadComponent: () =>
@@ -30,10 +32,24 @@ export const ReceivingRoutes: Routes = [
     canActivateChild: [ReceiptGuard],
     children: [
       {
-        path: 'generatereceipt',
+        path: 'purchasenumber',
         loadComponent: () =>
-          import('./feature/receipt/generate-receipt.component').then(
-            (m) => m.GenerateReceiptComponent
+          import('./feature/receipt/purchase-number.component').then(
+            (m) => m.PurchaseNumberComponent
+          ),
+      },
+      {
+        path: 'lineselecter',
+        loadComponent: () =>
+          import('./feature/receipt/lineSelecter.components').then(
+            (m) => m.LineSelecterComponent
+          ),
+      },
+      {
+        path: 'receiptquantity',
+        loadComponent: () =>
+          import('./feature/receipt/receipt-quantity.component').then(
+            (m) => m.ReceiptQuantityComponent
           ),
       },
       {

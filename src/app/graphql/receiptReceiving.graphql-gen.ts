@@ -2883,6 +2883,31 @@ export type FindReceiptHeaderListQuery = {
   } | null> | null;
 };
 
+export type FetchPurchaseOrderInfoQueryVariables = Types.Exact<{
+  PurchaseOrderNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  DistributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchPurchaseOrderInfoQuery = {
+  __typename?: 'Query';
+  findPurchaseOrderH?: {
+    __typename?: 'PurchaseOrderH';
+    _id: number;
+    Vendor: { __typename?: 'Vendor'; VendorName: string };
+    PURCHASEORDERLs?: Array<{
+      __typename?: 'PurchaseOrderL';
+      LineNumber: number;
+      QuantityReceived: number;
+      QuantityOnOrder: number;
+      Product: {
+        __typename?: 'Product';
+        PartNumber: string;
+        ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+      };
+    } | null> | null;
+  } | null;
+};
+
 export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
   ReceiptHID: Types.Scalars['Int'];
   statusID: Types.Scalars['Int'];
@@ -3113,6 +3138,49 @@ export class FindReceiptHeaderListGQL extends Apollo.Query<
   FindReceiptHeaderListQueryVariables
 > {
   document = FindReceiptHeaderListDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPurchaseOrderInfoDocument = gql`
+  query fetchPurchaseOrderInfo(
+    $PurchaseOrderNumber: String
+    $DistributionCenter: String
+  ) {
+    findPurchaseOrderH(
+      PurchaseOrder: {
+        DistributionCenter: $DistributionCenter
+        PurchaseOrderNumber: $PurchaseOrderNumber
+      }
+    ) {
+      _id
+      Vendor {
+        VendorName
+      }
+      PURCHASEORDERLs {
+        LineNumber
+        QuantityReceived
+        QuantityOnOrder
+        Product {
+          PartNumber
+          ProductCode {
+            ProductCodeNumber
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPurchaseOrderInfoGQL extends Apollo.Query<
+  FetchPurchaseOrderInfoQuery,
+  FetchPurchaseOrderInfoQueryVariables
+> {
+  document = FetchPurchaseOrderInfoDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

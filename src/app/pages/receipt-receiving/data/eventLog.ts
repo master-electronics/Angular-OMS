@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 export interface ReceivingLog {
   UserName: string;
   UserEventID: number;
-  ReceiptHeader: number;
+  ReceiptHeader?: number;
   ReceiptLine?: number;
   PartNumber?: string;
   ProductCode?: string;

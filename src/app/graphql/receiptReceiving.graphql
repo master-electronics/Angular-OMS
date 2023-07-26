@@ -26,6 +26,34 @@ query findReceiptHeaderList($PartNumber: String, $VendorNumber: String) {
   }
 }
 
+query fetchPurchaseOrderInfo(
+  $PurchaseOrderNumber: String
+  $DistributionCenter: String
+) {
+  findPurchaseOrderH(
+    PurchaseOrder: {
+      DistributionCenter: $DistributionCenter
+      PurchaseOrderNumber: $PurchaseOrderNumber
+    }
+  ) {
+    _id
+    Vendor {
+      VendorName
+    }
+    PURCHASEORDERLs {
+      LineNumber
+      QuantityReceived
+      QuantityOnOrder
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+    }
+  }
+}
+
 query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
   findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
     RECEIPTLs {

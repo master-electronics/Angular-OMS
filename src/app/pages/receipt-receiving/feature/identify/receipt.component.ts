@@ -83,7 +83,7 @@ export class ReceiptComponent implements OnInit {
   }
 
   public create(): void {
-    this._router.navigate(['../generatereceipt'], {
+    this._router.navigate(['../purchasenumber'], {
       relativeTo: this._actRoute,
     });
   }

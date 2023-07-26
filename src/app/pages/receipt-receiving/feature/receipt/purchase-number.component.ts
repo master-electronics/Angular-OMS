@@ -15,48 +15,44 @@ import {
   Validators,
 } from '@angular/forms';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { CreateReceiptService } from '../../data/createReceipt';
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MessageBarComponent,
-    NormalButtonComponent,
-    RedButtonComponent,
-    GreenButtonComponent,
-    GenerateReceiptInputComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, SingleInputformComponent],
   template: `
     <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
       <h1 class="text-4xl">Generate Receipt:</h1>
-      <generate-receipt-input
-        (formBack)="onBack()"
+      <single-input-form
         (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
         [data]="data$ | async"
         [formGroup]="inputForm"
-      ></generate-receipt-input>
+        inputType="text"
+        controlName="purchaseOrder"
+        title="Purchase Order"
+      ></single-input-form>
     </div>
   `,
 })
-export class GenerateReceiptComponent implements OnInit {
+export class PurchaseNumberComponent implements OnInit {
   public data$: Observable<any>;
   public inputForm = new FormGroup({
     purchaseOrder: new FormControl('', [Validators.required]),
-    lineNumber: new FormControl('', [Validators.required]),
-    quantity: new FormControl('', [Validators.required]),
   });
 
   constructor(
     private _actRoute: ActivatedRoute,
     private _router: Router,
     private _steps: TabService,
-    private _receipt: ReceiptInfoService
+    private _receipt: CreateReceiptService
   ) {}
 
   ngOnInit(): void {
     this._steps.changeSteps(0);
     this.data$ = of(true);
+    this._receipt.reset();
   }
 
   public onBack(): void {
@@ -68,14 +64,12 @@ export class GenerateReceiptComponent implements OnInit {
    */
   public onSubmit() {
     this.data$ = this._receipt
-      .generateReceipt$(
-        this.inputForm.value.purchaseOrder,
-        Number(this.inputForm.value.lineNumber),
-        Number(this.inputForm.value.quantity)
-      )
+      .getPurchaseOrderInfo$(this.inputForm.value.purchaseOrder)
       .pipe(
-        map((res) => {
-          this._router.navigate(['../part'], { relativeTo: this._actRoute });
+        map(() => {
+          this._router.navigate(['../lineselecter'], {
+            relativeTo: this._actRoute,
+          });
         }),
         catchError((error) => {
           return of({
