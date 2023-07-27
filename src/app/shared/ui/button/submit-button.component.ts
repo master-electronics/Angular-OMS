@@ -13,7 +13,7 @@ import {
   template: `
     <button
       (click)="onClick()"
-      class="h-full w-full  rounded-lg bg-blue-700 font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:bg-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      class="h-full w-full  rounded-lg bg-blue-700 font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:bg-blue-200 dark:bg-blue-600 dark:focus:ring-blue-800"
       type="submit"
       [disabled]="disabled"
     >
