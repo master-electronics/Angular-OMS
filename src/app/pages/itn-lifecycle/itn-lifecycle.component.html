@@ -6,8 +6,7 @@
         <nz-form-item nz-col nzSpan="8">
           <nz-form-label nzRequired> Date </nz-form-label>
           <nz-form-control> 
-            <nz-date-picker formControlName="startDatePicker" nzPlaceHolder="Start Date" nzId="startDatePicker"
-              ></nz-date-picker> 
+            <nz-range-picker formControlName="dateRangePicker" nzId="dateRangePicker"></nz-range-picker>
             <nz-select class="templateSelect" [(ngModel)]="templateIdName" [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="onTemplateChange($event)" nzPlaceHolder="Select Template">
               <nz-option *ngFor="let template of templates" nzValue="{{ template.id }},{{ template.name }}"

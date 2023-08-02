@@ -16,8 +16,8 @@ import { Subscription } from 'rxjs';
 import {
   FindItnTemplatesGQL,
   FetchItnLifecycleDrillDownGQL,
+  FetchItnLifecycleDrillDownRowsGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
-
 
 @Component({
   selector: 'itn-lifecycle',
@@ -45,6 +45,7 @@ export class ITNLifecycleComponent implements OnInit {
   private selTempSub = new Subscription();
   private columnsSubscription = new Subscription();
   private drillDownSubscription = new Subscription();
+  private drillDownRowsSubscription = new Subscription();
   columnsVisible = [];
   columnsVisible2 = [];
   drillDownColumns = [];
@@ -132,6 +133,7 @@ export class ITNLifecycleComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _fetchDrilldown: FetchItnLifecycleDrillDownGQL,
+    private _fetchDrillDownRows: FetchItnLifecycleDrillDownRowsGQL,
     private _findITNTemplates: FindItnTemplatesGQL,
     private _findITNTemplate: FindItnTemplateGQL,
     private _findITNColumns: FindItnColumnsGQL,
@@ -143,7 +145,7 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   filterForm = this.fb.group({
-    startDatePicker: ['', [Validators.required]],
+    dateRangePicker: ['', [Validators.required]],
   });
 
   onCalendarChange(result: Array<Date | null>) {
@@ -424,28 +426,17 @@ export class ITNLifecycleComponent implements OnInit {
 
   //Get records for search date
   onSubmit(): void {
-    //format start and end dates
-    if (this.filterForm.get('startDatePicker').invalid) {
-      const sDate = <HTMLInputElement>(
-        document.getElementById('startDatePicker')
-      );
-      sDate.parentElement.parentElement.setAttribute('notvalid', 'true');
-    } else {
-      const sDate = <HTMLInputElement>(
-        document.getElementById('startDatePicker')
-      );
-      sDate.parentElement.parentElement.setAttribute('notvalid', 'false');
-    }
-
     if (this.filterForm.invalid || this.isLoading) return;
+
     const startDate = new Date(
       new Date(
-        this.filterForm.get('startDatePicker').value.toString()
+        this.filterForm.get('dateRangePicker').value[0].toString()
       ).setHours(0, 0, 0, 0)
     ).toISOString();
+
     const endDate = new Date(
       new Date(
-        this.filterForm.get('startDatePicker').value.toString()
+        this.filterForm.get('dateRangePicker').value[1].toString()
       ).setHours(23, 59, 59, 999)
     ).toISOString();
 
@@ -1123,8 +1114,8 @@ export class ITNLifecycleComponent implements OnInit {
     this.isLoading = true;
     this.drilldownTableData2 = [];
 
-    this.drillDownSubscription.add(
-      this._fetchDrilldown
+    this.drillDownRowsSubscription.add(
+      this._fetchDrillDownRows
         .fetch(
           {
             orderNumber: orderNumber,
@@ -1137,56 +1128,613 @@ export class ITNLifecycleComponent implements OnInit {
           }
         )
         .subscribe((res) => {
-          if (res.data.fetchITNLifecycleDrillDown.length > 0) {
-            for (
-              let i = 0;
-              i < res.data.fetchITNLifecycleDrillDown.length;
-              i++
-            ) {
-              const row = res.data.fetchITNLifecycleDrillDown[i];
+          res.data.fetchITNLifecycleDrillDownRows.forEach((row) => {
+            const drillDownData = [];
 
-              this.drilldownTableData2.push({
-                OrderNumber: row.OrderNumber ? row.OrderNumber.trim() : '',
-                NOSINumber: row.NOSINumber ? row.NOSINumber.trim() : '',
-                InventoryTrackingNumber: row.InventoryTrackingNumber
-                  ? row.InventoryTrackingNumber.trim()
-                  : '',
-                Message: row.Message ? row.Message.trim() : '',
-                Name: row.UserName ? row.UserName.trim() : '',
-                UserEventId: row.UserEventID ? row.UserEventID : null,
-                Event: row.Event ? row.Event.trim() : '',
-                Module: row.Module ? row.Module.trim() : '',
-                DateTime: row.DateTime ? this.timeFormating(row.DateTime) : '',
-                PartNumber: row.PartNumber ? row.PartNumber.trim() : '',
-                ProductCode: row.ProductCode ? row.ProductCode.trim() : '',
-                PrcNumber:
-                  (row.ProductCode ? row.ProductCode.trim() : '') +
-                  (row.ProductCode ? '-' : '') +
-                  (row.PartNumber ? row.PartNumber.trim() : ''),
-                OrderLineNumber: row.OrderLineNumber
-                  ? row.OrderLineNumber.trim()
-                  : '',
-                CustomerNumber: row.CustomerNumber
-                  ? row.CustomerNumber.trim()
-                  : '',
-                CustomerTier: row.CustomerTier ? row.CustomerTier.trim() : '',
-                ProductTier: row.ProductTier ? row.ProductTier.trim() : '',
-                Zone: row.Zone ? row.Zone : null,
-                WMSPriority: row.WMSPriority ? row.WMSPriority : null,
-                Priority: row.Priority ? 'Y' : 'N',
-                TrackingNumber: row.TrackingNumber ? row.TrackingNumber : '',
-                ParentITN: row.ParentITN ? row.ParentITN : '',
-                DistributionCenter: row.DistributionCenter
-                  ? row.DistributionCenter
-                  : '',
-                Quantity: row.Quantity ? row.Quantity : null,
-                ShipmentMethod: row.ShipmentMethod ? row.ShipmentMethod : '',
-                ShipmentMethodDescription: row.ShipmentMethodDescription
-                  ? row.ShipmentMethodDescription
-                  : '',
-              });
+            //drillDownData.push({
+
+            const drillDownBase = {
+              OrderNumber: row.OrderNumber ? row.OrderNumber.trim() : '',
+              NOSINumber: row.NOSINumber ? row.NOSINumber.trim() : '',
+              InventoryTrackingNumber: row.after_InventoryTrackingNumber
+                ? row.after_InventoryTrackingNumber.trim()
+                : '',
+              DistributionCenter: row.DistributionCenter
+                ? row.DistributionCenter.trim()
+                : '',
+              Name: null,
+              Event: null,
+              Module: null,
+              DateTime: null,
+              Ticks: null,
+              PartNumber: row.PartNumber ? row.PartNumber.trim() : '',
+              ProductCode: row.ProductCode ? row.ProductCode.trim() : '',
+              PrcNumber:
+                (row.ProductCode ? row.ProductCode.trim() : '') +
+                (row.ProductCode ? '-' : '') +
+                (row.PartNumber ? row.PartNumber.trim() : ''),
+              OrderLineNumber: row.OrderLineNumber ? row.OrderLineNumber : null,
+              CustomerNumber: row.CustomerNumber
+                ? row.CustomerNumber.trim()
+                : '',
+              CustomerTier: row.CustomerTier ? row.CustomerTier.trim() : '',
+              ProductTier: row.ProductTier ? row.ProductTier.trim() : '',
+              Zone: row.Zone ? row.Zone : null,
+              WMSPriority: row.WMSPriority ? row.WMSPriority : null,
+              Priority: row.Priority ? 'Y' : 'N',
+              TrackingNumber: row.TrackingNumber
+                ? row.TrackingNumber.trim()
+                : '',
+              ParentITN: row.InventoryTrackingNumber
+                ? row.InventoryTrackingNumber.trim()
+                : '',
+              Quantity: row.Quantity ? row.Quantity : null,
+              ShipmentMethod: row.shipmentMethod ? row.shipmentMethod : null,
+              ShipmentMethodDescription: row.shipmentMethodDescription
+                ? row.shipmentMethodDescription
+                : null,
+            };
+
+            if (row.splitDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.splitDoneUser
+                ? row.splitDoneUser.trim()
+                : '';
+              drillDownItem.Event = 'ITN Split';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.splitDone);
+              drillDownItem.Ticks = row.splitDone;
+              drillDownData.push(drillDownItem);
             }
-          }
+
+            if (row.lineAllocation) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.lineAllocationUser
+                ? row.lineAllocationUser.trim()
+                : '';
+              drillDownItem.Event = 'Line Allocation';
+              drillDownItem.Module = 'Release';
+              drillDownItem.DateTime = this.timeFormating(row.lineAllocation);
+              drillDownItem.Ticks = row.lineAllocation;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.releaseOrder) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Order';
+              drillDownItem.Module = 'Release';
+              drillDownItem.DateTime = this.timeFormating(row.releaseOrder);
+              drillDownItem.Ticks = row.releaseOrder;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.releaseLine) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Line';
+              drillDownItem.Module = 'Release';
+              drillDownItem.DateTime = this.timeFormating(row.releaseLine);
+              drillDownItem.Ticks = row.releaseLine;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.lineCancel) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Line Canceled';
+              drillDownItem.Module = 'Release';
+              drillDownItem.DateTime = this.timeFormating(row.lineCancel);
+              drillDownItem.Ticks = row.lineCancel;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.orderCancel) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Order Canceled';
+              drillDownItem.Module = 'Release';
+              drillDownItem.DateTime = this.timeFormating(row.orderCancel);
+              drillDownItem.Ticks = row.orderCancel;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.pickStart
+                ? row.pickStartUser.trim()
+                : '';
+              drillDownItem.Event = 'Pick Start';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickStart);
+              drillDownItem.Ticks = row.pickStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickLocationScan) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Location Scan';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickLocationScan);
+              drillDownItem.Ticks = row.pickLocationScan;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickITNScan) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'ITN Scan';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickITNScan);
+              drillDownItem.Ticks = row.pickITNScan;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickQuantityEntered) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Quantity Entered';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(
+                row.pickQuantityEntered
+              );
+              drillDownItem.Ticks = row.pickQuantityEntered;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickITNPrint) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'ITN Print';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickITNPrint);
+              drillDownItem.Ticks = row.pickITNPrint;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickITNNF) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'ITN NF';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickITNNF);
+              drillDownItem.Ticks = row.pickITNNF;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickCartAssigned) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Cart Assigned';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickCartAssigned);
+              drillDownItem.Ticks = row.pickCartAssigned;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickUserExit) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'User Exit';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickUserExit);
+              drillDownItem.Ticks = row.pickUserExit;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickLabelCount) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Label Count';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickLabelCount);
+              drillDownItem.Ticks = row.pickLabelCount;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickLabelQuantity) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Label Quantity';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(
+                row.pickLabelQuantity
+              );
+              drillDownItem.Ticks = row.pickLabelQuantity;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickOverPick) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Over Pick';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickOverPick);
+              drillDownItem.Ticks = row.pickOverPick;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickToteAssignment) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Tote Assignment';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(
+                row.pickToteAssignment
+              );
+              drillDownItem.Ticks = row.pickToteAssignment;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickShortPick) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Short Pick';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickShortPick);
+              drillDownItem.Ticks = row.pickShortPick;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.pickDoneUser
+                ? row.pickDoneUser.trim()
+                : '';
+              drillDownItem.Event = 'Pick Done';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickDone);
+              drillDownItem.Ticks = row.pickDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pickStatus15) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Status 15';
+              drillDownItem.Module = 'Picking';
+              drillDownItem.DateTime = this.timeFormating(row.pickStatus15);
+              drillDownItem.Ticks = row.pickStatus15;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.qcStartUser
+                ? row.qcStartUser.trim()
+                : '';
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcStart);
+              drillDownItem.Ticks = row.qcStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.qcDoneUser ? row.qcDoneUser.trim() : '';
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcDone);
+              drillDownItem.Ticks = row.qcDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcStatus40) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Status 40';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcStatus40);
+              drillDownItem.Ticks = row.qcStatus40;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcStatus41) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Status 41';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcStatus41);
+              drillDownItem.Ticks = row.qcStatus41;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.agStartUser
+                ? row.agStartUser.trim()
+                : '';
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'Ag In';
+              drillDownItem.DateTime = this.timeFormating(row.agStart);
+              drillDownItem.Ticks = row.agStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agOutStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'Ag Out';
+              drillDownItem.DateTime = this.timeFormating(row.agOutStart);
+              drillDownItem.Ticks = row.agOutStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcHold) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Hold';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcHold);
+              drillDownItem.Ticks = row.qcHold;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.qcOrderComplete) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Order Complete';
+              drillDownItem.Module = 'QC';
+              drillDownItem.DateTime = this.timeFormating(row.qcOrderComplete);
+              drillDownItem.Ticks = row.qcOrderComplete;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.agDoneUser ? row.agDoneUser.trim() : '';
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'Ag Out';
+              drillDownItem.DateTime = this.timeFormating(row.agDone);
+              drillDownItem.Ticks = row.agDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agRelocate) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Relocate';
+              drillDownItem.Module = 'Ag In';
+              drillDownItem.DateTime = this.timeFormating(row.agRelocate);
+              drillDownItem.Ticks = row.agRelocate;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agOrderComplete) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Order Complete';
+              drillDownItem.Module = 'Ag In';
+              drillDownItem.DateTime = this.timeFormating(row.agOrderComplete);
+              drillDownItem.Ticks = row.agOrderComplete;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.agInDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'Ag In';
+              drillDownItem.DateTime = this.timeFormating(row.agInDone);
+              drillDownItem.Ticks = row.agInDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pullingStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'Pulling';
+              drillDownItem.DateTime = this.timeFormating(row.pullingStart);
+              drillDownItem.Ticks = row.pullingStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pullingCartSelected) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Cart Selected';
+              drillDownItem.Module = 'Pulling';
+              drillDownItem.DateTime = this.timeFormating(
+                row.pullingCartSelected
+              );
+              drillDownItem.Ticks = row.pullingCartSelected;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pullingLocationSelected) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Location Selected';
+              drillDownItem.Module = 'Pulling';
+              drillDownItem.DateTime = this.timeFormating(
+                row.pullingLocationSelected
+              );
+              drillDownItem.Ticks = row.pullingLocationSelected;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pullingNotFound) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Not Found';
+              drillDownItem.Module = 'Pulling';
+              drillDownItem.DateTime = this.timeFormating(row.pullingNotFound);
+              drillDownItem.Ticks = row.pullingNotFound;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.pullingDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'Pulling';
+              drillDownItem.DateTime = this.timeFormating(row.pullingDone);
+              drillDownItem.Ticks = row.pullingDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.dropoffUser
+                ? row.dropoffUser.trim()
+                : '';
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(row.dropoffStart);
+              drillDownItem.Ticks = row.dropoffStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffLine) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Line';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(row.dropoffLine);
+              drillDownItem.Ticks = row.dropoffLine;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(row.dropoffDone);
+              drillDownItem.Ticks = row.dropoffDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffCartSelected) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Cart Selected';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(
+                row.dropoffCartSelected
+              );
+              drillDownItem.Ticks = row.dropoffCartSelected;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffITNSkipped) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'ITN Skipped';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(
+                row.dropoffITNSkipped
+              );
+              drillDownItem.Ticks = row.dropoffITNSkipped;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.dropoffLocationSelected) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Location Selected';
+              drillDownItem.Module = 'Drop Off';
+              drillDownItem.DateTime = this.timeFormating(
+                row.dropoffLocationSelected
+              );
+              drillDownItem.Ticks = row.dropoffLocationSelected;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packStart) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Start';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.packStart);
+              drillDownItem.Ticks = row.packStart;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packLine) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = row.packLineUser
+                ? row.packLineUser.trim()
+                : '';
+              drillDownItem.Event = 'Line';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.packLine);
+              drillDownItem.Ticks = row.packLine;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packReject) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Reject';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.packReject);
+              drillDownItem.Ticks = row.packReject;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packDone) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Done';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.packDone);
+              drillDownItem.Ticks = row.packDone;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packNewPackage) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'New Package';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.packNewPackage);
+              drillDownItem.Ticks = row.packNewPackage;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.packSupervisorCheck) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Supervisor Check';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(
+                row.packSupervisorCheck
+              );
+              drillDownItem.Ticks = row.packSupervisorCheck;
+              drillDownData.push(drillDownItem);
+            }
+
+            if (row.shippingManifest) {
+              const drillDownItem = JSON.parse(JSON.stringify(drillDownBase));
+              drillDownItem.Name = null;
+              drillDownItem.Event = 'Shipping Manifest';
+              drillDownItem.Module = 'Packing';
+              drillDownItem.DateTime = this.timeFormating(row.shippingManifest);
+              drillDownItem.Ticks = row.shippingManifest;
+              drillDownData.push(drillDownItem);
+            }
+
+            drillDownData.sort((a, b) => {
+              if (Number(a.Ticks) < Number(b.Ticks)) {
+                return -1;
+              }
+
+              if (Number(a.Ticks) == Number(b.Ticks)) {
+                return 0;
+              }
+
+              return 1;
+            });
+
+            drillDownData.forEach((dataRow) => {
+              this.drilldownTableData2.push(dataRow);
+            });
+          });
 
           this.isLoading = false;
           this.drilldownTableData = this.drilldownTableData2;
@@ -1201,6 +1749,7 @@ export class ITNLifecycleComponent implements OnInit {
       this.selTempSub.unsubscribe();
       this.columnsSubscription.unsubscribe();
       this.drillDownSubscription.unsubscribe();
+      this.drillDownRowsSubscription.unsubscribe();
     } catch (ex) {
       console.log('Error1: ' + ex);
     }

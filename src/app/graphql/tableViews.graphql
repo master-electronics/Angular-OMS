@@ -311,6 +311,7 @@ query fetchITNLifecycleDrillDownRows(
     OrderNumber
     NOSINumber
     OrderNOSI
+    DistributionCenter
     InventoryTrackingNumber
     after_InventoryTrackingNumber
     PartNumber
@@ -338,6 +339,7 @@ query fetchITNLifecycleDrillDownRows(
     pickDone
     pickDoneUser
     splitDone
+    splitDoneUser
     pickITNNF
     pickCartAssigned
     pickUserExit
@@ -385,6 +387,8 @@ query fetchITNLifecycleDrillDownRows(
     ParentITN
     Quantity
     shippingManifest
+    shipmentMethod
+    shipmentMethodDescription
   }
 }
 
