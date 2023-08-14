@@ -21,14 +21,9 @@ import {
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { AggregationOutService } from '../aggregation-out.server';
-import {
-  Create_EventLogsGQL,
-  Insert_UserEventLogsGQL,
-} from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { type } from 'os';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { InventoryUpdateForMerp } from 'src/app/graphql/route.graphql-gen';
 
 @Component({
   selector: 'pick-tote',

@@ -30,7 +30,6 @@ import {
 } from '../../../graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { type } from 'os';
 
 @Component({
   selector: 'repack',

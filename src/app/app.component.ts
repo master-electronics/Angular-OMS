@@ -32,11 +32,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.router$ = this.router.events.pipe(
-      map((routerEvent: RouterEvent) => this.checkRouterEvent(routerEvent))
+      map((routerEvent) => this.checkRouterEvent(routerEvent))
     );
   }
 
-  checkRouterEvent(routerEvent: RouterEvent): void {
+  checkRouterEvent(routerEvent): void {
     if (routerEvent instanceof NavigationStart) {
       this.loading$.next(true);
       return;
