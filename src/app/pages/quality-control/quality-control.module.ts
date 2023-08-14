@@ -28,14 +28,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
-  declarations: [
-    QualityControlComponent,
-    ScanItnComponent,
-    StepTabsComponent,
-    GlobalMessagesComponent,
-    VerifyPackComponent,
-    RepackComponent,
-  ],
+  declarations: [QualityControlComponent],
   imports: [
     CommonModule,
     QualityControlRoutingModule,
@@ -57,6 +50,11 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzDrawerModule,
     NzModalModule,
     FocusInvlidInputDirective,
+    ScanItnComponent,
+    StepTabsComponent,
+    GlobalMessagesComponent,
+    VerifyPackComponent,
+    RepackComponent,
   ],
   providers: [QualityControlService],
   bootstrap: [QualityControlComponent],

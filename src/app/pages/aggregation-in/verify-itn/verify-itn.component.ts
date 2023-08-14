@@ -5,7 +5,12 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -26,10 +31,33 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { ChangeItnListForMerpGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'verify-itn',
   templateUrl: './verify-itn.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class VerifyITNComponent implements OnInit, AfterViewInit {
   alertType = 'error';

@@ -43,6 +43,19 @@ import { HttpClient } from '@angular/common/http';
 import { isThisHour } from 'date-fns';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { FormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 interface PartCode {
   _id: number;
@@ -75,6 +88,25 @@ interface ReceiptLine {
   selector: 'receipt-entry',
   templateUrl: './receipt-entry.component.html',
   styleUrls: ['./receipt-entry.component.css'],
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NgIf,
+    NzSelectModule,
+    FormsModule,
+    NgFor,
+    NzButtonModule,
+    NzIconModule,
+    NzWaveModule,
+    NzPopconfirmModule,
+    NzInputModule,
+    NgClass,
+    NzTableModule,
+    NzAlertModule,
+    NzModalModule,
+    NzDatePickerModule,
+    AsyncPipe,
+  ],
 })
 export class ReceiptEntry implements OnInit {
   log$: Observable<any>;

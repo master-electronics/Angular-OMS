@@ -10,6 +10,8 @@ import {
   UntypedFormBuilder,
   UntypedFormControl,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { OrderBarcodeRegex } from '../../../shared/utils/dataRegex';
 import {
@@ -18,12 +20,33 @@ import {
   SearchIntForWmsCount,
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'itn-view',
   templateUrl: './itn-view.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    NgFor,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class ITNViewComponent implements OnInit, AfterViewInit {
   OrderInfo$;

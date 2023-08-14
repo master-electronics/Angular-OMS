@@ -3,8 +3,21 @@ import * as XLSX from 'xlsx';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { catchError, map } from 'rxjs/operators';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { FetchHoldOnCounterGQL } from 'src/app/graphql/tableViews.graphql-gen';
+import { RouterLink } from '@angular/router';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 interface tableData {
   User: string;
@@ -15,6 +28,20 @@ interface tableData {
 @Component({
   selector: 'hold-on-counter',
   templateUrl: './hold-on-counter.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzDatePickerModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    NgFor,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class HoldOnCounterComponent implements OnInit {
   isLoading = false;

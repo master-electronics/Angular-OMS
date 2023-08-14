@@ -2,11 +2,15 @@ import { Component, OnInit } from '@angular/core';
 
 import { FindOrderByStatusGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'order-list',
   templateUrl: './order-list.component.html',
+  standalone: true,
+  imports: [NzTableModule, NgFor, RouterLink, AsyncPipe],
 })
 export class OrderListComponent implements OnInit {
   OrderInfo$;

@@ -3,13 +3,38 @@ import { Observable } from 'rxjs';
 
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchOrderTasktimeGQL } from '../../../graphql/tableViews.graphql-gen';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { OrderBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { map } from 'rxjs/operators';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'order-tasktime',
   templateUrl: './order-tasktime.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class OrderTasktimeComponent implements OnInit {
   isLoading = false;

@@ -15,11 +15,43 @@ import {
   DeleteTableDataGQL,
 } from 'src/app/graphql/dataMaintenance.graphql-gen';
 import { DataColumn } from 'src/app/graphql/utilityTools.graphql-gen';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'data-maintenance',
   templateUrl: './data-maintenance.component.html',
   styleUrls: ['./data-maintenance.component.css'],
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NzSelectModule,
+    FormsModule,
+    NgIf,
+    NzTableModule,
+    NgFor,
+    NzButtonModule,
+    NzIconModule,
+    NzDropDownModule,
+    NzInputModule,
+    NzWaveModule,
+    NzPopconfirmModule,
+    NzCheckboxModule,
+    NzDatePickerModule,
+    NzAlertModule,
+  ],
 })
 export class DataMaintenance implements OnInit {
   tableOptionsList: { label: string; value: string }[];
@@ -29,8 +61,8 @@ export class DataMaintenance implements OnInit {
   tablePrimaryKey: string;
   tableData;
   tableDataDisplay;
-  editCache: { [key: string]: { edit: boolean; data: {} } } = {};
-  addCache: { [key: string]: { data: {} } } = {};
+  editCache: { [key: string]: { edit: boolean; data } } = {};
+  addCache: { [key: string]: { data } } = {};
   temp;
   sqlTextTypes = [
     'CHAR',
@@ -438,7 +470,7 @@ export class DataMaintenance implements OnInit {
 
   dateTimeFormat(date: Date): string {
     let month = '' + (date.getMonth() + 1);
-    let day = '' + date.getDate();
+    const day = '' + date.getDate();
     const year = '' + date.getFullYear();
     let hours = '' + date.getHours();
     let minutes = '' + date.getMinutes();

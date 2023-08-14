@@ -5,15 +5,41 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { ShelfInventoryService } from '../shelf-inventory.server';
+import { NgIf, NgFor } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'sacn-itn',
   templateUrl: './scan-itn.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    NgIf,
+    NgFor,
+    RouterLink,
+  ],
 })
 export class ScanITNComponent implements OnInit, AfterViewInit {
   itemList = [];

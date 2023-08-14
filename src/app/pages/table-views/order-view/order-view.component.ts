@@ -7,8 +7,18 @@ import {
   OrderViewFilter,
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
-import { ActivatedRoute } from '@angular/router';
+import {
+  NzTableFilterFn,
+  NzTableFilterList,
+  NzTableModule,
+} from 'ng-zorro-antd/table';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { FormsModule } from '@angular/forms';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 interface DataItem {
   OrderNumber: string;
@@ -30,6 +40,19 @@ interface ColumnItem {
 @Component({
   selector: 'order-view',
   templateUrl: './order-view.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NzTableModule,
+    NzButtonModule,
+    NgFor,
+    RouterLink,
+    NzDropDownModule,
+    NzInputModule,
+    FormsModule,
+    NzWaveModule,
+    AsyncPipe,
+  ],
 })
 export class OrderViewComponent implements OnInit {
   title = 'Order View';

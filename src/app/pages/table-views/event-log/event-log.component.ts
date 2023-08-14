@@ -7,7 +7,12 @@ import {
   FetchUserInfoGQL,
 } from '../../../graphql/tableViews.graphql-gen';
 import { last, map, tap } from 'rxjs/operators';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   ITNBarcodeRegex,
   OrderBarcodeRegex,
@@ -15,10 +20,35 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'event-log',
   templateUrl: './event-log.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NgIf,
+    NzSelectModule,
+    NgFor,
+    NzInputModule,
+    NzDatePickerModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    AsyncPipe,
+  ],
 })
 export class EventLogComponent implements OnInit {
   public isLoading = false;

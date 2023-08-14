@@ -11,6 +11,8 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
@@ -23,10 +25,32 @@ import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'select-location',
   templateUrl: './select-location.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NgIf,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class SelectLocationComponent implements OnInit, AfterViewInit {
   title = 'Position';

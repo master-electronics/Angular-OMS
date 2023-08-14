@@ -20,12 +20,7 @@ import { VerifyITNComponent } from './verify-itn/verify-itn.component';
 import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
-  declarations: [
-    AggregationInComponent,
-    LocationComponent,
-    VerifyToteComponent,
-    VerifyITNComponent,
-  ],
+  declarations: [AggregationInComponent],
   imports: [
     CommonModule,
     AggregationInRoutingModule,
@@ -40,6 +35,9 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzSkeletonModule,
     NzDividerModule,
     FocusInvlidInputDirective,
+    LocationComponent,
+    VerifyToteComponent,
+    VerifyITNComponent,
   ],
   providers: [AggregationInService],
   bootstrap: [AggregationInComponent],

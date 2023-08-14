@@ -11,6 +11,8 @@ import {
   UntypedFormBuilder,
   UntypedFormControl,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
@@ -38,10 +40,37 @@ import {
 } from '../aggregation-in.server';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgIf, NgFor, NgClass, AsyncPipe, SlicePipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'location',
   templateUrl: './location.component.html',
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NgIf,
+    NzSkeletonModule,
+    NgFor,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NgClass,
+    AsyncPipe,
+    SlicePipe,
+  ],
 })
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   // varable for query

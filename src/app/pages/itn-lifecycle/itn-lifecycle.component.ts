@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { CommonService } from '../../shared/services/common.service';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   FetchItnLifecycleGQL,
   FindItnTemplateGQL,
@@ -17,11 +22,47 @@ import {
   FindItnTemplatesGQL,
   FetchItnLifecycleDrillDownGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { TemplateSettings } from './template-settings.component';
+import { NgFor, NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'itn-lifecycle',
   templateUrl: './itn-lifecycle.component.html',
   styleUrls: ['./itn-lifecycle.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzDatePickerModule,
+    NzSelectModule,
+    NgFor,
+    TemplateSettings,
+    NzButtonModule,
+    NzWaveModule,
+    NgIf,
+    NzIconModule,
+    NzSpinModule,
+    NzTableModule,
+    NzDropDownModule,
+    NzInputModule,
+    NgClass,
+    NzModalModule,
+    AsyncPipe,
+  ],
 })
 export class ITNLifecycleComponent implements OnInit {
   calendarStartDate: Date;

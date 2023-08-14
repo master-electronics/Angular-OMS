@@ -16,7 +16,7 @@ import { EventTemplateComponent } from './eventTemplate.component';
 import { DayViewSchedulerComponent } from './day-view-scheduler.component';
 
 @NgModule({
-  declarations: [EventTemplateComponent, DayViewSchedulerComponent],
+  declarations: [EventTemplateComponent],
   imports: [
     NzButtonModule,
     NzTableModule,
@@ -31,6 +31,7 @@ import { DayViewSchedulerComponent } from './day-view-scheduler.component';
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
+    DayViewSchedulerComponent,
   ],
   bootstrap: [EventTemplateComponent],
 })

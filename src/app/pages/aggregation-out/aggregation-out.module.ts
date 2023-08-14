@@ -19,7 +19,7 @@ import { PickITNComponent } from './pick-itn/pick-itn.component';
 import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
-  declarations: [AggregationOutComponent, PickToteComponent, PickITNComponent],
+  declarations: [AggregationOutComponent],
   imports: [
     CommonModule,
     AggregationOutRoutingModule,
@@ -34,6 +34,8 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     NzSkeletonModule,
     NzDividerModule,
     FocusInvlidInputDirective,
+    PickToteComponent,
+    PickITNComponent,
   ],
   providers: [AggregationOutService],
   bootstrap: [AggregationOutComponent],

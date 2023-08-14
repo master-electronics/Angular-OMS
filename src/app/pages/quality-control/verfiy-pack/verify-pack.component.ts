@@ -6,7 +6,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, of, Subscription, throwError } from 'rxjs';
 
@@ -26,10 +31,45 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import countries from 'src/app/shared/utils/countyList';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'verify-pack',
   templateUrl: './verify-pack.component.html',
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NgIf,
+    NzSkeletonModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzImageModule,
+    NzDescriptionsModule,
+    NzDividerModule,
+    FormsModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzInputModule,
+    NgFor,
+    NzSelectModule,
+    NzAlertModule,
+    NzDrawerModule,
+    AsyncPipe,
+  ],
 })
 export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   imgURL = 'https://www.onlinecomponents.com/images/parts/largeimages/';
