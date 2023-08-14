@@ -1,3 +1,4 @@
+/*eslint prefer-const: 'off'*/
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { catchError, map } from 'rxjs/operators';
