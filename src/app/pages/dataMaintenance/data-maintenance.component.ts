@@ -471,7 +471,7 @@ export class DataMaintenance implements OnInit {
 
   dateTimeFormat(date: Date): string {
     let month = '' + (date.getMonth() + 1);
-    const day = '' + date.getDate();
+    let day = '' + date.getDate();
     const year = '' + date.getFullYear();
     let hours = '' + date.getHours();
     let minutes = '' + date.getMinutes();
