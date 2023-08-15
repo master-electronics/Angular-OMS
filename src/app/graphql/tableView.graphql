@@ -21,3 +21,14 @@ query fetchEventLog(
     Log
   }
 }
+
+query fetchTaskCounter(
+  $Module: String!
+  $startDate: String!
+  $endDate: String!
+) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    User
+    taskCounter
+  }
+}

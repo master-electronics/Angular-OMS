@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 
 import { CommonService } from '../../../shared/services/common.service';
-import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
+import { FetchTaskCounterGQL } from '../../../graphql/tableView.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
 import {
   UntypedFormBuilder,
@@ -98,7 +98,7 @@ export class TaskCounterComponent implements OnInit {
     this.fetchTable$ = this.fetchTaskCounter
       .fetch(
         {
-          Module: Number(this.filterForm.get('module').value),
+          Module: this.filterForm.get('module').value,
           startDate: startDate,
           endDate: endDate,
         },

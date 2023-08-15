@@ -1656,7 +1656,7 @@ export type QueryFetchTableDataArgs = {
 };
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['Int'];
+  Module: Scalars['String'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
@@ -3016,21 +3016,6 @@ export type FetchUserEventLogQuery = {
   } | null> | null;
 };
 
-export type FetchTaskCounterQueryVariables = Types.Exact<{
-  Module: Types.Scalars['Int'];
-  startDate: Types.Scalars['String'];
-  endDate: Types.Scalars['String'];
-}>;
-
-export type FetchTaskCounterQuery = {
-  __typename?: 'Query';
-  fetchTaskCounter?: Array<{
-    __typename?: 'taskCounter';
-    User: string;
-    taskCounter: Array<number | null>;
-  } | null> | null;
-};
-
 export type FetchHoldOnCounterQueryVariables = Types.Exact<{
   startDate: Types.Scalars['String'];
   endDate: Types.Scalars['String'];
@@ -3678,36 +3663,6 @@ export class FetchUserEventLogGQL extends Apollo.Query<
   FetchUserEventLogQueryVariables
 > {
   document = FetchUserEventLogDocument;
-  client = 'wmsNodejs';
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const FetchTaskCounterDocument = gql`
-  query fetchTaskCounter(
-    $Module: Int!
-    $startDate: String!
-    $endDate: String!
-  ) {
-    fetchTaskCounter(
-      Module: $Module
-      startDate: $startDate
-      endDate: $endDate
-    ) {
-      User
-      taskCounter
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class FetchTaskCounterGQL extends Apollo.Query<
-  FetchTaskCounterQuery,
-  FetchTaskCounterQueryVariables
-> {
-  document = FetchTaskCounterDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
