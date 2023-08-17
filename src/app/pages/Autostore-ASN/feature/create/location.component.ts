@@ -71,6 +71,11 @@ export class ASNLocation implements OnInit {
     this.data$ = this._asn
       .findContainer(this.inputForm.value.location.toString())
       .pipe(
+        tap((res) => {
+          if (!res.data.findContainer) {
+            throw new Error("Can't find this Location!");
+          }
+        }),
         map((res) => {
           if (res.data.findContainer) {
             const asnContainer = {
@@ -94,46 +99,6 @@ export class ASNLocation implements OnInit {
           });
         })
       );
-    // this.data$ = this._asn
-    //   .sendToAutostore$(this.inputForm.value.location.toString())
-    //   .pipe(
-    //     map((res) => {
-    //       this.print$ = this._printer.printQRCode$(res.toString());
-    //       this.log$ = this._eventLog.insertLog(
-    //         [
-    //           {
-    //             UserEventID: sqlData.Event_Autostore_ASN_Submitted,
-    //             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-    //             DistributionCenter: environment.DistributionCenter,
-    //             Message:
-    //               'Location: ' +
-    //               this.inputForm.value.location.toString() +
-    //               ' ASNID: ' +
-    //               res,
-    //           },
-    //         ],
-    //         [
-    //           {
-    //             UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-    //             EventTypeID: sqlData.Event_Autostore_ASN_Submitted,
-    //             Log: JSON.stringify({
-    //               DistributionCenter: environment.DistributionCenter,
-    //               Location: this.inputForm.value.location.toString(),
-    //               ASNID: res,
-    //             }),
-    //           },
-    //         ]
-    //       );
-
-    //       this.message = `ASN '${res}' created`;
-    //       return res;
-    //     }),
-    //     catchError((error) => {
-    //       return of({
-    //         error: { message: error.message, type: 'error' },
-    //       });
-    //     })
-    //   );
   }
 
   onOk() {

@@ -33,6 +33,13 @@ import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.compone
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
+    <ng-container *ngIf="zeroList">
+      <popup-modal
+        [message]="zeroList"
+        (clickSubmit)="zeroListOK()"
+        [cancelVisible]="cancelVisible"
+      ></popup-modal>
+    </ng-container>
     <div *ngIf="log$ | async"></div>
     <div *ngIf="print$ | async"></div>
   `,
@@ -56,9 +63,13 @@ export class ASNDropOffLocation implements OnInit {
   });
 
   message;
+  zeroList;
+  cancelVisible = false;
+  asnID;
 
   ngOnInit(): void {
     this.data$ = of(true);
+    this.asnID = null;
   }
 
   public onSubmit(): void {
@@ -74,6 +85,7 @@ export class ASNDropOffLocation implements OnInit {
       )
       .pipe(
         tap((res) => {
+          const t = 'test';
           if (!res.data.findContainer) {
             throw new Error("Can't find this Location!");
           }
@@ -89,32 +101,54 @@ export class ASNDropOffLocation implements OnInit {
         switchMap((res) => {
           return this._asn.sendToAutostore$(asnContainer.Barcode).pipe(
             map((res) => {
-              this.print$ = this._printer.printQRCode$(res.toString());
-              this.log$ = this._eventLog.insertLog(
-                [
-                  {
-                    UserEventID: sqlData.Event_Autostore_ASN_Submitted,
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
-                    DistributionCenter: environment.DistributionCenter,
-                    Message:
-                      'Location: ' + asnContainer.Barcode + ' ASNID: ' + res,
-                  },
-                ],
-                [
-                  {
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
-                    EventTypeID: sqlData.Event_Autostore_ASN_Submitted,
-                    Log: JSON.stringify({
+              let zl = '';
+              if (res.ZeroList) {
+                res.ZeroList.forEach((itn) => {
+                  if (itn) {
+                    zl += itn.toString() + '<br />';
+                  }
+                });
+                this.zeroList =
+                  'The following ITNs have zero quantity:<br />' + zl;
+              }
+
+              if (res.ASNID != '0') {
+                this.print$ = this._printer.printQRCode$(res.ASNID.toString());
+                this.log$ = this._eventLog.insertLog(
+                  [
+                    {
+                      UserEventID: sqlData.Event_Autostore_ASN_Submitted,
+                      UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                        .Name,
                       DistributionCenter: environment.DistributionCenter,
-                      Location: asnContainer.Barcode,
-                      ASNID: res,
-                    }),
-                  },
-                ]
-              );
-              this.message = `ASN '${res}' created`;
+                      Message:
+                        'Location: ' +
+                        asnContainer.Barcode +
+                        ' ASNID: ' +
+                        res.ASNID.toString(),
+                    },
+                  ],
+                  [
+                    {
+                      UserName: JSON.parse(sessionStorage.getItem('userInfo'))
+                        .Name,
+                      EventTypeID: sqlData.Event_Autostore_ASN_Submitted,
+                      Log: JSON.stringify({
+                        DistributionCenter: environment.DistributionCenter,
+                        Location: asnContainer.Barcode,
+                        ASNID: res,
+                      }),
+                    },
+                  ]
+                );
+              }
+
+              if (res.ASNID) {
+                if (res.ASNID != '0') {
+                  this.asnID = res.ASNID;
+                  this.message = `ASN '${res.ASNID.toString()}' created`;
+                }
+              }
               sessionStorage.removeItem('asnContainer');
             })
           );
@@ -125,9 +159,18 @@ export class ASNDropOffLocation implements OnInit {
           });
         })
       );
+
+    //this.data$ = of(true);
   }
 
   onBack(): void {
     this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
+  }
+
+  zeroListOK(): void {
+    this.zeroList = null;
+    if (!this.asnID) {
+      this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
+    }
   }
 }
