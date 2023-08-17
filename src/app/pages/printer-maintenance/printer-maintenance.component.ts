@@ -9,6 +9,21 @@ import {
 import { Subscription } from 'rxjs';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { Title } from '@angular/platform-browser';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { FormsModule } from '@angular/forms';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 interface printerData {
   ID: number;
@@ -24,6 +39,26 @@ interface printerData {
   selector: 'printer-maintenance',
   templateUrl: './printer-maintenance.component.html',
   styleUrls: ['./printer-maintenance.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NzSpinModule,
+    NzTableModule,
+    NzButtonModule,
+    NzIconModule,
+    NgFor,
+    NzWaveModule,
+    NzPopconfirmModule,
+    NzInputModule,
+    FormsModule,
+    NzRadioModule,
+    NzSelectModule,
+    NzGridModule,
+    NzAlertModule,
+    NzDropDownModule,
+    NzCheckboxModule,
+    AsyncPipe,
+  ],
 })
 export class PrinterMaintenance implements OnInit {
   isLoading = false;

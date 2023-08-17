@@ -35,6 +35,9 @@ export class TableViewComponent {
   @Output() click: EventEmitter<any> = new EventEmitter();
 
   public onClick(data): void {
+    if (!data) {
+      return;
+    }
     this.click.emit(data);
   }
 }

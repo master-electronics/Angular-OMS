@@ -1,14 +1,34 @@
 import { Component, OnInit, HostListener, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { CommonService } from '../../../shared/services/common.service';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { map, Observable } from 'rxjs';
+import { MenubarItemComponent } from '../../../shared/ui/menubar-item.compenent';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   providers: [MenuService],
+  standalone: true,
+  imports: [
+    RouterLink,
+    NzIconModule,
+    NzButtonModule,
+    NgIf,
+    NzDropDownModule,
+    NzMenuModule,
+    NzDrawerModule,
+    NgFor,
+    MenubarItemComponent,
+    AsyncPipe,
+  ],
 })
 export class NavbarComponent implements OnInit {
   showMenu = false;

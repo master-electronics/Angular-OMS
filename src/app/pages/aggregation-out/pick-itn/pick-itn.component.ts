@@ -5,15 +5,42 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { AggregationOutService } from '../aggregation-out.server';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NgIf, NgFor } from '@angular/common';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'pick-itn',
   templateUrl: './pick-itn.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NgIf,
+    NzAlertModule,
+    NgFor,
+  ],
 })
 export class PickITNComponent implements OnInit, AfterViewInit {
   alertType = 'error';

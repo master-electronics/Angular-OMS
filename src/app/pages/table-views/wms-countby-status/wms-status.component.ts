@@ -3,10 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../shared/services/common.service';
 import { FetchWmsStatusViewGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
+import { RouterLink } from '@angular/router';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'wms-status',
   templateUrl: './wms-status.component.html',
+  standalone: true,
+  imports: [NzTableModule, NgIf, RouterLink, AsyncPipe],
 })
 export class WmsStatusComponent implements OnInit {
   fetchTable$;

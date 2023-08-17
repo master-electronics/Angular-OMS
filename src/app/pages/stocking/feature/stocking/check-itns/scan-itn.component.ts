@@ -79,12 +79,12 @@ export class ScanItnComponent implements OnInit {
       );
       return;
     }
-    // if not move this non found itn to user container.
+    // pop out warning message if not in list.
     this.inputForm.patchValue({ itn: '' });
-    this.data$ = this._stock.moveItnToUser(input).pipe(
+    this.data$ = of(true).pipe(
       map(() => ({
         error: {
-          message: `${input} is not found in the working location. It has been moved to your personal location.`,
+          message: `${input} is not found in the working location.`,
           name: `warning`,
         },
       })),

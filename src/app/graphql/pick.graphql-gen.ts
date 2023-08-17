@@ -1656,7 +1656,7 @@ export type QueryFetchTableDataArgs = {
 };
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['Int'];
+  Module: Scalars['String'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };

@@ -19,7 +19,6 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
-  declarations: [DataMaintenance],
   imports: [
     CommonModule,
     DataMaintenanceRoutingModule,
@@ -38,6 +37,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
     NzSelectModule,
     NzGridModule,
     NzDatePickerModule,
+    DataMaintenance,
   ],
 })
 export class DataMaintenanceModule {}

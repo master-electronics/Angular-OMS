@@ -43,6 +43,10 @@ export class ReceiptInfoService {
   public get headerID(): number {
     return this._headerID.value;
   }
+  public updateHeaderID(id: number) {
+    this._headerID.next(id);
+  }
+
   /**
    * Find Receipt info by ID, and all lines under this header with status "Entered".
    */
@@ -88,44 +92,6 @@ export class ReceiptInfoService {
     this._receiptLsAfterQuantity.next(null);
     this._selectedReceiptLine.next(null);
     this._eventLog.initEventLog(null);
-  }
-
-  /**
-   * GenerateRecipt: Use puchase order number, lineNumber to find information to create receipt header, line and detail.
-   */
-  public generateReceipt$(
-    PurchaseOrderNumber: string,
-    LineNumber: number,
-    Quantity: number
-  ): Observable<any> {
-    return this._generateReceipt
-      .mutate({
-        PurchaseOrderNumber,
-        LineNumber,
-        Quantity,
-      })
-      .pipe(
-        switchMap((res) => {
-          const id = res.data.generateReceiptForReceiving;
-          this._headerID.next(id);
-          this._log.initReceivingLog({
-            ReceiptHeader: id,
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-            UserEventID: sqlData.Event_Receiving_Start,
-          });
-          this._eventLog.initEventLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-            EventTypeID: sqlData.Event_Receiving_Start,
-            Log: JSON.stringify({
-              ReceiptHeader: id,
-            }),
-          });
-          return this._insertLog.mutate({
-            oldLogs: this._log.receivingLog,
-            eventLogs: this._eventLog.eventLog,
-          });
-        })
-      );
   }
 
   /**

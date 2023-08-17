@@ -17,6 +17,8 @@ import {
   CalendarWeekViewComponent,
   DateAdapter,
   getWeekViewPeriod,
+  CalendarWeekModule,
+  CalendarCommonModule,
 } from 'angular-calendar';
 
 import {
@@ -26,9 +28,15 @@ import {
   CalendarEvent,
   WeekViewAllDayEvent,
 } from 'calendar-utils';
-import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
+import {
+  DragEndEvent,
+  DragMoveEvent,
+  DragAndDropModule,
+} from 'angular-draggable-droppable';
 import { User } from './picker-manage.server';
 import { CustomEventTitleFormatter } from './custom-event-title.provider';
+import { ResizableModule } from 'angular-resizable-element';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 
 interface DayViewScheduler extends WeekView {
   users: User[];
@@ -84,6 +92,16 @@ export class DayViewSchedulerCalendarUtils extends CalendarUtils {
       provide: CalendarEventTitleFormatter,
       useClass: CustomEventTitleFormatter,
     },
+  ],
+  standalone: true,
+  imports: [
+    NgFor,
+    DragAndDropModule,
+    NgIf,
+    CalendarWeekModule,
+    ResizableModule,
+    NgClass,
+    CalendarCommonModule,
   ],
 })
 export class DayViewSchedulerComponent

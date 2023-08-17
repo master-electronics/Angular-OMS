@@ -1,5 +1,9 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Column, LevelLimit, Template } from './itn-lifecycle.server';
 import { ColumnSelectorComponent } from './column-selector.component';
 import { Subscription, Subject } from 'rxjs';
@@ -12,7 +16,15 @@ import {
   Delete_ItnUserTemplateGQL,
   Clear_ItnUserDefaultTemplateGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
+import { TabsViewComponent } from './tabs-view.component';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NgFor, NgIf } from '@angular/common';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
   selector: 'template-settings',
@@ -116,6 +128,21 @@ import { NzModalService } from 'ng-zorro-antd/modal';
     </nz-modal>
   `,
   styleUrls: ['./template-settings.component.css'],
+  standalone: true,
+  imports: [
+    NzButtonModule,
+    NzWaveModule,
+    NzIconModule,
+    NzModalModule,
+    NzSelectModule,
+    FormsModule,
+    NgFor,
+    NzDividerModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    NgIf,
+    TabsViewComponent,
+  ],
 })
 export class TemplateSettings {
   @Output() modalClosed: EventEmitter<any> = new EventEmitter();

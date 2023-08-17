@@ -18,7 +18,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @NgModule({
-  declarations: [PrinterMaintenance],
   imports: [
     CommonModule,
     PrinterMaintenanceRoutingModule,
@@ -36,6 +35,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     NzSpinModule,
     NzSelectModule,
     NzGridModule,
+    PrinterMaintenance,
   ],
 })
 export class PrinterMaintenanceModule {}

@@ -29,14 +29,7 @@ import { PullerAssignmentComponent } from './puller-assignment/puller-assignment
 import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvalidInput.directive';
 
 @NgModule({
-  declarations: [
-    SelectCartComponent,
-    SelectLocationComponent,
-    PullITNComponent,
-    DropOffComponent,
-    DetailAuthComponent,
-    PullerAssignmentComponent,
-  ],
+  declarations: [SelectCartComponent],
   imports: [
     CommonModule,
     PickRoutingModule,
@@ -58,6 +51,11 @@ import { FocusInvlidInputDirective } from 'src/app/shared/directives/focusInvali
     DragDropModule,
     NzCheckboxModule,
     FocusInvlidInputDirective,
+    SelectLocationComponent,
+    PullITNComponent,
+    DropOffComponent,
+    DetailAuthComponent,
+    PullerAssignmentComponent,
   ],
   providers: [PickService],
   bootstrap: [SelectCartComponent],

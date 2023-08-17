@@ -134,13 +134,6 @@ query fetchUserEventLog(
   }
 }
 
-query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
-  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
-    User
-    taskCounter
-  }
-}
-
 query fetchHoldOnCounter($startDate: String!, $endDate: String!) {
   fetchHoldOnCounter(startDate: $startDate, endDate: $endDate) {
     User

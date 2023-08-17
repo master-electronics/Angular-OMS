@@ -87,7 +87,10 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
           const itnList = [];
           res.data.findContainers.forEach((container) => {
             container.INVENTORies.forEach((itn) => {
-              if (itn.ORDERLINEDETAILs[0].StatusID === sqlData.agInComplete_ID)
+              if (
+                itn.ORDERLINEDETAILs[0]?.StatusID &&
+                itn.ORDERLINEDETAILs[0].StatusID === sqlData.agInComplete_ID
+              )
                 itnList.push(itn.InventoryTrackingNumber);
             });
           });

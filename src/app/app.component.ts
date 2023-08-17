@@ -6,9 +6,12 @@ import {
   NavigationStart,
   Router,
   RouterEvent,
+  RouterOutlet,
 } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LoadingSpinnerComponent } from './shared/ui/loading-spinner.component';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +27,8 @@ import { map } from 'rxjs/operators';
     </div>
     <router-outlet></router-outlet>
   `,
+  standalone: true,
+  imports: [NgIf, LoadingSpinnerComponent, RouterOutlet, AsyncPipe],
 })
 export class AppComponent implements OnInit {
   public loading$ = new BehaviorSubject<boolean>(false);
@@ -32,11 +37,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.router$ = this.router.events.pipe(
-      map((routerEvent: RouterEvent) => this.checkRouterEvent(routerEvent))
+      map((routerEvent) => this.checkRouterEvent(routerEvent))
     );
   }
 
-  checkRouterEvent(routerEvent: RouterEvent): void {
+  checkRouterEvent(routerEvent): void {
     if (routerEvent instanceof NavigationStart) {
       this.loading$.next(true);
       return;

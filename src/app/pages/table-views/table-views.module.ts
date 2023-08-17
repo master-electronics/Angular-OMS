@@ -31,18 +31,7 @@ import { TaskCounterComponent } from './task-counter/task-counter.component';
 import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.component';
 
 @NgModule({
-  declarations: [
-    TableViewsComponent,
-    EventLogComponent,
-    HoldOnCounterComponent,
-    WmsStatusComponent,
-    OrderListComponent,
-    OrderViewComponent,
-    ITNViewComponent,
-    TaskCounterComponent,
-    OrderTasktimeComponent,
-    HoldOnCounterComponent,
-  ],
+  declarations: [TableViewsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -64,6 +53,15 @@ import { OrderTasktimeComponent } from './order-tasktime/order-tasktime.componen
     NzInputNumberModule,
     NzRadioModule,
     NzSpinModule,
+    EventLogComponent,
+    HoldOnCounterComponent,
+    WmsStatusComponent,
+    OrderListComponent,
+    OrderViewComponent,
+    ITNViewComponent,
+    TaskCounterComponent,
+    OrderTasktimeComponent,
+    HoldOnCounterComponent,
   ],
   bootstrap: [TableViewsComponent],
 })

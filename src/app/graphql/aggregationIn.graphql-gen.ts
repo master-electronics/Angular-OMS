@@ -1656,7 +1656,7 @@ export type QueryFetchTableDataArgs = {
 };
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['Int'];
+  Module: Scalars['String'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
 };
@@ -2987,6 +2987,7 @@ export type UpdateAfterAgOutMutation = {
   updateOrder?: Array<number | null> | null;
   deleteAndInsertRouteTable: boolean;
   changeItnListForMerp?: boolean | null;
+  updateContainerList?: Array<number | null> | null;
   updateMerpOrderStatus: {
     __typename?: 'Response';
     success: boolean;
@@ -3331,6 +3332,18 @@ export const UpdateAfterAgOutDocument = gql`
       message
     }
     changeItnListForMerp(ITNList: $ITNList)
+    updateContainerList(
+      BarcodeList: $toteList
+      DistributionCenter: $DistributionCenter
+      Container: {
+        Warehouse: "10"
+        Row: "CV"
+        Aisle: null
+        Section: null
+        Shelf: null
+        ShelfDetail: null
+      }
+    )
   }
 `;
 

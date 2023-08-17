@@ -120,7 +120,6 @@ mutation updateAfterAgOut(
     success
     message
   }
-
   updateMerpWMSLog(
     FileKeyList: $FileKeyList
     LocationCode: $DistributionCenter
@@ -130,8 +129,19 @@ mutation updateAfterAgOut(
     success
     message
   }
-
   changeItnListForMerp(ITNList: $ITNList)
+  updateContainerList(
+    BarcodeList: $toteList
+    DistributionCenter: $DistributionCenter
+    Container: {
+      Warehouse: "10"
+      Row: "CV"
+      Aisle: null
+      Section: null
+      Shelf: null
+      ShelfDetail: null
+    }
+  )
 }
 
 mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {

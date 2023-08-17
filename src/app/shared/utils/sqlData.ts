@@ -78,6 +78,8 @@ export const sqlData = {
   Event_ReceiptEntry_LineDetailDelete: 1090,
   //Receiving
   Event_Receiving_Start: 1100,
+  Event_Receiving_create_receipt_start: 1101,
+  Event_Receiving_create_receipt_done: 1102,
   Event_Receiving_UpdateInfo: 1120,
   Event_Receiving_GenerateITN: 1130,
   Event_Receiving_UpdateInventory: 1140,
