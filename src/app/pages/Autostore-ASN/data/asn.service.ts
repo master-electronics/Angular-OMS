@@ -211,10 +211,8 @@ export class ASNService {
                 zeroList = res;
 
                 if (this.asn.AUTOSTOREASNLINEs.length != 0) {
-                  console.log('do submit');
                   return this.insertASN$();
                 } else {
-                  console.log('do NOT submit');
                   return of(null);
                 }
               }),
@@ -398,7 +396,6 @@ export class ASNService {
             } else {
               //if product hasn't been sent to Autostore add it to list for sending
               this.productList.push(inventory.Product._id);
-              console.log('send product');
 
               asnLines.push({
                 lineNumber: lineNumber,
