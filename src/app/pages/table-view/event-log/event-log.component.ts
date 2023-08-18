@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of, tap } from 'rxjs';
 import { FetchEventLogGQL } from 'src/app/graphql/tableView.graphql-gen';
-import { PrinterService } from 'src/app/shared/data/printer';
 import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
 
 @Component({

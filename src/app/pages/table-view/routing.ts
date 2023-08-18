@@ -12,6 +12,20 @@ export const TableViewRoutes: Routes = [
         loadComponent: () =>
           import('./menu/menu.component').then((m) => m.MenuComponent),
       },
+      {
+        path: 'taskcounter',
+        loadComponent: () =>
+          import('./task-counter/task-counter.component').then(
+            (m) => m.TaskCounterComponent
+          ),
+      },
+      {
+        path: 'eventlog',
+        loadComponent: () =>
+          import('./event-log/event-log.component').then(
+            (m) => m.EventLogComponent
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'menu' },
     ],
   },
