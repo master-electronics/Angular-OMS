@@ -132,7 +132,6 @@ export class LabelService {
       )
       .pipe(
         tap((res) => {
-          console.log(JSON.stringify(this.assignLabelInfo));
           if (
             !this.assignLabelInfo[this.ITNList?.length || 0].country.countryID
           ) {
@@ -181,7 +180,7 @@ export class LabelService {
             }),
           });
         }),
-        delay(5000)
+        delay(500)
       );
   }
 

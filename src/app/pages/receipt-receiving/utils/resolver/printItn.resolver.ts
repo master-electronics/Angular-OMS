@@ -1,16 +1,20 @@
-import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { inject } from '@angular/core';
+import {
+  ActivatedRouteSnapshot,
+  ResolveFn,
+  RouterStateSnapshot,
+} from '@angular/router';
+import { Observable, catchError, of } from 'rxjs';
 import { LabelService } from '../../data/label';
 
-@Injectable()
-export class PrintItnResolver implements Resolve<any> {
-  constructor(private _label: LabelService) {}
-  resolve() {
-    return this._label.printReceivingLabel$().pipe(
-      catchError((error) => {
-        return of({ error });
-      })
-    );
-  }
-}
+export const PrintItnResolver: ResolveFn<any> = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+  label: LabelService = inject(LabelService)
+): Observable<any> => {
+  return label.printReceivingLabel$().pipe(
+    catchError((error) => {
+      return of({ error });
+    })
+  );
+};
