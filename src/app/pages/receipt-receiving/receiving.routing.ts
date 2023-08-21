@@ -17,7 +17,6 @@ export const ReceivingRoutes: Routes = [
     providers: [
       PartResolver,
       VerifyResolver,
-      PrintItnResolver,
       TabService,
       ReceiptInfoService,
       updateReceiptInfoService,

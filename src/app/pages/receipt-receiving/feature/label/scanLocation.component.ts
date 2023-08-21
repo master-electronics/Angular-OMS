@@ -23,6 +23,7 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { LabelService } from '../../data/label';
 import { LogService } from '../../data/eventLog';
 import { LocationStrategy } from '@angular/common';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -65,6 +66,7 @@ export class ScanLocationComponent implements OnInit {
     private _actRoute: ActivatedRoute,
     private _ui: TabService,
     public _label: LabelService,
+    public _recipt: ReceiptInfoService,
     private location: LocationStrategy
   ) {}
 
@@ -104,13 +106,21 @@ export class ScanLocationComponent implements OnInit {
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
         filter(() => {
-          if (
-            this._label.ITNList?.length !== this._label.quantityList?.length
-          ) {
+          if (this._label.ITNList?.length < this._label.quantityList?.length) {
             this._router.navigate(['receiptreceiving/label/printitn']);
             return false;
           }
           if (this._label.ITNList?.length > this._label.quantityList?.length) {
+            this._router.navigate(['../assign'], {
+              relativeTo: this._actRoute,
+            });
+            return false;
+          }
+          let total = 0;
+          this._label.ITNList.map((itn) => {
+            total += itn.quantity;
+          });
+          if (total !== this._recipt.selectedReceiptLine[0].ExpectedQuantity) {
             this._router.navigate(['../assign'], {
               relativeTo: this._actRoute,
             });
