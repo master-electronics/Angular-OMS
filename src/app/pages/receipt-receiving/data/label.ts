@@ -5,6 +5,7 @@ import {
   delay,
   map,
   Observable,
+  of,
   switchMap,
   tap,
 } from 'rxjs';
@@ -125,6 +126,9 @@ export class LabelService {
    * printReceivingLabel And insert itn to list
    */
   public printReceivingLabel$() {
+    if (this.ITNList?.length >= this.quantityList?.length) {
+      return null;
+    }
     return this._itn
       .mutate(
         { LocationCode: environment.DistributionCenter },
