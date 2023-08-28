@@ -14,7 +14,6 @@ import {
 import { Router } from '@angular/router';
 
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
-import { CommonService } from '../../../shared/services/common.service';
 import { Title } from '@angular/platform-browser';
 import {
   AggregationInService,
@@ -29,6 +28,7 @@ import { NgIf } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'verify-tote',
@@ -64,10 +64,10 @@ export class VerifyToteComponent implements OnInit, AfterViewInit {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _titleService: Title,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _agInService: AggregationInService
   ) {
-    this._commonService.changeNavbar('Verify Tote');
+    this._title.update('Verify Tote');
     this._titleService.setTitle('agIn/verify-tote');
   }
 

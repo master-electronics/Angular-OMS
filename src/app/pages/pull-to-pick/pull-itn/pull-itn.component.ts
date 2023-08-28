@@ -17,7 +17,7 @@ import {
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
 import {
@@ -84,7 +84,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _titleService: Title,
     private _pickService: PickService,
@@ -94,7 +94,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     private _updateNotFound: UpdatePullingNotFoundGQL,
     private _userInfo: StorageUserInfoService
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle('Pick a Cart');
   }
 

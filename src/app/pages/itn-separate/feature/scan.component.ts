@@ -5,10 +5,10 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ItnSeparateService } from '../data/itn-separate.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   standalone: true,
@@ -32,7 +32,7 @@ import { ItnSeparateService } from '../data/itn-separate.service';
 export class ScanComponent implements OnInit {
   constructor(
     private title: Title,
-    private navbar: CommonService,
+    private navbar: NavbarTitleService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
@@ -47,7 +47,7 @@ export class ScanComponent implements OnInit {
 
   ngOnInit(): void {
     this.title.setTitle('ITN Split');
-    this.navbar.changeNavbar('ITN Split');
+    this.navbar.update('ITN Split');
     this.data$ = of(true);
     this._itn.resetitnInfo();
     this._eventLog.initEventLog(null);

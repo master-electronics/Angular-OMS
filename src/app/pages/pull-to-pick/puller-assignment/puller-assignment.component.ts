@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   FetchUserListGQL,

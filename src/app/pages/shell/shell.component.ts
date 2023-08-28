@@ -4,7 +4,7 @@ import { NavbarComponent } from './feature/navbar.component';
 @Component({
   template: `
     <div class="flex min-h-screen flex-col">
-      <!-- <app-navbar></app-navbar> -->
+      <top-navbar></top-navbar>
       <div class="flex-grow">
         <router-outlet></router-outlet>
       </div>

@@ -9,7 +9,6 @@ import {
   reduce,
 } from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import { CommonService } from 'src/app/shared/services/common.service';
 import {
   FetchVendorListGQL,
   FindVendorGQL,
@@ -39,8 +38,6 @@ import {
   ReceiptEntryLogGQL,
 } from 'src/app/graphql/receiving.graphql-gen';
 import { Insert_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { HttpClient } from '@angular/common/http';
-import { isThisHour } from 'date-fns';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -57,6 +54,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 interface PartCode {
   _id: number;
@@ -216,8 +214,8 @@ export class ReceiptEntry implements OnInit {
   private findVendorByPOSubscription = new Subscription();
 
   constructor(
-    private commonService: CommonService,
     private _userInfo: StorageUserInfoService,
+    private _title: NavbarTitleService,
     private titleService: Title,
     private _fetchVendorList: FetchVendorListGQL,
     private _findVendor: FindVendorGQL,
@@ -247,7 +245,7 @@ export class ReceiptEntry implements OnInit {
     private _receiptEntryLog: ReceiptEntryLogGQL,
     private _eventLog: Insert_EventLogsGQL
   ) {
-    this.commonService.changeNavbar('Receipt Entry');
+    this._title.update('Receipt Entry');
     this.titleService.setTitle('Receipt Entry');
   }
 

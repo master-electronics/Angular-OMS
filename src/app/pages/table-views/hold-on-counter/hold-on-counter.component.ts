@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map } from 'rxjs/operators';
 import {
   UntypedFormBuilder,
@@ -49,11 +49,11 @@ export class HoldOnCounterComponent implements OnInit {
   startDate: string;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private fetchHoldOnCounter: FetchHoldOnCounterGQL
   ) {
-    this.commonService.changeNavbar('Hold On Counting');
+    this._title.update('Hold On Counting');
   }
 
   filterForm = this.fb.group({

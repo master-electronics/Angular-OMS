@@ -18,7 +18,6 @@ import {
 import { Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
@@ -51,6 +50,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NgIf, NgFor, NgClass, AsyncPipe, SlicePipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'location',
@@ -116,7 +116,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: UntypedFormBuilder,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _titleService: Title,
     private _router: Router,
     private _fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
@@ -139,7 +139,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     this._agInService.changeEndContainer(null);
-    this._commonService.changeNavbar(`AGIN: ${this.outsetContainer.Barcode}`);
+    this._title.update(`AGIN: ${this.outsetContainer.Barcode}`);
     // fetch location and orderlinedetail
     this.isLoading = true;
     const FileKeyListforAgOut = [];

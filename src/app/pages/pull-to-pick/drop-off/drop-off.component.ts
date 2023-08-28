@@ -21,7 +21,6 @@ import {
   UpdateAfterDropOffGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
@@ -35,6 +34,7 @@ import { FocusInvlidInputDirective } from '../../../shared/directives/focusInval
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'drop-off',
@@ -84,7 +84,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _titleService: Title,
     private _fb: FormBuilder,
     private _router: Router,
@@ -95,7 +95,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
     private _insertLog: Insert_UserEventLogsGQL,
     private _userInfo: StorageUserInfoService
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle(this.title);
   }
 

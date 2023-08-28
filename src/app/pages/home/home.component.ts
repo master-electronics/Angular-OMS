@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { environment } from '../../../environments/environment';
-import { CommonService } from '../../shared/services/common.service';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { MenuItemComponent } from '../../shared/ui/menu-item.component';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -33,12 +33,12 @@ export class HomeComponent {
   title = 'Master Electronics';
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     public menuService: MenuService,
     private titleService: Title
   ) {
-    this.isMobile = this.commonService.isMobile();
-    this.commonService.changeNavbar(this.title);
+    this.isMobile = true;
+    this._title.update(this.title);
     this.titleService.setTitle('Home');
     this.menuService.getMenu('home');
   }

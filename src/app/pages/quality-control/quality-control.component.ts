@@ -1,9 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { FetchPrinterStationGQL } from 'src/app/graphql/qualityControl.graphql-gen';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { QualityControlService } from './quality-control.server';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
+import { PrinterService } from 'src/app/shared/data/printer';
 
 @Component({
   selector: 'quality-control',
@@ -13,30 +12,18 @@ export class QualityControlComponent implements OnInit {
   @ViewChild('stepPage') stepPage!: ElementRef;
   isModalVisible = false;
   modalMessage = '';
-  printerStation$ = new Observable();
+  printerStation$;
   title = 'Quality Control';
 
   constructor(
-    private commonService: CommonService,
-    private qcService: QualityControlService,
-    private fetchPrinterStation: FetchPrinterStationGQL
+    private _title: NavbarTitleService,
+    private _printer: PrinterService
   ) {
-    commonService.changeNavbar('Quality Control');
+    this._title.update('Quality Control');
   }
 
   ngOnInit(): void {
-    const station = this.commonService.printerStation;
-    if (station) return;
-    this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
-      map((res) => {
-        this.commonService.changePrinterStation(res.data.fetchPrinterStation);
-      }),
-      catchError((error) => {
-        this.modalMessage = error.error;
-        this.isModalVisible = true;
-        return of();
-      })
-    );
+    this.printerStation$ = this._printer.printerStation$;
   }
 
   closeModal(): void {

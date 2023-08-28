@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { FetchOrderTasktimeGQL } from '../../../graphql/tableViews.graphql-gen';
 import {
   UntypedFormBuilder,
@@ -41,11 +41,11 @@ export class OrderTasktimeComponent implements OnInit {
   fetchTable$: Observable<any>;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private fetchTable: FetchOrderTasktimeGQL
   ) {
-    this.commonService.changeNavbar('Task Counting');
+    this._title.update('Task Counting');
   }
 
   filterForm = this.fb.group({

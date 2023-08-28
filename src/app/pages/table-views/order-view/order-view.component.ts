@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import {
   FetchOrderViewGQL,
   OrderViewFilter,
@@ -62,11 +62,11 @@ export class OrderViewComponent implements OnInit {
   OrderInfo$: Observable<any>;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private _route: ActivatedRoute,
     private fetchOrderView: FetchOrderViewGQL
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
   }
 
   ngOnInit(): void {

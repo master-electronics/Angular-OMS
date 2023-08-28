@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 
-import { CommonService } from '../../shared/services/common.service';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
@@ -38,14 +38,14 @@ export class SearchBarcodeComponent implements AfterViewInit {
   displayOrder = [];
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private titleService: Title,
     private searchContainer: FindContainerForSearchBarcodeGQL,
     private searchITN: FindItNforSearchBarcodeGQL,
     private searchOrder: FindOrderForSearchBarcodeGQL
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this.titleService.setTitle(this.title);
   }
 

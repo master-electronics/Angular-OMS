@@ -17,7 +17,7 @@ import {
 import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { ShelfBarcodeBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -72,7 +72,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _userInfo: StorageUserInfoService,
     private _titleService: Title,
@@ -80,7 +80,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
     private _verifyPosition: VerifyPositionBarcodeForPullingGQL,
     private _insertLog: Insert_UserEventLogsGQL
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle(this.title);
   }
 

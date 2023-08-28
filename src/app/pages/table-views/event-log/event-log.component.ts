@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import {
   FetchUserEventLogGQL,
   FetchUserEventsGQL,
@@ -57,13 +57,13 @@ export class EventLogComponent implements OnInit {
   public endDate;
   constructor(
     private fb: UntypedFormBuilder,
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private route: ActivatedRoute,
     private fetchUser: FetchUserInfoGQL,
     private fetchEventLog: FetchUserEventLogGQL,
     private _fetchUserEvents: FetchUserEventsGQL
   ) {
-    this.commonService.changeNavbar('User Event Logs');
+    this._title.update('User Event Logs');
   }
 
   filterForm = this.fb.group({

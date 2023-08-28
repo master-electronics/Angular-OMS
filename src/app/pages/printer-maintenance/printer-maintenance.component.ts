@@ -7,7 +7,6 @@ import {
   DeletePrinterGQL,
 } from 'src/app/graphql/printerMaintenance.graphql-gen';
 import { Subscription } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { Title } from '@angular/platform-browser';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -24,6 +23,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 interface printerData {
   ID: number;
@@ -121,14 +121,14 @@ export class PrinterMaintenance implements OnInit {
   private deletePrinterSubscription = new Subscription();
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private titleService: Title,
     private _fetchPrinterList: FetchPrinterListGQL,
     private _insertPrinter: InsertPrinterGQL,
     private _updatePrinter: UpdatePrinterGQL,
     private _deletePrinter: DeletePrinterGQL
   ) {
-    this.commonService.changeNavbar('Printer Maintenance');
+    this._title.update('Printer Maintenance');
     this.titleService.setTitle('Printer Maintenance');
   }
 

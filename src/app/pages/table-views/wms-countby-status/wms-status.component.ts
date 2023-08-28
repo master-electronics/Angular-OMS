@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { FetchWmsStatusViewGQL } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
@@ -17,10 +17,10 @@ export class WmsStatusComponent implements OnInit {
   fetchTable$;
   isLoading = true;
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fetchtable: FetchWmsStatusViewGQL
   ) {
-    this.commonService.changeNavbar('WMS-Status');
+    this._title.update('WMS-Status');
   }
 
   ngOnInit(): void {

@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { CommonService } from '../../shared/services/common.service';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 import {
   UntypedFormBuilder,
   Validators,
@@ -169,7 +169,7 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _fetchDrilldown: FetchItnLifecycleDrillDownGQL,
@@ -179,7 +179,7 @@ export class ITNLifecycleComponent implements OnInit {
     private titleService: Title,
     private _userInfo: StorageUserInfoService
   ) {
-    this.commonService.changeNavbar('ITN Lifecycle');
+    this._title.update('ITN Lifecycle');
     this.titleService.setTitle('ITN Lifecycle');
   }
 

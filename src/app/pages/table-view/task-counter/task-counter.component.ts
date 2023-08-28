@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { FetchTaskCounterGQL } from '../../../graphql/tableView.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
 import {
@@ -35,11 +35,11 @@ export class TaskCounterComponent implements OnInit {
   startDate: string;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private fetchTaskCounter: FetchTaskCounterGQL
   ) {
-    this.commonService.changeNavbar('Task Counting');
+    this._title.update('Task Counting');
   }
 
   filterForm = this.fb.group({

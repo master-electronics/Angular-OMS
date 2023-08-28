@@ -14,13 +14,14 @@ import {
 } from '@angular/forms';
 import { of, Subscription, throwError } from 'rxjs';
 
-import { CommonService } from '../../shared/services/common.service';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 import { ITNBarcodeRegex } from '../../shared/utils/dataRegex';
 import {
   FetchPrinterStationGQL,
   PrintItnLabelGQL,
 } from '../../graphql/qualityControl.graphql-gen';
 import { catchError, map, tap } from 'rxjs/operators';
+import { PrinterService } from 'src/app/shared/data/printer';
 
 @Component({
   selector: 'print-itn',
@@ -45,29 +46,20 @@ export class PrintITNComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private titleService: Title,
+    private _print: PrinterService,
     private printItnLabel: PrintItnLabelGQL,
     private fetchPrinterStation: FetchPrinterStationGQL
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this.titleService.setTitle('printITN');
   }
 
   ngOnInit(): void {
-    this.currentStation = this.commonService.printerStation;
+    this.currentStation = this._print.printerStation;
     if (this.currentStation) return;
-    this.printerStation$ = this.fetchPrinterStation.fetch().pipe(
-      map((res) => {
-        this.currentStation = res.data.fetchPrinterStation;
-        this.commonService.changePrinterStation(this.currentStation);
-      }),
-      catchError((error) => {
-        this.modalMessage = error.error;
-        this.isModalVisible = true;
-        return of();
-      })
-    );
+    this.printerStation$ = this._print.printerStation$;
   }
   @ViewChild('ITN') ITNInput!: ElementRef;
   ngAfterViewInit(): void {

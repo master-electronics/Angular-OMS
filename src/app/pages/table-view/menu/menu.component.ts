@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 import { DefaultCardComponent } from 'src/app/shared/ui/card/default-card.component';
 
 @Component({
@@ -61,10 +61,13 @@ export class MenuComponent implements OnInit {
     },
   ];
 
-  constructor(private navBar: CommonService, private titleService: Title) {}
+  constructor(
+    private _title: NavbarTitleService,
+    private titleService: Title
+  ) {}
 
   ngOnInit(): void {
     this.titleService.setTitle('tableviews');
-    this.navBar.changeNavbar('Table View');
+    this._title.update('Table View');
   }
 }

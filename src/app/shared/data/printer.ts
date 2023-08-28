@@ -14,6 +14,8 @@ import {
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { FindBindedPrinterGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { PrintQrCodeLabelGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
+import { FetchPrinterStationGQL } from 'src/app/graphql/qualityControl.graphql-gen';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface PrinterInfo {
   Name: string;
@@ -30,6 +32,7 @@ export class PrinterService {
     private _find: FindBindedPrinterGQL,
     private _itn: PrintReceivingItnLabelGQL,
     private _text: PrintTextLabelGQL,
+    private _fetchPrinterStation: FetchPrinterStationGQL,
     private _qrCode: PrintQrCodeLabelGQL
   ) {
     //
@@ -146,5 +149,23 @@ export class PrinterService {
         );
       })
     );
+  }
+
+  //printerStation for old QC
+  private _printerStation = new BehaviorSubject<string>(null);
+  public get printerStation$() {
+    if (this._printerStation.value) {
+      return this._printerStation.asObservable();
+    }
+    return this._fetchPrinterStation.fetch().pipe(
+      takeUntilDestroyed(),
+      map((res) => res.data.fetchPrinterStation),
+      tap((res) => {
+        this._printerStation.next(res);
+      })
+    );
+  }
+  public get printerStation(): string {
+    return this._printerStation.value;
   }
 }

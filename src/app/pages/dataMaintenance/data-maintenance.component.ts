@@ -3,7 +3,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { catchError, map } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 import { Datacolumn } from './data-maintenance.server';
 
@@ -30,6 +29,7 @@ import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'data-maintenance',
@@ -108,7 +108,7 @@ export class DataMaintenance implements OnInit {
   private fetchLastPKSubscription = new Subscription();
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private titleService: Title,
     private _fetchTableList: FetchDataTableListGQL,
     private _fetchColumnList: FetchDataColumnListGQL,
@@ -117,7 +117,7 @@ export class DataMaintenance implements OnInit {
     private _updateTableData: UpdateTableDataGQL,
     private _deleteTableData: DeleteTableDataGQL
   ) {
-    this.commonService.changeNavbar('Data Maintenance');
+    this._title.update('Data Maintenance');
     this.titleService.setTitle('Data Maintenance');
   }
 

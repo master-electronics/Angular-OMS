@@ -4,10 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../data/stocking.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   standalone: true,
@@ -31,7 +31,7 @@ import { StockingService } from '../../data/stocking.service';
 export class ScanTargetComponent implements OnInit {
   constructor(
     private title: Title,
-    private navbar: CommonService,
+    private _title: NavbarTitleService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
@@ -45,7 +45,7 @@ export class ScanTargetComponent implements OnInit {
 
   ngOnInit(): void {
     this.title.setTitle('Stocking');
-    this.navbar.changeNavbar('Stocking');
+    this._title.update('Stocking');
     this.data$ = this._actRoute.data.pipe(map((res) => res.containerID));
     this._stock.reset();
   }

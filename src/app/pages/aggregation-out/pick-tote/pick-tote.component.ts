@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
@@ -81,7 +81,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription = new Subscription();
   constructor(
     private _fb: UntypedFormBuilder,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _route: ActivatedRoute,
     private agOutService: AggregationOutService,
@@ -98,7 +98,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     this.urlParams = { ...this._route.snapshot.queryParams };
-    this._commonService.changeNavbar(
+    this._title.update(
       `Pick: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`
     );
     this.containerList = this.agOutService.containerList;
