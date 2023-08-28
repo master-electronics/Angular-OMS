@@ -14,8 +14,7 @@ export const LoginGuard: CanActivateFn = (
   const router = inject(Router);
   const userInfo = inject(StorageUserInfoService);
 
-  const userinfo = userInfo.loadUserInfo();
-  if (userinfo) {
+  if (userInfo.userName) {
     return true;
   }
   // not logged in so redirect to login page

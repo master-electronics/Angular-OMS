@@ -7,7 +7,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
   imports: [NzDropDownModule],
   template: `
     <button
-      class="text-lg font-bold"
+      class="text-sm font-bold md:text-lg"
       nz-dropdown
       nzTrigger="click"
       [nzDropdownMenu]="userMenu"

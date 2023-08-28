@@ -21,7 +21,7 @@ import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service
               <i nz-icon nzType="home" nzTheme="outline" class="text-2xl"></i>
             </a>
             <div class="ml-2">
-              <span class="text-gray-800 md:text-lg">
+              <span class="text-sm text-gray-800 md:text-lg">
                 {{ this.title.title() }}
               </span>
             </div>
@@ -34,7 +34,7 @@ import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service
             ></nav-drop-menu>
             <div class="md:hidden">
               <button
-                class="inline-flex items-center justify-center rounded-md focus:outline-none"
+                class="rounded-md focus:outline-none"
                 (click)="toggleFullscreen()"
               >
                 <i
