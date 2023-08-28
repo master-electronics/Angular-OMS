@@ -25,6 +25,7 @@ import { environment } from 'src/environments/environment';
 import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 export interface ITNinfo {
   ITN: string;
@@ -55,7 +56,8 @@ export class LabelService {
     private _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,
     private _log: LogService,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   /**
@@ -232,7 +234,6 @@ export class LabelService {
    */
   public updateAfterReceving(): Observable<any> {
     const line = this._receipt.selectedReceiptLine[0];
-    const userinfo = sessionStorage.getItem('userToken');
     const Inventory = {
       DistributionCenter: environment.DistributionCenter,
       ProductID: line.ProductID,
@@ -241,7 +242,7 @@ export class LabelService {
     const info = {
       PartNumber: line.Product?.PartNumber || 'null',
       ProductCode: line.Product?.ProductCode.ProductCodeNumber || 'null',
-      User: JSON.parse(userinfo)?.username,
+      User: this._userInfo.userName,
       CreatingProgram: 'OMS-Receiving',
       PurchaseOrderNumber:
         line.RECEIPTLDs[0]?.PurchaseOrderL?.PurchaseOrderH

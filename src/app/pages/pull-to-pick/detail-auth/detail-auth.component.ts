@@ -20,6 +20,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { UserInfoStorage } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'detail-auth',
@@ -74,12 +75,12 @@ export class DetailAuthComponent implements OnDestroy, OnInit {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.login$ = this._authenticationService
-        .checkUserAuth(
+        .userAuthentication(
           this.f.username.value.trim().toLowerCase(),
           this.f.password.value
         )
         .pipe(
-          tap((res) => {
+          tap((res: UserInfoStorage) => {
             if (!res.userGroups.some((group) => group === 'whs_supr')) {
               throw 'No WHS Supervisor';
             }

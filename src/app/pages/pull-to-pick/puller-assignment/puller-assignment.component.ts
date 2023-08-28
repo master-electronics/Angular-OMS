@@ -43,6 +43,7 @@ import { FormsModule } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'puller-assignment',
@@ -140,7 +141,8 @@ export class PullerAssignmentComponent implements OnInit {
     private _insertUserZone: InsertUserZoneGQL,
     private _deleteUserZone: DeleteUserZoneGQL,
     private _fetchProductTypes: FetchProductTypesGQL,
-    private _fetchDCList: FetchDistributionCenterListGQL
+    private _fetchDCList: FetchDistributionCenterListGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   ngOnInit(): void {
@@ -1157,7 +1159,7 @@ export class PullerAssignmentComponent implements OnInit {
       this._findUsers
         .fetch(
           {
-            name: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            name: this._userInfo.userName,
           },
           {
             fetchPolicy: 'network-only',

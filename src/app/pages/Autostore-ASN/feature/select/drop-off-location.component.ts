@@ -11,6 +11,7 @@ import { VerifyAsnLocationDropOffGQL } from 'src/app/graphql/autostoreASN.graphq
 import { PrinterService } from 'src/app/shared/data/printer';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -52,6 +53,7 @@ export class ASNDropOffLocation implements OnInit {
     private _asn: ASNService,
     private _eventLog: EventLogService,
     private _findContainer: VerifyAsnLocationDropOffGQL,
+    private _userInfo: StorageUserInfoService,
     private _printer: PrinterService
   ) {}
 
@@ -118,8 +120,7 @@ export class ASNDropOffLocation implements OnInit {
                   [
                     {
                       UserEventID: sqlData.Event_Autostore_ASN_Submitted,
-                      UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                        .Name,
+                      UserName: this._userInfo.userName,
                       DistributionCenter: environment.DistributionCenter,
                       Message:
                         'Location: ' +
@@ -130,8 +131,7 @@ export class ASNDropOffLocation implements OnInit {
                   ],
                   [
                     {
-                      UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                        .Name,
+                      UserName: this._userInfo.userName,
                       EventTypeID: sqlData.Event_Autostore_ASN_Submitted,
                       Log: JSON.stringify({
                         DistributionCenter: environment.DistributionCenter,

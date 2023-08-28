@@ -37,6 +37,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'pick-tote',
@@ -89,7 +90,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _insertUserEvnetLog: Create_EventLogsGQL,
     private _updateAfterQC: UpdateAfterAgOutGQL,
-    private _eventLog: EventLogService
+    private _userInfo: StorageUserInfoService
   ) {
     this._titleService.setTitle('agout/pick');
   }
@@ -121,7 +122,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               ITNSet.add(node.Inventory.InventoryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
                 InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
@@ -145,7 +146,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             const eventLogs = res.data.findOrderLineDetails.map((node) => {
               return {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_AgOut_Start,
                 Log: JSON.stringify({
                   OrderNumber: this.urlParams.OrderNumber,
@@ -263,7 +264,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const oldLogs = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
@@ -285,7 +286,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const eventLogs = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         EventTypeID: sqlData.Event_AgOut_Done,
         Log: JSON.stringify({
           OrderNumber: this.urlParams.OrderNumber,
@@ -309,7 +310,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const ITNList = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        User: this._userInfo.userName,
         ITN: node.Inventory.InventoryTrackingNumber,
         BinLocation: 'PACKING',
       };

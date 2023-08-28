@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -49,6 +50,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NgIf, NgFor, NgClass, AsyncPipe, SlicePipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'location',
@@ -111,6 +113,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private subscription: Subscription = new Subscription();
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: UntypedFormBuilder,
     private _commonService: CommonService,
@@ -274,7 +277,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 {
                   ITN: singleITN,
                   BinLocation: 'PACKING',
-                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  User: this.userInfo.userName,
                 },
               ],
             }),
@@ -289,7 +292,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         switchMap((res) => {
           const oldLogs = [
             {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               InventoryTrackingNumber: singleITN,

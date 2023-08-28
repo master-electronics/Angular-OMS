@@ -33,6 +33,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'select-location',
@@ -73,6 +74,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
   constructor(
     private _commonService: CommonService,
     private _router: Router,
+    private _userInfo: StorageUserInfoService,
     private _titleService: Title,
     private _pickService: PickService,
     private _verifyPosition: VerifyPositionBarcodeForPullingGQL,
@@ -109,7 +111,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
       {
         Message: `${this.f.positionNumber.value}`,
         UserEventID: sqlData.Event_Pulling_SelectLocation,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
       },
     ];
     this.isLoading = true;

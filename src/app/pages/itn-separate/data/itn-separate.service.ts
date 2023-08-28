@@ -5,6 +5,7 @@ import { VerifyItnForSeparateGQL } from 'src/app/graphql/itnSeparate.graphql-gen
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 
@@ -22,7 +23,8 @@ export class ItnSeparateService {
     private readonly _separate: ItnSplitAndPrintLabelsGQL,
     private readonly _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService
   ) {
     //
   }
@@ -91,13 +93,13 @@ export class ItnSeparateService {
       }),
       switchMap((res) => {
         const oldLogs = {
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Stocking_SortingStart,
           InventoryTrackingNumber: ITN,
           Quantity: res.data.findInventory.QuantityOnHand,
         };
         this._eventLog.initEventLog({
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           EventTypeID: sqlData.Event_Stocking_SortingStart,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
@@ -130,7 +132,7 @@ export class ItnSeparateService {
           ORIENTATION: res.Orientation,
           PARTNUMBER: this.itnInfo.PartNumber,
           PRODUCTCODE: this.itnInfo.ProductCode,
-          User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          User: this._userInfo.userName,
         });
       }),
       map((res) => {

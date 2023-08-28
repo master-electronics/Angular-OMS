@@ -3,12 +3,16 @@ import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
 import { FindorCreateUserContainerGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { sqlData } from '../utils/sqlData';
+import { StorageUserInfoService } from '../services/storage-user-info.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserContainerService {
-  constructor(private _userContainer: FindorCreateUserContainerGQL) {}
+  constructor(
+    private _userContainer: FindorCreateUserContainerGQL,
+    private _userInfo: StorageUserInfoService
+  ) {}
 
   /**
    * User ContainerID
@@ -26,9 +30,7 @@ export class UserContainerService {
         return this._userContainer
           .mutate({
             DistributionCenter: environment.DistributionCenter,
-            Barcode: String(
-              JSON.parse(sessionStorage.getItem('userInfo')).Name
-            ),
+            Barcode: this._userInfo.userName,
             ContainerTypeID: sqlData.userType_ID,
           })
           .pipe(

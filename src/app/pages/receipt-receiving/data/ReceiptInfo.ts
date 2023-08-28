@@ -21,6 +21,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { LogService } from './eventLog';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class ReceiptInfoService {
@@ -32,7 +33,7 @@ export class ReceiptInfoService {
     private _log: LogService,
     private _eventLog: EventLogService,
     private _insertLog: Create_EventLogsGQL,
-    private _generateReceipt: GenerateReceiptForReceivingGQL,
+    private _userInfo: StorageUserInfoService,
     private _printer: PrinterService
   ) {}
 
@@ -108,11 +109,11 @@ export class ReceiptInfoService {
         this._headerID.next(id);
         this._log.initReceivingLog({
           ReceiptHeader: id,
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Receiving_Start,
         });
         this._eventLog.initEventLog({
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           EventTypeID: sqlData.Event_Receiving_Start,
           Log: JSON.stringify({
             ReceiptHeader: id,
@@ -169,7 +170,7 @@ export class ReceiptInfoService {
       ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
     });
     this._eventLog.updateEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserName: this._userInfo.userName,
       EventTypeID: sqlData.Event_Receiving_Start,
       Log: JSON.stringify({
         ReceiptHeader: this.headerID,

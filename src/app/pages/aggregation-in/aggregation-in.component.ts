@@ -4,6 +4,7 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
+  inject,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -24,6 +25,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'aggregation-in',
@@ -46,6 +48,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
     return this.containerForm.controls;
   }
 
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _commonService: CommonService,
     private _route: ActivatedRoute,
@@ -67,7 +70,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this._eventLog.initEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserName: this.userInfo.userName,
       EventTypeID: sqlData.Event_AgIn_Start,
       Log: '',
     });
@@ -195,7 +198,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
           });
           outsetContainer.ITNsInTote.forEach((item) => {
             oldLogs.push({
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               OrderNumber: outsetContainer.OrderNumber,
               NOSINumber: outsetContainer.NOSINumber,
               OrderLineNumber: item.OrderLineNumber,

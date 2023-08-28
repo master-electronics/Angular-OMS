@@ -45,6 +45,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'verify-pack',
@@ -150,6 +151,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     private printITN: PrintItnLabelGQL,
     private holdQCOrder: HoldQcOrderGQL,
     private insertEventLog: Create_EventLogsGQL,
+    private _userInfo: StorageUserInfoService,
     private evenLog: EventLogService
   ) {
     this.titleService.setTitle('qc/verifypack');
@@ -384,7 +386,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): void {
     const oldLogs = [
       {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         OrderNumber: this.itemInfo.OrderNumber,
         NOSINumber: this.itemInfo.NOSI,
         UserEventID: sqlData.Event_QC_Hold,

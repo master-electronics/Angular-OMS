@@ -36,6 +36,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'scan-itn',
@@ -66,12 +67,10 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private titleService: Title,
     private qcService: QualityControlService,
-    private insertUserEventLog: Insert_UserEventLogsGQL,
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
-    private verifyITNQC: VerifyItNforQcGQL,
-    private updateQCBin: Update_Merp_QcBinGQL,
-    private _location: ChangeItnListForMerpGQL
+    private _userInfo: StorageUserInfoService,
+    private verifyITNQC: VerifyItNforQcGQL
   ) {
     this.titleService.setTitle('qc/scanitn');
   }
@@ -86,7 +85,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     this.alertMessage = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(['process', 'wait', 'wait', 'wait']);
     this.logService.initEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserName: this._userInfo.userName,
       EventTypeID: sqlData.Event_QC_Start,
       Log: '',
     });
@@ -202,7 +201,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
           switchMap(() => {
             const oldLogs = [
               {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 OrderNumber: this.itemInfo.OrderNumber,
                 NOSINumber: this.itemInfo.NOSI,
                 OrderLineNumber: this.itemInfo.OrderLineNumber,

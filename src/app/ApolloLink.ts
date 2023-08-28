@@ -16,15 +16,10 @@ export const errorLink = onError(
 );
 
 export const middleware = new ApolloLink((operation, forward) => {
-  const authToken = JSON.parse(
-    sessionStorage.getItem('userToken') || ''
-  ).idToken;
-  if (authToken) {
+  const token = JSON.parse(sessionStorage.getItem('userInfo') || '').idToken;
+  if (token) {
     operation.setContext({
-      headers: new HttpHeaders().set(
-        'Authorization',
-        `Bearer ${authToken || ''}`
-      ),
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token || ''}`),
     });
   }
   return forward(operation);

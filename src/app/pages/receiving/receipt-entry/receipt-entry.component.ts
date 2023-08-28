@@ -56,6 +56,7 @@ import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 interface PartCode {
   _id: number;
@@ -216,6 +217,7 @@ export class ReceiptEntry implements OnInit {
 
   constructor(
     private commonService: CommonService,
+    private _userInfo: StorageUserInfoService,
     private titleService: Title,
     private _fetchVendorList: FetchVendorListGQL,
     private _findVendor: FindVendorGQL,
@@ -336,7 +338,7 @@ export class ReceiptEntry implements OnInit {
             receiptLineDetailDeleteEventID:
               sqlData.Event_ReceiptEntry_LineDetailDelete,
             distributionCenter: environment.DistributionCenter,
-            username: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            username: this._userInfo.userName,
           })
           .subscribe({
             next: (res) => {
@@ -347,8 +349,7 @@ export class ReceiptEntry implements OnInit {
                 this.insertLog([
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_HeaderDelete,
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     DistributionCenter: environment.DistributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                   },
@@ -361,8 +362,7 @@ export class ReceiptEntry implements OnInit {
 
                 this.insertNewLog([
                   {
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     EventTypeID: sqlData.Event_ReceiptEntry_HeaderDelete,
                     Log: JSON.stringify(log),
                   },
@@ -432,8 +432,7 @@ export class ReceiptEntry implements OnInit {
           .fetch(
             {
               purchaseOrderNumber: value.toUpperCase(),
-              distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
-                .DistributionCenter,
+              distributionCenter: this._userInfo.distributionCenter,
               limit: 20,
             },
             { fetchPolicy: 'network-only' }
@@ -479,8 +478,7 @@ export class ReceiptEntry implements OnInit {
           {
             searchString: value ? value : '',
             vendorID: Number(this.vendorID),
-            distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
-              .DistributionCenter,
+            distributionCenter: this._userInfo.distributionCenter,
           },
           { fetchPolicy: 'network-only' }
         )
@@ -551,8 +549,7 @@ export class ReceiptEntry implements OnInit {
             {
               vendorID: Number(this.receiptVendorID),
               productID: Number(this.partNumberID),
-              distributionCenter: JSON.parse(sessionStorage.getItem('userInfo'))
-                .DistributionCenter,
+              distributionCenter: this._userInfo.distributionCenter,
             },
             { fetchPolicy: 'network-only' }
           )
@@ -869,8 +866,7 @@ export class ReceiptEntry implements OnInit {
                 this.insertLog([
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_HeaderUpdate,
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     DistributionCenter: environment.DistributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                     VendorName: this.vendorNumber.toString(),
@@ -885,8 +881,7 @@ export class ReceiptEntry implements OnInit {
 
                 this.insertNewLog([
                   {
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     EventTypeID: sqlData.Event_ReceiptEntry_HeaderUpdate,
                     Log: JSON.stringify(log),
                   },
@@ -941,7 +936,7 @@ export class ReceiptEntry implements OnInit {
               this.insertLog([
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_HeaderCreating,
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   DistributionCenter: environment.DistributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   VendorName: this.vendorNumber.toString(),
@@ -956,7 +951,7 @@ export class ReceiptEntry implements OnInit {
 
               this.insertNewLog([
                 {
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   EventTypeID: sqlData.Event_ReceiptEntry_HeaderCreating,
                   Log: JSON.stringify(log),
                 },
@@ -1153,8 +1148,7 @@ export class ReceiptEntry implements OnInit {
                 this.insertLog([
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     DistributionCenter: environment.DistributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                     ReceiptLine: Number(this.receiptLineID),
@@ -1169,8 +1163,7 @@ export class ReceiptEntry implements OnInit {
 
                 this.insertNewLog([
                   {
-                    UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-                      .Name,
+                    UserName: this._userInfo.userName,
                     EventTypeID: sqlData.Event_ReceiptEntry_LineDetailDelete,
                     Log: JSON.stringify(log),
                   },
@@ -1186,9 +1179,7 @@ export class ReceiptEntry implements OnInit {
                       this.insertLog([
                         {
                           UserEventID: sqlData.Event_ReceiptEntry_LineDelete,
-                          UserName: JSON.parse(
-                            sessionStorage.getItem('userInfo')
-                          ).Name,
+                          UserName: this._userInfo.userName,
                           DistributionCenter: environment.DistributionCenter,
                           ReceiptHeader: Number(this.receiptID),
                           ReceiptLine: Number(this.receiptLineID),
@@ -1203,9 +1194,7 @@ export class ReceiptEntry implements OnInit {
 
                       this.insertNewLog([
                         {
-                          UserName: JSON.parse(
-                            sessionStorage.getItem('userInfo')
-                          ).Name,
+                          UserName: this._userInfo.userName,
                           EventTypeID: sqlData.Event_ReceiptEntry_LineDelete,
                           Log: JSON.stringify(log),
                         },
@@ -1484,7 +1473,7 @@ export class ReceiptEntry implements OnInit {
               this.insertLog([
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_LineCreating,
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   DistributionCenter: environment.DistributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   ReceiptLine: Number(this.receiptLineID),
@@ -1499,7 +1488,7 @@ export class ReceiptEntry implements OnInit {
 
               this.insertNewLog([
                 {
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   EventTypeID: sqlData.Event_ReceiptEntry_LineCreating,
                   Log: JSON.stringify(log),
                 },
@@ -1557,7 +1546,7 @@ export class ReceiptEntry implements OnInit {
               this.insertLog([
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_Lineupdate,
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   DistributionCenter: environment.DistributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   ReceiptLine: Number(this.receiptLineID),
@@ -1572,7 +1561,7 @@ export class ReceiptEntry implements OnInit {
 
               this.insertNewLog([
                 {
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   EventTypeID: sqlData.Event_ReceiptEntry_Lineupdate,
                   Log: JSON.stringify(log),
                 },
@@ -1634,8 +1623,7 @@ export class ReceiptEntry implements OnInit {
             //     this.insertLog([
             //       {
             //         UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
-            //         UserName: JSON.parse(sessionStorage.getItem('userInfo'))
-            //           .Name,
+            //         UserName: this._userInfo.userName,
             //         DistributionCenter: environment.DistributionCenter,
             //         ReceiptHeader: Number(this.receiptID),
             //         ReceiptLine: Number(this.receiptLineID),
@@ -1673,9 +1661,7 @@ export class ReceiptEntry implements OnInit {
                                 this.receiptLineDetailOkText == 'Save'
                                   ? sqlData.Event_ReceiptEntry_LineDetailUpdate
                                   : sqlData.Event_ReceiptEntry_LineDetailCreating,
-                              UserName: JSON.parse(
-                                sessionStorage.getItem('userInfo')
-                              ).Name,
+                              UserName: this._userInfo.userName,
                               DistributionCenter:
                                 environment.DistributionCenter,
                               ReceiptHeader: Number(this.receiptID),
@@ -1702,9 +1688,7 @@ export class ReceiptEntry implements OnInit {
 
                           this.insertNewLog([
                             {
-                              UserName: JSON.parse(
-                                sessionStorage.getItem('userInfo')
-                              ).Name,
+                              UserName: this._userInfo.userName,
                               EventTypeID:
                                 this.receiptLineDetailOkText == 'Save'
                                   ? sqlData.Event_ReceiptEntry_LineDetailUpdate

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import {
   Validators,
   ReactiveFormsModule,
@@ -8,12 +13,16 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { CommonModule } from '@angular/common';
 import { UserPasswordComponent } from 'src/app/shared/ui/input/user-password-form.component';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import {
+  StorageUserInfoService,
+  UserInfoStorage,
+} from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -28,7 +37,7 @@ import { environment } from 'src/environments/environment';
   template: `
     <div
       class="    
-      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-700 bg-cover bg-center"
+      absolute left-0 top-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-700 bg-cover bg-center"
       style="background-image: url(../../../assets/img/bg_1.svg)"
     >
       <div
@@ -40,7 +49,7 @@ import { environment } from 'src/environments/environment';
             src="../../../assets/icon/master_logo.svg"
             alt="logo"
           />
-          <h4 class="mt-1 mb-12 pb-1 text-xl font-semibold">
+          <h4 class="mb-12 mt-1 pb-1 text-xl font-semibold">
             Master Electronics
           </h4>
         </div>
@@ -56,59 +65,52 @@ import { environment } from 'src/environments/environment';
     </div>
   `,
 })
-export class LoginComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private authenticationService: AuthenticationService,
-    private userInfo: Find_Or_Create_UserInfoGQL
-  ) {}
-  public login$;
-  public inputForm: FormGroup;
+export class LoginComponent {
+  // inject dependence service
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  authService = inject(AuthenticationService);
+  userInfo = inject(Find_Or_Create_UserInfoGQL);
+  userStorage = inject(StorageUserInfoService);
 
-  ngOnInit(): void {
-    this.login$ = of(true);
-    if (this.authenticationService.userInfo) {
-      this.router.navigate(['home']);
-    }
-    this.inputForm = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
-    });
-  }
+  login$: Observable<any> = of(true);
+  inputForm: FormGroup = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+  });
 
   onSubmit(): void {
-    this.login$ = this.authenticationService
-      .login(
+    let userInfo: Partial<UserInfoStorage>;
+    this.login$ = this.authService
+      .userAuthentication(
         this.inputForm.value.username.trim().toLowerCase(),
         this.inputForm.value.password
       )
       .pipe(
-        switchMap(() => {
-          const UserInfo = {
-            Name: this.authenticationService.userInfo.username,
-          };
-          return this.userInfo.mutate({ UserInfo: UserInfo });
+        switchMap((res) => {
+          userInfo = res;
+          this.userStorage.saveUserInfo(userInfo);
+          return this.userInfo.mutate({
+            UserInfo: { Name: userInfo.userName },
+          });
         }),
-        map((res) => {
-          let userInfo = JSON.stringify(res.data.findOrCreateUserInfo);
-          const userInfoObj = JSON.parse(userInfo);
-
-          if (!userInfoObj.DistributionCenter) {
-            userInfoObj.DistributionCenter = environment.DistributionCenter;
-          }
-
-          userInfo = JSON.stringify(userInfoObj);
-
-          sessionStorage.setItem('userInfo', userInfo);
-          const returnUrl =
-            this.route.snapshot.queryParams['returnUrl'] || '/home';
+        map((res) => res.data.findOrCreateUserInfo),
+        tap((res) => {
+          userInfo = {
+            ...userInfo,
+            DistributionCenter: res.DistributionCenter
+              ? res.DistributionCenter
+              : environment.DistributionCenter,
+            userId: res._id,
+          };
+          this.userStorage.saveUserInfo(userInfo);
+          const returnUrl = this.route.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(returnUrl);
         }),
         catchError((error) => {
           return of({
             error: {
-              message: error.message,
+              message: error.error,
               name: 'error',
             },
           });

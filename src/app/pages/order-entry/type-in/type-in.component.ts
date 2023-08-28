@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { APIService } from '../../../shared/services/API.service';
 
 @Component({
   selector: 'type-in',
@@ -24,7 +23,6 @@ export class TypeInComponent implements OnInit {
     { value: 'MN', view: 'MN-Minnesota' },
     { value: 'UL', view: 'UL-Miami Sales' },
   ];
-  constructor(private apiservice: APIService) {}
 
   ngOnInit(): void {
     //

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { APIService } from '../../../shared/services/API.service';
 
 @Component({
   selector: 'customer-info',
@@ -7,7 +6,6 @@ import { APIService } from '../../../shared/services/API.service';
 })
 export class CustomerInfoComponent implements OnInit {
   name = 'master';
-  constructor(private apiservice: APIService) {}
   ngOnInit(): void {
     //
   }

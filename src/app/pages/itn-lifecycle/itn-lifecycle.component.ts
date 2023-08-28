@@ -36,6 +36,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'itn-lifecycle',
@@ -176,7 +177,7 @@ export class ITNLifecycleComponent implements OnInit {
     private _findITNTemplate: FindItnTemplateGQL,
     private _findITNColumns: FindItnColumnsGQL,
     private titleService: Title,
-    private router: Router
+    private _userInfo: StorageUserInfoService
   ) {
     this.commonService.changeNavbar('ITN Lifecycle');
     this.titleService.setTitle('ITN Lifecycle');
@@ -325,8 +326,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.screenHeight = window.innerHeight - 300 + 'px';
     this.drilldownHeight = window.innerHeight - 300 - 100 + 'px';
     this.selectedTemplate = {};
-    const UserInfo = sessionStorage.getItem('userInfo');
-    const userId = JSON.parse(UserInfo)._id;
+    const userId = this._userInfo.idToken;
     this.userId = userId.toString();
     this.templateNames = [];
     this.templates = [];

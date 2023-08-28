@@ -10,6 +10,7 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { ItnInfoService } from './itn-info.service';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class SortingService {
@@ -19,6 +20,7 @@ export class SortingService {
     private _verifyContainer: VerifyContainerForSortingGQL,
     private _updateInventory: UpdateInventoryAfterSortingGQL,
     private _itn: ItnInfoService,
+    private _userInfo: StorageUserInfoService,
     private _eventLog: EventLogService
   ) {}
   //
@@ -30,7 +32,7 @@ export class SortingService {
     return this._itn.verifyITN$(ITN).pipe(
       switchMap((res) => {
         const oldLogs = {
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Stocking_SortingStart,
           InventoryTrackingNumber: ITN,
           PartNumber: this._itn.itnInfo.PartNumber,
@@ -39,7 +41,7 @@ export class SortingService {
           Message: ``,
         };
         this._eventLog.initEventLog({
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           EventTypeID: sqlData.Event_Stocking_SortingStart,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
@@ -74,14 +76,14 @@ export class SortingService {
         }),
         switchMap((res) => {
           return this._updateInventory.mutate({
-            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            User: this._userInfo.userName,
             ITN: this._itn.itnInfo.ITN,
             BinLocation: Barcode,
           });
         }),
         switchMap(() => {
           const oldLogs = {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_SortingDone,
             ProductCode: this._itn.itnInfo.ProductCode,
             PartNumber: this._itn.itnInfo.PartNumber,

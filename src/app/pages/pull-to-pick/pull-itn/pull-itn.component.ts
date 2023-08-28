@@ -36,6 +36,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'pull-itn',
@@ -90,7 +91,8 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     private _findNextITN: FindNextItnForPullingGQL,
     private _updateAfterPulling: UpdateAfterPullingGQL,
     private _updateUserCart: VerifyCartAndUpdateGQL,
-    private _updateNotFound: UpdatePullingNotFoundGQL
+    private _updateNotFound: UpdatePullingNotFoundGQL,
+    private _userInfo: StorageUserInfoService
   ) {
     this._commonService.changeNavbar(this.title);
     this._titleService.setTitle('Pick a Cart');
@@ -173,7 +175,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     // Update Inventory
     this.step = 'Submit';
     this.isLoading = true;
-    const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
+    const UserID = this._userInfo.idToken;
     this.submit$ = this._updateUserCart
       .mutate(
         {
@@ -200,7 +202,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
                 {
                   UserEventID: sqlData.Event_Pulling_PullITN,
                   InventoryTrackingNumber: this.ITN,
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
                 },
@@ -240,7 +242,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
             {
               UserEventID: sqlData.Event_Pulling_NotFound,
               InventoryTrackingNumber: this.ITN,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
             },

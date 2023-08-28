@@ -15,6 +15,7 @@ import {
 import { catchError, map, of, tap } from 'rxjs';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { UserPasswordComponent } from '../input/user-password-form.component';
+import { UserInfoStorage } from '../../services/storage-user-info.service';
 
 @Component({
   selector: 'auth-modal',
@@ -25,14 +26,14 @@ import { UserPasswordComponent } from '../input/user-password-form.component';
     <div
       id="auth-modal"
       class="    
-      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30"
+      absolute left-0 top-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30"
     >
       <div class="relative h-full w-4/5 md:h-auto md:w-2/3 lg:w-1/2">
         <div class="relative rounded-lg bg-white shadow ">
           <!-- close button -->
           <button
             type="button"
-            class="absolute top-3 right-2.5 ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white"
+            class="absolute right-2.5 top-3 ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white"
             (click)="onClose()"
           >
             <svg
@@ -88,12 +89,12 @@ export class AuthModalComponent {
 
   onSubmit(): void {
     this.login$ = this.auth
-      .checkUserAuth(
+      .userAuthentication(
         this.inputForm.value.username.trim().toLowerCase(),
         this.inputForm.value.password
       )
       .pipe(
-        tap((res) => {
+        tap((res: UserInfoStorage) => {
           if (
             !res.userGroups.some(
               (group) => group === 'whs_supr' || group === 'Domain Admins'
