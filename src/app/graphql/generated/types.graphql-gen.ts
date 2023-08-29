@@ -1218,6 +1218,7 @@ export type MutationUpdateForProductFromMerpArgs = {
 };
 
 export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
+  DueDate?: InputMaybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   LocationCode: Scalars['String'];
   PartNumber: Scalars['String'];
@@ -1226,6 +1227,7 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   PurchaseOrderNumber: Scalars['String'];
   QuantityOnOrder?: InputMaybe<Scalars['Float']>;
   QuantityReceived?: InputMaybe<Scalars['Float']>;
+  UnitOfMeasure?: InputMaybe<Scalars['String']>;
   VendorName: Scalars['String'];
   VendorNumber: Scalars['String'];
 };
@@ -1554,14 +1556,16 @@ export type PurchaseOrderH = {
 
 export type PurchaseOrderL = {
   __typename?: 'PurchaseOrderL';
+  DueDate?: Maybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   Product: Product;
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
+  UnitOfMeasure?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 

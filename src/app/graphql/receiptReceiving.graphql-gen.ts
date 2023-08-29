@@ -1223,6 +1223,7 @@ export type MutationUpdateForProductFromMerpArgs = {
 };
 
 export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
+  DueDate?: InputMaybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   LocationCode: Scalars['String'];
   PartNumber: Scalars['String'];
@@ -1231,6 +1232,7 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   PurchaseOrderNumber: Scalars['String'];
   QuantityOnOrder?: InputMaybe<Scalars['Float']>;
   QuantityReceived?: InputMaybe<Scalars['Float']>;
+  UnitOfMeasure?: InputMaybe<Scalars['String']>;
   VendorName: Scalars['String'];
   VendorNumber: Scalars['String'];
 };
@@ -1559,14 +1561,16 @@ export type PurchaseOrderH = {
 
 export type PurchaseOrderL = {
   __typename?: 'PurchaseOrderL';
+  DueDate?: Maybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   Product: Product;
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
+  UnitOfMeasure?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -3121,8 +3125,8 @@ export type FetchPurchaseOrderInfoQuery = {
     PURCHASEORDERLs?: Array<{
       __typename?: 'PurchaseOrderL';
       LineNumber: number;
-      QuantityReceived: number;
-      QuantityOnOrder: number;
+      QuantityReceived?: number | null;
+      QuantityOnOrder?: number | null;
       Product: {
         __typename?: 'Product';
         PartNumber: string;
@@ -3162,8 +3166,9 @@ export type FindReceiptHeaderForReceivingQuery = {
         PurchaseOrderL?: {
           __typename?: 'PurchaseOrderL';
           LineNumber: number;
-          QuantityOnOrder: number;
-          QuantityReceived: number;
+          QuantityOnOrder?: number | null;
+          QuantityReceived?: number | null;
+          UnitOfMeasure?: string | null;
           PurchaseOrderH: {
             __typename?: 'PurchaseOrderH';
             PurchaseOrderNumber: string;
@@ -3439,6 +3444,7 @@ export const FindReceiptHeaderForReceivingDocument = gql`
             LineNumber
             QuantityOnOrder
             QuantityReceived
+            UnitOfMeasure
             PurchaseOrderH {
               PurchaseOrderNumber
             }
