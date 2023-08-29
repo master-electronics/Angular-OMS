@@ -42,9 +42,10 @@ import { EditInfoComponent } from './edit-info.component';
   ],
 
   template: `
-    <div class="grid grid-cols-2 gap-5 text-xl">
+    <div class="grid grid-cols-3 gap-5 text-xl">
       <h1>Total: {{ total }}</h1>
       <h1>Remaining: {{ remaining }}</h1>
+      <h1>Open for POs: {{ openForPOs }}</h1>
     </div>
 
     <form [formGroup]="inputForm">
@@ -123,6 +124,7 @@ export class AssignLabelComponent implements OnInit {
   public validator$: Observable<boolean>;
   public total = 0;
   public remaining = 0;
+  public openForPOs = 0;
   public editingIndex = 0;
   public authWindow = false;
   public editWindow = false;
@@ -145,6 +147,9 @@ export class AssignLabelComponent implements OnInit {
   ngOnInit(): void {
     this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
     this.remaining = this.total;
+    const tmp =
+      this.receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
+    this.openForPOs = tmp.QuantityOnOrder - tmp.QuantityReceived;
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});
     this.addField();
