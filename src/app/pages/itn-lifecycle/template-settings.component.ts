@@ -264,7 +264,7 @@ export class TemplateSettings {
       //If Default Template is checked clear the DefaultTemplate flag
       //for all of this users existing templates
       if (this.defaultTemplate) {
-        const userId = Number(this._userInfo.idToken);
+        const userId = Number(this._userInfo.userId);
 
         this.clearDefaultTemplateSub.add(
           this._clearITNDefaultTemplate
@@ -353,7 +353,7 @@ export class TemplateSettings {
 
   //add new INTUSERTEMPLATE record with all columns selected and no limits set
   addTemplate(input: HTMLInputElement): void {
-    const userId = this._userInfo.idToken;
+    const userId = this._userInfo.userId;
 
     let sep = '';
     let cols = '';
