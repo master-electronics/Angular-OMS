@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
