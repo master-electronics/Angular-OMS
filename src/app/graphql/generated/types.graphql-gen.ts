@@ -1559,8 +1559,8 @@ export type PurchaseOrderL = {
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
   _id: Scalars['Int'];
 };

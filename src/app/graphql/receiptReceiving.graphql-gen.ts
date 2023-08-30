@@ -1564,8 +1564,8 @@ export type PurchaseOrderL = {
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
   _id: Scalars['Int'];
 };
@@ -3121,8 +3121,8 @@ export type FetchPurchaseOrderInfoQuery = {
     PURCHASEORDERLs?: Array<{
       __typename?: 'PurchaseOrderL';
       LineNumber: number;
-      QuantityReceived: number;
-      QuantityOnOrder: number;
+      QuantityReceived?: number | null;
+      QuantityOnOrder?: number | null;
       Product: {
         __typename?: 'Product';
         PartNumber: string;
@@ -3162,8 +3162,8 @@ export type FindReceiptHeaderForReceivingQuery = {
         PurchaseOrderL?: {
           __typename?: 'PurchaseOrderL';
           LineNumber: number;
-          QuantityOnOrder: number;
-          QuantityReceived: number;
+          QuantityOnOrder?: number | null;
+          QuantityReceived?: number | null;
           PurchaseOrderH: {
             __typename?: 'PurchaseOrderH';
             PurchaseOrderNumber: string;

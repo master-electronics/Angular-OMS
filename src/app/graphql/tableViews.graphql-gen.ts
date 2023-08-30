@@ -1564,8 +1564,8 @@ export type PurchaseOrderL = {
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
   _id: Scalars['Int'];
 };
@@ -3418,6 +3418,101 @@ export type FetchItnLifecycleDrillDownQuery = {
   } | null> | null;
 };
 
+export type FetchItnLifecycleDrillDownRowsQueryVariables = Types.Exact<{
+  orderNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  nosiNumber?: Types.InputMaybe<Types.Scalars['String']>;
+  orderLineNumber?: Types.InputMaybe<Types.Scalars['Int']>;
+  inventoryTrackingNumber?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type FetchItnLifecycleDrillDownRowsQuery = {
+  __typename?: 'Query';
+  fetchITNLifecycleDrillDownRows?: Array<{
+    __typename?: 'ITNLifeCycle_Report';
+    OrderNumber?: string | null;
+    NOSINumber?: string | null;
+    OrderNOSI?: string | null;
+    DistributionCenter?: string | null;
+    InventoryTrackingNumber?: string | null;
+    after_InventoryTrackingNumber?: string | null;
+    PartNumber?: string | null;
+    ProductCode?: string | null;
+    OrderLineNumber?: number | null;
+    CustomerNumber?: string | null;
+    CustomerTier?: string | null;
+    ProductTier?: string | null;
+    Zone?: number | null;
+    WMSPriority?: number | null;
+    Priority?: boolean | null;
+    TrackingNumber?: string | null;
+    releaseOrder?: string | null;
+    releaseLine?: string | null;
+    lineAllocation?: string | null;
+    lineAllocationUser?: string | null;
+    lineCancel?: string | null;
+    orderCancel?: string | null;
+    pickStart?: string | null;
+    pickStartUser?: string | null;
+    pickLocationScan?: string | null;
+    pickITNScan?: string | null;
+    pickQuantityEntered?: string | null;
+    pickITNPrint?: string | null;
+    pickDone?: string | null;
+    pickDoneUser?: string | null;
+    splitDone?: string | null;
+    splitDoneUser?: string | null;
+    pickITNNF?: string | null;
+    pickCartAssigned?: string | null;
+    pickUserExit?: string | null;
+    pickLabelCount?: string | null;
+    pickLabelQuantity?: string | null;
+    pickOverPick?: string | null;
+    pickToteAssignment?: string | null;
+    pickStatus15?: string | null;
+    pickShortPick?: string | null;
+    qcStart?: string | null;
+    qcStartUser?: string | null;
+    qcHold?: string | null;
+    qcDone?: string | null;
+    qcDoneUser?: string | null;
+    qcOrderComplete?: string | null;
+    qcStatus40?: string | null;
+    qcStatus41?: string | null;
+    agStart?: string | null;
+    agStartUser?: string | null;
+    agDone?: string | null;
+    agDoneUser?: string | null;
+    agRelocate?: string | null;
+    agOrderComplete?: string | null;
+    agInDone?: string | null;
+    agOutStart?: string | null;
+    pullingStart?: string | null;
+    pullingCartSelected?: string | null;
+    pullingDone?: string | null;
+    pullingLocationSelected?: string | null;
+    pullingNotFound?: string | null;
+    dropoffStart?: string | null;
+    dropoffLine?: string | null;
+    dropoffUser?: string | null;
+    dropoffDone?: string | null;
+    dropoffCartSelected?: string | null;
+    dropoffITNSkipped?: string | null;
+    dropoffLocationSelected?: string | null;
+    packStart?: string | null;
+    packLine?: string | null;
+    packLineUser?: string | null;
+    packNewPackage?: string | null;
+    packSupervisorCheck?: string | null;
+    packReject?: string | null;
+    packDone?: string | null;
+    ParentITN?: string | null;
+    Quantity?: number | null;
+    shippingManifest?: string | null;
+    shipmentMethod?: string | null;
+    shipmentMethodDescription?: string | null;
+  } | null> | null;
+};
+
 export type FetchItnUserColumnsQueryVariables = Types.Exact<{
   userId?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
@@ -4117,6 +4212,117 @@ export class FetchItnLifecycleDrillDownGQL extends Apollo.Query<
   FetchItnLifecycleDrillDownQueryVariables
 > {
   document = FetchItnLifecycleDrillDownDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchItnLifecycleDrillDownRowsDocument = gql`
+  query fetchITNLifecycleDrillDownRows(
+    $orderNumber: String
+    $nosiNumber: String
+    $orderLineNumber: Int
+    $inventoryTrackingNumber: String
+  ) {
+    fetchITNLifecycleDrillDownRows(
+      orderNumber: $orderNumber
+      nosiNumber: $nosiNumber
+      orderLineNumber: $orderLineNumber
+      inventoryTrackingNumber: $inventoryTrackingNumber
+    ) {
+      OrderNumber
+      NOSINumber
+      OrderNOSI
+      DistributionCenter
+      InventoryTrackingNumber
+      after_InventoryTrackingNumber
+      PartNumber
+      ProductCode
+      OrderLineNumber
+      CustomerNumber
+      CustomerTier
+      ProductTier
+      Zone
+      WMSPriority
+      Priority
+      TrackingNumber
+      releaseOrder
+      releaseLine
+      lineAllocation
+      lineAllocationUser
+      lineCancel
+      orderCancel
+      pickStart
+      pickStartUser
+      pickLocationScan
+      pickITNScan
+      pickQuantityEntered
+      pickITNPrint
+      pickDone
+      pickDoneUser
+      splitDone
+      splitDoneUser
+      pickITNNF
+      pickCartAssigned
+      pickUserExit
+      pickLabelCount
+      pickLabelQuantity
+      pickOverPick
+      pickToteAssignment
+      pickStatus15
+      pickShortPick
+      qcStart
+      qcStartUser
+      qcHold
+      qcDone
+      qcDoneUser
+      qcOrderComplete
+      qcStatus40
+      qcStatus41
+      agStart
+      agStartUser
+      agDone
+      agDoneUser
+      agRelocate
+      agOrderComplete
+      agInDone
+      agOutStart
+      pullingStart
+      pullingCartSelected
+      pullingDone
+      pullingLocationSelected
+      pullingNotFound
+      dropoffStart
+      dropoffLine
+      dropoffUser
+      dropoffDone
+      dropoffCartSelected
+      dropoffITNSkipped
+      dropoffLocationSelected
+      packStart
+      packLine
+      packLineUser
+      packNewPackage
+      packSupervisorCheck
+      packReject
+      packDone
+      ParentITN
+      Quantity
+      shippingManifest
+      shipmentMethod
+      shipmentMethodDescription
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchItnLifecycleDrillDownRowsGQL extends Apollo.Query<
+  FetchItnLifecycleDrillDownRowsQuery,
+  FetchItnLifecycleDrillDownRowsQueryVariables
+> {
+  document = FetchItnLifecycleDrillDownRowsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
