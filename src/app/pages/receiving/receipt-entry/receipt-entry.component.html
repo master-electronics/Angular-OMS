@@ -24,7 +24,7 @@
         #receiptSearch
         name="receiptSearchSel"
         nzAllowClear
-        (ngModelChange)="onReceiptIDChange($event)"    
+        (ngModelChange)="onReceiptIDChange($event)"
       >
         <nz-option
           *ngFor="let receipt of receiptList"
@@ -239,7 +239,8 @@
     <ng-container *nzModalContent>
       <div nz-row nzGutter="8" nzJustify="start">
         <div nz-col nzSpan="10">PO Number-Line</div>
-        <div nz-col nzSpan="10">Quantity</div>
+        <div nz-col nzSpan="5">DueDate</div>
+        <div nz-col nzSpan="5">Quantity</div>
       </div>
       <div *ngIf="lineDetails.length > 0">
         <div
@@ -251,7 +252,10 @@
           <span nz-col nzSpan="10" class="detailsInfoBox">
             {{ lineDetail.PurchaseOrderNumberLine }}
           </span>
-          <span nz-col nzSpan="10" class="detailsInfoBox">
+          <span nz-col nzSpan="5" class="detailsInfoBox">
+            {{ lineDetail.DueDate }}
+          </span>
+          <span nz-col nzSpan="5" class="detailsInfoBox">
             {{ lineDetail.Quantity }}
           </span>
           <button nz-button (click)="removeDetailLine(i)">
@@ -280,7 +284,10 @@
             </nz-option>
           </nz-select>
         </div>
-        <div nz-col nzSpan="10">
+        <div nz-col nzSpan="5">
+          {{ lineDetails[0].DueDate }}
+        </div>
+        <div nz-col nzSpan="5">
           <input
             nz-input
             placeholder="Quantity"

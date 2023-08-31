@@ -78,6 +78,7 @@ interface ReceiptLine {
     ExpectedQuantity: number;
     PurchaseOrderLID: number;
     PurchaseOrderNumberLine: string;
+    DueDate: string;
   }[];
   Expanded: boolean;
   Selected: boolean;
@@ -174,6 +175,7 @@ export class ReceiptEntry implements OnInit {
   lineDetailOkDisabled = true;
   lineDetails: Array<{
     Quantity: number;
+    DueDate: string;
     PurchaseOrderLID: number;
     PurchaseOrderNumberLine: string;
   }> = [];
@@ -740,13 +742,14 @@ export class ReceiptEntry implements OnInit {
         )
         .subscribe({
           next: (res) => {
-            res.data.fetchReceiptLines.map((receiptLine) => {
+            res.data.findReceiptLs.map((receiptLine) => {
               const lineDetails: {
                 _id: number;
                 ReceiptLID: number;
                 ExpectedQuantity: number;
                 PurchaseOrderLID: number;
                 PurchaseOrderNumberLine: string;
+                DueDate: string;
               }[] = [];
 
               receiptLine.RECEIPTLDs.map((lineDetail) => {
@@ -755,6 +758,9 @@ export class ReceiptEntry implements OnInit {
                   ReceiptLID: lineDetail.ReceiptLID,
                   ExpectedQuantity: lineDetail.ExpectedQuantity,
                   PurchaseOrderLID: lineDetail.PurchaseOrderLID,
+                  DueDate: new Date(
+                    Number(lineDetail.PurchaseOrderL.DueDate)
+                  ).toLocaleString(),
                   PurchaseOrderNumberLine: '',
                 });
               });
@@ -1435,6 +1441,7 @@ export class ReceiptEntry implements OnInit {
 
         this.lineDetails.push({
           Quantity: lineDetail.ExpectedQuantity,
+          DueDate: lineDetail.DueDate || '',
           PurchaseOrderLID: lineDetail.PurchaseOrderLID,
           PurchaseOrderNumberLine: lineDetail.PurchaseOrderNumberLine,
         });
@@ -1730,6 +1737,7 @@ export class ReceiptEntry implements OnInit {
   addDetailLine(): void {
     if (this.poLineID) {
       let purchaseOrderNumberLine = '';
+      let DueDate = '';
       this.findPOLineSubscripton.add(
         this._findPOLine
           .fetch(
@@ -1740,11 +1748,15 @@ export class ReceiptEntry implements OnInit {
             next: (res) => {
               purchaseOrderNumberLine =
                 res.data.findPOLine[0].PurchaseOrderNumberLine;
+              DueDate = new Date(
+                Number(res.data.findPOLine[0].DueDate)
+              ).toLocaleString();
             },
             complete: () => {
               this.lineDetails.push({
                 Quantity: Number(this.receiptLineDetailQuantity),
                 PurchaseOrderLID: Number(this.poLineID),
+                DueDate,
                 PurchaseOrderNumberLine: purchaseOrderNumberLine,
               });
 
@@ -1785,6 +1797,7 @@ export class ReceiptEntry implements OnInit {
       const lineDetails: Array<{
         Quantity: number;
         PurchaseOrderLID: number;
+        DueDate: string;
         PurchaseOrderNumberLine: string;
       }> = [];
 

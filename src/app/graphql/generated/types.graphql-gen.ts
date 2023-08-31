@@ -1482,6 +1482,7 @@ export type Partcode = {
 
 export type PoLine = {
   __typename?: 'POLine';
+  DueDate?: Maybe<Scalars['String']>;
   MaxQuantity?: Maybe<Scalars['Int']>;
   PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];

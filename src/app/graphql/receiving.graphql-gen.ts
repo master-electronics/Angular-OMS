@@ -1487,6 +1487,7 @@ export type Partcode = {
 
 export type PoLine = {
   __typename?: 'POLine';
+  DueDate?: Maybe<Scalars['String']>;
   MaxQuantity?: Maybe<Scalars['Int']>;
   PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
@@ -3192,7 +3193,7 @@ export type FetchReceiptLinesQueryVariables = Types.Exact<{
 
 export type FetchReceiptLinesQuery = {
   __typename?: 'Query';
-  fetchReceiptLines?: Array<{
+  findReceiptLs?: Array<{
     __typename?: 'ReceiptL';
     _id: number;
     ReceiptHID: number;
@@ -3208,6 +3209,11 @@ export type FetchReceiptLinesQuery = {
       ReceiptLID: number;
       ExpectedQuantity: number;
       PurchaseOrderLID?: number | null;
+      PurchaseOrderL?: {
+        __typename?: 'PurchaseOrderL';
+        DueDate?: string | null;
+        LineNumber: number;
+      } | null;
     } | null> | null;
   } | null> | null;
 };
@@ -3263,6 +3269,7 @@ export type FindPoLineQuery = {
     __typename?: 'POLine';
     _id: number;
     PurchaseOrderNumberLine?: string | null;
+    DueDate?: string | null;
     MaxQuantity?: number | null;
   } | null> | null;
 };
@@ -3658,7 +3665,7 @@ export class FindPartGQL extends Apollo.Query<
 }
 export const FetchReceiptLinesDocument = gql`
   query fetchReceiptLines($receiptHID: Int) {
-    fetchReceiptLines(ReceiptHID: $receiptHID) {
+    findReceiptLs(ReceiptL: { ReceiptHID: $receiptHID }) {
       _id
       ReceiptHID
       ProductID
@@ -3672,6 +3679,10 @@ export const FetchReceiptLinesDocument = gql`
         ReceiptLID
         ExpectedQuantity
         PurchaseOrderLID
+        PurchaseOrderL {
+          DueDate
+          LineNumber
+        }
       }
     }
   }
@@ -3759,6 +3770,7 @@ export const FindPoLineDocument = gql`
     findPOLine(PurchaseOrderLID: $purchaseOrderLID) {
       _id
       PurchaseOrderNumberLine
+      DueDate
       MaxQuantity
     }
   }
