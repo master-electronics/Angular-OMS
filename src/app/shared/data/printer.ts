@@ -158,7 +158,6 @@ export class PrinterService {
       return this._printerStation.asObservable();
     }
     return this._fetchPrinterStation.fetch().pipe(
-      takeUntilDestroyed(),
       map((res) => res.data.fetchPrinterStation),
       tap((res) => {
         this._printerStation.next(res);
