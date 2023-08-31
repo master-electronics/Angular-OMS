@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { of } from 'rxjs';
 import { SESSION_STORAGE } from '../utils/storage';
 
@@ -18,49 +18,38 @@ export interface UserInfoStorage extends UserToken {
 })
 export class StorageUserInfoService {
   sessionStorage = inject(SESSION_STORAGE);
+  private _userInfo = signal<UserInfoStorage>(this.loadUserInfo());
+  public userInfo = computed(() => this._userInfo());
 
   loadUserInfo() {
     const userInfoString = this.sessionStorage.getItem('userInfo');
-    return of(
-      userInfoString
-        ? (JSON.parse(userInfoString) as Partial<UserInfoStorage>)
-        : null
-    );
+    return userInfoString
+      ? (JSON.parse(userInfoString) as UserInfoStorage)
+      : null;
   }
 
-  saveUserInfo(userInfo: Partial<UserInfoStorage>) {
+  saveUserInfo(userInfo: UserInfoStorage) {
     this.sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+    this._userInfo.set(userInfo);
   }
 
   get userName() {
-    const userInfoString = this.sessionStorage.getItem('userInfo');
-    const userInfo = userInfoString
-      ? (JSON.parse(userInfoString) as Partial<UserInfoStorage>)
-      : null;
-    return userInfo?.userName ? userInfo.userName : null;
+    return this._userInfo() ? this.userInfo().userName : null;
   }
 
   get userGroups() {
-    const userInfoString = this.sessionStorage.getItem('userInfo');
-    const userInfo = userInfoString
-      ? (JSON.parse(userInfoString) as Partial<UserInfoStorage>)
-      : null;
-    return userInfo?.userGroups ? userInfo.userGroups : [];
+    return this._userInfo() ? this.userInfo().userGroups : null;
   }
 
   get idToken() {
-    const userInfoString = this.sessionStorage.getItem('userInfo');
-    const userInfo = userInfoString
-      ? (JSON.parse(userInfoString) as Partial<UserInfoStorage>)
-      : null;
-    return userInfo?.idToken ? Number(userInfo.idToken) : null;
+    return this._userInfo() ? this.userInfo().idToken : null;
+  }
+
+  get userId() {
+    return this._userInfo() ? this.userInfo().userId : null;
   }
 
   get distributionCenter() {
-    const userInfoString = this.sessionStorage.getItem('userInfo');
-    const userInfo = userInfoString
-      ? (JSON.parse(userInfoString) as Partial<UserInfoStorage>)
-      : null;
-    return userInfo?.DistributionCenter ? userInfo.DistributionCenter : null;
+    return this._userInfo() ? this.userInfo().DistributionCenter : null;
   }
 }

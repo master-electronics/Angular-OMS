@@ -175,7 +175,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     // Update Inventory
     this.step = 'Submit';
     this.isLoading = true;
-    const UserID = this._userInfo.idToken;
+    const UserID = this._userInfo.userId;
     this.submit$ = this._updateUserCart
       .mutate(
         {

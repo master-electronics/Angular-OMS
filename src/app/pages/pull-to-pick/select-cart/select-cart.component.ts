@@ -74,7 +74,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this.urlParams = { ...this._route.snapshot.queryParams };
-    this.userID = this._userInfo.idToken;
+    this.userID = this._userInfo.userId;
     this.init$ = this._fetchSettings
       .fetch(
         {

@@ -12,6 +12,6 @@ export class NavbarTitleService {
 
   // reducers
   update(title: string) {
-    this._title.update(() => title);
+    this._title.set(title);
   }
 }

@@ -329,7 +329,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.screenHeight = window.innerHeight - 300 + 'px';
     this.drilldownHeight = window.innerHeight - 300 - 100 + 'px';
     this.selectedTemplate = {};
-    const userId = this._userInfo.idToken;
+    const userId = this._userInfo.userId;
     this.userId = userId.toString();
     this.templateNames = [];
     this.templates = [];
