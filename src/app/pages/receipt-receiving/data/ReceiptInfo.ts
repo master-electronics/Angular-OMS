@@ -247,7 +247,7 @@ export class ReceiptInfoService {
         switchMap(() => {
           return this._printer.printText$(list);
         }),
-        map(() => {
+        switchMap(() => {
           return this._insertLog.mutate({ oldLogs, eventLogs });
         })
       );
