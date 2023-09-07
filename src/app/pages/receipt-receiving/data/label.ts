@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -26,10 +26,11 @@ import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { ItnCountService } from './itnCount';
 
 export interface ITNinfo {
-  ITN: string;
   quantity: number;
+  ITN: string;
   BinLocation: string;
   ContainerID: number;
   datecode: string;
@@ -39,10 +40,8 @@ export interface ITNinfo {
 
 export interface AssignLabelInfo {
   datecode: string;
-  country: {
-    countryID: number;
-    ISO3: string;
-  };
+  countryID: number;
+  ISO3: string;
 }
 
 @Injectable()
@@ -59,76 +58,125 @@ export class LabelService {
     private _eventLog: EventLogService,
     private _userInfo: StorageUserInfoService
   ) {}
+  itnCount = inject(ItnCountService);
 
   /**
-   * save quantitylist after assign label
+   * Store all Itn info in to a list
    */
-  private _quantityList = new BehaviorSubject<number[]>(null);
-  public get quantityList(): number[] {
-    return this._quantityList.value;
+  private _ITNList = signal<ITNinfo[]>([]);
+  get ITNList(): ITNinfo[] {
+    return this._ITNList();
   }
-  public changeQuantityList(list: number[]) {
-    this._quantityList.next(list);
+
+  currentITN = computed(() => {
+    return this._ITNList()[this._currentItnIndex()].ITN;
+  });
+
+  // initiate the list base on user input itn count.
+  initItnList() {
+    const quantityList = this.itnCount.getQuantityList();
+    const list: ITNinfo[] = quantityList.map((qty) => ({
+      quantity: qty,
+      ITN: null,
+      BinLocation: null,
+      ContainerID: null,
+      datecode: this._partInfo.receiptInfo.DateCode,
+      countryID: this._partInfo.receiptInfo.CountryID,
+      ISO3: this._partInfo.receiptInfo.ISO3,
+    }));
+    this._ITNList.set(list);
+  }
+
+  insertNewItn() {
+    this._ITNList.mutate((list) => {
+      list.push({
+        quantity: 0,
+        ITN: null,
+        BinLocation: null,
+        ContainerID: null,
+        datecode: this._partInfo.receiptInfo.DateCode,
+        countryID: this._partInfo.receiptInfo.CountryID,
+        ISO3: this._partInfo.receiptInfo.ISO3,
+      });
+    });
+  }
+
+  removeItn(index: number) {
+    this._ITNList.mutate((list) => {
+      list.splice(index, 1);
+    });
+  }
+
+  updateItnListQty(Qty: number, index: number) {
+    this._ITNList.mutate((list) => {
+      list[index].quantity = Qty;
+    });
+  }
+
+  updateItnlistInfo(info: AssignLabelInfo, index: number) {
+    this._ITNList.mutate((list) => {
+      list[index] = {
+        ...list[index],
+        datecode: info.datecode,
+        ISO3: info.ISO3,
+        countryID: info.countryID,
+      };
+    });
+  }
+
+  updateItnListITN(ITN: string, index: number) {
+    this._ITNList.mutate((list) => {
+      list[index].ITN = ITN;
+    });
+  }
+
+  updateItnListBin(BinLocation: string, ContainerID: number, index: number) {
+    this._ITNList.mutate((list) => {
+      list[index].BinLocation = BinLocation;
+      list[index].ContainerID = ContainerID;
+    });
   }
 
   /**
-   * save itn info list after assign label
+   * Track total quantity and remaining for recipt line;
    */
-  private _assignLabelInfo = new BehaviorSubject<AssignLabelInfo[]>(null);
-  public get assignLabelInfo(): AssignLabelInfo[] {
-    return this._assignLabelInfo.value;
+
+  get total() {
+    return this._receipt.selectedReceiptLine[0].ExpectedQuantity;
   }
-  public changeassignLabelInfo(list: AssignLabelInfo[]) {
-    this._assignLabelInfo.next(list);
+
+  get remaining() {
+    return computed(() => {
+      let sum = 0;
+      this._ITNList().map((item) => (sum += item.quantity));
+      return this.total - sum;
+    });
   }
 
   /**
-   * insert itninfo after each itn number is created
+   * track current used ITN info for ITN scan and add location
    */
-  private _ITNList = new BehaviorSubject<ITNinfo[]>(null);
-  public get ITNList$() {
-    return this._ITNList.asObservable();
-  }
-  public get ITNList(): ITNinfo[] {
-    return this._ITNList.value;
+  private _currentItnIndex = signal<number>(-1);
+
+  get currentItnIndex() {
+    return this._currentItnIndex();
   }
 
-  public reset(): void {
-    this._quantityList.next(null);
-    this._ITNList.next(null);
-  }
-
-  /**
-   * insertITNList push input itn to the list;
-   */
-  public insertITNList(itn: ITNinfo) {
-    let tmp;
-    if (this._ITNList.value) {
-      tmp = [...this._ITNList.value, itn];
-    } else {
-      tmp = [itn];
-    }
-    this._ITNList.next(tmp);
-  }
-  /**
-   * updateLastITN pop the last itn of list, then insert the new ITN;
-   */
-  public updateLastITN(itn: ITNinfo) {
-    let tmp = [...this._ITNList.value];
-    if (tmp.length) {
-      tmp.pop();
-    } else {
-      tmp = [];
-    }
-    tmp.push(itn);
-    this._ITNList.next(tmp);
+  itnIndexIncrement() {
+    this._currentItnIndex.update((current) => {
+      // don't increase when reach the end of ITNList.
+      if (current < this.ITNList.length) {
+        return ++current;
+      }
+      return current;
+    });
   }
 
   /**
-   * printReceivingLabel And insert itn to list
+   * printReceivingLabel And insert itn info to ITNList
    */
   public printReceivingLabel$() {
-    if (this.ITNList?.length >= this.quantityList?.length) {
+    if (this._ITNList().length < this._currentItnIndex()) {
       return null;
     }
     return this._itn
@@ -138,22 +186,7 @@ export class LabelService {
       )
       .pipe(
         tap((res) => {
-          if (
-            !this.assignLabelInfo[this.ITNList?.length || 0].country.countryID
-          ) {
-            throw new Error('Invaild country!');
-          }
-          this.insertITNList({
-            quantity: this.quantityList[this.ITNList?.length || 0],
-            datecode:
-              this.assignLabelInfo[this.ITNList?.length || 0].datecode || '',
-            countryID:
-              this.assignLabelInfo[this.ITNList?.length || 0].country.countryID,
-            ISO3: this.assignLabelInfo[this.ITNList?.length || 0].country.ISO3,
-            ITN: res.data.createITN,
-            BinLocation: null,
-            ContainerID: null,
-          });
+          this.updateItnListITN(res.data.createITN, this._currentItnIndex());
           Logger.devOnly(
             'LabelService',
             'printReceivingLabel',
@@ -212,14 +245,12 @@ export class LabelService {
           }
         }),
         map((res) => {
-          let itn = this.ITNList.slice(-1)[0];
-          itn = {
-            ...itn,
-            BinLocation: res.data.findContainer.Barcode,
-            ContainerID: res.data.findContainer._id,
-          };
-          this.updateLastITN(itn);
-          return this._ITNList.value;
+          this.updateItnListBin(
+            res.data.findContainer.Barcode,
+            res.data.findContainer._id,
+            this._currentItnIndex()
+          );
+          return this._ITNList();
         }),
         tap((res) => {
           if (!res[res.length - 1].BinLocation) {
@@ -251,29 +282,19 @@ export class LabelService {
         line.RECEIPTLDs[0].PurchaseOrderL?.LineNumber.toString() || 'null',
     };
     const ReceiptLID = line._id;
-    // check if any binlocation is empty.
-    const itnInfo = this.ITNList;
-    const emptyIndex = [];
-    const validIndex = [];
-    this._ITNList.value.map((itn, index) => {
-      if (!itn.BinLocation || !itn.ContainerID) {
-        emptyIndex.push(index);
-      } else {
-        validIndex.push(index);
-      }
+    //
+    const itnInfo: ITNinfo[] = this._ITNList().map((node) => {
+      return {
+        quantity: node.quantity,
+        ITN: node.ITN,
+        BinLocation: node.BinLocation,
+        ContainerID: node.ContainerID,
+        datecode: node.datecode,
+        countryID: node.countryID,
+        ISO3: node.ISO3,
+      };
     });
-    if (!validIndex.length) {
-      throw new Error('Invalid ITN information!');
-    }
-    if (emptyIndex.length) {
-      const tmpBin = this.ITNList[validIndex[0]].BinLocation;
-      const tmpContainerID = this.ITNList[validIndex[0]].ContainerID;
-      emptyIndex.map((i) => {
-        itnInfo[i].BinLocation = tmpBin;
-        itnInfo[i].ContainerID = tmpContainerID;
-      });
-      this._ITNList.next(itnInfo);
-    }
+
     // generate request
     const update = this._update.mutate({
       ITNList: itnInfo,
@@ -282,7 +303,7 @@ export class LabelService {
       info,
     });
     // collect info for log
-    const oldLogs: any = this._ITNList.value.map((itn) => {
+    const oldLogs: any = itnInfo.map((itn) => {
       return {
         ...this._log.receivingLog,
         UserEventID: sqlData.Event_Receiving_UpdateInventory,
@@ -295,7 +316,7 @@ export class LabelService {
       ...this._log.receivingLog,
       UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
     });
-    const eventLogs = this._ITNList.value.map((itn) => {
+    const eventLogs = itnInfo.map((itn) => {
       return {
         ...this._eventLog.eventLog,
         EventTypeID: sqlData.Event_Receiving_UpdateInventory,
@@ -321,5 +342,32 @@ export class LabelService {
         return this._insertLog.mutate({ oldLogs, eventLogs });
       })
     );
+  }
+
+  verifyItnListBinLocation() {
+    const emptyIndex = [];
+    const validIndex = [];
+    this._ITNList().map((itn, index) => {
+      if (!itn.BinLocation || !itn.ContainerID) {
+        emptyIndex.push(index);
+      } else {
+        validIndex.push(index);
+      }
+    });
+    if (!validIndex.length) {
+      throw new Error('Invalid ITN information!');
+    }
+    if (emptyIndex.length) {
+      const tmpBin = this._ITNList()[validIndex[0]].BinLocation;
+      const tmpContainerID = this._ITNList()[validIndex[0]].ContainerID;
+      emptyIndex.map((i) => {
+        this.updateItnListBin(tmpBin, tmpContainerID, i);
+      });
+    }
+  }
+
+  reset() {
+    this._ITNList.set([]);
+    this._currentItnIndex.set(-1);
   }
 }

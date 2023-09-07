@@ -10,7 +10,7 @@ import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
   imports: [CommonModule, TableViewComponent],
   template: `
     <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
-      <h1 class="text-4xl">Generate Receipt:</h1>
+      <h1 class="text-4xl">Select One Receipt Line:</h1>
       <table-view
         [listOfData]="this.createreceipt.linesInfo"
         [listOfColumn]="listOfColumn"

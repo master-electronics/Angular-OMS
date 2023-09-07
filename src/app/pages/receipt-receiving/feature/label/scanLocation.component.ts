@@ -35,11 +35,11 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
   ],
   template: `
     <div
-      *ngIf="ITNList$ | async as list"
+      *ngIf="this._label.ITNList as list"
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Location Barcode:</h1>
-      <h1>({{ list.length }} of {{ _label.quantityList?.length }})</h1>
+      <h1>({{ list.length }} of {{ _label.currentItnIndex }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
@@ -73,7 +73,6 @@ export class ScanLocationComponent implements OnInit {
   ngOnInit(): void {
     this.data$ = of(true).pipe(delay(500));
     this._ui.changeSteps(3);
-    this.ITNList$ = this._label.ITNList$;
     this.inputForm = new FormGroup({
       location: new FormControl('', [Validators.required]),
     });
@@ -106,21 +105,11 @@ export class ScanLocationComponent implements OnInit {
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
         filter(() => {
-          if (this._label.ITNList?.length < this._label.quantityList?.length) {
+          if (this._label.ITNList?.length > this._label.currentItnIndex + 1) {
             this._router.navigate(['receiptreceiving/label/printitn']);
             return false;
           }
-          if (this._label.ITNList?.length > this._label.quantityList?.length) {
-            this._router.navigate(['../assign'], {
-              relativeTo: this._actRoute,
-            });
-            return false;
-          }
-          let total = 0;
-          this._label.ITNList.map((itn) => {
-            total += itn.quantity;
-          });
-          if (total !== this._recipt.selectedReceiptLine[0].ExpectedQuantity) {
+          if (this._label.ITNList?.length <= this._label.currentItnIndex) {
             this._router.navigate(['../assign'], {
               relativeTo: this._actRoute,
             });
@@ -128,9 +117,8 @@ export class ScanLocationComponent implements OnInit {
           }
           return true;
         }),
-        switchMap(() => this._label.updateAfterReceving()),
         map(() => {
-          this._router.navigate(['../../itnkickout'], {
+          this._router.navigate(['../summary'], {
             relativeTo: this._actRoute,
           });
           return true;

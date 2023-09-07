@@ -7,7 +7,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { map, of } from 'rxjs';
+import { map, of, startWith } from 'rxjs';
 import { PrinterService } from '../../data/printer';
 
 @Component({
@@ -60,7 +60,7 @@ export class PrinterButtomComponent implements OnInit {
   @Input() ITN: string;
   @Input() PRODUCTCODE: string;
   @Input() PARTNUMBER: string;
-  public printer$;
+  printer$;
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 
   ngOnInit() {
@@ -72,7 +72,10 @@ export class PrinterButtomComponent implements OnInit {
     if (this.ITN) {
       this.printer$ = this._print
         .printITN$(this.ITN, this.PRODUCTCODE, this.PARTNUMBER)
-        .pipe(map(() => false));
+        .pipe(
+          startWith(true),
+          map(() => false)
+        );
     }
   }
 }

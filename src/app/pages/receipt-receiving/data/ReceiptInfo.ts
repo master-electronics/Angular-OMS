@@ -1,12 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  map,
-  Observable,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,

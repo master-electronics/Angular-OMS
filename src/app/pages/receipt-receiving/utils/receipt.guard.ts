@@ -51,7 +51,7 @@ export const ReceiptGuard: CanActivateChildFn = (
       isActive = _receipt.selectedReceiptLine !== null;
       break;
     case '/receiptreceiving/label/printitn':
-      isActive = _label.quantityList?.length > 0;
+      isActive = _label.ITNList.length > 0;
       break;
     case '/receiptreceiving/label/sacnlocation':
       isActive = _label.ITNList !== null;

@@ -12,6 +12,7 @@ export const PrintItnResolver: ResolveFn<any> = (
   state: RouterStateSnapshot,
   label: LabelService = inject(LabelService)
 ): Observable<any> => {
+  label.itnIndexIncrement();
   return label.printReceivingLabel$().pipe(
     catchError((error) => {
       return of({ error });

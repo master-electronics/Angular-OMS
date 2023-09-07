@@ -10,6 +10,7 @@ import { kickoutService } from './data/kickout';
 import { CreateReceiptService } from './data/createReceipt';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
 import { PrintItnResolver } from './utils/resolver/printItn.resolver';
+import { ItnCountService } from './data/itnCount';
 
 export const ReceivingRoutes: Routes = [
   {
@@ -22,6 +23,7 @@ export const ReceivingRoutes: Routes = [
       LogService,
       kickoutService,
       CreateReceiptService,
+      ItnCountService,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
@@ -111,10 +113,17 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'label/selectline',
+        path: 'update/selectline',
         loadComponent: () =>
-          import('./feature/label/selectLine.component').then(
+          import('./feature/update-info/selectLine.component').then(
             (mod) => mod.SelectLineComponent
+          ),
+      },
+      {
+        path: 'update/itncount',
+        loadComponent: () =>
+          import('./feature/update-info/itn-count.component').then(
+            (m) => m.ItnCountComponent
           ),
       },
       {

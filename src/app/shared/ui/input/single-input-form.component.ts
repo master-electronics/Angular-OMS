@@ -53,16 +53,17 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
                   ? 'border-red-500'
                   : 'border-blue-500'
               ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
               [id]="controlName"
               [type]="inputType"
               autocomplete="off"
               [placeholder]="placeholder"
               #input
             />
-            <a class="absolute right-2 top-0.5 md:right-4" (click)="clean()">
+            <!-- Clean button -->
+            <!-- <a class="absolute right-2 top-0.5 md:right-4" (click)="clean()">
               <span nz-icon nzType="close-circle" nzTheme="outline"></span>
-            </a>
+            </a> -->
             <!-- error mesage -->
             <div
               *ngIf="

@@ -53,7 +53,7 @@ export class SelectLineComponent implements OnInit {
 
   public onClick(data): void {
     this._receipt.pickOneReceiptLine(data.id);
-    this._router.navigateByUrl('receiptreceiving/label/assign');
+    this._router.navigateByUrl('receiptreceiving/update/itncount');
   }
 
   public onBack(): void {

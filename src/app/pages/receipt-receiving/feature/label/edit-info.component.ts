@@ -18,9 +18,9 @@ import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs';
 import { CountryListService } from 'src/app/shared/data/countryList';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { AssignLabelInfo } from '../../data/label';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { SearchListInputComponent } from '../../ui/search-list-input.component';
+import { AssignLabelInfo } from '../../data/label';
 
 @Component({
   selector: 'edit-info',
@@ -38,7 +38,7 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
     <div
       id="edit-modal"
       class="    
-      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
+      absolute left-0 top-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
     >
       <div class="relative h-full w-4/5 text-lg md:h-auto md:w-2/3 lg:w-1/2">
         <div class="relative rounded-lg bg-white shadow">
@@ -52,7 +52,7 @@ import { SearchListInputComponent } from '../../ui/search-list-input.component';
               <div class="relative grow">
                 <input
                   formControlName="datecode"
-                  class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                  class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                   id="datecode"
                   type="text"
                   autocomplete="off"
@@ -196,7 +196,8 @@ export class EditInfoComponent implements OnInit {
       return;
     }
     this.clickSubmit.emit({
-      country: { ISO3, countryID: Number(countryID) },
+      ISO3,
+      countryID: Number(countryID),
       datecode,
     });
   }

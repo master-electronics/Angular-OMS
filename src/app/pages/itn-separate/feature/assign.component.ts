@@ -55,7 +55,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
               <button
                 type="remove"
                 (click)="removeField(control, $event)"
-                class="right-2.5 bottom-2.5 rounded-lg bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
+                class="bottom-2.5 right-2.5 rounded-lg bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
               >
                 Delete
               </button>

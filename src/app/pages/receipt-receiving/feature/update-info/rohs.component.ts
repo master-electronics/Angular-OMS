@@ -63,10 +63,10 @@ export class ROHSComponent implements OnInit {
         switch (this._receipt.receiptLsAfterQuantity?.length) {
           case 1:
             this._receipt.pickOneReceiptLine();
-            this._router.navigateByUrl('receiptreceiving/label/assign');
+            this._router.navigateByUrl('receiptreceiving/update/itncount');
             break;
           default:
-            this._router.navigateByUrl('receiptreceiving/label/selectline');
+            this._router.navigateByUrl('receiptreceiving/update/selectline');
         }
         return null;
       }),

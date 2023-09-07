@@ -30,11 +30,11 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
   ],
   template: `
     <div
-      *ngIf="ITNList$ | async as list"
+      *ngIf="label.ITNList as list"
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Label</h1>
-      <h1>({{ list.length }} of {{ label.quantityList?.length }})</h1>
+      <h1>({{ list.length }} of {{ label.currentItnIndex + 1 }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
@@ -48,7 +48,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     ></single-input-form>
     <printer-button
       class=" absolute bottom-1 right-1 h-64 w-64"
-      [ITN]="this.label.ITNList.slice(-1)[0].ITN"
+      [ITN]="this.label.currentITN()"
       [PARTNUMBER]="this.receipt.receiptLsAfterQuantity[0].Product.PartNumber"
       [PRODUCTCODE]="
         this.receipt.receiptLsAfterQuantity[0].Product.ProductCode
@@ -61,7 +61,6 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
 export class PrintITNComponent implements OnInit {
   public inputForm: FormGroup;
   public data$;
-  public ITNList$ = new Observable<Array<ITNinfo>>();
   public scanAll = false;
   public validators = [
     {
@@ -82,7 +81,6 @@ export class PrintITNComponent implements OnInit {
   ngOnInit(): void {
     this._ui.changeSteps(3);
     this.data$ = this._actRoute.data.pipe(map((res) => res.print));
-    this.ITNList$ = this.label.ITNList$;
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
     });

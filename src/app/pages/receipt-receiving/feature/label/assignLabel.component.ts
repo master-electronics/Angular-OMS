@@ -5,6 +5,7 @@ import {
   OnInit,
   QueryList,
   ViewChildren,
+  inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -16,7 +17,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { map, Observable, startWith, tap } from 'rxjs';
+import { map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -26,6 +27,8 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { EditInfoComponent } from './edit-info.component';
+import { InsertReceiptLineDetailsDocument } from 'src/app/graphql/receiving.graphql-gen';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -43,8 +46,8 @@ import { EditInfoComponent } from './edit-info.component';
 
   template: `
     <div class="grid grid-cols-3 gap-5 text-xl">
-      <h1>Total: {{ total }}</h1>
-      <h1>Remaining: {{ remaining }}</h1>
+      <h1>Total: {{ label.total }}</h1>
+      <h1>Remaining: {{ label.remaining() }}</h1>
       <h1>Open for POs: {{ openForPOs }}</h1>
     </div>
 
@@ -56,15 +59,16 @@ import { EditInfoComponent } from './edit-info.component';
               <input
                 type="number"
                 placeholder="Quantity"
-                [attr.id]="control.controlInstance.quantity"
-                [formControlName]="control.controlInstance.quantity"
+                [attr.id]="control.controlInstance.itn"
+                [formControlName]="control.controlInstance.itn"
+                (ngModelChange)="this.label.updateItnListQty($event, i)"
                 class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-2xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 required
-                #quantity
+                #itn
               />
               <div class="grid grid-rows-2 text-lg">
-                <h1>DateCode:{{ listOfInfo[i].datecode }}</h1>
-                <h1>Country:{{ listOfInfo[i].country.ISO3 }}</h1>
+                <h1>DateCode:{{ label.ITNList[i].datecode }}</h1>
+                <h1>Country:{{ label.ITNList[i].ISO3 }}</h1>
               </div>
 
               <button
@@ -106,14 +110,14 @@ import { EditInfoComponent } from './edit-info.component';
       <edit-info
         (clickCancel)="editWindow = false"
         (clickSubmit)="editInfo($event)"
-        [datecode]="this.listOfInfo[editingIndex].datecode"
-        [ISO3]="this.listOfInfo[editingIndex].country.ISO3"
+        [datecode]="this.label.ITNList[editingIndex].datecode"
+        [ISO3]="this.label.ITNList[editingIndex].ISO3"
       ></edit-info>
     </ng-container>
 
     <ng-container *ngIf="authWindow">
       <auth-modal
-        message="Allow Empty DateCode!"
+        [message]="message"
         (clickClose)="authWindow = false"
         (passAuth)="nextPage()"
       ></auth-modal>
@@ -121,47 +125,35 @@ import { EditInfoComponent } from './edit-info.component';
   `,
 })
 export class AssignLabelComponent implements OnInit {
-  public validator$: Observable<boolean>;
-  public total = 0;
-  public remaining = 0;
-  public openForPOs = 0;
-  public editingIndex = 0;
-  public authWindow = false;
-  public editWindow = false;
-  public inputForm: FormGroup;
-  public listOfControl: Array<{
+  validator$: Observable<boolean>;
+  openForPOs = 0;
+  editingIndex = 0;
+  authWindow = false;
+  message = '';
+  editWindow = false;
+  inputForm: FormGroup;
+  listOfControl: Array<{
     id: number;
-    controlInstance: { quantity: string };
+    controlInstance: { itn: string };
   }> = [];
-  public listOfInfo: Array<AssignLabelInfo> = [];
 
+  receipt = inject(ReceiptInfoService);
+  label = inject(LabelService);
   constructor(
-    public receipt: ReceiptInfoService,
     public updateInfo: updateReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
-    private _step: TabService,
-    private _label: LabelService
-  ) {}
-
-  ngOnInit(): void {
-    this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
-    this.remaining = this.total;
-    const tmp =
-      this.receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
-    this.openForPOs = tmp.QuantityOnOrder - tmp.QuantityReceived;
-    this._step.changeSteps(3);
+    private _step: TabService
+  ) {
     this.inputForm = this._fb.group({});
-    this.addField();
+    this.initList();
     this.validator$ = this.inputForm.valueChanges.pipe(
-      startWith(true),
       map((res) => {
         let sum = 0;
         Object.values(res).forEach((element, index) => {
           sum += Number(element);
         });
-        this.remaining = this.total - sum;
-        return this.remaining;
+        return this.label.total - sum;
       }),
       map((res) => {
         return res !== 0 || this.inputForm.invalid;
@@ -169,7 +161,38 @@ export class AssignLabelComponent implements OnInit {
     );
   }
 
-  @ViewChildren('quantity') inputFiledList: QueryList<ElementRef>;
+  ngOnInit(): void {
+    this._step.changeSteps(3);
+    const purchaseOrder =
+      this.receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
+    this.openForPOs =
+      purchaseOrder.QuantityOnOrder - purchaseOrder.QuantityReceived;
+  }
+
+  @ViewChildren('itn') inputFiledList: QueryList<ElementRef>;
+
+  public splitInteger(total: number, count: number): number[] {
+    const result: number[] = [];
+    return result;
+  }
+
+  initList(): void {
+    this.label.initItnList();
+    this.label.ITNList.map((itn, index) => {
+      // add a control for inpuForm
+      this.inputForm.addControl(
+        `itn${index}`,
+        new FormControl(itn.quantity, [Validators.required, Validators.min(1)])
+      );
+      // store information inot listOfControl
+      this.listOfControl.push({
+        id: index,
+        controlInstance: {
+          itn: `itn${index}`,
+        },
+      });
+    });
+  }
 
   addField(e?: MouseEvent): void {
     if (e) {
@@ -182,25 +205,16 @@ export class AssignLabelComponent implements OnInit {
     const control = {
       id,
       controlInstance: {
-        quantity: `quantity${id}`,
+        itn: `itn${id}`,
       },
     };
-    this.listOfInfo.push({
-      country: {
-        ISO3: this.updateInfo.receiptInfo.ISO3,
-        countryID: this.updateInfo.receiptInfo.CountryID,
-      },
-      datecode: this.updateInfo.receiptInfo.DateCode,
-    });
+    this.label.insertNewItn();
     const index = this.listOfControl.push(control);
     this.inputForm.addControl(
-      this.listOfControl[index - 1].controlInstance.quantity,
+      this.listOfControl[index - 1].controlInstance.itn,
       new FormControl(0, [Validators.required, Validators.min(1)])
     );
     setTimeout(() => {
-      if (!id) {
-        this.inputForm.get(`quantity${id}`).setValue(this.total);
-      }
       this.inputFiledList
         .get(this.listOfControl.length - 1)
         .nativeElement.select();
@@ -210,7 +224,7 @@ export class AssignLabelComponent implements OnInit {
   removeField(
     i: {
       id: number;
-      controlInstance: { quantity: string };
+      controlInstance: { itn: string };
     },
     e: MouseEvent
   ): void {
@@ -218,26 +232,31 @@ export class AssignLabelComponent implements OnInit {
     if (this.listOfControl.length > 1) {
       const index = this.listOfControl.indexOf(i);
       this.listOfControl.splice(index, 1);
-      this.listOfInfo.splice(index, 1);
-      this.inputForm.removeControl(i.controlInstance.quantity);
+      this.label.removeItn(index);
+      this.inputForm.removeControl(i.controlInstance.itn);
     }
   }
 
-  private quantityList = [];
   onSubmit(): void {
-    this._label.reset();
     if (this.inputForm.valid) {
-      this.quantityList = [];
+      const quantityList = [];
       Object.values(this.inputForm.value).forEach((ele, index) => {
-        this.quantityList.push(Number(ele));
+        quantityList.push(Number(ele));
       });
       if (
-        (this.listOfInfo.some((info) => info.datecode === '') &&
-          this.updateInfo.receiptInfo.DateCode !== '') ||
-        (this.listOfInfo.some((info) => info.country.ISO3 === 'UNK') &&
-          this.updateInfo.receiptInfo.ISO3 !== 'UNK')
+        this.label.ITNList.some((info) => info.datecode === '') &&
+        this.updateInfo.receiptInfo.DateCode !== ''
       ) {
         this.authWindow = true;
+        this.message = 'Allow empty DateCode!';
+        return;
+      }
+      if (
+        this.label.ITNList.some((info) => info.ISO3 === 'UNK') &&
+        this.updateInfo.receiptInfo.ISO3 !== 'UNK'
+      ) {
+        this.authWindow = true;
+        this.message = 'Allow unknown country code!';
         return;
       }
       this.nextPage();
@@ -251,18 +270,16 @@ export class AssignLabelComponent implements OnInit {
     }
   }
 
-  editInfo(info: AssignLabelInfo): void {
-    this.listOfInfo[this.editingIndex] = info;
+  editInfo(info: AssignLabelInfo) {
+    this.label.updateItnlistInfo(info, this.editingIndex);
     this.editWindow = false;
   }
 
   public nextPage(): void {
-    this._label.changeQuantityList(this.quantityList);
-    this._label.changeassignLabelInfo(this.listOfInfo);
     this._router.navigateByUrl('receiptreceiving/label/printitn');
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/update/ROHS');
+    this._router.navigateByUrl('receiptreceiving/update/itncount');
   }
 }
