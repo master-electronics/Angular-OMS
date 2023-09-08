@@ -68,10 +68,6 @@ export class LabelService {
     return this._ITNList();
   }
 
-  currentITN = computed(() => {
-    return this._ITNList()[this._currentItnIndex()].ITN;
-  });
-
   // initiate the list base on user input itn count.
   initItnList() {
     const quantityList = this.itnCount.getQuantityList();
@@ -156,29 +152,48 @@ export class LabelService {
   /**
    * track current used ITN info for ITN scan and add location
    */
-  private _currentItnIndex = signal<number>(-1);
 
   get currentItnIndex() {
-    return this._currentItnIndex();
+    return computed(() => {
+      let i = -1;
+      this._ITNList().map((itn, index) => {
+        if (itn.ITN) {
+          i = index;
+          return true;
+        }
+        return false;
+      });
+      return i;
+    });
   }
 
-  itnIndexIncrement() {
-    this._currentItnIndex.update((current) => {
-      // don't increase when reach the end of ITNList.
-      if (current < this.ITNList.length) {
-        return ++current;
-      }
-      return current;
-    });
+  /**
+   * Selecter
+   */
+
+  getItnInList(index: number) {
+    return computed(() => this._ITNList()[index].ITN);
+  }
+
+  get receiptPartNumber() {
+    return this._receipt.receiptLsAfterQuantity[0].Product.PartNumber;
+  }
+
+  get receiptProductCode() {
+    return this._receipt.receiptLsAfterQuantity[0].Product.ProductCode
+      .ProductCodeNumber;
+  }
+
+  get openQuantityForPOs() {
+    const purchaseOrder =
+      this._receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
+    return purchaseOrder.QuantityOnOrder - purchaseOrder.QuantityReceived;
   }
 
   /**
    * printReceivingLabel And insert itn info to ITNList
    */
   public printReceivingLabel$() {
-    if (this._ITNList().length < this._currentItnIndex()) {
-      return null;
-    }
     return this._itn
       .mutate(
         { LocationCode: environment.DistributionCenter },
@@ -186,7 +201,8 @@ export class LabelService {
       )
       .pipe(
         tap((res) => {
-          this.updateItnListITN(res.data.createITN, this._currentItnIndex());
+          // save ITN to next space.
+          this.updateItnListITN(res.data.createITN, this.currentItnIndex() + 1);
           Logger.devOnly(
             'LabelService',
             'printReceivingLabel',
@@ -248,14 +264,9 @@ export class LabelService {
           this.updateItnListBin(
             res.data.findContainer.Barcode,
             res.data.findContainer._id,
-            this._currentItnIndex()
+            this.currentItnIndex()
           );
           return this._ITNList();
-        }),
-        tap((res) => {
-          if (!res[res.length - 1].BinLocation) {
-            throw new Error('BinLocation invalid!');
-          }
         })
       );
   }
@@ -368,6 +379,5 @@ export class LabelService {
 
   reset() {
     this._ITNList.set([]);
-    this._currentItnIndex.set(-1);
   }
 }

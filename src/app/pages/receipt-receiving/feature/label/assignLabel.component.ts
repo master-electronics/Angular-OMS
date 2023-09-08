@@ -17,18 +17,15 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
 import { AssignLabelInfo, LabelService } from '../../data/label';
-import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { EditInfoComponent } from './edit-info.component';
-import { InsertReceiptLineDetailsDocument } from 'src/app/graphql/receiving.graphql-gen';
-import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -48,7 +45,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
     <div class="grid grid-cols-3 gap-5 text-xl">
       <h1>Total: {{ label.total }}</h1>
       <h1>Remaining: {{ label.remaining() }}</h1>
-      <h1>Open for POs: {{ openForPOs }}</h1>
+      <h1>Open for POs: {{ label.openQuantityForPOs }}</h1>
     </div>
 
     <form [formGroup]="inputForm">
@@ -72,14 +69,12 @@ import { toObservable } from '@angular/core/rxjs-interop';
               </div>
 
               <button
-                type="remove"
                 (click)="this.editWindow = true; this.editingIndex = i"
                 class="rounded-lg bg-green-500 px-4 py-2 font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800"
               >
                 Edit
               </button>
               <button
-                type="remove"
                 (click)="removeField(control, $event)"
                 class="bottom-2.5 right-2.5 rounded-lg bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
               >
@@ -126,7 +121,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class AssignLabelComponent implements OnInit {
   validator$: Observable<boolean>;
-  openForPOs = 0;
   editingIndex = 0;
   authWindow = false;
   message = '';
@@ -137,7 +131,6 @@ export class AssignLabelComponent implements OnInit {
     controlInstance: { itn: string };
   }> = [];
 
-  receipt = inject(ReceiptInfoService);
   label = inject(LabelService);
   constructor(
     public updateInfo: updateReceiptInfoService,
@@ -163,10 +156,6 @@ export class AssignLabelComponent implements OnInit {
 
   ngOnInit(): void {
     this._step.changeSteps(3);
-    const purchaseOrder =
-      this.receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
-    this.openForPOs =
-      purchaseOrder.QuantityOnOrder - purchaseOrder.QuantityReceived;
   }
 
   @ViewChildren('itn') inputFiledList: QueryList<ElementRef>;

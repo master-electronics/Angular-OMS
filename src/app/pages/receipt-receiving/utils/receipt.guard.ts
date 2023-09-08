@@ -8,6 +8,7 @@ import {
 import { LabelService } from '../data/label';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../data/updateReceipt';
+import { ItnListComponent } from '../../stocking/ui/itn-list.component';
 
 export const ReceiptGuard: CanActivateChildFn = (
   route: ActivatedRouteSnapshot,
@@ -55,6 +56,22 @@ export const ReceiptGuard: CanActivateChildFn = (
       break;
     case '/receiptreceiving/label/sacnlocation':
       isActive = _label.ITNList !== null;
+      break;
+    case '/receiptreceiving/label/summary':
+      // make sure every itn has binlocation, itn
+      if (!_label.ITNList.length) {
+        isActive = false;
+        break;
+      }
+      isActive = !_label.ITNList.some((itn) => {
+        if (!itn.ContainerID) {
+          return true;
+        }
+        if (!itn.ITN) {
+          return true;
+        }
+        return false;
+      });
       break;
     default:
       isActive = true;

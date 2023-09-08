@@ -151,6 +151,13 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
+        path: 'label/summary',
+        loadComponent: () =>
+          import('./feature/label/summary.component').then(
+            (mod) => mod.SummaryComponent
+          ),
+      },
+      {
         path: 'itnkickout',
         loadComponent: () =>
           import('./feature/kickout/itnKickout.component').then(

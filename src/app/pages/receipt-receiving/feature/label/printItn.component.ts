@@ -34,7 +34,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Label</h1>
-      <h1>({{ list.length }} of {{ label.currentItnIndex + 1 }})</h1>
+      <h1>({{ list.length }} of {{ label.currentItnIndex() + 1 }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
@@ -48,12 +48,9 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     ></single-input-form>
     <printer-button
       class=" absolute bottom-1 right-1 h-64 w-64"
-      [ITN]="this.label.currentITN()"
-      [PARTNUMBER]="this.receipt.receiptLsAfterQuantity[0].Product.PartNumber"
-      [PRODUCTCODE]="
-        this.receipt.receiptLsAfterQuantity[0].Product.ProductCode
-          .ProductCodeNumber
-      "
+      [ITN]="label.getItnInList(label.currentItnIndex())()"
+      [PARTNUMBER]="label.receiptPartNumber"
+      [PRODUCTCODE]="label.receiptProductCode"
       (buttonClick)="focusInput()"
     ></printer-button>
   `,
@@ -103,7 +100,8 @@ export class PrintITNComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = this.label.ITNList.slice(-1)[0].ITN === value;
+      const isVaild =
+        this.label.ITNList[this.label.currentItnIndex()].ITN === value;
       return !isVaild ? { label: true } : null;
     };
   }
