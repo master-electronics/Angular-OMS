@@ -1,14 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  delay,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { combineLatest, delay, map, Observable, switchMap, tap } from 'rxjs';
 import {
   CheckBinLocationGQL,
   UpdateAfterReceivingGQL,

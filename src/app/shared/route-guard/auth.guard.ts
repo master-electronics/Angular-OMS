@@ -5,9 +5,7 @@ import {
   CanActivateChildFn,
 } from '@angular/router';
 import { catchError, EMPTY, map, tap } from 'rxjs';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { RouteAuthService } from '../services/route-auth.service';
-import { Logger } from '../services/logger.service';
 import { StorageUserInfoService } from '../services/storage-user-info.service';
 
 export const AuthGuard: CanActivateChildFn = (
@@ -15,7 +13,6 @@ export const AuthGuard: CanActivateChildFn = (
   state: RouterStateSnapshot
 ) => {
   const _zone = inject(NgZone);
-  const _message = inject(NzMessageService);
   const _routeAuth = inject(RouteAuthService);
   const userInfo = inject(StorageUserInfoService);
 
@@ -43,7 +40,7 @@ export const AuthGuard: CanActivateChildFn = (
     tap((res) => {
       if (!res) {
         _zone.run(() => {
-          _message.warning('You are not allowed to view this page.');
+          console.error('You are not allowed to view this page.');
         });
       }
     }),

@@ -1,22 +1,20 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { LoginGuard } from './shared/route-guard/login.guard';
 import { AuthGuard } from './shared/route-guard/auth.guard';
-
-import { ShellComponent } from './pages/shell/shell.component';
-import { HomeComponent } from './pages/home/home.component';
 import { PrinterGuard } from './shared/route-guard/printer.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
-    component: ShellComponent,
+    loadComponent: () =>
+      import('./pages/shell/shell.component').then((m) => m.ShellComponent),
     canActivateChild: [LoginGuard, AuthGuard],
     children: [
       {
         path: 'home',
-        component: HomeComponent,
+        loadComponent: () =>
+          import('./pages/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'agin',
@@ -207,9 +205,3 @@ const routes: Routes = [
       ),
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, { enableTracing: false })],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}

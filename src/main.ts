@@ -1,24 +1,7 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzMessageModule } from 'ng-zorro-antd/message';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { AppRoutingModule } from './app/app.routing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PlatformModule } from '@angular/cdk/platform';
-import { CommonModule } from '@angular/common';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { InMemoryCache } from '@apollo/client/core';
 import { middleware, errorLink } from './app/ApolloLink';
@@ -34,11 +17,9 @@ import {
   withInterceptorsFromDi,
   provideHttpClient,
 } from '@angular/common/http';
-import {
-  Title,
-  BrowserModule,
-  bootstrapApplication,
-} from '@angular/platform-browser';
+import { Title, bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { routes } from './app/app.routing';
 
 if (environment.production) {
   enableProdMode();
@@ -46,26 +27,8 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(
-      CommonModule,
-      ApolloModule,
-      PlatformModule,
-      BrowserModule,
-      FormsModule,
-      ReactiveFormsModule,
-      AppRoutingModule,
-      NzIconModule,
-      NzButtonModule,
-      NzInputModule,
-      NzMessageModule,
-      NzDrawerModule,
-      NzDropDownModule,
-      NzMenuModule,
-      NzAlertModule,
-      NzFormModule,
-      NzCardModule,
-      NzModalModule
-    ),
+    provideRouter(routes),
+    importProvidersFrom(ApolloModule),
     Title,
     {
       provide: HTTP_INTERCEPTORS,
