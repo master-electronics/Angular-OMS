@@ -8,6 +8,15 @@
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome in wsl2",
+      "url": "http://localhost:4200",
+      "trace": true,
+      "sourceMaps": true,
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular Debug",
       "preLaunchTask": "npm: start",
       "url": "http://localhost:4200",
       "trace": true,

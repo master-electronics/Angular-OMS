@@ -20,6 +20,7 @@ import {
 import { Title, bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routing';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 
 if (environment.production) {
   enableProdMode();
@@ -28,7 +29,7 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    importProvidersFrom(ApolloModule),
+    importProvidersFrom(ApolloModule, NzMessageModule),
     Title,
     {
       provide: HTTP_INTERCEPTORS,
