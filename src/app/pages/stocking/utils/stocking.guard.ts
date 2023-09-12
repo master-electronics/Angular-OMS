@@ -1,41 +1,31 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  CanActivateChild,
-  UrlTree,
+  CanActivateChildFn,
 } from '@angular/router';
-import { Observable } from 'rxjs';
 import { ItnInfoService } from '../data/itn-info.service';
 
-@Injectable()
-export class StockingGuard implements CanActivateChild {
-  public routeAuthorized: boolean;
+export const StockingGuard: CanActivateChildFn = (
+  _: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  const router = inject(Router);
+  const _itn = inject(ItnInfoService);
 
-  constructor(private router: Router, private _itn: ItnInfoService) {}
+  let isActive: boolean;
+  switch (state.url) {
+    case '/stocking/location':
+      isActive = _itn.itnInfo !== null;
+      break;
 
-  canActivateChild(
-    childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
-    | boolean
-    | UrlTree
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree> {
-    let isActive: boolean;
-    switch (state.url) {
-      case '/stocking/location':
-        isActive = this._itn.itnInfo !== null;
-        break;
-
-      default:
-        isActive = true;
-        break;
-    }
-    if (!isActive) {
-      this.router.navigate(['/stocking']);
-    }
-    return isActive;
+    default:
+      isActive = true;
+      break;
   }
-}
+  if (!isActive) {
+    router.navigate(['/stocking']);
+  }
+  return isActive;
+};

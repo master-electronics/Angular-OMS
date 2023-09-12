@@ -35,7 +35,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
               ? 'border-red-500'
               : 'border-blue-500'
           "
-          class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 text-lg leading-tight text-gray-700 shadow focus:outline-none md:text-xl lg:text-2xl xl:text-4xl"
+          class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 text-lg leading-tight text-gray-700 shadow focus:outline-none md:text-xl lg:text-2xl xl:text-4xl"
           [id]="controlName"
           autocomplete="off"
           required

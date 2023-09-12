@@ -9,8 +9,7 @@ import { RouterModule } from '@angular/router';
       <div class="mt-5 grid justify-center gap-20 text-base">
         <a class="" routerLink="/stocking/itn">Sorting</a>
         <a class="" routerLink="/stocking/scantarget">Stocking</a>
-        <a class="" routerLink="/stocking/consolidation">Consolidation</a>
-        <a class="" routerLink="/stocking/report">Report</a>
+        <a class="" routerLink="/stocking/user">Personal ITNs</a>
       </div>
     </div>
   `,

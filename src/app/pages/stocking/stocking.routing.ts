@@ -19,7 +19,6 @@ export const StockingRoutes: Routes = [
       SortLocationResolver,
       ScanTargetResolver,
       UserItnlistResolver,
-      StockingGuard,
     ],
     canActivateChild: [StockingGuard],
     loadComponent: () =>

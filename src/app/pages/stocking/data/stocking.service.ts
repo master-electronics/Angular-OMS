@@ -260,19 +260,17 @@ export class StockingService {
    * ItnInUserContainer
    */
   public ItnInUserContainer$() {
-    return this._ItnInUser
-      .fetch(
-        { ContainerID: this._userC.userContainerID },
-        { fetchPolicy: 'network-only' }
-      )
-      .pipe(
-        map((res) => res.data.findContainer.INVENTORies),
-        tap((res) => {
-          if (!res.length) {
-            throw new Error('Not ITN  Under User');
-          }
-        })
-      );
+    return this._userC.userContainerID$.pipe(
+      switchMap((id) => {
+        return this._ItnInUser.fetch({ ContainerID: id });
+      }),
+      map((res) => res.data.findContainer.INVENTORies),
+      tap((res) => {
+        if (!res.length) {
+          throw new Error('Not ITN  Under User');
+        }
+      })
+    );
   }
 
   public verifyITN$(ITN: string) {
