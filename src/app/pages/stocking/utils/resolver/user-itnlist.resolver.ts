@@ -13,7 +13,7 @@ export class UserItnlistResolver implements Resolve<any> {
   resolve() {
     return this._stocking.ItnInUserContainer$().pipe(
       catchError((error) => {
-        this._router.navigate(['../stocking/scantarget'], {
+        this._router.navigate(['../stocking'], {
           relativeTo: this._actRoute,
         });
         return error;

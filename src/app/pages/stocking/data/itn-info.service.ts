@@ -43,7 +43,7 @@ export class ItnInfoService {
     localStorage.removeItem('stockingItnInfo');
   }
 
-  public verifyITN$(ITN: string): Observable<any> {
+  public verifyITN$(ITN: string) {
     return this._verifyITN
       .fetch(
         { ITN, DC: environment.DistributionCenter },
@@ -56,6 +56,12 @@ export class ItnInfoService {
           }
           if (!res.data.findInventory.Container.ContainerType.IsMobile) {
             throw new Error('Must be in a mobile container');
+          }
+          if (
+            res.data.findInventory.ORDERLINEDETAILs.length &&
+            res.data.findInventory.ORDERLINEDETAILs[0].StatusID
+          ) {
+            throw new Error("Can't move this ITN after picking.");
           }
           const inventory = res.data.findInventory;
           this.changeItnInfo({

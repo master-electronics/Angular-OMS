@@ -3094,6 +3094,10 @@ export type VerifyItnForSortingQuery = {
       _id: number;
       ContainerType: { __typename?: 'ContainerType'; IsMobile: boolean };
     };
+    ORDERLINEDETAILs?: Array<{
+      __typename?: 'OrderLineDetail';
+      StatusID: number;
+    } | null> | null;
     Product: {
       __typename?: 'Product';
       _id: number;
@@ -3227,6 +3231,9 @@ export const VerifyItnForSortingDocument = gql`
         ContainerType {
           IsMobile
         }
+      }
+      ORDERLINEDETAILs {
+        StatusID
       }
       Product {
         _id
