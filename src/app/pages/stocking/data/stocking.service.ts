@@ -264,12 +264,7 @@ export class StockingService {
       switchMap((id) => {
         return this._ItnInUser.fetch({ ContainerID: id });
       }),
-      map((res) => res.data.findContainer.INVENTORies),
-      tap((res) => {
-        if (!res.length) {
-          throw new Error('Not ITN  Under User');
-        }
-      })
+      map((res) => res.data.findContainer.INVENTORies)
     );
   }
 
