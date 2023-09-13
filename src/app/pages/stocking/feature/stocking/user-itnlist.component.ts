@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, of, tap } from 'rxjs';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { ItnListComponent } from '../../ui/itn-list.component';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   standalone: true,
@@ -23,19 +24,14 @@ import { ItnListComponent } from '../../ui/itn-list.component';
     </div>
   `,
 })
-export class UserItnlistComponent implements OnInit {
-  constructor(private _router: Router, private _actRoute: ActivatedRoute) {}
+export class UserItnlistComponent {
   public data$;
-
-  ngOnInit(): void {
-    this.data$ = this._actRoute.data.pipe(
-      tap((res) => {
-        if (!res.ItnList.length) {
-          this.onSubmit();
-        }
-      }),
-      map((res) => res.ItnList)
-    );
+  constructor(
+    private _router: Router,
+    private _actRoute: ActivatedRoute,
+    private message: NzMessageService
+  ) {
+    this.data$ = this._actRoute.data.pipe(map((res) => res.ItnList));
   }
 
   onSubmit(): void {
