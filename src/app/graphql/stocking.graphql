@@ -11,6 +11,9 @@ query verifyITNForSorting($ITN: String!, $DC: String!) {
         IsMobile
       }
     }
+    ORDERLINEDETAILs {
+      StatusID
+    }
     Product {
       _id
       ProductCode {
