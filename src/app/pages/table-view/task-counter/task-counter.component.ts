@@ -25,7 +25,7 @@ interface tableData {
     <div class="container mx-auto px-4 py-4">
       <table-view
         [listOfColumn]="listOfColumn"
-        [listOfData]="fetchTable$ | async"
+        [data]="fetchTable$ | async"
       ></table-view>
     </div>
   `,

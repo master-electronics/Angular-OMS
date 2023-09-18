@@ -32,6 +32,7 @@ interface LineInfo {
   QuantityReceived: number;
   PartNumber: string;
   ProductCode: string;
+  DueDate: string;
 }
 
 @Injectable()
@@ -105,6 +106,7 @@ export class CreateReceiptService {
             if (line.QuantityOnOrder <= line.QuantityReceived) {
               return;
             }
+            const date = new Date(Number(line.DueDate));
             const lineInfo: LineInfo = {
               LineNumber: line.LineNumber,
               VendorName: res.data.findPurchaseOrderH.Vendor.VendorName,
@@ -112,6 +114,7 @@ export class CreateReceiptService {
               QuantityReceived: line.QuantityReceived,
               PartNumber: line.Product.PartNumber,
               ProductCode: line.Product.ProductCode.ProductCodeNumber,
+              DueDate: date.toLocaleDateString(),
             };
             this.insertLineInfo(lineInfo);
           });

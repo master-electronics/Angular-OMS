@@ -24,7 +24,7 @@ import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
       <ng-container>
         <table-view
           [listOfColumn]="listOfColumn"
-          [listOfData]="data$ | async"
+          [data]="data$ | async"
         ></table-view>
       </ng-container>
     </div>

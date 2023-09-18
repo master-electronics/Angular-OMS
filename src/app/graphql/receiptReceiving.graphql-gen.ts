@@ -3126,6 +3126,7 @@ export type FetchPurchaseOrderInfoQuery = {
     PURCHASEORDERLs?: Array<{
       __typename?: 'PurchaseOrderL';
       LineNumber: number;
+      DueDate?: string | null;
       QuantityReceived?: number | null;
       QuantityOnOrder?: number | null;
       Product: {
@@ -3393,6 +3394,7 @@ export const FetchPurchaseOrderInfoDocument = gql`
       }
       PURCHASEORDERLs {
         LineNumber
+        DueDate
         QuantityReceived
         QuantityOnOrder
         Product {
