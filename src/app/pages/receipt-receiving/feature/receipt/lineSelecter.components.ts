@@ -40,6 +40,12 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
           </td>
         </ng-template>
       </table-view>
+      <div class="grid h-16 grid-cols-5 text-2xl md:mt-10 md:h-32 md:text-4xl">
+        <normal-button
+          class="col-start-3"
+          (buttonClick)="onBack()"
+        ></normal-button>
+      </div>
     </div>
   `,
 })
@@ -96,7 +102,7 @@ export class LineSelecterComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('home');
+    this._router.navigateByUrl('/receiptreceiving/purchasenumber');
   }
 
   public selectLine(data): void {
