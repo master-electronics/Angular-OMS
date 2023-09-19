@@ -38,7 +38,6 @@ export class StockingService {
     private _noFound: UpdateNotFoundForStockingGQL,
     private _insertLog: Create_EventLogsGQL,
     private _ItnInUser: FetchInventoryInUserContainerGQL,
-    private _verifyContainer: VerifyContainerForSortingGQL,
     private _updateInventory: UpdateInventoryAfterSortingGQL,
     private _itn: ItnInfoService,
     private _userInfo: StorageUserInfoService,
@@ -53,6 +52,10 @@ export class StockingService {
         'stockingVerifiedItns',
         JSON.stringify(this.verifiedItns())
       );
+      this._sessionStorage.setItem(
+        'stockingCheckedItns',
+        JSON.stringify(this.checkedItns())
+      );
     });
   }
 
@@ -62,38 +65,30 @@ export class StockingService {
     verifiedItns: JSON.parse(
       this._sessionStorage.getItem('stockingVerifiedItns')
     ),
+    checkedItns: JSON.parse(
+      this._sessionStorage.getItem('stockingCheckedItns')
+    ),
   });
 
   // Selectors
   ITNList = computed(() => this._state().ITNList);
   verifiedItns = computed(() => this._state().verifiedItns);
+  checkedItns = computed(() => this._state().checkedItns);
 
   //reducers
   /**
-   * verifiedItns should be a set of itn object. not dupicate elements.
-   */
-  public addVerifiedItns(itn: ItnInfo) {
-    const tmp = this.verifiedItns();
-    if (!tmp.length) {
-      this._state.mutate((state) => (state.verifiedItns = [itn]));
-      return;
-    }
-    tmp.push(itn);
-    this._state.mutate((state) => (state.verifiedItns = [...new Set(tmp)]));
-  }
-
-  /**
    * ScanITNasTarget In the scantarget page, if user scan a ITN, push this ITN to the ITNList.
    */
-  public ScanITNasTarget(ITN: string) {
+  public ScanItnAsTarget(ITN: ItnInfo) {
     this._state.set({
       ITNList: [ITN],
-      verifiedItns: null,
+      verifiedItns: [ITN],
+      checkedItns: null,
     });
   }
 
   /**
-   * moveItnToUser: move this ITN to user container.
+   * moveItnToUser: If user scan ITN, move this ITN to user container.
    */
   public moveItnToUser(ITN: string): Observable<any> {
     if (!this._userC.userContainerID) {
@@ -136,7 +131,7 @@ export class StockingService {
   }
 
   /**
-   * Verify the location Barcode, then find all itns in this location, then remove suspect and notFound.
+   * If user scan a location, verify the location Barcode, then find all itns in this location
    */
   public findITNsInLocation(Barcode: string) {
     return this._verifyBarcode
@@ -165,6 +160,7 @@ export class StockingService {
             throw new Error(`${Barcode} has no vaild ITN!`);
           }
         }),
+        // Update State based on return ITN list.
         switchMap((res) => {
           const ITNList = res.map((item) => {
             Logger.devOnly(
@@ -190,7 +186,8 @@ export class StockingService {
             'findITNsInLocation',
             ITNList.length
           );
-          this.updateItnList(ITNList);
+          // update the ITNList in state.
+          this._state.mutate((state) => (state.ITNList = ITNList));
           // insert log
           const oldLogs = {
             UserName: this._userInfo.userName,
@@ -213,9 +210,35 @@ export class StockingService {
   }
 
   /**
+   * verifiedItns should be a set of itn object. not dupicate elements.
+   */
+  public addVerifiedItns(itn: ItnInfo) {
+    const tmp = this.verifiedItns();
+    if (!tmp.length) {
+      this._state.mutate((state) => (state.verifiedItns = [itn]));
+      return;
+    }
+    tmp.push(itn);
+    this._state.mutate((state) => (state.verifiedItns = [...new Set(tmp)]));
+  }
+
+  /**
+   * checkedItns should be a set of itn object. not dupicate elements.
+   */
+  public addCheckedItns(itn: ItnInfo) {
+    const tmp = this.checkedItns();
+    if (!tmp.length) {
+      this._state.mutate((state) => (state.checkedItns = [itn]));
+      return;
+    }
+    tmp.push(itn);
+    this._state.mutate((state) => (state.checkedItns = [...new Set(tmp)]));
+  }
+
+  /**
    * notFound
    */
-  public addNotFoundFlag$(list: { ITN: string; InventoryID: number }[]) {
+  public addNotFoundFlag$(list: ItnInfo[]) {
     const oldLogs = [];
     const eventLogs = [];
     const ITNList = [];
@@ -236,7 +259,10 @@ export class StockingService {
         }),
       });
       ITNList.push(itn.ITN);
-      linkList.push({ InventoryID: itn.InventoryID, SuspectReasonID: 1 });
+      linkList.push({
+        InventoryID: itn.InventoryID,
+        SuspectReasonID: sqlData.SuspectReason_Location,
+      });
     });
     return this._noFound
       .mutate({
@@ -260,14 +286,14 @@ export class StockingService {
 
   public verifyITN$(ITN: string) {
     return this._itn.verifyITN$(ITN).pipe(
-      switchMap((res) => {
+      switchMap(() => {
         const oldLogs = {
           UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Stocking_ScanITN,
           InventoryTrackingNumber: ITN,
-          PartNumber: this._itn.itnInfo.PartNumber,
-          ProductCode: this._itn.itnInfo.ProductCode,
-          Quantity: this._itn.itnInfo.QuantityOnHand,
+          PartNumber: this._itn.itnInfo().PartNumber,
+          ProductCode: this._itn.itnInfo().ProductCode,
+          Quantity: this._itn.itnInfo().QuantityOnHand,
           Message: ``,
         };
         this._log.initEventLog({
@@ -275,10 +301,10 @@ export class StockingService {
           EventTypeID: sqlData.Event_Stocking_ScanITN,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
-            PartNumber: this._itn.itnInfo.PartNumber,
-            ProductCode: this._itn.itnInfo.ProductCode,
-            QuantityOnHand: this._itn.itnInfo.QuantityOnHand,
-            Velocity: this._itn.itnInfo.Velocity,
+            PartNumber: this._itn.itnInfo().PartNumber,
+            ProductCode: this._itn.itnInfo().ProductCode,
+            QuantityOnHand: this._itn.itnInfo().QuantityOnHand,
+            Velocity: this._itn.itnInfo().Velocity,
           }),
         });
         return this._insertLog.mutate({
@@ -289,33 +315,27 @@ export class StockingService {
     );
   }
 
+  /**
+   *
+   * @param Barcode destination barcode
+   * @returns
+   */
   public putAway$(Barcode: string) {
-    return this._verifyContainer
-      .fetch(
-        { Barcode, DistributionCenter: environment.DistributionCenter },
-        { fetchPolicy: 'network-only' }
-      )
+    return this._updateInventory
+      .mutate({
+        User: this._userInfo.userName,
+        BinLocation: Barcode,
+        ITN: this._itn.itnInfo().ITN,
+      })
       .pipe(
-        tap((res) => {
-          if (!res.data.findContainer._id) {
-            throw new Error('Container not found!');
-          }
-        }),
-        switchMap((res) => {
-          return this._updateInventory.mutate({
-            User: this._userInfo.userName,
-            BinLocation: Barcode,
-            ITN: this._itn.itnInfo.ITN,
-          });
-        }),
         switchMap(() => {
           const oldLogs = {
             UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
-            ProductCode: this._itn.itnInfo.ProductCode,
-            PartNumber: this._itn.itnInfo.PartNumber,
-            Quantity: this._itn.itnInfo.QuantityOnHand,
-            InventoryTrackingNumber: this._itn.itnInfo.ITN,
+            ProductCode: this._itn.itnInfo().ProductCode,
+            PartNumber: this._itn.itnInfo().PartNumber,
+            Quantity: this._itn.itnInfo().QuantityOnHand,
+            InventoryTrackingNumber: this._itn.itnInfo().ITN,
             Message: Barcode,
           };
           const eventLogs = {
@@ -335,8 +355,7 @@ export class StockingService {
     this._state.set({
       ITNList: null,
       verifiedItns: null,
-      loaded: false,
-      error: null,
+      checkedItns: null,
     });
   }
 }

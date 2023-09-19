@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, tap } from 'rxjs';
+import { map } from 'rxjs';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { ItnListComponent } from '../../ui/itn-list.component';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   standalone: true,
@@ -26,11 +25,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class UserItnlistComponent {
   public data$;
-  constructor(
-    private _router: Router,
-    private _actRoute: ActivatedRoute,
-    private message: NzMessageService
-  ) {
+  constructor(private _router: Router, private _actRoute: ActivatedRoute) {
     this.data$ = this._actRoute.data.pipe(map((res) => res.ItnList));
   }
 

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ItnInfoService } from '../../../data/itn-info.service';
@@ -46,17 +46,32 @@ export class RescanItnComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const input = this.inputForm.value.itn;
-    const isValid = input === this._itn.itnInfo.ITN;
-    if (!isValid) {
+    const input = this.inputForm.value.itn.trim();
+    // if not equal pop out error
+    if (input !== this._itn.itnInfo().ITN) {
       this.data$ = of({ error: { message: `Invalid ITN!`, name: `error` } });
       return;
     }
-    if (this._stock.verifiedItns?.length !== this._stock.ITNList.length) {
-      this._router.navigate(['../checkitns'], { relativeTo: this._actRoute });
-      return;
-    }
-    this._router.navigate(['../user'], { relativeTo: this._actRoute });
+    // if equal move itn to destination, then push itn to checked itn list.
+    this.data$ = this._stock.putAway$(input).pipe(
+      map(() => {
+        if (
+          this._stock.verifiedItns()?.length !==
+          this._stock.checkedItns()?.length
+        ) {
+          this._router.navigate(['../checkitns'], {
+            relativeTo: this._actRoute,
+          });
+          return;
+        }
+        this._router.navigate(['../user'], { relativeTo: this._actRoute });
+      }),
+      catchError((error) => {
+        return of({
+          error: { message: error.message, type: 'error' },
+        });
+      })
+    );
   }
 
   onBack(): void {

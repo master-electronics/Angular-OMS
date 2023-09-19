@@ -3,7 +3,6 @@ import { switchMap, tap } from 'rxjs';
 import {
   UpdateInventoryAfterSortingGQL,
   VerifyContainerForSortingGQL,
-  VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
@@ -15,7 +14,6 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
 @Injectable()
 export class SortingService {
   constructor(
-    private _verifyITN: VerifyItnForSortingGQL,
     private _insertLog: Create_EventLogsGQL,
     private _verifyContainer: VerifyContainerForSortingGQL,
     private _updateInventory: UpdateInventoryAfterSortingGQL,
@@ -23,21 +21,21 @@ export class SortingService {
     private _userInfo: StorageUserInfoService,
     private _eventLog: EventLogService
   ) {}
-  //
+  //Reducer
   /**
    * @param ITN User input ITN
    * @returns observable of http request.
    */
   public sortingStart$(ITN: string) {
     return this._itn.verifyITN$(ITN).pipe(
-      switchMap((res) => {
+      switchMap(() => {
         const oldLogs = {
           UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Stocking_SortingStart,
           InventoryTrackingNumber: ITN,
-          PartNumber: this._itn.itnInfo.PartNumber,
-          ProductCode: this._itn.itnInfo.ProductCode,
-          Quantity: this._itn.itnInfo.QuantityOnHand,
+          PartNumber: this._itn.itnInfo().PartNumber,
+          ProductCode: this._itn.itnInfo().ProductCode,
+          Quantity: this._itn.itnInfo().QuantityOnHand,
           Message: ``,
         };
         this._eventLog.initEventLog({
@@ -45,10 +43,10 @@ export class SortingService {
           EventTypeID: sqlData.Event_Stocking_SortingStart,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
-            PartNumber: this._itn.itnInfo.PartNumber,
-            ProductCode: this._itn.itnInfo.ProductCode,
-            QuantityOnHand: this._itn.itnInfo.QuantityOnHand,
-            Velocity: this._itn.itnInfo.Velocity,
+            PartNumber: this._itn.itnInfo().PartNumber,
+            ProductCode: this._itn.itnInfo().ProductCode,
+            QuantityOnHand: this._itn.itnInfo().QuantityOnHand,
+            Velocity: this._itn.itnInfo().Velocity,
           }),
         });
         return this._insertLog.mutate({
@@ -59,6 +57,11 @@ export class SortingService {
     );
   }
 
+  /**
+   *
+   * @param Barcode target location's barcode
+   * @returns
+   */
   public moveItn$(Barcode: string) {
     return this._verifyContainer
       .fetch(
@@ -74,10 +77,10 @@ export class SortingService {
             throw new Error('This container is not a mobile container');
           }
         }),
-        switchMap((res) => {
+        switchMap(() => {
           return this._updateInventory.mutate({
             User: this._userInfo.userName,
-            ITN: this._itn.itnInfo.ITN,
+            ITN: this._itn.itnInfo().ITN,
             BinLocation: Barcode,
           });
         }),
@@ -85,10 +88,10 @@ export class SortingService {
           const oldLogs = {
             UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_SortingDone,
-            ProductCode: this._itn.itnInfo.ProductCode,
-            PartNumber: this._itn.itnInfo.PartNumber,
-            Quantity: this._itn.itnInfo.QuantityOnHand,
-            InventoryTrackingNumber: this._itn.itnInfo.ITN,
+            ProductCode: this._itn.itnInfo().ProductCode,
+            PartNumber: this._itn.itnInfo().PartNumber,
+            Quantity: this._itn.itnInfo().QuantityOnHand,
+            InventoryTrackingNumber: this._itn.itnInfo().ITN,
             Message: Barcode,
           };
           const eventLogs = {

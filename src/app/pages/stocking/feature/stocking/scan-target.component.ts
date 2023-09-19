@@ -62,7 +62,7 @@ export class ScanTargetComponent implements OnInit {
       input.trim().length === 16
         ? input.trim().replace(/-/g, '')
         : input.trim();
-    this.findITNInLocation(input);
+    this.findITNInLocation(Barcode);
   }
 
   private moveItnToUser(ITN: string) {
@@ -71,7 +71,7 @@ export class ScanTargetComponent implements OnInit {
         return this._stock.moveItnToUser(ITN);
       }),
       map(() => {
-        this._stock.ScanITNasTarget(ITN);
+        this._stock.ScanItnAsTarget(this._itn.itnInfo());
         this._router.navigate(['../putaway'], {
           relativeTo: this._actRoute,
         });

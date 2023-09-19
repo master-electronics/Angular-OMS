@@ -9,6 +9,7 @@ import { ItnInfoService } from '../../data/itn-info.service';
 import { SortingService } from '../../data/sorting.service';
 import { SortInfoComponent } from '../../ui/sort-info.component';
 import { SuggetionLocationComponent } from '../../ui/suggetion-location.component';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -60,7 +61,7 @@ export class LocationComponent implements OnInit {
     location: ['', [Validators.required]],
   });
   public info$ = combineLatest([
-    this._itn.itnInfo$.pipe(
+    toObservable(this._itn.itnInfo).pipe(
       tap((res) => (this.ProductCode = res.ProductCode)),
       map((res) => ({
         ITN: res.ITN,
@@ -70,7 +71,7 @@ export class LocationComponent implements OnInit {
         Vty: res.Velocity,
       }))
     ),
-    this._itn.itnInfo$.pipe(
+    toObservable(this._itn.itnInfo).pipe(
       map((res) => ({
         flag: res.Autostore,
       }))

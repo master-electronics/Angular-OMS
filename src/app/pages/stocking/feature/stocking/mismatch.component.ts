@@ -45,7 +45,7 @@ import { ItnInfoService } from '../../data/itn-info.service';
     <ng-container *ngIf="message">
       <popup-modal
         [message]="message"
-        (clickSubmit)="notFound()"
+        (clickSubmit)="popSubmit()"
         (clickCancel)="cancel()"
       ></popup-modal>
     </ng-container>
@@ -62,8 +62,6 @@ export class MismatchComponent implements OnInit {
 
   public data$;
   public message;
-  public unverifiedITNs = [...this._stock.ITNList];
-  public verifiedITNs = [];
   public inputForm = this._fb.nonNullable.group({
     itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
@@ -75,19 +73,15 @@ export class MismatchComponent implements OnInit {
   onSubmit(): void {
     const input = this.inputForm.value.itn;
     this.inputForm.patchValue({ itn: '' });
-    // IF ITN not in the list, then move this itn to user container
-    if (!this._stock.ITNList.some((itn) => itn.ITN === input)) {
-      this.moveItnToUser(input);
+    const itnInfo = this._stock.ITNList().find((itn) => itn.ITN === input);
+    // IF ITN not in the list, popout a windown, then move this itn to user container
+    if (!itnInfo) {
+      this.message =
+        'This ITN is not found, do you want to move it to your personal container?';
       return;
     }
     // If itn in the list, move this itn from unverified to verified list.
-    this.unverifiedITNs = this.unverifiedITNs.filter((itn) => {
-      const isequal = itn.ITN === input;
-      if (isequal) {
-        this.verifiedITNs.push(itn);
-      }
-      return !isequal;
-    });
+    this._stock.addVerifiedItns(itnInfo);
     this.data$ = of({
       error: {
         message: `ITN ${input} is found`,
@@ -96,14 +90,14 @@ export class MismatchComponent implements OnInit {
     });
   }
 
-  private moveItnToUser(input): void {
-    this.data$ = this._itn.verifyITN$(input).pipe(
+  private moveItnToUser(itn: string): void {
+    this.data$ = this._itn.verifyITN$(itn).pipe(
       switchMap(() => {
-        return this._stock.moveItnToUser(input);
+        return this._stock.moveItnToUser(itn);
       }),
       map(() => ({
         error: {
-          message: `${input} is not found in the working location,  It has been moved to your personal location.`,
+          message: `${itn} is not found in the working location,  It has been moved to your personal location.`,
           name: `warning`,
         },
       })),
@@ -120,46 +114,44 @@ export class MismatchComponent implements OnInit {
   }
 
   onDone(): void {
-    if (!this.unverifiedITNs.length) {
-      this._stock.updateItnList(this.verifiedITNs);
+    const verified = this._stock.verifiedItns().length;
+    const total = this._stock.ITNList().length;
+    if (verified === total) {
       this._router.navigate(['../checkitns'], {
         relativeTo: this._actRoute,
       });
       return;
     }
-    this.message = `You are about to declare ${this.unverifiedITNs.length} ITNs as NOT FOUND.
+    this.message = `You are about to declare ${
+      total - verified
+    } ITNs as NOT FOUND.
     Continue?`;
   }
 
+  popSubmit() {
+    if (this.message.substring(0, 3) === 'You') {
+      this.notFound();
+      return;
+    }
+    this.moveItnToUser(this.message.substring(0, 8));
+  }
+
   notFound(): void {
-    const list = this.unverifiedITNs.map((itn) => ({
-      ITN: itn.ITN,
-      InventoryID: itn.InventoryID,
-    }));
-    this.data$ = this._stock.addNotFoundFlag$(list).pipe(
+    this.data$ = this._stock.addNotFoundFlag$(this._stock.verifiedItns()).pipe(
       map(() => {
         // check if current location is empty, back to first page.
         let url = '../checkitns';
-        if (this.unverifiedITNs.length === this._stock.ITNList.length) {
+        if (
+          this._stock.verifiedItns().length === this._stock.ITNList().length
+        ) {
           url = '../scantarget';
         }
-        this._stock.updateItnList(this.verifiedITNs);
         this._router.navigate([url], {
           relativeTo: this._actRoute,
         });
       }),
       catchError((error) => {
-        // check if current location is empty, back to first page.
-        let url = '../checkitns';
-        if (this.unverifiedITNs.length === this._stock.ITNList.length) {
-          url = '../scantarget';
-        }
-        this._stock.updateItnList(this.verifiedITNs);
-        this._router.navigate([url], {
-          relativeTo: this._actRoute,
-        });
-        // return of({ error: { message: error.message, name: 'error' } });
-        return of(false);
+        return of({ error: { message: error.message, name: 'error' } });
       })
     );
   }

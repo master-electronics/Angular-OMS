@@ -21,6 +21,13 @@ export const sqlData = {
   qcComplete_ID: 60,
   agInComplete_ID: 63,
   agOutComplete_ID: 65,
+  // Suspect Reason
+  SuspectReason_Location: 1,
+  SuspectReason_Quantity: 2,
+  SuspectReason_ROHS: 3,
+  SuspectReason_DateCode: 4,
+  SuspectReason_CountryOfOrigin: 5,
+  SuspectReason_InReceiving: 6,
   //WMS ContainerType table
   shelfType_ID: 2,
   toteType_ID: 3,

@@ -1,6 +1,9 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
-import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
+import {
+  VerifyContainerForSortingGQL,
+  VerifyItnForSortingGQL,
+} from 'src/app/graphql/stocking.graphql-gen';
 import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
 import { environment } from 'src/environments/environment';
 
@@ -15,12 +18,16 @@ export interface ItnInfo {
   ProductType: string;
   Velocity: string;
   Autostore: boolean;
+  BinLocation: string;
 }
 
 @Injectable()
 export class ItnInfoService {
   private _sessionStorage = inject(SESSION_STORAGE);
-  constructor(private _verifyITN: VerifyItnForSortingGQL) {
+  constructor(
+    private _verifyITN: VerifyItnForSortingGQL,
+    private _verifyContainer: VerifyContainerForSortingGQL
+  ) {
     effect(() => {
       this._sessionStorage.setItem(
         'stockingItnInfo',
@@ -40,6 +47,32 @@ export class ItnInfoService {
     this.itnInfo.set(null);
   }
 
+  /**
+   *
+   * @param Barcode destination barcode verify the barcode is valid
+   * @returns
+   */
+  public verifyPutawayBarcode(Barcode: string) {
+    return this._verifyContainer
+      .fetch(
+        { Barcode, DistributionCenter: environment.DistributionCenter },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        tap((res) => {
+          if (!res.data.findContainer._id) {
+            throw new Error('Container not found!');
+          }
+          this.itnInfo.mutate((info) => (info.BinLocation = Barcode));
+        })
+      );
+  }
+
+  /**
+   *
+   * @param ITN
+   * @returns
+   */
   public verifyITN$(ITN: string) {
     return this._verifyITN
       .fetch(
@@ -72,6 +105,7 @@ export class ItnInfoService {
             Autostore: inventory.Product.Autostore,
             ProductType: 'STANDARD',
             Remaining: null,
+            BinLocation: null,
           });
         })
       );

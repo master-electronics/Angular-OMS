@@ -9,6 +9,7 @@ import { ItnInfoService } from '../../../data/itn-info.service';
 import { StockingService } from '../../../data/stocking.service';
 import { StockInfoComponent } from '../../../ui/stock-info.component';
 import { SuggetionLocationComponent } from '../../../ui/suggetion-location.component';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -47,7 +48,6 @@ export class PutAwayComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _stock: StockingService,
     private _itn: ItnInfoService
   ) {}
 
@@ -57,7 +57,7 @@ export class PutAwayComponent implements OnInit {
     location: ['', [Validators.required]],
   });
   public info$ = combineLatest([
-    this._itn.itnInfo$.pipe(
+    toObservable(this._itn.itnInfo).pipe(
       tap((res) => (this.ProductCode = res.ProductCode)),
       map((res) => ({
         ITN: res.ITN,
@@ -68,10 +68,7 @@ export class PutAwayComponent implements OnInit {
       }))
     ),
     this._actRoute.data.pipe(map((res) => res.locations)),
-  ]).pipe(
-    map(([info, locations]) => ({ info, locations })),
-    shareReplay(1)
-  );
+  ]).pipe(map(([info, locations]) => ({ info, locations })));
 
   ngOnInit() {
     this.data$ = of(true);
@@ -81,7 +78,7 @@ export class PutAwayComponent implements OnInit {
     const tmp = this.inputForm.value.location;
     const Barcode =
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
-    this.data$ = this._stock.putAway$(Barcode).pipe(
+    this.data$ = this._itn.verifyPutawayBarcode(Barcode).pipe(
       map(() => {
         this._router.navigate(['../rescanitn'], {
           relativeTo: this._actRoute,

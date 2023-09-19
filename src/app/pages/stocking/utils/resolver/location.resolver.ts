@@ -14,7 +14,7 @@ export const SortLocationResolver: ResolveFn<any> = (
   suggest: SuggestLocationsService = inject(SuggestLocationsService),
   itn: ItnInfoService = inject(ItnInfoService)
 ): Observable<any> => {
-  return suggest.suggestLocation$(itn.itnInfo.ProductID).pipe(
+  return suggest.suggestLocation$(itn.itnInfo().ProductID).pipe(
     catchError((error) => {
       return of({ error });
     })

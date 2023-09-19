@@ -51,7 +51,7 @@ export class ScanITNComponent implements OnInit {
     this.title.setTitle('Sorting');
     this._title.update('Sorting');
     this.data$ = of(true);
-    this._itn.resetItnInfo();
+    this._itn.reset();
     this._eventLog.initEventLog(null);
   }
 
@@ -60,7 +60,7 @@ export class ScanITNComponent implements OnInit {
       map(() => {
         this._router.navigate(['../location'], {
           relativeTo: this._actRoute,
-          queryParams: { ProductID: this._itn.itnInfo.ProductID },
+          queryParams: { ProductID: this._itn.itnInfo().ProductID },
         });
       }),
       catchError((error) => {
