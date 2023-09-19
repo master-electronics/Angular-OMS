@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../data/stocking.service';
+import { ItnInfoService } from '../../data/itn-info.service';
 
 @Component({
   standalone: true,
@@ -55,7 +56,8 @@ export class MismatchComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _stock: StockingService
+    private _stock: StockingService,
+    private _itn: ItnInfoService
   ) {}
 
   public data$;
@@ -95,7 +97,10 @@ export class MismatchComponent implements OnInit {
   }
 
   private moveItnToUser(input): void {
-    this.data$ = this._stock.moveItnToUser(input).pipe(
+    this.data$ = this._itn.verifyITN$(input).pipe(
+      switchMap(() => {
+        return this._stock.moveItnToUser(input);
+      }),
       map(() => ({
         error: {
           message: `${input} is not found in the working location,  It has been moved to your personal location.`,

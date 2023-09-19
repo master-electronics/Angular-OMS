@@ -1,5 +1,4 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { of } from 'rxjs';
 import { SESSION_STORAGE } from '../utils/storage';
 
 export interface UserToken {

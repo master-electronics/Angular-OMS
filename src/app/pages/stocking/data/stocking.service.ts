@@ -1,4 +1,11 @@
-import { Injectable } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
+} from '@angular/core';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   FetchInventoryInUserContainerGQL,
@@ -17,12 +24,15 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { ItnInfo, ItnInfoService } from './itn-info.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
 
 @Injectable()
 export class StockingService {
+  private _destroyRef = inject(DestroyRef);
+  private _sessionStorage = inject(SESSION_STORAGE);
+
   constructor(
     private _userC: UserContainerService,
-    private _verifyITN: VerifyItnForSortingGQL,
     private _move: MoveInventoryToContainerForStockingGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
@@ -33,110 +43,90 @@ export class StockingService {
     private _itn: ItnInfoService,
     private _userInfo: StorageUserInfoService,
     private _log: EventLogService
-  ) {}
+  ) {
+    effect(() => {
+      this._sessionStorage.setItem(
+        'stockingItnList',
+        JSON.stringify(this.ITNList())
+      );
+      this._sessionStorage.setItem(
+        'stockingVerifiedItns',
+        JSON.stringify(this.verifiedItns())
+      );
+    });
+  }
 
-  public get ITNList() {
-    return JSON.parse(localStorage.getItem('stockingItnList') || 'null');
-  }
-  public updateItnList(list: ItnInfo[]): void {
-    localStorage.setItem('stockingItnList', JSON.stringify(list));
-  }
+  // State
+  private _state = signal({
+    ITNList: JSON.parse(this._sessionStorage.getItem('stockingItnList')),
+    verifiedItns: JSON.parse(
+      this._sessionStorage.getItem('stockingVerifiedItns')
+    ),
+  });
 
-  public get verifiedItns() {
-    return JSON.parse(localStorage.getItem('stockingVerifiedItns') || 'null');
-  }
+  // Selectors
+  ITNList = computed(() => this._state().ITNList);
+  verifiedItns = computed(() => this._state().verifiedItns);
+
+  //reducers
   /**
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
   public addVerifiedItns(itn: ItnInfo) {
-    const verifiedItns = JSON.parse(
-      localStorage.getItem('stockingVerifiedItns') || 'null'
-    );
-    if (!verifiedItns) {
-      localStorage.setItem('stockingVerifiedItns', JSON.stringify([itn.ITN]));
+    const tmp = this.verifiedItns();
+    if (!tmp.length) {
+      this._state.mutate((state) => (state.verifiedItns = [itn]));
       return;
     }
-    verifiedItns.push(itn.ITN);
-    const set = new Set(verifiedItns);
-    localStorage.setItem('stockingVerifiedItns', JSON.stringify([...set]));
-  }
-
-  public reset(): void {
-    this._itn.resetItnInfo();
-    localStorage.removeItem('stockingItnList');
-    localStorage.removeItem('stockingVerifiedItns');
+    tmp.push(itn);
+    this._state.mutate((state) => (state.verifiedItns = [...new Set(tmp)]));
   }
 
   /**
-   * moveItnToUser: Verify itn first, then move this ITN to user container.
+   * ScanITNasTarget In the scantarget page, if user scan a ITN, push this ITN to the ITNList.
+   */
+  public ScanITNasTarget(ITN: string) {
+    this._state.set({
+      ITNList: [ITN],
+      verifiedItns: null,
+    });
+  }
+
+  /**
+   * moveItnToUser: move this ITN to user container.
    */
   public moveItnToUser(ITN: string): Observable<any> {
-    return this._verifyITN
-      .fetch(
-        {
-          ITN,
-          DC: environment.DistributionCenter,
-        },
-        { fetchPolicy: 'network-only' }
-      )
+    if (!this._userC.userContainerID) {
+      throw new Error('Container not found');
+    }
+    return this._move
+      .mutate({
+        ITN: ITN,
+        User: this._userInfo.userName,
+        BinLocation: this._userInfo.userName,
+      })
       .pipe(
-        tap((res) => {
-          if (!res.data.findInventory) {
-            throw new Error('ITN not found');
-          }
-          if (!this._userC.userContainerID) {
-            throw new Error('Container not found');
-          }
-        }),
-        switchMap((res) => {
-          const inventory = res.data.findInventory;
-          // update itn info
-          this._itn.changeItnInfo({
-            ITN,
-            ProductID: inventory.Product._id,
-            InventoryID: inventory._id,
-            ProductCode: inventory.Product.ProductCode.ProductCodeNumber,
-            PartNumber: inventory.Product.PartNumber,
-            QuantityOnHand: inventory.QuantityOnHand,
-            Velocity: inventory.Product.Velocity,
-            Autostore: inventory.Product.Autostore,
-            ProductType: 'STANDARD',
-            Remaining: null,
-          });
+        switchMap(() => {
           // init evetlog
           this._log.initEventLog({
             UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
             Log: JSON.stringify({
               InventoryTrackingNumber: ITN,
-              PartNumber: this._itn.itnInfo.PartNumber,
-              ProductCode: this._itn.itnInfo.ProductCode,
-              QuantityOnHand: this._itn.itnInfo.QuantityOnHand,
-              Velocity: this._itn.itnInfo.Velocity,
+              PartNumber: this._itn.itnInfo().PartNumber,
+              ProductCode: this._itn.itnInfo().ProductCode,
+              QuantityOnHand: this._itn.itnInfo().QuantityOnHand,
+              Velocity: this._itn.itnInfo().Velocity,
             }),
           });
-          // insert itn to list when input ITN as target.
-          if (!this.ITNList) {
-            this.updateItnList([this._itn.itnInfo]);
-            localStorage.removeItem('stockingVerifiedItns');
-            this.addVerifiedItns(this._itn.itnInfo);
-          }
-          return this._move.mutate({
-            ITN: this._itn.itnInfo.ITN,
-            User: this._userInfo.userName,
-            BinLocation: this._userInfo.userName,
-          });
-        }),
-        switchMap(() => {
           const oldLogs = {
             UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
-            InventoryTrackingNumber: this._itn.itnInfo.ITN,
-            PartNumber: this._itn.itnInfo.PartNumber,
-            ProductCode: this._itn.itnInfo.ProductCode,
+            InventoryTrackingNumber: this._itn.itnInfo().ITN,
+            PartNumber: this._itn.itnInfo().PartNumber,
+            ProductCode: this._itn.itnInfo().ProductCode,
             Message: ``,
           };
-
           return this._insertLog.mutate({
             oldLogs,
             eventLogs: this._log.eventLog,
@@ -339,5 +329,14 @@ export class StockingService {
           return this._insertLog.mutate({ oldLogs, eventLogs });
         })
       );
+  }
+
+  public reset(): void {
+    this._state.set({
+      ITNList: null,
+      verifiedItns: null,
+      loaded: false,
+      error: null,
+    });
   }
 }

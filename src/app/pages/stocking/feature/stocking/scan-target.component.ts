@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../data/stocking.service';
 import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
+import { ItnInfoService } from '../../data/itn-info.service';
 
 @Component({
   standalone: true,
@@ -35,7 +36,8 @@ export class ScanTargetComponent implements OnInit {
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
-    private _stock: StockingService
+    private _stock: StockingService,
+    private _itn: ItnInfoService
   ) {}
 
   public data$;
@@ -64,9 +66,15 @@ export class ScanTargetComponent implements OnInit {
   }
 
   private moveItnToUser(ITN: string) {
-    this.data$ = this._stock.moveItnToUser(ITN).pipe(
+    this.data$ = this._itn.verifyITN$(ITN).pipe(
+      switchMap(() => {
+        return this._stock.moveItnToUser(ITN);
+      }),
       map(() => {
-        this._router.navigate(['../putaway'], { relativeTo: this._actRoute });
+        this._stock.ScanITNasTarget(ITN);
+        this._router.navigate(['../putaway'], {
+          relativeTo: this._actRoute,
+        });
       }),
       catchError((error) => {
         return of({

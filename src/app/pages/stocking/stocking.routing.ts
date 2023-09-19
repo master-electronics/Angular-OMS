@@ -16,8 +16,6 @@ export const StockingRoutes: Routes = [
       StockingService,
       ItnInfoService,
       SuggestLocationsService,
-      SortLocationResolver,
-      ScanTargetResolver,
     ],
     canActivateChild: [StockingGuard],
     loadComponent: () =>

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { Injectable, effect, inject, signal } from '@angular/core';
+import { tap } from 'rxjs';
 import { VerifyItnForSortingGQL } from 'src/app/graphql/stocking.graphql-gen';
+import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
 import { environment } from 'src/environments/environment';
 
 export interface ItnInfo {
@@ -18,29 +19,25 @@ export interface ItnInfo {
 
 @Injectable()
 export class ItnInfoService {
-  constructor(private _verifyITN: VerifyItnForSortingGQL) {}
+  private _sessionStorage = inject(SESSION_STORAGE);
+  constructor(private _verifyITN: VerifyItnForSortingGQL) {
+    effect(() => {
+      this._sessionStorage.setItem(
+        'stockingItnInfo',
+        JSON.stringify(this.itnInfo())
+      );
+    });
+  }
 
-  public get itnInfo() {
-    return JSON.parse(localStorage.getItem('stockingItnInfo') || 'null');
-  }
-  public get itnInfo$() {
-    const info = JSON.parse(localStorage.getItem('stockingItnInfo') || 'null');
-    return of(info);
-  }
-
-  /**
-   *
-   * @param date Update itnInfo
-   */
-  public changeItnInfo(date: ItnInfo): void {
-    localStorage.setItem('stockingItnInfo', JSON.stringify(date));
-  }
+  itnInfo = signal<ItnInfo>(
+    JSON.parse(this._sessionStorage.getItem('stockingItnInfo'))
+  );
 
   /**
    * resetItnInfo
    */
-  public resetItnInfo(): void {
-    localStorage.removeItem('stockingItnInfo');
+  public reset(): void {
+    this.itnInfo.set(null);
   }
 
   public verifyITN$(ITN: string) {
@@ -64,7 +61,7 @@ export class ItnInfoService {
             throw new Error("Can't move this ITN after picking.");
           }
           const inventory = res.data.findInventory;
-          this.changeItnInfo({
+          this.itnInfo.set({
             ITN,
             ProductID: inventory.Product._id,
             InventoryID: inventory._id,
