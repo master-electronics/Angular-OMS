@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, effect, inject, signal } from '@angular/core';
+import { SESSION_STORAGE } from '../utils/storage';
 
 export interface EventLog {
   UserName: string;
@@ -11,17 +11,26 @@ export interface EventLog {
   providedIn: 'root',
 })
 export class EventLogService {
-  private _eventLog = new BehaviorSubject<EventLog>(null);
+  sessionStorage = inject(SESSION_STORAGE);
+  constructor() {
+    effect(() => {
+      this.sessionStorage.setItem('EventLog', JSON.stringify(this._eventLog()));
+    });
+  }
+
+  private _eventLog = signal<EventLog>(
+    JSON.parse(this.sessionStorage.getItem('EventLog'))
+  );
   public get eventLog(): EventLog {
-    return this._eventLog.value;
+    return this._eventLog();
   }
   public initEventLog(log: EventLog): void {
-    this._eventLog.next(log);
+    this._eventLog.set(log);
   }
   public updateEventLog(log: EventLog): void {
-    this._eventLog.next({
-      ...this._eventLog?.value,
+    this._eventLog.update((ele) => ({
+      ...ele,
       ...log,
-    });
+    }));
   }
 }
