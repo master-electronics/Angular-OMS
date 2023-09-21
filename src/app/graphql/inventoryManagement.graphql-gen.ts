@@ -3212,24 +3212,492 @@ export type ValueMap = {
   _id?: Maybe<Scalars['Int']>;
 };
 
-export type FetchLocalLogsQueryVariables = Types.Exact<{
-  Date: Types.Scalars['String'];
+export type FetchAuditTypesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type FetchAuditTypesQuery = { __typename?: 'Query', fetchAuditTypes?: Array<{ __typename?: 'AUDITTYPE', _id?: number | null, Type?: string | null, Order?: number | null } | null> | null };
+
+export type VerifyAuditLocationQueryVariables = Types.Exact<{
+  container?: Types.InputMaybe<Types.SearchContainer>;
 }>;
 
 
-export type FetchLocalLogsQuery = { __typename?: 'Query', findLocalErrorLogs?: Array<string | null> | null };
+export type VerifyAuditLocationQuery = { __typename?: 'Query', findContainer?: { __typename?: 'Container', _id: number } | null };
 
-export const FetchLocalLogsDocument = gql`
-    query fetchLocalLogs($Date: String!) {
-  findLocalErrorLogs(Date: $Date)
+export type FindProductCodeQueryVariables = Types.Exact<{
+  productCode?: Types.InputMaybe<Types.SearchProductCode>;
+}>;
+
+
+export type FindProductCodeQuery = { __typename?: 'Query', findProductCode?: { __typename?: 'ProductCode', _id: number, ProductCodeNumber: string } | null };
+
+export type FindImProductQueryVariables = Types.Exact<{
+  product?: Types.InputMaybe<Types.SearchProduct>;
+}>;
+
+
+export type FindImProductQuery = { __typename?: 'Query', findProduct?: { __typename?: 'Product', _id: number, PartNumber: string, ProductCodeID: number } | null };
+
+export type FindImInventoryQueryVariables = Types.Exact<{
+  inventory: Types.SearchInventory;
+}>;
+
+
+export type FindImInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string } } | null };
+
+export type FindImInventoriesQueryVariables = Types.Exact<{
+  itn?: Types.InputMaybe<Types.Scalars['String']>;
+  barcodeStart?: Types.InputMaybe<Types.Scalars['String']>;
+  barcodeEnd?: Types.InputMaybe<Types.Scalars['String']>;
+  prc?: Types.InputMaybe<Types.Scalars['String']>;
+  partNumber?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FindImInventoriesQuery = { __typename?: 'Query', findIMInventories?: Array<{ __typename?: 'AUDITINVENTORY', _id?: number | null, InventoryTrackingNumber?: string | null, oldID?: number | null } | null> | null };
+
+export type FindImprcInventoriesQueryVariables = Types.Exact<{
+  prc?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FindImprcInventoriesQuery = { __typename?: 'Query', findIMPRCInventories?: Array<{ __typename?: 'Inventory', _id: number } | null> | null };
+
+export type FindImprcPartNumberInventoriesQueryVariables = Types.Exact<{
+  prc?: Types.InputMaybe<Types.Scalars['String']>;
+  partNumber?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type FindImprcPartNumberInventoriesQuery = { __typename?: 'Query', findIMPRCPartNumberInventories?: Array<{ __typename?: 'Inventory', _id: number } | null> | null };
+
+export type ValidateFilterQueryVariables = Types.Exact<{
+  itn?: Types.InputMaybe<Types.Scalars['String']>;
+  locationStart?: Types.InputMaybe<Types.Scalars['String']>;
+  locationEnd?: Types.InputMaybe<Types.Scalars['String']>;
+  prc?: Types.InputMaybe<Types.Scalars['String']>;
+  partNumber?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type ValidateFilterQuery = { __typename?: 'Query', validateFilter?: boolean | null };
+
+export type FindNextAuditQueryVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type FindNextAuditQuery = { __typename?: 'Query', findNextAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, Barcode?: string | null, ProductID?: number | null, DateCode?: string | null, COO?: string | null, ROHS?: boolean | null, QuantityOnHand?: number | null, PartNumber?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
+
+export type GetNextSubAuditQueryVariables = Types.Exact<{
+  inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type GetNextSubAuditQuery = { __typename?: 'Query', getNextSubAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, Barcode?: string | null, ProductID?: number | null, ROHS?: boolean | null, QuantityOnHand?: number | null, PartNumber?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
+
+export type InsertAuditsMutationVariables = Types.Exact<{
+  audits?: Types.InputMaybe<Array<Types.InputMaybe<Types.InputAudit>> | Types.InputMaybe<Types.InputAudit>>;
+}>;
+
+
+export type InsertAuditsMutation = { __typename?: 'Mutation', insertAudits?: Array<{ __typename?: 'AUDIT', _id?: number | null } | null> | null };
+
+export type InsertSuspectMutationVariables = Types.Exact<{
+  suspect?: Types.InputMaybe<Array<Types.InputMaybe<Types.InputSuspect>> | Types.InputMaybe<Types.InputSuspect>>;
+}>;
+
+
+export type InsertSuspectMutation = { __typename?: 'Mutation', insertSuspect?: { __typename?: 'AUDIT', _id?: number | null } | null };
+
+export type InventoryUpdateMutationVariables = Types.Exact<{
+  user: Types.Scalars['String'];
+  itn: Types.Scalars['String'];
+  quantity?: Types.InputMaybe<Types.Scalars['String']>;
+  dateCode?: Types.InputMaybe<Types.Scalars['String']>;
+  country?: Types.InputMaybe<Types.Scalars['String']>;
+  rohs?: Types.InputMaybe<Types.Scalars['String']>;
+  reason: Types.Scalars['String'];
+  suspect?: Types.InputMaybe<Types.Scalars['String']>;
+  binlocation?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type InventoryUpdateMutation = { __typename?: 'Mutation', inventoryUpdate?: boolean | null };
+
+export type DeleteAuditMutationVariables = Types.Exact<{
+  inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
+  typeID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type DeleteAuditMutation = { __typename?: 'Mutation', deleteAudit?: { __typename?: 'AUDIT', _id?: number | null } | null };
+
+export type CloseAuditMutationVariables = Types.Exact<{
+  inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
+  typeID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type CloseAuditMutation = { __typename?: 'Mutation', closeAudit?: { __typename?: 'AUDIT', _id?: number | null } | null };
+
+export const FetchAuditTypesDocument = gql`
+    query fetchAuditTypes {
+  fetchAuditTypes {
+    _id
+    Type
+    Order
+  }
 }
     `;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class FetchLocalLogsGQL extends Apollo.Query<FetchLocalLogsQuery, FetchLocalLogsQueryVariables> {
-    document = FetchLocalLogsDocument;
+  export class FetchAuditTypesGQL extends Apollo.Query<FetchAuditTypesQuery, FetchAuditTypesQueryVariables> {
+    document = FetchAuditTypesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const VerifyAuditLocationDocument = gql`
+    query verifyAuditLocation($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class VerifyAuditLocationGQL extends Apollo.Query<VerifyAuditLocationQuery, VerifyAuditLocationQueryVariables> {
+    document = VerifyAuditLocationDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindProductCodeDocument = gql`
+    query findProductCode($productCode: searchProductCode) {
+  findProductCode(productCode: $productCode) {
+    _id
+    ProductCodeNumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindProductCodeGQL extends Apollo.Query<FindProductCodeQuery, FindProductCodeQueryVariables> {
+    document = FindProductCodeDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindImProductDocument = gql`
+    query findIMProduct($product: searchProduct) {
+  findProduct(Product: $product) {
+    _id
+    PartNumber
+    ProductCodeID
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindImProductGQL extends Apollo.Query<FindImProductQuery, FindImProductQueryVariables> {
+    document = FindImProductDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindImInventoryDocument = gql`
+    query findIMInventory($inventory: searchInventory!) {
+  findInventory(Inventory: $inventory) {
+    _id
+    InventoryTrackingNumber
+    Product {
+      PartNumber
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindImInventoryGQL extends Apollo.Query<FindImInventoryQuery, FindImInventoryQueryVariables> {
+    document = FindImInventoryDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindImInventoriesDocument = gql`
+    query findIMInventories($itn: String, $barcodeStart: String, $barcodeEnd: String, $prc: String, $partNumber: String) {
+  findIMInventories(
+    ITN: $itn
+    BarcodeStart: $barcodeStart
+    BarcodeEnd: $barcodeEnd
+    PRC: $prc
+    PartNumber: $partNumber
+  ) {
+    _id
+    InventoryTrackingNumber
+    oldID
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindImInventoriesGQL extends Apollo.Query<FindImInventoriesQuery, FindImInventoriesQueryVariables> {
+    document = FindImInventoriesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindImprcInventoriesDocument = gql`
+    query findIMPRCInventories($prc: String) {
+  findIMPRCInventories(PRC: $prc) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindImprcInventoriesGQL extends Apollo.Query<FindImprcInventoriesQuery, FindImprcInventoriesQueryVariables> {
+    document = FindImprcInventoriesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindImprcPartNumberInventoriesDocument = gql`
+    query findIMPRCPartNumberInventories($prc: String, $partNumber: String) {
+  findIMPRCPartNumberInventories(PRC: $prc, PartNumber: $partNumber) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindImprcPartNumberInventoriesGQL extends Apollo.Query<FindImprcPartNumberInventoriesQuery, FindImprcPartNumberInventoriesQueryVariables> {
+    document = FindImprcPartNumberInventoriesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ValidateFilterDocument = gql`
+    query validateFilter($itn: String, $locationStart: String, $locationEnd: String, $prc: String, $partNumber: String) {
+  validateFilter(
+    ITN: $itn
+    LocationStart: $locationStart
+    LocationEnd: $locationEnd
+    PRC: $prc
+    PartNumber: $partNumber
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ValidateFilterGQL extends Apollo.Query<ValidateFilterQuery, ValidateFilterQueryVariables> {
+    document = ValidateFilterDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindNextAuditDocument = gql`
+    query findNextAudit($userID: Int) {
+  findNextAudit(UserID: $userID) {
+    _id
+    TypeID
+    InventoryID
+    Type
+    UserID
+    Order
+    InventoryTrackingNumber
+    Barcode
+    ProductID
+    DateCode
+    COO
+    ROHS
+    QuantityOnHand
+    PartNumber
+    ProductCodeID
+    ProductCodeNumber
+    LastUpdated
+    CreatedDatetime
+    Priority
+    MICPartNumber
+    UOM
+    PackType
+    PackQty
+    Cost
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindNextAuditGQL extends Apollo.Query<FindNextAuditQuery, FindNextAuditQueryVariables> {
+    document = FindNextAuditDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetNextSubAuditDocument = gql`
+    query getNextSubAudit($inventoryID: Int, $userID: Int) {
+  getNextSubAudit(InventoryID: $inventoryID, UserID: $userID) {
+    _id
+    TypeID
+    InventoryID
+    Type
+    UserID
+    Order
+    InventoryTrackingNumber
+    Barcode
+    ProductID
+    ROHS
+    QuantityOnHand
+    PartNumber
+    ProductCodeID
+    ProductCodeNumber
+    LastUpdated
+    CreatedDatetime
+    Priority
+    MICPartNumber
+    UOM
+    PackType
+    PackQty
+    Cost
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetNextSubAuditGQL extends Apollo.Query<GetNextSubAuditQuery, GetNextSubAuditQueryVariables> {
+    document = GetNextSubAuditDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertAuditsDocument = gql`
+    mutation insertAudits($audits: [inputAudit]) {
+  insertAudits(Audits: $audits) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InsertAuditsGQL extends Apollo.Mutation<InsertAuditsMutation, InsertAuditsMutationVariables> {
+    document = InsertAuditsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertSuspectDocument = gql`
+    mutation insertSuspect($suspect: [inputSuspect]) {
+  insertSuspect(Suspect: $suspect) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InsertSuspectGQL extends Apollo.Mutation<InsertSuspectMutation, InsertSuspectMutationVariables> {
+    document = InsertSuspectDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InventoryUpdateDocument = gql`
+    mutation inventoryUpdate($user: String!, $itn: String!, $quantity: String, $dateCode: String, $country: String, $rohs: String, $reason: String!, $suspect: String, $binlocation: String) {
+  inventoryUpdate(
+    User: $user
+    ITN: $itn
+    DateCode: $dateCode
+    CountryOfOrigin: $country
+    ROHSFlag: $rohs
+    QuantityOnHand: $quantity
+    AdjustmentReason: $reason
+    Suspect: $suspect
+    BinLocation: $binlocation
+  )
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InventoryUpdateGQL extends Apollo.Mutation<InventoryUpdateMutation, InventoryUpdateMutationVariables> {
+    document = InventoryUpdateDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteAuditDocument = gql`
+    mutation deleteAudit($inventoryID: Int, $typeID: Int) {
+  deleteAudit(InventoryID: $inventoryID, TypeID: $typeID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteAuditGQL extends Apollo.Mutation<DeleteAuditMutation, DeleteAuditMutationVariables> {
+    document = DeleteAuditDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CloseAuditDocument = gql`
+    mutation closeAudit($inventoryID: Int, $typeID: Int) {
+  closeAudit(InventoryID: $inventoryID, TypeID: $typeID) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CloseAuditGQL extends Apollo.Mutation<CloseAuditMutation, CloseAuditMutationVariables> {
+    document = CloseAuditDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

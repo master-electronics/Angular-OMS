@@ -25,10 +25,9 @@ import { asapScheduler } from 'rxjs';
         <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
           <div class="p-6 text-center">
             <h1
+              [innerHTML]="message"
               class="mb-6 text-base font-normal text-gray-500 dark:text-gray-400 md:text-lg lg:text-2xl"
-            >
-              {{ message }}
-            </h1>
+            ></h1>
             <div
               class="grid h-16 w-full grid-cols-3 text-base md:text-lg lg:text-2xl"
             >

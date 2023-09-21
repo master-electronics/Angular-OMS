@@ -139,6 +139,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'inventorymanagement',
+        loadChildren: () =>
+          import('./pages/inventory-management/routing').then(
+            (m) => m.InventoryMangementRoutes
+          ),
+      },
+      {
         path: 'picking',
         title: 'Picking',
         loadChildren: () =>
