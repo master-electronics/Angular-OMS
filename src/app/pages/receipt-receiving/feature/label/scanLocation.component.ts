@@ -39,7 +39,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Location Barcode:</h1>
-      <h1>({{ list.length }} of {{ _label.currentItnIndex() + 1 }})</h1>
+      <h1>({{ _label.currentItnIndex() + 1 }} of {{ list.length }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
