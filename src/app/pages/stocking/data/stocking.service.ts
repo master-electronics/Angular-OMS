@@ -16,6 +16,7 @@ import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { ItnInfo, ItnInfoService } from './itn-info.service';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class StockingService {
@@ -30,6 +31,7 @@ export class StockingService {
     private _verifyContainer: VerifyContainerForSortingGQL,
     private _updateInventory: UpdateInventoryAfterSortingGQL,
     private _itn: ItnInfoService,
+    private _userInfo: StorageUserInfoService,
     private _log: EventLogService
   ) {}
 
@@ -103,7 +105,7 @@ export class StockingService {
           });
           // init evetlog
           this._log.initEventLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
             Log: JSON.stringify({
               InventoryTrackingNumber: ITN,
@@ -121,13 +123,13 @@ export class StockingService {
           }
           return this._move.mutate({
             ITN: this._itn.itnInfo.ITN,
-            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
-            BinLocation: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            User: this._userInfo.userName,
+            BinLocation: this._userInfo.userName,
           });
         }),
         switchMap(() => {
           const oldLogs = {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_Stocking_MoveITNToUser,
             InventoryTrackingNumber: this._itn.itnInfo.ITN,
             PartNumber: this._itn.itnInfo.PartNumber,
@@ -201,12 +203,12 @@ export class StockingService {
           this.updateItnList(ITNList);
           // insert log
           const oldLogs = {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_ScanLocation,
             Message: Barcode,
           };
           this._log.initEventLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Stocking_ScanLocation,
             Log: JSON.stringify({
               Source: Barcode,
@@ -230,7 +232,7 @@ export class StockingService {
     const linkList = [];
     list.forEach((itn) => {
       oldLogs.push({
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         UserEventID: sqlData.Event_Stocking_NotFound,
         InventoryTrackingNumber: itn.ITN,
         Message: ``,
@@ -277,7 +279,7 @@ export class StockingService {
     return this._itn.verifyITN$(ITN).pipe(
       switchMap((res) => {
         const oldLogs = {
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Stocking_ScanITN,
           InventoryTrackingNumber: ITN,
           PartNumber: this._itn.itnInfo.PartNumber,
@@ -286,7 +288,7 @@ export class StockingService {
           Message: ``,
         };
         this._log.initEventLog({
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           EventTypeID: sqlData.Event_Stocking_ScanITN,
           Log: JSON.stringify({
             InventoryTrackingNumber: ITN,
@@ -318,14 +320,14 @@ export class StockingService {
         }),
         switchMap((res) => {
           return this._updateInventory.mutate({
-            User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            User: this._userInfo.userName,
             BinLocation: Barcode,
             ITN: this._itn.itnInfo.ITN,
           });
         }),
         switchMap(() => {
           const oldLogs = {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_StockingRelocation_Location,
             ProductCode: this._itn.itnInfo.ProductCode,
             PartNumber: this._itn.itnInfo.PartNumber,

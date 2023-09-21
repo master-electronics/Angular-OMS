@@ -8,7 +8,7 @@ import {
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 
-import { CommonService } from '../../shared/services/common.service';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 
 import { AggregationShelfBarcodeRegex } from '../../shared/utils/dataRegex';
 import { Router } from '@angular/router';
@@ -31,14 +31,14 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
   search$ = new Observable();
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private router: Router,
     private fb: UntypedFormBuilder,
     private titleService: Title,
     private searchITNList: FindItNsByShelfGQL,
     private shelfInventory: ShelfInventoryService
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this.titleService.setTitle(this.title);
   }
 

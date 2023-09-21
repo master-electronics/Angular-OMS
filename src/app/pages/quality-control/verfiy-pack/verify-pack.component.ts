@@ -6,7 +6,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, of, Subscription, throwError } from 'rxjs';
 
@@ -20,16 +25,53 @@ import {
   UpdateAfterQcVerifyGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, delay, map, switchMap, tap } from 'rxjs/operators';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import countries from 'src/app/shared/utils/countyList';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
+import { PrinterService } from 'src/app/shared/data/printer';
 
 @Component({
   selector: 'verify-pack',
   templateUrl: './verify-pack.component.html',
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NgIf,
+    NzSkeletonModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzImageModule,
+    NzDescriptionsModule,
+    NzDividerModule,
+    FormsModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzInputModule,
+    NgFor,
+    NzSelectModule,
+    NzAlertModule,
+    NzDrawerModule,
+    AsyncPipe,
+  ],
 })
 export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   imgURL = 'https://www.onlinecomponents.com/images/parts/largeimages/';
@@ -102,18 +144,16 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: UntypedFormBuilder,
     private router: Router,
-    private commonService: CommonService,
-    private titleService: Title,
+    private _printer: PrinterService,
     private qcService: QualityControlService,
     private updateAfterQc: UpdateAfterQcVerifyGQL,
     private fetchProductInfoFromMerp: FetchProductInfoFromMerpGQL,
     private printITN: PrintItnLabelGQL,
     private holdQCOrder: HoldQcOrderGQL,
     private insertEventLog: Create_EventLogsGQL,
+    private _userInfo: StorageUserInfoService,
     private evenLog: EventLogService
-  ) {
-    this.titleService.setTitle('qc/verifypack');
-  }
+  ) {}
 
   ngOnInit(): void {
     this.qcService.changeTab(['finish', 'finish', 'process', 'wait']);
@@ -273,7 +313,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.printITN$ = this.printITN
       .mutate({
         InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-        Station: this.commonService.printerStation,
+        Station: this._printer.printerStation,
       })
       .pipe(
         tap((res) => {
@@ -332,7 +372,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
       OrderLineDetailID: this.itemInfo.OrderLineDetailID,
       InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
       Status: String(Status).padStart(2, '3'),
-      Station: this.commonService.printerStation,
+      Station: this._printer.printerStation,
       StatusID: sqlData.warehouseHold_ID,
     };
     this.isLoading = true;
@@ -344,7 +384,7 @@ export class VerifyPackComponent implements OnInit, AfterViewInit, OnDestroy {
   writeInfoToMerp(holdInfo: HoldQcOrderMutationVariables): void {
     const oldLogs = [
       {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         OrderNumber: this.itemInfo.OrderNumber,
         NOSINumber: this.itemInfo.NOSI,
         UserEventID: sqlData.Event_QC_Hold,

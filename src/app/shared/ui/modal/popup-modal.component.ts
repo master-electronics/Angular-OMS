@@ -27,6 +27,7 @@ import { asapScheduler } from 'rxjs';
             <h1
               [innerHTML]="message"
               class="mb-6 text-base font-normal text-gray-500 dark:text-gray-400 md:text-lg lg:text-2xl"
+              [innerHTML]="message"
             ></h1>
             <div
               class="grid h-16 w-full grid-cols-3 text-base md:text-lg lg:text-2xl"
@@ -40,6 +41,7 @@ import { asapScheduler } from 'rxjs';
                 {{ buttonOne }}
               </button>
               <button
+                *ngIf="cancelVisible"
                 (click)="onCancel()"
                 class="col-start-3 h-full w-full rounded-lg border border-gray-200 bg-gray-100 font-medium text-gray-900 hover:bg-gray-200 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
                 type="button"
@@ -57,6 +59,7 @@ export class PopupModalComponent {
   @Input() message = '';
   @Input() buttonOne = 'OK';
   @Input() buttonTwo = 'Cancel';
+  @Input() cancelVisible = true;
   @Output() clickSubmit: EventEmitter<null> = new EventEmitter();
   @Output() clickCancel: EventEmitter<null> = new EventEmitter();
 

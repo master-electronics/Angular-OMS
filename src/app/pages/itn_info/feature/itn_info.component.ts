@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, map } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 import {
   FormsModule,
@@ -20,6 +19,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { environment } from 'src/environments/environment.dev';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 interface IITN {
   _id: number;
@@ -160,7 +160,7 @@ interface IITN {
     ReactiveFormsModule,
   ],
   template: `
-    <div class="container mx-auto py-2 px-2">
+    <div class="container mx-auto px-2 py-2">
       <form
         nz-form
         focusInvalidInput
@@ -471,7 +471,7 @@ export class INTInfoComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private _findInventory: FindInventoryGQL,
-    private commonService: CommonService,
+    private _nav: NavbarTitleService,
     private _title: Title
   ) {}
 
@@ -481,7 +481,7 @@ export class INTInfoComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.commonService.changeNavbar('ITN Info');
+    this._nav.update('ITN Info');
     this._title.setTitle('ITN Info');
   }
 

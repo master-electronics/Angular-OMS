@@ -5,17 +5,19 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import {
   AbstractControl,
   UntypedFormBuilder,
   UntypedFormControl,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
 import {
   AggregationShelfBarcodeRegex,
   ToteBarcodeRegex,
@@ -38,10 +40,39 @@ import {
 } from '../aggregation-in.server';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgIf, NgFor, NgClass, AsyncPipe, SlicePipe } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'location',
   templateUrl: './location.component.html',
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NgIf,
+    NzSkeletonModule,
+    NgFor,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NgClass,
+    AsyncPipe,
+    SlicePipe,
+  ],
 })
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   // varable for query
@@ -82,9 +113,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private subscription: Subscription = new Subscription();
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: UntypedFormBuilder,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _titleService: Title,
     private _router: Router,
     private _fetchLocation: FetchLocationAndOrderDetailForAgInGQL,
@@ -107,7 +139,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     this._agInService.changeEndContainer(null);
-    this._commonService.changeNavbar(`AGIN: ${this.outsetContainer.Barcode}`);
+    this._title.update(`AGIN: ${this.outsetContainer.Barcode}`);
     // fetch location and orderlinedetail
     this.isLoading = true;
     const FileKeyListforAgOut = [];
@@ -245,7 +277,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 {
                   ITN: singleITN,
                   BinLocation: 'PACKING',
-                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  User: this.userInfo.userName,
                 },
               ],
             }),
@@ -260,7 +292,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         switchMap((res) => {
           const oldLogs = [
             {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
               InventoryTrackingNumber: singleITN,

@@ -1,31 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   Router,
-  CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
+  CanActivateFn,
 } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class PrinterGuard implements CanActivate {
-  public routeAuthorized: boolean;
+export const PrinterGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  const router = inject(Router);
 
-  constructor(private router: Router) {}
-
-  canActivate(
-    _route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
-    localStorage.removeItem('printerName');
-    if (sessionStorage.getItem('printerName')) {
-      return true;
-    }
-    // printerName have not set, then redirect to setting page
-    this.router.navigate(['/printersetting'], {
-      queryParams: { returnUrl: state.url },
-    });
-    return false;
+  localStorage.removeItem('printerName');
+  if (sessionStorage.getItem('printerName')) {
+    return true;
   }
-}
+  // printerName have not set, then redirect to setting page
+  router.navigate(['/printersetting'], {
+    queryParams: { returnUrl: state.url },
+  });
+  return false;
+};

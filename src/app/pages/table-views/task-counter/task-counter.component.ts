@@ -1,10 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 
-import { CommonService } from '../../../shared/services/common.service';
-import { FetchTaskCounterGQL } from '../../../graphql/tableViews.graphql-gen';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
+import { FetchTaskCounterGQL } from '../../../graphql/tableView.graphql-gen';
 import { catchError, map } from 'rxjs/operators';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 interface tableData {
   User: string;
@@ -15,6 +29,21 @@ interface tableData {
 @Component({
   selector: 'task-counter',
   templateUrl: './task-counter.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzSelectModule,
+    NzDatePickerModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzTableModule,
+    NgFor,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class TaskCounterComponent implements OnInit {
   isLoading = false;
@@ -22,11 +51,11 @@ export class TaskCounterComponent implements OnInit {
   startDate: string;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private fetchTaskCounter: FetchTaskCounterGQL
   ) {
-    this.commonService.changeNavbar('Task Counting');
+    this._title.update('Task Counting');
   }
 
   filterForm = this.fb.group({
@@ -69,7 +98,7 @@ export class TaskCounterComponent implements OnInit {
     this.fetchTable$ = this.fetchTaskCounter
       .fetch(
         {
-          Module: Number(this.filterForm.get('module').value),
+          Module: this.filterForm.get('module').value,
           startDate: startDate,
           endDate: endDate,
         },

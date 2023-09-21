@@ -76,7 +76,7 @@ import { EditInfoComponent } from './edit-info.component';
               <button
                 type="remove"
                 (click)="removeField(control, $event)"
-                class="right-2.5 bottom-2.5 rounded-lg bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
+                class="bottom-2.5 right-2.5 rounded-lg bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
               >
                 Delete
               </button>
@@ -144,7 +144,6 @@ export class AssignLabelComponent implements OnInit {
 
   ngOnInit(): void {
     this.total = this.receipt.selectedReceiptLine[0].ExpectedQuantity;
-    this._label.reset();
     this.remaining = this.total;
     this._step.changeSteps(3);
     this.inputForm = this._fb.group({});
@@ -221,6 +220,7 @@ export class AssignLabelComponent implements OnInit {
 
   private quantityList = [];
   onSubmit(): void {
+    this._label.reset();
     if (this.inputForm.valid) {
       this.quantityList = [];
       Object.values(this.inputForm.value).forEach((ele, index) => {

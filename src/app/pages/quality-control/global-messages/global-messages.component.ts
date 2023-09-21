@@ -8,10 +8,31 @@ import {
 } from '../../../graphql/qualityControl.graphql-gen';
 import { Title } from '@angular/platform-browser';
 import { catchError, map } from 'rxjs/operators';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'global-messages',
   templateUrl: './global-messages.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NzSkeletonModule,
+    NzDescriptionsModule,
+    NgFor,
+    NzGridModule,
+    NzFormModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class GlobalMessagesComponent implements OnInit {
   isLoading = false;

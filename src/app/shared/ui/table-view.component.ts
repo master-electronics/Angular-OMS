@@ -1,13 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, NzTableModule],
   selector: 'table-view',
   template: `
-    <nz-table #table [nzData]="listOfData">
+    <nz-table id="table-view" #table [nzData]="listOfData">
       <thead>
         <tr>
           <th

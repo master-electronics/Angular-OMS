@@ -5,11 +5,11 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { ItnInfoService } from '../../data/itn-info.service';
 import { SortingService } from '../../data/sorting.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   standalone: true,
@@ -33,7 +33,7 @@ import { SortingService } from '../../data/sorting.service';
 export class ScanITNComponent implements OnInit {
   constructor(
     private title: Title,
-    private navbar: CommonService,
+    private _title: NavbarTitleService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router,
@@ -49,7 +49,7 @@ export class ScanITNComponent implements OnInit {
 
   ngOnInit(): void {
     this.title.setTitle('Sorting');
-    this.navbar.changeNavbar('Sorting');
+    this._title.update('Sorting');
     this.data$ = of(true);
     this._itn.resetItnInfo();
     this._eventLog.initEventLog(null);

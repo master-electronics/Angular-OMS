@@ -19,7 +19,6 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 @NgModule({
-  declarations: [ReceiptEntry],
   imports: [
     CommonModule,
     FormsModule,
@@ -35,6 +34,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     NzTableModule,
     NzPopconfirmModule,
     NzAlertModule,
+    ReceiptEntry,
   ],
 })
 export class ReceiptEntryModule {}

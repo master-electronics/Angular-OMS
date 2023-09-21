@@ -9,6 +9,7 @@ import {
   of,
   switchMap,
   tap,
+  lastValueFrom,
 } from 'rxjs';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 import { Logger } from 'src/app/shared/services/logger.service';
@@ -37,6 +38,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ProductService } from './product.service';
 import { ReplenishmentItem } from '../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { compareAsc } from 'date-fns';
 
 interface ASNLine {
   lineNumber?: number;
@@ -93,7 +95,6 @@ export class ASNService {
     private _itnChange: ItnChangeGQL,
     private _clearSuspect: ClearSuspectGQL,
     private _globalASNReject: GlobalAsnRejectionGQL
-    //private _deleteReplenishmentItem: DeleteAsnReplenishmentItemGQL
   ) {}
 
   inventoryList;
@@ -154,7 +155,6 @@ export class ASNService {
             throw new Error(error);
           })
         ),
-      //itnLocationChange: this.itnLocationChange(User, ITN, BinLocation),
       itnChange: this.itnChange(User, ITN, BinLocation, 'true'),
     });
   }
@@ -172,6 +172,8 @@ export class ASNService {
 
   public sendToAutostore$(Barcode: string) {
     let containerID: number;
+    let zeroList;
+    let messageID;
     return this._verifyLocation
       .fetch(
         {
@@ -201,53 +203,87 @@ export class ASNService {
                     `Open ASN '${res.data.verifyASNLocationStatus[0].tuId}' already exists`
                   );
                 }
+              }),
+              switchMap((res) => {
+                return this.fetchASNInventory$(containerID);
+              }),
+              switchMap((res) => {
+                zeroList = res;
+
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  return this.insertASN$();
+                } else {
+                  return of(null);
+                }
+              }),
+              switchMap((res) => {
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  this.asnID = res;
+                  const p$ = lastValueFrom(
+                    this._productService.sendToAutostore$(this.productList)
+                  ).then((res) => {
+                    p$;
+                  });
+                  return of(res);
+                } else {
+                  return of(null);
+                }
+              }),
+              switchMap((res) => {
+                let messageUpdate;
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  return this.insertMessage$();
+                } else {
+                  return of(null);
+                }
+              }),
+              switchMap((res) => {
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  messageID = res.data.insertAutostoreMessage._id;
+                  const tMsg = JSON.parse(JSON.stringify(this.message));
+                  tMsg._id = res.data.insertAutostoreMessage._id;
+
+                  const nMsg = {
+                    pattern: 'ASN_message',
+                    data: {
+                      message: tMsg,
+                    },
+                  };
+
+                  return this.sendMessage(nMsg);
+                } else {
+                  return of(null);
+                }
+              }),
+              switchMap((res) => {
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  return this.updateMessageStatus('sent', messageID);
+                } else {
+                  return of(null);
+                }
+              }),
+              switchMap((res) => {
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  return this.updateASNStatus('Sent', this.asnID);
+                } else {
+                  return of(null);
+                }
+              }),
+
+              switchMap((res) => {
+                if (this.asn.AUTOSTOREASNLINEs.length != 0) {
+                  return combineLatest({
+                    ASNID: of(this.asnID),
+                    ZeroList: zeroList.length > 0 ? of(zeroList) : of(null),
+                  });
+                } else {
+                  return combineLatest({
+                    ASNID: of('0'),
+                    ZeroList: zeroList.length > 0 ? of(zeroList) : of(null),
+                  });
+                }
               })
             );
-        }),
-        switchMap((res) => {
-          return this.fetchASNInventory$(containerID);
-        }),
-        switchMap((res) => {
-          //this.asnID = Number(res._id);
-          this.data$ = this.insertASN$();
-          return this.data$;
-        }),
-        switchMap((res) => {
-          const product$ =
-            this.productList.length > 0
-              ? this._productService.sendToAutostore$(this.productList)
-              : of(true);
-
-          return combineLatest({
-            product: product$,
-            message: this.insertMessage$(),
-          });
-        }),
-        switchMap((res) => {
-          console.log('***');
-          console.log(res);
-          console.log('###');
-          const tMsg = JSON.parse(JSON.stringify(this.message));
-          tMsg._id = res.message.data.insertAutostoreMessage._id;
-
-          const nMsg = {
-            pattern: 'ASN_message',
-            data: {
-              message: tMsg,
-            },
-          };
-
-          return combineLatest({
-            message: this.sendMessage(nMsg),
-            AsnStatus: this.updateASNStatus('Sent', this.asnID),
-            MessageStatus: this.updateMessageStatus(
-              'sent',
-              res.message.data.insertAutostoreMessage._id
-            ),
-          });
-        }),
-        switchMap((res) => {
-          return of(this.asnID);
         })
       );
   }
@@ -350,30 +386,31 @@ export class ASNService {
           let lineNumber = 1;
 
           const asnLines: ASNLine[] = [];
+          const zeroList = [];
 
           let i = 1;
 
           this.inventoryList.map((inventory) => {
-            //if product hasn't been sent to Autostore add it to list for sending
-            //if (!inventory.Product.LastAutostoreSync) {
-            this.productList.push(inventory.Product._id);
-            console.log('send product');
-            //}
+            if (!inventory.QuantityOnHand || inventory.QuantityOnHand == 0) {
+              zeroList.push(inventory.InventoryTrackingNumber);
+            } else {
+              //if product hasn't been sent to Autostore add it to list for sending
+              this.productList.push(inventory.Product._id);
 
-            asnLines.push({
-              lineNumber: lineNumber,
-              productId:
-                inventory.Product.ProductCode.ProductCodeNumber.toString() +
-                '-' +
-                inventory.Product.PartNumber.toString(),
-              packagingUom: inventory.packagingUom,
-              quantityExpected: Number(inventory.QuantityOnHand),
-              InventoryID: Number(inventory._id),
-              InventoryTrackingNumber: inventory.InventoryTrackingNumber,
-              //DateCode: inventory.DateCode,
-            });
-            lineNumber++;
-            i++;
+              asnLines.push({
+                lineNumber: lineNumber,
+                productId:
+                  inventory.Product.ProductCode.ProductCodeNumber.toString() +
+                  '-' +
+                  inventory.Product.PartNumber.toString(),
+                packagingUom: inventory.packagingUom,
+                quantityExpected: Number(inventory.QuantityOnHand),
+                InventoryID: Number(inventory._id),
+                InventoryTrackingNumber: inventory.InventoryTrackingNumber,
+              });
+              lineNumber++;
+              i++;
+            }
           });
 
           this.asn.tuType = 'BIN-1x1';
@@ -382,7 +419,12 @@ export class ASNService {
 
           this.asn.AUTOSTOREASNLINEs = asnLines;
 
-          return res;
+          //return res;
+          // return combineLatest({
+          //   ZeroList: zeroList,
+          //   ASNLines: asnLines,
+          // });
+          return zeroList;
         })
       );
   }
@@ -391,11 +433,6 @@ export class ASNService {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
     }),
-  };
-
-  data = {
-    test: 'woot',
-    boom: 'ham',
   };
 
   sendMessage(message) {

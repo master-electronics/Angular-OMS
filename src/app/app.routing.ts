@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { LoginGuard } from './shared/route-guard/login.guard';
-import { RouterGuard } from './shared/route-guard/route-auth.guard';
+import { AuthGuard } from './shared/route-guard/auth.guard';
 
 import { ShellComponent } from './pages/shell/shell.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -12,7 +12,7 @@ const routes: Routes = [
   {
     path: '',
     component: ShellComponent,
-    canActivateChild: [LoginGuard, RouterGuard],
+    canActivateChild: [LoginGuard, AuthGuard],
     children: [
       {
         path: 'home',
@@ -175,11 +175,9 @@ const routes: Routes = [
           ).then((m) => m.ClearSuspectInventoryComponent),
       },
       {
-        path: 'eventlog',
-        loadComponent: () =>
-          import('./pages/table-view/event-log/event-log.component').then(
-            (m) => m.EventLogComponent
-          ),
+        path: 'tableview',
+        loadChildren: () =>
+          import('./pages/table-view/routing').then((m) => m.TableViewRoutes),
       },
       {
         path: 'itnseparate',

@@ -11,11 +11,13 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { ShelfBarcodeBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -23,10 +25,33 @@ import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'select-location',
   templateUrl: './select-location.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NgIf,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class SelectLocationComponent implements OnInit, AfterViewInit {
   title = 'Position';
@@ -47,14 +72,15 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
+    private _userInfo: StorageUserInfoService,
     private _titleService: Title,
     private _pickService: PickService,
     private _verifyPosition: VerifyPositionBarcodeForPullingGQL,
     private _insertLog: Insert_UserEventLogsGQL
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle(this.title);
   }
 
@@ -85,7 +111,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
       {
         Message: `${this.f.positionNumber.value}`,
         UserEventID: sqlData.Event_Pulling_SelectLocation,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
       },
     ];
     this.isLoading = true;

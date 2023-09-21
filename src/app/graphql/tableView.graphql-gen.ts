@@ -3224,6 +3224,15 @@ export type FetchEventLogQueryVariables = Types.Exact<{
 
 export type FetchEventLogQuery = { __typename?: 'Query', findEventLogs?: Array<{ __typename?: 'EventLog', UserName: string, Event: string, Module: string, CreateTime: string, Log: string } | null> | null };
 
+export type FetchTaskCounterQueryVariables = Types.Exact<{
+  Module: Types.Scalars['Int'];
+  startDate: Types.Scalars['String'];
+  endDate: Types.Scalars['String'];
+}>;
+
+
+export type FetchTaskCounterQuery = { __typename?: 'Query', fetchTaskCounter?: Array<{ __typename?: 'taskCounter', User: string, taskCounter: Array<number | null> } | null> | null };
+
 export const FetchEventLogDocument = gql`
     query fetchEventLog($limit: Int, $offset: Int, $UserName: String, $eventIdList: [Int], $timeFrame: [String], $Log: String) {
   findEventLogs(
@@ -3248,6 +3257,25 @@ export const FetchEventLogDocument = gql`
   })
   export class FetchEventLogGQL extends Apollo.Query<FetchEventLogQuery, FetchEventLogQueryVariables> {
     document = FetchEventLogDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchTaskCounterDocument = gql`
+    query fetchTaskCounter($Module: Int!, $startDate: String!, $endDate: String!) {
+  fetchTaskCounter(Module: $Module, startDate: $startDate, endDate: $endDate) {
+    User
+    taskCounter
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchTaskCounterGQL extends Apollo.Query<FetchTaskCounterQuery, FetchTaskCounterQueryVariables> {
+    document = FetchTaskCounterDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

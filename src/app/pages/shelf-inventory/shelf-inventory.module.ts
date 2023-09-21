@@ -15,7 +15,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 @NgModule({
-  declarations: [ShelfInventoryComponent, ScanITNComponent],
+  declarations: [ShelfInventoryComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -27,6 +27,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     NzFormModule,
     NzSkeletonModule,
     NzAlertModule,
+    ScanITNComponent,
   ],
   providers: [ShelfInventoryService],
   bootstrap: [ShelfInventoryComponent],

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FetchMenuListGQL } from 'src/app/graphql/menu.graphql-gen';
+import { StorageUserInfoService } from './storage-user-info.service';
 
 interface MenuItem {
   _id: number;
@@ -29,6 +30,8 @@ export class MenuService {
   public rootMenuItems;
   public menusLoaded: Promise<boolean>;
 
+  userInfo = inject(StorageUserInfoService);
+
   private menuListSubscription = new Subscription();
 
   constructor(private _fetchMenuList: FetchMenuListGQL) {}
@@ -53,8 +56,7 @@ export class MenuService {
             res.data.fetchMenuList.map((menu) => {
               let authorized = false;
 
-              const authToken = JSON.parse(sessionStorage.getItem('userToken'));
-              const userGroups = authToken.userGroups.toString().split(',');
+              const userGroups = this.userInfo.userGroups.toString().split(',');
               const menuGroups = menu.Groups ? menu.Groups.split(',') : null;
 
               userGroups.map((group) => {

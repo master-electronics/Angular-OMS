@@ -17,6 +17,7 @@ import { ASNService } from '../../data/asn.service';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -49,7 +50,8 @@ export class ASNLocation implements OnInit {
     private _router: Router,
     private _fb: FormBuilder,
     private _asn: ASNService,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   //public inputForm: FormGroup;
@@ -115,7 +117,7 @@ export class ASNLocation implements OnInit {
             [
               {
                 UserEventID: sqlData.Event_Autostore_ASN_Location_Scanned,
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 DistributionCenter: environment.DistributionCenter,
                 InventoryTrackingNumber: this.selectedITN,
                 Message: 'Location: ' + barcode,
@@ -123,7 +125,7 @@ export class ASNLocation implements OnInit {
             ],
             [
               {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_Autostore_ASN_Location_Scanned,
                 Log: JSON.stringify({
                   DistributionCenter: environment.DistributionCenter,
@@ -139,7 +141,7 @@ export class ASNLocation implements OnInit {
               .moveItnToLocation(
                 this.selectedITN,
                 containerID,
-                JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                this._userInfo.userName,
                 barcode
               )
               .pipe(

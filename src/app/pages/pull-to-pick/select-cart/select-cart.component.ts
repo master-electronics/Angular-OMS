@@ -15,7 +15,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { CartBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -27,6 +27,7 @@ import {
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'select-cart',
@@ -53,7 +54,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _titleService: Title,
     private _router: Router,
     private _route: ActivatedRoute,
@@ -61,9 +62,10 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     private _verifyCartForDropOff: VerifyCartAndUpdateForDropOffGQL,
     private _pickService: PickService,
     private _fetchSettings: FetchPickingSettingsGQL,
-    private _userLog: Insert_UserEventLogsGQL
+    private _userLog: Insert_UserEventLogsGQL,
+    private _userInfo: StorageUserInfoService
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle(this.title);
   }
 
@@ -72,7 +74,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this.urlParams = { ...this._route.snapshot.queryParams };
-    this.userID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
+    this.userID = this._userInfo.idToken;
     this.init$ = this._fetchSettings
       .fetch(
         {
@@ -145,7 +147,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
               {
                 Message: `${this.containerForm.value.containerNumber}`,
                 UserEventID: sqlData.Event_Pulling_SelectCart,
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
               },
             ],
           });
@@ -187,7 +189,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
               {
                 Message: `${this.containerForm.value.containerNumber}`,
                 UserEventID: sqlData.Event_DropOff_SelectCart,
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
               },
             ],
           });

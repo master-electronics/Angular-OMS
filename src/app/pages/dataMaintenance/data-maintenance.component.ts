@@ -1,8 +1,8 @@
+/*eslint prefer-const: 'off'*/
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { catchError, map } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 import { Datacolumn } from './data-maintenance.server';
 
@@ -15,11 +15,44 @@ import {
   DeleteTableDataGQL,
 } from 'src/app/graphql/dataMaintenance.graphql-gen';
 import { DataColumn } from 'src/app/graphql/utilityTools.graphql-gen';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'data-maintenance',
   templateUrl: './data-maintenance.component.html',
   styleUrls: ['./data-maintenance.component.css'],
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NzSelectModule,
+    FormsModule,
+    NgIf,
+    NzTableModule,
+    NgFor,
+    NzButtonModule,
+    NzIconModule,
+    NzDropDownModule,
+    NzInputModule,
+    NzWaveModule,
+    NzPopconfirmModule,
+    NzCheckboxModule,
+    NzDatePickerModule,
+    NzAlertModule,
+  ],
 })
 export class DataMaintenance implements OnInit {
   tableOptionsList: { label: string; value: string }[];
@@ -29,8 +62,8 @@ export class DataMaintenance implements OnInit {
   tablePrimaryKey: string;
   tableData;
   tableDataDisplay;
-  editCache: { [key: string]: { edit: boolean; data: {} } } = {};
-  addCache: { [key: string]: { data: {} } } = {};
+  editCache: { [key: string]: { edit: boolean; data } } = {};
+  addCache: { [key: string]: { data } } = {};
   temp;
   sqlTextTypes = [
     'CHAR',
@@ -75,7 +108,7 @@ export class DataMaintenance implements OnInit {
   private fetchLastPKSubscription = new Subscription();
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private titleService: Title,
     private _fetchTableList: FetchDataTableListGQL,
     private _fetchColumnList: FetchDataColumnListGQL,
@@ -84,7 +117,7 @@ export class DataMaintenance implements OnInit {
     private _updateTableData: UpdateTableDataGQL,
     private _deleteTableData: DeleteTableDataGQL
   ) {
-    this.commonService.changeNavbar('Data Maintenance');
+    this._title.update('Data Maintenance');
     this.titleService.setTitle('Data Maintenance');
   }
 

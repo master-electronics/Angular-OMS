@@ -4,6 +4,7 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
+  inject,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -15,7 +16,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../shared/services/common.service';
 import { ToteBarcodeRegex } from '../../shared/utils/dataRegex';
 import { VerifyContainerForAggregationInGQL } from '../../graphql/aggregationIn.graphql-gen';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
@@ -24,6 +24,8 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AggregationInService, outsetContainer } from './aggregation-in.server';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'aggregation-in',
@@ -46,9 +48,10 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
     return this.containerForm.controls;
   }
 
+  userInfo = inject(StorageUserInfoService);
   constructor(
-    private _commonService: CommonService,
     private _route: ActivatedRoute,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _titleService: Title,
     private _verifyContainer: VerifyContainerForAggregationInGQL,
@@ -58,7 +61,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
   ) {
     this._agInService.changeOutsetContainer(null);
     this._agInService.changeEndContainer(null);
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle('agin');
   }
 
@@ -67,7 +70,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
     this.alertType = this._route.snapshot.queryParams['type'];
     this.alertMessage = this._route.snapshot.queryParams['message'];
     this._eventLog.initEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserName: this.userInfo.userName,
       EventTypeID: sqlData.Event_AgIn_Start,
       Log: '',
     });
@@ -195,7 +198,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
           });
           outsetContainer.ITNsInTote.forEach((item) => {
             oldLogs.push({
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               OrderNumber: outsetContainer.OrderNumber,
               NOSINumber: outsetContainer.NOSINumber,
               OrderLineNumber: item.OrderLineNumber,

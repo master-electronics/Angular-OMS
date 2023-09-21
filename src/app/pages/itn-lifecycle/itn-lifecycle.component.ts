@@ -2,8 +2,13 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import { CommonService } from '../../shared/services/common.service';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { NavbarTitleService } from '../../shared/services/navbar-title.service';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   FetchItnLifecycleGQL,
   FindItnTemplateGQL,
@@ -17,11 +22,48 @@ import {
   FindItnTemplatesGQL,
   FetchItnLifecycleDrillDownGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { TemplateSettings } from './template-settings.component';
+import { NgFor, NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'itn-lifecycle',
   templateUrl: './itn-lifecycle.component.html',
   styleUrls: ['./itn-lifecycle.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzDatePickerModule,
+    NzSelectModule,
+    NgFor,
+    TemplateSettings,
+    NzButtonModule,
+    NzWaveModule,
+    NgIf,
+    NzIconModule,
+    NzSpinModule,
+    NzTableModule,
+    NzDropDownModule,
+    NzInputModule,
+    NgClass,
+    NzModalModule,
+    AsyncPipe,
+  ],
 })
 export class ITNLifecycleComponent implements OnInit {
   calendarStartDate: Date;
@@ -127,7 +169,7 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private _fetchITNLife: FetchItnLifecycleGQL,
     private _fetchDrilldown: FetchItnLifecycleDrillDownGQL,
@@ -135,9 +177,9 @@ export class ITNLifecycleComponent implements OnInit {
     private _findITNTemplate: FindItnTemplateGQL,
     private _findITNColumns: FindItnColumnsGQL,
     private titleService: Title,
-    private router: Router
+    private _userInfo: StorageUserInfoService
   ) {
-    this.commonService.changeNavbar('ITN Lifecycle');
+    this._title.update('ITN Lifecycle');
     this.titleService.setTitle('ITN Lifecycle');
   }
 
@@ -284,8 +326,7 @@ export class ITNLifecycleComponent implements OnInit {
     this.screenHeight = window.innerHeight - 300 + 'px';
     this.drilldownHeight = window.innerHeight - 300 - 100 + 'px';
     this.selectedTemplate = {};
-    const UserInfo = sessionStorage.getItem('userInfo');
-    const userId = JSON.parse(UserInfo)._id;
+    const userId = this._userInfo.idToken;
     this.userId = userId.toString();
     this.templateNames = [];
     this.templates = [];

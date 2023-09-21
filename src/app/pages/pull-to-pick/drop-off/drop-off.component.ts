@@ -5,7 +5,12 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
@@ -16,14 +21,40 @@ import {
   UpdateAfterDropOffGQL,
 } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'drop-off',
   templateUrl: './drop-off.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NzTableModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class DropOffComponent implements OnInit, AfterViewInit {
   title = 'Drop Off';
@@ -53,7 +84,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
   });
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _titleService: Title,
     private _fb: FormBuilder,
     private _router: Router,
@@ -61,9 +92,10 @@ export class DropOffComponent implements OnInit, AfterViewInit {
     private _findITNs: FindItNsInCartForDropOffGQL,
     private _updateForDropOff: UpdateAfterDropOffGQL,
     private _findContainer: FindContainerGQL,
-    private _insertLog: Insert_UserEventLogsGQL
+    private _insertLog: Insert_UserEventLogsGQL,
+    private _userInfo: StorageUserInfoService
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle(this.title);
   }
 
@@ -87,7 +119,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       ),
       insertUserLog: this._insertLog.mutate({
         log: {
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_DropOff_Start,
           Message: `From ${this._service.cartInfo.barcode}`,
         },
@@ -153,7 +185,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
               OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
               NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
               UserEventID: sqlData.Event_DropOff_ITN_Drop,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               Message: `From ${this._service.cartInfo.barcode}`,
             },
           })
@@ -170,7 +202,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
           OrderNumber: node.ORDERLINEDETAILs[0].Order.OrderNumber,
           NOSINumber: node.ORDERLINEDETAILs[0].Order.NOSINumber,
           UserEventID: sqlData.Event_DropOff_Done,
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           Message: `From ${this._service.cartInfo.barcode}`,
         });
       });
@@ -178,7 +210,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       this.submit$ = this._updateForDropOff
         .mutate(
           {
-            UserID: Number(JSON.parse(sessionStorage.getItem('userInfo'))._id),
+            UserID: this._userInfo.idToken,
             UserInfo: {
               CartID: null,
             },

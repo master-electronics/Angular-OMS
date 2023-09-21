@@ -13,7 +13,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { CommonService } from '../../shared/services/common.service';
 import { OrderBarcodeRegex } from '../../shared/utils/dataRegex';
 import { Title } from '@angular/platform-browser';
 import {
@@ -25,6 +24,8 @@ import { of, throwError } from 'rxjs';
 import { AggregationOutService } from './aggregation-out.server';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { EventLogService } from 'src/app/shared/data/eventLog';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'aggregation-out',
@@ -49,7 +50,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
@@ -57,9 +58,10 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     private pickOrder: PickOrderForAgOutGQL,
     private verifyOrder: VerifyOrderForAgOutGQL,
     private agOutService: AggregationOutService,
-    private eventLog: EventLogService
+    private eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this.titleService.setTitle(this.title);
   }
 
@@ -73,7 +75,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     this.agOutService.changePickedContainer(null);
     this.agOutService.changeITNsInOrder(null);
     this.eventLog.initEventLog({
-      UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+      UserName: this._userInfo.userName,
       EventTypeID: sqlData.Event_AgOut_Start,
       Log: '',
     });

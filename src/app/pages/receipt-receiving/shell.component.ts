@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar/step-bar.component';
 import { TabService, Tab } from '../../shared/ui/step-bar/tab';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   standalone: true,
@@ -26,14 +26,14 @@ import { TabService, Tab } from '../../shared/ui/step-bar/tab';
 export class ReceivingShell implements OnInit {
   public tab$ = new Observable<Tab>();
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private _service: TabService
   ) {}
 
   ngOnInit(): void {
     this._service.initTab(this.steps);
     this.tab$ = this._service.tab$;
-    this.commonService.changeNavbar('Receiving');
+    this._title.update('Receiving');
   }
 
   private readonly steps = [

@@ -29,14 +29,6 @@ import { TabsViewComponent } from './tabs-view.component';
 import { TemplateSettings } from './template-settings.component';
 
 @NgModule({
-  declarations: [
-    ITNLifecycleComponent,
-    ColumnSelectorComponent,
-    LevelSelectorComponent,
-    LevelSliderComponent,
-    TabsViewComponent,
-    TemplateSettings,
-  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -59,6 +51,12 @@ import { TemplateSettings } from './template-settings.component';
     NzSpinModule,
     ITNLifecycleRoutingModule,
     NzIconModule,
+    ITNLifecycleComponent,
+    ColumnSelectorComponent,
+    LevelSelectorComponent,
+    LevelSliderComponent,
+    TabsViewComponent,
+    TemplateSettings,
   ],
 })
 export class ITNLifeCycleModule {}

@@ -6,12 +6,17 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   FetchContainerForAgoutPickGQL,
@@ -21,18 +26,37 @@ import {
 import { Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { AggregationOutService } from '../aggregation-out.server';
-import {
-  Create_EventLogsGQL,
-  Insert_UserEventLogsGQL,
-} from 'src/app/graphql/utilityTools.graphql-gen';
+import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { type } from 'os';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { InventoryUpdateForMerp } from 'src/app/graphql/route.graphql-gen';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'pick-tote',
   templateUrl: './pick-tote.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   urlParams: { [key: string]: string };
@@ -57,7 +81,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription = new Subscription();
   constructor(
     private _fb: UntypedFormBuilder,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _route: ActivatedRoute,
     private agOutService: AggregationOutService,
@@ -66,7 +90,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _insertUserEvnetLog: Create_EventLogsGQL,
     private _updateAfterQC: UpdateAfterAgOutGQL,
-    private _eventLog: EventLogService
+    private _userInfo: StorageUserInfoService
   ) {
     this._titleService.setTitle('agout/pick');
   }
@@ -74,7 +98,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('containerNumber') containerInput: ElementRef;
   ngOnInit(): void {
     this.urlParams = { ...this._route.snapshot.queryParams };
-    this._commonService.changeNavbar(
+    this._title.update(
       `Pick: ${this.urlParams.OrderNumber}-${this.urlParams.NOSINumber}`
     );
     this.containerList = this.agOutService.containerList;
@@ -98,7 +122,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
               ITNSet.add(node.Inventory.InventoryTrackingNumber);
               containerSet.add(node.Inventory.Container);
               return {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 OrderNumber: this.urlParams.OrderNumber,
                 NOSINumber: this.urlParams.NOSINumber,
                 InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
@@ -122,7 +146,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             const eventLogs = res.data.findOrderLineDetails.map((node) => {
               return {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_AgOut_Start,
                 Log: JSON.stringify({
                   OrderNumber: this.urlParams.OrderNumber,
@@ -240,7 +264,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoading = true;
     const oldLogs = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         InventoryTrackingNumber: node.Inventory.InventoryTrackingNumber,
@@ -262,7 +286,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const eventLogs = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         EventTypeID: sqlData.Event_AgOut_Done,
         Log: JSON.stringify({
           OrderNumber: this.urlParams.OrderNumber,
@@ -286,7 +310,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const ITNList = this.agOutService.ITNsInOrder.map((node) => {
       return {
-        User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        User: this._userInfo.userName,
         ITN: node.Inventory.InventoryTrackingNumber,
         BinLocation: 'PACKING',
       };

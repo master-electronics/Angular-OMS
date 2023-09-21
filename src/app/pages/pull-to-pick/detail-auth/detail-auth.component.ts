@@ -1,15 +1,44 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import {
+  FormBuilder,
+  Validators,
+  AbstractControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { catchError, map, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { UserInfoStorage } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'detail-auth',
   templateUrl: './detail-auth.component.html',
+  standalone: true,
+  imports: [
+    NzGridModule,
+    FormsModule,
+    FocusInvlidInputDirective,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NgIf,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class DetailAuthComponent implements OnDestroy, OnInit {
   title = 'Auth';
@@ -46,12 +75,12 @@ export class DetailAuthComponent implements OnDestroy, OnInit {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.login$ = this._authenticationService
-        .checkUserAuth(
+        .userAuthentication(
           this.f.username.value.trim().toLowerCase(),
           this.f.password.value
         )
         .pipe(
-          tap((res) => {
+          tap((res: UserInfoStorage) => {
             if (!res.userGroups.some((group) => group === 'whs_supr')) {
               throw 'No WHS Supervisor';
             }

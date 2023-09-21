@@ -1,5 +1,9 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Column, LevelLimit, Template } from './itn-lifecycle.server';
 import { ColumnSelectorComponent } from './column-selector.component';
 import { Subscription, Subject } from 'rxjs';
@@ -12,7 +16,16 @@ import {
   Delete_ItnUserTemplateGQL,
   Clear_ItnUserDefaultTemplateGQL,
 } from 'src/app/graphql/tableViews.graphql-gen';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
+import { TabsViewComponent } from './tabs-view.component';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NgFor, NgIf } from '@angular/common';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'template-settings',
@@ -116,6 +129,21 @@ import { NzModalService } from 'ng-zorro-antd/modal';
     </nz-modal>
   `,
   styleUrls: ['./template-settings.component.css'],
+  standalone: true,
+  imports: [
+    NzButtonModule,
+    NzWaveModule,
+    NzIconModule,
+    NzModalModule,
+    NzSelectModule,
+    FormsModule,
+    NgFor,
+    NzDividerModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    NgIf,
+    TabsViewComponent,
+  ],
 })
 export class TemplateSettings {
   @Output() modalClosed: EventEmitter<any> = new EventEmitter();
@@ -160,6 +188,7 @@ export class TemplateSettings {
     private _insertITNTemplate: Insert_ItnUserTemplateGQL,
     private _deleteITNTemplate: Delete_ItnUserTemplateGQL,
     private _clearITNDefaultTemplate: Clear_ItnUserDefaultTemplateGQL,
+    private _userInfo: StorageUserInfoService,
     private fb: UntypedFormBuilder,
     private modal: NzModalService
   ) {}
@@ -235,8 +264,7 @@ export class TemplateSettings {
       //If Default Template is checked clear the DefaultTemplate flag
       //for all of this users existing templates
       if (this.defaultTemplate) {
-        const UserInfo = sessionStorage.getItem('userInfo');
-        const userId = JSON.parse(UserInfo)._id;
+        const userId = Number(this._userInfo.idToken);
 
         this.clearDefaultTemplateSub.add(
           this._clearITNDefaultTemplate
@@ -325,8 +353,7 @@ export class TemplateSettings {
 
   //add new INTUSERTEMPLATE record with all columns selected and no limits set
   addTemplate(input: HTMLInputElement): void {
-    const UserInfo = sessionStorage.getItem('userInfo');
-    const userId = JSON.parse(UserInfo)._id;
+    const userId = this._userInfo.idToken;
 
     let sep = '';
     let cols = '';

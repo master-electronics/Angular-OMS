@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 import { StepBarComponent } from 'src/app/shared/ui/step-bar/step-bar.component';
 import { Tab, TabService } from 'src/app/shared/ui/step-bar/tab';
 
@@ -23,11 +23,11 @@ import { Tab, TabService } from 'src/app/shared/ui/step-bar/tab';
   `,
 })
 export class StockingShell {
-  constructor(private commonService: CommonService, private _tab: TabService) {}
+  constructor(private _title: NavbarTitleService, private _tab: TabService) {}
   public tab$ = new Observable<Tab>();
 
   ngOnInit(): void {
-    this.commonService.changeNavbar('Picking');
+    this._title.update('Picking');
     this._tab.initTab(this.steps);
     this.tab$ = this._tab.tab$;
   }

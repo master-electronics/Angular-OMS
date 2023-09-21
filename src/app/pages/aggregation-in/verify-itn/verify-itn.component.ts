@@ -4,8 +4,14 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
+  inject,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -26,10 +32,34 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { ChangeItnListForMerpGQL } from 'src/app/graphql/utilityTools.graphql-gen';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'verify-itn',
   templateUrl: './verify-itn.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class VerifyITNComponent implements OnInit, AfterViewInit {
   alertType = 'error';
@@ -59,7 +89,8 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     private _updateMerpLog: UpdateMerpWmsLogGQL,
     private _updateMerpOrder: UpdateMerpOrderStatusGQL,
     private _insertEventLog: Create_EventLogsGQL,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   @ViewChild('containerNumber') containerInput: ElementRef;
@@ -114,7 +145,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     // preper query for update info to sql and merp
     const ITNList = this._agInService.outsetContainer.ITNsInTote.map((itn) => {
       return {
-        User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        User: this._userInfo.userName,
         ITN: itn.ITN,
         BinLocation: this._agInService.endContainer.Barcode,
       };
@@ -156,7 +187,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
     // log info
     const oldLogs = this.outsetContainer.ITNsInTote.map((node) => {
       return {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         OrderNumber: this.endContainer.OrderNumber,
         NOSINumber: this.endContainer.NOSINumber,
         UserEventID: sqlData.Event_AgIn_Relocate,
@@ -218,7 +249,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
       });
       if (this.endContainer.isLastLine) {
         oldLogs.push({
-          UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          UserName: this._userInfo.userName,
           OrderNumber: this.endContainer.OrderNumber,
           NOSINumber: this.endContainer.NOSINumber,
           UserEventID: sqlData.Event_AgIn_OrderComplete,

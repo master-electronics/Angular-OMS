@@ -5,9 +5,14 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 
 import { itemParams, QualityControlService } from '../quality-control.server';
@@ -15,8 +20,6 @@ import {
   VerifyQcRepackGQL,
   UpdateMerpForLastLineAfterQcRepackGQL,
   UpdateMerpAfterQcRepackGQL,
-  FindNewAfterUpdateBinGQL,
-  CleanContainerFromPrevOrderGQL,
   UpdatStatusAfterRepackGQL,
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
@@ -25,16 +28,41 @@ import { environment } from '../../../../environments/environment';
 import {
   ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
-  Insert_UserEventLogsGQL,
   UpdateContainerGQL,
 } from '../../../graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { EventLogService } from 'src/app/shared/data/eventLog';
-import { type } from 'os';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'repack',
   templateUrl: './repack.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NzDescriptionsModule,
+    NzDividerModule,
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class RepackComponent implements OnInit, AfterViewInit {
   isLoading = false;
@@ -55,12 +83,11 @@ export class RepackComponent implements OnInit, AfterViewInit {
     private verifyQCRepack: VerifyQcRepackGQL,
     private updateContainer: UpdateContainerGQL,
     private updateStatus: UpdatStatusAfterRepackGQL,
-    private cleanContainer: CleanContainerFromPrevOrderGQL,
     private updateMerpLastLine: UpdateMerpForLastLineAfterQcRepackGQL,
     private updateMerp: UpdateMerpAfterQcRepackGQL,
     private insertUserEventLog: Create_EventLogsGQL,
     private eventLog: EventLogService,
-    private findNewID: FindNewAfterUpdateBinGQL,
+    private _userInfo: StorageUserInfoService,
     private _location: ChangeItnListForMerpGQL
   ) {
     this.titleService.setTitle('qc/repack');
@@ -209,7 +236,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
 
           const oldLogs = [
             {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               OrderNumber: this.itemInfo.OrderNumber,
               NOSINumber: this.itemInfo.NOSI,
               InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
@@ -243,7 +270,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
           ];
           if (!inProcess) {
             oldLogs.push({
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               OrderNumber: this.itemInfo.OrderNumber,
               NOSINumber: this.itemInfo.NOSI,
               UserEventID: sqlData.Event_QC_OrderComplete,
@@ -332,7 +359,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
                 itn.ORDERLINEDETAILs[0].StatusID >= sqlData.agOutComplete_ID
               ) {
                 cleanupItnList.push({
-                  User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  User: this._userInfo.userName,
                   ITN: itn.InventoryTrackingNumber,
                   BinLocation: 'PACKING',
                 });
@@ -375,7 +402,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
             ITNList: [
               {
                 ITN: this.itemInfo.InventoryTrackingNumber,
-                User: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                User: this._userInfo.userName,
                 BinLocation: barcode,
               },
             ],

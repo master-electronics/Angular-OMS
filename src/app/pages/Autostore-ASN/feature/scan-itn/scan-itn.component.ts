@@ -38,6 +38,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { FormsModule } from '@angular/forms';
 import { isTemplateExpression, readJsonConfigFile } from 'typescript';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -124,7 +125,8 @@ export class ScanITN implements OnInit {
     private _router: Router,
     private _eventLog: EventLogService,
     private _findReplenishmentItem: FindAsnReplenishmentInventoryGQL,
-    private _fetchRejectReasons: FetchAsnRejectionReasonsGQL
+    private _fetchRejectReasons: FetchAsnRejectionReasonsGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   rejectVisible: boolean;
@@ -166,7 +168,7 @@ export class ScanITN implements OnInit {
           [
             {
               UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber:
                 this.replenishmentItem.InventoryTrackingNumber,
@@ -174,7 +176,7 @@ export class ScanITN implements OnInit {
           ],
           [
             {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
               Log: JSON.stringify({
                 DistributionCenter: environment.DistributionCenter,
@@ -226,14 +228,14 @@ export class ScanITN implements OnInit {
         [
           {
             UserEventID: sqlData.Event_Autostore_ASN_ITN_Scanned,
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             DistributionCenter: environment.DistributionCenter,
             InventoryTrackingNumber: input,
           },
         ],
         [
           {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Autostore_ASN_ITN_Scanned,
             Log: JSON.stringify({
               DistributionCenter: environment.DistributionCenter,
@@ -290,7 +292,7 @@ export class ScanITN implements OnInit {
 
       userEventLogs.push({
         UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: JSON.parse(
           sessionStorage.getItem('asnReplenishmentItem')
@@ -299,7 +301,7 @@ export class ScanITN implements OnInit {
       });
 
       eventLogs.push({
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this._userInfo.userName,
         EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -316,7 +318,7 @@ export class ScanITN implements OnInit {
           )
         ),
         skip: this._asn.clearSuspect(
-          JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          this._userInfo.userName,
           this.replenishmentItem.InventoryTrackingNumber,
           this.replenishmentItem.Barcode,
           'false'
@@ -326,14 +328,14 @@ export class ScanITN implements OnInit {
           res.globalReject.data.globalASNRejection.forEach((item) => {
             userEventLogs.push({
               UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber: item.InventoryTrackingNumber,
               Message: rejectReason,
             });
 
             eventLogs.push({
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
               Log: JSON.stringify({
                 DistributionCenter: environment.DistributionCenter,
@@ -350,7 +352,7 @@ export class ScanITN implements OnInit {
       );
     } else {
       this.data$ = this._asn.clearSuspect(
-        JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        this._userInfo.userName,
         this.replenishmentItem.InventoryTrackingNumber,
         this.replenishmentItem.Barcode,
         'false'
@@ -360,7 +362,7 @@ export class ScanITN implements OnInit {
         [
           {
             UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             DistributionCenter: environment.DistributionCenter,
             InventoryTrackingNumber: JSON.parse(
               sessionStorage.getItem('asnReplenishmentItem')
@@ -370,7 +372,7 @@ export class ScanITN implements OnInit {
         ],
         [
           {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
             Log: JSON.stringify({
               DistributionCenter: environment.DistributionCenter,
@@ -431,7 +433,7 @@ export class ScanITN implements OnInit {
             [
               {
                 UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 DistributionCenter: environment.DistributionCenter,
                 InventoryTrackingNumber:
                   this.replenishmentItem.InventoryTrackingNumber,
@@ -439,7 +441,7 @@ export class ScanITN implements OnInit {
             ],
             [
               {
-                UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
                 Log: JSON.stringify({
                   DistributionCenter: environment.DistributionCenter,

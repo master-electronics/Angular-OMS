@@ -1,14 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import {
   FetchOrderViewGQL,
   OrderViewFilter,
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
-import { NzTableFilterFn, NzTableFilterList } from 'ng-zorro-antd/table';
-import { ActivatedRoute } from '@angular/router';
+import {
+  NzTableFilterFn,
+  NzTableFilterList,
+  NzTableModule,
+} from 'ng-zorro-antd/table';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { FormsModule } from '@angular/forms';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 interface DataItem {
   OrderNumber: string;
@@ -30,6 +40,19 @@ interface ColumnItem {
 @Component({
   selector: 'order-view',
   templateUrl: './order-view.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NzTableModule,
+    NzButtonModule,
+    NgFor,
+    RouterLink,
+    NzDropDownModule,
+    NzInputModule,
+    FormsModule,
+    NzWaveModule,
+    AsyncPipe,
+  ],
 })
 export class OrderViewComponent implements OnInit {
   title = 'Order View';
@@ -39,11 +62,11 @@ export class OrderViewComponent implements OnInit {
   OrderInfo$: Observable<any>;
 
   constructor(
-    private commonService: CommonService,
+    private _title: NavbarTitleService,
     private _route: ActivatedRoute,
     private fetchOrderView: FetchOrderViewGQL
   ) {
-    this.commonService.changeNavbar(this.title);
+    this._title.update(this.title);
   }
 
   ngOnInit(): void {

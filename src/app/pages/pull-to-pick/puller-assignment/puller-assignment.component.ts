@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   FetchUserListGQL,
@@ -24,16 +23,49 @@ import {
   CdkDragStart,
   moveItemInArray,
   transferArrayItem,
+  CdkDropList,
+  CdkDrag,
+  CdkDragHandle,
 } from '@angular/cdk/drag-drop';
 import { subscribe } from 'graphql';
 import { DeletePrinterGQL } from 'src/app/graphql/printerMaintenance.graphql-gen';
 import { List } from 'postcss/lib/list';
 import { isThisHour } from 'date-fns';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NgFor, NgClass } from '@angular/common';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'puller-assignment',
   templateUrl: './puller-assignment.component.html',
   styleUrls: ['./puller-assignment.component.css'],
+  standalone: true,
+  imports: [
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    FormsModule,
+    NzSelectModule,
+    NgFor,
+    NzWaveModule,
+    NzTableModule,
+    CdkDropList,
+    CdkDrag,
+    NgClass,
+    CdkDragHandle,
+    NzDropDownModule,
+    NzDividerModule,
+    NzCheckboxModule,
+  ],
 })
 export class PullerAssignmentComponent implements OnInit {
   userTableData = [];
@@ -108,7 +140,8 @@ export class PullerAssignmentComponent implements OnInit {
     private _insertUserZone: InsertUserZoneGQL,
     private _deleteUserZone: DeleteUserZoneGQL,
     private _fetchProductTypes: FetchProductTypesGQL,
-    private _fetchDCList: FetchDistributionCenterListGQL
+    private _fetchDCList: FetchDistributionCenterListGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   ngOnInit(): void {
@@ -1125,7 +1158,7 @@ export class PullerAssignmentComponent implements OnInit {
       this._findUsers
         .fetch(
           {
-            name: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            name: this._userInfo.userName,
           },
           {
             fetchPolicy: 'network-only',

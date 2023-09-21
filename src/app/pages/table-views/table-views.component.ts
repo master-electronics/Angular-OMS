@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'table-views',
@@ -46,11 +46,8 @@ export class TableViewsComponent {
     },
   ];
 
-  constructor(
-    private commonService: CommonService,
-    private titleService: Title
-  ) {
-    this.commonService.changeNavbar('Table Views');
+  constructor(private _title: NavbarTitleService, private titleService: Title) {
+    this._title.update('Table Views');
     this.titleService.setTitle('tableviews');
   }
 }

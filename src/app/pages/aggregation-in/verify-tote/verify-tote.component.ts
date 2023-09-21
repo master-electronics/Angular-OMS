@@ -5,21 +5,47 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
-import { CommonService } from '../../../shared/services/common.service';
 import { Title } from '@angular/platform-browser';
 import {
   AggregationInService,
   endContainer,
   outsetContainer,
 } from '../aggregation-in.server';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NgIf } from '@angular/common';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 
 @Component({
   selector: 'verify-tote',
   templateUrl: './verify-tote.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NzGridModule,
+    NgIf,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+  ],
 })
 export class VerifyToteComponent implements OnInit, AfterViewInit {
   endContainer: endContainer;
@@ -38,10 +64,10 @@ export class VerifyToteComponent implements OnInit, AfterViewInit {
     private _fb: UntypedFormBuilder,
     private _router: Router,
     private _titleService: Title,
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _agInService: AggregationInService
   ) {
-    this._commonService.changeNavbar('Verify Tote');
+    this._title.update('Verify Tote');
     this._titleService.setTitle('agIn/verify-tote');
   }
 

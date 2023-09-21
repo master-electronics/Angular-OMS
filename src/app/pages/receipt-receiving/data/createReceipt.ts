@@ -17,6 +17,7 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 interface PurchaseInfo {
   PurchaseOrderNumber?: string;
@@ -76,6 +77,7 @@ export class CreateReceiptService {
     private _fetchpurchase: FetchPurchaseOrderInfoGQL,
     private _log: LogService,
     private _eventLog: EventLogService,
+    private _userInfo: StorageUserInfoService,
     private _insertLog: Create_EventLogsGQL
   ) {}
 
@@ -119,12 +121,12 @@ export class CreateReceiptService {
         }),
         switchMap(() => {
           this._log.initReceivingLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Receiving_Start,
             PurchaseOrderNumber: order,
           });
           this._eventLog.initEventLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Receiving_Start,
             Log: JSON.stringify({
               PurchaseOrderNumber: order,
@@ -157,7 +159,7 @@ export class CreateReceiptService {
             UserEventID: sqlData.Event_Receiving_Start,
           });
           this._eventLog.updateEventLog({
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Receiving_Start,
             Log: JSON.stringify({
               ReceiptHeader: id,
@@ -166,11 +168,11 @@ export class CreateReceiptService {
           });
           const oldlog2 = {
             ReceiptHeader: id,
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Receiving_create_receipt_done,
           };
           const eventlog2 = {
-            UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Receiving_create_receipt_done,
             Log: JSON.stringify({
               ReceiptHeader: id,

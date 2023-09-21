@@ -11,11 +11,13 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CommonService } from '../../../shared/services/common.service';
+import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PickService } from '../pick.server';
 import {
@@ -26,10 +28,33 @@ import {
 } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzWaveModule } from 'ng-zorro-antd/core/wave';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { FocusInvlidInputDirective } from '../../../shared/directives/focusInvalidInput.directive';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'pull-itn',
   templateUrl: './pull-itn.component.html',
+  standalone: true,
+  imports: [
+    FormsModule,
+    NzFormModule,
+    FocusInvlidInputDirective,
+    ReactiveFormsModule,
+    NgIf,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzWaveModule,
+    NzAlertModule,
+    AsyncPipe,
+  ],
 })
 export class PullITNComponent implements OnInit, AfterViewInit {
   title = 'Pull ITN';
@@ -59,16 +84,17 @@ export class PullITNComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private _commonService: CommonService,
+    private _title: NavbarTitleService,
     private _router: Router,
     private _titleService: Title,
     private _pickService: PickService,
     private _findNextITN: FindNextItnForPullingGQL,
     private _updateAfterPulling: UpdateAfterPullingGQL,
     private _updateUserCart: VerifyCartAndUpdateGQL,
-    private _updateNotFound: UpdatePullingNotFoundGQL
+    private _updateNotFound: UpdatePullingNotFoundGQL,
+    private _userInfo: StorageUserInfoService
   ) {
-    this._commonService.changeNavbar(this.title);
+    this._title.update(this.title);
     this._titleService.setTitle('Pick a Cart');
   }
 
@@ -149,7 +175,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
     // Update Inventory
     this.step = 'Submit';
     this.isLoading = true;
-    const UserID = Number(JSON.parse(sessionStorage.getItem('userInfo'))._id);
+    const UserID = this._userInfo.idToken;
     this.submit$ = this._updateUserCart
       .mutate(
         {
@@ -176,7 +202,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
                 {
                   UserEventID: sqlData.Event_Pulling_PullITN,
                   InventoryTrackingNumber: this.ITN,
-                  UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                  UserName: this._userInfo.userName,
                   OrderNumber: this.OrderNumber,
                   NOSINumber: this.NOSINumber,
                 },
@@ -216,7 +242,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
             {
               UserEventID: sqlData.Event_Pulling_NotFound,
               InventoryTrackingNumber: this.ITN,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this._userInfo.userName,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
             },
