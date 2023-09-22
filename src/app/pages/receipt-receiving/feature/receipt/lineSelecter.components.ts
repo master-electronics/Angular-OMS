@@ -29,7 +29,9 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
           </th>
         </ng-template>
         <ng-template #rows let-row>
-          <td *ngFor="let node of row | keyvalue">{{ node.value }}</td>
+          <td class="select-none" *ngFor="let node of row | keyvalue">
+            {{ node.value }}
+          </td>
           <td>
             <button
               (click)="selectLine(row)"

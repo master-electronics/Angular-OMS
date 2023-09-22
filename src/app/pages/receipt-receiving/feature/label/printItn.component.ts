@@ -34,7 +34,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Label</h1>
-      <h1>({{ list.length }} of {{ label.currentItnIndex() + 1 }})</h1>
+      <h1>({{ label.currentItnIndex() + 1 }} of {{ list.length }})</h1>
     </div>
     <single-input-form
       (formSubmit)="onSubmit()"
