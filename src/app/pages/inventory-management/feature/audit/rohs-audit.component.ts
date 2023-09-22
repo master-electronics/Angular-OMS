@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleRadioFormComponent } from 'src/app/shared/ui/input/single-radio-form.component';
 import {
@@ -27,6 +27,7 @@ import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { Audit } from '../../utils/interfaces';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -59,6 +60,7 @@ import { Audit } from '../../utils/interfaces';
   `,
 })
 export class ROHSAudit implements OnInit {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -117,7 +119,7 @@ export class ROHSAudit implements OnInit {
     const userEventLogs = [
       {
         UserEventID: sqlData.Event_IM_ROHS_Entered,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message: 'Country of Origin: ' + this.inputForm.value.rohs,
@@ -126,7 +128,7 @@ export class ROHSAudit implements OnInit {
 
     const eventLogs = [
       {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_ROHS_Entered,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -141,7 +143,7 @@ export class ROHSAudit implements OnInit {
     ) {
       userEventLogs.push({
         UserEventID: sqlData.Event_IM_ROHS_Updated,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message:
@@ -152,7 +154,7 @@ export class ROHSAudit implements OnInit {
       });
 
       eventLogs.push({
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_ROHS_Updated,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -167,7 +169,7 @@ export class ROHSAudit implements OnInit {
     this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
       switchMap((res) => {
         return this._auditService.inventoryUpdate(
-          JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          this.userInfo.userName,
           sessionStorage.getItem('auditITN'),
           'Inventory Management Audit',
           '',
@@ -186,7 +188,7 @@ export class ROHSAudit implements OnInit {
         return this._auditService
           .nextSubAudit$(
             JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID,
-            Number(JSON.parse(sessionStorage.getItem('userInfo'))._id)
+            this.userInfo.userId
           )
           .pipe(
             tap((res) => {
@@ -198,7 +200,7 @@ export class ROHSAudit implements OnInit {
                     10,
                     JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
                       .ITN,
-                    JSON.parse(sessionStorage.getItem('userInfo')).Name
+                    this.userInfo.userName
                   )
                   .pipe(
                     map((res) => {

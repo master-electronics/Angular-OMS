@@ -74,8 +74,12 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
         }
       }
       RECEIPTLDs {
+        _id
         PurchaseOrderL {
           LineNumber
+          QuantityOnOrder
+          QuantityReceived
+          UnitOfMeasure
           PurchaseOrderH {
             PurchaseOrderNumber
           }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -39,6 +39,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AuditService } from '../../data/audit.service';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -209,6 +210,7 @@ import { AuditService } from '../../data/audit.service';
   styleUrls: ['./user-trigger.component.css'],
 })
 export class UserTrigger {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -508,7 +510,7 @@ export class UserTrigger {
     this.itnList.forEach((item) => {
       suspects.push(
         this._auditService.inventoryUpdate(
-          JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          this.userInfo.userName,
           item.ITN,
           'Inventory Management Audit',
           '',

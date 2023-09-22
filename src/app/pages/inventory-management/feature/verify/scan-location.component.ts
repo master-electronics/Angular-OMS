@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
@@ -24,6 +24,7 @@ import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { ShelfBarcodeBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -60,6 +61,7 @@ import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
   `,
 })
 export class ScanLocation implements OnInit {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
@@ -121,7 +123,7 @@ export class ScanLocation implements OnInit {
           const userEventLogs = [
             {
               UserEventID: sqlData.Event_IM_Location_Scanned,
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
               Message: 'BinLocation: ' + barcode,
@@ -130,7 +132,7 @@ export class ScanLocation implements OnInit {
 
           const eventLogs = [
             {
-              UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+              UserName: this.userInfo.userName,
               EventTypeID: sqlData.Event_IM_Location_Scanned,
               Log: JSON.stringify({
                 DistributionCenter: environment.DistributionCenter,
@@ -143,7 +145,7 @@ export class ScanLocation implements OnInit {
           return this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
             switchMap((res) => {
               return this._auditService.inventoryUpdate(
-                JSON.parse(sessionStorage.getItem('userInfo')).Name,
+                this.userInfo.userName,
                 sessionStorage.getItem('auditITN'),
                 'Inventory Management Audit',
                 '',

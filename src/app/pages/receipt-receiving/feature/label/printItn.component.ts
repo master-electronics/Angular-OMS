@@ -60,7 +60,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
 })
 export class PrintITNComponent implements OnInit {
   public inputForm: FormGroup;
-  public data$: Observable<any>;
+  public data$;
   public ITNList$ = new Observable<Array<ITNinfo>>();
   public scanAll = false;
   public validators = [

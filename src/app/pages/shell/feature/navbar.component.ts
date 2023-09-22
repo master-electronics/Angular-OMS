@@ -1,4 +1,10 @@
-import { Component, HostListener, Inject, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  Inject,
+  inject,
+} from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { LOCAL_STORAGE } from 'src/app/shared/utils/storage';
@@ -11,6 +17,7 @@ import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service
 
 @Component({
   selector: 'top-navbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="border-b-2 border-indigo-500 bg-gray-100">
       <div class="mx-auto px-2">
@@ -69,7 +76,6 @@ import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service
   ],
 })
 export class NavbarComponent {
-  showMenu = false;
   isFullscreen = false;
   elem;
 
@@ -117,7 +123,6 @@ export class NavbarComponent {
 
   title = inject(NavbarTitleService);
   userInfo = inject(StorageUserInfoService);
-
   router = inject(Router);
   localStorage = inject(LOCAL_STORAGE);
   logout(): void {

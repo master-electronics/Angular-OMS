@@ -210,7 +210,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       this.submit$ = this._updateForDropOff
         .mutate(
           {
-            UserID: this._userInfo.idToken,
+            UserID: this._userInfo.userId,
             UserInfo: {
               CartID: null,
             },

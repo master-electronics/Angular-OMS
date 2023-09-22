@@ -200,6 +200,7 @@ export class ReceiptInfoService {
                 MIC: `${environment.productImgSource}${info.data.fetchProductMICFromMerp}.jpg`,
                 message: info.data.fetchPartMessage.comments,
                 kitInfo: '',
+                UoM: line[0].RECEIPTLDs[0].PurchaseOrderL.UnitOfMeasure || '',
               };
             })
           );
@@ -246,7 +247,7 @@ export class ReceiptInfoService {
         switchMap(() => {
           return this._printer.printText$(list);
         }),
-        map(() => {
+        switchMap(() => {
           return this._insertLog.mutate({ oldLogs, eventLogs });
         })
       );

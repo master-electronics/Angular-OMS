@@ -1,23 +1,27 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRoute, Resolve, Router } from '@angular/router';
-import { catchError, tap } from 'rxjs';
+import { inject } from '@angular/core';
+import {
+  ActivatedRouteSnapshot,
+  ResolveFn,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { StockingService } from '../../data/stocking.service';
+import { tap } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
-@Injectable()
-export class UserItnlistResolver implements Resolve<any> {
-  constructor(
-    private _stocking: StockingService,
-    private _router: Router,
-    private _actRoute: ActivatedRoute
-  ) {}
-  resolve() {
-    return this._stocking.ItnInUserContainer$().pipe(
-      catchError((error) => {
-        this._router.navigate(['../stocking/scantarget'], {
-          relativeTo: this._actRoute,
-        });
-        return error;
-      })
-    );
-  }
-}
+export const UserItnListResolver: ResolveFn<any> = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+  stocking: StockingService = inject(StockingService),
+  router: Router = inject(Router),
+  message: NzMessageService = inject(NzMessageService)
+) => {
+  return stocking.ItnInUserContainer$().pipe(
+    tap((res: any) => {
+      if (!res.length) {
+        message.info('Empty Personal Container.');
+        router.navigate(['../stocking']);
+      }
+    })
+  );
+};

@@ -23,7 +23,7 @@ query fetchEventLog(
 }
 
 query fetchTaskCounter(
-  $Module: Int!
+  $Module: String!
   $startDate: String!
   $endDate: String!
 ) {

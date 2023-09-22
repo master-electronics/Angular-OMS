@@ -29,6 +29,17 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
             [value]="info.PartNumber"
           />
         </div>
+        <div>
+          <label for="PartNumber">Unit of Measure</label>
+          <input
+            type="text"
+            name="PartNumber"
+            id="PartNumber"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            disabled
+            [value]="info.UoM"
+          />
+        </div>
       </div>
       <div>
         <label for="message">Global Message</label>

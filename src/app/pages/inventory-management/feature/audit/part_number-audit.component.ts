@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { SingleRadioFormComponent } from 'src/app/shared/ui/input/single-radio-form.component';
@@ -35,6 +35,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -222,6 +223,7 @@ import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.compo
   `,
 })
 export class PartNumberAudit implements OnInit {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -318,7 +320,7 @@ export class PartNumberAudit implements OnInit {
     const userEventLogs = [
       {
         UserEventID: sqlData.Event_IM_PartNumber_Entered,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message: 'Part Number: ' + this.inputForm.value.partMatch,
@@ -327,7 +329,7 @@ export class PartNumberAudit implements OnInit {
 
     const eventLogs = [
       {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_PartNumber_Entered,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -345,7 +347,7 @@ export class PartNumberAudit implements OnInit {
     ) {
       userEventLogs.push({
         UserEventID: sqlData.Event_IM_PartNumber_Updated,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message:
@@ -357,7 +359,7 @@ export class PartNumberAudit implements OnInit {
       });
 
       eventLogs.push({
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_PartNumber_Updated,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -412,7 +414,7 @@ export class PartNumberAudit implements OnInit {
         return this._auditService
           .nextSubAudit$(
             JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID,
-            Number(JSON.parse(sessionStorage.getItem('userInfo'))._id)
+            this.userInfo.userId
           )
           .pipe(
             tap((res) => {
@@ -424,7 +426,7 @@ export class PartNumberAudit implements OnInit {
                     10,
                     JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
                       .ITN,
-                    JSON.parse(sessionStorage.getItem('userInfo')).Name
+                    this.userInfo.userName
                   )
                   .pipe(
                     map((res) => {

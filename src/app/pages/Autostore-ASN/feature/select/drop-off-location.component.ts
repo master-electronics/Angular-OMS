@@ -41,6 +41,13 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
         [cancelVisible]="cancelVisible"
       ></popup-modal>
     </ng-container>
+    <ng-container *ngIf="zeroList">
+      <popup-modal
+        [message]="zeroList"
+        (clickSubmit)="zeroListOK()"
+        [cancelVisible]="cancelVisible"
+      ></popup-modal>
+    </ng-container>
     <div *ngIf="log$ | async"></div>
     <div *ngIf="print$ | async"></div>
   `,

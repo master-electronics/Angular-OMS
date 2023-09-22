@@ -307,24 +307,31 @@ export type ItnInfoforPulling = {
   Zone?: Maybe<Scalars['Int']>;
 };
 
-export type ItnLifeCycle = {
-  __typename?: 'ITNLifeCycle';
+export type Itnlifecycleprocess = {
+  __typename?: 'ITNLIFECYCLEPROCESS';
+  LastProcessedID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Itnlifecycle_Report = {
+  __typename?: 'ITNLIFECYCLE_Report';
   CustomerNumber?: Maybe<Scalars['String']>;
   CustomerTier?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   NOSINumber?: Maybe<Scalars['String']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
-  OrderNOSI?: Maybe<Scalars['String']>;
   OrderNumber?: Maybe<Scalars['String']>;
   ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Boolean']>;
   ProductCode?: Maybe<Scalars['String']>;
   ProductTier?: Maybe<Scalars['String']>;
-  Quantity?: Maybe<Scalars['Int']>;
+  Quantity?: Maybe<Scalars['Float']>;
   TrackingNumber?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
   after_InventoryTrackingNumber?: Maybe<Scalars['String']>;
   agDone?: Maybe<Scalars['String']>;
   agDoneUser?: Maybe<Scalars['String']>;
@@ -414,6 +421,91 @@ export type ItnLifeCycleDrillDown = {
   UserName?: Maybe<Scalars['String']>;
   WMSPriority?: Maybe<Scalars['Int']>;
   Zone?: Maybe<Scalars['Int']>;
+};
+
+export type ItnLifeCycle_Report = {
+  __typename?: 'ITNLifeCycle_Report';
+  CustomerNumber?: Maybe<Scalars['String']>;
+  CustomerTier?: Maybe<Scalars['String']>;
+  DistributionCenter?: Maybe<Scalars['String']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  NOSINumber?: Maybe<Scalars['String']>;
+  OrderLineNumber?: Maybe<Scalars['Int']>;
+  OrderNOSI?: Maybe<Scalars['String']>;
+  OrderNumber?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Boolean']>;
+  ProductCode?: Maybe<Scalars['String']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  Quantity?: Maybe<Scalars['Int']>;
+  TrackingNumber?: Maybe<Scalars['String']>;
+  WMSPriority?: Maybe<Scalars['Int']>;
+  Zone?: Maybe<Scalars['Int']>;
+  after_InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  agDone?: Maybe<Scalars['String']>;
+  agDoneUser?: Maybe<Scalars['String']>;
+  agInDone?: Maybe<Scalars['String']>;
+  agOrderComplete?: Maybe<Scalars['String']>;
+  agOutStart?: Maybe<Scalars['String']>;
+  agRelocate?: Maybe<Scalars['String']>;
+  agStart?: Maybe<Scalars['String']>;
+  agStartUser?: Maybe<Scalars['String']>;
+  dropoffCartSelected?: Maybe<Scalars['String']>;
+  dropoffDone?: Maybe<Scalars['String']>;
+  dropoffITNSkipped?: Maybe<Scalars['String']>;
+  dropoffLine?: Maybe<Scalars['String']>;
+  dropoffLocationSelected?: Maybe<Scalars['String']>;
+  dropoffStart?: Maybe<Scalars['String']>;
+  dropoffUser?: Maybe<Scalars['String']>;
+  lineAllocation?: Maybe<Scalars['String']>;
+  lineAllocationUser?: Maybe<Scalars['String']>;
+  lineCancel?: Maybe<Scalars['String']>;
+  orderCancel?: Maybe<Scalars['String']>;
+  packDone?: Maybe<Scalars['String']>;
+  packLine?: Maybe<Scalars['String']>;
+  packLineUser?: Maybe<Scalars['String']>;
+  packNewPackage?: Maybe<Scalars['String']>;
+  packReject?: Maybe<Scalars['String']>;
+  packStart?: Maybe<Scalars['String']>;
+  packSupervisorCheck?: Maybe<Scalars['String']>;
+  pickCartAssigned?: Maybe<Scalars['String']>;
+  pickDone?: Maybe<Scalars['String']>;
+  pickDoneUser?: Maybe<Scalars['String']>;
+  pickITNNF?: Maybe<Scalars['String']>;
+  pickITNPrint?: Maybe<Scalars['String']>;
+  pickITNScan?: Maybe<Scalars['String']>;
+  pickLabelCount?: Maybe<Scalars['String']>;
+  pickLabelQuantity?: Maybe<Scalars['String']>;
+  pickLocationScan?: Maybe<Scalars['String']>;
+  pickOverPick?: Maybe<Scalars['String']>;
+  pickQuantityEntered?: Maybe<Scalars['String']>;
+  pickShortPick?: Maybe<Scalars['String']>;
+  pickStart?: Maybe<Scalars['String']>;
+  pickStartUser?: Maybe<Scalars['String']>;
+  pickStatus15?: Maybe<Scalars['String']>;
+  pickToteAssignment?: Maybe<Scalars['String']>;
+  pickUserExit?: Maybe<Scalars['String']>;
+  pullingCartSelected?: Maybe<Scalars['String']>;
+  pullingDone?: Maybe<Scalars['String']>;
+  pullingLocationSelected?: Maybe<Scalars['String']>;
+  pullingNotFound?: Maybe<Scalars['String']>;
+  pullingStart?: Maybe<Scalars['String']>;
+  qcDone?: Maybe<Scalars['String']>;
+  qcDoneUser?: Maybe<Scalars['String']>;
+  qcHold?: Maybe<Scalars['String']>;
+  qcOrderComplete?: Maybe<Scalars['String']>;
+  qcStart?: Maybe<Scalars['String']>;
+  qcStartUser?: Maybe<Scalars['String']>;
+  qcStatus40?: Maybe<Scalars['String']>;
+  qcStatus41?: Maybe<Scalars['String']>;
+  releaseLine?: Maybe<Scalars['String']>;
+  releaseOrder?: Maybe<Scalars['String']>;
+  shipmentMethod?: Maybe<Scalars['String']>;
+  shipmentMethodDescription?: Maybe<Scalars['String']>;
+  shippingManifest?: Maybe<Scalars['String']>;
+  splitDone?: Maybe<Scalars['String']>;
+  splitDoneUser?: Maybe<Scalars['String']>;
 };
 
 export type ItnUserColumn = {
@@ -610,7 +702,9 @@ export type Mutation = {
   insertValueMap?: Maybe<ValueMap>;
   inventoryUpdate?: Maybe<Scalars['Boolean']>;
   itnChange?: Maybe<Scalars['Boolean']>;
+  itnEvent?: Maybe<Itnlifecycle_Report>;
   itnLocationChange?: Maybe<Scalars['Boolean']>;
+  orderEvent?: Maybe<Itnlifecycle_Report>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
@@ -629,6 +723,7 @@ export type Mutation = {
   updateForOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   updateForProductFromMerp?: Maybe<Scalars['Boolean']>;
   updateForPurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']>;
+  updateITNLifeCycleProcess?: Maybe<Itnlifecycleprocess>;
   updateITNUserColumns?: Maybe<ItnUserColumns>;
   updateITNUserLevels?: Maybe<ItnUserLevels>;
   updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1119,10 +1214,34 @@ export type MutationItnChangeArgs = {
 };
 
 
+export type MutationItnEventArgs = {
+  After?: InputMaybe<Scalars['Boolean']>;
+  EventID?: InputMaybe<Scalars['Int']>;
+  ITNLC?: InputMaybe<ItnLifeCycle>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  LogID?: InputMaybe<Scalars['Int']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationItnLocationChangeArgs = {
   BinLocation: Scalars['String'];
   ITN: Scalars['String'];
   User: Scalars['String'];
+};
+
+
+export type MutationOrderEventArgs = {
+  LogID?: InputMaybe<Scalars['Int']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  ORDERLC?: InputMaybe<ItnLifeCycle>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1269,6 +1388,7 @@ export type MutationUpdateForProductFromMerpArgs = {
 
 
 export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
+  DueDate?: InputMaybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   LocationCode: Scalars['String'];
   PartNumber: Scalars['String'];
@@ -1277,8 +1397,15 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   PurchaseOrderNumber: Scalars['String'];
   QuantityOnOrder?: InputMaybe<Scalars['Float']>;
   QuantityReceived?: InputMaybe<Scalars['Float']>;
+  UnitOfMeasure?: InputMaybe<Scalars['String']>;
   VendorName: Scalars['String'];
   VendorNumber: Scalars['String'];
+};
+
+
+export type MutationUpdateItnLifeCycleProcessArgs = {
+  _id?: InputMaybe<Scalars['Int']>;
+  itnLCProcess?: InputMaybe<ItnLifecycleProcess>;
 };
 
 
@@ -1554,6 +1681,7 @@ export type Partcode = {
 
 export type PoLine = {
   __typename?: 'POLine';
+  DueDate?: Maybe<Scalars['String']>;
   MaxQuantity?: Maybe<Scalars['Int']>;
   PurchaseOrderNumberLine?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
@@ -1628,14 +1756,16 @@ export type PurchaseOrderH = {
 
 export type PurchaseOrderL = {
   __typename?: 'PurchaseOrderL';
+  DueDate?: Maybe<Scalars['String']>;
   LineNumber: Scalars['Int'];
   Product: Product;
   ProductID: Scalars['Int'];
   PurchaseOrderH: PurchaseOrderH;
   PurchaseOrderHID: Scalars['Int'];
-  QuantityOnOrder: Scalars['Float'];
-  QuantityReceived: Scalars['Float'];
+  QuantityOnOrder?: Maybe<Scalars['Float']>;
+  QuantityReceived?: Maybe<Scalars['Float']>;
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
+  UnitOfMeasure?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -1653,8 +1783,9 @@ export type Query = {
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
-  fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle>>>;
+  fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
+  fetchITNLifecycleDrillDownRows?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
@@ -1672,6 +1803,7 @@ export type Query = {
   fetchSuggetionLocationForSorting?: Maybe<Array<Maybe<SuggetionLocation>>>;
   fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
+  fetchUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   fetchUserList?: Maybe<Array<Maybe<User>>>;
   fetchUsersForZone?: Maybe<Array<Maybe<User>>>;
   fetchValueMapView?: Maybe<Array<Maybe<ValueMap>>>;
@@ -1804,6 +1936,14 @@ export type QueryFetchItnLifecycleDrillDownArgs = {
 };
 
 
+export type QueryFetchItnLifecycleDrillDownRowsArgs = {
+  inventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  nosiNumber?: InputMaybe<Scalars['String']>;
+  orderLineNumber?: InputMaybe<Scalars['Int']>;
+  orderNumber?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
 };
@@ -1879,9 +2019,15 @@ export type QueryFetchTableDataArgs = {
 
 
 export type QueryFetchTaskCounterArgs = {
-  Module: Scalars['Int'];
+  Module: Scalars['String'];
   endDate: Scalars['String'];
   startDate: Scalars['String'];
+};
+
+
+export type QueryFetchUserEventLogsArgs = {
+  EventList?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2819,6 +2965,94 @@ export type InsertUserInfo = {
   StrictPriority?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type ItnLifeCycle = {
+  CustomerNumber?: InputMaybe<Scalars['String']>;
+  CustomerTier?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  NOSINumber?: InputMaybe<Scalars['String']>;
+  OrderLineNumber?: InputMaybe<Scalars['Int']>;
+  OrderNumber?: InputMaybe<Scalars['String']>;
+  ParentITN?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  Quantity?: InputMaybe<Scalars['Float']>;
+  TrackingNumber?: InputMaybe<Scalars['String']>;
+  WMSPriority?: InputMaybe<Scalars['Int']>;
+  Zone?: InputMaybe<Scalars['Int']>;
+  after_InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
+  agDone?: InputMaybe<Scalars['String']>;
+  agDoneUser?: InputMaybe<Scalars['String']>;
+  agInDone?: InputMaybe<Scalars['String']>;
+  agOrderComplete?: InputMaybe<Scalars['String']>;
+  agOutStart?: InputMaybe<Scalars['String']>;
+  agRelocate?: InputMaybe<Scalars['String']>;
+  agStart?: InputMaybe<Scalars['String']>;
+  agStartUser?: InputMaybe<Scalars['String']>;
+  dropoffCartSelected?: InputMaybe<Scalars['String']>;
+  dropoffDone?: InputMaybe<Scalars['String']>;
+  dropoffITNSkipped?: InputMaybe<Scalars['String']>;
+  dropoffLine?: InputMaybe<Scalars['String']>;
+  dropoffLocationSelected?: InputMaybe<Scalars['String']>;
+  dropoffStart?: InputMaybe<Scalars['String']>;
+  dropoffUser?: InputMaybe<Scalars['String']>;
+  lineAllocation?: InputMaybe<Scalars['String']>;
+  lineAllocationUser?: InputMaybe<Scalars['String']>;
+  lineCancel?: InputMaybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']>;
+  orderCancel?: InputMaybe<Scalars['String']>;
+  packDone?: InputMaybe<Scalars['String']>;
+  packLine?: InputMaybe<Scalars['String']>;
+  packLineUser?: InputMaybe<Scalars['String']>;
+  packNewPackage?: InputMaybe<Scalars['String']>;
+  packReject?: InputMaybe<Scalars['String']>;
+  packStart?: InputMaybe<Scalars['String']>;
+  packSupervisorCheck?: InputMaybe<Scalars['String']>;
+  pickCartAssigned?: InputMaybe<Scalars['String']>;
+  pickDone?: InputMaybe<Scalars['String']>;
+  pickDoneUser?: InputMaybe<Scalars['String']>;
+  pickITNNF?: InputMaybe<Scalars['String']>;
+  pickITNPrint?: InputMaybe<Scalars['String']>;
+  pickITNScan?: InputMaybe<Scalars['String']>;
+  pickLabelCount?: InputMaybe<Scalars['String']>;
+  pickLabelQuantity?: InputMaybe<Scalars['String']>;
+  pickLocationScan?: InputMaybe<Scalars['String']>;
+  pickOverPick?: InputMaybe<Scalars['String']>;
+  pickQuantityEntered?: InputMaybe<Scalars['String']>;
+  pickShortPick?: InputMaybe<Scalars['String']>;
+  pickStart?: InputMaybe<Scalars['String']>;
+  pickStartUser?: InputMaybe<Scalars['String']>;
+  pickStatus15?: InputMaybe<Scalars['String']>;
+  pickToteAssignment?: InputMaybe<Scalars['String']>;
+  pickUserExit?: InputMaybe<Scalars['String']>;
+  pullingCartSelected?: InputMaybe<Scalars['String']>;
+  pullingDone?: InputMaybe<Scalars['String']>;
+  pullingLocationSelected?: InputMaybe<Scalars['String']>;
+  pullingNotFound?: InputMaybe<Scalars['String']>;
+  pullingStart?: InputMaybe<Scalars['String']>;
+  qcDone?: InputMaybe<Scalars['String']>;
+  qcDoneUser?: InputMaybe<Scalars['String']>;
+  qcHold?: InputMaybe<Scalars['String']>;
+  qcOrderComplete?: InputMaybe<Scalars['String']>;
+  qcStart?: InputMaybe<Scalars['String']>;
+  qcStartUser?: InputMaybe<Scalars['String']>;
+  qcStatus40?: InputMaybe<Scalars['String']>;
+  qcStatus41?: InputMaybe<Scalars['String']>;
+  releaseLine?: InputMaybe<Scalars['String']>;
+  releaseOrder?: InputMaybe<Scalars['String']>;
+  shipmentMethod?: InputMaybe<Scalars['String']>;
+  shipmentMethodDescription?: InputMaybe<Scalars['String']>;
+  shippingManifest?: InputMaybe<Scalars['String']>;
+  splitDone?: InputMaybe<Scalars['String']>;
+  splitDoneUser?: InputMaybe<Scalars['String']>;
+};
+
+export type ItnLifecycleProcess = {
+  LastProcessedID?: InputMaybe<Scalars['Int']>;
+};
+
 export type OrderTasktime = {
   __typename?: 'orderTasktime';
   Order: Scalars['String'];
@@ -3242,7 +3476,7 @@ export type FetchPurchaseOrderInfoQueryVariables = Types.Exact<{
 }>;
 
 
-export type FetchPurchaseOrderInfoQuery = { __typename?: 'Query', findPurchaseOrderH?: { __typename?: 'PurchaseOrderH', _id: number, Vendor: { __typename?: 'Vendor', VendorName: string }, PURCHASEORDERLs?: Array<{ __typename?: 'PurchaseOrderL', LineNumber: number, QuantityReceived: number, QuantityOnOrder: number, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
+export type FetchPurchaseOrderInfoQuery = { __typename?: 'Query', findPurchaseOrderH?: { __typename?: 'PurchaseOrderH', _id: number, Vendor: { __typename?: 'Vendor', VendorName: string }, PURCHASEORDERLs?: Array<{ __typename?: 'PurchaseOrderL', LineNumber: number, QuantityReceived?: number | null, QuantityOnOrder?: number | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } } } | null> | null } | null };
 
 export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
   ReceiptHID: Types.Scalars['Int'];
@@ -3250,7 +3484,7 @@ export type FindReceiptHeaderForReceivingQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindReceiptHeaderForReceivingQuery = { __typename?: 'Query', findReceiptInfoByIdAndStatus?: { __typename?: 'ReceiptH', RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, ExpectedQuantity: number, DateCode?: string | null, ROHS?: boolean | null, LineNumber: number, ProductID: number, CountryID?: number | null, Country?: { __typename?: 'Country', ISO3: string } | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', PurchaseOrderL?: { __typename?: 'PurchaseOrderL', LineNumber: number, PurchaseOrderH: { __typename?: 'PurchaseOrderH', PurchaseOrderNumber: string } } | null } | null> | null } | null> | null } | null };
+export type FindReceiptHeaderForReceivingQuery = { __typename?: 'Query', findReceiptInfoByIdAndStatus?: { __typename?: 'ReceiptH', RECEIPTLs?: Array<{ __typename?: 'ReceiptL', _id: number, ExpectedQuantity: number, DateCode?: string | null, ROHS?: boolean | null, LineNumber: number, ProductID: number, CountryID?: number | null, Country?: { __typename?: 'Country', ISO3: string } | null, Product: { __typename?: 'Product', PartNumber: string, ProductCode: { __typename?: 'ProductCode', ProductCodeNumber: string } }, RECEIPTLDs?: Array<{ __typename?: 'ReceiptLD', _id: number, PurchaseOrderL?: { __typename?: 'PurchaseOrderL', LineNumber: number, QuantityOnOrder?: number | null, QuantityReceived?: number | null, UnitOfMeasure?: string | null, PurchaseOrderH: { __typename?: 'PurchaseOrderH', PurchaseOrderNumber: string } } | null } | null> | null } | null> | null } | null };
 
 export type FetchProductInfoForReceivingQueryVariables = Types.Exact<{
   ProductCode: Types.Scalars['String'];
@@ -3452,8 +3686,12 @@ export const FindReceiptHeaderForReceivingDocument = gql`
         }
       }
       RECEIPTLDs {
+        _id
         PurchaseOrderL {
           LineNumber
+          QuantityOnOrder
+          QuantityReceived
+          UnitOfMeasure
           PurchaseOrderH {
             PurchaseOrderNumber
           }

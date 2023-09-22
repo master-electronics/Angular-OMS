@@ -42,11 +42,16 @@ query findReceipts($receiptID: String) {
   }
 }
 
-query findPartCodes($searchString: String, $vendorID: Int, $distributionCenter: String) {
+query findPartCodes(
+  $searchString: String
+  $vendorID: Int
+  $distributionCenter: String
+) {
   findPartCodes(
-    SearchString: $searchString, 
-    VendorID: $vendorID, 
-    DistributionCenter: $distributionCenter) {
+    SearchString: $searchString
+    VendorID: $vendorID
+    DistributionCenter: $distributionCenter
+  ) {
     _id
     PRC
   }
@@ -66,7 +71,7 @@ query findPart($productID: Int) {
 }
 
 query fetchReceiptLines($receiptHID: Int) {
-  fetchReceiptLines(ReceiptHID: $receiptHID) {
+  findReceiptLs(ReceiptL: { ReceiptHID: $receiptHID }) {
     _id
     ReceiptHID
     ProductID
@@ -80,6 +85,10 @@ query fetchReceiptLines($receiptHID: Int) {
       ReceiptLID
       ExpectedQuantity
       PurchaseOrderLID
+      PurchaseOrderL {
+        DueDate
+        LineNumber
+      }
     }
   }
 }
@@ -103,8 +112,16 @@ query findReceiptLine($receiptLineId: Int) {
   }
 }
 
-query findPOLines($vendorID: Int, $productID: Int, $distributionCenter: String) {
-  findPOLines(VendorID: $vendorID, ProductID: $productID, DistributionCenter: $distributionCenter) {
+query findPOLines(
+  $vendorID: Int
+  $productID: Int
+  $distributionCenter: String
+) {
+  findPOLines(
+    VendorID: $vendorID
+    ProductID: $productID
+    DistributionCenter: $distributionCenter
+  ) {
     _id
     PurchaseOrderNumberLine
   }
@@ -114,15 +131,21 @@ query findPOLine($purchaseOrderLID: Int) {
   findPOLine(PurchaseOrderLID: $purchaseOrderLID) {
     _id
     PurchaseOrderNumberLine
+    DueDate
     MaxQuantity
   }
 }
 
-query findPOs($purchaseOrderNumber: String, $distributionCenter: String, $limit: Int) {
+query findPOs(
+  $purchaseOrderNumber: String
+  $distributionCenter: String
+  $limit: Int
+) {
   findPOs(
-    PurchaseOrderNumber: $purchaseOrderNumber, 
-    DistributionCenter: $distributionCenter, 
-    limit: $limit) {
+    PurchaseOrderNumber: $purchaseOrderNumber
+    DistributionCenter: $distributionCenter
+    limit: $limit
+  ) {
     _id
     PurchaseOrderNumber
     VendorID
@@ -276,13 +299,15 @@ mutation deleteReceipt(
   $receiptLineDeleteEventID: Int
   $receiptLineDetailDeleteEventID: Int
   $distributionCenter: String
-  $username: String) {
+  $username: String
+) {
   deleteReceipt(
     ReceiptID: $receiptID
     ReceiptLineDeleteEventID: $receiptLineDeleteEventID
     ReceiptLineDetailDeleteEventID: $receiptLineDetailDeleteEventID
     DistributionCenter: $distributionCenter
-    Username: $username) {
+    Username: $username
+  ) {
     result
   }
 }

@@ -76,7 +76,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     </form>
     <ng-container *ngIf="popup">
       <auth-modal
-        message="Allow Empty DateCode!"
+        message="Allow Unknown Country"
         (clickClose)="this.popup = false"
         (passAuth)="passAuth($event)"
       ></auth-modal>

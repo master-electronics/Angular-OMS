@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import {
@@ -32,6 +32,7 @@ import {
   InventoryUpdateDocument,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { Audit } from '../../utils/interfaces';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   standalone: true,
@@ -71,6 +72,7 @@ import { Audit } from '../../utils/interfaces';
   `,
 })
 export class DateCodeAudit implements OnInit {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -126,7 +128,7 @@ export class DateCodeAudit implements OnInit {
     const userEventLogs = [
       {
         UserEventID: sqlData.Event_IM_DateCode_Entered,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message: 'Date Code: ' + this.inputForm.value.dateCode,
@@ -135,7 +137,7 @@ export class DateCodeAudit implements OnInit {
 
     const eventLogs = [
       {
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_DateCode_Entered,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -151,7 +153,7 @@ export class DateCodeAudit implements OnInit {
     ) {
       userEventLogs.push({
         UserEventID: sqlData.Event_IM_DateCode_Updated,
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         Message:
@@ -163,7 +165,7 @@ export class DateCodeAudit implements OnInit {
       });
 
       eventLogs.push({
-        UserName: JSON.parse(sessionStorage.getItem('userInfo')).Name,
+        UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_DateCode_Updated,
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
@@ -178,7 +180,7 @@ export class DateCodeAudit implements OnInit {
     this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
       switchMap((res) => {
         return this._auditService.inventoryUpdate(
-          JSON.parse(sessionStorage.getItem('userInfo')).Name,
+          this.userInfo.userName,
           sessionStorage.getItem('auditITN'),
           'Inventory Management Audit',
           '',
@@ -195,7 +197,7 @@ export class DateCodeAudit implements OnInit {
         return this._auditService
           .nextSubAudit$(
             JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID,
-            Number(JSON.parse(sessionStorage.getItem('userInfo'))._id)
+            this.userInfo.userId
           )
           .pipe(
             tap((res) => {
@@ -207,7 +209,7 @@ export class DateCodeAudit implements OnInit {
                     10,
                     JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
                       .ITN,
-                    JSON.parse(sessionStorage.getItem('userInfo')).Name
+                    this.userInfo.userName
                   )
                   .pipe(
                     map((res) => {

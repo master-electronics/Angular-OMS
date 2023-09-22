@@ -80,14 +80,14 @@ export class LoginComponent {
   });
 
   onSubmit(): void {
-    let userInfo: Partial<UserInfoStorage>;
+    let userInfo: UserInfoStorage;
     this.login$ = this.authService
       .userAuthentication(
         this.inputForm.value.username.trim().toLowerCase(),
         this.inputForm.value.password
       )
       .pipe(
-        switchMap((res) => {
+        switchMap((res: UserInfoStorage) => {
           userInfo = res;
           this.userStorage.saveUserInfo(userInfo);
           return this.userInfo.mutate({

@@ -289,6 +289,102 @@ query fetchITNLifecycleDrillDown(
   }
 }
 
+query fetchITNLifecycleDrillDownRows(
+  $orderNumber: String
+  $nosiNumber: String
+  $orderLineNumber: Int
+  $inventoryTrackingNumber: String
+) {
+  fetchITNLifecycleDrillDownRows(
+    orderNumber: $orderNumber
+    nosiNumber: $nosiNumber
+    orderLineNumber: $orderLineNumber
+    inventoryTrackingNumber: $inventoryTrackingNumber
+  ) {
+    OrderNumber
+    NOSINumber
+    OrderNOSI
+    DistributionCenter
+    InventoryTrackingNumber
+    after_InventoryTrackingNumber
+    PartNumber
+    ProductCode
+    OrderLineNumber
+    CustomerNumber
+    CustomerTier
+    ProductTier
+    Zone
+    WMSPriority
+    Priority
+    TrackingNumber
+    releaseOrder
+    releaseLine
+    lineAllocation
+    lineAllocationUser
+    lineCancel
+    orderCancel
+    pickStart
+    pickStartUser
+    pickLocationScan
+    pickITNScan
+    pickQuantityEntered
+    pickITNPrint
+    pickDone
+    pickDoneUser
+    splitDone
+    splitDoneUser
+    pickITNNF
+    pickCartAssigned
+    pickUserExit
+    pickLabelCount
+    pickLabelQuantity
+    pickOverPick
+    pickToteAssignment
+    pickStatus15
+    pickShortPick
+    qcStart
+    qcStartUser
+    qcHold
+    qcDone
+    qcDoneUser
+    qcOrderComplete
+    qcStatus40
+    qcStatus41
+    agStart
+    agStartUser
+    agDone
+    agDoneUser
+    agRelocate
+    agOrderComplete
+    agInDone
+    agOutStart
+    pullingStart
+    pullingCartSelected
+    pullingDone
+    pullingLocationSelected
+    pullingNotFound
+    dropoffStart
+    dropoffLine
+    dropoffUser
+    dropoffDone
+    dropoffCartSelected
+    dropoffITNSkipped
+    dropoffLocationSelected
+    packStart
+    packLine
+    packLineUser
+    packNewPackage
+    packSupervisorCheck
+    packReject
+    packDone
+    ParentITN
+    Quantity
+    shippingManifest
+    shipmentMethod
+    shipmentMethodDescription
+  }
+}
+
 query fetchITNUserColumns($userId: String) {
   fetchITNUserColumns(userId: $userId) {
     _id

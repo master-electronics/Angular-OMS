@@ -4,19 +4,17 @@ import { ReceiptInfoService } from './data/ReceiptInfo';
 import { TabService } from '../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { ReceiptGuard } from './utils/receipt.guard';
-import { VerifyResolver } from './utils/resolver/verify.resolver';
-import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { PartResolver } from './utils/resolver/part.resolver';
 import { LogService } from './data/eventLog';
 import { kickoutService } from './data/kickout';
 import { CreateReceiptService } from './data/createReceipt';
+import { VerifyResolver } from './utils/resolver/verify.resolver';
+import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 
 export const ReceivingRoutes: Routes = [
   {
     path: '',
     providers: [
-      PartResolver,
-      VerifyResolver,
       TabService,
       ReceiptInfoService,
       updateReceiptInfoService,
@@ -24,7 +22,6 @@ export const ReceivingRoutes: Routes = [
       LogService,
       kickoutService,
       CreateReceiptService,
-      ReceiptGuard,
     ],
     loadComponent: () =>
       import('./shell.component').then((m) => m.ReceivingShell),
