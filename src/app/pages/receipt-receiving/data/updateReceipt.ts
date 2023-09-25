@@ -18,7 +18,7 @@ import { ReceiptInfoService } from './ReceiptInfo';
 
 interface ReceiptInfo {
   ReceiptLIDs: number[];
-  DateCode?: string;
+  DateCode: string;
   CountryID: number;
   ROHS: boolean;
   ISO3: string;
@@ -66,7 +66,7 @@ export class updateReceiptInfoService {
     });
   }
 
-  public updateDateCode(DateCode?: string): void {
+  public updateDateCode(DateCode: string): void {
     this._receiptInfo.next({
       ...this._receiptInfo.value,
       DateCode,
