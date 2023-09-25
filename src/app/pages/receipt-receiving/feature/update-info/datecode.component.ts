@@ -112,7 +112,7 @@ export class DateCodeComponent implements OnInit {
       })
       .pipe(
         tap(() => {
-          this._update.updateDateCode(null);
+          this._update.updateDateCode(' ');
           this._router.navigateByUrl('receiptreceiving/update/ROHS');
         })
       );

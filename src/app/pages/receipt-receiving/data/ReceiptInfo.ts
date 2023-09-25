@@ -4,7 +4,6 @@ import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
-  GenerateReceiptForReceivingGQL,
   SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
