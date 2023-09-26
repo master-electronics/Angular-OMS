@@ -74,17 +74,17 @@ export class LineSelecterComponent implements OnInit {
       priority: false,
     },
     {
-      title: 'VendorName',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
       title: 'QuantityOnOrder',
       compare: (a: string, b: string) => a.localeCompare(b),
       priority: false,
     },
     {
       title: 'QuantityReceived',
+      compare: (a: string, b: string) => a.localeCompare(b),
+      priority: false,
+    },
+    {
+      title: 'VendorName',
       compare: (a: string, b: string) => a.localeCompare(b),
       priority: false,
     },
