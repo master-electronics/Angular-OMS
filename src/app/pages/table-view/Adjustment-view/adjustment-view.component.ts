@@ -25,7 +25,7 @@ import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
     </div>
   `,
 })
-export class EventLogComponent implements OnInit {
+export class AdjustmentViewComponent implements OnInit {
   public data$;
   listOfColumn = [
     {
@@ -53,7 +53,7 @@ export class EventLogComponent implements OnInit {
   constructor(private router: Router, private _log: FetchEventLogGQL) {}
 
   ngOnInit(): void {
-    this.onSubmit();
+    //
   }
 
   onSubmit(): void {

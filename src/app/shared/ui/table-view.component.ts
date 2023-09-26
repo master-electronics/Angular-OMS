@@ -16,7 +16,14 @@ import { NzTableModule } from 'ng-zorro-antd/table';
   imports: [CommonModule, NzTableModule],
   selector: 'table-view',
   template: `
-    <nz-table id="table-view" #table [nzData]="data">
+    <nz-table
+      id="table-view"
+      #table
+      [nzData]="data"
+      nzShowSizeChanger
+      [nzPageSize]="50"
+      [nzPageSizeOptions]="sizeOptions"
+    >
       <thead>
         <tr>
           <ng-container
@@ -28,7 +35,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of data" (click)="onClick(data)">
+        <tr *ngFor="let row of table.data" (click)="onClick(row)">
           <ng-container
             *ngTemplateOutlet="
               rows || defaultRowTemplate;
@@ -41,13 +48,15 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 
     <!-- If no template is provided use keys as headers and display all values -->
     <ng-template #defaultHeaderTemplate let-data>
-      <th *ngFor="let header of data[0] | keyvalue">
+      <th *ngFor="let header of table.data[0] | keyvalue">
         {{ header.key }}
       </th>
     </ng-template>
 
     <ng-template #defaultRowTemplate let-row>
-      <td *ngFor="let node of row | keyvalue">{{ node.value }}</td>
+      <td *ngFor="let node of row | keyvalue">
+        {{ node.value }}
+      </td>
     </ng-template>
   `,
 })
@@ -57,11 +66,12 @@ export class TableViewComponent {
   @ContentChild('headers') headers: TemplateRef<any> | undefined;
   @ContentChild('rows') rows: TemplateRef<any> | undefined;
   @Output() click: EventEmitter<any> = new EventEmitter();
+  sizeOptions = [50, 100];
 
-  public onClick(data): void {
-    if (!data) {
+  public onClick(row): void {
+    if (!row) {
       return;
     }
-    this.click.emit(data);
+    this.click.emit(row);
   }
 }
