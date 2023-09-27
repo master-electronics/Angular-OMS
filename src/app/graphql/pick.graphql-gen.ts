@@ -48,29 +48,41 @@ export type Asnreplenishmentitem = {
 
 export type Audit = {
   __typename?: 'AUDIT';
+  Autostore?: Maybe<Scalars['Boolean']>;
   Barcode?: Maybe<Scalars['String']>;
+  BoundForAutostore?: Maybe<Scalars['Boolean']>;
   COO?: Maybe<Scalars['String']>;
   Cost?: Maybe<Scalars['Float']>;
   CreatedDatetime?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
+  Description?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
+  LocatedInAutostore?: Maybe<Scalars['Boolean']>;
   MICPartNumber?: Maybe<Scalars['String']>;
+  NotFound?: Maybe<Scalars['Boolean']>;
   Order?: Maybe<Scalars['Int']>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
   PackQty?: Maybe<Scalars['Float']>;
   PackType?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Int']>;
   ProductCodeID?: Maybe<Scalars['Int']>;
   ProductCodeNumber?: Maybe<Scalars['String']>;
   ProductID?: Maybe<Scalars['Int']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  ProductTypeDescription?: Maybe<Scalars['String']>;
   QuantityOnHand?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
+  Suspect?: Maybe<Scalars['Boolean']>;
   Type?: Maybe<Scalars['String']>;
   TypeID?: Maybe<Scalars['Int']>;
   UOM?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
+  Velocity?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -1873,6 +1885,7 @@ export type Query = {
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
   getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
+  getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
   getSearchLocations?: Maybe<Array<Maybe<Searchlocation>>>;
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
@@ -2394,6 +2407,12 @@ export type QueryFindVendorByPoArgs = {
 export type QueryGetNextSubAuditArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetSearchLocationArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+  Level?: InputMaybe<Scalars['Int']>;
 };
 
 

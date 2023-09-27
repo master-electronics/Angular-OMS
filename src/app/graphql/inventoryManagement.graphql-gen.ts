@@ -48,29 +48,41 @@ export type Asnreplenishmentitem = {
 
 export type Audit = {
   __typename?: 'AUDIT';
+  Autostore?: Maybe<Scalars['Boolean']>;
   Barcode?: Maybe<Scalars['String']>;
+  BoundForAutostore?: Maybe<Scalars['Boolean']>;
   COO?: Maybe<Scalars['String']>;
   Cost?: Maybe<Scalars['Float']>;
   CreatedDatetime?: Maybe<Scalars['String']>;
   DateCode?: Maybe<Scalars['String']>;
+  Description?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
+  LocatedInAutostore?: Maybe<Scalars['Boolean']>;
   MICPartNumber?: Maybe<Scalars['String']>;
+  NotFound?: Maybe<Scalars['Boolean']>;
   Order?: Maybe<Scalars['Int']>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
   PackQty?: Maybe<Scalars['Float']>;
   PackType?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
   PartNumber?: Maybe<Scalars['String']>;
   Priority?: Maybe<Scalars['Int']>;
   ProductCodeID?: Maybe<Scalars['Int']>;
   ProductCodeNumber?: Maybe<Scalars['String']>;
   ProductID?: Maybe<Scalars['Int']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  ProductTypeDescription?: Maybe<Scalars['String']>;
   QuantityOnHand?: Maybe<Scalars['Float']>;
   ROHS?: Maybe<Scalars['Boolean']>;
+  Suspect?: Maybe<Scalars['Boolean']>;
   Type?: Maybe<Scalars['String']>;
   TypeID?: Maybe<Scalars['Int']>;
   UOM?: Maybe<Scalars['String']>;
   UserID?: Maybe<Scalars['Int']>;
+  Velocity?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -1873,6 +1885,7 @@ export type Query = {
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
   getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
+  getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
   getSearchLocations?: Maybe<Array<Maybe<Searchlocation>>>;
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
@@ -2394,6 +2407,12 @@ export type QueryFindVendorByPoArgs = {
 export type QueryGetNextSubAuditArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetSearchLocationArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+  Level?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -3477,7 +3496,7 @@ export type FindImInventoryQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindImInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string } } | null };
+export type FindImInventoryQuery = { __typename?: 'Query', findInventory?: { __typename?: 'Inventory', _id: number, InventoryTrackingNumber: string, Product: { __typename?: 'Product', PartNumber: string }, Container: { __typename?: 'Container', Barcode: string } } | null };
 
 export type FindImInventoriesQueryVariables = Types.Exact<{
   itn?: Types.InputMaybe<Types.Scalars['String']>;
@@ -3521,7 +3540,7 @@ export type FindNextAuditQueryVariables = Types.Exact<{
 }>;
 
 
-export type FindNextAuditQuery = { __typename?: 'Query', findNextAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, Barcode?: string | null, ProductID?: number | null, DateCode?: string | null, COO?: string | null, ROHS?: boolean | null, QuantityOnHand?: number | null, PartNumber?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
+export type FindNextAuditQuery = { __typename?: 'Query', findNextAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, ParentITN?: string | null, Barcode?: string | null, ProductID?: number | null, DateCode?: string | null, COO?: string | null, ROHS?: boolean | null, QuantityOnHand?: number | null, OriginalQuantity?: number | null, NotFound?: boolean | null, Suspect?: boolean | null, LocatedInAutostore?: boolean | null, BoundForAutostore?: boolean | null, PartNumber?: string | null, Description?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, ProductTier?: string | null, ProductType?: string | null, ProductTypeDescription?: string | null, Velocity?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, Autostore?: boolean | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
 
 export type GetNextSubAuditQueryVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -3529,7 +3548,22 @@ export type GetNextSubAuditQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetNextSubAuditQuery = { __typename?: 'Query', getNextSubAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, Barcode?: string | null, ProductID?: number | null, ROHS?: boolean | null, QuantityOnHand?: number | null, PartNumber?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
+export type GetNextSubAuditQuery = { __typename?: 'Query', getNextSubAudit?: Array<{ __typename?: 'AUDIT', _id?: number | null, TypeID?: number | null, InventoryID?: number | null, Type?: string | null, UserID?: number | null, Order?: number | null, InventoryTrackingNumber?: string | null, ParentITN?: string | null, Barcode?: string | null, ProductID?: number | null, DateCode?: string | null, COO?: string | null, ROHS?: boolean | null, QuantityOnHand?: number | null, OriginalQuantity?: number | null, NotFound?: boolean | null, Suspect?: boolean | null, LocatedInAutostore?: boolean | null, BoundForAutostore?: boolean | null, PartNumber?: string | null, Description?: string | null, ProductCodeID?: number | null, ProductCodeNumber?: string | null, ProductTier?: string | null, ProductType?: string | null, ProductTypeDescription?: string | null, Velocity?: string | null, LastUpdated?: string | null, CreatedDatetime?: string | null, Priority?: number | null, MICPartNumber?: string | null, UOM?: string | null, Autostore?: boolean | null, PackType?: string | null, PackQty?: number | null, Cost?: number | null } | null> | null };
+
+export type GetSearchLocationQueryVariables = Types.Exact<{
+  barcode?: Types.InputMaybe<Types.Scalars['String']>;
+  level?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type GetSearchLocationQuery = { __typename?: 'Query', getSearchLocation?: Array<{ __typename?: 'SEARCHLOCATION', _id?: number | null, Barcode?: string | null } | null> | null };
+
+export type GetSearchLocationsQueryVariables = Types.Exact<{
+  barcode?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type GetSearchLocationsQuery = { __typename?: 'Query', getSearchLocations?: Array<{ __typename?: 'SEARCHLOCATION', _id?: number | null, Barcode?: string | null } | null> | null };
 
 export type InsertAuditsMutationVariables = Types.Exact<{
   audits?: Types.InputMaybe<Array<Types.InputMaybe<Types.InputAudit>> | Types.InputMaybe<Types.InputAudit>>;
@@ -3661,6 +3695,9 @@ export const FindImInventoryDocument = gql`
     Product {
       PartNumber
     }
+    Container {
+      Barcode
+    }
   }
 }
     `;
@@ -3769,20 +3806,32 @@ export const FindNextAuditDocument = gql`
     UserID
     Order
     InventoryTrackingNumber
+    ParentITN
     Barcode
     ProductID
     DateCode
     COO
     ROHS
     QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
     PartNumber
+    Description
     ProductCodeID
     ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
     LastUpdated
     CreatedDatetime
     Priority
     MICPartNumber
     UOM
+    Autostore
     PackType
     PackQty
     Cost
@@ -3810,18 +3859,32 @@ export const GetNextSubAuditDocument = gql`
     UserID
     Order
     InventoryTrackingNumber
+    ParentITN
     Barcode
     ProductID
+    DateCode
+    COO
     ROHS
     QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
     PartNumber
+    Description
     ProductCodeID
     ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
     LastUpdated
     CreatedDatetime
     Priority
     MICPartNumber
     UOM
+    Autostore
     PackType
     PackQty
     Cost
@@ -3834,6 +3897,44 @@ export const GetNextSubAuditDocument = gql`
   })
   export class GetNextSubAuditGQL extends Apollo.Query<GetNextSubAuditQuery, GetNextSubAuditQueryVariables> {
     document = GetNextSubAuditDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetSearchLocationDocument = gql`
+    query getSearchLocation($barcode: String, $level: Int) {
+  getSearchLocation(Barcode: $barcode, Level: $level) {
+    _id
+    Barcode
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetSearchLocationGQL extends Apollo.Query<GetSearchLocationQuery, GetSearchLocationQueryVariables> {
+    document = GetSearchLocationDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetSearchLocationsDocument = gql`
+    query getSearchLocations($barcode: String) {
+  getSearchLocations(Barcode: $barcode) {
+    _id
+    Barcode
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetSearchLocationsGQL extends Apollo.Query<GetSearchLocationsQuery, GetSearchLocationsQueryVariables> {
+    document = GetSearchLocationsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -34,6 +34,9 @@ query findIMInventory($inventory: searchInventory!) {
     Product {
       PartNumber
     }
+    Container {
+      Barcode
+    }
   }
 }
 
@@ -92,20 +95,32 @@ query findNextAudit($userID: Int) {
     UserID
     Order
     InventoryTrackingNumber
+    ParentITN
     Barcode
     ProductID
     DateCode
     COO
     ROHS
     QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
     PartNumber
+    Description
     ProductCodeID
     ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
     LastUpdated
     CreatedDatetime
     Priority
     MICPartNumber
     UOM
+    Autostore
     PackType
     PackQty
     Cost
@@ -121,21 +136,49 @@ query getNextSubAudit($inventoryID: Int, $userID: Int) {
     UserID
     Order
     InventoryTrackingNumber
+    ParentITN
     Barcode
     ProductID
+    DateCode
+    COO
     ROHS
     QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
     PartNumber
+    Description
     ProductCodeID
     ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
     LastUpdated
     CreatedDatetime
     Priority
     MICPartNumber
     UOM
+    Autostore
     PackType
     PackQty
     Cost
+  }
+}
+
+query getSearchLocation($barcode: String, $level: Int) {
+  getSearchLocation(Barcode: $barcode, Level: $level) {
+    _id
+    Barcode
+  }
+}
+
+query getSearchLocations($barcode: String) {
+  getSearchLocations(Barcode: $barcode) {
+    _id
+    Barcode
   }
 }
 

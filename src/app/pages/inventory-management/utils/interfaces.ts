@@ -23,14 +23,21 @@ export interface Inventory {
   ITN?: string;
   ProductID?: number;
   DateCode?: string;
+  ParentITN?: string;
   COO?: string;
   ROHS?: boolean;
   Quantity?: number;
   Product?: Product;
+  OriginalQuantity?: number;
+  NotFound?: boolean;
+  Suspect?: boolean;
+  LocatedInAutostore?: boolean;
+  BoundForAutostore?: boolean;
 }
 
 export interface Container {
   Barcode: string;
+  Status?: string;
 }
 
 export interface Product {
@@ -38,8 +45,13 @@ export interface Product {
   PartNumber?: string;
   ProductCodeID?: number;
   ProductCode?: ProductCode;
+  ProductTier?: string;
+  ProductType?: ProductType;
+  Description?: string;
+  Velocity?: string;
   MICPartNumber?: string;
   UOM?: string;
+  Autostore?: boolean;
   PackType?: string;
   PackQty?: number;
   Cost?: number;
@@ -48,4 +60,10 @@ export interface Product {
 export interface ProductCode {
   _id?: number;
   ProductCodeNumber?: string;
+}
+
+export interface ProductType {
+  _id?: number;
+  ProductType?: string;
+  Description?: string;
 }

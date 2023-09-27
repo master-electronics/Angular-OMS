@@ -8,13 +8,13 @@ import { AuditService } from '../../data/audit.service';
 import { catchError, of } from 'rxjs';
 
 @Injectable()
-export class LocationResolver implements Resolve<any> {
+export class SearchLocationResolver implements Resolve<any> {
   constructor(private _auditService: AuditService) {
     //
   }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     {
-      return this._auditService.nextAudit$.pipe(
+      return this._auditService.searchLocations$.pipe(
         catchError((error) => {
           return of({ error });
         })

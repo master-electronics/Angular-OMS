@@ -115,6 +115,9 @@ export class ROHSAudit implements OnInit {
 
   async onSubmit() {
     const rohs = this.inputForm.value.rohs;
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
 
     const userEventLogs = [
       {
@@ -122,7 +125,7 @@ export class ROHSAudit implements OnInit {
         UserName: this.userInfo.userName,
         DistributionCenter: environment.DistributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-        Message: 'Country of Origin: ' + this.inputForm.value.rohs,
+        Message: 'Country of Origin: ' + rohs,
       },
     ];
 
@@ -133,7 +136,33 @@ export class ROHSAudit implements OnInit {
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
           InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-          COO: this.inputForm.value.rohs,
+          ParentITN: currentAudit.Inventory.ParentITN,
+          BinLocation: currentAudit.Container.Barcode,
+          QuantityOnHand: currentAudit.Inventory.Quantity,
+          OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+          DateCode: currentAudit.Inventory.DateCode,
+          CountryOfOrigin: currentAudit.Inventory.COO,
+          ROHS: currentAudit.Inventory.ROHS,
+          ROHSEntered: rohs,
+          NotFound: currentAudit.Inventory.NotFound,
+          Suspect: currentAudit.Inventory.Suspect,
+          LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+          BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+          PartNumber: currentAudit.Inventory.Product.PartNumber,
+          ProductCode:
+            currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+          Description: currentAudit.Inventory.Product.Description,
+          ProductTier: currentAudit.Inventory.Product.ProductTier,
+          ProductType: currentAudit.Inventory.Product.ProductType.ProductType,
+          ProductTypeDescription:
+            currentAudit.Inventory.Product.ProductType.Description,
+          Velocity: currentAudit.Inventory.Product.Velocity,
+          MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+          UOM: currentAudit.Inventory.Product.UOM,
+          Autostore: currentAudit.Inventory.Product.Autostore,
+          PackType: currentAudit.Inventory.Product.PackType,
+          PackQuantity: currentAudit.Inventory.Product.PackQty,
+          Cost: currentAudit.Inventory.Product.Cost,
         }),
       },
     ];
@@ -159,8 +188,32 @@ export class ROHSAudit implements OnInit {
         Log: JSON.stringify({
           DistributionCenter: environment.DistributionCenter,
           InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-          OriginalROHS: JSON.parse(sessionStorage.getItem('currentAudit'))
-            .Inventory.ROHS,
+          ParentITN: currentAudit.Inventory.ParentITN,
+          BinLocation: currentAudit.Container.Barcode,
+          QuantityOnHand: currentAudit.Inventory.Quantity,
+          OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+          DateCode: currentAudit.Inventory.DateCode,
+          CountryOfOrigin: currentAudit.Inventory.COO,
+          ROHS: currentAudit.Inventory.ROHS,
+          NotFound: currentAudit.Inventory.NotFound,
+          Suspect: currentAudit.Inventory.Suspect,
+          LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+          BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+          PartNumber: currentAudit.Inventory.Product.PartNumber,
+          ProductCode:
+            currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+          Description: currentAudit.Inventory.Product.Description,
+          ProductTier: currentAudit.Inventory.Product.ProductTier,
+          ProductType: currentAudit.Inventory.Product.ProductType.ProductType,
+          ProductTypeDescription:
+            currentAudit.Inventory.Product.ProductType.Description,
+          Velocity: currentAudit.Inventory.Product.Velocity,
+          MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+          UOM: currentAudit.Inventory.Product.UOM,
+          Autostore: currentAudit.Inventory.Product.Autostore,
+          PackType: currentAudit.Inventory.Product.PackType,
+          PackQuantity: currentAudit.Inventory.Product.PackQty,
+          Cost: currentAudit.Inventory.Product.Cost,
           NewROHS: rohs,
         }),
       });
@@ -193,22 +246,81 @@ export class ROHSAudit implements OnInit {
           .pipe(
             tap((res) => {
               if (!res) {
-                this.close$ = this._auditService
-                  .closeAudit(
-                    JSON.parse(sessionStorage.getItem('currentAudit'))
-                      .InventoryID,
-                    10,
-                    JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
-                      .ITN,
-                    this.userInfo.userName
-                  )
-                  .pipe(
-                    map((res) => {
-                      this._router.navigate(['../verify/scan-itn'], {
-                        relativeTo: this._actRoute,
-                      });
+                const closeUserEventLog = [
+                  {
+                    UserEventID: sqlData.Event_IM_Audit_Completed,
+                    UserName: this.userInfo.userName,
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  },
+                ];
 
-                      return res;
+                const closeEventLog = [
+                  {
+                    UserName: this.userInfo.userName,
+                    EventTypeID: sqlData.Event_IM_Audit_Completed,
+                    Log: JSON.stringify({
+                      DistributionCenter: environment.DistributionCenter,
+                      InventoryTrackingNumber:
+                        sessionStorage.getItem('auditITN'),
+                      ParentITN: currentAudit.Inventory.ParentITN,
+                      BinLocation: currentAudit.Container.Barcode,
+                      QuantityOnHand: currentAudit.Inventory.Quantity,
+                      OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                      DateCode: currentAudit.Inventory.DateCode,
+                      CountryOfOrigin: currentAudit.Inventory.COO,
+                      ROHS: currentAudit.Inventory.ROHS,
+                      ROHSEntered: rohs,
+                      NotFound: currentAudit.Inventory.NotFound,
+                      Suspect: currentAudit.Inventory.Suspect,
+                      LocatedInAutostore:
+                        currentAudit.Inventory.LocatedInAutostore,
+                      BoundForAutostore:
+                        currentAudit.Inventory.BoundForAutostore,
+                      PartNumber: currentAudit.Inventory.Product.PartNumber,
+                      ProductCode:
+                        currentAudit.Inventory.Product.ProductCode
+                          .ProductCodeNumber,
+                      Description: currentAudit.Inventory.Product.Description,
+                      ProductTier: currentAudit.Inventory.Product.ProductTier,
+                      ProductType:
+                        currentAudit.Inventory.Product.ProductType.ProductType,
+                      ProductTypeDescription:
+                        currentAudit.Inventory.Product.ProductType.Description,
+                      Velocity: currentAudit.Inventory.Product.Velocity,
+                      MICPartNumber:
+                        currentAudit.Inventory.Product.MICPartNumber,
+                      UOM: currentAudit.Inventory.Product.UOM,
+                      Autostore: currentAudit.Inventory.Product.Autostore,
+                      PackType: currentAudit.Inventory.Product.PackType,
+                      PackQuantity: currentAudit.Inventory.Product.PackQty,
+                      Cost: currentAudit.Inventory.Product.Cost,
+                    }),
+                  },
+                ];
+
+                this.close$ = this._eventLog
+                  .insertLog(closeEventLog, closeEventLog)
+                  .pipe(
+                    switchMap((res) => {
+                      return this._auditService
+                        .closeAudit(
+                          JSON.parse(sessionStorage.getItem('currentAudit'))
+                            .InventoryID,
+                          10,
+                          JSON.parse(sessionStorage.getItem('currentAudit'))
+                            .Inventory.ITN,
+                          this.userInfo.userName
+                        )
+                        .pipe(
+                          map((res) => {
+                            this._router.navigate(['../verify/scan-itn'], {
+                              relativeTo: this._actRoute,
+                            });
+
+                            return res;
+                          })
+                        );
                     })
                   );
 

@@ -136,6 +136,10 @@ export class QuantityAudit implements OnInit {
   }
 
   async onSubmit() {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
+
     if (this.counts.length == 0) {
       this.counts.push(Number(this.inputForm.value.quantity));
       this.data$ = this._eventLog
@@ -156,7 +160,34 @@ export class QuantityAudit implements OnInit {
               Log: JSON.stringify({
                 DistributionCenter: environment.DistributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-                Quantity: this.inputForm.value.quantity,
+                ParentITN: currentAudit.Inventory.ParentITN,
+                BinLocation: currentAudit.Container.Barcode,
+                QuantityEntered: this.inputForm.value.quantity,
+                QuantityOnHand: currentAudit.Inventory.Quantity,
+                OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                DateCode: currentAudit.Inventory.DateCode,
+                CountryOfOrigin: currentAudit.Inventory.COO,
+                ROHS: currentAudit.Inventory.ROHS,
+                NotFound: currentAudit.Inventory.NotFound,
+                Suspect: currentAudit.Inventory.Suspect,
+                LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                PartNumber: currentAudit.Inventory.Product.PartNumber,
+                ProductCode:
+                  currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+                Description: currentAudit.Inventory.Product.Description,
+                ProductTier: currentAudit.Inventory.Product.ProductTier,
+                ProductType:
+                  currentAudit.Inventory.Product.ProductType.ProductType,
+                ProductTypeDescription:
+                  currentAudit.Inventory.Product.ProductType.Description,
+                Velocity: currentAudit.Inventory.Product.Velocity,
+                MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                UOM: currentAudit.Inventory.Product.UOM,
+                Autostore: currentAudit.Inventory.Product.Autostore,
+                PackType: currentAudit.Inventory.Product.PackType,
+                PackQuantity: currentAudit.Inventory.Product.PackQty,
+                Cost: currentAudit.Inventory.Product.Cost,
               }),
             },
           ]
@@ -190,7 +221,34 @@ export class QuantityAudit implements OnInit {
             Log: JSON.stringify({
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-              Quantity: this.inputForm.value.quantity,
+              ParentITN: currentAudit.Inventory.ParentITN,
+              BinLocation: currentAudit.Container.Barcode,
+              QuantityEntered: this.inputForm.value.quantity,
+              QuantityOnHand: currentAudit.Inventory.Quantity,
+              OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+              DateCode: currentAudit.Inventory.DateCode,
+              CountryOfOrigin: currentAudit.Inventory.COO,
+              ROHS: currentAudit.Inventory.ROHS,
+              NotFound: currentAudit.Inventory.NotFound,
+              Suspect: currentAudit.Inventory.Suspect,
+              LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+              BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+              PartNumber: currentAudit.Inventory.Product.PartNumber,
+              ProductCode:
+                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+              Description: currentAudit.Inventory.Product.Description,
+              ProductTier: currentAudit.Inventory.Product.ProductTier,
+              ProductType:
+                currentAudit.Inventory.Product.ProductType.ProductType,
+              ProductTypeDescription:
+                currentAudit.Inventory.Product.ProductType.Description,
+              Velocity: currentAudit.Inventory.Product.Velocity,
+              MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+              UOM: currentAudit.Inventory.Product.UOM,
+              Autostore: currentAudit.Inventory.Product.Autostore,
+              PackType: currentAudit.Inventory.Product.PackType,
+              PackQuantity: currentAudit.Inventory.Product.PackQty,
+              Cost: currentAudit.Inventory.Product.Cost,
             }),
           },
         ];
@@ -224,12 +282,34 @@ export class QuantityAudit implements OnInit {
             Log: JSON.stringify({
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-              OriginalQuantity: JSON.parse(
-                sessionStorage.getItem('currentAudit')
-              ).Inventory.Quantity,
+              ParentITN: currentAudit.Inventory.ParentITN,
+              BinLocation: currentAudit.Container.Barcode,
+              QuantityOnHand: currentAudit.Inventory.Quantity,
+              OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+              DateCode: currentAudit.Inventory.DateCode,
+              CountryOfOrigin: currentAudit.Inventory.COO,
+              ROHS: currentAudit.Inventory.ROHS,
+              NotFound: currentAudit.Inventory.NotFound,
+              Suspect: currentAudit.Inventory.Suspect,
+              LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+              BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+              PartNumber: currentAudit.Inventory.Product.PartNumber,
+              ProductCode:
+                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+              Description: currentAudit.Inventory.Product.Description,
+              ProductTier: currentAudit.Inventory.Product.ProductTier,
+              ProductType:
+                currentAudit.Inventory.Product.ProductType.ProductType,
+              ProductTypeDescription:
+                currentAudit.Inventory.Product.ProductType.Description,
+              Velocity: currentAudit.Inventory.Product.Velocity,
+              MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+              UOM: currentAudit.Inventory.Product.UOM,
+              Autostore: currentAudit.Inventory.Product.Autostore,
+              PackType: currentAudit.Inventory.Product.PackType,
+              PackQuantity: currentAudit.Inventory.Product.PackQty,
+              Cost: currentAudit.Inventory.Product.Cost,
               NewQuantity: quantity,
-              Cost: JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
-                .Product.Cost,
             }),
           });
         }
@@ -276,6 +356,43 @@ export class QuantityAudit implements OnInit {
                           DistributionCenter: environment.DistributionCenter,
                           InventoryTrackingNumber:
                             sessionStorage.getItem('auditITN'),
+                          ParentITN: currentAudit.Inventory.ParentITN,
+                          BinLocation: currentAudit.Container.Barcode,
+                          QuantityEntered: this.inputForm.value.quantity,
+                          QuantityOnHand: currentAudit.Inventory.Quantity,
+                          OriginalQuantity:
+                            currentAudit.Inventory.OriginalQuantity,
+                          DateCode: currentAudit.Inventory.DateCode,
+                          CountryOfOrigin: currentAudit.Inventory.COO,
+                          ROHS: currentAudit.Inventory.ROHS,
+                          NotFound: currentAudit.Inventory.NotFound,
+                          Suspect: currentAudit.Inventory.Suspect,
+                          LocatedInAutostore:
+                            currentAudit.Inventory.LocatedInAutostore,
+                          BoundForAutostore:
+                            currentAudit.Inventory.BoundForAutostore,
+                          PartNumber: currentAudit.Inventory.Product.PartNumber,
+                          ProductCode:
+                            currentAudit.Inventory.Product.ProductCode
+                              .ProductCodeNumber,
+                          Description:
+                            currentAudit.Inventory.Product.Description,
+                          ProductTier:
+                            currentAudit.Inventory.Product.ProductTier,
+                          ProductType:
+                            currentAudit.Inventory.Product.ProductType
+                              .ProductType,
+                          ProductTypeDescription:
+                            currentAudit.Inventory.Product.ProductType
+                              .Description,
+                          Velocity: currentAudit.Inventory.Product.Velocity,
+                          MICPartNumber:
+                            currentAudit.Inventory.Product.MICPartNumber,
+                          UOM: currentAudit.Inventory.Product.UOM,
+                          Autostore: currentAudit.Inventory.Product.Autostore,
+                          PackType: currentAudit.Inventory.Product.PackType,
+                          PackQuantity: currentAudit.Inventory.Product.PackQty,
+                          Cost: currentAudit.Inventory.Product.Cost,
                         }),
                       },
                     ];
@@ -284,7 +401,6 @@ export class QuantityAudit implements OnInit {
                       .insertLog(closeUserEventLog, closeEventLog)
                       .pipe(
                         switchMap((res) => {
-                          const t = 'test';
                           return this._auditService
                             .closeAudit(
                               JSON.parse(sessionStorage.getItem('currentAudit'))
@@ -344,7 +460,35 @@ export class QuantityAudit implements OnInit {
                 Log: JSON.stringify({
                   DistributionCenter: environment.DistributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-                  Quantity: this.inputForm.value.quantity,
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityEntered: this.inputForm.value.quantity,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
                 }),
               },
             ]

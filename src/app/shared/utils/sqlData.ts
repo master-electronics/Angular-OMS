@@ -116,4 +116,7 @@ export const sqlData = {
   Event_IM_ROHS_Updated: 4155,
   Event_IM_PartNumber_Entered: 4160,
   Event_IM_PartNumber_Updated: 4165,
+  Event_IM_Search_Location_Scanned: 4200,
+  Event_IM_Search_ITN_Scanned: 4300,
+  Event_IM_Search_ITN_Location_Updated: 4305,
 };

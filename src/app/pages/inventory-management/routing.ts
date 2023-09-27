@@ -1,12 +1,18 @@
 import { Routes } from '@angular/router';
 import { AuditResolver } from './utils/resolver/audit.resolver';
+import { SearchLocationResolver } from './utils/resolver/search-location.resolver';
 import { AuditService } from './data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 
 export const InventoryMangementRoutes: Routes = [
   {
     path: '',
-    providers: [AuditResolver, AuditService, EventLogService],
+    providers: [
+      AuditResolver,
+      SearchLocationResolver,
+      AuditService,
+      EventLogService,
+    ],
     canActivateChild: [],
     loadComponent: () =>
       import('./shell.component').then((m) => m.InventoryMenegementShell),
@@ -64,10 +70,16 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/search/scan-location',
+        resolve: { Location: SearchLocationResolver },
         loadComponent: () =>
           import('./feature/search/scan-location.component').then(
             (m) => m.ScanLocation
           ),
+      },
+      {
+        path: 'audit/search/scan-itn',
+        loadComponent: () =>
+          import('./feature/search/scan-itn.component').then((m) => m.ScanITN),
       },
       {
         path: 'audit/verify/scan-itn',

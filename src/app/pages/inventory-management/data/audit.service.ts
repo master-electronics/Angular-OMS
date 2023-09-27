@@ -15,6 +15,8 @@ import {
   GetNextSubAuditGQL,
   InsertSuspectGQL,
   FindImInventoryGQL,
+  GetSearchLocationGQL,
+  GetSearchLocationsGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 
 @Injectable()
@@ -26,12 +28,60 @@ export class AuditService {
     private _closeAudit: CloseAuditGQL,
     private _nextSubAudit: GetNextSubAuditGQL,
     private _insertSuspect: InsertSuspectGQL,
-    private _findInventory: FindImInventoryGQL
+    private _findInventory: FindImInventoryGQL,
+    private _getSearchLocation: GetSearchLocationGQL,
+    private _getSearchLocations: GetSearchLocationsGQL
   ) {}
 
-  //public get nextSearchLocation$(): Observable<Container> {
-  //return
-  //}
+  public get nextSearchLocation$(): Observable<Container> {
+    return this._getSearchLocation
+      .fetch(
+        {
+          barcode: JSON.parse(sessionStorage.getItem('currentAudit')).Container
+            .Barcode,
+          level: Number(sessionStorage.getItem('searchLevel')),
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          const container: Container = {
+            Barcode: res.data.getSearchLocation[0].Barcode,
+          };
+
+          return container;
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public get searchLocations$(): Observable<Container[]> {
+    return this._getSearchLocations
+      .fetch(
+        {
+          barcode: JSON.parse(sessionStorage.getItem('currentAudit')).Container
+            .Barcode,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          let containers: Container[] = [];
+          res.data.getSearchLocations.forEach((container) => {
+            containers.push({
+              Barcode: container.Barcode,
+            });
+          });
+
+          return containers;
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
 
   public get nextAudit$(): Observable<Audit> {
     return this._findNextAudit
@@ -51,19 +101,33 @@ export class AuditService {
               InventoryID: data.InventoryID,
               Inventory: {
                 ITN: data.InventoryTrackingNumber,
+                ParentITN: data.ParentITN,
                 DateCode: data.DateCode,
                 COO: data.COO,
                 ROHS: data.ROHS,
                 Quantity: data.QuantityOnHand,
+                OriginalQuantity: data.OriginalQuantity,
+                NotFound: data.NotFound,
+                Suspect: data.Suspect,
+                LocatedInAutostore: data.LocatedInAutostore,
+                BoundForAutostore: data.BoundForAutostore,
                 ProductID: data.ProductID,
                 Product: {
                   PartNumber: data.PartNumber,
+                  Description: data.Description,
                   ProductCodeID: data.ProductCodeID,
                   ProductCode: {
                     ProductCodeNumber: data.ProductCodeNumber,
                   },
+                  ProductType: {
+                    ProductType: data.ProductType,
+                    Description: data.ProductTypeDescription,
+                  },
+                  ProductTier: data.ProductTier,
+                  Velocity: data.Velocity,
                   MICPartNumber: data.MICPartNumber,
                   UOM: data.UOM,
+                  Autostore: data.Autostore,
                   PackType: data.PackType,
                   PackQty: data.PackQty,
                   Cost: data.Cost,
@@ -91,18 +155,6 @@ export class AuditService {
     Suspect?: string,
     BinLocation?: string
   ) {
-    // if (Quantity) {
-    //   return this._inventoryUpdate.mutate({
-    //     user: Username,
-    //     itn: ITN,
-    //     quantity: Quantity,
-    //     dateCode: DateCode,
-    //     country: Country,
-    //     rohs: ROHS,
-    //     reason: Reason,
-    //   });
-    // }
-
     return this._inventoryUpdate.mutate({
       user: Username,
       itn: ITN,
@@ -166,6 +218,26 @@ export class AuditService {
     });
   }
 
+  public checkBinlocation(ITN) {
+    return this._findInventory
+      .fetch(
+        {
+          inventory: {
+            InventoryTrackingNumber: ITN,
+          },
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
   public validatePartNumber(PartData) {
     return this._findInventory
       .fetch(
@@ -178,7 +250,6 @@ export class AuditService {
       )
       .pipe(
         map((res) => {
-          const t = 'test';
           if (
             res.data.findInventory.Product.PartNumber != PartData[0].PartNumber
           ) {
@@ -261,17 +332,33 @@ export class AuditService {
               InventoryID: data.InventoryID,
               Inventory: {
                 ITN: data.InventoryTrackingNumber,
+                ParentITN: data.ParentITN,
+                DateCode: data.DateCode,
+                COO: data.COO,
                 ROHS: data.ROHS,
                 Quantity: data.QuantityOnHand,
+                OriginalQuantity: data.OriginalQuantity,
+                NotFound: data.NotFound,
+                Suspect: data.Suspect,
+                LocatedInAutostore: data.LocatedInAutostore,
+                BoundForAutostore: data.BoundForAutostore,
                 ProductID: data.ProductID,
                 Product: {
                   PartNumber: data.PartNumber,
+                  Description: data.Description,
                   ProductCodeID: data.ProductCodeID,
                   ProductCode: {
                     ProductCodeNumber: data.ProductCodeNumber,
                   },
+                  ProductType: {
+                    ProductType: data.ProductType,
+                    Description: data.ProductTypeDescription,
+                  },
+                  ProductTier: data.ProductTier,
+                  Velocity: data.Velocity,
                   MICPartNumber: data.MICPartNumber,
                   UOM: data.UOM,
+                  Autostore: data.Autostore,
                   PackType: data.PackType,
                   PackQty: data.PackQty,
                   Cost: data.Cost,

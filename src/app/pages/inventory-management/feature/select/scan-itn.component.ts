@@ -67,6 +67,7 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
+    <div *ngIf="close$ | async"></div>
   `,
 })
 export class ScanITN implements OnInit {
@@ -81,6 +82,7 @@ export class ScanITN implements OnInit {
 
   public data$;
   public info$;
+  public close$;
   public inputForm = this._fb.nonNullable.group({
     ITN: ['', [Validators.required]],
   });
@@ -111,6 +113,9 @@ export class ScanITN implements OnInit {
 
   onSubmit(): void {
     const input = this.inputForm.value.ITN.trim();
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
 
     if (ITNBarcodeRegex.test(input)) {
       if (this.audit.Inventory.ITN != input) {
@@ -136,8 +141,34 @@ export class ScanITN implements OnInit {
             EventTypeID: sqlData.Event_IM_ITN_Scanned,
             Log: JSON.stringify({
               DistributionCenter: environment.DistributionCenter,
-              InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-              ITN: this.inputForm.value.ITN,
+              InventoryTrackingNumber: this.inputForm.value.ITN,
+              ParentITN: currentAudit.Inventory.ParentITN,
+              BinLocation: currentAudit.Container.Barcode,
+              QuantityOnHand: currentAudit.Inventory.Quantity,
+              OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+              DateCode: currentAudit.Inventory.DateCode,
+              CountryOfOrigin: currentAudit.Inventory.COO,
+              ROHS: currentAudit.Inventory.ROHS,
+              NotFound: currentAudit.Inventory.NotFound,
+              Suspect: currentAudit.Inventory.Suspect,
+              LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+              BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+              PartNumber: currentAudit.Inventory.Product.PartNumber,
+              ProductCode:
+                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
+              Description: currentAudit.Inventory.Product.Description,
+              ProductTier: currentAudit.Inventory.Product.ProductTier,
+              ProductType:
+                currentAudit.Inventory.Product.ProductType.ProductType,
+              ProductTypeDescription:
+                currentAudit.Inventory.Product.ProductType.Description,
+              Velocity: currentAudit.Inventory.Product.Velocity,
+              MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+              UOM: currentAudit.Inventory.Product.UOM,
+              Autostore: currentAudit.Inventory.Product.Autostore,
+              PackType: currentAudit.Inventory.Product.PackType,
+              PackQuantity: currentAudit.Inventory.Product.PackQty,
+              Cost: currentAudit.Inventory.Product.Cost,
             }),
           },
         ];
@@ -149,21 +180,102 @@ export class ScanITN implements OnInit {
               .pipe(
                 tap((audit) => {
                   if (!audit) {
-                    //next itn
-                  }
-                }),
-                map((audit) => {
-                  if (audit) {
+                    const closeUerEventLog = [
+                      {
+                        UserEventID: sqlData.Event_IM_Audit_Completed,
+                        UserName: this.userInfo.userName,
+                        DistributionCenter: environment.DistributionCenter,
+                        InventoryTrackingNumber: this.audit.Inventory.ITN,
+                      },
+                    ];
+
+                    const closeEventLog = [
+                      {
+                        UserName: this.userInfo.userName,
+                        EventTypeID: sqlData.Event_IM_Audit_Completed,
+                        Log: JSON.stringify({
+                          DistributionCenter: environment.DistributionCenter,
+                          InventoryTrackingNumber:
+                            sessionStorage.getItem('auditITN'),
+                          ParentITN: currentAudit.Inventory.ParentITN,
+                          BinLocation: currentAudit.Container.Barcode,
+                          QuantityOnHand: currentAudit.Inventory.Quantity,
+                          OriginalQuantity:
+                            currentAudit.Inventory.OriginalQuantity,
+                          DateCode: currentAudit.Inventory.DateCode,
+                          CountryOfOrigin: currentAudit.Inventory.COO,
+                          ROHS: currentAudit.Inventory.ROHS,
+                          NotFound: currentAudit.Inventory.NotFound,
+                          Suspect: currentAudit.Inventory.Suspect,
+                          LocatedInAutostore:
+                            currentAudit.Inventory.LocatedInAutostore,
+                          BoundForAutostore:
+                            currentAudit.Inventory.BoundForAutostore,
+                          PartNumber: currentAudit.Inventory.Product.PartNumber,
+                          ProductCode:
+                            currentAudit.Inventory.Product.ProductCode
+                              .ProductCodeNumber,
+                          Description:
+                            currentAudit.Inventory.Product.Description,
+                          ProductTier:
+                            currentAudit.Inventory.Product.ProductTier,
+                          ProductType:
+                            currentAudit.Inventory.Product.ProductType
+                              .ProductType,
+                          ProductTypeDescription:
+                            currentAudit.Inventory.Product.ProductType
+                              .Description,
+                          Velocity: currentAudit.Inventory.Product.Velocity,
+                          MICPartNumber:
+                            currentAudit.Inventory.Product.MICPartNumber,
+                          UOM: currentAudit.Inventory.Product.UOM,
+                          Autostore: currentAudit.Inventory.Product.Autostore,
+                          PackType: currentAudit.Inventory.Product.PackType,
+                          PackQuantity: currentAudit.Inventory.Product.PackQty,
+                          Cost: currentAudit.Inventory.Product.Cost,
+                        }),
+                      },
+                    ];
+
+                    this.close$ = this._eventLog
+                      .insertLog(closeUerEventLog, closeEventLog)
+                      .pipe(
+                        switchMap((res) => {
+                          return this._auditService
+                            .closeAudit(
+                              this.audit.InventoryID,
+                              10,
+                              this.audit.Inventory.ITN,
+                              this.userInfo.userName
+                            )
+                            .pipe(
+                              map((res) => {
+                                this._router.navigate(
+                                  ['../verify/scan-location'],
+                                  {
+                                    relativeTo: this._actRoute,
+                                  }
+                                );
+
+                                return res;
+                              })
+                            );
+                        })
+                      );
+
+                    return of(true);
+                  } else {
                     this._router.navigate(['../' + audit.Route], {
                       relativeTo: this._actRoute,
                     });
-                  } else {
-                    this._router.navigate(['../../menu'], {
-                      relativeTo: this._actRoute,
-                    });
-                  }
 
-                  return audit;
+                    return res;
+                  }
+                }),
+                catchError((error) => {
+                  return of({
+                    error: { message: error.message, type: 'error' },
+                  });
                 })
               );
           })
@@ -181,6 +293,7 @@ export class ScanITN implements OnInit {
   }
 
   onNotFound(): void {
+    sessionStorage.setItem('searchLevel', '1');
     this._router.navigate(['../search/scan-location'], {
       relativeTo: this._actRoute,
     });
