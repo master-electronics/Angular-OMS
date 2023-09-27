@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, LocationStrategy } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
@@ -92,6 +92,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
           <submit-button
             *ngIf="data; else buttonLoading"
             [disabled]="validator$ | async"
+            [loading]="!data"
             buttonText="Submit"
             (buttonClick)="onSubmit()"
           >
@@ -142,7 +143,8 @@ export class SummaryComponent implements OnInit {
     public updateInfo: updateReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
-    private _step: TabService
+    private _step: TabService,
+    private location: LocationStrategy
   ) {
     this.inputForm = this._fb.group({});
     this.initList();
@@ -163,6 +165,12 @@ export class SummaryComponent implements OnInit {
   ngOnInit(): void {
     this._step.changeSteps(3);
     this.data$ = of(true);
+
+    // preventing back button
+    history.pushState(null, null, window.location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, window.location.href);
+    });
   }
 
   public splitInteger(total: number, count: number): number[] {

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, LocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -96,6 +96,7 @@ export class ItnKickoutComponent implements OnInit {
     private _step: TabService,
     private _log: LogService,
     public _label: LabelService,
+    private location: LocationStrategy,
     private _kickout: kickoutService
   ) {}
 
@@ -107,6 +108,11 @@ export class ItnKickoutComponent implements OnInit {
       itnList: new FormArray([], [Validators.required]),
     });
     this.formArray = this.selectITN.get('itnList') as FormArray;
+    // preventing back button
+    history.pushState(null, null, window.location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, window.location.href);
+    });
   }
 
   onCheckChange(event) {
