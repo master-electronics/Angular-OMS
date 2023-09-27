@@ -27,26 +27,6 @@ import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
 })
 export class EventLogComponent implements OnInit {
   public data$;
-  listOfColumn = [
-    {
-      title: 'Name',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'Type',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'Time',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'Log',
-    },
-  ];
   public inputForm: FormGroup = new FormGroup({
     printerName: new FormControl(null, [Validators.required]),
   });
@@ -62,13 +42,25 @@ export class EventLogComponent implements OnInit {
         //
       }),
       map((res) => {
-        return res.data.findEventLogs.map((res) => {
+        const keySet = new Set<string>();
+        const result = res.data.findEventLogs.map((res) => {
+          const log = JSON.parse(res.Log);
+          Object.entries(log).map((key) => keySet.add(key[0]));
           return {
             Name: res.UserName,
             Type: res.Module + ' | ' + res.Event,
             Time: res.CreateTime,
-            Log: res.Log,
+            Log: JSON.parse(res.Log),
           };
+        });
+        const keyArray = [...keySet];
+        return result.map((row) => {
+          const log = row.Log;
+          keyArray.map((key) => {
+            row[key] = log[key];
+          });
+          delete row.Log;
+          return row;
         });
       })
     );
