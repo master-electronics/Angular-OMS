@@ -5,7 +5,7 @@ import {
   ITNBarcodeRegex,
   ShelfBarcodeBarcodeRegex,
 } from 'src/app/shared/utils/dataRegex';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -56,6 +56,13 @@ import { AuditService } from '../../data/audit.service';
       [isvalid]="this.inputForm.valid"
     >
     </single-input-form>
+    <ng-container *ngIf="message">
+      <popup-modal
+        (clickSubmit)="onFoundOk()"
+        [message]="message"
+      ></popup-modal>
+    </ng-container>
+    <div *ngIf="close$ | async"></div>
   `,
 })
 export class ScanITN implements OnInit {
@@ -71,12 +78,14 @@ export class ScanITN implements OnInit {
 
   public data$;
   public info$;
+  public close$;
   public inputForm = this._fb.nonNullable.group({
     itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
 
   searchLocation;
   auditInfo: Audit;
+  message;
 
   ngOnInit(): void {
     this.data$ = of(true);
@@ -164,6 +173,29 @@ export class ScanITN implements OnInit {
         return of(res);
       }),
       switchMap((res) => {
+        if (
+          itn ==
+          JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN
+        ) {
+          locs.forEach((loc) => {
+            loc.Status = 'done';
+          });
+
+          sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+          const audit: Audit = JSON.parse(
+            sessionStorage.getItem('currentAudit')
+          );
+
+          audit.Container.Barcode = loc.Barcode;
+          sessionStorage.setItem('currentAudit', JSON.stringify(audit));
+
+          this.message =
+            'Found ITN ' +
+            JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN;
+
+          return of(res);
+        }
+
         this._router.navigate(['../scan-itn'], {
           relativeTo: this._actRoute,
         });
@@ -209,5 +241,98 @@ export class ScanITN implements OnInit {
     this._router.navigate(['../scan-location'], {
       relativeTo: this._actRoute,
     });
+  }
+
+  onFoundOk() {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
+    sessionStorage.setItem('auditITN', currentAudit.Inventory.ITN);
+    this.data$ = this._auditService
+      .nextSubAudit$(currentAudit.InventoryID, this.userInfo.userId)
+      .pipe(
+        tap((audit) => {
+          if (!audit) {
+            const closerUserEventLog = [
+              {
+                UserEventID: sqlData.Event_IM_Audit_Completed,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: currentAudit.Inventory.ITN,
+              },
+            ];
+
+            const closeEventLog = [
+              {
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_Audit_Completed,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
+                }),
+              },
+            ];
+
+            this.close$ = this._eventLog
+              .insertLog(closerUserEventLog, closeEventLog)
+              .pipe(
+                switchMap((res) => {
+                  return this._auditService
+                    .closeAudit(
+                      currentAudit.InventoryID,
+                      10,
+                      currentAudit.Inventory.ITN,
+                      this.userInfo.userName
+                    )
+                    .pipe(
+                      map((res) => {
+                        this._router.navigate(['../../scan-itn'], {
+                          relativeTo: this._actRoute,
+                        });
+
+                        return res;
+                      })
+                    );
+                })
+              );
+
+            return of(true);
+          } else {
+            this._router.navigate(['../../' + audit.Route], {
+              relativeTo: this._actRoute,
+            });
+
+            return of(true);
+          }
+        })
+      );
   }
 }

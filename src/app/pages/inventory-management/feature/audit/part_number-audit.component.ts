@@ -368,12 +368,7 @@ export class PartNumberAudit implements OnInit {
       },
     ];
 
-    if (
-      partMatch.trim() !=
-      JSON.parse(
-        sessionStorage.getItem('currentAudit')
-      ).Inventory.Product.PartNumber.trim()
-    ) {
+    if (partMatch.trim() != 'match') {
       userEventLogs.push({
         UserEventID: sqlData.Event_IM_PartNumber_Updated,
         UserName: this.userInfo.userName,

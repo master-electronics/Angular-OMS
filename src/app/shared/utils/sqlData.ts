@@ -105,6 +105,7 @@ export const sqlData = {
   Event_IM_Audit_Completed: 4090,
   Event_IM_Location_Scanned: 4100,
   Event_IM_ITN_Scanned: 4110,
+  Event_IM_Audit_ITN_NF: 4115,
   Event_IM_Quantity_Entered: 4120,
   Event_IM_Quantity_Confirm_Entered: 4121,
   Event_IM_Quantity_Updated: 4125,

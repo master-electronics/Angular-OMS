@@ -94,6 +94,7 @@ export class ScanITN implements OnInit {
   ngOnInit(): void {
     sessionStorage.removeItem('currentAudit');
     sessionStorage.removeItem('auditITN');
+    sessionStorage.removeItem('searchLocations');
     this.audit = null;
 
     this.info$ = this._actRoute.data.pipe(
@@ -293,9 +294,62 @@ export class ScanITN implements OnInit {
   }
 
   onNotFound(): void {
+    const audit: Audit = JSON.parse(sessionStorage.getItem('currentAudit'));
     sessionStorage.setItem('searchLevel', '1');
-    this._router.navigate(['../search/scan-location'], {
-      relativeTo: this._actRoute,
-    });
+
+    const userEventLog = [
+      {
+        UserEventID: sqlData.Event_IM_Audit_ITN_NF,
+        UserName: this.userInfo.userName,
+        DistributionCenter: environment.DistributionCenter,
+        InventoryTrackingNumber: audit.Inventory.ITN,
+      },
+    ];
+
+    const eventLog = [
+      {
+        UserName: this.userInfo.userName,
+        EventTypeID: sqlData.Event_IM_Audit_ITN_NF,
+        Log: JSON.stringify({
+          DistributionCenter: environment.DistributionCenter,
+          InventoryTrackingNumber: audit.Inventory.ITN,
+          ParentITN: audit.Inventory.ParentITN,
+          BinLocation: audit.Container.Barcode,
+          QuantityOnHand: audit.Inventory.Quantity,
+          OriginalQuantity: audit.Inventory.OriginalQuantity,
+          DateCode: audit.Inventory.DateCode,
+          CountryOfOrigin: audit.Inventory.COO,
+          ROHS: audit.Inventory.ROHS,
+          NotFound: audit.Inventory.NotFound,
+          Suspect: audit.Inventory.Suspect,
+          LocatedInAutostore: audit.Inventory.LocatedInAutostore,
+          BoundForAutostore: audit.Inventory.BoundForAutostore,
+          PartNumber: audit.Inventory.Product.PartNumber,
+          ProductCode: audit.Inventory.Product.ProductCode.ProductCodeNumber,
+          Description: audit.Inventory.Product.Description,
+          ProductTier: audit.Inventory.Product.ProductTier,
+          ProductType: audit.Inventory.Product.ProductType.ProductType,
+          ProductTypeDescription:
+            audit.Inventory.Product.ProductType.Description,
+          Velocity: audit.Inventory.Product.Velocity,
+          MICPartNumber: audit.Inventory.Product.MICPartNumber,
+          UOM: audit.Inventory.Product.UOM,
+          Autostore: audit.Inventory.Product.Autostore,
+          PackType: audit.Inventory.Product.PackType,
+          PackQuantity: audit.Inventory.Product.PackQty,
+          Cost: audit.Inventory.Product.Cost,
+        }),
+      },
+    ];
+
+    this.data$ = this._eventLog.insertLog(userEventLog, eventLog).pipe(
+      map((res) => {
+        this._router.navigate(['../search/scan-location'], {
+          relativeTo: this._actRoute,
+        });
+
+        return res;
+      })
+    );
   }
 }

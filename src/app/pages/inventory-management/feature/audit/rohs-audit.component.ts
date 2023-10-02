@@ -300,7 +300,7 @@ export class ROHSAudit implements OnInit {
                 ];
 
                 this.close$ = this._eventLog
-                  .insertLog(closeEventLog, closeEventLog)
+                  .insertLog(closeUserEventLog, closeEventLog)
                   .pipe(
                     switchMap((res) => {
                       return this._auditService

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import {
@@ -24,6 +24,9 @@ import {
 } from '../../utils/interfaces';
 import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { EventLogService } from 'src/app/shared/services/eventLog.service';
 
 @Component({
   standalone: true,
@@ -72,11 +75,13 @@ import { environment } from 'src/environments/environment';
   `,
 })
 export class ScanLocation implements OnInit {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _findContainer: FindContainerGQL,
-    private _router: Router
+    private _router: Router,
+    private _eventLog: EventLogService
   ) {}
 
   public data$;
@@ -143,38 +148,71 @@ export class ScanLocation implements OnInit {
         error: { message: 'Incorrect Location!', type: 'error' },
       });
     } else {
-      this.data$ = this._findContainer
-        .fetch(
-          {
-            Container: {
-              DistributionCenter: environment.DistributionCenter,
-              Barcode: barcode,
-            },
-          },
-          { fetchPolicy: 'network-only' }
-        )
-        .pipe(
-          tap((res) => {
-            if (!res.data.findContainer) {
-              throw new Error('Location not found');
-            }
+      const userEventLog = [
+        {
+          UserEventID: sqlData.Event_IM_Search_Location_Scanned,
+          UserName: this.userInfo.userName,
+          DistributionCenter: environment.DistributionCenter,
+          Message: 'Location: ' + barcode,
+        },
+      ];
+
+      const eventLog = [
+        {
+          UserName: this.userInfo.userName,
+          EventTypeID: sqlData.Event_IM_Search_Location_Scanned,
+          Log: JSON.stringify({
+            DistributionCenter: environment.DistributionCenter,
+            Location: barcode,
           }),
-          map((res) => {
-            const loc = this.locations.find((loc) => loc.Barcode == barcode);
-            loc.Status = 'active';
-            sessionStorage.setItem(
-              'searchLocations',
-              JSON.stringify(this.locations)
+        },
+      ];
+
+      this.data$ = this._eventLog.insertLog(userEventLog, eventLog).pipe(
+        switchMap((res) => {
+          return this._findContainer
+            .fetch(
+              {
+                Container: {
+                  DistributionCenter: environment.DistributionCenter,
+                  Barcode: barcode,
+                },
+              },
+              { fetchPolicy: 'network-only' }
+            )
+            .pipe(
+              tap((res) => {
+                if (!res.data.findContainer) {
+                  throw new Error('Location not found');
+                }
+              }),
+              map((res) => {
+                const loc = this.locations.find(
+                  (loc) => loc.Barcode == barcode
+                );
+                loc.Status = 'active';
+                sessionStorage.setItem(
+                  'searchLocations',
+                  JSON.stringify(this.locations)
+                );
+                this._router.navigate(['../scan-itn'], {
+                  relativeTo: this._actRoute,
+                });
+              })
             );
-            this._router.navigate(['../scan-itn'], {
-              relativeTo: this._actRoute,
-            });
-          })
-        );
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
     }
   }
 
   onBack(): void {
-    //
+    this._router.navigate(['../../scan-itn'], {
+      relativeTo: this._actRoute,
+    });
   }
 }
