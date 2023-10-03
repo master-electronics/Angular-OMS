@@ -43,7 +43,7 @@ import { of } from 'rxjs';
 export class ItnCountComponent {
   data$;
   inputForm = new FormGroup({
-    itnCount: new FormControl<number>(null, [
+    itnCount: new FormControl<number>(1, [
       Validators.required,
       Validators.min(1),
     ]),
