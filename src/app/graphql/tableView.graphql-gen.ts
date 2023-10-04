@@ -221,6 +221,13 @@ export type EventLog = {
   _id: Scalars['Int'];
 };
 
+export type EventType = {
+  __typename?: 'EventType';
+  Event: Scalars['String'];
+  Module: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -1622,6 +1629,7 @@ export type Query = {
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
+  findEventType?: Maybe<Array<Maybe<EventType>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1846,6 +1854,12 @@ export type QueryFindEventLogsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   timeFrame?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export type QueryFindEventTypeArgs = {
+  EventType?: InputMaybe<SearchEventType>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFindItnColumnsArgs = {
@@ -2747,6 +2761,12 @@ export type SearchContainer = {
   _id?: InputMaybe<Scalars['Int']>;
 };
 
+export type SearchEventType = {
+  Event?: InputMaybe<Scalars['String']>;
+  Module?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
 export type SearchIntForWmsCount = {
   Priority?: InputMaybe<Scalars['Boolean']>;
   StatusID: Scalars['Int'];
@@ -3105,6 +3125,20 @@ export type FetchEventLogQuery = {
   } | null> | null;
 };
 
+export type FetchEventTypeQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchEventTypeQuery = {
+  __typename?: 'Query';
+  findEventType?: Array<{
+    __typename?: 'EventType';
+    _id: number;
+    Module: string;
+    Event: string;
+  } | null> | null;
+};
+
 export type FetchTaskCounterQueryVariables = Types.Exact<{
   Module: Types.Scalars['String'];
   startDate: Types.Scalars['String'];
@@ -3154,6 +3188,29 @@ export class FetchEventLogGQL extends Apollo.Query<
   FetchEventLogQueryVariables
 > {
   document = FetchEventLogDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchEventTypeDocument = gql`
+  query fetchEventType {
+    findEventType {
+      _id
+      Module
+      Event
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchEventTypeGQL extends Apollo.Query<
+  FetchEventTypeQuery,
+  FetchEventTypeQueryVariables
+> {
+  document = FetchEventTypeDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
