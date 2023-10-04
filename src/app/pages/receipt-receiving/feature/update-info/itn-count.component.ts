@@ -61,7 +61,7 @@ export class ItnCountComponent {
     if (this.inputForm.invalid) {
       return;
     }
-    this.itnCount.update(this.inputForm.get('itnCount').value);
+    this.itnCount.update(Math.trunc(this.inputForm.get('itnCount').value));
     this.router.navigate(['../../label/assign'], { relativeTo: this.actRoute });
   }
 }
