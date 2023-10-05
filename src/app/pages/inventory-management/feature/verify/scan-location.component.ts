@@ -181,6 +181,6 @@ export class ScanLocation implements OnInit {
   }
 
   onBack(): void {
-    this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
+    this._router.navigate(['../../../menu'], { relativeTo: this._actRoute });
   }
 }

@@ -182,6 +182,10 @@ query getSearchLocations($barcode: String) {
   }
 }
 
+query validateAssignment($auditID: Int, $userID: Int) {
+  validateAssignment(AuditID: $auditID, UserID: $userID)
+}
+
 mutation insertAudits($audits: [inputAudit]) {
   insertAudits(Audits: $audits) {
     _id
@@ -238,6 +242,12 @@ mutation closeAudit(
     InventoryID: $inventoryID
     TypeID: $typeID
   ) {
+    _id
+  }
+}
+
+mutation clearTimeoutAudits($seconds: Int) {
+  clearTimeoutAudits(Seconds: $seconds) {
     _id
   }
 }

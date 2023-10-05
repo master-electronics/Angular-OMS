@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -19,4 +19,8 @@ import { RouterModule } from '@angular/router';
     </div>
   `,
 })
-export class MenuComponent {}
+export class MenuComponent {
+  ngOnInit(): void {
+    sessionStorage.removeItem('currentAudit');
+  }
+}

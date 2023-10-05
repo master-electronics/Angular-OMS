@@ -647,6 +647,7 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
+  clearTimeoutAudits?: Maybe<Audit>;
   closeAudit?: Maybe<Audit>;
   createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
@@ -814,6 +815,11 @@ export type MutationClearMerpToteArgs = {
 export type MutationClearSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+};
+
+
+export type MutationClearTimeoutAuditsArgs = {
+  Seconds?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1622,6 +1628,12 @@ export type MutationUpdateVendorFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
+export type Omsconfig = {
+  __typename?: 'OMSCONFIG';
+  Name?: Maybe<Scalars['String']>;
+  Value?: Maybe<Scalars['String']>;
+};
+
 export type Order = {
   __typename?: 'Order';
   BranchID?: Maybe<Scalars['String']>;
@@ -1790,6 +1802,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchConfigValue?: Maybe<Omsconfig>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1890,6 +1903,7 @@ export type Query = {
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
+  validateAssignment?: Maybe<Scalars['Boolean']>;
   validateFilter?: Maybe<Scalars['Boolean']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
   verifyASNLocationNotInProcess?: Maybe<Array<Maybe<Autostoreasnheader>>>;
@@ -1916,6 +1930,11 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchConfigValueArgs = {
+  Name?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2447,6 +2466,12 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
+};
+
+
+export type QueryValidateAssignmentArgs = {
+  AuditID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -3565,6 +3590,14 @@ export type GetSearchLocationsQueryVariables = Types.Exact<{
 
 export type GetSearchLocationsQuery = { __typename?: 'Query', getSearchLocations?: Array<{ __typename?: 'SEARCHLOCATION', _id?: number | null, Barcode?: string | null } | null> | null };
 
+export type ValidateAssignmentQueryVariables = Types.Exact<{
+  auditID?: Types.InputMaybe<Types.Scalars['Int']>;
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type ValidateAssignmentQuery = { __typename?: 'Query', validateAssignment?: boolean | null };
+
 export type InsertAuditsMutationVariables = Types.Exact<{
   audits?: Types.InputMaybe<Array<Types.InputMaybe<Types.InputAudit>> | Types.InputMaybe<Types.InputAudit>>;
 }>;
@@ -3609,6 +3642,13 @@ export type CloseAuditMutationVariables = Types.Exact<{
 
 
 export type CloseAuditMutation = { __typename?: 'Mutation', closeAudit?: { __typename?: 'AUDIT', _id?: number | null } | null };
+
+export type ClearTimeoutAuditsMutationVariables = Types.Exact<{
+  seconds?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+
+export type ClearTimeoutAuditsMutation = { __typename?: 'Mutation', clearTimeoutAudits?: { __typename?: 'AUDIT', _id?: number | null } | null };
 
 export const FetchAuditTypesDocument = gql`
     query fetchAuditTypes {
@@ -3940,6 +3980,22 @@ export const GetSearchLocationsDocument = gql`
       super(apollo);
     }
   }
+export const ValidateAssignmentDocument = gql`
+    query validateAssignment($auditID: Int, $userID: Int) {
+  validateAssignment(AuditID: $auditID, UserID: $userID)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ValidateAssignmentGQL extends Apollo.Query<ValidateAssignmentQuery, ValidateAssignmentQueryVariables> {
+    document = ValidateAssignmentDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const InsertAuditsDocument = gql`
     mutation insertAudits($audits: [inputAudit]) {
   insertAudits(Audits: $audits) {
@@ -4033,6 +4089,24 @@ export const CloseAuditDocument = gql`
   })
   export class CloseAuditGQL extends Apollo.Mutation<CloseAuditMutation, CloseAuditMutationVariables> {
     document = CloseAuditDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ClearTimeoutAuditsDocument = gql`
+    mutation clearTimeoutAudits($seconds: Int) {
+  clearTimeoutAudits(Seconds: $seconds) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ClearTimeoutAuditsGQL extends Apollo.Mutation<ClearTimeoutAuditsMutation, ClearTimeoutAuditsMutationVariables> {
+    document = ClearTimeoutAuditsDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -642,6 +642,7 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
+  clearTimeoutAudits?: Maybe<Audit>;
   closeAudit?: Maybe<Audit>;
   createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
@@ -809,6 +810,11 @@ export type MutationClearMerpToteArgs = {
 export type MutationClearSuspectInventoryArgs = {
   DistributionCenter: Scalars['String'];
   InventoryTrackingNumber: Scalars['String'];
+};
+
+
+export type MutationClearTimeoutAuditsArgs = {
+  Seconds?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1617,6 +1623,12 @@ export type MutationUpdateVendorFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
+export type Omsconfig = {
+  __typename?: 'OMSCONFIG';
+  Name?: Maybe<Scalars['String']>;
+  Value?: Maybe<Scalars['String']>;
+};
+
 export type Order = {
   __typename?: 'Order';
   BranchID?: Maybe<Scalars['String']>;
@@ -1785,6 +1797,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchConfigValue?: Maybe<Omsconfig>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1885,6 +1898,7 @@ export type Query = {
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
+  validateAssignment?: Maybe<Scalars['Boolean']>;
   validateFilter?: Maybe<Scalars['Boolean']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
   verifyASNLocationNotInProcess?: Maybe<Array<Maybe<Autostoreasnheader>>>;
@@ -1911,6 +1925,11 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchConfigValueArgs = {
+  Name?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2442,6 +2461,12 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
+};
+
+
+export type QueryValidateAssignmentArgs = {
+  AuditID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 

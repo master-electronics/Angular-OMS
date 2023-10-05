@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of, map, catchError, switchMap } from 'rxjs';
 import {
   Audit,
@@ -17,10 +17,13 @@ import {
   FindImInventoryGQL,
   GetSearchLocationGQL,
   GetSearchLocationsGQL,
+  ValidateAssignmentGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class AuditService {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _findNextAudit: FindNextAuditGQL,
     private _inventoryUpdate: InventoryUpdateGQL,
@@ -30,7 +33,8 @@ export class AuditService {
     private _insertSuspect: InsertSuspectGQL,
     private _findInventory: FindImInventoryGQL,
     private _getSearchLocation: GetSearchLocationGQL,
-    private _getSearchLocations: GetSearchLocationsGQL
+    private _getSearchLocations: GetSearchLocationsGQL,
+    private _validateAssignment: ValidateAssignmentGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -83,9 +87,19 @@ export class AuditService {
       );
   }
 
+  public validateAssignment$(AuditID: number, UserID: number) {
+    return this._validateAssignment.fetch(
+      {
+        auditID: AuditID,
+        userID: UserID,
+      },
+      { fetchPolicy: 'network-only' }
+    );
+  }
+
   public get nextAudit$(): Observable<Audit> {
     return this._findNextAudit
-      .fetch({ userID: 13 }, { fetchPolicy: 'network-only' })
+      .fetch({ userID: this.userInfo.userId }, { fetchPolicy: 'network-only' })
       .pipe(
         map((res) => {
           let Audit: Audit;

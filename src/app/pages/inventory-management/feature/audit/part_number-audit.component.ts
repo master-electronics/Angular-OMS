@@ -129,7 +129,7 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
                   ? 'border-red-500'
                   : 'border-blue-500'
               ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
               id="comment"
               type="text"
               autocomplete="off"
@@ -149,7 +149,7 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
                   ? 'border-red-500'
                   : 'border-blue-500'
               ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
               id="partNumber"
               type="text"
               autocomplete="off"
@@ -194,31 +194,10 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
       (outputString)="onChange($event)"
       layout="string"
     ></simple-keyboard>
-    <!--
-    <single-radio-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      controlName="partNumber"
-      title="Part Match:"
-      [options]="options"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-radio-form>
-    
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="partNumber"
-      title="Enter Part Number:"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-input-form>
--->
+    <ng-container *ngIf="message">
+      <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
+    </ng-container>
+    <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
   `,
 })
@@ -234,12 +213,14 @@ export class PartNumberAudit implements OnInit {
 
   public data$;
   public close$;
+  public info$;
   public inputForm = this._fb.nonNullable.group({
     partMatch: ['', [Validators.required]],
     comment: [''],
     partNumber: [''],
   });
   auditInfo: Audit;
+  message;
 
   options = [
     {
@@ -320,247 +301,293 @@ export class PartNumberAudit implements OnInit {
       sessionStorage.getItem('currentAudit')
     );
 
-    const userEventLogs = [
-      {
-        UserEventID: sqlData.Event_IM_PartNumber_Entered,
-        UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
-        InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-        Message: 'Part Number: ' + this.inputForm.value.partMatch,
-      },
-    ];
+    this.info$ = this._auditService
+      .validateAssignment$(currentAudit._id, this.userInfo.userId)
+      .pipe(
+        map((res) => {
+          if (!res.data.validateAssignment) {
+            this.message = 'This Audit has timed out!';
+            sessionStorage.removeItem('currentAudit');
+            sessionStorage.removeItem('auditITN');
 
-    const eventLogs = [
-      {
-        UserName: this.userInfo.userName,
-        EventTypeID: sqlData.Event_IM_PartNumber_Entered,
-        Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
-          InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-          ParentITN: currentAudit.Inventory.ParentITN,
-          BinLocation: currentAudit.Container.Barcode,
-          QuantityOnHand: currentAudit.Inventory.Quantity,
-          OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
-          DateCode: currentAudit.Inventory.DateCode,
-          CountryOfOrigin: currentAudit.Inventory.COO,
-          ROHS: currentAudit.Inventory.ROHS,
-          NotFound: currentAudit.Inventory.NotFound,
-          Suspect: currentAudit.Inventory.Suspect,
-          LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
-          BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
-          PartNumber: currentAudit.Inventory.Product.PartNumber,
-          PartNumberEntered: partNumber,
-          ProductCode:
-            currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-          Description: currentAudit.Inventory.Product.Description,
-          ProductTier: currentAudit.Inventory.Product.ProductTier,
-          ProductType: currentAudit.Inventory.Product.ProductType.ProductType,
-          ProductTypeDescription:
-            currentAudit.Inventory.Product.ProductType.Description,
-          Velocity: currentAudit.Inventory.Product.Velocity,
-          MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
-          UOM: currentAudit.Inventory.Product.UOM,
-          Autostore: currentAudit.Inventory.Product.Autostore,
-          PackType: currentAudit.Inventory.Product.PackType,
-          PackQuantity: currentAudit.Inventory.Product.PackQty,
-          Cost: currentAudit.Inventory.Product.Cost,
-        }),
-      },
-    ];
+            return of(true);
+          } else {
+            const userEventLogs = [
+              {
+                UserEventID: sqlData.Event_IM_PartNumber_Entered,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                Message: 'Part Number: ' + this.inputForm.value.partMatch,
+              },
+            ];
 
-    if (partMatch.trim() != 'match') {
-      userEventLogs.push({
-        UserEventID: sqlData.Event_IM_PartNumber_Updated,
-        UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
-        InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-        Message:
-          'Original Part Number: ' +
-          JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.Product
-            .PartNumber +
-          ' --- New Part Number: ' +
-          partMatch,
-      });
+            const eventLogs = [
+              {
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_PartNumber_Entered,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  PartNumberEntered: partNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
+                }),
+              },
+            ];
 
-      eventLogs.push({
-        UserName: this.userInfo.userName,
-        EventTypeID: sqlData.Event_IM_PartNumber_Updated,
-        Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
-          InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-          ParentITN: currentAudit.Inventory.ParentITN,
-          BinLocation: currentAudit.Container.Barcode,
-          QuantityOnHand: currentAudit.Inventory.Quantity,
-          OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
-          DateCode: currentAudit.Inventory.DateCode,
-          CountryOfOrigin: currentAudit.Inventory.COO,
-          ROHS: currentAudit.Inventory.ROHS,
-          NotFound: currentAudit.Inventory.NotFound,
-          Suspect: currentAudit.Inventory.Suspect,
-          LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
-          BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
-          PartNumber: currentAudit.Inventory.Product.PartNumber,
-          ProductCode:
-            currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-          Description: currentAudit.Inventory.Product.Description,
-          ProductTier: currentAudit.Inventory.Product.ProductTier,
-          ProductType: currentAudit.Inventory.Product.ProductType.ProductType,
-          ProductTypeDescription:
-            currentAudit.Inventory.Product.ProductType.Description,
-          Velocity: currentAudit.Inventory.Product.Velocity,
-          MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
-          UOM: currentAudit.Inventory.Product.UOM,
-          Autostore: currentAudit.Inventory.Product.Autostore,
-          PackType: currentAudit.Inventory.Product.PackType,
-          PackQuantity: currentAudit.Inventory.Product.PackQty,
-          Cost: currentAudit.Inventory.Product.Cost,
-          NewPartNumber: partNumber,
-        }),
-      });
-    }
+            if (partMatch.trim() != 'match') {
+              userEventLogs.push({
+                UserEventID: sqlData.Event_IM_PartNumber_Updated,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                Message:
+                  'Original Part Number: ' +
+                  JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
+                    .Product.PartNumber +
+                  ' --- New Part Number: ' +
+                  partMatch,
+              });
 
-    this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
-      switchMap((res) => {
-        if (
-          JSON.parse(
-            sessionStorage.getItem('currentAudit')
-          ).Inventory.Product.PartNumber.trim() != partMatch.trim()
-        ) {
-          const currentAudit = JSON.parse(
-            sessionStorage.getItem('currentAudit')
-          );
+              eventLogs.push({
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_PartNumber_Updated,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
+                  NewPartNumber: partNumber,
+                }),
+              });
+            }
 
-          currentAudit.Inventory.IMSuspect = 'Y';
+            this.data$ = this._eventLog
+              .insertLog(userEventLogs, eventLogs)
+              .pipe(
+                switchMap((res) => {
+                  if (
+                    JSON.parse(
+                      sessionStorage.getItem('currentAudit')
+                    ).Inventory.Product.PartNumber.trim() != partMatch.trim()
+                  ) {
+                    const currentAudit = JSON.parse(
+                      sessionStorage.getItem('currentAudit')
+                    );
 
-          sessionStorage.setItem('currentAudit', JSON.stringify(currentAudit));
+                    currentAudit.Inventory.IMSuspect = 'Y';
 
-          const PartData = [
-            {
-              InventoryID: JSON.parse(sessionStorage.getItem('currentAudit'))
-                .InventoryID,
-              Reason: `Expected Part Number: 
+                    sessionStorage.setItem(
+                      'currentAudit',
+                      JSON.stringify(currentAudit)
+                    );
+
+                    const PartData = [
+                      {
+                        InventoryID: JSON.parse(
+                          sessionStorage.getItem('currentAudit')
+                        ).InventoryID,
+                        Reason: `Expected Part Number: 
                   ${
                     JSON.parse(sessionStorage.getItem('currentAudit')).Inventory
                       .Product.PartNumber
                   }
                    found Part Number: ${partNumber}`,
-              Comment: comment,
-            },
-          ];
-          return this._auditService.insertSuspect(PartData);
-        }
+                        Comment: comment,
+                      },
+                    ];
+                    return this._auditService.insertSuspect(PartData);
+                  }
 
-        return of(res);
-      }),
-      switchMap((res) => {
-        return this._auditService.deleteAudit(
-          JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID,
-          60
-        );
-      }),
-      switchMap((res) => {
-        return this._auditService
-          .nextSubAudit$(
-            JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID,
-            this.userInfo.userId
-          )
-          .pipe(
-            tap((res) => {
-              if (!res) {
-                const closeUserEventLog = [
-                  {
-                    UserEventID: sqlData.Event_IM_Audit_Completed,
-                    UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
-                    InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-                  },
-                ];
-
-                const closeEventLog = [
-                  {
-                    UserName: this.userInfo.userName,
-                    EventTypeID: sqlData.Event_IM_Audit_Completed,
-                    Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
-                      InventoryTrackingNumber:
-                        sessionStorage.getItem('auditITN'),
-                      ParentITN: currentAudit.Inventory.ParentITN,
-                      BinLocation: currentAudit.Container.Barcode,
-                      QuantityOnHand: currentAudit.Inventory.Quantity,
-                      OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
-                      DateCode: currentAudit.Inventory.DateCode,
-                      CountryOfOrigin: currentAudit.Inventory.COO,
-                      ROHS: currentAudit.Inventory.ROHS,
-                      NotFound: currentAudit.Inventory.NotFound,
-                      Suspect: currentAudit.Inventory.Suspect,
-                      LocatedInAutostore:
-                        currentAudit.Inventory.LocatedInAutostore,
-                      BoundForAutostore:
-                        currentAudit.Inventory.BoundForAutostore,
-                      PartNumber: currentAudit.Inventory.Product.PartNumber,
-                      PartNumberEntered: partNumber,
-                      ProductCode:
-                        currentAudit.Inventory.Product.ProductCode
-                          .ProductCodeNumber,
-                      Description: currentAudit.Inventory.Product.Description,
-                      ProductTier: currentAudit.Inventory.Product.ProductTier,
-                      ProductType:
-                        currentAudit.Inventory.Product.ProductType.ProductType,
-                      ProductTypeDescription:
-                        currentAudit.Inventory.Product.ProductType.Description,
-                      Velocity: currentAudit.Inventory.Product.Velocity,
-                      MICPartNumber:
-                        currentAudit.Inventory.Product.MICPartNumber,
-                      UOM: currentAudit.Inventory.Product.UOM,
-                      Autostore: currentAudit.Inventory.Product.Autostore,
-                      PackType: currentAudit.Inventory.Product.PackType,
-                      PackQuantity: currentAudit.Inventory.Product.PackQty,
-                      Cost: currentAudit.Inventory.Product.Cost,
-                    }),
-                  },
-                ];
-                this.close$ = this._eventLog
-                  .insertLog(closeUserEventLog, closeEventLog)
-                  .pipe(
-                    switchMap((res) => {
-                      return this._auditService
-                        .closeAudit(
-                          JSON.parse(sessionStorage.getItem('currentAudit'))
-                            .InventoryID,
-                          10,
-                          JSON.parse(sessionStorage.getItem('currentAudit'))
-                            .Inventory.ITN,
-                          this.userInfo.userName
-                        )
-                        .pipe(
-                          map((res) => {
-                            this._router.navigate(['../verify/scan-itn'], {
-                              relativeTo: this._actRoute,
-                            });
-
-                            return res;
-                          })
-                        );
-                    })
+                  return of(res);
+                }),
+                switchMap((res) => {
+                  return this._auditService.deleteAudit(
+                    JSON.parse(sessionStorage.getItem('currentAudit'))
+                      .InventoryID,
+                    60
                   );
+                }),
+                switchMap((res) => {
+                  return this._auditService
+                    .nextSubAudit$(
+                      JSON.parse(sessionStorage.getItem('currentAudit'))
+                        .InventoryID,
+                      this.userInfo.userId
+                    )
+                    .pipe(
+                      tap((res) => {
+                        if (!res) {
+                          const closeUserEventLog = [
+                            {
+                              UserEventID: sqlData.Event_IM_Audit_Completed,
+                              UserName: this.userInfo.userName,
+                              DistributionCenter:
+                                environment.DistributionCenter,
+                              InventoryTrackingNumber:
+                                sessionStorage.getItem('auditITN'),
+                            },
+                          ];
 
-                return of(true);
-              } else {
-                this._router.navigate(['../' + res.Route], {
-                  relativeTo: this._actRoute,
-                });
+                          const closeEventLog = [
+                            {
+                              UserName: this.userInfo.userName,
+                              EventTypeID: sqlData.Event_IM_Audit_Completed,
+                              Log: JSON.stringify({
+                                DistributionCenter:
+                                  environment.DistributionCenter,
+                                InventoryTrackingNumber:
+                                  sessionStorage.getItem('auditITN'),
+                                ParentITN: currentAudit.Inventory.ParentITN,
+                                BinLocation: currentAudit.Container.Barcode,
+                                QuantityOnHand: currentAudit.Inventory.Quantity,
+                                OriginalQuantity:
+                                  currentAudit.Inventory.OriginalQuantity,
+                                DateCode: currentAudit.Inventory.DateCode,
+                                CountryOfOrigin: currentAudit.Inventory.COO,
+                                ROHS: currentAudit.Inventory.ROHS,
+                                NotFound: currentAudit.Inventory.NotFound,
+                                Suspect: currentAudit.Inventory.Suspect,
+                                LocatedInAutostore:
+                                  currentAudit.Inventory.LocatedInAutostore,
+                                BoundForAutostore:
+                                  currentAudit.Inventory.BoundForAutostore,
+                                PartNumber:
+                                  currentAudit.Inventory.Product.PartNumber,
+                                PartNumberEntered: partNumber,
+                                ProductCode:
+                                  currentAudit.Inventory.Product.ProductCode
+                                    .ProductCodeNumber,
+                                Description:
+                                  currentAudit.Inventory.Product.Description,
+                                ProductTier:
+                                  currentAudit.Inventory.Product.ProductTier,
+                                ProductType:
+                                  currentAudit.Inventory.Product.ProductType
+                                    .ProductType,
+                                ProductTypeDescription:
+                                  currentAudit.Inventory.Product.ProductType
+                                    .Description,
+                                Velocity:
+                                  currentAudit.Inventory.Product.Velocity,
+                                MICPartNumber:
+                                  currentAudit.Inventory.Product.MICPartNumber,
+                                UOM: currentAudit.Inventory.Product.UOM,
+                                Autostore:
+                                  currentAudit.Inventory.Product.Autostore,
+                                PackType:
+                                  currentAudit.Inventory.Product.PackType,
+                                PackQuantity:
+                                  currentAudit.Inventory.Product.PackQty,
+                                Cost: currentAudit.Inventory.Product.Cost,
+                              }),
+                            },
+                          ];
+                          this.close$ = this._eventLog
+                            .insertLog(closeUserEventLog, closeEventLog)
+                            .pipe(
+                              switchMap((res) => {
+                                return this._auditService
+                                  .closeAudit(
+                                    JSON.parse(
+                                      sessionStorage.getItem('currentAudit')
+                                    ).InventoryID,
+                                    10,
+                                    JSON.parse(
+                                      sessionStorage.getItem('currentAudit')
+                                    ).Inventory.ITN,
+                                    this.userInfo.userName
+                                  )
+                                  .pipe(
+                                    map((res) => {
+                                      this._router.navigate(
+                                        ['../verify/scan-itn'],
+                                        {
+                                          relativeTo: this._actRoute,
+                                        }
+                                      );
 
-                return res;
-              }
-            })
-          );
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      })
-    );
+                                      return res;
+                                    })
+                                  );
+                              })
+                            );
+
+                          return of(true);
+                        } else {
+                          this._router.navigate(['../' + res.Route], {
+                            relativeTo: this._actRoute,
+                          });
+
+                          return res;
+                        }
+                      })
+                    );
+                }),
+                catchError((error) => {
+                  return of({
+                    error: { message: error.message, type: 'error' },
+                  });
+                })
+              );
+
+            return of(true);
+          }
+        })
+      );
   }
 
   onBack() {
