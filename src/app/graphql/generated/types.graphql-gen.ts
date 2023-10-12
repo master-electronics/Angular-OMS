@@ -1585,6 +1585,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchCommonvariablesForLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1699,6 +1700,10 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchCommonvariablesForLogsArgs = {
+  events?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type QueryFetchDataColumnListArgs = {

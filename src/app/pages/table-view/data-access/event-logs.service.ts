@@ -15,6 +15,11 @@ interface ListOfEvent {
   groupLabel: string;
 }
 
+interface ListOfFilter {
+  label: string;
+  value: string;
+}
+
 @Injectable()
 export class EventLogService {
   // Event type for Event type input selector
@@ -22,6 +27,13 @@ export class EventLogService {
   listOfEvent = computed(() => this._listOfEvent());
   setListOfEvent(list: ListOfEvent[]) {
     this._listOfEvent.set(list);
+  }
+
+  // Event type for Event type input selector
+  private _listOfFilter = signal<ListOfFilter[]>(null);
+  listOfFilter = computed(() => this._listOfFilter());
+  setListOfFilter(list: ListOfFilter[]) {
+    this._listOfFilter.set(list);
   }
 
   // filter User for User selector
@@ -34,58 +46,18 @@ export class EventLogService {
     this._filterUser.update((list) => [user, ...list]);
   }
 
-  setFilter(list: number[]): JsonFormData {
-    const tmp = new Array<JsonFormControls>();
-    list.map((id) => {
-      if (id < 100) {
-        tmp.push({
-          name: 'InventoryTrackingNumber',
-          label: 'ITN',
-          value: '',
-          type: 'text',
-          required: false,
-          validators: {},
-        });
-        tmp.push({
-          name: 'OrderNumber',
-          label: 'Order',
-          value: '',
-          type: 'text',
-          required: false,
-          validators: {},
-        });
-        return;
-      }
-      if (id < 4200) {
-        tmp.push({
-          name: 'InventoryTrackingNumber',
-          label: 'ITN',
-          value: '',
-          type: 'text',
-          required: false,
-          validators: {},
-        });
-
-        tmp.push({
-          name: 'PartNumber',
-          label: 'PartNumber',
-          value: '',
-          type: 'text',
-          required: false,
-          validators: {},
-        });
-      }
+  setFilterList(list: string[]): JsonFormData {
+    const filter = new Array<JsonFormControls>();
+    list.map((title) => {
+      filter.push({
+        name: title,
+        label: title,
+        value: '',
+        type: 'text',
+        required: false,
+        validators: {},
+      });
     });
-    const unique = tmp.filter(
-      (arr, index, self) => index === self.findIndex((t) => t.name === arr.name)
-    );
-    return { controls: unique };
-  }
-
-  addToControl(input: JsonFormControls, list: JsonFormControls[]) {
-    const flag = list.some((control) => {
-      control.name === input.name;
-    });
-    flag ? list : list.push(input);
+    return { controls: filter };
   }
 }

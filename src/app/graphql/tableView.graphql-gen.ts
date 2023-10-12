@@ -1590,6 +1590,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchCommonvariablesForLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1704,6 +1705,10 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchCommonvariablesForLogsArgs = {
+  events?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type QueryFetchDataColumnListArgs = {
@@ -3125,6 +3130,18 @@ export type FetchEventLogQuery = {
   } | null> | null;
 };
 
+export type FetchCommonvariablesForLogsQueryVariables = Types.Exact<{
+  events?: Types.InputMaybe<
+    | Array<Types.InputMaybe<Types.Scalars['Int']>>
+    | Types.InputMaybe<Types.Scalars['Int']>
+  >;
+}>;
+
+export type FetchCommonvariablesForLogsQuery = {
+  __typename?: 'Query';
+  fetchCommonvariablesForLogs?: Array<string | null> | null;
+};
+
 export type FetchEventTypeQueryVariables = Types.Exact<{
   [key: string]: never;
 }>;
@@ -3188,6 +3205,25 @@ export class FetchEventLogGQL extends Apollo.Query<
   FetchEventLogQueryVariables
 > {
   document = FetchEventLogDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchCommonvariablesForLogsDocument = gql`
+  query fetchCommonvariablesForLogs($events: [Int]) {
+    fetchCommonvariablesForLogs(events: $events)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchCommonvariablesForLogsGQL extends Apollo.Query<
+  FetchCommonvariablesForLogsQuery,
+  FetchCommonvariablesForLogsQueryVariables
+> {
+  document = FetchCommonvariablesForLogsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

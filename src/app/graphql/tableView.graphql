@@ -22,6 +22,10 @@ query fetchEventLog(
   }
 }
 
+query fetchCommonvariablesForLogs($events: [Int]) {
+  fetchCommonvariablesForLogs(events: $events)
+}
+
 query fetchEventType {
   findEventType {
     _id
