@@ -6,6 +6,8 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -21,11 +23,8 @@ import { JsonFormControls, JsonFormData } from './json-form.service';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-      <div
-        *ngFor="let control of jsonFormData?.controls"
-        class="grid grid-flow-col"
-      >
-        <div>
+      <div class="grid grid-cols-4">
+        <div *ngFor="let control of jsonFormData?.controls">
           <label *ngIf="control.label !== ''">{{ control.label }}</label>
           <input
             *ngIf="
@@ -55,22 +54,27 @@ import { JsonFormControls, JsonFormData } from './json-form.service';
             [checked]="control.value"
           />
         </div>
-        <button type="submit">Submit</button>
       </div>
+
+      <button type="submit">Submit</button>
     </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JsonFormComponent implements OnChanges {
   @Input() jsonFormData: JsonFormData;
+  @Output() formSubmit: EventEmitter<any> = new EventEmitter();
   private _fb = inject(FormBuilder);
   public myForm: FormGroup = this._fb.group({});
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.createForm(this.jsonFormData.controls);
+    if (!changes.jsonFormData.firstChange) {
+      this.createForm(this.jsonFormData.controls);
+    }
   }
 
   createForm(controls: JsonFormControls[]) {
+    this.myForm = this._fb.group({});
     for (const control of controls) {
       const validatorsToAdd = [];
       for (const [key, value] of Object.entries(control.validators)) {
@@ -121,7 +125,8 @@ export class JsonFormComponent implements OnChanges {
     }
   }
   onSubmit() {
-    console.log('Form valid: ', this.myForm.valid);
-    console.log('Form values: ', this.myForm.value);
+    if (this.myForm.valid) {
+      this.formSubmit.emit(this.myForm.value);
+    }
   }
 }

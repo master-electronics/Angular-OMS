@@ -75,7 +75,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
           </nz-form-control>
         </nz-form-item>
 
-        <nz-form-item nz-col nzSpan="6">
+        <nz-form-item class="col-span-2">
           <button nz-button (click)="reset.emit()" class="mr-4">Clear</button>
           <button nz-button (click)="excel.emit()">Save</button>
         </nz-form-item>
