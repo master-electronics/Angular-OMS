@@ -66,6 +66,7 @@ export const sqlData = {
   // sorting
   Event_Stocking_SortingStart: 900,
   Event_Stocking_SortingDone: 901,
+  Event_Stocking_MoveToPersonal: 902,
   //Receipt Entry
   Event_ReceiptEntry_HeaderCreating: 1010,
   Event_ReceiptEntry_HeaderUpdate: 1020,
