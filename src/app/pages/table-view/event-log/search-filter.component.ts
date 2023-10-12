@@ -70,7 +70,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
             <nz-range-picker
               [nzShowTime]="true"
               formControlName="timeRange"
-              (ngModelChange)="this.timeChange.emit($event)"
             ></nz-range-picker>
           </nz-form-control>
         </nz-form-item>
@@ -88,7 +87,6 @@ export class SearchFilterComponent implements OnInit {
   @Input() userList: { _id: number; Name: string }[];
   @Output() reset: EventEmitter<null> = new EventEmitter();
   @Output() excel: EventEmitter<null> = new EventEmitter();
-  @Output() timeChange: EventEmitter<any> = new EventEmitter();
   @Output() addUser: EventEmitter<string> = new EventEmitter();
   public filterForm: FormGroup;
 

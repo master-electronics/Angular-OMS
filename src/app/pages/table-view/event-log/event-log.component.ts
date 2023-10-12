@@ -32,7 +32,6 @@ import { EventLogService } from '../data-access/event-logs.service';
       [userList]="server.filterUser()"
       [listOfEvent]="server.listOfEvent()"
       (excel)="exportexcel()"
-      (timeChange)="timeChange($event)"
       (addUser)="addUser($event)"
     ></search-filter>
     <app-json-form
@@ -46,7 +45,6 @@ import { EventLogService } from '../data-access/event-logs.service';
 })
 export class EventLogComponent implements OnInit {
   public data$;
-  public dateRange: { start: string; end: string };
   public defaultFilter = this._fb.group({
     user: [''],
     timeRange: [[]],
@@ -115,13 +113,6 @@ export class EventLogComponent implements OnInit {
     this.defaultFilter.get('user').setValue(user);
   }
 
-  timeChange(result: Date[]): void {
-    this.dateRange = {
-      start: result[0]?.toISOString(),
-      end: result[1]?.toISOString(),
-    };
-  }
-
   onSubmit(output): void {
     let Log = '';
     if (Object.keys(output).length !== 0) {
@@ -171,6 +162,6 @@ export class EventLogComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
 
     /* save to file */
-    XLSX.writeFile(wb, `${this.dateRange.start?.substring(0, 10)}.xlsx`);
+    XLSX.writeFile(wb, `${this.defaultFilter.value.timeRange[0]}.xlsx`);
   }
 }
