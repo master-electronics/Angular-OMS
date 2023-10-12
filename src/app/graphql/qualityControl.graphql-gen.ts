@@ -221,6 +221,13 @@ export type EventLog = {
   _id: Scalars['Int'];
 };
 
+export type EventType = {
+  __typename?: 'EventType';
+  Event: Scalars['String'];
+  Module: Scalars['String'];
+  _id: Scalars['Int'];
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -1622,6 +1629,7 @@ export type Query = {
   findContainer?: Maybe<Container>;
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
+  findEventType?: Maybe<Array<Maybe<EventType>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1846,6 +1854,12 @@ export type QueryFindEventLogsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   timeFrame?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export type QueryFindEventTypeArgs = {
+  EventType?: InputMaybe<SearchEventType>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFindItnColumnsArgs = {
@@ -2744,6 +2758,12 @@ export type SearchContainer = {
   ShelfDetail?: InputMaybe<Scalars['String']>;
   Warehouse?: InputMaybe<Scalars['String']>;
   Zone?: InputMaybe<Scalars['Int']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchEventType = {
+  Event?: InputMaybe<Scalars['String']>;
+  Module?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 

@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
+import { JsonFormService } from 'src/app/shared/ui/input/json-form/json-form.service';
+import { EventLogService } from './data-access/event-logs.service';
 
 export const TableViewRoutes: Routes = [
   {
     path: '',
-    providers: [],
+    providers: [JsonFormService, EventLogService],
     canActivateChild: [],
     loadComponent: () => import('./shell').then((m) => m.Shell),
     children: [

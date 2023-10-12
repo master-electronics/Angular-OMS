@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  ControlContainer,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -9,7 +13,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     NzFormModule,
     NzSelectModule,
@@ -18,11 +21,30 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   selector: 'search-filter',
   template: `
     <form nz-form [formGroup]="filterForm">
-      <div nz-row nzAlign="bottom" nzGutter="8" nzJustify="space-between">
-        <nz-form-item nz-col nzSpan="4" *ngIf="fetchUser$ | async as userList">
+      <div class="grid grid-cols-10 gap-3">
+        <!-- Event selector -->
+        <nz-form-item class="col-span-4 ">
+          <nz-form-control *ngIf="listOfEvent as list">
+            <nz-select
+              nzMode="multiple"
+              nzPlaceHolder="Select events"
+              nzAllowClear
+              formControlName="events"
+              [nzOptions]="list"
+            >
+            </nz-select>
+            <ng-template #tagPlaceHolder let-selectedList
+              >and {{ selectedList.length }} more selected</ng-template
+            >
+          </nz-form-control>
+        </nz-form-item>
+        <!-- Event selector -->
+        <nz-form-item class="col-span-2" *ngIf="userList">
           <nz-form-control>
             <nz-select
               nzAllowClear
+              [nzDropdownRender]="renderTemplate"
+              nzShowSearch
               nzPlaceHolder="Select a User"
               formControlName="user"
             >
@@ -32,81 +54,45 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
                 [nzValue]="user.Name"
               ></nz-option>
             </nz-select>
+            <ng-template #renderTemplate>
+              <div class="container">
+                <input type="text" nz-input #inputElement />
+                <a class="add-item" (click)="addUser.emit(inputElement.value)">
+                  Add User
+                </a>
+              </div>
+            </ng-template>
           </nz-form-control>
         </nz-form-item>
-
-        <nz-form-item nz-col nzSpan="4">
-          <nz-form-control
-            nzHasFeedback
-            nzErrorTip="The input is not valid barcode!"
-          >
-            <input
-              nz-input
-              oninput="this.value = this.value.toUpperCase()"
-              formControlName="order"
-              placeholder="filter by Order-NOSI"
-            />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item nz-col nzSpan="4">
-          <nz-form-control
-            nzHasFeedback
-            nzErrorTip="The input is not valid barcode!"
-          >
-            <input
-              nz-input
-              oninput="this.value = this.value.toUpperCase()"
-              formControlName="ITN"
-              placeholder="filter by ITN"
-            />
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item nz-col nzSpan="6">
+        <!-- Event selector -->
+        <nz-form-item class="col-span-2">
           <nz-form-control>
             <nz-range-picker
               [nzShowTime]="true"
               formControlName="timeRange"
-              (ngModelChange)="onChange($event)"
             ></nz-range-picker>
           </nz-form-control>
         </nz-form-item>
-      </div>
 
-      <div nz-row nzGutter="8" nzJustify="start">
-        <nz-form-control
-          nz-col
-          nzSpan="16"
-          *ngIf="listOfEvent$ | async as list"
-        >
-          <nz-select
-            nzMode="multiple"
-            nzPlaceHolder="Select events"
-            nzAllowClear
-            formControlName="events"
-            [nzOptions]="list"
-          >
-          </nz-select>
-          <ng-template #tagPlaceHolder let-selectedList
-            >and {{ selectedList.length }} more selected</ng-template
-          >
-        </nz-form-control>
-        <div nz-col nzSpan="6">
-          <button nz-button nzType="primary" (click)="onSubmit()" class="mr-4">
-            Search
-          </button>
-          <button nz-button (click)="resetForm()" class="mr-4">Clear</button>
-          <button nz-button (click)="exportexcel()">Save</button>
-        </div>
+        <nz-form-item class="col-span-2">
+          <button nz-button (click)="reset.emit()" class="mr-4">Clear</button>
+          <button nz-button (click)="excel.emit()">Save</button>
+        </nz-form-item>
       </div>
     </form>
   `,
 })
-export class SearchFilterComponent {
-  @Output() search: EventEmitter<any> = new EventEmitter();
-  @Output() excel: EventEmitter<any> = new EventEmitter();
+export class SearchFilterComponent implements OnInit {
+  @Input() listOfEvent: { label: string; value: number; groupLabel: string }[];
+  @Input() userList: { _id: number; Name: string }[];
+  @Output() reset: EventEmitter<null> = new EventEmitter();
+  @Output() excel: EventEmitter<null> = new EventEmitter();
+  @Output() addUser: EventEmitter<string> = new EventEmitter();
+  public filterForm: FormGroup;
 
-  public onClick(data): void {
-    this.click.emit(data);
+  constructor(private controlContainer: ControlContainer) {}
+
+  public ngOnInit(): void {
+    this.filterForm = this.controlContainer.control as FormGroup;
   }
 }

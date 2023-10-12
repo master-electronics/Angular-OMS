@@ -19,15 +19,6 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
     <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
       <h1 class="text-4xl">Select One Receipt Line:</h1>
       <table-view [data]="this.createreceipt.linesInfo">
-        <ng-template #headers>
-          <th
-            *ngFor="let header of listOfColumn"
-            [nzSortFn]="header.compare"
-            [nzSortPriority]="header.priority"
-          >
-            {{ header.title }}
-          </th>
-        </ng-template>
         <ng-template #rows let-row>
           <td class="select-none" *ngFor="let node of row | keyvalue">
             {{ node.value }}
@@ -52,46 +43,6 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
   `,
 })
 export class LineSelecterComponent implements OnInit {
-  public listOfColumn = [
-    {
-      title: 'DueDate',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'LineNumber',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'ProductCode',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'PartNumber',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'VendorName',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'QuantityOnOrder',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: 'QuantityReceived',
-      compare: (a: string, b: string) => a.localeCompare(b),
-      priority: false,
-    },
-    {
-      title: ' ',
-    },
-  ];
   constructor(
     private _router: Router,
     private _actRoute: ActivatedRoute,

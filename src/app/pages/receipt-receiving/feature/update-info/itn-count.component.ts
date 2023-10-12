@@ -43,7 +43,7 @@ import { of } from 'rxjs';
 export class ItnCountComponent {
   data$;
   inputForm = new FormGroup({
-    itnCount: new FormControl<number>(null, [
+    itnCount: new FormControl<number>(1, [
       Validators.required,
       Validators.min(1),
     ]),
@@ -61,7 +61,7 @@ export class ItnCountComponent {
     if (this.inputForm.invalid) {
       return;
     }
-    this.itnCount.update(this.inputForm.get('itnCount').value);
+    this.itnCount.update(Math.trunc(this.inputForm.get('itnCount').value));
     this.router.navigate(['../../label/assign'], { relativeTo: this.actRoute });
   }
 }

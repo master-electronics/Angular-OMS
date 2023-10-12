@@ -22,6 +22,14 @@ query fetchEventLog(
   }
 }
 
+query fetchEventType {
+  findEventType {
+    _id
+    Module
+    Event
+  }
+}
+
 query fetchTaskCounter(
   $Module: String!
   $startDate: String!

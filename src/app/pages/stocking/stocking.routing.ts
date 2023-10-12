@@ -7,6 +7,7 @@ import { SortLocationResolver } from './utils/resolver/location.resolver';
 import { StockingGuard } from './utils/stocking.guard';
 import { ItnInfoService } from './data/itn-info.service';
 import { UserItnListResolver } from './utils/resolver/user-itnlist.resolver';
+import { MoveItnService } from './data/move-to-personal.service';
 
 export const StockingRoutes: Routes = [
   {
@@ -15,6 +16,7 @@ export const StockingRoutes: Routes = [
       SortingService,
       StockingService,
       ItnInfoService,
+      MoveItnService,
       SuggestLocationsService,
     ],
     canActivateChild: [StockingGuard],
@@ -92,6 +94,13 @@ export const StockingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/stocking/user-itnlist.component').then(
             (m) => m.UserItnlistComponent
+          ),
+      },
+      {
+        path: 'movetouser',
+        loadComponent: () =>
+          import('./feature/move-to-user.component').then(
+            (m) => m.MoveToUserComponent
           ),
       },
     ],

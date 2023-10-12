@@ -59,6 +59,11 @@ export class MenuComponent implements OnInit {
       link: 'itnlifecycle',
       discription: 'The life of every ITN worked each day',
     },
+    {
+      title: 'Adjustment View',
+      link: 'adjustmentview',
+      discription: 'Show all of audit quantity.',
+    },
   ];
 
   constructor(

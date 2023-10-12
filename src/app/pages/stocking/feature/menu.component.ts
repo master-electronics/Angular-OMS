@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
         <a class="" routerLink="/stocking/itn">Sorting</a>
         <a class="" routerLink="/stocking/scantarget">Stocking</a>
         <a class="" routerLink="/stocking/user">Personal ITNs</a>
+        <a class="" routerLink="/stocking/movetouser">Move to Personal</a>
       </div>
     </div>
   `,
