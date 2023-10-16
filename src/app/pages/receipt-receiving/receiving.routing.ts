@@ -85,7 +85,7 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'part/selectLine',
+        path: 'part/selectline',
         loadComponent: () =>
           import('./feature/verify/selectLine.component').then(
             (m) => m.SelectLineComponent

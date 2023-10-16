@@ -288,7 +288,7 @@ export class ReceiptInfoService {
           );
         }),
         switchMap(() => {
-          const line = this._receiptLsAfterQuantity[0];
+          const line = this.receiptLsAfterQuantity[0];
           this._log.updateReceivingLog({
             UserEventID: sqlData.Event_Receiving_OverReceiving,
             ReceiptLine: line.LineNumber,
@@ -310,6 +310,7 @@ export class ReceiptInfoService {
                 line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
                   .PurchaseOrderNumber,
               PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+              Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
             }),
           });
           return this._insertLog.mutate({
