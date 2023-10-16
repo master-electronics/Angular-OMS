@@ -4,6 +4,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as XLSX from 'xlsx';
 import {
+  debounceTime,
   filter,
   map,
   pairwise,
@@ -80,6 +81,8 @@ export class EventLogComponent implements OnInit {
 
     formChange$
       .pipe(
+        takeUntilDestroyed(),
+        debounceTime(500),
         filter(
           (res) => res[0]?.events?.toString() !== res[1]?.events?.toString()
         ),
@@ -100,6 +103,7 @@ export class EventLogComponent implements OnInit {
 
     formChange$
       .pipe(
+        takeUntilDestroyed(),
         filter(
           (res) => res[0]?.filter?.toString() !== res[1]?.filter?.toString()
         ),

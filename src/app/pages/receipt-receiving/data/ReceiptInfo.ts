@@ -259,11 +259,11 @@ export class ReceiptInfoService {
    * OverReceivingInfo$
    */
   public LineInfoForOverReceiving() {
-    return this.receiptLsAfterQuantity.map((line) => ({
+    return this.lineAfterPart.map((line) => ({
       id: line._id,
       LineNumber: line.LineNumber,
       Quantity: line.ExpectedQuantity,
-      PartNumber: line.Part.PartNumber,
+      PartNumber: line.Product.PartNumber,
       PurchaseOrderNumber:
         line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
       QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
@@ -289,7 +289,8 @@ export class ReceiptInfoService {
         }),
         switchMap(() => {
           const line = this.receiptLsAfterQuantity[0];
-          this._log.updateReceivingLog({
+          const oldLogs = {
+            ...this._log.receivingLog,
             UserEventID: sqlData.Event_Receiving_OverReceiving,
             ReceiptLine: line.LineNumber,
             Quantity: line.ExpectedQuantity,
@@ -298,8 +299,8 @@ export class ReceiptInfoService {
                 .PurchaseOrderNumber,
             PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
             Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
-          });
-          this._eventLog.updateEventLog({
+          };
+          const eventLogs = {
             ...this._eventLog.eventLog,
             EventTypeID: sqlData.Event_Receiving_OverReceiving,
             Log: JSON.stringify({
@@ -312,10 +313,10 @@ export class ReceiptInfoService {
               PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
               Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
             }),
-          });
+          };
           return this._insertLog.mutate({
-            oldLogs: this._log.receivingLog,
-            eventLogs: this._eventLog.eventLog,
+            oldLogs,
+            eventLogs,
           });
         })
       );
