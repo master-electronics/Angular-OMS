@@ -1,9 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestAll,
+  map,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
+  OverReceivingUpdateReceiptLGQL,
   SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -22,6 +31,7 @@ export class ReceiptInfoService {
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
     private _checkHeader: CheckReceiptHeaderGQL,
     private _suspect: SuspectInventoryGQL,
+    private _updateReceiptLine: OverReceivingUpdateReceiptLGQL,
     private _log: LogService,
     private _eventLog: EventLogService,
     private _insertLog: Create_EventLogsGQL,
@@ -246,6 +256,71 @@ export class ReceiptInfoService {
   }
 
   /**
+   * OverReceivingInfo$
+   */
+  public LineInfoForOverReceiving() {
+    return this.receiptLsAfterQuantity.map((line) => ({
+      id: line._id,
+      LineNumber: line.LineNumber,
+      Quantity: line.ExpectedQuantity,
+      PartNumber: line.Part.PartNumber,
+      PurchaseOrderNumber:
+        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
+      QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
+    }));
+  }
+
+  public updateQuanityForOverReceiving$(quantity: number, AuthName: string) {
+    let prevQuantity;
+    return this._updateReceiptLine
+      .mutate({
+        _id: this.receiptLsAfterQuantity[0]._id,
+        ExpectedQuantity: quantity,
+      })
+      .pipe(
+        tap(() => {
+          prevQuantity = this.receiptLsAfterQuantity[0].ExpectedQuantity;
+          this._receiptLsAfterQuantity.next(
+            this.receiptLsAfterQuantity.map((line) => ({
+              ...line,
+              ExpectedQuantity: quantity,
+            }))
+          );
+        }),
+        switchMap(() => {
+          const line = this._receiptLsAfterQuantity[0];
+          this._log.updateReceivingLog({
+            UserEventID: sqlData.Event_Receiving_OverReceiving,
+            ReceiptLine: line.LineNumber,
+            Quantity: line.ExpectedQuantity,
+            PurchaseOrderNumber:
+              line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
+                .PurchaseOrderNumber,
+            PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+            Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
+          });
+          this._eventLog.updateEventLog({
+            ...this._eventLog.eventLog,
+            EventTypeID: sqlData.Event_Receiving_OverReceiving,
+            Log: JSON.stringify({
+              ...JSON.parse(this._eventLog.eventLog.Log),
+              ReceiptLine: line.LineNumber,
+              ExpectedQuantity: line.ExpectedQuantity,
+              PurchaseOrderNumber:
+                line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
+                  .PurchaseOrderNumber,
+              PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+            }),
+          });
+          return this._insertLog.mutate({
+            oldLogs: this._log.receivingLog,
+            eventLogs: this._eventLog.eventLog,
+          });
+        })
+      );
+  }
+
+  /**
    * filterByQuantity
    */
   public filterByQuantity(Quantity: number): void {
@@ -253,6 +328,18 @@ export class ReceiptInfoService {
       (res) => res.ExpectedQuantity === Quantity
     );
     this._receiptLsAfterQuantity.next(tmp);
+  }
+
+  /**
+   * filterByOverReceiving
+   */
+  public filterByOverReceiving(id?: number) {
+    if (!id) {
+      this._receiptLsAfterQuantity.next(this.lineAfterPart);
+    } else {
+      const selected = this.lineAfterPart.filter((res) => res._id === id);
+      this._receiptLsAfterQuantity.next(selected);
+    }
   }
 
   /**

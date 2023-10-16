@@ -23,6 +23,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     ReactiveFormsModule,
     SimpleKeyboardComponent,
     MessageBarComponent,
+    RedButtonComponent,
   ],
   template: `
     <single-input-form
@@ -39,17 +40,17 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     >
       <ng-container *ngIf="data$ | async as error">
         <message-bar
-          class="col-span-2"
+          class="col-span-3"
           [message]="error.error.message"
           [name]="error.error.name"
         ></message-bar>
+
+        <red-button
+          (buttonClick)="overRece()"
+          buttonText="OverReceiving"
+        ></red-button>
       </ng-container>
     </div>
-    <!-- <simple-keyboard
-      [inputString]="inputForm.value.quantity"
-      layout="number"
-      (outputString)="onChange($event)"
-    ></simple-keyboard> -->
   `,
 })
 export class QuantityComponent implements OnInit {
@@ -89,6 +90,15 @@ export class QuantityComponent implements OnInit {
         name: `warning`,
       },
     });
+  }
+
+  public overRece(): void {
+    if (this._receipt.lineAfterPart.length === 1) {
+      this._receipt.filterByOverReceiving();
+      this._router.navigateByUrl('/receiptreceiving/overreceiving');
+      return;
+    }
+    this._router.navigateByUrl('receiptreceiving/part/selectline');
   }
 
   public onBack(): void {

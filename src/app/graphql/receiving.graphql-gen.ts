@@ -2161,6 +2161,7 @@ export type ReceiptL = {
   DateCode?: Maybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Float'];
   LineNumber: Scalars['Int'];
+  OverReceiving: Scalars['Boolean'];
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -2879,6 +2880,7 @@ export type SearchReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
@@ -3070,6 +3072,7 @@ export type UpdateReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;

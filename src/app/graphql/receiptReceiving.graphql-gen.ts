@@ -2161,6 +2161,7 @@ export type ReceiptL = {
   DateCode?: Maybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Float'];
   LineNumber: Scalars['Int'];
+  OverReceiving: Scalars['Boolean'];
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -2879,6 +2880,7 @@ export type SearchReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
@@ -3070,6 +3072,7 @@ export type UpdateReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
@@ -3232,6 +3235,16 @@ export type FindPartForReceivingQuery = {
     PartNumber: string;
     ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
   } | null> | null;
+};
+
+export type OverReceivingUpdateReceiptLMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  ExpectedQuantity: Types.Scalars['Float'];
+}>;
+
+export type OverReceivingUpdateReceiptLMutation = {
+  __typename?: 'Mutation';
+  updateReceiptLsByID?: Array<number | null> | null;
 };
 
 export type ReceivingUpdateReceiptLMutationVariables = Types.Exact<{
@@ -3541,6 +3554,28 @@ export class FindPartForReceivingGQL extends Apollo.Query<
   FindPartForReceivingQueryVariables
 > {
   document = FindPartForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const OverReceivingUpdateReceiptLDocument = gql`
+  mutation OverReceivingUpdateReceiptL($_id: Int!, $ExpectedQuantity: Float!) {
+    updateReceiptLsByID(
+      ReceiptL: { ExpectedQuantity: $ExpectedQuantity, OverReceiving: true }
+      idList: [$_id]
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class OverReceivingUpdateReceiptLGQL extends Apollo.Mutation<
+  OverReceivingUpdateReceiptLMutation,
+  OverReceivingUpdateReceiptLMutationVariables
+> {
+  document = OverReceivingUpdateReceiptLDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
