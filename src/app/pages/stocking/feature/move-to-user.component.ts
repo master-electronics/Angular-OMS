@@ -44,9 +44,13 @@ export class MoveToUserComponent {
     if (this.inputForm.invalid) {
       return;
     }
-    this.data$ = this._move.moveItnToPersonal$(this.inputForm.value.itn).pipe(
+    const itn = this.inputForm.value.itn.trim();
+    this.data$ = this._move.moveItnToPersonal$(itn).pipe(
       map(() => ({
-        error: { message: `Move `, name: 'sucess' },
+        error: {
+          message: `Move ${itn} to Personal Container.`,
+          name: 'success',
+        },
       })),
       catchError((error) => {
         return of({

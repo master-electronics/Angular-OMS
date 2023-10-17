@@ -33,9 +33,15 @@ export const ReceiptGuard: CanActivateChildFn = (
     case '/receiptreceiving/part/quantity':
       isActive = _receipt.lineAfterPart !== null;
       break;
-      // case '/receiptreceiving/kickout':
-      //   isActive = _receipt.lineAfterPart !== null;
+    case '/receiptreceiving/part/selectline':
+      isActive = _receipt.lineAfterPart !== null;
       break;
+    case '/receiptreceiving/overreceiving':
+      isActive = _receipt.receiptLsAfterQuantity !== null;
+      break;
+    // case '/receiptreceiving/kickout':
+    //   isActive = _receipt.lineAfterPart !== null;
+    // break;
     case '/receiptreceiving/update/country':
       isActive = _receipt.receiptLsAfterQuantity !== null;
       break;

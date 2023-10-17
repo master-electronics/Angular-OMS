@@ -3,8 +3,18 @@ import { Component, OnInit, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as XLSX from 'xlsx';
-import { map, tap } from 'rxjs';
 import {
+  debounceTime,
+  filter,
+  map,
+  pairwise,
+  shareReplay,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
+import {
+  FetchCommonvariablesForLogsGQL,
   FetchEventLogGQL,
   FetchEventTypeGQL,
 } from 'src/app/graphql/tableView.graphql-gen';
@@ -31,6 +41,7 @@ import { EventLogService } from '../data-access/event-logs.service';
       [formGroup]="defaultFilter"
       [userList]="server.filterUser()"
       [listOfEvent]="server.listOfEvent()"
+      [listOfFilter]="server.listOfFilter()"
       (excel)="exportexcel()"
       (addUser)="addUser($event)"
     ></search-filter>
@@ -47,8 +58,9 @@ export class EventLogComponent implements OnInit {
   public data$;
   public defaultFilter = this._fb.group({
     user: [''],
-    timeRange: [[]],
-    events: [[]],
+    timeRange: [],
+    events: [],
+    filter: [],
   });
 
   constructor(
@@ -57,15 +69,46 @@ export class EventLogComponent implements OnInit {
     private _fb: NonNullableFormBuilder,
     private _fetchUser: FetchUserInfoGQL,
     private _fetchEvents: FetchEventTypeGQL,
+    private _commonVariables: FetchCommonvariablesForLogsGQL,
     public server: EventLogService
   ) {
-    this.defaultFilter.valueChanges
+    const formChange$ = this.defaultFilter.valueChanges.pipe(
+      takeUntilDestroyed(),
+      startWith(null),
+      pairwise(),
+      shareReplay()
+    );
+
+    formChange$
       .pipe(
         takeUntilDestroyed(),
+        debounceTime(500),
+        filter(
+          (res) => res[0]?.events?.toString() !== res[1]?.events?.toString()
+        ),
+        switchMap((res) => {
+          return this._commonVariables.fetch({ events: res[1].events });
+        }),
         map((res) => {
-          if (res.events) {
-            this.formData.setJsonForm(this.server.setFilter(res.events));
-          }
+          return res.data.fetchCommonvariablesForLogs.map((title) => ({
+            label: title,
+            value: title,
+          }));
+        }),
+        map((res) => {
+          this.server.setListOfFilter(res);
+        })
+      )
+      .subscribe();
+
+    formChange$
+      .pipe(
+        takeUntilDestroyed(),
+        filter(
+          (res) => res[0]?.filter?.toString() !== res[1]?.filter?.toString()
+        ),
+        map((res) => {
+          this.formData.setJsonForm(this.server.setFilterList(res[1].filter));
         })
       )
       .subscribe();
@@ -118,17 +161,30 @@ export class EventLogComponent implements OnInit {
     if (Object.keys(output).length !== 0) {
       Log = JSON.stringify(output);
     }
-
+    let timeFrame;
+    if (this.defaultFilter.value.timeRange) {
+      timeFrame = [
+        this.defaultFilter.value.timeRange[0]
+          .setUTCHours(0, 0, 0, 0)
+          .toString(),
+        this.defaultFilter.value.timeRange[1]
+          .setUTCHours(23, 59, 59, 999)
+          .toString(),
+      ];
+    }
     this.data$ = this._log
       .fetch({
         Log,
         limit: 500,
         UserName: this.defaultFilter.value.user,
         eventIdList: this.defaultFilter.value.events,
-        timeFrame: this.defaultFilter.value.timeRange,
+        timeFrame,
       })
       .pipe(
         map((res) => {
+          if (!res.data.findEventLogs) {
+            return null;
+          }
           const keySet = new Set<string>();
           const result = res.data.findEventLogs.map((res) => {
             const log = JSON.parse(res.Log);

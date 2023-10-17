@@ -23,7 +23,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     <form nz-form [formGroup]="filterForm">
       <div class="grid grid-cols-10 gap-3">
         <!-- Event selector -->
-        <nz-form-item class="col-span-4 ">
+        <nz-form-item class="col-span-3 ">
           <nz-form-control *ngIf="listOfEvent as list">
             <nz-select
               nzMode="multiple"
@@ -38,8 +38,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
             >
           </nz-form-control>
         </nz-form-item>
-        <!-- Event selector -->
-        <nz-form-item class="col-span-2" *ngIf="userList">
+        <!-- User selector -->
+        <nz-form-item class="col-span-1" *ngIf="userList">
           <nz-form-control>
             <nz-select
               nzAllowClear
@@ -64,17 +64,32 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
             </ng-template>
           </nz-form-control>
         </nz-form-item>
-        <!-- Event selector -->
+        <!-- time selector -->
         <nz-form-item class="col-span-2">
           <nz-form-control>
-            <nz-range-picker
-              [nzShowTime]="true"
-              formControlName="timeRange"
-            ></nz-range-picker>
+            <nz-range-picker formControlName="timeRange"></nz-range-picker>
           </nz-form-control>
         </nz-form-item>
 
-        <nz-form-item class="col-span-2">
+        <!-- Event selector -->
+        <nz-form-item class="col-span-3 ">
+          <nz-form-control *ngIf="listOfFilter as list">
+            <nz-select
+              nzMode="multiple"
+              nzPlaceHolder="Select Filters"
+              nzAllowClear
+              formControlName="filter"
+              [nzOptions]="list"
+            >
+            </nz-select>
+            <ng-template #tagPlaceHolder let-selectedList
+              >and {{ selectedList.length }} more selected</ng-template
+            >
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Button Area -->
+        <nz-form-item class="col-span-1">
           <button nz-button (click)="reset.emit()" class="mr-4">Clear</button>
           <button nz-button (click)="excel.emit()">Save</button>
         </nz-form-item>
@@ -85,6 +100,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 export class SearchFilterComponent implements OnInit {
   @Input() listOfEvent: { label: string; value: number; groupLabel: string }[];
   @Input() userList: { _id: number; Name: string }[];
+  @Input() listOfFilter: { label: string; value: string }[];
   @Output() reset: EventEmitter<null> = new EventEmitter();
   @Output() excel: EventEmitter<null> = new EventEmitter();
   @Output() addUser: EventEmitter<string> = new EventEmitter();

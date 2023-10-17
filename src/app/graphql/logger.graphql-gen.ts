@@ -1590,6 +1590,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchCommonvariablesForLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1704,6 +1705,10 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchCommonvariablesForLogsArgs = {
+  events?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type QueryFetchDataColumnListArgs = {
@@ -2156,6 +2161,7 @@ export type ReceiptL = {
   DateCode?: Maybe<Scalars['String']>;
   ExpectedQuantity: Scalars['Float'];
   LineNumber: Scalars['Int'];
+  OverReceiving: Scalars['Boolean'];
   Product: Product;
   ProductID: Scalars['Int'];
   RECEIPTLDs?: Maybe<Array<Maybe<ReceiptLd>>>;
@@ -2874,6 +2880,7 @@ export type SearchReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;
@@ -3065,6 +3072,7 @@ export type UpdateReceiptL = {
   DateCode?: InputMaybe<Scalars['String']>;
   ExpectedQuantity?: InputMaybe<Scalars['Float']>;
   LineNumber?: InputMaybe<Scalars['Int']>;
+  OverReceiving?: InputMaybe<Scalars['Boolean']>;
   ProductID?: InputMaybe<Scalars['Int']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   ReceiptHID?: InputMaybe<Scalars['Int']>;

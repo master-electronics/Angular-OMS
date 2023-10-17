@@ -85,6 +85,20 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
+        path: 'part/selectline',
+        loadComponent: () =>
+          import('./feature/verify/selectLine.component').then(
+            (m) => m.SelectLineComponent
+          ),
+      },
+      {
+        path: 'overreceiving',
+        loadComponent: () =>
+          import('./feature/verify/overReceiving.component').then(
+            (m) => m.OverReceivingComponent
+          ),
+      },
+      {
         path: 'part/quantity',
         loadComponent: () =>
           import('./feature/verify/quantity.component').then(

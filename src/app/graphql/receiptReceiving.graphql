@@ -110,6 +110,13 @@ query findPartForReceiving($PartNumber: String!) {
   }
 }
 
+mutation OverReceivingUpdateReceiptL($_id: Int!, $ExpectedQuantity: Float!) {
+  updateReceiptLsByID(
+    ReceiptL: { ExpectedQuantity: $ExpectedQuantity, OverReceiving: true }
+    idList: [$_id]
+  )
+}
+
 mutation ReceivingUpdateReceiptL(
   $idList: [Int]!
   $CountryID: Int!
