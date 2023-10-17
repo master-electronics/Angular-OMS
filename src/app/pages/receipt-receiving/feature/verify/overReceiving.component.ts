@@ -30,11 +30,12 @@ import { OverReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving
   ],
   template: `
     <!-- Receipt Line infomation -->
-    <div class="grid grid-cols-4 text-2xl">
+    <div class="grid grid-cols-5 text-2xl">
       <h1>LineNumber: {{ receipt.receiptLsAfterQuantity[0].LineNumber }}</h1>
       <h1>
         Quantity: {{ receipt.receiptLsAfterQuantity[0].ExpectedQuantity }}
       </h1>
+      <h1>UOM: {{ receipt.UoM() }}</h1>
       <h1>
         PurchaseNumber:
         {{
@@ -43,11 +44,8 @@ import { OverReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving
         }}
       </h1>
       <h1>
-        QuantityOnOrder:
-        {{
-          receipt.receiptLsAfterQuantity[0].RECEIPTLDs[0].PurchaseOrderL
-            .QuantityOnOrder
-        }}
+        Part:
+        {{ receipt.receiptLsAfterQuantity[0].Product.PartNumber }}
       </h1>
     </div>
     <!-- Quantity input form -->
@@ -91,7 +89,7 @@ export class OverReceivingComponent implements OnInit {
 
   onSubmit() {
     this.authWindow = true;
-    this.message = `Over Receving Quantity: ${this.inputForm.value.quantity}`;
+    this.message = `Over Receipt Quantity: ${this.inputForm.value.quantity}`;
   }
 
   nextPage(name): void {
@@ -107,6 +105,6 @@ export class OverReceivingComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/part/selectline');
+    this._router.navigateByUrl('receiptreceiving/part/quantity');
   }
 }

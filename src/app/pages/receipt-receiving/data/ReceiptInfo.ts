@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -185,6 +185,7 @@ export class ReceiptInfoService {
   /**
    * fetch Part Info
    */
+  UoM = signal('');
   public findVerifyInfo() {
     return this._lineAfterPart.pipe(
       switchMap((line) => {
@@ -195,6 +196,9 @@ export class ReceiptInfoService {
           })
           .pipe(
             map((info) => {
+              this.UoM.set(
+                line[0].RECEIPTLDs[0].PurchaseOrderL.UnitOfMeasure || ''
+              );
               return {
                 ProductID: line[0].Product.ProductID,
                 ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
@@ -202,7 +206,7 @@ export class ReceiptInfoService {
                 MIC: `${environment.productImgSource}${info.data.fetchProductMICFromMerp}.jpg`,
                 message: info.data.fetchPartMessage.comments,
                 kitInfo: '',
-                UoM: line[0].RECEIPTLDs[0].PurchaseOrderL.UnitOfMeasure || '',
+                UoM: this.UoM(),
               };
             })
           );

@@ -47,7 +47,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
         <red-button
           (buttonClick)="overRece()"
-          buttonText="OverReceiving"
+          buttonText="Over Receipt"
         ></red-button>
       </ng-container>
     </div>
