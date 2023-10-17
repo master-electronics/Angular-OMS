@@ -54,6 +54,15 @@ export class ScanItnComponent implements OnInit {
      * Then go to location page.
      */
     const itnInfo = this._stock.verifiedItns().find((itn) => itn.ITN === input);
+    if (
+      this._stock.checkedItns() &&
+      this._stock.checkedItns().some((info) => info.ITN === input)
+    ) {
+      this.data$ = of({
+        error: { message: 'This ITN has been put away.', name: 'warning' },
+      });
+      return;
+    }
     if (itnInfo) {
       this.data$ = this._stock.verifyITN$(input).pipe(
         map(() => {

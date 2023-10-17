@@ -84,7 +84,7 @@ export class StockingService {
     this._state.set({
       ITNList: [ITN],
       verifiedItns: [ITN],
-      checkedItns: [],
+      checkedItns: null,
     });
   }
 
@@ -227,18 +227,19 @@ export class StockingService {
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
   public addVerifiedItns(itn: ItnInfo) {
-    const tmp = this.verifiedItns();
-    if (!tmp?.length) {
+    if (!this.verifiedItns()?.length) {
       this._state.update((state) => ({
         ...state,
         verifiedItns: [itn],
       }));
       return;
     }
-    tmp.push(itn);
+    if (this.verifiedItns().some((info) => info.ITN === itn.ITN)) {
+      return;
+    }
     this._state.update((state) => ({
       ...state,
-      verifiedItns: [...new Set(tmp)],
+      verifiedItns: [...this.verifiedItns(), itn],
     }));
   }
 
@@ -246,18 +247,19 @@ export class StockingService {
    * checkedItns should be a set of itn object. not dupicate elements.
    */
   public addCheckedItns(itn: ItnInfo) {
-    const tmp = this.checkedItns();
-    if (!tmp?.length) {
+    if (!this.checkedItns()?.length) {
       this._state.update((state) => ({
         ...state,
         checkedItns: [itn],
       }));
       return;
     }
-    tmp.push(itn);
+    if (this.checkedItns().some((info) => info.ITN === itn.ITN)) {
+      return;
+    }
     this._state.update((state) => ({
       ...state,
-      checkedItns: [...new Set(tmp)],
+      checkedItns: [...this.checkedItns(), itn],
     }));
   }
 
