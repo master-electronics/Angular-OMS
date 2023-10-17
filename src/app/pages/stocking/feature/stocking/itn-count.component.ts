@@ -53,6 +53,7 @@ export class ITNCountComponent implements OnInit {
 
   ngOnInit(): void {
     this.data$ = of(true);
+    this._stock.resetVerifiedAndChecked();
     this.audio.load();
   }
 

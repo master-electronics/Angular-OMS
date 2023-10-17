@@ -24,7 +24,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
   template: `
     <single-input-form
       (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
+      (formBack)="back()"
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="location"
@@ -91,7 +91,7 @@ export class PutAwayComponent implements OnInit {
     );
   }
 
-  onBack(): void {
-    // this._router.navigate(['../'], { relativeTo: this._actRoute });
+  back(): void {
+    this._router.navigate(['../itncount'], { relativeTo: this._actRoute });
   }
 }

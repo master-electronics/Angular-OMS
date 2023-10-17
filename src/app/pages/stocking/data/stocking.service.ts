@@ -89,6 +89,17 @@ export class StockingService {
   }
 
   /**
+   * resetVerifiedAndChecked
+   */
+  public resetVerifiedAndChecked() {
+    this._state.set({
+      ITNList: JSON.parse(this._sessionStorage.getItem('stockingItnList')),
+      verifiedItns: null,
+      checkedItns: null,
+    });
+  }
+
+  /**
    * moveItnToUser: If user scan ITN, move this ITN to user container.
    */
   public moveItnToUser(ITN: string): Observable<any> {
