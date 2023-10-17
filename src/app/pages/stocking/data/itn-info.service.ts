@@ -1,5 +1,5 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import {
   VerifyContainerForSortingGQL,
   VerifyItnForSortingGQL,
@@ -50,9 +50,10 @@ export class ItnInfoService {
   /**
    *
    * @param Barcode destination barcode verify the barcode is valid
+   * If pass the verifacation, set ItnInfo's barcode as new location
    * @returns
    */
-  public verifyPutawayBarcode(Barcode: string) {
+  public verifyPutawayBarcode$(Barcode: string) {
     return this._verifyContainer
       .fetch(
         { Barcode, DistributionCenter: environment.DistributionCenter },
@@ -63,14 +64,19 @@ export class ItnInfoService {
           if (!res.data.findContainer._id) {
             throw new Error('Container not found!');
           }
-          this.itnInfo.mutate((info) => (info.BinLocation = Barcode));
+        }),
+        map(() => {
+          this.itnInfo.update((info) => ({
+            ...info,
+            BinLocation: Barcode,
+          }));
         })
       );
   }
 
   /**
    *
-   * @param ITN
+   * @param ITN verify the ITN, then store current ITN's to session storge
    * @returns
    */
   public verifyITN$(ITN: string) {

@@ -4,10 +4,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { ItnListComponent } from '../../ui/itn-list.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ItnListComponent, SubmitButtonComponent],
+  imports: [
+    CommonModule,
+    ItnListComponent,
+    SubmitButtonComponent,
+    NormalButtonComponent,
+  ],
   template: `
     <h1 class=" text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
       Personal Location Contents
@@ -20,6 +26,8 @@ import { ItnListComponent } from '../../ui/itn-list.component';
         buttonText="Continue"
         (buttonClick)="onSubmit()"
       ></submit-button>
+      <div></div>
+      <normal-button buttonText="Back" (buttonClick)="back()"> </normal-button>
     </div>
   `,
 })
@@ -30,6 +38,10 @@ export class UserItnlistComponent {
   }
 
   onSubmit(): void {
+    this._router.navigate(['../scantarget'], { relativeTo: this._actRoute });
+  }
+
+  back(): void {
     this._router.navigate(['../'], { relativeTo: this._actRoute });
   }
 }

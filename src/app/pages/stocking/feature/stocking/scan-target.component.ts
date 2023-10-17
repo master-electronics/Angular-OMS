@@ -50,6 +50,7 @@ export class ScanTargetComponent implements OnInit {
     this._title.update('Stocking');
     this.data$ = this._actRoute.data.pipe(map((res) => res.containerID));
     this._stock.reset();
+    this._itn.reset();
   }
 
   onSubmit(): void {

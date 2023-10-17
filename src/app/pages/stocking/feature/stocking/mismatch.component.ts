@@ -71,13 +71,12 @@ export class MismatchComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const input = this.inputForm.value.itn;
+    const input = this.inputForm.value.itn.trim();
     this.inputForm.patchValue({ itn: '' });
     const itnInfo = this._stock.ITNList().find((itn) => itn.ITN === input);
     // IF ITN not in the list, popout a windown, then move this itn to user container
     if (!itnInfo) {
-      this.message =
-        'This ITN is not found, do you want to move it to your personal container?';
+      this.message = `${input} is not found, do you want to move it to your personal container?`;
       return;
     }
     // If itn in the list, move this itn from unverified to verified list.
@@ -95,17 +94,19 @@ export class MismatchComponent implements OnInit {
       switchMap(() => {
         return this._stock.moveItnToUser(itn);
       }),
+      tap(() => (this.message = null)),
       map(() => ({
         error: {
           message: `${itn} is not found in the working location,  It has been moved to your personal location.`,
           name: `warning`,
         },
       })),
-      catchError((error) =>
-        of({
+      catchError((error) => {
+        this.message = null;
+        return of({
           error: { message: error.message, name: 'error' },
-        })
-      )
+        });
+      })
     );
   }
 
@@ -133,11 +134,16 @@ export class MismatchComponent implements OnInit {
       this.notFound();
       return;
     }
-    this.moveItnToUser(this.message.substring(0, 8));
+    this.moveItnToUser(this.message.substring(0, 10));
   }
 
   notFound(): void {
-    this.data$ = this._stock.addNotFoundFlag$(this._stock.verifiedItns()).pipe(
+    const notFound = this._stock.ITNList().filter((total) => {
+      return !this._stock
+        .verifiedItns()
+        .some((verify) => verify.ITN === total.ITN);
+    });
+    this.data$ = this._stock.addNotFoundFlag$(notFound).pipe(
       map(() => {
         // check if current location is empty, back to first page.
         let url = '../checkitns';

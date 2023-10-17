@@ -24,7 +24,7 @@ import { StockingService } from '../../../data/stocking.service';
       [data]="data$ | async"
       [formGroup]="inputForm"
       controlName="itn"
-      title="Scan ITN: {{ _stock.checkedItns()?.length + 1 }} of {{
+      title="Scan ITN: {{ _stock.checkedItnsLength() + 1 }} of {{
         _stock.verifiedItns().length
       }}"
     ></single-input-form>

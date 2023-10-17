@@ -53,7 +53,7 @@ export class RescanItnComponent implements OnInit {
       return;
     }
     // if equal move itn to destination, then push itn to checked itn list.
-    this.data$ = this._stock.putAway$(input).pipe(
+    this.data$ = this._stock.putAway$().pipe(
       map(() => {
         if (
           this._stock.verifiedItns()?.length !==

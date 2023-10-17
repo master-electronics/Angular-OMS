@@ -57,7 +57,8 @@ export class ITNCountComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (Number(this.inputForm.value.itn) === this._stock.ITNList.length) {
+    if (Number(this.inputForm.value.itn) === this._stock.ITNList().length) {
+      this._stock.countMatch();
       this._router.navigate(['../checkitns'], {
         relativeTo: this._actRoute,
       });

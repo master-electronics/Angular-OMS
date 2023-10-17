@@ -6,7 +6,6 @@ import { catchError, combineLatest, map, of, shareReplay, tap } from 'rxjs';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ItnInfoService } from '../../../data/itn-info.service';
-import { StockingService } from '../../../data/stocking.service';
 import { StockInfoComponent } from '../../../ui/stock-info.component';
 import { SuggetionLocationComponent } from '../../../ui/suggetion-location.component';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -78,7 +77,7 @@ export class PutAwayComponent implements OnInit {
     const tmp = this.inputForm.value.location;
     const Barcode =
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
-    this.data$ = this._itn.verifyPutawayBarcode(Barcode).pipe(
+    this.data$ = this._itn.verifyPutawayBarcode$(Barcode).pipe(
       map(() => {
         this._router.navigate(['../rescanitn'], {
           relativeTo: this._actRoute,

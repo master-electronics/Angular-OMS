@@ -13,8 +13,6 @@ import {
   MoveInventoryToContainerForStockingGQL,
   UpdateInventoryAfterSortingGQL,
   UpdateNotFoundForStockingGQL,
-  VerifyContainerForSortingGQL,
-  VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
@@ -74,6 +72,9 @@ export class StockingService {
   ITNList = computed(() => this._state().ITNList);
   verifiedItns = computed(() => this._state().verifiedItns);
   checkedItns = computed(() => this._state().checkedItns);
+  checkedItnsLength = computed(() => {
+    return this._state().checkedItns ? this._state().checkedItns.length : 0;
+  });
 
   //reducers
   /**
@@ -83,7 +84,7 @@ export class StockingService {
     this._state.set({
       ITNList: [ITN],
       verifiedItns: [ITN],
-      checkedItns: null,
+      checkedItns: [],
     });
   }
 
@@ -187,7 +188,10 @@ export class StockingService {
             ITNList.length
           );
           // update the ITNList in state.
-          this._state.mutate((state) => (state.ITNList = ITNList));
+          this._state.update((state) => ({
+            ...state,
+            ITNList,
+          }));
           // insert log
           const oldLogs = {
             UserName: this._userInfo.userName,
@@ -210,16 +214,32 @@ export class StockingService {
   }
 
   /**
+   * countMatch If count ITN match, move all stockingITnList to stocking verifiedItns.
+   */
+  public countMatch() {
+    this._state.update((state) => ({
+      ...state,
+      verifiedItns: state.ITNList,
+    }));
+  }
+
+  /**
    * verifiedItns should be a set of itn object. not dupicate elements.
    */
   public addVerifiedItns(itn: ItnInfo) {
     const tmp = this.verifiedItns();
-    if (!tmp.length) {
-      this._state.mutate((state) => (state.verifiedItns = [itn]));
+    if (!tmp?.length) {
+      this._state.update((state) => ({
+        ...state,
+        verifiedItns: [itn],
+      }));
       return;
     }
     tmp.push(itn);
-    this._state.mutate((state) => (state.verifiedItns = [...new Set(tmp)]));
+    this._state.update((state) => ({
+      ...state,
+      verifiedItns: [...new Set(tmp)],
+    }));
   }
 
   /**
@@ -227,12 +247,18 @@ export class StockingService {
    */
   public addCheckedItns(itn: ItnInfo) {
     const tmp = this.checkedItns();
-    if (!tmp.length) {
-      this._state.mutate((state) => (state.checkedItns = [itn]));
+    if (!tmp?.length) {
+      this._state.update((state) => ({
+        ...state,
+        checkedItns: [itn],
+      }));
       return;
     }
     tmp.push(itn);
-    this._state.mutate((state) => (state.checkedItns = [...new Set(tmp)]));
+    this._state.update((state) => ({
+      ...state,
+      checkedItns: [...new Set(tmp)],
+    }));
   }
 
   /**
@@ -320,14 +346,17 @@ export class StockingService {
    * @param Barcode destination barcode
    * @returns
    */
-  public putAway$(Barcode: string) {
+  public putAway$() {
     return this._updateInventory
       .mutate({
         User: this._userInfo.userName,
-        BinLocation: Barcode,
+        BinLocation: this._itn.itnInfo().BinLocation,
         ITN: this._itn.itnInfo().ITN,
       })
       .pipe(
+        tap(() => {
+          this.addCheckedItns(this._itn.itnInfo());
+        }),
         switchMap(() => {
           const oldLogs = {
             UserName: this._userInfo.userName,
@@ -336,14 +365,14 @@ export class StockingService {
             PartNumber: this._itn.itnInfo().PartNumber,
             Quantity: this._itn.itnInfo().QuantityOnHand,
             InventoryTrackingNumber: this._itn.itnInfo().ITN,
-            Message: Barcode,
+            Message: this._itn.itnInfo().BinLocation,
           };
           const eventLogs = {
             ...this._log.eventLog,
             EventTypeID: sqlData.Event_Stocking_StockingRelocation_Location,
             Log: JSON.stringify({
               ...JSON.parse(this._log.eventLog.Log),
-              Target: Barcode,
+              Target: this._itn.itnInfo().BinLocation,
             }),
           };
           return this._insertLog.mutate({ oldLogs, eventLogs });
