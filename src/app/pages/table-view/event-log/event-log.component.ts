@@ -42,6 +42,7 @@ import { EventLogService } from '../data-access/event-logs.service';
       [userList]="server.filterUser()"
       [listOfEvent]="server.listOfEvent()"
       [listOfFilter]="server.listOfFilter()"
+      (reset)="reset()"
       (excel)="exportexcel()"
       (addUser)="addUser($event)"
     ></search-filter>
@@ -72,6 +73,7 @@ export class EventLogComponent implements OnInit {
     private _commonVariables: FetchCommonvariablesForLogsGQL,
     public server: EventLogService
   ) {
+    // Form value change.
     const formChange$ = this.defaultFilter.valueChanges.pipe(
       takeUntilDestroyed(),
       startWith(null),
@@ -79,6 +81,7 @@ export class EventLogComponent implements OnInit {
       shareReplay()
     );
 
+    // when the events input field change, insert Filter stirng to filter input
     formChange$
       .pipe(
         takeUntilDestroyed(),
@@ -101,6 +104,7 @@ export class EventLogComponent implements OnInit {
       )
       .subscribe();
 
+    // when the filter input change, update jsonForm input field;
     formChange$
       .pipe(
         takeUntilDestroyed(),
@@ -205,8 +209,16 @@ export class EventLogComponent implements OnInit {
             delete row.Log;
             return row;
           });
+        }),
+        // save table date to excel
+        tap((res) => {
+          this.ws = XLSX.utils.json_to_sheet(res);
         })
       );
+  }
+
+  reset(): void {
+    this.formData.setJsonForm(null);
   }
 
   // excel export
@@ -218,6 +230,6 @@ export class EventLogComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
 
     /* save to file */
-    XLSX.writeFile(wb, `${this.defaultFilter.value.timeRange[0]}.xlsx`);
+    XLSX.writeFile(wb, `Logs.xlsx`);
   }
 }

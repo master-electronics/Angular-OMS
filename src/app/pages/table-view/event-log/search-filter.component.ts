@@ -90,8 +90,12 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 
         <!-- Button Area -->
         <nz-form-item class="col-span-1">
-          <button nz-button (click)="reset.emit()" class="mr-4">Clear</button>
-          <button nz-button (click)="excel.emit()">Save</button>
+          <button
+            class="mb-2 mr-2 h-10 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200"
+            (click)="excel.emit()"
+          >
+            Save
+          </button>
         </nz-form-item>
       </div>
     </form>

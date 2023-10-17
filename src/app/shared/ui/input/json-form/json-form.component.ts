@@ -23,10 +23,15 @@ import { JsonFormControls, JsonFormData } from './json-form.service';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-4">
+      <div class="mb-4 grid grid-cols-5 gap-4">
         <div *ngFor="let control of jsonFormData?.controls">
-          <label *ngIf="control.label !== ''">{{ control.label }}</label>
+          <label
+            class="mb-2 block text-sm font-medium text-gray-900"
+            *ngIf="control.label !== ''"
+            >{{ control.label }}</label
+          >
           <input
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             *ngIf="
               [
                 'text',
@@ -56,7 +61,12 @@ import { JsonFormControls, JsonFormData } from './json-form.service';
         </div>
       </div>
 
-      <button type="submit">Submit</button>
+      <button
+        class="mb-2 mr-2 h-10 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        type="submit"
+      >
+        Submit
+      </button>
     </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

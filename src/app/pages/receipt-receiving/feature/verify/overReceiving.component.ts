@@ -1,12 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable, map, of } from 'rxjs';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
@@ -15,7 +10,6 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
-import { OverReceivingUpdateReceiptLGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 
 @Component({
   standalone: true,
