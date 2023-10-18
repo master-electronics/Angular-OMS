@@ -115,7 +115,7 @@ export class MismatchComponent implements OnInit {
   }
 
   onDone(): void {
-    const verified = this._stock.verifiedItns().length;
+    const verified = this._stock.verifiedItns()?.length || 0;
     const total = this._stock.ITNList().length;
     if (verified === total) {
       this._router.navigate(['../checkitns'], {
@@ -138,18 +138,21 @@ export class MismatchComponent implements OnInit {
   }
 
   notFound(): void {
-    const notFound = this._stock.ITNList().filter((total) => {
-      return !this._stock
-        .verifiedItns()
-        .some((verify) => verify.ITN === total.ITN);
-    });
+    let notFound;
+    if (!this._stock.verifiedItns()?.length) {
+      notFound = this._stock.ITNList();
+    } else {
+      notFound = this._stock.ITNList().filter((total) => {
+        return !this._stock
+          .verifiedItns()
+          .some((verify) => verify.ITN === total.ITN);
+      });
+    }
     this.data$ = this._stock.addNotFoundFlag$(notFound).pipe(
       map(() => {
         // check if current location is empty, back to first page.
         let url = '../checkitns';
-        if (
-          this._stock.verifiedItns().length === this._stock.ITNList().length
-        ) {
+        if (!this._stock.verifiedItns()?.length) {
           url = '../scantarget';
         }
         this._router.navigate([url], {
@@ -157,7 +160,11 @@ export class MismatchComponent implements OnInit {
         });
       }),
       catchError((error) => {
-        this._router.navigate(['../checkitns'], {
+        let url = '../checkitns';
+        if (!this._stock.verifiedItns()?.length) {
+          url = '../scantarget';
+        }
+        this._router.navigate([url], {
           relativeTo: this._actRoute,
         });
         return of({ error: { message: error.message, name: 'error' } });
