@@ -157,6 +157,9 @@ export class MismatchComponent implements OnInit {
         });
       }),
       catchError((error) => {
+        this._router.navigate(['../checkitns'], {
+          relativeTo: this._actRoute,
+        });
         return of({ error: { message: error.message, name: 'error' } });
       })
     );
