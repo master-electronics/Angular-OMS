@@ -18,6 +18,7 @@ import {
   GetSearchLocationGQL,
   GetSearchLocationsGQL,
   ValidateAssignmentGQL,
+  UpdateLastUpdatedGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -34,7 +35,8 @@ export class AuditService {
     private _findInventory: FindImInventoryGQL,
     private _getSearchLocation: GetSearchLocationGQL,
     private _getSearchLocations: GetSearchLocationsGQL,
-    private _validateAssignment: ValidateAssignmentGQL
+    private _validateAssignment: ValidateAssignmentGQL,
+    private _lastUpdated: UpdateLastUpdatedGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -85,6 +87,18 @@ export class AuditService {
           throw new Error(error);
         })
       );
+  }
+
+  public updateLastUpdated(
+    InventoryID: number,
+    TypeID: number,
+    LastUpdated: string
+  ) {
+    return this._lastUpdated.mutate({
+      inventoryID: InventoryID,
+      typeID: TypeID,
+      lastUpdated: LastUpdated,
+    });
   }
 
   public validateAssignment$(AuditID: number, UserID: number) {
@@ -150,6 +164,7 @@ export class AuditService {
               Container: {
                 Barcode: data.Barcode,
               },
+              LastUpdated: data.LastUpdated,
             };
           }
 

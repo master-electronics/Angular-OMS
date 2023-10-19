@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map, lastValueFrom } from 'rxjs';
 import { FetchOmsConfigValueGQL } from 'src/app/graphql/omsConfig.graphql-gen';
 
 @Injectable({

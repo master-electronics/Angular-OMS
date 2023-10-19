@@ -2,7 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  map,
+  of,
+  switchMap,
+  tap,
+  interval,
+  Subscription,
+} from 'rxjs';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -24,6 +32,7 @@ import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { OMSConfigService } from 'src/app/shared/services/oms-config.service';
+import { BeepBeep } from 'src/app/shared/utils/beeper';
 
 @Component({
   standalone: true,
@@ -68,10 +77,18 @@ import { OMSConfigService } from 'src/app/shared/services/oms-config.service';
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
+    <ng-container *ngIf="this.showTimeoutAlert">
+      <popup-modal
+        (clickSubmit)="resetTimeout()"
+        [message]="timeoutAlert"
+      ></popup-modal>
+    </ng-container>
     <div *ngIf="close$ | async"></div>
+    <div *ngIf="config$ | async"></div>
   `,
 })
 export class ScanITN implements OnInit {
+  subscription: Subscription;
   userInfo = inject(StorageUserInfoService);
   constructor(
     private _fb: FormBuilder,
@@ -91,10 +108,17 @@ export class ScanITN implements OnInit {
   });
 
   message;
+  showTimeoutAlert;
+  timeoutAlert;
   valid: boolean;
   audit: Audit;
+  alertTimeout: number;
+  timeoutSeconds = 0;
+  auditTimeout: number;
+  alertTime: number;
+  lastUpdated: number;
 
-  ngOnInit(): void {
+  ngOnInit() {
     sessionStorage.removeItem('currentAudit');
     sessionStorage.removeItem('auditITN');
     sessionStorage.removeItem('searchLocations');
@@ -102,12 +126,20 @@ export class ScanITN implements OnInit {
 
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
-        if (!res.Audit.InventoryID) {
+        const t = 'test';
+        console.log(res);
+        if (!res?.Audit?.audit?.InventoryID) {
           this.message = 'There are no more Audits';
           return of(false);
         } else {
-          this.audit = res.Audit;
+          this.auditTimeout =
+            res?.Audit?.auditTimeout?.data?.fetchConfigValue?.Value;
+          this.alertTime = res?.Audit?.alertTime?.data?.fetchConfigValue?.Value;
+          this.audit = res.Audit.audit;
+          this.lastUpdated = Number(res.Audit.audit.LastUpdated);
           sessionStorage.setItem('currentAudit', JSON.stringify(this.audit));
+          const timeoutTimer = interval(1000);
+          this.subscription = timeoutTimer.subscribe((val) => this.timer());
           return of(true);
         }
       })
@@ -115,18 +147,70 @@ export class ScanITN implements OnInit {
     this.data$ = of(true);
   }
 
-  test() {
+  getConfig() {
+    this.config$ = this._configService.getValue('IM_Audit_Timeout').pipe(
+      map((res) => {
+        return res.data.fetchConfigValue.Value;
+      })
+    );
+  }
+
+  resetTimeout() {
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
     );
 
-    this.info$ = this._auditService
-      .validateAssignment$(currentAudit._id, 14)
+    this.data$ = this._auditService
+      .updateLastUpdated(
+        currentAudit.InventoryID,
+        10,
+        new Date(Date.now()).toISOString()
+      )
       .pipe(
-        map((res) => {
-          this.valid = res.data.validateAssignment;
+        map(() => {
+          currentAudit.LastUpdated = new Date(Date.now()).getTime().toString();
+          sessionStorage.setItem('currentAudit', JSON.stringify(currentAudit));
+          return of(true);
+        }),
+        catchError((error) => {
+          return of({ error });
         })
       );
+
+    this.timeoutSeconds = 0;
+    this.showTimeoutAlert = false;
+  }
+
+  timer() {
+    ++this.timeoutSeconds;
+    const secondsRemaining =
+      (this.lastUpdated +
+        this.auditTimeout * 1000 -
+        (this.timeoutSeconds * 1000 + this.lastUpdated)) /
+      1000;
+
+    if (secondsRemaining == 0) {
+      this.onBack();
+      return;
+    }
+
+    if (secondsRemaining == this.alertTime) {
+      const beep = new BeepBeep();
+      beep.beep(100, 520);
+      this.showTimeoutAlert = true;
+    }
+
+    let minutes = Math.floor(secondsRemaining / 60);
+    let extraSeconds = secondsRemaining % 60;
+    const minutesStr =
+      minutes < 10 ? '0' + minutes.toString() : minutes.toString();
+    const secondsStr =
+      extraSeconds < 10
+        ? '0' + extraSeconds.toString()
+        : extraSeconds.toString();
+
+    this.timeoutAlert =
+      'Audit will timeout in ' + minutesStr + ':' + secondsStr;
   }
 
   onSubmit(): void {
@@ -209,6 +293,13 @@ export class ScanITN implements OnInit {
                 this.data$ = this._eventLog
                   .insertLog(userEventLogs, eventLogs)
                   .pipe(
+                    switchMap(() => {
+                      return this._auditService.updateLastUpdated(
+                        currentAudit.InventoryID,
+                        10,
+                        new Date(Date.now()).toISOString()
+                      );
+                    }),
                     switchMap((res) => {
                       return this._auditService
                         .nextSubAudit$(
@@ -397,6 +488,13 @@ export class ScanITN implements OnInit {
     ];
 
     this.data$ = this._eventLog.insertLog(userEventLog, eventLog).pipe(
+      switchMap(() => {
+        return this._auditService.updateLastUpdated(
+          audit.InventoryID,
+          10,
+          new Date(Date.now()).toISOString()
+        );
+      }),
       map((res) => {
         this._router.navigate(['../search/scan-location'], {
           relativeTo: this._actRoute,
@@ -405,5 +503,9 @@ export class ScanITN implements OnInit {
         return res;
       })
     );
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 }

@@ -10,6 +10,8 @@ import {
   pipe,
   forkJoin,
   switchMap,
+  Subscription,
+  interval,
 } from 'rxjs';
 import {
   ReactiveFormsModule,
@@ -28,6 +30,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { Audit } from '../../utils/interfaces';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { BeepBeep } from 'src/app/shared/utils/beeper';
 
 @Component({
   standalone: true,
@@ -59,12 +62,19 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
+    <ng-container *ngIf="this.showTimeoutAlert">
+      <popup-modal
+        (clickSubmit)="resetTimeout()"
+        [message]="timeoutAlert"
+      ></popup-modal>
+    </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
   `,
 })
 export class ROHSAudit implements OnInit {
   userInfo = inject(StorageUserInfoService);
+  subscription: Subscription;
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
@@ -93,12 +103,20 @@ export class ROHSAudit implements OnInit {
 
   auditInfo: Audit;
   message;
+  auditTimeout: number;
+  alertTime: number;
+  lastUpdated: number;
+  timeoutSeconds = 0;
+  showTimeoutAlert;
+  timeoutAlert;
 
   ngOnInit(): void {
     if (sessionStorage.getItem('currentAudit')) {
       const currentAudit: Audit = JSON.parse(
         sessionStorage.getItem('currentAudit')
       );
+
+      this.lastUpdated = Number(currentAudit.LastUpdated);
       this.auditInfo = {
         Container: {
           Barcode: currentAudit.Container.Barcode,
@@ -116,7 +134,75 @@ export class ROHSAudit implements OnInit {
       };
     }
 
+    this.info$ = this._actRoute.data.pipe(
+      map((res) => {
+        this.auditTimeout =
+          res?.Config?.auditTimeout?.data?.fetchConfigValue?.Value;
+        this.alertTime = res?.Config?.alertTime?.data?.fetchConfigValue?.Value;
+
+        const timeoutTimer = interval(1000);
+        this.subscription = timeoutTimer.subscribe((val) => this.timer());
+      })
+    );
+
     this.data$ = of(true);
+  }
+
+  timer() {
+    ++this.timeoutSeconds;
+    const secondsRemaining =
+      (this.lastUpdated +
+        this.auditTimeout * 1000 -
+        (this.timeoutSeconds * 1000 + this.lastUpdated)) /
+      1000;
+
+    if (secondsRemaining == 0) {
+      this._router.navigate(['../../menu'], { relativeTo: this._actRoute });
+      return;
+    }
+
+    if (secondsRemaining == this.alertTime) {
+      const beep = new BeepBeep();
+      beep.beep(100, 520);
+      this.showTimeoutAlert = true;
+    }
+
+    let minutes = Math.floor(secondsRemaining / 60);
+    let extraSeconds = secondsRemaining % 60;
+    const minutesStr =
+      minutes < 10 ? '0' + minutes.toString() : minutes.toString();
+    const secondsStr =
+      extraSeconds < 10
+        ? '0' + extraSeconds.toString()
+        : extraSeconds.toString();
+
+    this.timeoutAlert =
+      'Audit will timeout in ' + minutesStr + ':' + secondsStr;
+  }
+
+  resetTimeout() {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
+
+    this.info$ = this._auditService
+      .updateLastUpdated(
+        currentAudit.InventoryID,
+        10,
+        new Date(Date.now()).toISOString()
+      )
+      .pipe(
+        map(() => {
+          currentAudit.LastUpdated = new Date(Date.now()).getTime().toString();
+          sessionStorage.setItem('currentAudit', JSON.stringify(currentAudit));
+        }),
+        catchError((error) => {
+          return of({ error });
+        })
+      );
+
+    this.timeoutSeconds = 0;
+    this.showTimeoutAlert = false;
   }
 
   async onSubmit() {
@@ -245,6 +331,20 @@ export class ROHSAudit implements OnInit {
             this.data$ = this._eventLog
               .insertLog(userEventLogs, eventLogs)
               .pipe(
+                switchMap(() => {
+                  return this._auditService.updateLastUpdated(
+                    currentAudit.InventoryID,
+                    50,
+                    new Date(Date.now()).toISOString()
+                  );
+                }),
+                switchMap(() => {
+                  return this._auditService.updateLastUpdated(
+                    currentAudit.InventoryID,
+                    10,
+                    new Date(Date.now()).toISOString()
+                  );
+                }),
                 switchMap((res) => {
                   return this._auditService.inventoryUpdate(
                     this.userInfo.userName,
@@ -395,5 +495,9 @@ export class ROHSAudit implements OnInit {
 
   onBack() {
     this._router.navigate(['../scan-itn'], { relativeTo: this._actRoute });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

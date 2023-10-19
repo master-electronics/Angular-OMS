@@ -5,7 +5,16 @@ import {
   ITNBarcodeRegex,
   ShelfBarcodeBarcodeRegex,
 } from 'src/app/shared/utils/dataRegex';
-import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  map,
+  of,
+  switchMap,
+  tap,
+  Subscription,
+  interval,
+} from 'rxjs';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -27,6 +36,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { AuditService } from '../../data/audit.service';
+import { BeepBeep } from 'src/app/shared/utils/beeper';
 
 @Component({
   standalone: true,
@@ -56,6 +66,12 @@ import { AuditService } from '../../data/audit.service';
       [isvalid]="this.inputForm.valid"
     >
     </single-input-form>
+    <ng-container *ngIf="this.showTimeoutAlert">
+      <popup-modal
+        (clickSubmit)="resetTimeout()"
+        [message]="timeoutAlert"
+      ></popup-modal>
+    </ng-container>
     <ng-container *ngIf="message">
       <popup-modal
         (clickSubmit)="onFoundOk()"
@@ -67,6 +83,7 @@ import { AuditService } from '../../data/audit.service';
 })
 export class ScanITN implements OnInit {
   userInfo = inject(StorageUserInfoService);
+  subscription: Subscription;
   constructor(
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
@@ -86,9 +103,88 @@ export class ScanITN implements OnInit {
   searchLocation;
   auditInfo: Audit;
   message;
+  auditTimeout: number;
+  alertTime: number;
+  lastUpdated: number;
+  timeoutSeconds = 0;
+  showTimeoutAlert;
+  timeoutAlert;
 
   ngOnInit(): void {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
+
+    this.lastUpdated = Number(currentAudit.LastUpdated);
+    this.info$ = this._actRoute.data.pipe(
+      map((res) => {
+        this.auditTimeout =
+          res?.Config?.auditTimeout?.data?.fetchConfigValue?.Value;
+        this.alertTime = res?.Config?.alertTime?.data?.fetchConfigValue?.Value;
+
+        const timeoutTimer = interval(1000);
+        this.subscription = timeoutTimer.subscribe((val) => this.timer());
+      })
+    );
+
     this.data$ = of(true);
+  }
+
+  timer() {
+    ++this.timeoutSeconds;
+    const secondsRemaining =
+      (this.lastUpdated +
+        this.auditTimeout * 1000 -
+        (this.timeoutSeconds * 1000 + this.lastUpdated)) /
+      1000;
+
+    if (secondsRemaining == 0) {
+      this._router.navigate(['../../../menu'], { relativeTo: this._actRoute });
+      return;
+    }
+
+    if (secondsRemaining == this.alertTime) {
+      const beep = new BeepBeep();
+      beep.beep(100, 520);
+      this.showTimeoutAlert = true;
+    }
+
+    let minutes = Math.floor(secondsRemaining / 60);
+    let extraSeconds = secondsRemaining % 60;
+    const minutesStr =
+      minutes < 10 ? '0' + minutes.toString() : minutes.toString();
+    const secondsStr =
+      extraSeconds < 10
+        ? '0' + extraSeconds.toString()
+        : extraSeconds.toString();
+
+    this.timeoutAlert =
+      'Audit will timeout in ' + minutesStr + ':' + secondsStr;
+  }
+
+  resetTimeout() {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
+
+    this.info$ = this._auditService
+      .updateLastUpdated(
+        currentAudit.InventoryID,
+        10,
+        new Date(Date.now()).toISOString()
+      )
+      .pipe(
+        map(() => {
+          currentAudit.LastUpdated = new Date(Date.now()).getTime().toString();
+          sessionStorage.setItem('currentAudit', JSON.stringify(currentAudit));
+        }),
+        catchError((error) => {
+          return of({ error });
+        })
+      );
+
+    this.timeoutSeconds = 0;
+    this.showTimeoutAlert = false;
   }
 
   onSubmit(): void {
@@ -208,28 +304,6 @@ export class ScanITN implements OnInit {
         });
       })
     );
-
-    // this.data$ = this._findContainer
-    //   .fetch(
-    //     {
-    //       Container: {
-    //         DistributionCenter: environment.DistributionCenter,
-    //         Barcode: itn,
-    //       },
-    //     },
-    //     { fetchPolicy: 'network-only' }
-    //   )
-    //   .pipe(
-    //     tap((res) => {
-    //       if (!res.data.findContainer) {
-    //         throw new Error('Location not found');
-    //       }
-    //     }),
-    //     map((res) => {
-    //       //this._router.navigate
-    //     })
-    //   );
-    //}
   }
 
   onBack(): void {
@@ -334,5 +408,9 @@ export class ScanITN implements OnInit {
           }
         })
       );
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 }

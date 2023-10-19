@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuditResolver } from './utils/resolver/audit.resolver';
+import { SubAuditResolver } from './utils/resolver/subAudit.resolver';
 import { SearchLocationResolver } from './utils/resolver/search-location.resolver';
 import { AuditService } from './data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
@@ -9,6 +10,7 @@ export const InventoryMangementRoutes: Routes = [
     path: '',
     providers: [
       AuditResolver,
+      SubAuditResolver,
       SearchLocationResolver,
       AuditService,
       EventLogService,
@@ -37,6 +39,7 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/quantity',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/audit/quantity-audit.component').then(
             (m) => m.QuantityAudit
@@ -44,6 +47,7 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/dateCode',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/audit/date_code-audit.component').then(
             (m) => m.DateCodeAudit
@@ -51,11 +55,13 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/coo',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/audit/coo-audit.component').then((m) => m.COOAudit),
       },
       {
         path: 'audit/rohs',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/audit/rohs-audit.component').then(
             (m) => m.ROHSAudit
@@ -63,6 +69,7 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/partNumber',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/audit/part_number-audit.component').then(
             (m) => m.PartNumberAudit
@@ -78,6 +85,7 @@ export const InventoryMangementRoutes: Routes = [
       },
       {
         path: 'audit/search/scan-itn',
+        resolve: { Config: SubAuditResolver },
         loadComponent: () =>
           import('./feature/search/scan-itn.component').then((m) => m.ScanITN),
       },
