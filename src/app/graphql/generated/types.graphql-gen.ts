@@ -47,6 +47,60 @@ export type Asnreplenishmentitem = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type Audit = {
+  __typename?: 'AUDIT';
+  Autostore?: Maybe<Scalars['Boolean']>;
+  Barcode?: Maybe<Scalars['String']>;
+  BoundForAutostore?: Maybe<Scalars['Boolean']>;
+  COO?: Maybe<Scalars['String']>;
+  Cost?: Maybe<Scalars['Float']>;
+  CreatedDatetime?: Maybe<Scalars['String']>;
+  DateCode?: Maybe<Scalars['String']>;
+  Description?: Maybe<Scalars['String']>;
+  InventoryID?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  LastUpdated?: Maybe<Scalars['String']>;
+  LocatedInAutostore?: Maybe<Scalars['Boolean']>;
+  MICPartNumber?: Maybe<Scalars['String']>;
+  NotFound?: Maybe<Scalars['Boolean']>;
+  Order?: Maybe<Scalars['Int']>;
+  OriginalQuantity?: Maybe<Scalars['Float']>;
+  PackQty?: Maybe<Scalars['Float']>;
+  PackType?: Maybe<Scalars['String']>;
+  ParentITN?: Maybe<Scalars['String']>;
+  PartNumber?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Int']>;
+  ProductCodeID?: Maybe<Scalars['Int']>;
+  ProductCodeNumber?: Maybe<Scalars['String']>;
+  ProductID?: Maybe<Scalars['Int']>;
+  ProductTier?: Maybe<Scalars['String']>;
+  ProductType?: Maybe<Scalars['String']>;
+  ProductTypeDescription?: Maybe<Scalars['String']>;
+  QuantityOnHand?: Maybe<Scalars['Float']>;
+  ROHS?: Maybe<Scalars['Boolean']>;
+  Suspect?: Maybe<Scalars['Boolean']>;
+  Type?: Maybe<Scalars['String']>;
+  TypeID?: Maybe<Scalars['Int']>;
+  UOM?: Maybe<Scalars['String']>;
+  UserID?: Maybe<Scalars['Int']>;
+  Velocity?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Auditinventory = {
+  __typename?: 'AUDITINVENTORY';
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+  oldID?: Maybe<Scalars['Int']>;
+};
+
+export type Audittype = {
+  __typename?: 'AUDITTYPE';
+  Order?: Maybe<Scalars['Int']>;
+  Type?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type Autostoreasnheader = {
   __typename?: 'AUTOSTOREASNHEADER';
   AUTOSTOREASNLINEs?: Maybe<Array<Maybe<Autostoreasnline>>>;
@@ -601,10 +655,13 @@ export type Mutation = {
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
+  clearTimeoutAudits?: Maybe<Audit>;
+  closeAudit?: Maybe<Audit>;
   createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
+  deleteAudit?: Maybe<Audit>;
   deleteAutostoreOrderLineHistory?: Maybe<Autostoreorderline>;
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -639,6 +696,7 @@ export type Mutation = {
   generateReceiptForReceiving?: Maybe<Scalars['Int']>;
   globalASNRejection?: Maybe<Array<Maybe<Asnreplenishmentitem>>>;
   holdQCOrder: Response;
+  insertAudits?: Maybe<Array<Maybe<Audit>>>;
   insertAutostoreASN?: Maybe<Autostoreasnheader>;
   insertAutostoreASNLine?: Maybe<Autostoreasnline>;
   insertAutostoreMessage?: Maybe<Autostoremessage>;
@@ -658,10 +716,12 @@ export type Mutation = {
   insertReceiptLine?: Maybe<Array<Maybe<ReceiptL>>>;
   insertReceiptLineDetail?: Maybe<ReceiptLd>;
   insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLd>>>;
+  insertSuspect?: Maybe<Audit>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
+  inventoryUpdate?: Maybe<Scalars['Boolean']>;
   itnChange?: Maybe<Scalars['Boolean']>;
   itnEvent?: Maybe<Itnlifecycle_Report>;
   itnLocationChange?: Maybe<Scalars['Boolean']>;
@@ -690,6 +750,7 @@ export type Mutation = {
   updateITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   updateInventory?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateInventoryList?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateLastUpdated?: Maybe<Audit>;
   updateMerpOrderStatus: Response;
   updateMerpQCBin: Response;
   updateMerpWMSLog: Response;
@@ -758,6 +819,15 @@ export type MutationClearSuspectInventoryArgs = {
   InventoryTrackingNumber: Scalars['String'];
 };
 
+export type MutationClearTimeoutAuditsArgs = {
+  Seconds?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationCloseAuditArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  TypeID?: InputMaybe<Scalars['Int']>;
+};
+
 export type MutationCreateContainerArgs = {
   BinLocation: Scalars['String'];
 };
@@ -774,6 +844,11 @@ export type MutationCreateInventoryFromOmsArgs = {
 
 export type MutationDeleteAndInsertRouteTableArgs = {
   lpnList: Array<InputMaybe<Scalars['String']>>;
+};
+
+export type MutationDeleteAuditArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  TypeID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
@@ -943,6 +1018,10 @@ export type MutationHoldQcOrderArgs = {
   Status: Scalars['String'];
 };
 
+export type MutationInsertAuditsArgs = {
+  Audits?: InputMaybe<Array<InputMaybe<InputAudit>>>;
+};
+
 export type MutationInsertAutostoreAsnArgs = {
   ASN?: InputMaybe<AutostoreAsnHeader>;
 };
@@ -1038,6 +1117,10 @@ export type MutationInsertReceiptLineDetailsArgs = {
   ReceiptLineDetails?: InputMaybe<Array<InputMaybe<InsertReceiptLd>>>;
 };
 
+export type MutationInsertSuspectArgs = {
+  Suspect?: InputMaybe<Array<InputMaybe<InputSuspect>>>;
+};
+
 export type MutationInsertTableDataArgs = {
   InsertQuery?: InputMaybe<Scalars['String']>;
 };
@@ -1060,6 +1143,18 @@ export type MutationInsertValueMapArgs = {
   TargetSystemName?: InputMaybe<Scalars['String']>;
   TargetTableName?: InputMaybe<Scalars['String']>;
   TargetValue?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationInventoryUpdateArgs = {
+  AdjustmentReason?: InputMaybe<Scalars['String']>;
+  BinLocation?: InputMaybe<Scalars['String']>;
+  CountryOfOrigin?: InputMaybe<Scalars['String']>;
+  DateCode?: InputMaybe<Scalars['String']>;
+  ITN: Scalars['String'];
+  QuantityOnHand?: InputMaybe<Scalars['String']>;
+  ROHSFlag?: InputMaybe<Scalars['String']>;
+  Suspect?: InputMaybe<Scalars['String']>;
+  User: Scalars['String'];
 };
 
 export type MutationItnChangeArgs = {
@@ -1278,6 +1373,12 @@ export type MutationUpdateInventoryListArgs = {
   idList?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
+export type MutationUpdateLastUpdatedArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  LastUpdated?: InputMaybe<Scalars['String']>;
+  TypeID?: InputMaybe<Scalars['Int']>;
+};
+
 export type MutationUpdateMerpOrderStatusArgs = {
   NOSINumber: Scalars['String'];
   OrderNumber: Scalars['String'];
@@ -1416,6 +1517,12 @@ export type MutationUpdateValueMapArgs = {
 export type MutationUpdateVendorFromMerpArgs = {
   VendorName: Scalars['String'];
   VendorNumber: Scalars['String'];
+};
+
+export type Omsconfig = {
+  __typename?: 'OMSCONFIG';
+  Name?: Maybe<Scalars['String']>;
+  Value?: Maybe<Scalars['String']>;
 };
 
 export type Order = {
@@ -1582,10 +1689,12 @@ export type Query = {
   countOrderItns: Scalars['Int'];
   fetchASNRejectionReasons?: Maybe<Array<Maybe<Asnrejectionreason>>>;
   fetchAllCountry?: Maybe<Array<Maybe<Country>>>;
+  fetchAuditTypes?: Maybe<Array<Maybe<Audittype>>>;
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchCommonvariablesForLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  fetchConfigValue?: Maybe<Omsconfig>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
@@ -1626,6 +1735,9 @@ export type Query = {
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
   findEventType?: Maybe<Array<Maybe<EventType>>>;
+  findIMInventories?: Maybe<Array<Maybe<Auditinventory>>>;
+  findIMPRCInventories?: Maybe<Array<Maybe<Inventory>>>;
+  findIMPRCPartNumberInventories?: Maybe<Array<Maybe<Inventory>>>;
   findITNColumns?: Maybe<Array<Maybe<ItnColumn>>>;
   findITNTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   findITNTemplates?: Maybe<Array<Maybe<ItnUserTemplate>>>;
@@ -1633,6 +1745,7 @@ export type Query = {
   findInventoryByUser?: Maybe<Array<Maybe<Inventory>>>;
   findInventorys?: Maybe<Array<Maybe<Inventory>>>;
   findLocalErrorLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  findNextAudit?: Maybe<Array<Maybe<Audit>>>;
   findNextITNForPulling?: Maybe<ItnInfoforPulling>;
   findOrder?: Maybe<Order>;
   findOrderByStatus?: Maybe<Array<Maybe<Order>>>;
@@ -1648,6 +1761,7 @@ export type Query = {
   findPartCodes?: Maybe<Array<Maybe<Partcode>>>;
   findPrinters?: Maybe<Array<Maybe<Printer>>>;
   findProduct?: Maybe<Product>;
+  findProductCode?: Maybe<ProductCode>;
   findProducts?: Maybe<Array<Maybe<Product>>>;
   findPurchaseOrderH?: Maybe<PurchaseOrderH>;
   findPurchaseOrderHs?: Maybe<Array<Maybe<PurchaseOrderH>>>;
@@ -1676,9 +1790,14 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
+  getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
+  getSearchLocations?: Maybe<Array<Maybe<Searchlocation>>>;
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
+  validateAssignment?: Maybe<Scalars['Boolean']>;
+  validateFilter?: Maybe<Scalars['Boolean']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
   verifyASNLocationNotInProcess?: Maybe<Array<Maybe<Autostoreasnheader>>>;
   verifyASNLocationStatus?: Maybe<Array<Maybe<Autostoreasnheader>>>;
@@ -1704,6 +1823,10 @@ export type QueryFetchAutostoreOrderMessagesArgs = {
 
 export type QueryFetchCommonvariablesForLogsArgs = {
   events?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+export type QueryFetchConfigValueArgs = {
+  Name?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryFetchDataColumnListArgs = {
@@ -1862,6 +1985,23 @@ export type QueryFindEventTypeArgs = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+export type QueryFindImInventoriesArgs = {
+  BarcodeEnd?: InputMaybe<Scalars['String']>;
+  BarcodeStart?: InputMaybe<Scalars['String']>;
+  ITN?: InputMaybe<Scalars['String']>;
+  PRC?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFindImprcInventoriesArgs = {
+  PRC?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFindImprcPartNumberInventoriesArgs = {
+  PRC?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+};
+
 export type QueryFindItnColumnsArgs = {
   UserID?: InputMaybe<Scalars['Int']>;
 };
@@ -1891,6 +2031,10 @@ export type QueryFindLocalErrorLogsArgs = {
   Date: Scalars['String'];
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFindNextAuditArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFindNextItnForPullingArgs = {
@@ -1964,6 +2108,10 @@ export type QueryFindPrintersArgs = {
 
 export type QueryFindProductArgs = {
   Product?: InputMaybe<SearchProduct>;
+};
+
+export type QueryFindProductCodeArgs = {
+  productCode?: InputMaybe<SearchProductCode>;
 };
 
 export type QueryFindProductsArgs = {
@@ -2088,6 +2236,20 @@ export type QueryFindVendorByPoArgs = {
   PurchaseOrder: SearchPurchaseOrderH;
 };
 
+export type QueryGetNextSubAuditArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryGetSearchLocationArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+  Level?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryGetSearchLocationsArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
+};
+
 export type QueryPrintQrCodeLabelArgs = {
   DPI: Scalars['String'];
   ORIENTATION: Scalars['String'];
@@ -2112,6 +2274,19 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
+};
+
+export type QueryValidateAssignmentArgs = {
+  AuditID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryValidateFilterArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
+  LocationEnd?: InputMaybe<Scalars['String']>;
+  LocationStart?: InputMaybe<Scalars['String']>;
+  PRC?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryVerifyAsnLocationArgs = {
@@ -2205,6 +2380,12 @@ export type RouteGroup = {
   Route: Route;
   RouteID: Scalars['Int'];
   _id: Scalars['Int'];
+};
+
+export type Searchlocation = {
+  __typename?: 'SEARCHLOCATION';
+  Barcode?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type ShipmentMethod = {
@@ -2468,6 +2649,21 @@ export type EntityTable = {
   __typename?: 'entityTable';
   TableName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type InputAudit = {
+  CreatedDatetime?: InputMaybe<Scalars['String']>;
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  LastUpdated?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Int']>;
+  TypeID?: InputMaybe<Scalars['Int']>;
+  UserID?: InputMaybe<Scalars['Int']>;
+};
+
+export type InputSuspect = {
+  Comment?: InputMaybe<Scalars['String']>;
+  InventoryID?: InputMaybe<Scalars['Int']>;
+  Reason?: InputMaybe<Scalars['String']>;
 };
 
 export type InsertContainer = {
@@ -2844,6 +3040,11 @@ export type SearchProduct = {
   PartNumber?: InputMaybe<Scalars['String']>;
   ProductCodeID?: InputMaybe<Scalars['Int']>;
   ProductTier?: InputMaybe<Scalars['String']>;
+  _id?: InputMaybe<Scalars['Int']>;
+};
+
+export type SearchProductCode = {
+  ProductCodeNumber?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 

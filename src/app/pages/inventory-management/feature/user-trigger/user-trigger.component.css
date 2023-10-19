@@ -1,0 +1,101 @@
+.box {
+  margin: auto;
+  width: 17%;
+}
+.bigBox {
+  margin: auto;
+  width: 43%;
+  text-align: center;
+  padding-top: 20px;
+}
+.title {
+  text-align: center;
+  padding: 5px 10px;
+  width: 100%;
+}
+.leftbox {
+  float:left;
+  position: relative;
+  width: 135px;
+}
+.middlebox{
+  float:left;
+  position: relative;
+  padding: 10px;
+}
+.rightbox{
+  float:left;
+  position: relative;
+  width: 135px;
+}
+select {
+  border: solid 1px #d9d9d9;
+  border-radius: 2px;
+  width: 100%;
+}
+select:focus {
+  border: solid 1px #40a9ff;
+  box-shadow: -2px -2px 2px #d1e9ff;
+}
+select option:disabled {
+  color: #bfbfbf;
+}
+.buttonContainer {
+  max-width: 200px;
+  width: 100%;
+  display: inline-block;
+}
+.button {
+  border: solid 1px #d9d9d9;
+  border-radius: 2px;
+  padding: 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.button:hover {
+  border: solid 1px #40a9ff;
+}
+.backButton {
+  background-color: #1f2937;
+  color: #9ca3af;
+}
+.backButton:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+.clear {
+  position: relative;
+  clear: both;
+}
+.textInput {
+  float: left;
+  width: 200px;
+  padding: 2px 2px 30px 2px;
+}
+.textInput input {
+  width: 100%;
+}
+.inputBox {
+  width: 200px;
+  display: inline-block;
+}
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  padding-bottom: 10px;
+}
+.container {
+  min-width: 100px;
+  max-width: 125px;
+  width: 100%;
+}
+.alertContainer {
+  max-width: 85%;
+  width: 100%;
+}
+form {
+  width: 100%;
+}

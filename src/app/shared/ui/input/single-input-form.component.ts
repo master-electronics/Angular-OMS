@@ -99,6 +99,7 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
           <submit-button [loading]="!data" [disabled]="!isvalid">
           </submit-button>
           <normal-button
+            [buttonText]="backButtonText"
             class="col-start-3"
             (buttonClick)="onBack()"
           ></normal-button>
@@ -122,6 +123,7 @@ export class SingleInputformComponent implements OnInit {
   @Input() placeholder = '';
   @Input() title = '';
   @Input() isvalid = true;
+  @Input() backButtonText = 'Back';
   @Output() formSubmit: EventEmitter<null> = new EventEmitter();
   @Output() formBack: EventEmitter<null> = new EventEmitter();
 

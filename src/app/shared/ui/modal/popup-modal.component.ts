@@ -19,12 +19,13 @@ import { asapScheduler } from 'rxjs';
     <div
       id="popup-modal"
       class="    
-      absolute top-0 left-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
+      absolute left-0 top-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-400 bg-opacity-30 text-white"
     >
       <div class="relative h-full w-4/5 md:h-auto md:w-2/3 lg:w-1/2">
         <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
           <div class="p-6 text-center">
             <h1
+              [innerHTML]="message"
               class="mb-6 text-base font-normal text-gray-500 dark:text-gray-400 md:text-lg lg:text-2xl"
               [innerHTML]="message"
             ></h1>

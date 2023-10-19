@@ -18,7 +18,7 @@ import Keyboard from 'simple-keyboard';
     `
       .simple-keyboard {
         font-size: 3vw;
-        position: absolute;
+        position: fixed;
         z-index: 10;
         bottom: 15px;
         width: 95%;
@@ -87,6 +87,7 @@ export class SimpleKeyboardComponent implements OnChanges {
   }
 
   onChange = (input: string) => {
+    console.log('1-' + input);
     this.outputString.emit(input);
   };
 

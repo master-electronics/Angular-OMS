@@ -1,0 +1,259 @@
+query fetchAuditTypes {
+  fetchAuditTypes {
+    _id
+    Type
+    Order
+  }
+}
+
+query verifyAuditLocation($container: searchContainer) {
+  findContainer(Container: $container) {
+    _id
+  }
+}
+
+query findProductCode($productCode: searchProductCode) {
+  findProductCode(productCode: $productCode) {
+    _id
+    ProductCodeNumber
+  }
+}
+
+query findIMProduct($product: searchProduct) {
+  findProduct(Product: $product) {
+    _id
+    PartNumber
+    ProductCodeID
+  }
+}
+
+query findIMInventory($inventory: searchInventory!) {
+  findInventory(Inventory: $inventory) {
+    _id
+    InventoryTrackingNumber
+    Product {
+      PartNumber
+    }
+    Container {
+      Barcode
+    }
+  }
+}
+
+query findIMInventories(
+  $itn: String,
+  $barcodeStart: String, 
+  $barcodeEnd: String,
+  $prc: String, 
+  $partNumber: String) {
+  findIMInventories(
+    ITN: $itn
+    BarcodeStart: $barcodeStart, 
+    BarcodeEnd: $barcodeEnd,
+    PRC: $prc, 
+    PartNumber: $partNumber) {
+    _id
+    InventoryTrackingNumber
+    oldID
+  }
+}
+
+query findIMPRCInventories($prc: String) {
+  findIMPRCInventories(PRC: $prc) {
+    _id
+  }
+}
+
+query findIMPRCPartNumberInventories($prc: String, $partNumber: String) {
+  findIMPRCPartNumberInventories(PRC: $prc, PartNumber: $partNumber) {
+    _id
+  }
+}
+
+query validateFilter(
+  $itn: String
+  $locationStart: String
+  $locationEnd: String
+  $prc: String
+  $partNumber: String
+) {
+  validateFilter(
+    ITN: $itn
+    LocationStart: $locationStart
+    LocationEnd: $locationEnd
+    PRC: $prc
+    PartNumber: $partNumber
+  )
+}
+
+query findNextAudit($userID: Int) {
+  findNextAudit(UserID: $userID) {
+    _id
+    TypeID
+    InventoryID
+    Type
+    UserID
+    Order
+    InventoryTrackingNumber
+    ParentITN
+    Barcode
+    ProductID
+    DateCode
+    COO
+    ROHS
+    QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
+    PartNumber
+    Description
+    ProductCodeID
+    ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
+    LastUpdated
+    CreatedDatetime
+    Priority
+    MICPartNumber
+    UOM
+    Autostore
+    PackType
+    PackQty
+    Cost
+  }
+}
+
+query getNextSubAudit($inventoryID: Int, $userID: Int) {
+  getNextSubAudit(InventoryID: $inventoryID, UserID: $userID) {
+    _id
+    TypeID
+    InventoryID
+    Type
+    UserID
+    Order
+    InventoryTrackingNumber
+    ParentITN
+    Barcode
+    ProductID
+    DateCode
+    COO
+    ROHS
+    QuantityOnHand
+    OriginalQuantity
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
+    PartNumber
+    Description
+    ProductCodeID
+    ProductCodeNumber
+    ProductTier
+    ProductType
+    ProductTypeDescription
+    Velocity
+    LastUpdated
+    CreatedDatetime
+    Priority
+    MICPartNumber
+    UOM
+    Autostore
+    PackType
+    PackQty
+    Cost
+  }
+}
+
+query getSearchLocation($barcode: String, $level: Int) {
+  getSearchLocation(Barcode: $barcode, Level: $level) {
+    _id
+    Barcode
+  }
+}
+
+query getSearchLocations($barcode: String) {
+  getSearchLocations(Barcode: $barcode) {
+    _id
+    Barcode
+  }
+}
+
+query validateAssignment($auditID: Int, $userID: Int) {
+  validateAssignment(AuditID: $auditID, UserID: $userID)
+}
+
+mutation updateLastUpdated($inventoryID: Int, $typeID: Int, $lastUpdated: String) {
+  updateLastUpdated(InventoryID: $inventoryID, TypeID: $typeID, LastUpdated: $lastUpdated) {
+    _id
+  }
+}
+
+mutation insertAudits($audits: [inputAudit]) {
+  insertAudits(Audits: $audits) {
+    _id
+  }
+}
+
+mutation insertSuspect($suspect: [inputSuspect]) {
+  insertSuspect(Suspect: $suspect) {
+    _id
+  }
+}
+
+mutation inventoryUpdate(
+  $user: String!
+  $itn: String!
+  $quantity: String
+  $dateCode: String
+  $country: String
+  $rohs: String
+  $reason: String!
+  $suspect: String
+  $binlocation: String
+) {
+  inventoryUpdate(
+    User: $user
+    ITN: $itn
+    DateCode: $dateCode
+    CountryOfOrigin: $country
+    ROHSFlag: $rohs
+    QuantityOnHand: $quantity
+    AdjustmentReason: $reason
+    Suspect: $suspect
+    BinLocation: $binlocation
+  )
+}
+
+mutation deleteAudit(
+  $inventoryID: Int
+  $typeID: Int
+) {
+  deleteAudit(
+    InventoryID: $inventoryID
+    TypeID: $typeID
+  ) {
+    _id
+  }
+}
+
+mutation closeAudit(
+  $inventoryID: Int
+  $typeID: Int
+) {
+  closeAudit(
+    InventoryID: $inventoryID
+    TypeID: $typeID
+  ) {
+    _id
+  }
+}
+
+mutation clearTimeoutAudits($seconds: Int) {
+  clearTimeoutAudits(Seconds: $seconds) {
+    _id
+  }
+}

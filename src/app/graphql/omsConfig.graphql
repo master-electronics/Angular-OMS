@@ -1,0 +1,5 @@
+query fetchOMSConfigValue($name: String) {
+  fetchConfigValue(Name: $name) {
+    Value
+  }
+}
