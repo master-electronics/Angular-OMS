@@ -48,11 +48,6 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
         (buttonClick)="onSearch()"
       ></normal-button>
     </div>
-    <!-- <simple-keyboard
-      layout="number"
-      [inputString]="inputForm.value.receipt"
-      (outputString)="onChange($event)"
-    ></simple-keyboard> -->
   `,
 })
 export class ReceiptComponent implements OnInit {

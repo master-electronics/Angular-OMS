@@ -317,7 +317,10 @@ export class StockingService {
   public ItnInUserContainer$() {
     return this._userC.userContainerID$.pipe(
       switchMap((id) => {
-        return this._ItnInUser.fetch({ ContainerID: id });
+        return this._ItnInUser.fetch(
+          { ContainerID: id },
+          { fetchPolicy: 'network-only' }
+        );
       }),
       map((res) => res.data.findContainer.INVENTORies)
     );
