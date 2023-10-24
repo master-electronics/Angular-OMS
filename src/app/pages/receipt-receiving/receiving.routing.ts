@@ -174,13 +174,13 @@ export const ReceivingRoutes: Routes = [
             (mod) => mod.SummaryComponent
           ),
       },
-      {
-        path: 'itnkickout',
-        loadComponent: () =>
-          import('./feature/kickout/itnKickout.component').then(
-            (mod) => mod.ItnKickoutComponent
-          ),
-      },
+      // {
+      //   path: 'itnkickout',
+      //   loadComponent: () =>
+      //     import('./feature/kickout/itnKickout.component').then(
+      //       (mod) => mod.ItnKickoutComponent
+      //     ),
+      // },
       {
         path: 'kickout',
         loadComponent: () =>
