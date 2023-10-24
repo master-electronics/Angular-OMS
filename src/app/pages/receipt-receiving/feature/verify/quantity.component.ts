@@ -44,11 +44,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           [message]="error.error.message"
           [name]="error.error.name"
         ></message-bar>
-
-        <red-button
-          (buttonClick)="overRece()"
-          buttonText="Over Receipt"
-        ></red-button>
       </ng-container>
     </div>
   `,
@@ -90,15 +85,6 @@ export class QuantityComponent implements OnInit {
         name: `warning`,
       },
     });
-  }
-
-  public overRece(): void {
-    if (this._receipt.lineAfterPart.length === 1) {
-      this._receipt.filterByOverReceiving();
-      this._router.navigateByUrl('/receiptreceiving/overreceiving');
-      return;
-    }
-    this._router.navigateByUrl('receiptreceiving/part/selectline');
   }
 
   public onBack(): void {

@@ -53,14 +53,10 @@ export class SelectLineComponent implements OnInit {
   ngOnInit(): void {
     this._steps.changeSteps(0);
     this.tableData = this.receipt.LineInfoForOverReceiving();
-    if (this.tableData.length === 1) {
-      this.receipt.filterByOverReceiving();
-      this._router.navigateByUrl('/receiptreceiving/overreceiving');
-    }
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('/receiptreceiving/receipt');
+    this._router.navigateByUrl('/receiptreceiving');
   }
 
   public selectLine(data): void {

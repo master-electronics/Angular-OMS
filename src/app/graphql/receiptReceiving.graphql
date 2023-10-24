@@ -76,6 +76,48 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
       }
       RECEIPTLDs {
         _id
+        ReceiptStatus {
+          Name
+        }
+        PurchaseOrderL {
+          LineNumber
+          QuantityOnOrder
+          QuantityReceived
+          UnitOfMeasure
+          PurchaseOrderH {
+            PurchaseOrderNumber
+          }
+        }
+      }
+    }
+  }
+}
+
+query fetchReceiptForOverReceiving($ReceiptHID: Int!) {
+  findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+    _id
+    RECEIPTLs {
+      _id
+      ExpectedQuantity
+      DateCode
+      ROHS
+      LineNumber
+      ProductID
+      CountryID
+      Country {
+        ISO3
+      }
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+      }
+      RECEIPTLDs {
+        _id
+        ReceiptStatus {
+          Name
+        }
         PurchaseOrderL {
           LineNumber
           QuantityOnOrder
