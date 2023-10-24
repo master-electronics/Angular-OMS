@@ -11,6 +11,7 @@ import {
 import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
+  FetchReceiptForOverReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
   OverReceivingUpdateReceiptLGQL,
   SuspectInventoryGQL,
@@ -29,6 +30,7 @@ export class ReceiptInfoService {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
+    private _fetchLinesForOverReceipt$: FetchReceiptForOverReceivingGQL,
     private _checkHeader: CheckReceiptHeaderGQL,
     private _suspect: SuspectInventoryGQL,
     private _updateReceiptLine: OverReceivingUpdateReceiptLGQL,
@@ -129,6 +131,10 @@ export class ReceiptInfoService {
     );
   }
 
+  /**
+   * find all Receipt Line with status 10
+   * @returns Observable boolean
+   */
   public findLines$(): Observable<boolean> {
     return this._findReceiptH$
       .fetch(
@@ -160,6 +166,63 @@ export class ReceiptInfoService {
       );
   }
 
+  /**
+   * findAllLines$
+   */
+  public findAllLines$() {
+    return this._fetchLinesForOverReceipt$
+      .fetch({ ReceiptHID: this.headerID }, { fetchPolicy: 'network-only' })
+      .pipe(
+        tap((res) => {
+          if (!res.data.findReceiptH) {
+            throw { name: 'error', message: "Can't find this Receipt!" };
+          }
+          if (!res.data.findReceiptH.RECEIPTLs?.length) {
+            throw {
+              name: 'warning',
+              message: 'No avaiable line under this Receipt!',
+            };
+          }
+        }),
+        map((res) => res.data.findReceiptH.RECEIPTLs),
+        map((res) => {
+          Logger.devOnly('ReceiptInfo', 'findLines', res[0].Product.PartNumber);
+          Logger.devOnly('ReceiptInfo', 'findLines', res[0].ExpectedQuantity);
+          this._receiptLines.next(res);
+          return true;
+        })
+      );
+  }
+
+  /**
+   * OverReceivingInfo$
+   */
+  public LineInfoForOverReceiving() {
+    return this.receiptLines.map((line) => ({
+      id: line._id,
+      LineNumber: line.LineNumber,
+      Quantity: line.ExpectedQuantity,
+      PartNumber: line.Product.PartNumber,
+      PurchaseOrderNumber:
+        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
+      QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
+      Status: line.RECEIPTLDs[0].ReceiptStatus.Name,
+    }));
+  }
+
+  /**
+   * filterByOverReceiving
+   */
+  public filterByOverReceiving(id: number) {
+    const selected = this.receiptLines.filter((res) => res._id === id);
+    this._receiptLsAfterQuantity.next(selected);
+    this._lineAfterPart.next(selected);
+  }
+
+  /**
+   *
+   * @param PartNumber Filter the Receipt Line by input part Number
+   */
   public filterbyPartNumber(PartNumber: string): void {
     const tmp = this.receiptLines.filter(
       (res) =>
@@ -259,21 +322,6 @@ export class ReceiptInfoService {
       );
   }
 
-  /**
-   * OverReceivingInfo$
-   */
-  public LineInfoForOverReceiving() {
-    return this.lineAfterPart.map((line) => ({
-      id: line._id,
-      LineNumber: line.LineNumber,
-      Quantity: line.ExpectedQuantity,
-      PartNumber: line.Product.PartNumber,
-      PurchaseOrderNumber:
-        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
-      QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
-    }));
-  }
-
   public updateQuanityForOverReceiving$(quantity: number, AuthName: string) {
     let prevQuantity;
     return this._updateReceiptLine
@@ -334,18 +382,6 @@ export class ReceiptInfoService {
       (res) => res.ExpectedQuantity === Quantity
     );
     this._receiptLsAfterQuantity.next(tmp);
-  }
-
-  /**
-   * filterByOverReceiving
-   */
-  public filterByOverReceiving(id?: number) {
-    if (!id) {
-      this._receiptLsAfterQuantity.next(this.lineAfterPart);
-    } else {
-      const selected = this.lineAfterPart.filter((res) => res._id === id);
-      this._receiptLsAfterQuantity.next(selected);
-    }
   }
 
   /**

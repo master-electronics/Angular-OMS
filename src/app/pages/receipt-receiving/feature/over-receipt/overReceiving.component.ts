@@ -24,8 +24,12 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
   ],
   template: `
     <!-- Receipt Line infomation -->
-    <div class="grid grid-cols-5 text-2xl">
+    <div class="grid grid-cols-3 text-2xl">
       <h1>LineNumber: {{ receipt.receiptLsAfterQuantity[0].LineNumber }}</h1>
+      <h1>
+        Status:
+        {{ receipt.receiptLsAfterQuantity[0].RECEIPTLDs[0].ReceiptStatus.Name }}
+      </h1>
       <h1>
         Quantity: {{ receipt.receiptLsAfterQuantity[0].ExpectedQuantity }}
       </h1>
@@ -99,6 +103,6 @@ export class OverReceivingComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/part/quantity');
+    this._router.navigateByUrl('receiptreceiving');
   }
 }

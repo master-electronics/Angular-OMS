@@ -37,6 +37,23 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
+        path: 'alllines',
+        loadComponent: () =>
+          import('./feature/over-receipt/selectLine.component').then(
+            (m) => m.SelectLineComponent
+          ),
+      },
+      {
+        path: 'overreceiving',
+        resolve: {
+          info: VerifyResolver,
+        },
+        loadComponent: () =>
+          import('./feature/over-receipt/overReceiving.component').then(
+            (m) => m.OverReceivingComponent
+          ),
+      },
+      {
         path: 'lineselecter',
         loadComponent: () =>
           import('./feature/receipt/lineSelecter.components').then(
@@ -82,20 +99,6 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/verify/verify.component').then(
             (m) => m.VerifyComponent
-          ),
-      },
-      {
-        path: 'part/selectline',
-        loadComponent: () =>
-          import('./feature/verify/selectLine.component').then(
-            (m) => m.SelectLineComponent
-          ),
-      },
-      {
-        path: 'overreceiving',
-        loadComponent: () =>
-          import('./feature/verify/overReceiving.component').then(
-            (m) => m.OverReceivingComponent
           ),
       },
       {

@@ -8,13 +8,13 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleKeyboardComponent } from '../../../../shared/ui/simple-keyboard.component';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
-import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
+import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 
 @Component({
   standalone: true,
@@ -25,7 +25,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
     ReactiveFormsModule,
     MessageBarComponent,
     GreenButtonComponent,
-    NormalButtonComponent,
+    RedButtonComponent,
   ],
   template: `
     <single-input-form
@@ -42,11 +42,11 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
       class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
       <green-button buttonText="Create" (buttonClick)="create()"></green-button>
-      <normal-button
-        class=" col-start-3"
-        buttonText="search"
-        (buttonClick)="onSearch()"
-      ></normal-button>
+      <red-button
+        class="col-start-3"
+        buttonText="Over Receipt"
+        (buttonClick)="overRece()"
+      ></red-button>
     </div>
   `,
 })
@@ -81,6 +81,38 @@ export class ReceiptComponent implements OnInit {
     this._router.navigate(['../purchasenumber'], {
       relativeTo: this._actRoute,
     });
+  }
+
+  public overRece(): void {
+    if (!this.inputForm.value.receipt?.trim()) {
+      return;
+    }
+    this.data$ = this._receipt
+      .checkReceiptHeader(Number(this.inputForm.value.receipt))
+      .pipe(
+        switchMap(() => {
+          return this._receipt.findAllLines$();
+        }),
+        tap(() => {
+          if (this._receipt.receiptLines.length === 1) {
+            this._receipt.filterByOverReceiving(
+              this._receipt.receiptLines[0]._id
+            );
+            this._router.navigate(['../overreceiving'], {
+              relativeTo: this._actRoute,
+            });
+            return;
+          }
+          this._router.navigate(['../alllines'], {
+            relativeTo: this._actRoute,
+          });
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
   }
 
   public onSearch(): void {

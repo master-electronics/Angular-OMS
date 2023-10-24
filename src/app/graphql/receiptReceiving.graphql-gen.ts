@@ -3200,6 +3200,51 @@ export type FindReceiptHeaderForReceivingQuery = {
       RECEIPTLDs?: Array<{
         __typename?: 'ReceiptLD';
         _id: number;
+        ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
+        PurchaseOrderL?: {
+          __typename?: 'PurchaseOrderL';
+          LineNumber: number;
+          QuantityOnOrder?: number | null;
+          QuantityReceived?: number | null;
+          UnitOfMeasure?: string | null;
+          PurchaseOrderH: {
+            __typename?: 'PurchaseOrderH';
+            PurchaseOrderNumber: string;
+          };
+        } | null;
+      } | null> | null;
+    } | null> | null;
+  } | null;
+};
+
+export type FetchReceiptForOverReceivingQueryVariables = Types.Exact<{
+  ReceiptHID: Types.Scalars['Int'];
+}>;
+
+export type FetchReceiptForOverReceivingQuery = {
+  __typename?: 'Query';
+  findReceiptH?: {
+    __typename?: 'ReceiptH';
+    _id: number;
+    RECEIPTLs?: Array<{
+      __typename?: 'ReceiptL';
+      _id: number;
+      ExpectedQuantity: number;
+      DateCode?: string | null;
+      ROHS?: boolean | null;
+      LineNumber: number;
+      ProductID: number;
+      CountryID?: number | null;
+      Country?: { __typename?: 'Country'; ISO3: string } | null;
+      Product: {
+        __typename?: 'Product';
+        PartNumber: string;
+        ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+      };
+      RECEIPTLDs?: Array<{
+        __typename?: 'ReceiptLD';
+        _id: number;
+        ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
         PurchaseOrderL?: {
           __typename?: 'PurchaseOrderL';
           LineNumber: number;
@@ -3488,6 +3533,9 @@ export const FindReceiptHeaderForReceivingDocument = gql`
         }
         RECEIPTLDs {
           _id
+          ReceiptStatus {
+            Name
+          }
           PurchaseOrderL {
             LineNumber
             QuantityOnOrder
@@ -3511,6 +3559,60 @@ export class FindReceiptHeaderForReceivingGQL extends Apollo.Query<
   FindReceiptHeaderForReceivingQueryVariables
 > {
   document = FindReceiptHeaderForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchReceiptForOverReceivingDocument = gql`
+  query fetchReceiptForOverReceiving($ReceiptHID: Int!) {
+    findReceiptH(ReceiptH: { _id: $ReceiptHID }) {
+      _id
+      RECEIPTLs {
+        _id
+        ExpectedQuantity
+        DateCode
+        ROHS
+        LineNumber
+        ProductID
+        CountryID
+        Country {
+          ISO3
+        }
+        Product {
+          PartNumber
+          ProductCode {
+            ProductCodeNumber
+          }
+        }
+        RECEIPTLDs {
+          _id
+          ReceiptStatus {
+            Name
+          }
+          PurchaseOrderL {
+            LineNumber
+            QuantityOnOrder
+            QuantityReceived
+            UnitOfMeasure
+            PurchaseOrderH {
+              PurchaseOrderNumber
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchReceiptForOverReceivingGQL extends Apollo.Query<
+  FetchReceiptForOverReceivingQuery,
+  FetchReceiptForOverReceivingQueryVariables
+> {
+  document = FetchReceiptForOverReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
