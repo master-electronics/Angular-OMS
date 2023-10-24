@@ -43,6 +43,7 @@ export type Asnreplenishmentitem = {
   Barcode?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  ProductID?: Maybe<Scalars['Int']>;
   Row?: Maybe<Scalars['String']>;
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
@@ -706,6 +707,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateProduct?: Maybe<UpdatedProduct>;
   updateProductLastSync?: Maybe<UpdatedProduct>;
   updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1347,6 +1349,10 @@ export type MutationUpdatePrinterArgs = {
   Orientation?: InputMaybe<Scalars['String']>;
   StationName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type MutationUpdateProductArgs = {
+  Product: UpdateProduct;
 };
 
 export type MutationUpdateProductLastSyncArgs = {
@@ -3043,6 +3049,7 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateProduct = {
+  ExcludeFromAutostore?: InputMaybe<Scalars['Boolean']>;
   LastAutostoreSync?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
@@ -3287,6 +3294,18 @@ export type ClearSuspectMutation = {
   itnChange?: boolean | null;
 };
 
+export type UpdateProductMutationVariables = Types.Exact<{
+  product: Types.UpdateProduct;
+}>;
+
+export type UpdateProductMutation = {
+  __typename?: 'Mutation';
+  updateProduct?: {
+    __typename?: 'UpdatedProduct';
+    LastUpdated?: string | null;
+  } | null;
+};
+
 export type FindAsnReplenishmentInventoryQueryVariables = Types.Exact<{
   barcode?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
@@ -3297,6 +3316,7 @@ export type FindAsnReplenishmentInventoryQuery = {
     __typename?: 'ASNREPLENISHMENTITEM';
     _id?: number | null;
     InventoryID?: number | null;
+    ProductID?: number | null;
     Status?: string | null;
     Barcode?: string | null;
     Warehouse?: string | null;
@@ -3756,11 +3776,33 @@ export class ClearSuspectGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
+export const UpdateProductDocument = gql`
+  mutation updateProduct($product: updateProduct!) {
+    updateProduct(Product: $product) {
+      LastUpdated
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateProductGQL extends Apollo.Mutation<
+  UpdateProductMutation,
+  UpdateProductMutationVariables
+> {
+  document = UpdateProductDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const FindAsnReplenishmentInventoryDocument = gql`
   query findASNReplenishmentInventory($barcode: String) {
     findASNReplenishmentInventory(Barcode: $barcode) {
       _id
       InventoryID
+      ProductID
       Status
       Barcode
       Warehouse

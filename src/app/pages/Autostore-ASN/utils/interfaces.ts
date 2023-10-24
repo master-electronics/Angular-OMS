@@ -1,6 +1,7 @@
 export interface ReplenishmentItem {
   _id?: number;
   InventoryID?: number;
+  ProductID?: number;
   Status?: string;
   Barcode?: string;
   Warehouse?: string;
