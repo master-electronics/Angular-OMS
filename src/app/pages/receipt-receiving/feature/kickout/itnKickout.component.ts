@@ -13,13 +13,13 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { LogService } from '../../data/eventLog';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { LabelService } from '../../data/label';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { kickoutService } from '../../data/kickout';
 import { Logger } from 'src/app/shared/services/logger.service';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -94,9 +94,9 @@ export class ItnKickoutComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService,
-    private _log: LogService,
     public _label: LabelService,
     private location: LocationStrategy,
+    private _info: ReceiptInfoService,
     private _kickout: kickoutService
   ) {}
 
@@ -136,8 +136,8 @@ export class ItnKickoutComponent implements OnInit {
   skip(): void {
     this._router.navigate(['receiptreceiving/part'], {
       queryParams: {
-        receipt: this._log.receivingLog.ReceiptHeader,
-        line: this._log.receivingLog.ReceiptLine,
+        receipt: this._info.headerID,
+        line: this._info.receiptInfoAfterFilter()[0].ReceiptLineNumber,
         name: 'finish',
       },
     });

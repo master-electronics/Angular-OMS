@@ -49,8 +49,8 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     <printer-button
       class=" absolute bottom-1 right-1 h-64 w-64"
       [ITN]="label.getItnInList(label.currentItnIndex())()"
-      [PARTNUMBER]="label.receiptPartNumber"
-      [PRODUCTCODE]="label.receiptProductCode"
+      [PARTNUMBER]="receipt.partNumber()"
+      [PRODUCTCODE]="receipt.productCode()"
       (buttonClick)="focusInput()"
     ></printer-button>
   `,

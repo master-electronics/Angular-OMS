@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  AsyncValidatorFn,
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
@@ -17,20 +15,14 @@ import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { CountryListService } from 'src/app/shared/data/countryList';
 import {
   catchError,
-  debounceTime,
   distinctUntilChanged,
   map,
   Observable,
   of,
   switchMap,
-  take,
-  tap,
 } from 'rxjs';
 import { SearchListInputComponent } from '../../ui/search-list-input.component';
 import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
-import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { LogService } from '../../data/eventLog';
-import { sqlData } from 'src/app/shared/utils/sqlData';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 
 @Component({
@@ -92,22 +84,20 @@ export class CountryComponent implements OnInit {
   public data$: Observable<any>;
   public popup = false;
   public inputForm = this._fb.group({
-    country: ['', [Validators.required], [this._info.countryValidator()]],
+    country: ['', [Validators.required], [this._update.countryValidator()]],
   });
 
   constructor(
     private _fb: FormBuilder,
     private _router: Router,
-    private _info: updateReceiptInfoService,
+    private _update: updateReceiptInfoService,
     private _step: TabService,
-    private _country: CountryListService,
-    private _inserlog: Insert_UserEventLogsGQL,
-    private _log: LogService
+    private _country: CountryListService
   ) {}
 
   ngOnInit(): void {
     this._step.changeSteps(2);
-    this._info.initReceiptInfo();
+    this._update.initReceiptInfo();
     this.countryList$ = this.inputForm.valueChanges.pipe(
       map((res) => res.country),
       // debounceTime(100),
@@ -155,16 +145,16 @@ export class CountryComponent implements OnInit {
 
   onSubmit(): void {
     if (this.countryInfo) {
-      this._info.updateCountry(this.countryInfo._id, this.countryInfo.ISO3);
+      this._update.updateCountry(this.countryInfo._id, this.countryInfo.ISO3);
     } else {
       const [iso2, iso3, , id] = this.inputForm.value.country.split(' - ');
       if (!iso3 || !id) {
         return;
       }
-      this._info.updateCountry(Number(id), iso3);
+      this._update.updateCountry(Number(id), iso3);
     }
     // pop out auth window when UNK
-    if (this._info.receiptInfo.ISO3 === 'UNK') {
+    if (this._update.receiptInfo.ISO3 === 'UNK') {
       this.popup = true;
       return;
     }
@@ -176,20 +166,12 @@ export class CountryComponent implements OnInit {
   }
 
   passAuth(Supervisor: string): void {
-    this.data$ = this._inserlog
-      .mutate({
-        log: [
-          {
-            ...this._log.receivingLog,
-            UserEventID: sqlData.Event_Receiving_NotApplicable,
-            Message: 'Country' + Supervisor,
-          },
-        ],
-      })
+    this.data$ = this._update
+      .passAuthForNotApplicable$(Supervisor, 'country')
       .pipe(
         map(() => {
           // Unknown country id is 253
-          this._info.updateCountry(253, 'UNK');
+          this._update.updateCountry(253, 'UNK');
           this._router.navigateByUrl('receiptreceiving/update/datecode');
           return null;
         }),

@@ -13,7 +13,6 @@ import { PrinterService } from 'src/app/shared/data/printer';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
-import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
 import { updateReceiptInfoService } from './updateReceipt';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
@@ -45,7 +44,6 @@ export class LabelService {
     private _update: UpdateAfterReceivingGQL,
     private _printer: PrinterService,
     private _insertLog: Create_EventLogsGQL,
-    private _log: LogService,
     private _eventLog: EventLogService,
     private _userInfo: StorageUserInfoService
   ) {}
@@ -125,60 +123,31 @@ export class LabelService {
   }
 
   /**
-   * Track total quantity and remaining for recipt line;
-   */
-
-  get total() {
-    return this._receipt.selectedReceiptLine[0].ExpectedQuantity;
-  }
-
-  get remaining() {
-    return computed(() => {
-      let sum = 0;
-      this._ITNList().map((item) => (sum += item.quantity));
-      return this.total - sum;
-    });
-  }
-
-  /**
-   * track current used ITN info for ITN scan and add location
-   */
-
-  get currentItnIndex() {
-    return computed(() => {
-      let i = -1;
-      this._ITNList().map((itn, index) => {
-        if (itn.ITN) {
-          i = index;
-          return true;
-        }
-        return false;
-      });
-      return i;
-    });
-  }
-
-  /**
    * Selecter
    */
 
+  //
+  remaining = computed(() => {
+    let sum = 0;
+    this._ITNList().map((item) => (sum += item.quantity));
+    return this._receipt.ExpectQuantity() - sum;
+  });
+
+  // track current used ITN info for ITN scan and add location
+  currentItnIndex = computed(() => {
+    let i = -1;
+    this._ITNList().map((itn, index) => {
+      if (itn.ITN) {
+        i = index;
+        return true;
+      }
+      return false;
+    });
+    return i;
+  });
+
   getItnInList(index: number) {
     return computed(() => this._ITNList()[index].ITN);
-  }
-
-  get receiptPartNumber() {
-    return this._receipt.receiptLsAfterQuantity[0].Product.PartNumber;
-  }
-
-  get receiptProductCode() {
-    return this._receipt.receiptLsAfterQuantity[0].Product.ProductCode
-      .ProductCodeNumber;
-  }
-
-  get openQuantityForPOs() {
-    const purchaseOrder =
-      this._receipt.selectedReceiptLine[0].RECEIPTLDs[0].PurchaseOrderL;
-    return purchaseOrder.QuantityOnOrder - purchaseOrder.QuantityReceived;
   }
 
   /**
@@ -204,23 +173,27 @@ export class LabelService {
           return combineLatest({
             print: this._printer.printITN$(
               res.data.createITN,
-              this._receipt.receiptLsAfterQuantity[0].Product.ProductCode
-                .ProductCodeNumber,
-              this._receipt.receiptLsAfterQuantity[0].Product.PartNumber
+              this._receipt.productCode(),
+              this._receipt.partNumber()
             ),
             log: this._insertLog.mutate({
               oldLogs: {
-                ...this._log.receivingLog,
-                InventoryTrackingNumber: res.data.createITN,
-                Quantity: null,
+                UserName: this._userInfo.userName,
                 UserEventID: sqlData.Event_Receiving_GenerateITN,
+                InventoryTrackingNumber: res.data.createITN,
+                PartNumber: this._receipt.partNumber(),
+                ProductCode: this._receipt.productCode(),
+                ReceiptHeader: this._receipt.headerID(),
+                ReceiptLine: this._receipt.receiptLine(),
+                PurchaseOrderNumber: this._receipt.purchaseOrderNumber(),
+                PurchaseLine: this._receipt.purchaseLineNumber(),
               },
               eventLogs: {
                 ...this._eventLog.eventLog,
                 EventTypeID: sqlData.Event_Receiving_GenerateITN,
                 Log: JSON.stringify({
-                  ...JSON.parse(this._eventLog.eventLog.Log),
                   InventoryTrackingNumber: res.data.createITN,
+                  ...this._receipt.receiptInfoAfterFilter()[0],
                 }),
               },
             }),
@@ -266,24 +239,21 @@ export class LabelService {
    * updateAfterReceving
    */
   public updateAfterReceving(): Observable<any> {
-    const line = this._receipt.selectedReceiptLine[0];
+    const line = this._receipt.receiptInfoAfterFilter()[0];
     const Inventory = {
       DistributionCenter: environment.DistributionCenter,
       ProductID: line.ProductID,
       ROHS: this._partInfo.receiptInfo.ROHS,
     };
     const info = {
-      PartNumber: line.Product?.PartNumber || 'null',
-      ProductCode: line.Product?.ProductCode.ProductCodeNumber || 'null',
+      PartNumber: line.PartNumber,
+      ProductCode: line.ProductCodeNumber,
       User: this._userInfo.userName,
       CreatingProgram: 'OMS-Receiving',
-      PurchaseOrderNumber:
-        line.RECEIPTLDs[0]?.PurchaseOrderL?.PurchaseOrderH
-          ?.PurchaseOrderNumber || 'null',
-      PurchaseOrderLine:
-        line.RECEIPTLDs[0].PurchaseOrderL?.LineNumber.toString() || 'null',
+      PurchaseOrderNumber: line.PurchaseOrderNumber,
+      PurchaseOrderLine: line.PurchaseLineNumber.toString(),
     };
-    const ReceiptLID = line._id;
+    const ReceiptLID = line.ReceiptLineID;
     //
     const itnInfo: ITNinfo[] = this._ITNList().map((node) => {
       return {
@@ -307,23 +277,35 @@ export class LabelService {
     // collect info for log
     const oldLogs: any = itnInfo.map((itn) => {
       return {
-        ...this._log.receivingLog,
+        UserName: this._userInfo.userName,
         UserEventID: sqlData.Event_Receiving_UpdateInventory,
         InventoryTrackingNumber: itn.ITN,
         Quantity: itn.quantity,
+        PartNumber: this._receipt.partNumber(),
+        ProductCode: this._receipt.productCode(),
+        ReceiptHeader: this._receipt.headerID(),
+        ReceiptLine: this._receipt.receiptLine(),
+        PurchaseOrderNumber: this._receipt.purchaseOrderNumber(),
+        PurchaseLine: this._receipt.purchaseLineNumber(),
         Message: itn.BinLocation,
       };
     });
     oldLogs.push({
-      ...this._log.receivingLog,
+      UserName: this._userInfo.userName,
       UserEventID: sqlData.Event_Receiving_ReceiptLineDone,
+      PartNumber: this._receipt.partNumber(),
+      ProductCode: this._receipt.productCode(),
+      ReceiptHeader: this._receipt.headerID(),
+      ReceiptLine: this._receipt.receiptLine(),
+      PurchaseOrderNumber: this._receipt.purchaseOrderNumber(),
+      PurchaseLine: this._receipt.purchaseLineNumber(),
     });
     const eventLogs = itnInfo.map((itn) => {
       return {
         ...this._eventLog.eventLog,
         EventTypeID: sqlData.Event_Receiving_UpdateInventory,
         Log: JSON.stringify({
-          ...JSON.parse(this._eventLog.eventLog.Log),
+          ...this._receipt.receiptInfoAfterFilter()[0],
           InventoryTrackingNumber: itn.ITN,
           Quantity: itn.quantity,
           BinLocation: itn.BinLocation,

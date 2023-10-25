@@ -25,25 +25,24 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
   template: `
     <!-- Receipt Line infomation -->
     <div class="grid grid-cols-3 text-2xl">
-      <h1>LineNumber: {{ receipt.receiptLsAfterQuantity[0].LineNumber }}</h1>
+      <h1>
+        LineNumber: {{ receipt.receiptInfoAfterFilter()[0].ReceiptLineNumber }}
+      </h1>
       <h1>
         Status:
-        {{ receipt.receiptLsAfterQuantity[0].RECEIPTLDs[0].ReceiptStatus.Name }}
+        {{ receipt.receiptInfoAfterFilter()[0].Status }}
       </h1>
       <h1>
-        Quantity: {{ receipt.receiptLsAfterQuantity[0].ExpectedQuantity }}
+        Quantity: {{ receipt.receiptInfoAfterFilter()[0].ExpectedQuantity }}
       </h1>
-      <h1>UOM: {{ receipt.UoM() }}</h1>
+      <h1>UOM: {{ receipt.receiptInfoAfterFilter()[0].UnitOfMeasure }}</h1>
       <h1>
         PurchaseNumber:
-        {{
-          receipt.receiptLsAfterQuantity[0].RECEIPTLDs[0].PurchaseOrderL
-            .PurchaseOrderH.PurchaseOrderNumber
-        }}
+        {{ receipt.receiptInfoAfterFilter()[0].PurchaseOrderNumber }}
       </h1>
       <h1>
         Part:
-        {{ receipt.receiptLsAfterQuantity[0].Product.PartNumber }}
+        {{ receipt.receiptInfoAfterFilter()[0].PartNumber }}
       </h1>
     </div>
     <!-- Quantity input form -->

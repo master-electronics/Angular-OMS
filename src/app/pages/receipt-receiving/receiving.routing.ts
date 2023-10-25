@@ -5,7 +5,6 @@ import { TabService } from '../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { ReceiptGuard } from './utils/receipt.guard';
 import { PartResolver } from './utils/resolver/part.resolver';
-import { LogService } from './data/eventLog';
 import { kickoutService } from './data/kickout';
 import { CreateReceiptService } from './data/createReceipt';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
@@ -20,7 +19,6 @@ export const ReceivingRoutes: Routes = [
       ReceiptInfoService,
       updateReceiptInfoService,
       LabelService,
-      LogService,
       kickoutService,
       CreateReceiptService,
       ItnCountService,
@@ -87,7 +85,7 @@ export const ReceivingRoutes: Routes = [
           lines: PartResolver,
         },
         loadComponent: () =>
-          import('./feature/identify/part.component').then(
+          import('./feature/verify/part.component').then(
             (m) => m.PartComponent
           ),
       },

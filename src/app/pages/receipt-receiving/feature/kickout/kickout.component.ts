@@ -14,7 +14,6 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { kickoutService } from '../../data/kickout';
@@ -106,7 +105,6 @@ export class KickoutComponent implements OnInit {
     private _router: Router,
     private _step: TabService,
     private _receipt: ReceiptInfoService,
-    private _log: LogService,
     public _kickout: kickoutService
   ) {}
 
@@ -140,9 +138,9 @@ export class KickoutComponent implements OnInit {
   onSubmit(): void {
     const { kickoutReason, otherReason } = this.kickoutForm.value;
     const kickoutText = this.kickoutOptions[kickoutReason - 7]?.content;
-    let reason = `${
-      this._receipt.headerID
-    }|${this._receipt.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim()}|`;
+    let reason = `${this._receipt.headerID}|${this._receipt
+      .receiptInfoAfterFilter()[0]
+      .PurchaseOrderNumber.trim()}|`;
     reason += kickoutText;
     if (kickoutReason === 14) {
       reason = reason + ': ' + otherReason;
@@ -153,7 +151,7 @@ export class KickoutComponent implements OnInit {
       list.push(tmp);
     }
     // update suspect flag and reason then print current label for current ITN.
-    this.print$ = this._receipt
+    this.print$ = this._kickout
       .printKickOutLabel$(
         list,
         this._kickout.kickoutItns[this.index],
@@ -168,8 +166,8 @@ export class KickoutComponent implements OnInit {
           }
           this._router.navigate(['receiptreceiving/part'], {
             queryParams: {
-              receipt: this._log.receivingLog.ReceiptHeader,
-              part: this._log.receivingLog.PartNumber,
+              receipt: this._receipt.headerID,
+              part: this._receipt.partNumber,
               name: 'kickout',
             },
           });

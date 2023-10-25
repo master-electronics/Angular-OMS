@@ -44,15 +44,15 @@ export class SelectLineComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.data = this._receipt.receiptLsAfterQuantity.map((res) => ({
-      id: res._id,
-      content: `Line ${res.LineNumber}`,
+    this.data = this._receipt.receiptInfoAfterFilter().map((res) => ({
+      id: res.ReceiptLineID,
+      content: `Line ${res.ReceiptLineID}`,
     }));
     this._tab.changeSteps(3);
   }
 
   public onClick(data): void {
-    this._receipt.pickOneReceiptLine(data.id);
+    this._receipt.updateReceiptLine(data.id);
     this._router.navigateByUrl('receiptreceiving/update/itncount');
   }
 

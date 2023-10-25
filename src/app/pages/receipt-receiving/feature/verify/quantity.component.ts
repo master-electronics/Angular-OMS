@@ -71,11 +71,13 @@ export class QuantityComponent implements OnInit {
   };
 
   onSubmit(): void {
-    const vaild = this._receipt.lineAfterPart.some(
-      (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
-    );
+    const vaild = this._receipt
+      .receiptInfoAfterFilter()
+      .some(
+        (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
+      );
     if (vaild) {
-      this._receipt.filterByQuantity(Number(this.inputForm.value.quantity));
+      this._receipt.updateQuantity(Number(this.inputForm.value.quantity));
       this._router.navigateByUrl('receiptreceiving/update/country');
       return;
     }

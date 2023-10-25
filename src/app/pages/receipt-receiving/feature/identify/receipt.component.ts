@@ -42,11 +42,6 @@ import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.componen
       class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
       <green-button buttonText="Create" (buttonClick)="create()"></green-button>
-      <red-button
-        class="col-start-3"
-        buttonText="Over Receipt"
-        (buttonClick)="overRece()"
-      ></red-button>
     </div>
   `,
 })
@@ -83,38 +78,6 @@ export class ReceiptComponent implements OnInit {
     });
   }
 
-  public overRece(): void {
-    if (!this.inputForm.value.receipt?.trim()) {
-      return;
-    }
-    this.data$ = this._receipt
-      .checkReceiptHeader(Number(this.inputForm.value.receipt))
-      .pipe(
-        switchMap(() => {
-          return this._receipt.findAllLines$();
-        }),
-        tap(() => {
-          if (this._receipt.receiptLines.length === 1) {
-            this._receipt.filterByOverReceiving(
-              this._receipt.receiptLines[0]._id
-            );
-            this._router.navigate(['../overreceiving'], {
-              relativeTo: this._actRoute,
-            });
-            return;
-          }
-          this._router.navigate(['../alllines'], {
-            relativeTo: this._actRoute,
-          });
-        }),
-        catchError((error) => {
-          return of({
-            error: { message: error.message, type: 'error' },
-          });
-        })
-      );
-  }
-
   public onSearch(): void {
     this._router.navigate(['../search'], {
       relativeTo: this._actRoute,
@@ -123,7 +86,7 @@ export class ReceiptComponent implements OnInit {
 
   public onSubmit(): void {
     this.data$ = this._receipt
-      .checkReceiptHeader(Number(this.inputForm.value.receipt))
+      .checkReceiptHeader$(Number(this.inputForm.value.receipt))
       .pipe(
         tap(() => {
           this._router.navigate(['../part'], { relativeTo: this._actRoute });

@@ -13,8 +13,8 @@ import { DatecodeService } from 'src/app/shared/data/datecode';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { DefalutDateCode } from 'src/app/shared/utils/dataRegex';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { LogService } from './eventLog';
 import { ReceiptInfoService } from './ReceiptInfo';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 interface ReceiptInfo {
   ReceiptLIDs: number[];
@@ -29,11 +29,11 @@ export class updateReceiptInfoService {
   constructor(
     private _update: ReceivingUpdateReceiptLGQL,
     private _receipt: ReceiptInfoService,
-    private _log: LogService,
     private _insertLog: Create_EventLogsGQL,
     private _eventLog: EventLogService,
     private _country: CountryListService,
-    private _datecode: DatecodeService
+    private _datecode: DatecodeService,
+    private _userInfo: StorageUserInfoService
   ) {}
   /**
    * Store info for update receipt
@@ -54,9 +54,9 @@ export class updateReceiptInfoService {
    * initReceiptInfo: After filter by Quantity. All lines are target receipt
    */
   public initReceiptInfo(): void {
-    const ReceiptLIDs = this._receipt.receiptLsAfterQuantity.map(
-      (res) => res._id
-    );
+    const ReceiptLIDs = this._receipt
+      .receiptInfoAfterFilter()
+      .map((res) => res.ReceiptLineID);
     this._receiptInfo.next({
       ReceiptLIDs,
       DateCode: '',
@@ -161,38 +161,69 @@ export class updateReceiptInfoService {
     };
   }
 
-  public updateReceiptLSQL() {
+  public passAuthForNotApplicable$(Supervisor: string, Type: string) {
+    const line = this._receipt.receiptInfoAfterFilter()[0];
+    const oldLogs = {
+      UserName: this._userInfo.userName,
+      UserEventID: sqlData.Event_Receiving_NotApplicable,
+      Quantity: line.ExpectedQuantity,
+      PartNumber: line.PartNumber,
+      ProductCode: line.ProductCodeNumber,
+      ReceiptHeader: this._receipt.headerID(),
+      PurchaseOrderNumber: line.PurchaseOrderNumber,
+      PurchaseLine: line.PurchaseLineNumber,
+      Message: `${Type}|${Supervisor}`,
+    };
+    const eventLogs = {
+      UserName: this._userInfo.userName,
+      EventTypeID: sqlData.Event_Receiving_NotApplicable,
+      Log: JSON.stringify({
+        Quantity: line.ExpectedQuantity,
+        PartNumber: line.PartNumber,
+        ProductCode: line.ProductCodeNumber,
+        ReceiptHeader: this._receipt.headerID(),
+        PurchaseOrderNumber: line.PurchaseOrderNumber,
+        PurchaseLine: line.PurchaseLineNumber,
+        Supervisor,
+        Type,
+      }),
+    };
+    return this._insertLog.mutate({ oldLogs, eventLogs });
+  }
+
+  public updateReceiptLSQL$() {
     const update = this._update.mutate({
       idList: this.receiptInfo.ReceiptLIDs,
       DateCode: this.receiptInfo.DateCode,
       CountryID: this.receiptInfo.CountryID,
       ROHS: this.receiptInfo.ROHS,
     });
-    const oldLogs = this._receipt.receiptLsAfterQuantity.map((line) => {
+    const oldLogs = this._receipt.receiptInfoAfterFilter().map((line) => {
       return {
-        ...this._log.receivingLog,
+        UserName: this._userInfo.userName,
         UserEventID: sqlData.Event_Receiving_UpdateInfo,
-        ReceiptLine: line.LineNumber,
+        ReceiptLine: line.ReceiptLineNumber,
         Quantity: line.ExpectedQuantity,
+        PartNumber: line.PartNumber,
+        ProductCode: line.ProductCodeNumber,
+        ReceiptHeader: this._receipt.headerID(),
+        PurchaseOrderNumber: line.PurchaseOrderNumber,
+        PurchaseLine: line.PurchaseLineNumber,
       };
     });
-    const eventLogs = this._receipt.receiptLsAfterQuantity.map((line) => {
+    const eventLogs = this._receipt.receiptInfoAfterFilter().map((line) => {
       return {
         ...this._eventLog.eventLog,
         EventTypeID: sqlData.Event_Receiving_UpdateInfo,
         Log: JSON.stringify({
           ...JSON.parse(this._eventLog.eventLog.Log),
-          ReceiptLine: line.LineNumber,
-          ExpectedQuantity: line.ExpectedQuantity,
-          DateCode: this.receiptInfo.DateCode,
-          ROHS: this.receiptInfo.ROHS,
-          CountryOfOrigin: this.receiptInfo.ISO3,
+          ...line,
         }),
       };
     });
     this._eventLog.updateEventLog(eventLogs[0]);
     return update.pipe(
-      switchMap((res) => {
+      switchMap(() => {
         return this._insertLog.mutate({ oldLogs, eventLogs });
       })
     );

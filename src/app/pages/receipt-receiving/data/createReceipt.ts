@@ -5,7 +5,6 @@ import {
   FetchPurchaseOrderInfoGQL,
   GenerateReceiptForReceivingGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
-import { LogService } from './eventLog';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -69,14 +68,13 @@ export class CreateReceiptService {
     private _receiptInfo: ReceiptInfoService,
     private _generateReceipt: GenerateReceiptForReceivingGQL,
     private _fetchpurchase: FetchPurchaseOrderInfoGQL,
-    private _log: LogService,
     private _eventLog: EventLogService,
     private _userInfo: StorageUserInfoService,
     private _insertLog: Create_EventLogsGQL
   ) {}
 
   /**
-   * getPurchaseOrderInfo
+   * Let user input purchase order number, start create receipt.
    */
   public getPurchaseOrderInfo$(order: string) {
     this.updatePurchaseInfo({ PurchaseOrderNumber: order });
@@ -116,20 +114,22 @@ export class CreateReceiptService {
           }
         }),
         switchMap(() => {
-          this._log.initReceivingLog({
-            UserName: this._userInfo.userName,
-            UserEventID: sqlData.Event_Receiving_Start,
-            PurchaseOrderNumber: order,
-          });
+          const oldLogs = [
+            {
+              UserName: this._userInfo.userName,
+              UserEventID: sqlData.Event_Receiving_create_receipt_start,
+              PurchaseOrderNumber: order,
+            },
+          ];
           this._eventLog.initEventLog({
             UserName: this._userInfo.userName,
-            EventTypeID: sqlData.Event_Receiving_Start,
+            EventTypeID: sqlData.Event_Receiving_create_receipt_start,
             Log: JSON.stringify({
               PurchaseOrderNumber: order,
             }),
           });
           return this._insertLog.mutate({
-            oldLogs: [this._log.receivingLog],
+            oldLogs,
             eventLogs: [this._eventLog.eventLog],
           });
         })
@@ -147,37 +147,26 @@ export class CreateReceiptService {
         Quantity: this.purchaseInfo.Quantity,
       })
       .pipe(
-        switchMap((res) => {
-          const id = res.data.generateReceiptForReceiving;
-          this._receiptInfo.updateHeaderID(id);
-          this._log.updateReceivingLog({
-            ReceiptHeader: id,
-            UserEventID: sqlData.Event_Receiving_Start,
-          });
-          this._eventLog.updateEventLog({
-            UserName: this._userInfo.userName,
-            EventTypeID: sqlData.Event_Receiving_Start,
-            Log: JSON.stringify({
-              ReceiptHeader: id,
-              ...this.purchaseInfo,
-            }),
-          });
-          const oldlog2 = {
-            ReceiptHeader: id,
-            UserName: this._userInfo.userName,
-            UserEventID: sqlData.Event_Receiving_create_receipt_done,
-          };
-          const eventlog2 = {
+        map((res) => res.data.generateReceiptForReceiving),
+        switchMap((id) => {
+          this._receiptInfo.updateheaderID(id);
+          this._eventLog.initEventLog({
             UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Receiving_create_receipt_done,
             Log: JSON.stringify({
               ReceiptHeader: id,
               ...this.purchaseInfo,
             }),
+          });
+          const oldLogs = {
+            ...this.purchaseInfo,
+            ReceiptHeader: id,
+            UserName: this._userInfo.userName,
+            UserEventID: sqlData.Event_Receiving_create_receipt_done,
           };
           return this._insertLog.mutate({
-            oldLogs: [this._log.receivingLog, oldlog2],
-            eventLogs: [this._eventLog.eventLog, eventlog2],
+            oldLogs,
+            eventLogs: this._eventLog.eventLog,
           });
         })
       );

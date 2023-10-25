@@ -136,7 +136,7 @@ export class SearchComponent implements OnInit {
   }
 
   onSelect(id: number): void {
-    this.search$ = this.receipt.checkReceiptHeader(id).pipe(
+    this.search$ = this.receipt.checkReceiptHeader$(id).pipe(
       tap(() => {
         this._router.navigate(['../part'], { relativeTo: this._actRoute });
       })
