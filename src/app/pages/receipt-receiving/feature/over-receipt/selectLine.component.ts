@@ -48,11 +48,11 @@ export class SelectLineComponent implements OnInit {
     private _steps: TabService,
     public receipt: ReceiptInfoService
   ) {}
-  public tableData: ReceiptInfo[];
+  public tableData;
 
   ngOnInit(): void {
     this._steps.changeSteps(0);
-    this.tableData = this.receipt.receiptInfoAfterFilter();
+    this.tableData = this.receipt.OverReceivingTableinfo();
   }
 
   public onBack(): void {
@@ -60,11 +60,11 @@ export class SelectLineComponent implements OnInit {
   }
 
   public selectLine(data): void {
-    if (!data.ReceiptLineID) {
+    if (!data.ID) {
       return;
     }
     // select line;
-    this.receipt.updateReceiptLine(data.ReceiptLineID);
+    this.receipt.updateReceiptLine(data.ID);
     this._router.navigateByUrl('/receiptreceiving/overreceiving');
   }
 }

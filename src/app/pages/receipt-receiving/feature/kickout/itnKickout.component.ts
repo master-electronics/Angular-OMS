@@ -136,7 +136,7 @@ export class ItnKickoutComponent implements OnInit {
   skip(): void {
     this._router.navigate(['receiptreceiving/part'], {
       queryParams: {
-        receipt: this._info.headerID,
+        receipt: this._info.headerID(),
         line: this._info.receiptInfoAfterFilter()[0].ReceiptLineNumber,
         name: 'finish',
       },

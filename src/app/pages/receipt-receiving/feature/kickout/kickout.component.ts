@@ -166,8 +166,8 @@ export class KickoutComponent implements OnInit {
           }
           this._router.navigate(['receiptreceiving/part'], {
             queryParams: {
-              receipt: this._receipt.headerID,
-              part: this._receipt.partNumber,
+              receipt: this._receipt.headerID(),
+              part: this._receipt.partNumber(),
               name: 'kickout',
             },
           });

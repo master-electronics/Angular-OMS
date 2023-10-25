@@ -28,8 +28,6 @@ export interface ReceiptInfo {
   DateCode: string;
   ROHS: boolean;
   ProductID: number;
-  CountryID: number;
-  ISO3: string;
   PartNumber: string;
   ProductCodeNumber: string;
 }
@@ -69,8 +67,7 @@ export class ReceiptInfoService {
     if (!this._receiptState().receiptList.length) {
       return null;
     }
-    console.log('run');
-    let tmp: ReceiptInfo[] = this._receiptState().receiptList;
+    let tmp: ReceiptInfo[] = [...this._receiptState().receiptList];
     if (this._receiptState().ReceiptLine) {
       return tmp.filter(
         (line) => line.ReceiptLineID === this._receiptState().ReceiptLine
@@ -111,7 +108,8 @@ export class ReceiptInfoService {
 
   OverReceivingTableinfo = computed(() => {
     return this._receiptState().receiptList.map((line) => ({
-      ReceiptLineNumber: line.ReceiptLineNumber,
+      ID: line.ReceiptLineID,
+      ReceiptHeader: line.ReceiptHID,
       Quantity: line.ExpectedQuantity,
       PartNumber: line.PartNumber,
       PurchaseOrderNumber: line.PurchaseOrderNumber,
@@ -144,21 +142,30 @@ export class ReceiptInfoService {
   }
   updateReceiptLine(line: number) {
     this._receiptState.update((info) => ({ ...info, ReceiptLine: line }));
-    const receiptL = this.receiptInfoAfterFilter()[0];
-    this._receiptState.update((info) => ({
-      ...info,
-      PartNumber: receiptL.PartNumber,
-      Quantity: receiptL.ExpectedQuantity,
-      headerID: receiptL.ReceiptHID,
-    }));
+    this._receiptState().receiptList.map((node) => {
+      if (node.ReceiptLineID === line) {
+        this._receiptState.update((info) => ({
+          ...info,
+          headerID: node.ReceiptHID,
+          Quantity: node.ExpectedQuantity,
+          PartNumber: node.PartNumber,
+        }));
+      }
+    });
   }
   updateReceiptList(list: ReceiptInfo[]) {
     this._receiptState.update((info) => ({ ...info, receiptList: list }));
   }
-  updateExpectQuantityForOverReceipt(quantity: number) {
+  updateExpectQuantity(quantity: number) {
+    const list = this._receiptState().receiptList.map((line) => {
+      if (line.ReceiptLineID === this._receiptState().ReceiptLine) {
+        return { ...line, ExpectedQuantity: quantity };
+      }
+      return line;
+    });
     this._receiptState.update((info) => ({
       ...info,
-      receiptList: [{ ...info.receiptList[0], ExpectedQuantity: quantity }],
+      receiptList: list,
     }));
   }
 
@@ -199,7 +206,7 @@ export class ReceiptInfoService {
     return this._findReceiptH$
       .fetch(
         {
-          ReceiptHID: this._receiptState().headerID,
+          ReceiptHID: this.headerID(),
           statusID: sqlData.Receipt_Entered,
         },
         { fetchPolicy: 'network-only' }
@@ -218,8 +225,16 @@ export class ReceiptInfoService {
         }),
         map((res) => res.data.findReceiptInfoByIdAndStatus),
         tap((res) => {
-          Logger.devOnly('ReceiptInfo', 'findLines', res[0].Product.PartNumber);
-          Logger.devOnly('ReceiptInfo', 'findLines', res[0].ExpectedQuantity);
+          Logger.devOnly(
+            'ReceiptInfo',
+            'findLines',
+            res.RECEIPTLs[0].Product.PartNumber
+          );
+          Logger.devOnly(
+            'ReceiptInfo',
+            'findLines',
+            res.RECEIPTLs[0].ExpectedQuantity
+          );
           const list: ReceiptInfo[] = res.RECEIPTLs.map((line) => ({
             ReceiptHID: res._id,
             PurchaseLineNumber: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
@@ -237,8 +252,6 @@ export class ReceiptInfoService {
             DateCode: line.DateCode,
             ROHS: line.ROHS,
             ProductID: line.ProductID,
-            CountryID: line.CountryID,
-            ISO3: line.Country.ISO3,
             PartNumber: line.Product.PartNumber,
             ProductCodeNumber: line.Product.ProductCode.ProductCodeNumber,
           }));
@@ -269,15 +282,13 @@ export class ReceiptInfoService {
                 QuantityReceived: pl.QuantityReceived,
                 UnitOfMeasure: pl.UnitOfMeasure,
                 ReceiptHID: rd.ReceiptL.ReceiptHID,
-                ReceiptLineID: rd._id,
+                ReceiptLineID: rd.ReceiptL._id,
                 Status: rd.ReceiptStatus.Name,
                 ReceiptLineNumber: rd.ReceiptL.LineNumber,
                 ExpectedQuantity: rd.ReceiptL.ExpectedQuantity,
                 DateCode: rd.ReceiptL.DateCode,
                 ROHS: rd.ReceiptL.ROHS,
                 ProductID: rd.ReceiptL.ProductID,
-                CountryID: rd.ReceiptL.CountryID,
-                ISO3: rd.ReceiptL.Country.ISO3,
                 PartNumber: rd.ReceiptL.Product.PartNumber,
                 ProductCodeNumber:
                   rd.ReceiptL.Product.ProductCode.ProductCodeNumber,
@@ -345,7 +356,7 @@ export class ReceiptInfoService {
       })
       .pipe(
         tap(() => {
-          this.updateExpectQuantityForOverReceipt(quantity);
+          this.updateExpectQuantity(quantity);
         }),
         switchMap(() => {
           const line = this.receiptInfoAfterFilter()[0];

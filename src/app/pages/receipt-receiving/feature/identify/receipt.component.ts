@@ -15,6 +15,8 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
+import { updateReceiptInfoService } from '../../data/updateReceipt';
+import { LabelService } from '../../data/label';
 
 @Component({
   standalone: true,
@@ -52,6 +54,8 @@ export class ReceiptComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
+    private _info: updateReceiptInfoService,
+    private _label: LabelService,
     private _ui: TabService,
     private _actRoute: ActivatedRoute
   ) {}
@@ -62,6 +66,9 @@ export class ReceiptComponent implements OnInit {
       receipt: new FormControl(null, [Validators.required]),
     });
     this.data$ = this._actRoute.queryParamMap;
+    this._label.reset();
+    this._info.reset();
+    this._receipt.resetAfterDone();
   }
 
   public onChange = (input: string) => {
@@ -85,6 +92,9 @@ export class ReceiptComponent implements OnInit {
   }
 
   public onSubmit(): void {
+    if (!this.inputForm.value.receipt) {
+      return;
+    }
     this.data$ = this._receipt
       .checkReceiptHeader$(Number(this.inputForm.value.receipt))
       .pipe(

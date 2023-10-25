@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, tap } from 'rxjs';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import {
   FormControl,
@@ -37,6 +37,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
         class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
       >
         <red-button
+          *ngIf="data$ | async"
           buttonText="Over Receipt"
           (buttonClick)="overReceipt()"
         ></red-button>
@@ -95,7 +96,8 @@ export class PurchaseNumberComponent implements OnInit {
           return of({
             error: { message: error.message, type: 'error' },
           });
-        })
+        }),
+        shareReplay(1)
       );
   }
 
@@ -115,7 +117,8 @@ export class PurchaseNumberComponent implements OnInit {
           return of({
             error: { message: error.message, type: 'error' },
           });
-        })
+        }),
+        shareReplay(1)
       );
   }
 }

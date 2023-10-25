@@ -26,9 +26,6 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
     <!-- Receipt Line infomation -->
     <div class="grid grid-cols-3 text-2xl">
       <h1>
-        LineNumber: {{ receipt.receiptInfoAfterFilter()[0].ReceiptLineNumber }}
-      </h1>
-      <h1>
         Status:
         {{ receipt.receiptInfoAfterFilter()[0].Status }}
       </h1>
@@ -39,6 +36,10 @@ import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component
       <h1>
         PurchaseNumber:
         {{ receipt.receiptInfoAfterFilter()[0].PurchaseOrderNumber }}
+      </h1>
+      <h1>
+        PurchaseLine:
+        {{ receipt.receiptInfoAfterFilter()[0].PurchaseLineNumber }}
       </h1>
       <h1>
         Part:

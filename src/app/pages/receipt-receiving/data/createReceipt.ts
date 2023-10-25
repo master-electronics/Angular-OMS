@@ -13,12 +13,12 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
 
 interface PurchaseInfo {
   PurchaseOrderNumber?: string;
-  LineNumber?: number;
+  PurchaseLine?: number;
   Quantity?: number;
 }
 
 interface LineInfo {
-  LineNumber: number;
+  PurchaseLine: number;
   VendorName: string;
   QuantityOnOrder: number;
   QuantityReceived: number;
@@ -99,7 +99,7 @@ export class CreateReceiptService {
             }
             const date = new Date(Number(line.DueDate));
             const lineInfo: LineInfo = {
-              LineNumber: line.LineNumber,
+              PurchaseLine: line.LineNumber,
               VendorName: res.data.findPurchaseOrderH.Vendor.VendorName,
               QuantityOnOrder: line.QuantityOnOrder,
               QuantityReceived: line.QuantityReceived,
@@ -142,7 +142,7 @@ export class CreateReceiptService {
   public generateReceipt$() {
     return this._generateReceipt
       .mutate({
-        LineNumber: this.purchaseInfo.LineNumber,
+        LineNumber: this.purchaseInfo.PurchaseLine,
         PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
         Quantity: this.purchaseInfo.Quantity,
       })
@@ -159,10 +159,12 @@ export class CreateReceiptService {
             }),
           });
           const oldLogs = {
-            ...this.purchaseInfo,
             ReceiptHeader: id,
             UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Receiving_create_receipt_done,
+            Quantity: this.purchaseInfo.Quantity,
+            PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
+            PurchaseLine: this.purchaseInfo.PurchaseLine,
           };
           return this._insertLog.mutate({
             oldLogs,
