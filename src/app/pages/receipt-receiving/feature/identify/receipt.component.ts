@@ -39,7 +39,7 @@ import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.componen
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <div
-      class="grid h-16 grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-24 md:text-4xl lg:h-36"
+      class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
       <green-button buttonText="Create" (buttonClick)="create()"></green-button>
       <red-button
@@ -98,7 +98,7 @@ export class ReceiptComponent implements OnInit {
             this._receipt.filterByOverReceiving(
               this._receipt.receiptLines[0]._id
             );
-            this._router.navigate(['../'], {
+            this._router.navigate(['../overreceiving'], {
               relativeTo: this._actRoute,
             });
             return;

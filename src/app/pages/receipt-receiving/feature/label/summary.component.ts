@@ -23,7 +23,6 @@ import { PrinterService } from 'src/app/shared/data/printer';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { LogService } from '../../data/eventLog';
 
 @Component({
   standalone: true,
@@ -145,7 +144,6 @@ export class SummaryComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService,
-    private _log: LogService,
     private location: LocationStrategy
   ) {
     this.inputForm = this._fb.group({});
@@ -216,13 +214,7 @@ export class SummaryComponent implements OnInit {
   onSubmit(): void {
     this.data$ = this.label.updateAfterReceving().pipe(
       map(() => {
-        this._router.navigate(['receiptreceiving/part'], {
-          queryParams: {
-            receipt: this._log.receivingLog.ReceiptHeader,
-            line: this._log.receivingLog.ReceiptLine,
-            name: 'finish',
-          },
-        });
+        this._router.navigateByUrl('receiptreceiving/itnkickout');
       }),
       catchError((error) => {
         return of({

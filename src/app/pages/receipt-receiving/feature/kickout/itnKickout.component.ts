@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { LogService } from '../../data/eventLog';
@@ -19,6 +19,7 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
 import { LabelService } from '../../data/label';
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { kickoutService } from '../../data/kickout';
+import { Logger } from 'src/app/shared/services/logger.service';
 
 @Component({
   standalone: true,

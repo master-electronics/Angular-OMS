@@ -7,7 +7,6 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { ReceiptPartInfoComponent } from '../../ui/receipt-part-info.component';
-import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 
 @Component({
   standalone: true,
@@ -17,7 +16,6 @@ import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.componen
     SubmitButtonComponent,
     NgOptimizedImage,
     NormalButtonComponent,
-    RedButtonComponent,
     ReceiptPartInfoComponent,
   ],
   template: `
@@ -26,9 +24,9 @@ import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.componen
       <receipt-part-info [info]="info"></receipt-part-info>
     </div>
     <div
-      class="grid h-16 grid-cols-4 gap-6 text-2xl md:mt-10 md:h-24 md:text-4xl lg:h-36"
+      class="grid h-16 w-full grid-cols-4 gap-6 md:mt-16 md:h-32 md:text-4xl"
     >
-      <red-button (buttonClick)="kickOut()" buttonText="Kick Out"></red-button>
+      <div></div>
       <div></div>
       <submit-button (buttonClick)="onSubmit()" buttonText="Verify">
       </submit-button>
@@ -42,6 +40,7 @@ export class VerifyComponent implements OnInit {
   constructor(
     private _router: Router,
     private _actRoute: ActivatedRoute,
+    private _receipt: ReceiptInfoService,
     private _step: TabService
   ) {}
 
@@ -55,10 +54,6 @@ export class VerifyComponent implements OnInit {
         of({ isLoading: false, message: error.message, messageType: 'error' })
       )
     );
-  }
-
-  kickOut(): void {
-    this._router.navigateByUrl('receiptreceiving/kickout');
   }
 
   onSubmit(): void {

@@ -18,7 +18,6 @@ import { LogService } from '../../data/eventLog';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { kickoutService } from '../../data/kickout';
-import { PrinterService } from 'src/app/shared/data/printer';
 
 @Component({
   standalone: true,
@@ -40,6 +39,10 @@ import { PrinterService } from 'src/app/shared/data/printer';
       (ngSubmit)="onSubmit()"
       class="text-4xl md:mx-16"
     >
+      <p>
+        ITN: {{ this._kickout.kickoutItns[index] }} ({{ index + 1 }} of
+        {{ this._kickout.kickoutItns.length }})
+      </p>
       <nz-radio-group
         id="kickoutReason"
         nzSize="large"
@@ -76,10 +79,20 @@ import { PrinterService } from 'src/app/shared/data/printer';
         <div></div>
         <normal-button (buttonClick)="onBack()"></normal-button>
       </div>
+      <ng-container *ngIf="print.error">
+        <message-bar
+          [message]="print.error.message"
+          [name]="print.error.type"
+        ></message-bar>
+      </ng-container>
     </form>
     <ng-template #loading>
       <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }"></nz-skeleton>
     </ng-template>
+    <!-- <simple-keyboard
+      [inputString]="kickoutForm.value.otherReason"
+      (outputString)="onChange($event)"
+    ></simple-keyboard> -->
   `,
 })
 export class KickoutComponent implements OnInit {
@@ -93,7 +106,8 @@ export class KickoutComponent implements OnInit {
     private _router: Router,
     private _step: TabService,
     private _receipt: ReceiptInfoService,
-    private _log: LogService
+    private _log: LogService,
+    public _kickout: kickoutService
   ) {}
 
   ngOnInit(): void {
@@ -120,7 +134,7 @@ export class KickoutComponent implements OnInit {
   };
 
   onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/part/verify');
+    this._router.navigateByUrl('receiptreceiving/itnkickout');
   }
 
   onSubmit(): void {
@@ -139,22 +153,33 @@ export class KickoutComponent implements OnInit {
       list.push(tmp);
     }
     // update suspect flag and reason then print current label for current ITN.
-    this.print$ = this._receipt.printKickOut$(list, kickoutText).pipe(
-      tap(() => {
-        this._router.navigate(['receiptreceiving'], {
-          queryParams: {
-            receipt: this._log.receivingLog.ReceiptHeader,
-            part: this._log.receivingLog.PartNumber,
-            name: 'kickout',
-          },
-        });
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      }),
-      shareReplay(1)
-    );
+    this.print$ = this._receipt
+      .printKickOutLabel$(
+        list,
+        this._kickout.kickoutItns[this.index],
+        kickoutText,
+        kickoutReason
+      )
+      .pipe(
+        tap(() => {
+          this.index++;
+          if (this._kickout.kickoutItns.length - this.index > 0) {
+            return;
+          }
+          this._router.navigate(['receiptreceiving/part'], {
+            queryParams: {
+              receipt: this._log.receivingLog.ReceiptHeader,
+              part: this._log.receivingLog.PartNumber,
+              name: 'kickout',
+            },
+          });
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        }),
+        shareReplay(1)
+      );
   }
 }

@@ -277,35 +277,6 @@ export class ReceiptInfoService {
     );
   }
 
-  public printKickOut$(list: string[], reason: string) {
-    const oldLogs = {
-      ...this._log.receivingLog,
-      UserEventID: sqlData.Event_Receiving_KickOut,
-      PurchaseOrderNumber:
-        this.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim(),
-      PurchaseLine:
-        this.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.LineNumber,
-      Message: reason,
-    };
-    const eventLogs = {
-      ...this._eventLog.eventLog,
-      EventTypeID: sqlData.Event_Receiving_KickOut,
-      Log: JSON.stringify({
-        ...JSON.parse(this._eventLog.eventLog.Log),
-        PurchaseOrderNumber:
-          this.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber.trim(),
-        PurchaseLine:
-          this.lineAfterPart[0].RECEIPTLDs[0].PurchaseOrderL.LineNumber,
-        Reason: reason,
-      }),
-    };
-    return this._printer.printText$(list).pipe(
-      switchMap(() => {
-        return this._insertLog.mutate({ oldLogs, eventLogs });
-      })
-    );
-  }
-
   public printKickOutLabel$(
     list: string[],
     itn: string,
