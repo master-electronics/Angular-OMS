@@ -65,8 +65,8 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
                 #itn
               />
               <div class="grid grid-rows-2 text-lg">
-                <h1>DateCode:{{ label.ITNList[i].datecode }}</h1>
-                <h1>Country:{{ label.ITNList[i].ISO3 }}</h1>
+                <h1>DateCode:{{ label.ITNList()[i].datecode }}</h1>
+                <h1>Country:{{ label.ITNList()[i].ISO3 }}</h1>
               </div>
 
               <button
@@ -106,8 +106,8 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
       <edit-info
         (clickCancel)="editWindow = false"
         (clickSubmit)="editInfo($event)"
-        [datecode]="this.label.ITNList[editingIndex].datecode"
-        [ISO3]="this.label.ITNList[editingIndex].ISO3"
+        [datecode]="this.label.ITNList()[editingIndex].datecode"
+        [ISO3]="this.label.ITNList()[editingIndex].ISO3"
       ></edit-info>
     </ng-container>
 
@@ -169,7 +169,7 @@ export class AssignLabelComponent implements OnInit {
 
   initList(): void {
     this.label.initItnList();
-    this.label.ITNList.map((itn, index) => {
+    this.label.ITNList().map((itn, index) => {
       // add a control for inpuForm
       this.inputForm.addControl(
         `itn${index}`,
@@ -235,7 +235,7 @@ export class AssignLabelComponent implements OnInit {
         quantityList.push(Number(ele));
       });
       if (
-        this.label.ITNList.some((info) => info.datecode === '') &&
+        this.label.ITNList().some((info) => info.datecode === '') &&
         this.updateInfo.receiptInfo.DateCode !== ''
       ) {
         this.authWindow = true;
@@ -243,7 +243,7 @@ export class AssignLabelComponent implements OnInit {
         return;
       }
       if (
-        this.label.ITNList.some((info) => info.ISO3 === 'UNK') &&
+        this.label.ITNList().some((info) => info.ISO3 === 'UNK') &&
         this.updateInfo.receiptInfo.ISO3 !== 'UNK'
       ) {
         this.authWindow = true;

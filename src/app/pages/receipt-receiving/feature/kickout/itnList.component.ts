@@ -101,7 +101,7 @@ export class ItnListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.itnList = this._label.ITNList;
+    this.itnList = this._label.ITNList();
     this._step.changeSteps(3);
     this.print$ = of(true);
     this.selectITN = this._fb.group({

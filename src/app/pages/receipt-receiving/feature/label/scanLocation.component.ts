@@ -25,7 +25,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
   ],
   template: `
     <div
-      *ngIf="this._label.ITNList as list"
+      *ngIf="this._label.ITNList() as list"
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Location Barcode:</h1>
@@ -95,11 +95,14 @@ export class ScanLocationComponent implements OnInit {
       .checkBinLocation(this.inputForm.value.location.trim())
       .pipe(
         filter(() => {
-          if (this._label.ITNList?.length > this._label.currentItnIndex() + 1) {
+          if (
+            this._label.ITNList()?.length >
+            this._label.currentItnIndex() + 1
+          ) {
             this._router.navigate(['receiptreceiving/label/printitn']);
             return false;
           }
-          if (this._label.ITNList?.length <= this._label.currentItnIndex()) {
+          if (this._label.ITNList()?.length <= this._label.currentItnIndex()) {
             this._router.navigate(['../assign'], {
               relativeTo: this._actRoute,
             });

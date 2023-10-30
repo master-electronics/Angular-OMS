@@ -30,7 +30,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
   ],
   template: `
     <div
-      *ngIf="label.ITNList as list"
+      *ngIf="label.ITNList() as list"
       class="flex flex-col justify-center text-lg"
     >
       <h1>Scan Label</h1>
@@ -101,7 +101,7 @@ export class PrintITNComponent implements OnInit {
         return null;
       }
       const isVaild =
-        this.label.ITNList[this.label.currentItnIndex()].ITN === value;
+        this.label.ITNList()[this.label.currentItnIndex()].ITN === value;
       return !isVaild ? { label: true } : null;
     };
   }

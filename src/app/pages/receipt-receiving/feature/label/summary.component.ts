@@ -58,18 +58,18 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
               <div class="grid grid-cols-4 gap-2">
                 <div class="col-span-2 grid grid-rows-2">
                   <div class="grid grid-cols-2">
-                    <h1>ITN:{{ label.ITNList[i].ITN }}</h1>
-                    <h1>Location:{{ label.ITNList[i].BinLocation }}</h1>
+                    <h1>ITN:{{ label.ITNList()[i].ITN }}</h1>
+                    <h1>Location:{{ label.ITNList()[i].BinLocation }}</h1>
                   </div>
                   <div class="grid grid-cols-3">
-                    <h1>Qty:{{ label.ITNList[i].quantity }}</h1>
-                    <h1>DateCode:{{ label.ITNList[i].datecode }}</h1>
-                    <h1>Country:{{ label.ITNList[i].ISO3 }}</h1>
+                    <h1>Qty:{{ label.ITNList()[i].quantity }}</h1>
+                    <h1>DateCode:{{ label.ITNList()[i].datecode }}</h1>
+                    <h1>Country:{{ label.ITNList()[i].ISO3 }}</h1>
                   </div>
                 </div>
 
                 <button
-                  (click)="printItn(label.ITNList[i].ITN)"
+                  (click)="printItn(label.ITNList()[i].ITN)"
                   class="rounded-lg bg-green-500 px-4 py-2 font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800"
                 >
                   Print
@@ -181,7 +181,7 @@ export class SummaryComponent implements OnInit {
   }
 
   initList(): void {
-    this.label.ITNList.map((itn, index) => {
+    this.label.ITNList().map((itn, index) => {
       // add a control for inpuForm
       this.inputForm.addControl(
         `itn${index}`,

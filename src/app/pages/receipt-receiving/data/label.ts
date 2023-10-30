@@ -53,9 +53,7 @@ export class LabelService {
    * Store all Itn info in to a list
    */
   private _ITNList = signal<ITNinfo[]>([]);
-  get ITNList(): ITNinfo[] {
-    return this._ITNList();
-  }
+  ITNList = computed(() => this._ITNList());
 
   // initiate the list base on user input itn count.
   initItnList() {
@@ -73,7 +71,7 @@ export class LabelService {
   }
 
   insertNewItn() {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list.push({
         quantity: 0,
         ITN: null,
@@ -83,42 +81,48 @@ export class LabelService {
         countryID: this._partInfo.receiptInfo.CountryID,
         ISO3: this._partInfo.receiptInfo.ISO3,
       });
+      return [...list];
     });
   }
 
   removeItn(index: number) {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list.splice(index, 1);
+      return [...list];
     });
   }
 
   updateItnListQty(Qty: number, index: number) {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list[index].quantity = Qty;
+      return [...list];
     });
   }
 
   updateItnlistInfo(info: AssignLabelInfo, index: number) {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list[index] = {
         ...list[index],
         datecode: info.datecode,
         ISO3: info.ISO3,
         countryID: info.countryID,
       };
+      return [...list];
     });
   }
 
   updateItnListITN(ITN: string, index: number) {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list[index].ITN = ITN;
+      return [...list];
     });
   }
 
   updateItnListBin(BinLocation: string, ContainerID: number, index: number) {
-    this._ITNList.mutate((list) => {
+    this._ITNList.update((list) => {
       list[index].BinLocation = BinLocation;
       list[index].ContainerID = ContainerID;
+      return [...list];
     });
   }
 
