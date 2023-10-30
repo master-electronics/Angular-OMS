@@ -20,8 +20,17 @@ export const ReceiptGuard: CanActivateChildFn = (
 
   let isActive;
   switch (state.url) {
+    case '/receiptreceiving/receipt':
+      _label.reset();
+      _info.reset();
+      _receipt.resetAfterPart();
+      isActive = true;
+      break;
     case '/receiptreceiving/part':
-      isActive = _receipt.headerID !== null;
+      _label.reset();
+      _info.reset();
+      _receipt.resetAfterPart();
+      isActive = true;
       break;
     case '/receiptreceiving/part/verify':
       isActive = _receipt.partNumber() !== null;

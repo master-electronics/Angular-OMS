@@ -44,6 +44,11 @@ import { LabelService } from '../../data/label';
       class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-32 md:text-4xl"
     >
       <green-button buttonText="Create" (buttonClick)="create()"></green-button>
+      <red-button
+        class="col-start-3"
+        buttonText="Kick out"
+        (buttonClick)="onKickout()"
+      ></red-button>
     </div>
   `,
 })
@@ -54,8 +59,6 @@ export class ReceiptComponent implements OnInit {
   constructor(
     private _router: Router,
     private _receipt: ReceiptInfoService,
-    private _info: updateReceiptInfoService,
-    private _label: LabelService,
     private _ui: TabService,
     private _actRoute: ActivatedRoute
   ) {}
@@ -66,9 +69,6 @@ export class ReceiptComponent implements OnInit {
       receipt: new FormControl(null, [Validators.required]),
     });
     this.data$ = this._actRoute.queryParamMap;
-    this._label.reset();
-    this._info.reset();
-    this._receipt.resetAfterDone();
   }
 
   public onChange = (input: string) => {
@@ -81,6 +81,12 @@ export class ReceiptComponent implements OnInit {
 
   public create(): void {
     this._router.navigate(['../purchasenumber'], {
+      relativeTo: this._actRoute,
+    });
+  }
+
+  onKickout(): void {
+    this._router.navigate(['../kickoutitn'], {
       relativeTo: this._actRoute,
     });
   }

@@ -86,9 +86,7 @@ export class PartComponent implements OnInit {
           );
         }
         if (url.name === 'kickout') {
-          this._message.warning(
-            `Kickout Receipt: ${url.receipt}, Part: ${url.part}`
-          );
+          this._message.warning(`Kickout PurchaseOrder: ${url.PurchaseOrder},`);
         }
         return this._actRoute.data.pipe(
           filter((res) => res.lines?.error),
@@ -99,7 +97,7 @@ export class PartComponent implements OnInit {
               message = `Receipt Complete`;
             }
             if (url.name === 'kickout') {
-              message = `Kickout Receipt: ${url.receipt}, Part: ${url.part}\n${res}`;
+              message = `Kickout PurchaseOrder: ${url.PurchaseOrder}\n${res}`;
             }
             return message;
           })

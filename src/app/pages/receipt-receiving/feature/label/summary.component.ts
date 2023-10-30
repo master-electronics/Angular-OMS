@@ -216,7 +216,7 @@ export class SummaryComponent implements OnInit {
   onSubmit(): void {
     this.data$ = this.label.updateAfterReceving().pipe(
       map(() => {
-        this._router.navigateByUrl('receiptreceiving/itnkickout');
+        this._router.navigateByUrl('receiptreceiving/itnlist');
       }),
       catchError((error) => {
         return of({

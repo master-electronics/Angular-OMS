@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
@@ -121,14 +121,14 @@ export class ReceiptInfoService {
   /**
    * Reducer
    */
-  resetAfterDone() {
-    this._receiptState.set({
-      headerID: null,
+  resetAfterPart() {
+    this._receiptState.update((state) => ({
+      headerID: state.headerID,
       PartNumber: null,
       Quantity: null,
       ReceiptLine: null,
       receiptList: <ReceiptInfo[]>[],
-    });
+    }));
   }
 
   updateheaderID(id: number) {
@@ -203,6 +203,9 @@ export class ReceiptInfoService {
 
   // find all Receipt Line by Receipt heaser ID with status 10, then update State by result list.
   public findLines$() {
+    if (!this.headerID()) {
+      return of();
+    }
     return this._findReceiptH$
       .fetch(
         {

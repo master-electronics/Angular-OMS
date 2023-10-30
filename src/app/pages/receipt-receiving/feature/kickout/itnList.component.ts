@@ -84,7 +84,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     </ng-template>
   `,
 })
-export class ItnKickoutComponent implements OnInit {
+export class ItnListComponent implements OnInit {
   public selectITN: FormGroup;
   public print$: Observable<any>;
   public itnList;
@@ -147,6 +147,6 @@ export class ItnKickoutComponent implements OnInit {
     if (!this.formArray.value.length) {
       return;
     }
-    this._router.navigate(['receiptreceiving/kickout']);
+    this._router.navigate(['receiptreceiving/kickoutitn']);
   }
 }

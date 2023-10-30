@@ -173,17 +173,17 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'itnkickout',
+        path: 'itnlist',
         loadComponent: () =>
-          import('./feature/kickout/itnKickout.component').then(
-            (mod) => mod.ItnKickoutComponent
+          import('./feature/kickout/itnList.component').then(
+            (mod) => mod.ItnListComponent
           ),
       },
       {
-        path: 'kickout',
+        path: 'kickoutitn',
         loadComponent: () =>
-          import('./feature/kickout/kickout.component').then(
-            (m) => m.KickoutComponent
+          import('./feature/kickout/kickoutITN.component').then(
+            (m) => m.KickoutItnComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },
