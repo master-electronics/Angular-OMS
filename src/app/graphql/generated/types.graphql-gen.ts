@@ -288,6 +288,12 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type Imadjustreason = {
+  __typename?: 'IMADJUSTREASON';
+  Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
@@ -1790,6 +1796,7 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  getIMAdjustReasons?: Maybe<Array<Maybe<Imadjustreason>>>;
   getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
   getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
   getSearchLocations?: Maybe<Array<Maybe<Searchlocation>>>;

@@ -186,6 +186,13 @@ query validateAssignment($auditID: Int, $userID: Int) {
   validateAssignment(AuditID: $auditID, UserID: $userID)
 }
 
+query getIMAdjustReasons {
+  getIMAdjustReasons {
+    _id
+    Reason
+  }
+}
+
 mutation updateLastUpdated($inventoryID: Int, $typeID: Int, $lastUpdated: String) {
   updateLastUpdated(InventoryID: $inventoryID, TypeID: $typeID, LastUpdated: $lastUpdated) {
     _id

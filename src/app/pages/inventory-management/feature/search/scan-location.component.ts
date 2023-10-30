@@ -124,7 +124,6 @@ export class ScanLocation implements OnInit {
 
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
-        console.log(res);
         const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
         this.locations = [];
 
@@ -190,7 +189,6 @@ export class ScanLocation implements OnInit {
 
   timer() {
     ++this.timeoutSeconds;
-    console.log(this.timeoutSeconds);
     const secondsRemaining =
       (this.lastUpdated +
         this.auditTimeout * 1000 -

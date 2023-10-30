@@ -19,6 +19,7 @@ import {
   GetSearchLocationsGQL,
   ValidateAssignmentGQL,
   UpdateLastUpdatedGQL,
+  GetImAdjustReasonsGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -36,7 +37,8 @@ export class AuditService {
     private _getSearchLocation: GetSearchLocationGQL,
     private _getSearchLocations: GetSearchLocationsGQL,
     private _validateAssignment: ValidateAssignmentGQL,
-    private _lastUpdated: UpdateLastUpdatedGQL
+    private _lastUpdated: UpdateLastUpdatedGQL,
+    private _imAdjustReasons: GetImAdjustReasonsGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -306,6 +308,24 @@ export class AuditService {
         }),
         catchError((error) => {
           const t = error.message;
+          return error;
+        })
+      );
+  }
+
+  public getIMAdjustReasons() {
+    const reasons = [];
+    return this._imAdjustReasons
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => {
+          res.data.getIMAdjustReasons.forEach((reason) => {
+            reasons.push(reason.Reason);
+          });
+
+          return reasons;
+        }),
+        catchError((error) => {
           return error;
         })
       );

@@ -293,6 +293,12 @@ export type HoldOnCounter = {
   detail: Array<Maybe<Scalars['Int']>>;
 };
 
+export type Imadjustreason = {
+  __typename?: 'IMADJUSTREASON';
+  Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
@@ -1795,6 +1801,7 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  getIMAdjustReasons?: Maybe<Array<Maybe<Imadjustreason>>>;
   getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
   getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
   getSearchLocations?: Maybe<Array<Maybe<Searchlocation>>>;
@@ -3560,6 +3567,19 @@ export type ValidateAssignmentQuery = {
   validateAssignment?: boolean | null;
 };
 
+export type GetImAdjustReasonsQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type GetImAdjustReasonsQuery = {
+  __typename?: 'Query';
+  getIMAdjustReasons?: Array<{
+    __typename?: 'IMADJUSTREASON';
+    _id?: number | null;
+    Reason?: string | null;
+  } | null> | null;
+};
+
 export type UpdateLastUpdatedMutationVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
   typeID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -4039,6 +4059,28 @@ export class ValidateAssignmentGQL extends Apollo.Query<
   ValidateAssignmentQueryVariables
 > {
   document = ValidateAssignmentDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GetImAdjustReasonsDocument = gql`
+  query getIMAdjustReasons {
+    getIMAdjustReasons {
+      _id
+      Reason
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetImAdjustReasonsGQL extends Apollo.Query<
+  GetImAdjustReasonsQuery,
+  GetImAdjustReasonsQueryVariables
+> {
+  document = GetImAdjustReasonsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
