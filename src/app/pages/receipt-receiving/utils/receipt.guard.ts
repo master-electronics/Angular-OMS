@@ -8,6 +8,8 @@ import {
 import { LabelService } from '../data/label';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../data/updateReceipt';
+import { kickoutService } from '../data/kickout';
+import { CreateReceiptService } from '../data/createReceipt';
 
 export const ReceiptGuard: CanActivateChildFn = (
   route: ActivatedRouteSnapshot,
@@ -17,21 +19,11 @@ export const ReceiptGuard: CanActivateChildFn = (
   const _receipt = inject(ReceiptInfoService);
   const _info = inject(updateReceiptInfoService);
   const _label = inject(LabelService);
+  const _kickout = inject(kickoutService);
+  const _create = inject(CreateReceiptService);
 
   let isActive;
   switch (state.url) {
-    case '/receiptreceiving/receipt':
-      _label.reset();
-      _info.reset();
-      _receipt.resetAfterPart();
-      isActive = true;
-      break;
-    case '/receiptreceiving/part':
-      _label.reset();
-      _info.reset();
-      _receipt.resetAfterPart();
-      isActive = true;
-      break;
     case '/receiptreceiving/part/verify':
       isActive = _receipt.partNumber() !== null;
       break;
@@ -66,7 +58,7 @@ export const ReceiptGuard: CanActivateChildFn = (
       isActive = _label.ITNList().length > 0;
       break;
     case '/receiptreceiving/label/sacnlocation':
-      isActive = _label.ITNList() !== null;
+      isActive = _label.ITNList().length > 0;
       break;
     case '/receiptreceiving/label/summary':
       // make sure every itn has binlocation, itn
@@ -83,6 +75,9 @@ export const ReceiptGuard: CanActivateChildFn = (
         }
         return false;
       });
+      break;
+    case '/receiptreceiving/itnlist':
+      isActive = _label.ITNList().length > 0;
       break;
     default:
       isActive = true;

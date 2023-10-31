@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -17,6 +17,8 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
 import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { LabelService } from '../../data/label';
+import { kickoutService } from '../../data/kickout';
+import { CreateReceiptService } from '../../data/createReceipt';
 
 @Component({
   standalone: true,
@@ -58,13 +60,23 @@ export class ReceiptComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _receipt: ReceiptInfoService,
     private _ui: TabService,
     private _actRoute: ActivatedRoute
   ) {}
 
+  _receipt = inject(ReceiptInfoService);
+  _info = inject(updateReceiptInfoService);
+  _label = inject(LabelService);
+  _kickout = inject(kickoutService);
+  _create = inject(CreateReceiptService);
+
   ngOnInit(): void {
     this._ui.changeSteps(0);
+    this._create.reset();
+    this._kickout.reset();
+    this._label.reset();
+    this._info.reset();
+    this._receipt.resetAfterPart();
     this.inputForm = new FormGroup({
       receipt: new FormControl(null, [Validators.required]),
     });

@@ -134,7 +134,7 @@ export class ItnListComponent implements OnInit {
   }
 
   skip(): void {
-    this._router.navigate(['receiptreceiving/part'], {
+    this._router.navigate(['receiptreceiving'], {
       queryParams: {
         receipt: this._info.headerID(),
         line: this._info.receiptInfoAfterFilter()[0].ReceiptLineNumber,

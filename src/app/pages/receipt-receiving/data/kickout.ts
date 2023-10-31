@@ -10,14 +10,18 @@ export class kickoutService {
   private _printer = inject(PrinterService);
 
   private _kickoutItns = new BehaviorSubject<string[]>(null);
-  public get kickoutItns(): string[] {
+  get kickoutItns(): string[] {
     return this._kickoutItns.value;
   }
-  public updatekickoutItns(list: string[]): void {
+  updatekickoutItns(list: string[]): void {
     this._kickoutItns.next(list);
   }
 
-  public printKickOutLabel$(list: string[], reasonID: number, itn: string) {
+  reset() {
+    this._kickoutItns.next(null);
+  }
+
+  printKickOutLabel$(list: string[], reasonID: number, itn: string) {
     if (itn) {
       return this._suspect
         .mutate({
