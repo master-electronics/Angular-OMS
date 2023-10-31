@@ -70,6 +70,7 @@ interface IITN {
     ProductCodeID: number;
     PartNumber: string;
     ProductTier?: string;
+    Velocity?: string;
     ProductCode: {
       _id: number;
       ProductCodeNumber: string;
@@ -269,6 +270,9 @@ interface IITN {
               <div *ngIf="itn.Product">
                 <li *ngIf="itn.Product.PartNumber">
                   Part Number: {{ itn.Product.PartNumber }}
+                </li>
+                <li *ngIf="itn.Product.Velocity">
+                  Velocity: {{ itn.Product.Velocity }}
                 </li>
                 <li *ngIf="itn.Product.ProductCode.ProductCodeNumber">
                   Product Code: {{ itn.Product.ProductCode.ProductCodeNumber }}
@@ -738,6 +742,7 @@ export class INTInfoComponent implements OnInit {
               itn.Product && itn.Product.PartNumber
                 ? itn.Product.PartNumber.trim()
                 : null,
+            Velocity: itn.Product.Velocity,
             ProductTier:
               itn.Product && itn.Product.ProductTier
                 ? itn.Product.ProductTier.trim()

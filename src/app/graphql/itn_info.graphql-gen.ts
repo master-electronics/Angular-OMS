@@ -3174,6 +3174,7 @@ export type FindInventoryQuery = {
       ProductCodeID: number;
       PartNumber: string;
       ProductTier?: string | null;
+      Velocity?: string | null;
       ProductCode: {
         __typename?: 'ProductCode';
         _id: number;
@@ -3320,6 +3321,7 @@ export const FindInventoryDocument = gql`
         ProductCodeID
         PartNumber
         ProductTier
+        Velocity
         ProductCode {
           _id
           ProductCodeNumber
