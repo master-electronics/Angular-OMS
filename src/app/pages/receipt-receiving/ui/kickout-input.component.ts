@@ -82,21 +82,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
         border bg-gray-50 p-2.5 text-gray-900"
           />
         </div>
-        <!-- ProductCode -->
-        <div>
-          <label for="purchaseOrder" class="block font-medium "
-            >Product Code</label
-          >
-          <input
-            autocomplete="off"
-            formControlName="productCode"
-            type="text"
-            name="productCode"
-            id="productCode"
-            class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg
-        border bg-gray-50 p-2.5 text-gray-900"
-          />
-        </div>
         <!-- PartNumber -->
         <div>
           <label for="partNumber" class="block font-medium">Part Number</label>

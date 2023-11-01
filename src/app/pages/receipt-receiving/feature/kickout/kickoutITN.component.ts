@@ -88,7 +88,6 @@ export class KickoutItnComponent implements OnInit {
       kickoutReason: ['', Validators.required],
       otherReason: [''],
       purchaseOrder: [''],
-      productCode: [''],
       partNumber: [''],
     });
   }
@@ -148,7 +147,6 @@ export class KickoutItnComponent implements OnInit {
           UserName: this._userInfo.userName,
           UserEventID: sqlData.Event_Receiving_KickOut,
           PartNumber: this.kickoutForm.value.partNumber,
-          ProductCode: this.kickoutForm.value.productCode,
           PurchaseOrderNumber: this.kickoutForm.value.purchaseOrder,
           Message: reason,
         },
@@ -158,7 +156,6 @@ export class KickoutItnComponent implements OnInit {
         EventTypeID: sqlData.Event_Receiving_KickOut,
         Log: JSON.stringify({
           PartNumber: this.kickoutForm.value.partNumber,
-          ProductCode: this.kickoutForm.value.productCode,
           PurchaseOrderNumber: this.kickoutForm.value.purchaseOrder,
           Reason: reason,
         }),
