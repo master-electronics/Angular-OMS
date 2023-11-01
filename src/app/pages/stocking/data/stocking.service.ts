@@ -384,10 +384,13 @@ export class StockingService {
             Message: this._itn.itnInfo().BinLocation,
           };
           const eventLogs = {
-            ...this._log.eventLog,
+            UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Stocking_StockingRelocation_Location,
             Log: JSON.stringify({
-              ...JSON.parse(this._log.eventLog.Log),
+              ProductCode: this._itn.itnInfo().ProductCode,
+              PartNumber: this._itn.itnInfo().PartNumber,
+              Quantity: this._itn.itnInfo().QuantityOnHand,
+              InventoryTrackingNumber: this._itn.itnInfo().ITN,
               Target: this._itn.itnInfo().BinLocation,
             }),
           };
