@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ItnInfoService } from '../data/itn-info.service';
+import { StockingService } from '../data/stocking.service';
 
 @Component({
   standalone: true,
@@ -15,4 +17,12 @@ import { RouterModule } from '@angular/router';
     </div>
   `,
 })
-export class MenuComponent {}
+export class MenuComponent {
+  constructor(
+    private _itn: ItnInfoService,
+    private _stocking: StockingService
+  ) {
+    _itn.reset();
+    _stocking.reset();
+  }
+}
