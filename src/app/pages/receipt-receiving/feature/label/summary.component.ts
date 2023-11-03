@@ -43,7 +43,8 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
   ],
 
   template: `
-    <div class="grid grid-cols-3 gap-5 text-xl">
+    <div class="grid grid-cols-4 gap-5 text-xl">
+      <h1>Part: {{ receipt.partNumber() }}</h1>
       <h1>Total: {{ receipt.ExpectQuantity() }}</h1>
       <h1>Remaining: {{ label.remaining() }}</h1>
       <h1>Open for POs: {{ receipt.openQuantityForPOs() }}</h1>
