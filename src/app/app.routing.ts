@@ -98,13 +98,13 @@ export const routes: Routes = [
             (m) => m.DataMaintenanceModule
           ),
       },
-      {
-        path: 'demo',
-        loadChildren: () =>
-          import('./pages/picker-manage/picker-manage.module').then(
-            (m) => m.PickerManageModule
-          ),
-      },
+      // {
+      //   path: 'demo',
+      //   loadChildren: () =>
+      //     import('./pages/picker-manage/picker-manage.module').then(
+      //       (m) => m.PickerManageModule
+      //     ),
+      // },
       {
         path: 'receiving/receiptentry',
         loadChildren: () =>
