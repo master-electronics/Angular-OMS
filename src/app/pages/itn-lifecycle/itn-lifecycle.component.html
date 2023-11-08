@@ -59,6 +59,9 @@
         <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
       </span>
     </div>
+    <div class="timeLock" *ngIf="timeLock">
+      <div>The ITN Lifecycle report can only be run after 3:00 PM MST</div>
+    </div>
     <nz-table
       id="excel-table"
       #table
