@@ -55,16 +55,7 @@ export class RescanItnComponent implements OnInit {
     // if equal move itn to destination, then push itn to checked itn list.
     this.data$ = this._stock.putAway$().pipe(
       map(() => {
-        if (
-          this._stock.verifiedItns()?.length !==
-          this._stock.checkedItns()?.length
-        ) {
-          this._router.navigate(['../checkitns'], {
-            relativeTo: this._actRoute,
-          });
-          return;
-        }
-        this._router.navigate(['../user'], { relativeTo: this._actRoute });
+        this._router.navigate(['../conform'], { relativeTo: this._actRoute });
       }),
       catchError((error) => {
         return of({
