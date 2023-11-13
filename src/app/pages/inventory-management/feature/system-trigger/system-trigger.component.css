@@ -1,0 +1,67 @@
+.plusButton {
+  border: solid 1px #d9d9d9;
+  border-radius: 2px;
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.plusButton:hover {
+  border: solid 1px #40a9ff;
+}
+.buttonContainer {
+  max-width: 200px;
+  width: 100%;
+  display: inline-block;
+}
+.button {
+  border: solid 1px #d9d9d9;
+  border-radius: 2px;
+  padding: 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.button:hover {
+  border: solid 1px #40a9ff;
+}
+.backButton {
+  background-color: #1f2937;
+  color: #9ca3af;
+}
+.backButton:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+.container {
+  min-width: 100px;
+  max-width: 125px;
+  width: 100%;
+}
+select {
+  border: solid 1px #d9d9d9;
+  border-radius: 2px;
+  width: 100%;
+}
+select:focus {
+  border: solid 1px #40a9ff;
+  box-shadow: -2px -2px 2px #d1e9ff;
+}
+select option:disabled {
+  color: #bfbfbf;
+}
+.formArea {
+  width: 49%;
+}
+.formAreaHeader {
+  font-size: 1.25em;
+  padding-bottom: 5px;;
+}
+input {
+  margin-bottom: 5px;
+}

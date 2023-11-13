@@ -87,7 +87,6 @@ export class SimpleKeyboardComponent implements OnChanges {
   }
 
   onChange = (input: string) => {
-    console.log('1-' + input);
     this.outputString.emit(input);
   };
 

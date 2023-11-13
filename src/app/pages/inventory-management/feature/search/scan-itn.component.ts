@@ -188,15 +188,14 @@ export class ScanITN implements OnInit {
   }
 
   onSubmit(): void {
+    const currentAudit: Audit = JSON.parse(
+      sessionStorage.getItem('currentAudit')
+    );
     const itn = this.inputForm.value.itn;
     let loc;
     let locs;
     let barcode;
-    // if (this.searchLocation != itn) {
-    //   this.data$ = of({
-    //     error: { message: 'Incorrect Location!', type: 'error' },
-    //   });
-    // } else {
+
     const userEventLogs = [
       {
         UserEventID: sqlData.Event_IM_Search_ITN_Scanned,
@@ -217,6 +216,9 @@ export class ScanITN implements OnInit {
         }),
       },
     ];
+
+    const closeAuditsUserEventLogs = [];
+    const closeAuditsEventLogs = [];
 
     this.data$ = this._auditService.checkBinlocation(itn).pipe(
       switchMap((res) => {
@@ -250,6 +252,45 @@ export class ScanITN implements OnInit {
         }
 
         return this._eventLog.insertLog(userEventLogs, eventLogs);
+      }),
+      switchMap((res) => {
+        return this._auditService.closeAudits(itn).pipe(
+          map((res) => {
+            res?.data.closeAudits.forEach((audit) => {
+              closeAuditsUserEventLogs.push({
+                UserEventID: sqlData.Event_IM_Audit_Closed_ITN_Search,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: audit.InventoryTrackingNumber,
+                Message: `Audit with _id: ${audit._id} closed.  ITN: ${audit.InventoryTrackingNumber}
+                  found while searching for ITN: ${currentAudit.Inventory.ITN}`,
+              });
+
+              closeAuditsEventLogs.push({
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_Audit_Closed_ITN_Search,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  AuditID: audit._id,
+                  InventoryTrackingNumber: audit.InventoryTrackingNumber,
+                  SearchedITN: currentAudit.Inventory.ITN,
+                }),
+              });
+            });
+          })
+        );
+      }),
+      switchMap((res) => {
+        if (closeAuditsUserEventLogs.length > 0) {
+          const t = 'test';
+          return this._eventLog.insertLog(
+            closeAuditsUserEventLogs,
+            closeAuditsEventLogs
+          );
+        } else {
+          const t = 'test';
+          return of(res);
+        }
       }),
       switchMap((res) => {
         if (loc.Barcode != barcode) {

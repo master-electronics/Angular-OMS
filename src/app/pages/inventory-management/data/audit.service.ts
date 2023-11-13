@@ -12,6 +12,7 @@ import {
   InventoryUpdateGQL,
   DeleteAuditGQL,
   CloseAuditGQL,
+  CloseAuditsGQL,
   GetNextSubAuditGQL,
   InsertSuspectGQL,
   FindImInventoryGQL,
@@ -20,6 +21,10 @@ import {
   ValidateAssignmentGQL,
   UpdateLastUpdatedGQL,
   GetImAdjustReasonsGQL,
+  FetchAuditTypesGQL,
+  FetchSystemAuditListGQL,
+  UpdateSystemTriggerGQL,
+  InsertSystemTriggerGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -31,6 +36,7 @@ export class AuditService {
     private _inventoryUpdate: InventoryUpdateGQL,
     private _deleteAudit: DeleteAuditGQL,
     private _closeAudit: CloseAuditGQL,
+    private _closeAudits: CloseAuditsGQL,
     private _nextSubAudit: GetNextSubAuditGQL,
     private _insertSuspect: InsertSuspectGQL,
     private _findInventory: FindImInventoryGQL,
@@ -38,7 +44,11 @@ export class AuditService {
     private _getSearchLocations: GetSearchLocationsGQL,
     private _validateAssignment: ValidateAssignmentGQL,
     private _lastUpdated: UpdateLastUpdatedGQL,
-    private _imAdjustReasons: GetImAdjustReasonsGQL
+    private _imAdjustReasons: GetImAdjustReasonsGQL,
+    private _auditTypes: FetchAuditTypesGQL,
+    private _systemAuditList: FetchSystemAuditListGQL,
+    private _updateSystemTrigger: UpdateSystemTriggerGQL,
+    private _insertSystemTrigger: InsertSystemTriggerGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -212,7 +222,6 @@ export class AuditService {
     ITN: string,
     Username: string
   ) {
-    const t = 'test';
     return this._closeAudit
       .mutate({
         inventoryID: InventoryID,
@@ -220,7 +229,6 @@ export class AuditService {
       })
       .pipe(
         switchMap((res) => {
-          const t = 'test';
           if (
             JSON.parse(sessionStorage.getItem('currentAudit')).IMSuspect != 'Y'
           ) {
@@ -237,16 +245,66 @@ export class AuditService {
       );
   }
 
-  public insertSuspect(PartData) {
+  public closeAudits(ITN: string) {
+    return this._closeAudits.mutate({
+      itn: ITN,
+    });
+  }
+
+  public insertSuspect(SuspectData) {
     return this._insertSuspect.mutate({
       suspect: [
         {
-          InventoryID: Number(PartData[0].InventoryID),
-          Reason: PartData[0].Reason,
-          Comment: PartData[0].Comment,
+          InventoryID: Number(SuspectData[0].InventoryID),
+          Reason: SuspectData[0].Reason,
+          Comment: SuspectData[0].Comment,
         },
       ],
     });
+  }
+
+  public updateSystemTrigger(
+    TriggerId: number,
+    Trigger: {
+      Name?: string;
+      Description?: string;
+      Active?: boolean;
+      Priority?: number;
+    },
+    AuditTypes
+  ) {
+    return this._updateSystemTrigger
+      .mutate({
+        triggerId: TriggerId,
+        trigger: Trigger,
+        auditTypes: AuditTypes,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public insertSystemTrigger(
+    Trigger: {
+      Name?: string;
+      Description?: string;
+      Active?: boolean;
+      Priority?: number;
+    },
+    AuditTypes
+  ) {
+    return this._insertSystemTrigger
+      .mutate({
+        trigger: Trigger,
+        auditTypes: AuditTypes,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
   }
 
   public checkBinlocation(ITN) {
@@ -324,6 +382,60 @@ export class AuditService {
           });
 
           return reasons;
+        }),
+        catchError((error) => {
+          return error;
+        })
+      );
+  }
+
+  public getAuditTypes(): Observable<any> {
+    const auditTypes = [];
+    return this._auditTypes.fetch({}, { fetchPolicy: 'network-only' }).pipe(
+      map((res) => {
+        res.data.fetchAuditTypes.forEach((type) => {
+          auditTypes.push({
+            name: type.Type,
+            value: type._id,
+            disabled: type.Type == 'Location,',
+          });
+        });
+
+        return auditTypes;
+      })
+    );
+  }
+
+  public getSystemAuditList(includeDeactivated: boolean): Observable<any> {
+    const audits = [];
+    return this._systemAuditList
+      .fetch(
+        { includedDeactivated: includeDeactivated },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          res.data.fetchSystemAudits.forEach((audit) => {
+            const types = [];
+            audit.IMTrigger_AuditTypes.forEach((type) => {
+              types.push({
+                Type: type.IMAuditType.Type,
+                IMAuditTypeID: type.IMAuditTypeID,
+              });
+            });
+
+            audits.push({
+              _id: audit._id,
+              Active: audit.Active,
+              Name: audit.Name,
+              Description: audit.Description,
+              Priority: audit.Priority,
+              IMTrigger_AuditTypes: types,
+            });
+            //audits.push(audit);
+          });
+
+          return audits;
         }),
         catchError((error) => {
           return error;
