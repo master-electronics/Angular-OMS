@@ -8,11 +8,13 @@ mutation generateReceiptForReceiving(
   $PurchaseOrderNumber: String!
   $LineNumber: Int!
   $Quantity: Float!
+  $OverReceipt: Boolean
 ) {
   generateReceiptForReceiving(
     PurchaseOrderNumber: $PurchaseOrderNumber
     LineNumber: $LineNumber
     Quantity: $Quantity
+    OverReceipt: $OverReceipt
   )
 }
 

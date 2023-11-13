@@ -544,7 +544,6 @@ export type Inventory = {
   QuantityOnHand: Scalars['Float'];
   ROHS?: Maybe<Scalars['Boolean']>;
   Suspect: Scalars['Boolean'];
-  Velocity?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -936,6 +935,7 @@ export type MutationFindOrCreateUserInfoArgs = {
 
 export type MutationGenerateReceiptForReceivingArgs = {
   LineNumber: Scalars['Int'];
+  OverReceipt?: InputMaybe<Scalars['Boolean']>;
   PurchaseOrderNumber: Scalars['String'];
   Quantity: Scalars['Float'];
 };
@@ -2800,7 +2800,6 @@ export type SearchInventory = {
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
-  Velocity?: InputMaybe<Scalars['String']>;
   _id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -3014,7 +3013,6 @@ export type UpdateInventory = {
   QuantityOnHand?: InputMaybe<Scalars['Float']>;
   ROHS?: InputMaybe<Scalars['Boolean']>;
   Suspect?: InputMaybe<Scalars['Boolean']>;
-  Velocity?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOrder = {

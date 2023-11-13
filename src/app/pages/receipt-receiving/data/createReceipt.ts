@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 import { ReceiptInfoService } from './ReceiptInfo';
 import {
   FetchPurchaseOrderInfoGQL,
@@ -139,12 +139,13 @@ export class CreateReceiptService {
   /**
    * GenerateRecipt: Use puchase order number, lineNumber to find information to create receipt header, line and detail.
    */
-  public generateReceipt$() {
+  public generateReceipt$(OverReceipt: boolean, authName: string) {
     return this._generateReceipt
       .mutate({
         LineNumber: this.purchaseInfo.PurchaseLine,
         PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
         Quantity: this.purchaseInfo.Quantity,
+        OverReceipt,
       })
       .pipe(
         map((res) => res.data.generateReceiptForReceiving),
@@ -158,17 +159,44 @@ export class CreateReceiptService {
               ...this.purchaseInfo,
             }),
           });
-          const oldLogs = {
-            ReceiptHeader: id,
-            UserName: this._userInfo.userName,
-            UserEventID: sqlData.Event_Receiving_create_receipt_done,
-            Quantity: this.purchaseInfo.Quantity,
-            PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
-            PurchaseLine: this.purchaseInfo.PurchaseLine,
-          };
+          const eventLogs = [
+            {
+              ...this._eventLog.eventLog,
+            },
+          ];
+          const oldLogs = [
+            {
+              ReceiptHeader: id,
+              UserName: this._userInfo.userName,
+              UserEventID: sqlData.Event_Receiving_create_receipt_done,
+              Quantity: this.purchaseInfo.Quantity,
+              PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
+              PurchaseLine: this.purchaseInfo.PurchaseLine,
+              Message: '',
+            },
+          ];
+          if (OverReceipt) {
+            eventLogs.push({
+              EventTypeID: sqlData.Event_Receiving_OverReceiving_done,
+              UserName: this._userInfo.userName,
+              Log: JSON.stringify({
+                ...JSON.parse(this._eventLog.eventLog.Log),
+                Message: `${authName} to ${this.purchaseInfo.Quantity}`,
+              }),
+            });
+            oldLogs.push({
+              UserEventID: sqlData.Event_Receiving_OverReceiving_done,
+              Message: `${authName} to ${this.purchaseInfo.Quantity}`,
+              ReceiptHeader: id,
+              UserName: this._userInfo.userName,
+              Quantity: this.purchaseInfo.Quantity,
+              PurchaseOrderNumber: this.purchaseInfo.PurchaseOrderNumber,
+              PurchaseLine: this.purchaseInfo.PurchaseLine,
+            });
+          }
           return this._insertLog.mutate({
             oldLogs,
-            eventLogs: this._eventLog.eventLog,
+            eventLogs,
           });
         })
       );
