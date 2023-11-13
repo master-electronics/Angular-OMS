@@ -1083,6 +1083,7 @@ export type MutationFindOrCreateUserInfoArgs = {
 
 export type MutationGenerateReceiptForReceivingArgs = {
   LineNumber: Scalars['Int'];
+  OverReceipt?: InputMaybe<Scalars['Boolean']>;
   PurchaseOrderNumber: Scalars['String'];
   Quantity: Scalars['Float'];
 };
@@ -3613,6 +3614,7 @@ export type GenerateReceiptForReceivingMutationVariables = Types.Exact<{
   PurchaseOrderNumber: Types.Scalars['String'];
   LineNumber: Types.Scalars['Int'];
   Quantity: Types.Scalars['Float'];
+  OverReceipt?: Types.InputMaybe<Types.Scalars['Boolean']>;
 }>;
 
 
@@ -3761,11 +3763,12 @@ export const CheckReceiptHeaderDocument = gql`
     }
   }
 export const GenerateReceiptForReceivingDocument = gql`
-    mutation generateReceiptForReceiving($PurchaseOrderNumber: String!, $LineNumber: Int!, $Quantity: Float!) {
+    mutation generateReceiptForReceiving($PurchaseOrderNumber: String!, $LineNumber: Int!, $Quantity: Float!, $OverReceipt: Boolean) {
   generateReceiptForReceiving(
     PurchaseOrderNumber: $PurchaseOrderNumber
     LineNumber: $LineNumber
     Quantity: $Quantity
+    OverReceipt: $OverReceipt
   )
 }
     `;

@@ -1078,6 +1078,7 @@ export type MutationFindOrCreateUserInfoArgs = {
 
 export type MutationGenerateReceiptForReceivingArgs = {
   LineNumber: Scalars['Int'];
+  OverReceipt?: InputMaybe<Scalars['Boolean']>;
   PurchaseOrderNumber: Scalars['String'];
   Quantity: Scalars['Float'];
 };

@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 
 import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { FetchTaskCounterGQL } from '../../../graphql/tableView.graphql-gen';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import {
   UntypedFormBuilder,
   Validators,
@@ -132,6 +132,37 @@ export class TaskCounterComponent implements OnInit {
           });
           return tableData;
         }),
+        tap((res) => {
+          const tmp = res.map((node) => ({
+            User: node.User,
+            total: node.total,
+            '0am': node.taskCounter[0],
+            '1am': node.taskCounter[1],
+            '2am': node.taskCounter[2],
+            '3am': node.taskCounter[3],
+            '4am': node.taskCounter[4],
+            '5am': node.taskCounter[5],
+            '6am': node.taskCounter[6],
+            '7am': node.taskCounter[7],
+            '8am': node.taskCounter[8],
+            '9am': node.taskCounter[9],
+            '10am': node.taskCounter[10],
+            '11am': node.taskCounter[11],
+            '12am': node.taskCounter[12],
+            '1pm': node.taskCounter[13],
+            '2pm': node.taskCounter[14],
+            '3pm': node.taskCounter[15],
+            '4pm': node.taskCounter[16],
+            '5pm': node.taskCounter[17],
+            '6pm': node.taskCounter[18],
+            '7pm': node.taskCounter[19],
+            '8pm': node.taskCounter[20],
+            '9pm': node.taskCounter[21],
+            '10pm': node.taskCounter[22],
+            '11pm': node.taskCounter[23],
+          }));
+          this.ws = XLSX.utils.json_to_sheet(tmp);
+        }),
         catchError((error) => {
           this.isLoading = false;
           return error;
@@ -152,21 +183,14 @@ export class TaskCounterComponent implements OnInit {
     },
   ];
 
+  public ws: XLSX.WorkSheet;
   exportexcel(): void {
     /* table id is passed over here */
-    const element = document.getElementById('excel-table');
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
 
     /* save to file */
-    XLSX.writeFile(
-      wb,
-      `${this.filterForm
-        .get('module')
-        .value.replace(' ', '')}${this.startDate.substring(0, 10)}.xlsx`
-    );
+    XLSX.writeFile(wb, `${this.startDate?.substring(0, 10)}.xlsx`);
   }
 }

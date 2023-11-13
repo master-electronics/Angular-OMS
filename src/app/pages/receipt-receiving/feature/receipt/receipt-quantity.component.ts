@@ -11,10 +11,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { CreateReceiptService } from '../../data/createReceipt';
+import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
+import { AuthModalComponent } from 'src/app/shared/ui/modal/auth-modal.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, SingleInputformComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    SingleInputformComponent,
+    ReactiveFormsModule,
+    RedButtonComponent,
+    AuthModalComponent,
+  ],
   template: `
     <div class="flew justify-center gap-2 md:gap-6 lg:gap-12">
       <h1 class="text-4xl">Generate Receipt:</h1>
@@ -29,6 +37,21 @@ import { CreateReceiptService } from '../../data/createReceipt';
         [isvalid]="this.inputForm.valid"
       ></single-input-form>
     </div>
+    <div
+      *ngIf="this._createreceipt.leftQuantity < this.inputForm.value.quantity"
+      class="grid h-16  grid-cols-3 text-2xl md:mx-16 md:mt-10 md:h-36 md:text-4xl"
+    >
+      <red-button
+        buttonText="Over Receipt"
+        (buttonClick)="overReceipt()"
+      ></red-button>
+    </div>
+    <auth-modal
+      *ngIf="message"
+      [message]="message"
+      (clickClose)="message = ''"
+      (passAuth)="generateReceipt(true, $event)"
+    ></auth-modal>
   `,
 })
 export class ReceiptQuantityComponent implements OnInit {
@@ -44,7 +67,7 @@ export class ReceiptQuantityComponent implements OnInit {
     private _router: Router,
     private _actRoute: ActivatedRoute,
     private _steps: TabService,
-    private _createreceipt: CreateReceiptService
+    public _createreceipt: CreateReceiptService
   ) {}
 
   ngOnInit(): void {
@@ -71,21 +94,31 @@ export class ReceiptQuantityComponent implements OnInit {
       });
       return;
     }
+    this.generateReceipt();
+  }
 
+  message = '';
+  overReceipt() {
+    this.message = `Over Receipt Quantity: ${this.inputForm.value.quantity}`;
+  }
+
+  generateReceipt(overReceipt?: boolean, authName?: string) {
     this._createreceipt.updatePurchaseInfo({
       Quantity: Number(this.inputForm.value.quantity),
     });
-    this.data$ = this._createreceipt.generateReceipt$().pipe(
-      map(() => {
-        this._router.navigate(['../part'], {
-          relativeTo: this._actRoute,
-        });
-      }),
-      catchError((error) => {
-        return of({
-          error: { message: error.message, type: 'error' },
-        });
-      })
-    );
+    this.data$ = this._createreceipt
+      .generateReceipt$(overReceipt, authName)
+      .pipe(
+        map(() => {
+          this._router.navigate(['../part'], {
+            relativeTo: this._actRoute,
+          });
+        }),
+        catchError((error) => {
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
   }
 }

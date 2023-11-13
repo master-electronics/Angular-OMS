@@ -6,9 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { RedButtonComponent } from 'src/app/shared/ui/button/red-button.component';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
@@ -23,7 +22,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     ReactiveFormsModule,
     SimpleKeyboardComponent,
     MessageBarComponent,
-    RedButtonComponent,
   ],
   template: `
     <single-input-form
@@ -44,10 +42,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           [message]="error.error.message"
           [name]="error.error.name"
         ></message-bar>
-        <red-button
-          (buttonClick)="overRece()"
-          buttonText="Over Receipt"
-        ></red-button>
       </ng-container>
     </div>
   `,
@@ -91,14 +85,6 @@ export class QuantityComponent implements OnInit {
         name: `warning`,
       },
     });
-  }
-
-  public overRece(): void {
-    if (this._receipt.receiptInfoAfterFilter().length === 1) {
-      this._router.navigateByUrl('/receiptreceiving/overreceiving');
-      return;
-    }
-    this._router.navigateByUrl('receiptreceiving/alllines');
   }
 
   public onBack(): void {
