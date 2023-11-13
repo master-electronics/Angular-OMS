@@ -50,8 +50,11 @@ export class HomeComponent {
       .subscribe((res) => this.quickLink(res));
   }
 
-  quickLink(keys: string[]) {
+  quickLink(keys: string | undefined) {
     let link = '/';
+    if (!keys) {
+      return;
+    }
     switch (keys[0]) {
       case 'w':
         switch (keys[1]) {

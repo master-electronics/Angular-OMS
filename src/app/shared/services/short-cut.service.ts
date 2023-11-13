@@ -7,6 +7,10 @@ export class ShortCutService {
   shortCut$ = this._keydown$.pipe(
     buffer(this._keydown$.pipe(debounce(() => timer(300)))),
     map((evt) => evt as KeyboardEvent[]),
-    map((evt) => evt.map((res) => res.key.toLowerCase()))
+    map((evt) => {
+      let keys = '';
+      evt.map((key) => (keys += key.key.toLowerCase()));
+      return keys;
+    })
   );
 }
