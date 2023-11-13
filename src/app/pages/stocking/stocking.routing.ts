@@ -89,6 +89,13 @@ export const StockingRoutes: Routes = [
           ),
       },
       {
+        path: 'conform',
+        loadComponent: () =>
+          import(
+            './feature/stocking/check-itns/conform-relocation.component'
+          ).then((m) => m.ConformRelocationComponent),
+      },
+      {
         path: 'user',
         resolve: { ItnList: UserItnListResolver },
         loadComponent: () =>

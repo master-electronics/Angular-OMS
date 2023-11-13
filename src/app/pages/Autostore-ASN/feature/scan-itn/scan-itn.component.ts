@@ -317,6 +317,10 @@ export class ScanITN implements OnInit {
               .InventoryID
           )
         ),
+        updateProduct: this._asn.updateProduct({
+          _id: this.replenishmentItem.ProductID,
+          ExcludeFromAutostore: true,
+        }),
         skip: this._asn.clearSuspect(
           this._userInfo.userName,
           this.replenishmentItem.InventoryTrackingNumber,
@@ -351,12 +355,18 @@ export class ScanITN implements OnInit {
         })
       );
     } else {
-      this.data$ = this._asn.clearSuspect(
-        this._userInfo.userName,
-        this.replenishmentItem.InventoryTrackingNumber,
-        this.replenishmentItem.Barcode,
-        'false'
-      );
+      this.data$ = await forkJoin({
+        skip: this._asn.clearSuspect(
+          this._userInfo.userName,
+          this.replenishmentItem.InventoryTrackingNumber,
+          this.replenishmentItem.Barcode,
+          'false'
+        ),
+        updateProduct: this._asn.updateProduct({
+          _id: this.replenishmentItem.ProductID,
+          ExcludeFromAutostore: true,
+        }),
+      });
 
       this.log$ = await this._eventLog.insertLog(
         [

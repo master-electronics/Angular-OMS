@@ -58,11 +58,13 @@ export class ROHSComponent implements OnInit {
 
   public onUpdate(ROHS: boolean): void {
     this._update.updateROHS(ROHS);
-    this.update$ = this._update.updateReceiptLSQL().pipe(
+    this.update$ = this._update.updateReceiptLSQL$().pipe(
       map(() => {
-        switch (this._receipt.receiptLsAfterQuantity?.length) {
+        switch (this._receipt.receiptInfoAfterFilter()?.length) {
           case 1:
-            this._receipt.pickOneReceiptLine();
+            this._receipt.updateReceiptLine(
+              this._receipt.receiptInfoAfterFilter()[0].ReceiptLineID
+            );
             this._router.navigateByUrl('receiptreceiving/update/itncount');
             break;
           default:

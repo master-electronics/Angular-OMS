@@ -5,7 +5,7 @@ import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { TableViewComponent } from 'src/app/shared/ui/table-view.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
-import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { ReceiptInfo, ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -52,23 +52,19 @@ export class SelectLineComponent implements OnInit {
 
   ngOnInit(): void {
     this._steps.changeSteps(0);
-    this.tableData = this.receipt.LineInfoForOverReceiving();
-    if (this.tableData.length === 1) {
-      this.receipt.filterByOverReceiving();
-      this._router.navigateByUrl('/receiptreceiving/overreceiving');
-    }
+    this.tableData = this.receipt.OverReceivingTableinfo();
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('/receiptreceiving/receipt');
+    this._router.navigateByUrl('/receiptreceiving');
   }
 
   public selectLine(data): void {
-    if (!data.id) {
+    if (!data.ID) {
       return;
     }
     // select line;
-    this.receipt.filterByOverReceiving(data.id);
+    this.receipt.updateReceiptLine(data.ID);
     this._router.navigateByUrl('/receiptreceiving/overreceiving');
   }
 }

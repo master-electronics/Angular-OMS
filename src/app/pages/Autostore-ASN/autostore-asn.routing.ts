@@ -49,7 +49,7 @@ export const AutostoreASNRoutes: Routes = [
       },
       {
         path: 'scan-itn',
-        resolve: { ReplenishmentItem: ReplenishItemResolver }, //resolve: { containerID: ITNResolver },
+        resolve: { ReplenishmentItem: ReplenishItemResolver },
         loadComponent: () =>
           import('./feature/scan-itn/scan-itn.component').then(
             (m) => m.ScanITN

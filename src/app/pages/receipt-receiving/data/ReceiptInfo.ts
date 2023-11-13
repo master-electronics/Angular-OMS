@@ -1,119 +1,191 @@
-import { Injectable, signal } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  combineLatestAll,
-  map,
-  Observable,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { Injectable, computed, signal } from '@angular/core';
+import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   CheckReceiptHeaderGQL,
   FetchProductInfoForReceivingGQL,
+  FetchReceiptForOverReceivingGQL,
   FindReceiptHeaderForReceivingGQL,
   OverReceivingUpdateReceiptLGQL,
-  SuspectInventoryGQL,
 } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { PrinterService } from 'src/app/shared/data/printer';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
-import { LogService } from './eventLog';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+
+export interface ReceiptInfo {
+  PurchaseLineNumber: number;
+  PurchaseOrderNumber: string;
+  QuantityOnOrder: number;
+  QuantityReceived: number;
+  UnitOfMeasure: string;
+  ReceiptLineID: number;
+  ReceiptHID: number;
+  Status: string;
+  ReceiptLineNumber: number;
+  ExpectedQuantity: number;
+  DateCode: string;
+  ROHS: boolean;
+  ProductID: number;
+  PartNumber: string;
+  ProductCodeNumber: string;
+}
 
 @Injectable()
 export class ReceiptInfoService {
   constructor(
     private _findReceiptH$: FindReceiptHeaderForReceivingGQL,
     private _findverifyInfo$: FetchProductInfoForReceivingGQL,
+    private _fetchLinesForOverReceipt$: FetchReceiptForOverReceivingGQL,
     private _checkHeader: CheckReceiptHeaderGQL,
-    private _suspect: SuspectInventoryGQL,
     private _updateReceiptLine: OverReceivingUpdateReceiptLGQL,
-    private _log: LogService,
     private _eventLog: EventLogService,
     private _insertLog: Create_EventLogsGQL,
-    private _userInfo: StorageUserInfoService,
-    private _printer: PrinterService
+    private _userInfo: StorageUserInfoService
   ) {}
 
   /**
-   * Store header id after verify
+   * State
    */
-  private _headerID = new BehaviorSubject<number>(null);
-  public get headerID(): number {
-    return this._headerID.value;
-  }
-  public updateHeaderID(id: number) {
-    this._headerID.next(id);
-  }
+  private _receiptState = signal({
+    headerID: null,
+    PartNumber: null,
+    Quantity: null,
+    ReceiptLine: null,
+    receiptList: <ReceiptInfo[]>[],
+  });
 
   /**
-   * Find Receipt info by ID, and all lines under this header with status "Entered".
+   * Selector
    */
-  private _receiptLines = new BehaviorSubject<any>(null);
-  public get receiptLines() {
-    return this._receiptLines.value;
-  }
+  headerID = computed(() => this._receiptState().headerID);
+  receiptLine = computed(() => this._receiptState().ReceiptLine);
+  quantity = computed(() => this._receiptState().Quantity);
+
+  receiptInfoAfterFilter = computed(() => {
+    if (!this._receiptState().receiptList.length) {
+      return null;
+    }
+    let tmp: ReceiptInfo[] = [...this._receiptState().receiptList];
+    if (this._receiptState().ReceiptLine) {
+      return tmp.filter(
+        (line) => line.ReceiptLineID === this._receiptState().ReceiptLine
+      );
+    }
+    if (this._receiptState().PartNumber) {
+      tmp = tmp.filter(
+        (line) =>
+          line.PartNumber.trim().toLocaleLowerCase() ===
+          this._receiptState().PartNumber.trim().toLocaleLowerCase()
+      );
+    }
+    if (this._receiptState().Quantity) {
+      tmp = tmp.filter(
+        (line) => line.ExpectedQuantity === this._receiptState().Quantity
+      );
+    }
+    return tmp;
+  });
+  ExpectQuantity = computed(
+    () => this.receiptInfoAfterFilter()[0].ExpectedQuantity
+  );
+  partNumber = computed(() => this.receiptInfoAfterFilter()[0].PartNumber);
+  productCode = computed(
+    () => this.receiptInfoAfterFilter()[0].ProductCodeNumber
+  );
+  purchaseLineNumber = computed(
+    () => this.receiptInfoAfterFilter()[0].PurchaseLineNumber
+  );
+  purchaseOrderNumber = computed(
+    () => this.receiptInfoAfterFilter()[0].PurchaseOrderNumber
+  );
+  openQuantityForPOs = computed(
+    () =>
+      this.receiptInfoAfterFilter()[0].QuantityOnOrder -
+      this.receiptInfoAfterFilter()[0].QuantityReceived
+  );
+
+  OverReceivingTableinfo = computed(() => {
+    return this._receiptState().receiptList.map((line) => ({
+      ID: line.ReceiptLineID,
+      ReceiptHeader: line.ReceiptHID,
+      Quantity: line.ExpectedQuantity,
+      PartNumber: line.PartNumber,
+      PurchaseOrderNumber: line.PurchaseOrderNumber,
+      QuantityOnOrder: line.QuantityOnOrder,
+      Status: line.Status,
+    }));
+  });
 
   /**
-   * First Filter for Receipt by part number
+   * Reducer
    */
-  private _lineAfterPart = new BehaviorSubject<any>(null);
-  public get lineAfterPart$(): Observable<any> {
-    return this._lineAfterPart.asObservable();
-  }
-  public get lineAfterPart() {
-    return this._lineAfterPart.getValue();
-  }
-  /**
-   * Second Filter for Receipt lines by quantity
-   */
-  private _receiptLsAfterQuantity = new BehaviorSubject<any>(null);
-  public get receiptLsAfterQuantity$(): Observable<any> {
-    return this._receiptLsAfterQuantity.asObservable();
-  }
-  public get receiptLsAfterQuantity(): any {
-    return this._receiptLsAfterQuantity.value;
-  }
-  /**
-   * After two filter, still have multi lines, let user select one line.
-   */
-  private _selectedReceiptLine = new BehaviorSubject<any>(null);
-  public get selectedReceiptLine() {
-    return this._selectedReceiptLine.value;
+  resetAfterPart() {
+    this._receiptState.update((state) => ({
+      headerID: state.headerID,
+      PartNumber: null,
+      Quantity: null,
+      ReceiptLine: null,
+      receiptList: <ReceiptInfo[]>[],
+    }));
   }
 
-  /**
-   * resetAfterDone
-   */
-  public resetAfterDone() {
-    this._receiptLines.next(null);
-    this._lineAfterPart.next(null);
-    this._receiptLsAfterQuantity.next(null);
-    this._selectedReceiptLine.next(null);
-    this._eventLog.initEventLog(null);
+  updateheaderID(id: number) {
+    this._receiptState.update((info) => ({ ...info, headerID: id }));
+  }
+  updatePartNumber(part: string) {
+    this._receiptState.update((info) => ({ ...info, PartNumber: part }));
+  }
+  updateQuantity(quantity: number) {
+    this._receiptState.update((info) => ({ ...info, Quantity: quantity }));
+  }
+  updateReceiptLine(line: number) {
+    this._receiptState.update((info) => ({ ...info, ReceiptLine: line }));
+    this._receiptState().receiptList.map((node) => {
+      if (node.ReceiptLineID === line) {
+        this._receiptState.update((info) => ({
+          ...info,
+          headerID: node.ReceiptHID,
+          Quantity: node.ExpectedQuantity,
+          PartNumber: node.PartNumber,
+        }));
+      }
+    });
+  }
+  updateReceiptList(list: ReceiptInfo[]) {
+    this._receiptState.update((info) => ({ ...info, receiptList: list }));
+  }
+  updateExpectQuantity(quantity: number) {
+    const list = this._receiptState().receiptList.map((line) => {
+      if (line.ReceiptLineID === this._receiptState().ReceiptLine) {
+        return { ...line, ExpectedQuantity: quantity };
+      }
+      return line;
+    });
+    this._receiptState.update((info) => ({
+      ...info,
+      receiptList: list,
+    }));
   }
 
-  /**
-   * checkReceiptHeader: Search receiptHeader by id, check if this header id is vaild.
-   */
-  public checkReceiptHeader(id: number): Observable<any> {
+  //checkReceiptHeader: Search receiptHeader by id, check if this header id is vaild.
+  public checkReceiptHeader$(id: number) {
     return this._checkHeader.fetch({ id }).pipe(
       tap((res) => {
         if (!res.data.findReceiptH?._id) {
           throw new Error("Can't find this Receipt!");
         }
+        this.updateheaderID(id);
       }),
       switchMap(() => {
-        this._headerID.next(id);
-        this._log.initReceivingLog({
-          ReceiptHeader: id,
-          UserName: this._userInfo.userName,
-          UserEventID: sqlData.Event_Receiving_Start,
-        });
+        const oldLogs = [
+          {
+            ReceiptHeader: id,
+            UserName: this._userInfo.userName,
+            UserEventID: sqlData.Event_Receiving_Start,
+          },
+        ];
         this._eventLog.initEventLog({
           UserName: this._userInfo.userName,
           EventTypeID: sqlData.Event_Receiving_Start,
@@ -122,18 +194,22 @@ export class ReceiptInfoService {
           }),
         });
         return this._insertLog.mutate({
-          oldLogs: this._log.receivingLog,
+          oldLogs,
           eventLogs: this._eventLog.eventLog,
         });
       })
     );
   }
 
-  public findLines$(): Observable<boolean> {
+  // find all Receipt Line by Receipt heaser ID with status 10, then update State by result list.
+  public findLines$() {
+    if (!this.headerID()) {
+      return of();
+    }
     return this._findReceiptH$
       .fetch(
         {
-          ReceiptHID: this.headerID,
+          ReceiptHID: this.headerID(),
           statusID: sqlData.Receipt_Entered,
         },
         { fetchPolicy: 'network-only' }
@@ -150,171 +226,158 @@ export class ReceiptInfoService {
             };
           }
         }),
-        map((res) => res.data.findReceiptInfoByIdAndStatus.RECEIPTLs),
-        map((res) => {
-          Logger.devOnly('ReceiptInfo', 'findLines', res[0].Product.PartNumber);
-          Logger.devOnly('ReceiptInfo', 'findLines', res[0].ExpectedQuantity);
-          this._receiptLines.next(res);
-          return true;
+        map((res) => res.data.findReceiptInfoByIdAndStatus),
+        tap((res) => {
+          Logger.devOnly(
+            'ReceiptInfo',
+            'findLines',
+            res.RECEIPTLs[0].Product.PartNumber
+          );
+          Logger.devOnly(
+            'ReceiptInfo',
+            'findLines',
+            res.RECEIPTLs[0].ExpectedQuantity
+          );
+          const list: ReceiptInfo[] = res.RECEIPTLs.map((line) => ({
+            ReceiptHID: res._id,
+            PurchaseLineNumber: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+            PurchaseOrderNumber:
+              line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
+                .PurchaseOrderNumber,
+            QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
+            QuantityReceived:
+              line.RECEIPTLDs[0].PurchaseOrderL.QuantityReceived,
+            UnitOfMeasure: line.RECEIPTLDs[0].PurchaseOrderL.UnitOfMeasure,
+            ReceiptLineID: line.RECEIPTLDs[0]._id,
+            Status: line.RECEIPTLDs[0].ReceiptStatus.Name,
+            ReceiptLineNumber: line.LineNumber,
+            ExpectedQuantity: line.ExpectedQuantity,
+            DateCode: line.DateCode,
+            ROHS: line.ROHS,
+            ProductID: line.ProductID,
+            PartNumber: line.Product.PartNumber,
+            ProductCodeNumber: line.Product.ProductCode.ProductCodeNumber,
+          }));
+          this.updateReceiptList(list);
         })
       );
   }
 
-  public filterbyPartNumber(PartNumber: string): void {
-    const tmp = this.receiptLines.filter(
-      (res) =>
-        res.Product.PartNumber.trim().toLowerCase() ===
-        PartNumber.trim().toLowerCase()
-    );
-    this._lineAfterPart.next(tmp);
-    this._log.updateReceivingLog({
-      PartNumber: tmp[0].Product.PartNumber,
-      ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
-    });
-    this._eventLog.updateEventLog({
-      UserName: this._userInfo.userName,
-      EventTypeID: sqlData.Event_Receiving_Start,
-      Log: JSON.stringify({
-        ReceiptHeader: this.headerID,
-        PartNumber: tmp[0].Product.PartNumber,
-        ProductCode: tmp[0].Product.ProductCode.ProductCodeNumber,
-      }),
-    });
+  // Fetch Receipt line info by purchase Order Number for over receipt. For this case, fetch all Status, let user able to redo some receipt line.
+  public fetchReceiptLinesForOverReceipt$(PurchaseOrder: string) {
+    return this._fetchLinesForOverReceipt$
+      .fetch({ PurchaseOrder }, { fetchPolicy: 'network-only' })
+      .pipe(
+        map((res) => res.data.findPurchaseOrderH.PURCHASEORDERLs),
+        tap((res) => {
+          if (!res.some((pl) => pl.RECEIPTLDs.length > 0)) {
+            throw { name: 'error', message: "Can't find this Receipt!" };
+          }
+        }),
+        tap((res) => {
+          const list: ReceiptInfo[] = [];
+          res.forEach((pl) => {
+            pl.RECEIPTLDs.forEach((rd) => {
+              const node: ReceiptInfo = {
+                PurchaseLineNumber: pl.LineNumber,
+                PurchaseOrderNumber: PurchaseOrder.trim(),
+                QuantityOnOrder: pl.QuantityOnOrder,
+                QuantityReceived: pl.QuantityReceived,
+                UnitOfMeasure: pl.UnitOfMeasure,
+                ReceiptHID: rd.ReceiptL.ReceiptHID,
+                ReceiptLineID: rd.ReceiptL._id,
+                Status: rd.ReceiptStatus.Name,
+                ReceiptLineNumber: rd.ReceiptL.LineNumber,
+                ExpectedQuantity: rd.ReceiptL.ExpectedQuantity,
+                DateCode: rd.ReceiptL.DateCode,
+                ROHS: rd.ReceiptL.ROHS,
+                ProductID: rd.ReceiptL.ProductID,
+                PartNumber: rd.ReceiptL.Product.PartNumber,
+                ProductCodeNumber:
+                  rd.ReceiptL.Product.ProductCode.ProductCodeNumber,
+              };
+              list.push(node);
+            });
+          });
+          this.updateReceiptList(list);
+        }),
+        // insert Log
+        switchMap(() => {
+          const oldLogs = [
+            {
+              PurchaseOrderNumber: PurchaseOrder,
+              UserName: this._userInfo.userName,
+              UserEventID: sqlData.Event_Receiving_OverReceiving_start,
+            },
+          ];
+          this._eventLog.initEventLog({
+            UserName: this._userInfo.userName,
+            EventTypeID: sqlData.Event_Receiving_OverReceiving_start,
+            Log: JSON.stringify({
+              PurchaseOrderNumber: PurchaseOrder,
+            }),
+          });
+          return this._insertLog.mutate({
+            oldLogs,
+            eventLogs: this._eventLog.eventLog,
+          });
+        })
+      );
   }
 
   /**
    * fetch Part Info
    */
-  UoM = signal('');
-  public findVerifyInfo() {
-    return this._lineAfterPart.pipe(
-      switchMap((line) => {
-        return this._findverifyInfo$
-          .fetch({
-            PartNumber: line[0].Product.PartNumber,
-            ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
-          })
-          .pipe(
-            map((info) => {
-              this.UoM.set(
-                line[0].RECEIPTLDs[0].PurchaseOrderL.UnitOfMeasure || ''
-              );
-              return {
-                ProductID: line[0].Product.ProductID,
-                ProductCode: line[0].Product.ProductCode.ProductCodeNumber,
-                PartNumber: line[0].Product.PartNumber,
-                MIC: `${environment.productImgSource}${info.data.fetchProductMICFromMerp}.jpg`,
-                message: info.data.fetchPartMessage.comments,
-                kitInfo: '',
-                UoM: this.UoM(),
-              };
-            })
-          );
-      })
-    );
-  }
-
-  public printKickOutLabel$(
-    list: string[],
-    itn: string,
-    reason: string,
-    reasonID: number
-  ) {
-    const oldLogs = this._lineAfterPart.value.map((line) => {
-      return {
-        ...this._log.receivingLog,
-        InventoryTrackingNumber: itn,
-        UserEventID: sqlData.Event_Receiving_KickOut,
-        ReceiptLine: line.LineNumber,
-        Quantity: line.ExpectedQuantity,
-        Message: reason,
-      };
-    });
-    const eventLogs = this._lineAfterPart.value.map((line) => {
-      return {
-        ...this._eventLog.eventLog,
-        EventTypeID: sqlData.Event_Receiving_KickOut,
-        Log: JSON.stringify({
-          ...JSON.parse(this._eventLog.eventLog.Log),
-          InventoryTrackingNumber: itn,
-          ReceiptLine: line.LineNumber,
-          ExpectedQuantity: line.ExpectedQuantity,
-          Reason: reason,
-        }),
-      };
-    });
-    return this._suspect
-      .mutate({
-        DC: environment.DistributionCenter,
-        ITN: itn,
-        reasonIDList: [reasonID],
+  public findVerifyInfo$() {
+    const info = this.receiptInfoAfterFilter()[0];
+    return this._findverifyInfo$
+      .fetch({
+        PartNumber: info.PartNumber,
+        ProductCode: info.ProductCodeNumber,
       })
       .pipe(
-        switchMap(() => {
-          return this._printer.printText$(list);
-        }),
-        switchMap(() => {
-          return this._insertLog.mutate({ oldLogs, eventLogs });
+        map((res) => {
+          return {
+            ProductID: info.ProductID,
+            ProductCode: info.ProductCodeNumber,
+            PartNumber: info.PartNumber,
+            MIC: `${environment.productImgSource}${res.data.fetchProductMICFromMerp}.jpg`,
+            message: res.data.fetchPartMessage.comments,
+            kitInfo: '',
+            UoM: info.UnitOfMeasure,
+          };
         })
       );
   }
 
-  /**
-   * OverReceivingInfo$
-   */
-  public LineInfoForOverReceiving() {
-    return this.lineAfterPart.map((line) => ({
-      id: line._id,
-      LineNumber: line.LineNumber,
-      Quantity: line.ExpectedQuantity,
-      PartNumber: line.Product.PartNumber,
-      PurchaseOrderNumber:
-        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
-      QuantityOnOrder: line.RECEIPTLDs[0].PurchaseOrderL.QuantityOnOrder,
-    }));
-  }
-
   public updateQuanityForOverReceiving$(quantity: number, AuthName: string) {
-    let prevQuantity;
+    const prevQuantity = this.receiptInfoAfterFilter()[0].ExpectedQuantity;
     return this._updateReceiptLine
       .mutate({
-        _id: this.receiptLsAfterQuantity[0]._id,
+        _id: this.receiptInfoAfterFilter()[0].ReceiptLineID,
         ExpectedQuantity: quantity,
       })
       .pipe(
         tap(() => {
-          prevQuantity = this.receiptLsAfterQuantity[0].ExpectedQuantity;
-          this._receiptLsAfterQuantity.next(
-            this.receiptLsAfterQuantity.map((line) => ({
-              ...line,
-              ExpectedQuantity: quantity,
-            }))
-          );
+          this.updateExpectQuantity(quantity);
         }),
         switchMap(() => {
-          const line = this.receiptLsAfterQuantity[0];
+          const line = this.receiptInfoAfterFilter()[0];
           const oldLogs = {
-            ...this._log.receivingLog,
-            UserEventID: sqlData.Event_Receiving_OverReceiving,
-            ReceiptLine: line.LineNumber,
+            UserName: this._userInfo.userName,
+            UserEventID: sqlData.Event_Receiving_OverReceiving_done,
+            ReceiptLine: line.ReceiptLineNumber,
             Quantity: line.ExpectedQuantity,
-            PurchaseOrderNumber:
-              line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
-                .PurchaseOrderNumber,
-            PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+            PurchaseOrderNumber: line.PurchaseOrderNumber,
+            PurchaseLine: line.PurchaseLineNumber,
             Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
           };
           const eventLogs = {
-            ...this._eventLog.eventLog,
-            EventTypeID: sqlData.Event_Receiving_OverReceiving,
+            EventTypeID: sqlData.Event_Receiving_OverReceiving_done,
+            UserName: this._userInfo.userName,
             Log: JSON.stringify({
               ...JSON.parse(this._eventLog.eventLog.Log),
-              ReceiptLine: line.LineNumber,
-              ExpectedQuantity: line.ExpectedQuantity,
-              PurchaseOrderNumber:
-                line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH
-                  .PurchaseOrderNumber,
-              PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
+              ...line,
               Message: `${AuthName} from ${prevQuantity} to ${quantity}`,
             }),
           };
@@ -324,62 +387,5 @@ export class ReceiptInfoService {
           });
         })
       );
-  }
-
-  /**
-   * filterByQuantity
-   */
-  public filterByQuantity(Quantity: number): void {
-    const tmp = this.lineAfterPart.filter(
-      (res) => res.ExpectedQuantity === Quantity
-    );
-    this._receiptLsAfterQuantity.next(tmp);
-  }
-
-  /**
-   * filterByOverReceiving
-   */
-  public filterByOverReceiving(id?: number) {
-    if (!id) {
-      this._receiptLsAfterQuantity.next(this.lineAfterPart);
-    } else {
-      const selected = this.lineAfterPart.filter((res) => res._id === id);
-      this._receiptLsAfterQuantity.next(selected);
-    }
-  }
-
-  /**
-   * pickOneReceiptLine
-   */
-  public pickOneReceiptLine(id?: number) {
-    let line;
-    if (!id) {
-      this._selectedReceiptLine.next(this.receiptLsAfterQuantity);
-      line = this.receiptLsAfterQuantity[0];
-    } else {
-      const selected = this.receiptLsAfterQuantity.filter(
-        (res) => res._id === id
-      );
-      this._selectedReceiptLine.next(selected);
-      line = selected[0];
-    }
-    this._log.updateReceivingLog({
-      ReceiptLine: line.LineNumber,
-      Quantity: line.ExpectedQuantity,
-      PurchaseOrderNumber:
-        line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
-      PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
-    });
-    this._eventLog.updateEventLog({
-      ...this._eventLog.eventLog,
-      Log: JSON.stringify({
-        ...JSON.parse(this._eventLog.eventLog.Log),
-        ReceiptLine: line.LineNumber,
-        ExpectedQuantity: line.ExpectedQuantity,
-        PurchaseOrderNumber:
-          line.RECEIPTLDs[0].PurchaseOrderL.PurchaseOrderH.PurchaseOrderNumber,
-        PurchaseLine: line.RECEIPTLDs[0].PurchaseOrderL.LineNumber,
-      }),
-    });
   }
 }

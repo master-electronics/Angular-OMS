@@ -26,6 +26,7 @@ import { AssignLabelInfo, LabelService } from '../../data/label';
 import { updateReceiptInfoService } from '../../data/updateReceipt';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { EditInfoComponent } from './edit-info.component';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -43,9 +44,9 @@ import { EditInfoComponent } from './edit-info.component';
 
   template: `
     <div class="grid grid-cols-3 gap-5 text-xl">
-      <h1>Total: {{ label.total }}</h1>
+      <h1>Total: {{ receipt.ExpectQuantity() }}</h1>
       <h1>Remaining: {{ label.remaining() }}</h1>
-      <h1>Open for POs: {{ label.openQuantityForPOs }}</h1>
+      <h1>Open for POs: {{ receipt.openQuantityForPOs() }}</h1>
     </div>
 
     <form [formGroup]="inputForm">
@@ -64,8 +65,8 @@ import { EditInfoComponent } from './edit-info.component';
                 #itn
               />
               <div class="grid grid-rows-2 text-lg">
-                <h1>DateCode:{{ label.ITNList[i].datecode }}</h1>
-                <h1>Country:{{ label.ITNList[i].ISO3 }}</h1>
+                <h1>DateCode:{{ label.ITNList()[i].datecode }}</h1>
+                <h1>Country:{{ label.ITNList()[i].ISO3 }}</h1>
               </div>
 
               <button
@@ -105,8 +106,8 @@ import { EditInfoComponent } from './edit-info.component';
       <edit-info
         (clickCancel)="editWindow = false"
         (clickSubmit)="editInfo($event)"
-        [datecode]="this.label.ITNList[editingIndex].datecode"
-        [ISO3]="this.label.ITNList[editingIndex].ISO3"
+        [datecode]="this.label.ITNList()[editingIndex].datecode"
+        [ISO3]="this.label.ITNList()[editingIndex].ISO3"
       ></edit-info>
     </ng-container>
 
@@ -134,6 +135,7 @@ export class AssignLabelComponent implements OnInit {
   label = inject(LabelService);
   constructor(
     public updateInfo: updateReceiptInfoService,
+    public receipt: ReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService
@@ -146,7 +148,7 @@ export class AssignLabelComponent implements OnInit {
         Object.values(res).forEach((element, index) => {
           sum += Number(element);
         });
-        return this.label.total - sum;
+        return this.receipt.ExpectQuantity() - sum;
       }),
       map((res) => {
         return res !== 0 || this.inputForm.invalid;
@@ -167,7 +169,7 @@ export class AssignLabelComponent implements OnInit {
 
   initList(): void {
     this.label.initItnList();
-    this.label.ITNList.map((itn, index) => {
+    this.label.ITNList().map((itn, index) => {
       // add a control for inpuForm
       this.inputForm.addControl(
         `itn${index}`,
@@ -233,7 +235,7 @@ export class AssignLabelComponent implements OnInit {
         quantityList.push(Number(ele));
       });
       if (
-        this.label.ITNList.some((info) => info.datecode === '') &&
+        this.label.ITNList().some((info) => info.datecode === '') &&
         this.updateInfo.receiptInfo.DateCode !== ''
       ) {
         this.authWindow = true;
@@ -241,7 +243,7 @@ export class AssignLabelComponent implements OnInit {
         return;
       }
       if (
-        this.label.ITNList.some((info) => info.ISO3 === 'UNK') &&
+        this.label.ITNList().some((info) => info.ISO3 === 'UNK') &&
         this.updateInfo.receiptInfo.ISO3 !== 'UNK'
       ) {
         this.authWindow = true;

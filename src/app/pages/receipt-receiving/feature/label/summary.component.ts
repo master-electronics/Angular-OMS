@@ -23,6 +23,7 @@ import { PrinterService } from 'src/app/shared/data/printer';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
 @Component({
   standalone: true,
@@ -42,10 +43,11 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
   ],
 
   template: `
-    <div class="grid grid-cols-3 gap-5 text-xl">
-      <h1>Total: {{ label.total }}</h1>
+    <div class="grid grid-cols-4 gap-5 text-xl">
+      <h1>Part: {{ receipt.partNumber() }}</h1>
+      <h1>Total: {{ receipt.ExpectQuantity() }}</h1>
       <h1>Remaining: {{ label.remaining() }}</h1>
-      <h1>Open for POs: {{ label.openQuantityForPOs }}</h1>
+      <h1>Open for POs: {{ receipt.openQuantityForPOs() }}</h1>
     </div>
 
     <form [formGroup]="inputForm">
@@ -57,18 +59,18 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
               <div class="grid grid-cols-4 gap-2">
                 <div class="col-span-2 grid grid-rows-2">
                   <div class="grid grid-cols-2">
-                    <h1>ITN:{{ label.ITNList[i].ITN }}</h1>
-                    <h1>Location:{{ label.ITNList[i].BinLocation }}</h1>
+                    <h1>ITN:{{ label.ITNList()[i].ITN }}</h1>
+                    <h1>Location:{{ label.ITNList()[i].BinLocation }}</h1>
                   </div>
                   <div class="grid grid-cols-3">
-                    <h1>Qty:{{ label.ITNList[i].quantity }}</h1>
-                    <h1>DateCode:{{ label.ITNList[i].datecode }}</h1>
-                    <h1>Country:{{ label.ITNList[i].ISO3 }}</h1>
+                    <h1>Qty:{{ label.ITNList()[i].quantity }}</h1>
+                    <h1>DateCode:{{ label.ITNList()[i].datecode }}</h1>
+                    <h1>Country:{{ label.ITNList()[i].ISO3 }}</h1>
                   </div>
                 </div>
 
                 <button
-                  (click)="printItn(label.ITNList[i].ITN)"
+                  (click)="printItn(label.ITNList()[i].ITN)"
                   class="rounded-lg bg-green-500 px-4 py-2 font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800"
                 >
                   Print
@@ -141,6 +143,7 @@ export class SummaryComponent implements OnInit {
   label = inject(LabelService);
   constructor(
     public updateInfo: updateReceiptInfoService,
+    public receipt: ReceiptInfoService,
     private _fb: FormBuilder,
     private _router: Router,
     private _step: TabService,
@@ -154,7 +157,7 @@ export class SummaryComponent implements OnInit {
         Object.values(res).forEach((element) => {
           sum += Number(element);
         });
-        return this.label.total - sum;
+        return this.receipt.ExpectQuantity() - sum;
       }),
       map((res) => {
         return res !== 0 || this.inputForm.invalid;
@@ -179,7 +182,7 @@ export class SummaryComponent implements OnInit {
   }
 
   initList(): void {
-    this.label.ITNList.map((itn, index) => {
+    this.label.ITNList().map((itn, index) => {
       // add a control for inpuForm
       this.inputForm.addControl(
         `itn${index}`,
@@ -214,7 +217,7 @@ export class SummaryComponent implements OnInit {
   onSubmit(): void {
     this.data$ = this.label.updateAfterReceving().pipe(
       map(() => {
-        this._router.navigateByUrl('receiptreceiving/itnkickout');
+        this._router.navigateByUrl('receiptreceiving/itnlist');
       }),
       catchError((error) => {
         return of({
@@ -227,11 +230,7 @@ export class SummaryComponent implements OnInit {
 
   printItn(itn: string) {
     this.data$ = this.print
-      .printITN$(
-        itn,
-        this.label.receiptProductCode,
-        this.label.receiptPartNumber
-      )
+      .printITN$(itn, this.receipt.productCode(), this.receipt.partNumber())
       .pipe(map(() => true));
   }
 

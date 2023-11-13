@@ -43,6 +43,7 @@ export type Asnreplenishmentitem = {
   Barcode?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  ProductID?: Maybe<Scalars['Int']>;
   Row?: Maybe<Scalars['String']>;
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
@@ -773,6 +774,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateProduct?: Maybe<UpdatedProduct>;
   updateProductLastSync?: Maybe<UpdatedProduct>;
   updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1454,6 +1456,10 @@ export type MutationUpdatePrinterArgs = {
   Orientation?: InputMaybe<Scalars['String']>;
   StationName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type MutationUpdateProductArgs = {
+  Product: UpdateProduct;
 };
 
 export type MutationUpdateProductLastSyncArgs = {
@@ -3251,6 +3257,7 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateProduct = {
+  ExcludeFromAutostore?: InputMaybe<Scalars['Boolean']>;
   LastAutostoreSync?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };

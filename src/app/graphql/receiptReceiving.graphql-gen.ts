@@ -43,6 +43,7 @@ export type Asnreplenishmentitem = {
   Barcode?: Maybe<Scalars['String']>;
   InventoryID?: Maybe<Scalars['Int']>;
   InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  ProductID?: Maybe<Scalars['Int']>;
   Row?: Maybe<Scalars['String']>;
   Section?: Maybe<Scalars['String']>;
   Shelf?: Maybe<Scalars['String']>;
@@ -773,6 +774,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
+  updateProduct?: Maybe<UpdatedProduct>;
   updateProductLastSync?: Maybe<UpdatedProduct>;
   updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1454,6 +1456,10 @@ export type MutationUpdatePrinterArgs = {
   Orientation?: InputMaybe<Scalars['String']>;
   StationName?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type MutationUpdateProductArgs = {
+  Product: UpdateProduct;
 };
 
 export type MutationUpdateProductLastSyncArgs = {
@@ -3251,6 +3257,7 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateProduct = {
+  ExcludeFromAutostore?: InputMaybe<Scalars['Boolean']>;
   LastAutostoreSync?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
@@ -3383,6 +3390,7 @@ export type FindReceiptHeaderForReceivingQuery = {
   __typename?: 'Query';
   findReceiptInfoByIdAndStatus?: {
     __typename?: 'ReceiptH';
+    _id: number;
     RECEIPTLs?: Array<{
       __typename?: 'ReceiptL';
       _id: number;
@@ -3401,6 +3409,7 @@ export type FindReceiptHeaderForReceivingQuery = {
       RECEIPTLDs?: Array<{
         __typename?: 'ReceiptLD';
         _id: number;
+        ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
         PurchaseOrderL?: {
           __typename?: 'PurchaseOrderL';
           LineNumber: number;
@@ -3412,6 +3421,50 @@ export type FindReceiptHeaderForReceivingQuery = {
             PurchaseOrderNumber: string;
           };
         } | null;
+      } | null> | null;
+    } | null> | null;
+  } | null;
+};
+
+export type FetchReceiptForOverReceivingQueryVariables = Types.Exact<{
+  PurchaseOrder: Types.Scalars['String'];
+}>;
+
+export type FetchReceiptForOverReceivingQuery = {
+  __typename?: 'Query';
+  findPurchaseOrderH?: {
+    __typename?: 'PurchaseOrderH';
+    _id: number;
+    PURCHASEORDERLs?: Array<{
+      __typename?: 'PurchaseOrderL';
+      LineNumber: number;
+      QuantityOnOrder?: number | null;
+      QuantityReceived?: number | null;
+      UnitOfMeasure?: string | null;
+      RECEIPTLDs?: Array<{
+        __typename?: 'ReceiptLD';
+        _id: number;
+        ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
+        ReceiptL: {
+          __typename?: 'ReceiptL';
+          _id: number;
+          ReceiptHID: number;
+          ExpectedQuantity: number;
+          DateCode?: string | null;
+          ROHS?: boolean | null;
+          LineNumber: number;
+          ProductID: number;
+          CountryID?: number | null;
+          Country?: { __typename?: 'Country'; ISO3: string } | null;
+          Product: {
+            __typename?: 'Product';
+            PartNumber: string;
+            ProductCode: {
+              __typename?: 'ProductCode';
+              ProductCodeNumber: string;
+            };
+          };
+        };
       } | null> | null;
     } | null> | null;
   } | null;
@@ -3670,6 +3723,7 @@ export class FetchPurchaseOrderInfoGQL extends Apollo.Query<
 export const FindReceiptHeaderForReceivingDocument = gql`
   query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
     findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
+      _id
       RECEIPTLs {
         _id
         ExpectedQuantity
@@ -3689,6 +3743,9 @@ export const FindReceiptHeaderForReceivingDocument = gql`
         }
         RECEIPTLDs {
           _id
+          ReceiptStatus {
+            Name
+          }
           PurchaseOrderL {
             LineNumber
             QuantityOnOrder
@@ -3712,6 +3769,58 @@ export class FindReceiptHeaderForReceivingGQL extends Apollo.Query<
   FindReceiptHeaderForReceivingQueryVariables
 > {
   document = FindReceiptHeaderForReceivingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchReceiptForOverReceivingDocument = gql`
+  query fetchReceiptForOverReceiving($PurchaseOrder: String!) {
+    findPurchaseOrderH(PurchaseOrder: { PurchaseOrderNumber: $PurchaseOrder }) {
+      _id
+      PURCHASEORDERLs {
+        LineNumber
+        QuantityOnOrder
+        QuantityReceived
+        UnitOfMeasure
+        RECEIPTLDs {
+          _id
+          ReceiptStatus {
+            Name
+          }
+          ReceiptL {
+            _id
+            ReceiptHID
+            ExpectedQuantity
+            DateCode
+            ROHS
+            LineNumber
+            ProductID
+            CountryID
+            Country {
+              ISO3
+            }
+            Product {
+              PartNumber
+              ProductCode {
+                ProductCodeNumber
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchReceiptForOverReceivingGQL extends Apollo.Query<
+  FetchReceiptForOverReceivingQuery,
+  FetchReceiptForOverReceivingQueryVariables
+> {
+  document = FetchReceiptForOverReceivingDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

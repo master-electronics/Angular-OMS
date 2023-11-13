@@ -5,7 +5,6 @@ import { TabService } from '../../shared/ui/step-bar/tab';
 import { updateReceiptInfoService } from './data/updateReceipt';
 import { ReceiptGuard } from './utils/receipt.guard';
 import { PartResolver } from './utils/resolver/part.resolver';
-import { LogService } from './data/eventLog';
 import { kickoutService } from './data/kickout';
 import { CreateReceiptService } from './data/createReceipt';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
@@ -20,7 +19,6 @@ export const ReceivingRoutes: Routes = [
       ReceiptInfoService,
       updateReceiptInfoService,
       LabelService,
-      LogService,
       kickoutService,
       CreateReceiptService,
       ItnCountService,
@@ -34,6 +32,23 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/receipt/purchase-number.component').then(
             (m) => m.PurchaseNumberComponent
+          ),
+      },
+      {
+        path: 'alllines',
+        loadComponent: () =>
+          import('./feature/over-receipt/selectLine.component').then(
+            (m) => m.SelectLineComponent
+          ),
+      },
+      {
+        path: 'overreceiving',
+        resolve: {
+          info: VerifyResolver,
+        },
+        loadComponent: () =>
+          import('./feature/over-receipt/overReceiving.component').then(
+            (m) => m.OverReceivingComponent
           ),
       },
       {
@@ -70,7 +85,7 @@ export const ReceivingRoutes: Routes = [
           lines: PartResolver,
         },
         loadComponent: () =>
-          import('./feature/identify/part.component').then(
+          import('./feature/verify/part.component').then(
             (m) => m.PartComponent
           ),
       },
@@ -82,20 +97,6 @@ export const ReceivingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/verify/verify.component').then(
             (m) => m.VerifyComponent
-          ),
-      },
-      {
-        path: 'part/selectline',
-        loadComponent: () =>
-          import('./feature/verify/selectLine.component').then(
-            (m) => m.SelectLineComponent
-          ),
-      },
-      {
-        path: 'overreceiving',
-        loadComponent: () =>
-          import('./feature/verify/overReceiving.component').then(
-            (m) => m.OverReceivingComponent
           ),
       },
       {
@@ -172,17 +173,17 @@ export const ReceivingRoutes: Routes = [
           ),
       },
       {
-        path: 'itnkickout',
+        path: 'itnlist',
         loadComponent: () =>
-          import('./feature/kickout/itnKickout.component').then(
-            (mod) => mod.ItnKickoutComponent
+          import('./feature/kickout/itnList.component').then(
+            (mod) => mod.ItnListComponent
           ),
       },
       {
-        path: 'kickout',
+        path: 'kickoutitn',
         loadComponent: () =>
-          import('./feature/kickout/kickout.component').then(
-            (m) => m.KickoutComponent
+          import('./feature/kickout/kickoutITN.component').then(
+            (m) => m.KickoutItnComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },

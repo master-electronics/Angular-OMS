@@ -57,6 +57,7 @@ query fetchPurchaseOrderInfo(
 
 query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
   findReceiptInfoByIdAndStatus(ReceiptHID: $ReceiptHID, statusID: $statusID) {
+    _id
     RECEIPTLs {
       _id
       ExpectedQuantity
@@ -76,6 +77,9 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
       }
       RECEIPTLDs {
         _id
+        ReceiptStatus {
+          Name
+        }
         PurchaseOrderL {
           LineNumber
           QuantityOnOrder
@@ -83,6 +87,43 @@ query findReceiptHeaderForReceiving($ReceiptHID: Int!, $statusID: Int!) {
           UnitOfMeasure
           PurchaseOrderH {
             PurchaseOrderNumber
+          }
+        }
+      }
+    }
+  }
+}
+
+query fetchReceiptForOverReceiving($PurchaseOrder: String!) {
+  findPurchaseOrderH(PurchaseOrder: { PurchaseOrderNumber: $PurchaseOrder }) {
+    _id
+    PURCHASEORDERLs {
+      LineNumber
+      QuantityOnOrder
+      QuantityReceived
+      UnitOfMeasure
+      RECEIPTLDs {
+        _id
+        ReceiptStatus {
+          Name
+        }
+        ReceiptL {
+          _id
+          ReceiptHID
+          ExpectedQuantity
+          DateCode
+          ROHS
+          LineNumber
+          ProductID
+          CountryID
+          Country {
+            ISO3
+          }
+          Product {
+            PartNumber
+            ProductCode {
+              ProductCodeNumber
+            }
           }
         }
       }

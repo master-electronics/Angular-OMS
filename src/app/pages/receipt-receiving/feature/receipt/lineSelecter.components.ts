@@ -59,10 +59,10 @@ export class LineSelecterComponent implements OnInit {
   }
 
   public selectLine(data): void {
-    if (!data.LineNumber) {
+    if (!data.PurchaseLine) {
       return;
     }
-    this.createreceipt.updatePurchaseInfo({ LineNumber: data.LineNumber });
+    this.createreceipt.updatePurchaseInfo({ PurchaseLine: data.PurchaseLine });
     this.createreceipt.updateLeftQuantity(
       data.QuantityOnOrder - data.QuantityReceived
     );

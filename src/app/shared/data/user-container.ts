@@ -41,7 +41,6 @@ export class UserContainerService {
           return this._userContainerID.value;
         }),
         tap((res) => {
-          console.log(res);
           this._sessionStorage.setItem('UserContainerID', res.toString());
         })
       );

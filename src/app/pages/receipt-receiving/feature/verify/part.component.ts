@@ -42,10 +42,6 @@ import { LocationStrategy } from '@angular/common';
         <popup-modal (clickSubmit)="onBack()" [message]="data"></popup-modal>
       </ng-container>
     </ng-container>
-    <!-- <simple-keyboard
-      [inputString]="inputForm.value.partNumber"
-      (outputString)="onChange($event)"
-    ></simple-keyboard> -->
   `,
 })
 export class PartComponent implements OnInit {
@@ -90,9 +86,7 @@ export class PartComponent implements OnInit {
           );
         }
         if (url.name === 'kickout') {
-          this._message.warning(
-            `Kickout Receipt: ${url.receipt}, Part: ${url.part}`
-          );
+          this._message.warning(`Kickout PurchaseOrder: ${url.PurchaseOrder},`);
         }
         return this._actRoute.data.pipe(
           filter((res) => res.lines?.error),
@@ -103,7 +97,7 @@ export class PartComponent implements OnInit {
               message = `Receipt Complete`;
             }
             if (url.name === 'kickout') {
-              message = `Kickout Receipt: ${url.receipt}, Part: ${url.part}\n${res}`;
+              message = `Kickout PurchaseOrder: ${url.PurchaseOrder}\n${res}`;
             }
             return message;
           })
@@ -118,11 +112,12 @@ export class PartComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const isVaild = this._receipt.receiptLines?.some(
-        (line) =>
-          line.Product.PartNumber.trim().toLowerCase() ===
-          value.trim().toLowerCase()
-      );
+      const isVaild = this._receipt
+        .receiptInfoAfterFilter()
+        .some(
+          (line) =>
+            line.PartNumber.trim().toLowerCase() === value.trim().toLowerCase()
+        );
       return !isVaild ? { filter: true } : null;
     };
   }
@@ -132,7 +127,7 @@ export class PartComponent implements OnInit {
   };
 
   onSubmit(): void {
-    this._receipt.filterbyPartNumber(this.inputForm.value.partNumber);
+    this._receipt.updatePartNumber(this.inputForm.value.partNumber.trim());
     this._router.navigate(['../part/verify'], { relativeTo: this._actRoute });
   }
 

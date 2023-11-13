@@ -9,6 +9,7 @@ import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { StockingService } from '../../data/stocking.service';
 import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 import { ItnInfoService } from '../../data/itn-info.service';
+import { UserContainerService } from 'src/app/shared/data/user-container';
 
 @Component({
   standalone: true,
@@ -37,6 +38,7 @@ export class ScanTargetComponent implements OnInit {
     private _actRoute: ActivatedRoute,
     private _router: Router,
     private _stock: StockingService,
+    private _userC: UserContainerService,
     private _itn: ItnInfoService
   ) {}
 
@@ -68,7 +70,12 @@ export class ScanTargetComponent implements OnInit {
 
   private moveItnToUser(ITN: string) {
     this.data$ = this._itn.verifyITN$(ITN).pipe(
-      switchMap(() => {
+      switchMap((res) => {
+        if (
+          res.data.findInventory.Container._id === this._userC.userContainerID
+        ) {
+          return of(false);
+        }
         return this._stock.moveItnToUser(ITN);
       }),
       map(() => {

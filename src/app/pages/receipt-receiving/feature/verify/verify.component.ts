@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, Observable, of, map } from 'rxjs';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { ReceiptInfoService } from '../../data/ReceiptInfo';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
 import { ReceiptPartInfoComponent } from '../../ui/receipt-part-info.component';
 
@@ -40,7 +39,6 @@ export class VerifyComponent implements OnInit {
   constructor(
     private _router: Router,
     private _actRoute: ActivatedRoute,
-    private _receipt: ReceiptInfoService,
     private _step: TabService
   ) {}
 

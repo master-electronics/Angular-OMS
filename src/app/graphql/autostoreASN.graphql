@@ -144,10 +144,17 @@ mutation clearSuspect(
   )
 }
 
+mutation updateProduct($product: updateProduct!) {
+  updateProduct(Product: $product) {
+    LastUpdated
+  }
+}
+
 query findASNReplenishmentInventory($barcode: String) {
   findASNReplenishmentInventory(Barcode: $barcode) {
     _id
     InventoryID
+    ProductID
     Status
     Barcode
     Warehouse

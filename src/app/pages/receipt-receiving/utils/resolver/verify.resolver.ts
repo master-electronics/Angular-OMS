@@ -12,7 +12,7 @@ export const VerifyResolver: ResolveFn<any> = (
   state: RouterStateSnapshot,
   receipt: ReceiptInfoService = inject(ReceiptInfoService)
 ): Observable<any> => {
-  return receipt.findVerifyInfo().pipe(
+  return receipt.findVerifyInfo$().pipe(
     catchError((error) => {
       return of({ error });
     })

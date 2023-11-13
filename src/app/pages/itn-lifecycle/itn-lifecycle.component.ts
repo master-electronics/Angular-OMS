@@ -71,6 +71,7 @@ export class ITNLifecycleComponent implements OnInit {
   calendarEndDate: Date;
   defaultDate: Date[];
   isLoading = false;
+  timeLock = false;
   dateRange: [];
   startDate: string;
   endDate: string;
@@ -204,6 +205,14 @@ export class ITNLifecycleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const date = new Date();
+    const hours = date.getHours();
+    console.log(date.getHours());
+    if (hours < 15) {
+      this.timeLock = true;
+      return;
+    }
+
     const sDate: Date = new Date(Date.now());
     const eDate: Date = new Date(Date.now());
     sDate.setDate(eDate.getDate() - 7);

@@ -8,7 +8,8 @@ import {
 import { LabelService } from '../data/label';
 import { ReceiptInfoService } from '../data/ReceiptInfo';
 import { updateReceiptInfoService } from '../data/updateReceipt';
-import { ItnListComponent } from '../../stocking/ui/itn-list.component';
+import { kickoutService } from '../data/kickout';
+import { CreateReceiptService } from '../data/createReceipt';
 
 export const ReceiptGuard: CanActivateChildFn = (
   route: ActivatedRouteSnapshot,
@@ -18,58 +19,54 @@ export const ReceiptGuard: CanActivateChildFn = (
   const _receipt = inject(ReceiptInfoService);
   const _info = inject(updateReceiptInfoService);
   const _label = inject(LabelService);
+  const _kickout = inject(kickoutService);
+  const _create = inject(CreateReceiptService);
 
   let isActive;
   switch (state.url) {
-    case '/receiptreceiving/part':
-      _label.reset();
-      _info.reset();
-      _receipt.resetAfterDone();
-      isActive = _receipt.headerID !== null;
-      break;
     case '/receiptreceiving/part/verify':
-      isActive = _receipt.lineAfterPart !== null;
+      isActive = _receipt.partNumber() !== null;
       break;
     case '/receiptreceiving/part/quantity':
-      isActive = _receipt.lineAfterPart !== null;
+      isActive = _receipt.partNumber() !== null;
       break;
     case '/receiptreceiving/part/selectline':
-      isActive = _receipt.lineAfterPart !== null;
+      isActive = _receipt.quantity() !== null;
       break;
     case '/receiptreceiving/overreceiving':
-      isActive = _receipt.receiptLsAfterQuantity !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     // case '/receiptreceiving/kickout':
-    //   isActive = _receipt.lineAfterPart !== null;
+    //   isActive = _receipt.partNumber() !== null;
     // break;
     case '/receiptreceiving/update/country':
-      isActive = _receipt.receiptLsAfterQuantity !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     case '/receiptreceiving/update/datecode':
-      isActive = _receipt.receiptLsAfterQuantity !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     case '/receiptreceiving/update/ROHS':
-      isActive = _receipt.receiptLsAfterQuantity !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     case '/receiptreceiving/label/selectline':
-      isActive = _receipt.receiptLsAfterQuantity !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     case '/receiptreceiving/label/assign':
-      isActive = _receipt.selectedReceiptLine !== null;
+      isActive = _receipt.receiptInfoAfterFilter()?.length !== 0;
       break;
     case '/receiptreceiving/label/printitn':
-      isActive = _label.ITNList.length > 0;
+      isActive = _label.ITNList().length > 0;
       break;
     case '/receiptreceiving/label/sacnlocation':
-      isActive = _label.ITNList !== null;
+      isActive = _label.ITNList().length > 0;
       break;
     case '/receiptreceiving/label/summary':
       // make sure every itn has binlocation, itn
-      if (!_label.ITNList.length) {
+      if (!_label.ITNList().length) {
         isActive = false;
         break;
       }
-      isActive = !_label.ITNList.some((itn) => {
+      isActive = !_label.ITNList().some((itn) => {
         if (!itn.ContainerID) {
           return true;
         }
@@ -78,6 +75,9 @@ export const ReceiptGuard: CanActivateChildFn = (
         }
         return false;
       });
+      break;
+    case '/receiptreceiving/itnlist':
+      isActive = _label.ITNList().length > 0;
       break;
     default:
       isActive = true;

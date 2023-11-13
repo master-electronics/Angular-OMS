@@ -29,6 +29,7 @@ import {
   ItnLocationChangeGQL,
   ItnChangeGQL,
   ClearSuspectGQL,
+  UpdateProductGQL,
   GlobalAsnRejectionGQL,
   //DeleteAsnReplenishmentItemGQL,
 } from 'src/app/graphql/autostoreASN.graphql-gen';
@@ -94,6 +95,7 @@ export class ASNService {
     private _itnLocationChange: ItnLocationChangeGQL,
     private _itnChange: ItnChangeGQL,
     private _clearSuspect: ClearSuspectGQL,
+    private _updateProduct: UpdateProductGQL,
     private _globalASNReject: GlobalAsnRejectionGQL
   ) {}
 
@@ -489,6 +491,7 @@ export class ASNService {
           const Item: ReplenishmentItem = {
             _id: data._id,
             InventoryID: data.InventoryID,
+            ProductID: data.ProductID,
             Status: data.Status,
             Barcode: data.Barcode,
             Warehouse: data.Warehouse,
@@ -630,6 +633,21 @@ export class ASNService {
           itn: ITN,
           binLocation: BinLocation,
           suspect: Suspect,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  updateProduct(Product: { _id: number; ExcludeFromAutostore: boolean }) {
+    return this._updateProduct
+      .mutate(
+        {
+          product: Product,
         },
         { fetchPolicy: 'network-only' }
       )

@@ -44,7 +44,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
           [message]="error.error.message"
           [name]="error.error.name"
         ></message-bar>
-
         <red-button
           (buttonClick)="overRece()"
           buttonText="Over Receipt"
@@ -76,11 +75,13 @@ export class QuantityComponent implements OnInit {
   };
 
   onSubmit(): void {
-    const vaild = this._receipt.lineAfterPart.some(
-      (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
-    );
+    const vaild = this._receipt
+      .receiptInfoAfterFilter()
+      .some(
+        (res) => res.ExpectedQuantity === Number(this.inputForm.value.quantity)
+      );
     if (vaild) {
-      this._receipt.filterByQuantity(Number(this.inputForm.value.quantity));
+      this._receipt.updateQuantity(Number(this.inputForm.value.quantity));
       this._router.navigateByUrl('receiptreceiving/update/country');
       return;
     }
@@ -93,12 +94,11 @@ export class QuantityComponent implements OnInit {
   }
 
   public overRece(): void {
-    if (this._receipt.lineAfterPart.length === 1) {
-      this._receipt.filterByOverReceiving();
+    if (this._receipt.receiptInfoAfterFilter().length === 1) {
       this._router.navigateByUrl('/receiptreceiving/overreceiving');
       return;
     }
-    this._router.navigateByUrl('receiptreceiving/part/selectline');
+    this._router.navigateByUrl('receiptreceiving/alllines');
   }
 
   public onBack(): void {
