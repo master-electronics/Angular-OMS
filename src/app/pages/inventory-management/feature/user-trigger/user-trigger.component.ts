@@ -507,53 +507,56 @@ export class UserTrigger {
   onOk(): void {
     const audits = [];
     const suspects = [];
-    this.itnList.forEach((item) => {
-      suspects.push(
-        this._auditService.inventoryUpdate(
-          this.userInfo.userName,
-          item.ITN,
-          'Inventory Management Audit',
-          '',
-          '',
-          '',
-          '',
-          'true'
-        )
-      );
 
-      this.includedAuditTypeList.forEach((type) => {
-        audits.push({
-          TypeID: Number(type.value),
-          InventoryID: Number(item._id),
-          LastUpdated: new Date(Date.now()).toISOString(),
-          CreatedDatetime: new Date(Date.now()).toISOString(),
+    if (this.itnList.length > 0) {
+      this.itnList.forEach((item) => {
+        suspects.push(
+          this._auditService.inventoryUpdate(
+            this.userInfo.userName,
+            item.ITN,
+            'Inventory Management Audit',
+            '',
+            '',
+            '',
+            '',
+            'true'
+          )
+        );
+
+        this.includedAuditTypeList.forEach((type) => {
+          audits.push({
+            TypeID: Number(type.value),
+            InventoryID: Number(item._id),
+            LastUpdated: new Date(Date.now()).toISOString(),
+            CreatedDatetime: new Date(Date.now()).toISOString(),
+          });
         });
       });
-    });
 
-    this.suspect$ = forkJoin(suspects);
+      this.suspect$ = forkJoin(suspects);
 
-    this.data$ = this._insertAudits
-      .mutate({
-        audits: audits,
-      })
-      .pipe(
-        tap(() => {
-          this.errorType = 'success';
-          this.error = { message: 'Audits created!' };
-          this.removeAll();
-          this.inputForm.reset();
-          return of(true);
-        }),
-        catchError((error) => {
-          this.errorType = 'error';
-          this.error = { message: error.message };
-
-          return of({
-            error: { message: error.message, type: 'error' },
-          });
+      this.data$ = this._insertAudits
+        .mutate({
+          audits: audits,
         })
-      );
+        .pipe(
+          tap(() => {
+            this.errorType = 'success';
+            this.error = { message: 'Audits created!' };
+            this.removeAll();
+            this.inputForm.reset();
+            return of(true);
+          }),
+          catchError((error) => {
+            this.errorType = 'error';
+            this.error = { message: error.message };
+
+            return of({
+              error: { message: error.message, type: 'error' },
+            });
+          })
+        );
+    }
 
     this.message = null;
   }

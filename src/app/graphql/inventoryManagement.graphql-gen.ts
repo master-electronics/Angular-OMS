@@ -286,6 +286,24 @@ export type Imadjustreason = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type Imtrigger = {
+  __typename?: 'IMTRIGGER';
+  Active?: Maybe<Scalars['Boolean']>;
+  Description?: Maybe<Scalars['String']>;
+  IMTrigger_AuditTypes?: Maybe<Array<Maybe<ImTrigger_AuditType>>>;
+  Name?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type ImTrigger_AuditType = {
+  __typename?: 'IMTrigger_AuditType';
+  IMAuditType?: Maybe<Audittype>;
+  IMAuditTypeID?: Maybe<Scalars['Int']>;
+  IMTriggerID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
@@ -655,6 +673,7 @@ export type Mutation = {
   clearSuspectInventory: Scalars['Boolean'];
   clearTimeoutAudits?: Maybe<Audit>;
   closeAudit?: Maybe<Audit>;
+  closeAudits?: Maybe<Array<Maybe<Audit>>>;
   createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
@@ -715,6 +734,7 @@ export type Mutation = {
   insertReceiptLineDetail?: Maybe<ReceiptLd>;
   insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLd>>>;
   insertSuspect?: Maybe<Audit>;
+  insertSystemTrigger?: Maybe<Imtrigger>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
@@ -766,6 +786,7 @@ export type Mutation = {
   updateReceiptLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateSystemTrigger?: Maybe<Imtrigger>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -833,6 +854,11 @@ export type MutationClearTimeoutAuditsArgs = {
 export type MutationCloseAuditArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
   TypeID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationCloseAuditsArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1186,6 +1212,12 @@ export type MutationInsertReceiptLineDetailsArgs = {
 
 export type MutationInsertSuspectArgs = {
   Suspect?: InputMaybe<Array<InputMaybe<InputSuspect>>>;
+};
+
+
+export type MutationInsertSystemTriggerArgs = {
+  AuditTypes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  Trigger?: InputMaybe<ImTrigger>;
 };
 
 
@@ -1600,6 +1632,13 @@ export type MutationUpdateReceiptLsByIdArgs = {
 };
 
 
+export type MutationUpdateSystemTriggerArgs = {
+  AuditTypes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  Trigger?: InputMaybe<ImTrigger>;
+  TriggerID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
@@ -1840,6 +1879,7 @@ export type Query = {
   fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchReceiptLines?: Maybe<Array<Maybe<ReceiptL>>>;
   fetchSuggetionLocationForSorting?: Maybe<Array<Maybe<SuggetionLocation>>>;
+  fetchSystemAudits?: Maybe<Array<Maybe<Imtrigger>>>;
   fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
@@ -2055,6 +2095,11 @@ export type QueryFetchReceiptLinesArgs = {
 export type QueryFetchSuggetionLocationForSortingArgs = {
   ProductID: Scalars['Int'];
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchSystemAuditsArgs = {
+  IncludeDeactivated?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -2862,6 +2907,13 @@ export type EntityTable = {
   _id: Scalars['Int'];
 };
 
+export type ImTrigger = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Int']>;
+};
+
 export type InputAudit = {
   CreatedDatetime?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
@@ -3510,6 +3562,13 @@ export type FetchAuditTypesQueryVariables = Types.Exact<{ [key: string]: never; 
 
 export type FetchAuditTypesQuery = { __typename?: 'Query', fetchAuditTypes?: Array<{ __typename?: 'AUDITTYPE', _id?: number | null, Type?: string | null, Order?: number | null } | null> | null };
 
+export type FetchSystemAuditListQueryVariables = Types.Exact<{
+  includedDeactivated?: Types.InputMaybe<Types.Scalars['Boolean']>;
+}>;
+
+
+export type FetchSystemAuditListQuery = { __typename?: 'Query', fetchSystemAudits?: Array<{ __typename?: 'IMTRIGGER', _id?: number | null, Name?: string | null, Description?: string | null, Priority?: number | null, Active?: boolean | null, IMTrigger_AuditTypes?: Array<{ __typename?: 'IMTrigger_AuditType', _id?: number | null, IMTriggerID?: number | null, IMAuditTypeID?: number | null, IMAuditType?: { __typename?: 'AUDITTYPE', _id?: number | null, Type?: string | null, Order?: number | null } | null } | null> | null } | null> | null };
+
 export type VerifyAuditLocationQueryVariables = Types.Exact<{
   container?: Types.InputMaybe<Types.SearchContainer>;
 }>;
@@ -3672,12 +3731,36 @@ export type CloseAuditMutationVariables = Types.Exact<{
 
 export type CloseAuditMutation = { __typename?: 'Mutation', closeAudit?: { __typename?: 'AUDIT', _id?: number | null } | null };
 
+export type CloseAuditsMutationVariables = Types.Exact<{
+  itn?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type CloseAuditsMutation = { __typename?: 'Mutation', closeAudits?: Array<{ __typename?: 'AUDIT', _id?: number | null, InventoryTrackingNumber?: string | null } | null> | null };
+
 export type ClearTimeoutAuditsMutationVariables = Types.Exact<{
   seconds?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
 
 
 export type ClearTimeoutAuditsMutation = { __typename?: 'Mutation', clearTimeoutAudits?: { __typename?: 'AUDIT', _id?: number | null } | null };
+
+export type UpdateSystemTriggerMutationVariables = Types.Exact<{
+  triggerId?: Types.InputMaybe<Types.Scalars['Int']>;
+  trigger?: Types.InputMaybe<Types.ImTrigger>;
+  auditTypes?: Types.InputMaybe<Array<Types.InputMaybe<Types.Scalars['Int']>> | Types.InputMaybe<Types.Scalars['Int']>>;
+}>;
+
+
+export type UpdateSystemTriggerMutation = { __typename?: 'Mutation', updateSystemTrigger?: { __typename?: 'IMTRIGGER', _id?: number | null } | null };
+
+export type InsertSystemTriggerMutationVariables = Types.Exact<{
+  trigger?: Types.InputMaybe<Types.ImTrigger>;
+  auditTypes?: Types.InputMaybe<Array<Types.InputMaybe<Types.Scalars['Int']>> | Types.InputMaybe<Types.Scalars['Int']>>;
+}>;
+
+
+export type InsertSystemTriggerMutation = { __typename?: 'Mutation', insertSystemTrigger?: { __typename?: 'IMTRIGGER', _id?: number | null } | null };
 
 export const FetchAuditTypesDocument = gql`
     query fetchAuditTypes {
@@ -3694,6 +3777,38 @@ export const FetchAuditTypesDocument = gql`
   })
   export class FetchAuditTypesGQL extends Apollo.Query<FetchAuditTypesQuery, FetchAuditTypesQueryVariables> {
     document = FetchAuditTypesDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FetchSystemAuditListDocument = gql`
+    query fetchSystemAuditList($includedDeactivated: Boolean) {
+  fetchSystemAudits(IncludeDeactivated: $includedDeactivated) {
+    _id
+    Name
+    Description
+    Priority
+    Active
+    IMTrigger_AuditTypes {
+      _id
+      IMTriggerID
+      IMAuditTypeID
+      IMAuditType {
+        _id
+        Type
+        Order
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FetchSystemAuditListGQL extends Apollo.Query<FetchSystemAuditListQuery, FetchSystemAuditListQueryVariables> {
+    document = FetchSystemAuditListDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -4164,6 +4279,25 @@ export const CloseAuditDocument = gql`
       super(apollo);
     }
   }
+export const CloseAuditsDocument = gql`
+    mutation closeAudits($itn: String) {
+  closeAudits(ITN: $itn) {
+    _id
+    InventoryTrackingNumber
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CloseAuditsGQL extends Apollo.Mutation<CloseAuditsMutation, CloseAuditsMutationVariables> {
+    document = CloseAuditsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const ClearTimeoutAuditsDocument = gql`
     mutation clearTimeoutAudits($seconds: Int) {
   clearTimeoutAudits(Seconds: $seconds) {
@@ -4177,6 +4311,46 @@ export const ClearTimeoutAuditsDocument = gql`
   })
   export class ClearTimeoutAuditsGQL extends Apollo.Mutation<ClearTimeoutAuditsMutation, ClearTimeoutAuditsMutationVariables> {
     document = ClearTimeoutAuditsDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateSystemTriggerDocument = gql`
+    mutation updateSystemTrigger($triggerId: Int, $trigger: imTrigger, $auditTypes: [Int]) {
+  updateSystemTrigger(
+    TriggerID: $triggerId
+    Trigger: $trigger
+    AuditTypes: $auditTypes
+  ) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateSystemTriggerGQL extends Apollo.Mutation<UpdateSystemTriggerMutation, UpdateSystemTriggerMutationVariables> {
+    document = UpdateSystemTriggerDocument;
+    client = 'wmsNodejs';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InsertSystemTriggerDocument = gql`
+    mutation insertSystemTrigger($trigger: imTrigger, $auditTypes: [Int]) {
+  insertSystemTrigger(Trigger: $trigger, AuditTypes: $auditTypes) {
+    _id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InsertSystemTriggerGQL extends Apollo.Mutation<InsertSystemTriggerMutation, InsertSystemTriggerMutationVariables> {
+    document = InsertSystemTriggerDocument;
     client = 'wmsNodejs';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

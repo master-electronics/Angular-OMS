@@ -4,6 +4,7 @@ import { SubAuditResolver } from './utils/resolver/subAudit.resolver';
 import { SearchLocationResolver } from './utils/resolver/search-location.resolver';
 import { AuditService } from './data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
+import { SystemTriggerResolver } from './utils/resolver/system-trigger.resolver';
 
 export const InventoryMangementRoutes: Routes = [
   {
@@ -11,6 +12,7 @@ export const InventoryMangementRoutes: Routes = [
     providers: [
       AuditResolver,
       SubAuditResolver,
+      SystemTriggerResolver,
       SearchLocationResolver,
       AuditService,
       EventLogService,
@@ -29,6 +31,14 @@ export const InventoryMangementRoutes: Routes = [
         loadComponent: () =>
           import('./feature/user-trigger/user-trigger.component').then(
             (m) => m.UserTrigger
+          ),
+      },
+      {
+        path: 'systemtriggers',
+        resolve: { InitData: SystemTriggerResolver },
+        loadComponent: () =>
+          import('./feature/system-trigger/system-trigger.component').then(
+            (m) => m.SystemTrigger
           ),
       },
       {

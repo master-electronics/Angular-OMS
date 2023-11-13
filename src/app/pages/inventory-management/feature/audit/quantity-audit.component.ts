@@ -570,6 +570,15 @@ export class QuantityAudit implements OnInit {
                       new Date(Date.now()).toISOString()
                     );
                   }),
+                  switchMap(() => {
+                    if (Number(qty) == currentAudit.Inventory.Quantity) {
+                      //correct, don't need confirmation
+                      const typeID = Number(qty) == 0 ? null : 20;
+                      this.closeAudit(qty, typeID);
+                    }
+
+                    return of(true);
+                  }),
                   catchError((error) => {
                     return of({
                       error: { message: error.message, type: 'error' },

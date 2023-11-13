@@ -286,6 +286,24 @@ export type Imadjustreason = {
   _id?: Maybe<Scalars['Int']>;
 };
 
+export type Imtrigger = {
+  __typename?: 'IMTRIGGER';
+  Active?: Maybe<Scalars['Boolean']>;
+  Description?: Maybe<Scalars['String']>;
+  IMTrigger_AuditTypes?: Maybe<Array<Maybe<ImTrigger_AuditType>>>;
+  Name?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type ImTrigger_AuditType = {
+  __typename?: 'IMTrigger_AuditType';
+  IMAuditType?: Maybe<Audittype>;
+  IMAuditTypeID?: Maybe<Scalars['Int']>;
+  IMTriggerID?: Maybe<Scalars['Int']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
 export type ItnAndQuantity = {
   BinLocation: Scalars['String'];
   ContainerID: Scalars['Int'];
@@ -655,6 +673,7 @@ export type Mutation = {
   clearSuspectInventory: Scalars['Boolean'];
   clearTimeoutAudits?: Maybe<Audit>;
   closeAudit?: Maybe<Audit>;
+  closeAudits?: Maybe<Array<Maybe<Audit>>>;
   createContainer?: Maybe<Scalars['Boolean']>;
   createITN: Scalars['String'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
@@ -715,6 +734,7 @@ export type Mutation = {
   insertReceiptLineDetail?: Maybe<ReceiptLd>;
   insertReceiptLineDetails?: Maybe<Array<Maybe<ReceiptLd>>>;
   insertSuspect?: Maybe<Audit>;
+  insertSystemTrigger?: Maybe<Imtrigger>;
   insertTableData?: Maybe<Array<Maybe<TableData>>>;
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
@@ -766,6 +786,7 @@ export type Mutation = {
   updateReceiptLine?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLineDetail?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLsByID?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  updateSystemTrigger?: Maybe<Imtrigger>;
   updateTableData?: Maybe<TableData>;
   updateUserCart?: Maybe<Container>;
   updateUserCartForDropOff?: Maybe<Container>;
@@ -833,6 +854,11 @@ export type MutationClearTimeoutAuditsArgs = {
 export type MutationCloseAuditArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
   TypeID?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationCloseAuditsArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1186,6 +1212,12 @@ export type MutationInsertReceiptLineDetailsArgs = {
 
 export type MutationInsertSuspectArgs = {
   Suspect?: InputMaybe<Array<InputMaybe<InputSuspect>>>;
+};
+
+
+export type MutationInsertSystemTriggerArgs = {
+  AuditTypes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  Trigger?: InputMaybe<ImTrigger>;
 };
 
 
@@ -1600,6 +1632,13 @@ export type MutationUpdateReceiptLsByIdArgs = {
 };
 
 
+export type MutationUpdateSystemTriggerArgs = {
+  AuditTypes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  Trigger?: InputMaybe<ImTrigger>;
+  TriggerID?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type MutationUpdateTableDataArgs = {
   UpdateQuery?: InputMaybe<Scalars['String']>;
 };
@@ -1840,6 +1879,7 @@ export type Query = {
   fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
   fetchReceiptLines?: Maybe<Array<Maybe<ReceiptL>>>;
   fetchSuggetionLocationForSorting?: Maybe<Array<Maybe<SuggetionLocation>>>;
+  fetchSystemAudits?: Maybe<Array<Maybe<Imtrigger>>>;
   fetchTableData?: Maybe<Array<Maybe<TableData>>>;
   fetchTaskCounter?: Maybe<Array<Maybe<TaskCounter>>>;
   fetchUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
@@ -2055,6 +2095,11 @@ export type QueryFetchReceiptLinesArgs = {
 export type QueryFetchSuggetionLocationForSortingArgs = {
   ProductID: Scalars['Int'];
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFetchSystemAuditsArgs = {
+  IncludeDeactivated?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -2860,6 +2905,13 @@ export type EntityTable = {
   __typename?: 'entityTable';
   TableName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type ImTrigger = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
+  Name?: InputMaybe<Scalars['String']>;
+  Priority?: InputMaybe<Scalars['Int']>;
 };
 
 export type InputAudit = {

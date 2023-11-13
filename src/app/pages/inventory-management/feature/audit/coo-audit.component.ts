@@ -87,13 +87,29 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
         ></normal-button>
       </div>
     </form>
+    <div style="height: 20px"></div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
+        <button
+          (click)="onNA()"
+          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+          type="button"
+        >
+          N/A
+        </button>
+      </div>
+    </div>
     <div style="height: 200px;"></div>
     <simple-keyboard
       [inputString]="this.inputForm.value.country"
       (outputString)="onChange($event)"
     ></simple-keyboard>
     <ng-container *ngIf="data$ | async as data">
-      <message-bar [message]="data.message" [name]="data.name"></message-bar>
+      <message-bar
+        *ngIf="errorMessage"
+        [message]="errorMessage"
+        [name]="data.name"
+      ></message-bar>
     </ng-container>
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
@@ -132,6 +148,7 @@ export class COOAudit implements OnInit {
   public currentInputField;
   auditInfo: Audit;
   message;
+  errorMessage;
   auditTimeout: number;
   alertTime: number;
   lastUpdated: number;
@@ -628,6 +645,181 @@ export class COOAudit implements OnInit {
 
   onBack() {
     this._router.navigate(['../scan-itn'], { relativeTo: this._actRoute });
+  }
+
+  onNA() {
+    const audit: Audit = JSON.parse(sessionStorage.getItem('currentAudit'));
+
+    const userEventLogs = [
+      {
+        UserEventID: sqlData.Event_IM_COO_NA,
+        UserName: this.userInfo.userName,
+        DistributionCenter: environment.DistributionCenter,
+        InventoryTrackingNumber: audit.Inventory.ITN,
+      },
+    ];
+
+    const eventLogs = [
+      {
+        UserName: this.userInfo.userName,
+        EventTypeID: sqlData.Event_IM_COO_NA,
+        Log: JSON.stringify({
+          DistributionCenter: environment.DistributionCenter,
+          InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+          ParentITN: audit.Inventory.ParentITN,
+          BinLocation: audit.Container.Barcode,
+          QuantityOnHand: audit.Inventory.Quantity,
+          OriginalQuantity: audit.Inventory.OriginalQuantity,
+          DateCode: audit.Inventory.DateCode,
+          CountryOfOrigin: audit.Inventory.COO,
+          ROHS: audit.Inventory.ROHS,
+          NotFound: audit.Inventory.NotFound,
+          Suspect: audit.Inventory.Suspect,
+          LocatedInAutostore: audit.Inventory.LocatedInAutostore,
+          BoundForAutostore: audit.Inventory.BoundForAutostore,
+          PartNumber: audit.Inventory.Product.PartNumber,
+          ProductCode: audit.Inventory.Product.ProductCode.ProductCodeNumber,
+          Description: audit.Inventory.Product.Description,
+          ProductTier: audit.Inventory.Product.ProductTier,
+          ProductType: audit.Inventory.Product.ProductType.ProductType,
+          ProductTypeDescription:
+            audit.Inventory.Product.ProductType.Description,
+          Velocity: audit.Inventory.Product.Velocity,
+          MICPartNumber: audit.Inventory.Product.MICPartNumber,
+          UOM: audit.Inventory.Product.UOM,
+          Autostore: audit.Inventory.Product.Autostore,
+          PackType: audit.Inventory.Product.PackType,
+          PackQuantity: audit.Inventory.Product.PackQty,
+          Cost: audit.Inventory.Product.Cost,
+        }),
+      },
+    ];
+
+    this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
+      switchMap(() => {
+        return this._auditService.updateLastUpdated(
+          audit.InventoryID,
+          40,
+          new Date(Date.now()).toISOString()
+        );
+      }),
+      switchMap(() => {
+        return this._auditService.updateLastUpdated(
+          audit.InventoryID,
+          10,
+          new Date(Date.now()).toISOString()
+        );
+      }),
+      switchMap(() => {
+        const SuspectData = [
+          {
+            InventoryID: audit.InventoryID,
+            Reason: 'User selected N/A for COO',
+            Comment: `COO of ${audit.Inventory.COO} expected`,
+          },
+        ];
+
+        return this._auditService.insertSuspect(SuspectData);
+      }),
+      switchMap(() => {
+        return this._auditService.deleteAudit(audit.InventoryID, 40);
+      }),
+      switchMap(() => {
+        return this._auditService
+          .nextSubAudit$(audit.InventoryID, this.userInfo.userId)
+          .pipe(
+            tap((res) => {
+              if (!res) {
+                const closeUserEventLog = [
+                  {
+                    UserEventID: sqlData.Event_IM_Audit_Completed,
+                    UserName: this.userInfo.userName,
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: audit.Inventory.ITN,
+                  },
+                ];
+
+                const closeEventLog = [
+                  {
+                    UserName: this.userInfo.userName,
+                    EventTypeID: sqlData.Event_IM_Audit_Completed,
+                    Log: JSON.stringify({
+                      DistributionCenter: environment.DistributionCenter,
+                      InventoryTrackingNumber:
+                        sessionStorage.getItem('auditITN'),
+                      ParentITN: audit.Inventory.ParentITN,
+                      BinLocation: audit.Container.Barcode,
+                      QuantityOnHand: audit.Inventory.Quantity,
+                      OriginalQuantity: audit.Inventory.OriginalQuantity,
+                      DateCode: audit.Inventory.DateCode,
+                      CountryOfOrigin: audit.Inventory.COO,
+                      CountryOfOriginEntered: 'N/A',
+                      ROHS: audit.Inventory.ROHS,
+                      NotFound: audit.Inventory.NotFound,
+                      Suspect: audit.Inventory.Suspect,
+                      LocatedInAutostore: audit.Inventory.LocatedInAutostore,
+                      BoundForAutostore: audit.Inventory.BoundForAutostore,
+                      PartNumber: audit.Inventory.Product.PartNumber,
+                      ProductCode:
+                        audit.Inventory.Product.ProductCode.ProductCodeNumber,
+                      Description: audit.Inventory.Product.Description,
+                      ProductTier: audit.Inventory.Product.ProductTier,
+                      ProductType:
+                        audit.Inventory.Product.ProductType.ProductType,
+                      ProductTypeDescription:
+                        audit.Inventory.Product.ProductType.Description,
+                      Velocity: audit.Inventory.Product.Velocity,
+                      MICPartNumber: audit.Inventory.Product.MICPartNumber,
+                      UOM: audit.Inventory.Product.UOM,
+                      Autostore: audit.Inventory.Product.Autostore,
+                      PackType: audit.Inventory.Product.PackType,
+                      PackQuantity: audit.Inventory.Product.PackQty,
+                      Cost: audit.Inventory.Product.Cost,
+                    }),
+                  },
+                ];
+
+                this.close$ = this._eventLog
+                  .insertLog(closeUserEventLog, closeEventLog)
+                  .pipe(
+                    switchMap(() => {
+                      return this._auditService
+                        .closeAudit(
+                          audit.InventoryID,
+                          10,
+                          audit.Inventory.ITN,
+                          this.userInfo.userName
+                        )
+                        .pipe(
+                          map((res) => {
+                            this._router.navigate(['../verify/scan-itn'], {
+                              relativeTo: this._actRoute,
+                            });
+
+                            return res;
+                          })
+                        );
+                    })
+                  );
+
+                return of(true);
+              } else {
+                this._router.navigate(['../' + res.Route], {
+                  relativeTo: this._actRoute,
+                });
+
+                return res;
+              }
+            })
+          );
+      }),
+      catchError((error) => {
+        this.errorMessage = error.message;
+        return of({
+          error: { message: error.message, type: 'error' },
+        });
+      })
+    );
   }
 
   ngOnDestroy() {

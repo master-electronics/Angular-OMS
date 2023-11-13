@@ -6,6 +6,26 @@ query fetchAuditTypes {
   }
 }
 
+query fetchSystemAuditList($includedDeactivated: Boolean) {
+  fetchSystemAudits(IncludeDeactivated: $includedDeactivated) {
+    _id
+    Name
+    Description
+    Priority
+    Active
+    IMTrigger_AuditTypes {
+      _id
+      IMTriggerID
+      IMAuditTypeID
+      IMAuditType {
+        _id
+        Type
+        Order
+      }
+    }
+  }
+}
+
 query verifyAuditLocation($container: searchContainer) {
   findContainer(Container: $container) {
     _id
@@ -259,8 +279,39 @@ mutation closeAudit(
   }
 }
 
+mutation closeAudits(
+  $itn: String
+) {
+  closeAudits(ITN: $itn) { 
+    _id 
+    InventoryTrackingNumber
+  }
+}
+
 mutation clearTimeoutAudits($seconds: Int) {
   clearTimeoutAudits(Seconds: $seconds) {
     _id
   }
+}
+
+mutation updateSystemTrigger(
+  $triggerId: Int, 
+  $trigger: imTrigger, 
+  $auditTypes: [Int]) {
+    updateSystemTrigger(
+      TriggerID: $triggerId,
+      Trigger: $trigger,
+      AuditTypes: $auditTypes) {
+        _id
+    }
+}
+
+mutation insertSystemTrigger(
+  $trigger: imTrigger,
+  $auditTypes: [Int]) {
+    insertSystemTrigger(
+      Trigger: $trigger,
+      AuditTypes: $auditTypes) {
+        _id
+    }
 }
