@@ -97,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ag-wms:build:production"
+              "buildTarget": "ag-wms:build:production"
             },
             "development": {
-              "browserTarget": "ag-wms:build:development"
+              "buildTarget": "ag-wms:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -108,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ag-wms:build"
+            "buildTarget": "ag-wms:build"
           }
         },
         "test": {
