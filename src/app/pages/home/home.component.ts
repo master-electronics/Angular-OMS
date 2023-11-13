@@ -10,11 +10,15 @@ import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { ShortCutService } from 'src/app/shared/services/short-cut.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  providers: [MenuService],
+  providers: [MenuService, ShortCutService],
   standalone: true,
   imports: [
     NzGridModule,
@@ -33,13 +37,45 @@ export class HomeComponent {
   title = 'Master Electronics';
 
   constructor(
-    private _title: NavbarTitleService,
     public menuService: MenuService,
-    private titleService: Title
+    private _title: NavbarTitleService,
+    private _shortCut: ShortCutService,
+    private _router: Router
   ) {
     this.isMobile = true;
     this._title.update(this.title);
-    this.titleService.setTitle('Home');
     this.menuService.getMenu('home');
+    this._shortCut.shortCut$
+      .pipe(takeUntilDestroyed())
+      .subscribe((res) => this.quickLink(res));
+  }
+
+  quickLink(keys: string[]) {
+    let link = '/';
+    switch (keys[0]) {
+      case 'w':
+        switch (keys[1]) {
+          case 'i':
+            link = '/agin';
+            break;
+          case 'o':
+            link = '/agout';
+            break;
+          case 'Q':
+            link = '/qc';
+            break;
+          case 'r':
+            link = '/receiptreceiving';
+            break;
+          case 's':
+            link = '/stocking';
+            break;
+        }
+        break;
+
+      default:
+        break;
+    }
+    this._router.navigateByUrl(link);
   }
 }

@@ -1,13 +1,12 @@
-import { Injectable, inject } from '@angular/core';
-import { buffer, debounce, fromEvent, share, timer } from 'rxjs';
-import { WINDOW } from './window.service';
+import { Injectable } from '@angular/core';
+import { buffer, debounce, fromEvent, map, share, tap, timer } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ShortCutService {
-  keydown$ = fromEvent(inject<Window>(WINDOW), 'keydown').pipe(share());
-  src$ = this.keydown$.pipe(
-    buffer(this.keydown$.pipe(debounce(() => timer(150))))
+  private _keydown$ = fromEvent(window, 'keydown').pipe(share());
+  shortCut$ = this._keydown$.pipe(
+    buffer(this._keydown$.pipe(debounce(() => timer(300)))),
+    map((evt) => evt as KeyboardEvent[]),
+    map((evt) => evt.map((res) => res.key.toLowerCase()))
   );
 }
