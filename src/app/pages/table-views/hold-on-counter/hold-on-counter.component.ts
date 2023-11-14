@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 
 import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import {
   UntypedFormBuilder,
   Validators,
@@ -113,6 +113,22 @@ export class HoldOnCounterComponent implements OnInit {
           });
           return tableData;
         }),
+        tap((res) => {
+          const tmp = res.map((node) => ({
+            User: node.User,
+            total: node.total,
+            '31 Short Quantity': node.detail[0],
+            '32 Damaged': node.detail[1],
+            '33 Repackaging': node.detail[2],
+            '34 Wrong Parts': node.detail[3],
+            '35 Verify Quantity': node.detail[4],
+            '36 Mixed Parts': node.detail[5],
+            '37 Part Number Verification': node.detail[6],
+            '38 Kit Set': node.detail[7],
+            '39 Over Shipment': node.detail[8],
+          }));
+          this.ws = XLSX.utils.json_to_sheet(tmp);
+        }),
         catchError((error) => {
           this.isLoading = false;
           return error;
@@ -169,16 +185,14 @@ export class HoldOnCounterComponent implements OnInit {
     },
   ];
 
+  public ws: XLSX.WorkSheet;
   exportexcel(): void {
     /* table id is passed over here */
-    const element = document.getElementById('excel-table');
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.utils.book_append_sheet(wb, this.ws, 'Sheet1');
 
     /* save to file */
-    XLSX.writeFile(wb, `Hold-On${this.startDate.substring(0, 10)}.xlsx`);
+    XLSX.writeFile(wb, `${this.startDate?.substring(0, 10)}.xlsx`);
   }
 }
