@@ -1,0 +1,1 @@
+import{Ab as s,va as o,zb as r}from"./chunk-N7LPRJLK.js";var f=(()=>{let t=class t{constructor(){this._title=s("Home"),this.title=r(()=>this._title())}update(i){this._title.set(i)}};t.\u0275fac=function(c){return new(c||t)},t.\u0275prov=o({token:t,factory:t.\u0275fac,providedIn:"root"});let e=t;return e})();export{f as a};

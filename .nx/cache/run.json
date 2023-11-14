@@ -1,0 +1,21 @@
+{
+  "run": {
+    "command": "nx build",
+    "startTime": "2023-11-14T18:13:11.067Z",
+    "endTime": "2023-11-14T18:13:11.112Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "ag-wms:build:production",
+      "target": "build",
+      "projectName": "ag-wms",
+      "hash": "65985857121136648",
+      "startTime": "2023-11-14T18:13:11.076Z",
+      "endTime": "2023-11-14T18:13:11.093Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    }
+  ]
+}
