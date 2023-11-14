@@ -60,10 +60,6 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
               [placeholder]="placeholder"
               #input
             />
-            <!-- Clean button -->
-            <!-- <a class="absolute right-2 top-0.5 md:right-4" (click)="clean()">
-              <span nz-icon nzType="close-circle" nzTheme="outline"></span>
-            </a> -->
             <!-- error mesage -->
             <div
               *ngIf="
