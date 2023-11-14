@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ItnInfoService } from '../data/itn-info.service';
 import { StockingService } from '../data/stocking.service';
 
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule],
   template: `
     <div class="container mx-auto px-2 py-2 text-lg md:mt-4">

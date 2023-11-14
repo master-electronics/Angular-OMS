@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -8,6 +8,7 @@ import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.co
 
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ItnListComponent,

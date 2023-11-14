@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ItnInfoService } from '../../../data/itn-info.service';
 import { StockingService } from '../../../data/stocking.service';
@@ -7,6 +7,7 @@ import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.co
 
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, SubmitButtonComponent],
   template: `
     <div class="text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">

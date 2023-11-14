@@ -12,6 +12,7 @@ import { ItnInfoService } from '../../data/itn-info.service';
 
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,
@@ -20,7 +21,6 @@ import { ItnInfoService } from '../../data/itn-info.service';
     GreenButtonComponent,
     PopupModalComponent,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h1 class="flex justify-center font-bold text-red-500 lg:text-4xl">
       ITN Count Mismatch
