@@ -32,7 +32,7 @@ export class UserContainerService {
     return this._userContainer
       .mutate({
         DistributionCenter: environment.DistributionCenter,
-        Barcode: this._userInfo.userName,
+        Barcode: this._userInfo.userName.substring(0, 15),
         ContainerTypeID: sqlData.userType_ID,
       })
       .pipe(
