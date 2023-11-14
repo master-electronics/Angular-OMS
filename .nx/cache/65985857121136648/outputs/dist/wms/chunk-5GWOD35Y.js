@@ -1,1 +1,0 @@
-import{Ba as r,ab as e,za as o}from"./chunk-N7LPRJLK.js";var n=new o("window local storage object",{providedIn:"root",factory:()=>r(e)==="browser"?window.localStorage:{}}),s=new o("window session storage object",{providedIn:"root",factory:()=>r(e)==="browser"?window.sessionStorage:{}});export{n as a,s as b};

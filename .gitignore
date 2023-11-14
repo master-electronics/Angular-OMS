@@ -2,6 +2,7 @@
 
 #cache
 .eslintcache
+.nx
 
 # compiled output
 /dist
