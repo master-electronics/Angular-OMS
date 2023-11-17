@@ -124,8 +124,18 @@ export class AuditService {
   }
 
   public get nextAudit$(): Observable<Audit> {
+    const barcode = sessionStorage.getItem('CurrentLocation')
+      ? sessionStorage.getItem('CurrentLocation')
+      : null;
+
     return this._findNextAudit
-      .fetch({ userID: this.userInfo.userId }, { fetchPolicy: 'network-only' })
+      .fetch(
+        {
+          userID: this.userInfo.userId,
+          barcode: barcode,
+        },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         map((res) => {
           let Audit: Audit;
