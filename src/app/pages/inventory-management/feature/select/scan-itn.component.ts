@@ -134,6 +134,10 @@ export class ScanITN implements OnInit {
             res?.Audit?.auditTimeout?.data?.fetchConfigValue?.Value;
           this.alertTime = res?.Audit?.alertTime?.data?.fetchConfigValue?.Value;
           this.audit = res.Audit.audit;
+          sessionStorage.setItem(
+            'CurrentLocation',
+            this.audit.Container.Barcode
+          );
           this.lastUpdated = Number(res.Audit.audit.LastUpdated);
           sessionStorage.setItem('currentAudit', JSON.stringify(this.audit));
           const timeoutTimer = interval(1000);

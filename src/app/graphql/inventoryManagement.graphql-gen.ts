@@ -746,6 +746,7 @@ export type Mutation = {
   orderEvent?: Maybe<Itnlifecycle_Report>;
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
+  processSystemTrigger?: Maybe<Scalars['String']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1305,6 +1306,15 @@ export type MutationOrderEventArgs = {
 export type MutationPrintItnLabelArgs = {
   InternalTrackingNumber: Scalars['String'];
   Station: Scalars['String'];
+};
+
+
+export type MutationProcessSystemTriggerArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  ITN?: InputMaybe<Scalars['String']>;
+  Source?: InputMaybe<Scalars['String']>;
+  TriggerName?: InputMaybe<Scalars['String']>;
+  Username?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2238,6 +2248,7 @@ export type QueryFindLocalErrorLogsArgs = {
 
 
 export type QueryFindNextAuditArgs = {
+  Barcode?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
@@ -3636,6 +3647,7 @@ export type ValidateFilterQuery = { __typename?: 'Query', validateFilter?: boole
 
 export type FindNextAuditQueryVariables = Types.Exact<{
   userID?: Types.InputMaybe<Types.Scalars['Int']>;
+  barcode?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 
@@ -3981,8 +3993,8 @@ export const ValidateFilterDocument = gql`
     }
   }
 export const FindNextAuditDocument = gql`
-    query findNextAudit($userID: Int) {
-  findNextAudit(UserID: $userID) {
+    query findNextAudit($userID: Int, $barcode: String) {
+  findNextAudit(UserID: $userID, Barcode: $barcode) {
     _id
     TypeID
     InventoryID

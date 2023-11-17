@@ -106,8 +106,8 @@ query validateFilter(
   )
 }
 
-query findNextAudit($userID: Int) {
-  findNextAudit(UserID: $userID) {
+query findNextAudit($userID: Int, $barcode: String) {
+  findNextAudit(UserID: $userID, Barcode: $barcode) {
     _id
     TypeID
     InventoryID
