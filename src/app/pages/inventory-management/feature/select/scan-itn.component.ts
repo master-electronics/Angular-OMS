@@ -127,6 +127,7 @@ export class ScanITN implements OnInit {
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
         if (!res?.Audit?.audit?.InventoryID) {
+          sessionStorage.removeItem('CurrentLocation');
           this.message = 'There are no more Audits';
           return of(false);
         } else {
