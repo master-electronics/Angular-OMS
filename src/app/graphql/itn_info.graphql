@@ -26,7 +26,6 @@ query findInventory(
     Container {
       Barcode
       Zone
-      DistributionCenter
       Warehouse
       Row
       Aisle
@@ -75,7 +74,6 @@ query findInventory(
     }
     ORDERLINEDETAILs {
       Quantity
-      LastUpdated
       BinLocation
       WMSPriority
       Status {
@@ -86,10 +84,8 @@ query findInventory(
         Quantity
       }
       Order {
-        DistributionCenter
         OrderNumber
         NOSINumber
-        OrderStatusCode
         OrderType
         isSelected
         ShipmentMethod {

@@ -3423,7 +3423,6 @@ export type FindInventoryQuery = {
       __typename?: 'Container';
       Barcode: string;
       Zone?: number | null;
-      DistributionCenter: string;
       Warehouse?: string | null;
       Row?: string | null;
       Aisle?: string | null;
@@ -3478,7 +3477,6 @@ export type FindInventoryQuery = {
     ORDERLINEDETAILs?: Array<{
       __typename?: 'OrderLineDetail';
       Quantity: number;
-      LastUpdated?: string | null;
       BinLocation?: string | null;
       WMSPriority: number;
       Status: { __typename?: 'OrderStatus'; Name: string };
@@ -3489,10 +3487,8 @@ export type FindInventoryQuery = {
       };
       Order: {
         __typename?: 'Order';
-        DistributionCenter: string;
         OrderNumber: string;
         NOSINumber: string;
-        OrderStatusCode?: string | null;
         OrderType?: string | null;
         isSelected: number;
         ShipmentMethod?: {
@@ -3559,7 +3555,6 @@ export const FindInventoryDocument = gql`
       Container {
         Barcode
         Zone
-        DistributionCenter
         Warehouse
         Row
         Aisle
@@ -3608,7 +3603,6 @@ export const FindInventoryDocument = gql`
       }
       ORDERLINEDETAILs {
         Quantity
-        LastUpdated
         BinLocation
         WMSPriority
         Status {
@@ -3619,10 +3613,8 @@ export const FindInventoryDocument = gql`
           Quantity
         }
         Order {
-          DistributionCenter
           OrderNumber
           NOSINumber
-          OrderStatusCode
           OrderType
           isSelected
           ShipmentMethod {
