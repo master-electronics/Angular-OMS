@@ -337,7 +337,7 @@ export class ScanITN implements OnInit {
           relativeTo: this._actRoute,
         });
 
-        return of(res);
+        return of(true);
       }),
       catchError((error) => {
         return of({

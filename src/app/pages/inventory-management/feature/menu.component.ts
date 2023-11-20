@@ -22,5 +22,6 @@ import { RouterModule } from '@angular/router';
 export class MenuComponent {
   ngOnInit(): void {
     sessionStorage.removeItem('currentAudit');
+    sessionStorage.removeItem('CurrentLocation');
   }
 }
