@@ -3411,9 +3411,6 @@ export type FindInventoryQuery = {
     ROHS?: boolean | null;
     OriginalQuantity?: number | null;
     BinLocation?: string | null;
-    ProductID: number;
-    ContainerID: number;
-    CountryID?: number | null;
     NotFound: boolean;
     Country?: {
       __typename?: 'Country';
@@ -3433,7 +3430,6 @@ export type FindInventoryQuery = {
       Section?: string | null;
       Shelf?: string | null;
       ShelfDetail?: string | null;
-      ContainerTypeID: number;
       ContainerType: {
         __typename?: 'ContainerType';
         Name: string;
@@ -3447,7 +3443,6 @@ export type FindInventoryQuery = {
     Product: {
       __typename?: 'Product';
       _id: number;
-      ProductCodeID: number;
       PartNumber: string;
       ProductTier?: string | null;
       Velocity?: string | null;
@@ -3482,9 +3477,6 @@ export type FindInventoryQuery = {
     };
     ORDERLINEDETAILs?: Array<{
       __typename?: 'OrderLineDetail';
-      OrderID: number;
-      OrderLineID: number;
-      StatusID: number;
       Quantity: number;
       LastUpdated?: string | null;
       BinLocation?: string | null;
@@ -3501,10 +3493,8 @@ export type FindInventoryQuery = {
         OrderNumber: string;
         NOSINumber: string;
         OrderStatusCode?: string | null;
-        ShipmentMethodID?: string | null;
         OrderType?: string | null;
         isSelected: number;
-        CustomerID?: number | null;
         ShipmentMethod?: {
           __typename?: 'ShipmentMethod';
           ShippingMethod: string;
@@ -3559,9 +3549,6 @@ export const FindInventoryDocument = gql`
       ROHS
       OriginalQuantity
       BinLocation
-      ProductID
-      ContainerID
-      CountryID
       NotFound
       Country {
         CountryCode
@@ -3579,7 +3566,6 @@ export const FindInventoryDocument = gql`
         Section
         Shelf
         ShelfDetail
-        ContainerTypeID
         ContainerType {
           Name
           IsMobile
@@ -3590,7 +3576,6 @@ export const FindInventoryDocument = gql`
       }
       Product {
         _id
-        ProductCodeID
         PartNumber
         ProductTier
         Velocity
@@ -3622,9 +3607,6 @@ export const FindInventoryDocument = gql`
         }
       }
       ORDERLINEDETAILs {
-        OrderID
-        OrderLineID
-        StatusID
         Quantity
         LastUpdated
         BinLocation
@@ -3641,10 +3623,8 @@ export const FindInventoryDocument = gql`
           OrderNumber
           NOSINumber
           OrderStatusCode
-          ShipmentMethodID
           OrderType
           isSelected
-          CustomerID
           ShipmentMethod {
             ShippingMethod
             PriorityPinkPaper

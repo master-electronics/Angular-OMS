@@ -16,9 +16,6 @@ query findInventory(
     ROHS
     OriginalQuantity
     BinLocation
-    ProductID
-    ContainerID
-    CountryID
     NotFound
     Country {
       CountryCode
@@ -36,7 +33,6 @@ query findInventory(
       Section
       Shelf
       ShelfDetail
-      ContainerTypeID
       ContainerType {
         Name
         IsMobile
@@ -47,7 +43,6 @@ query findInventory(
     }
     Product {
       _id
-      ProductCodeID
       PartNumber
       ProductTier
       Velocity
@@ -79,9 +74,6 @@ query findInventory(
       }
     }
     ORDERLINEDETAILs {
-      OrderID
-      OrderLineID
-      StatusID
       Quantity
       LastUpdated
       BinLocation
@@ -98,10 +90,8 @@ query findInventory(
         OrderNumber
         NOSINumber
         OrderStatusCode
-        ShipmentMethodID
         OrderType
         isSelected
-        CustomerID
         ShipmentMethod {
           ShippingMethod
           PriorityPinkPaper
