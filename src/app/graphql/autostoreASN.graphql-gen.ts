@@ -794,7 +794,7 @@ export type Mutation = {
   updateOrderLineDetailList?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updatePickingCalendarSettings: Scalars['Boolean'];
   updatePrinter?: Maybe<Printer>;
-  updateProduct?: Maybe<UpdatedProduct>;
+  updateProduct?: Maybe<Product>;
   updateProductLastSync?: Maybe<UpdatedProduct>;
   updateReceipt?: Maybe<Array<Maybe<Scalars['Int']>>>;
   updateReceiptLD?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1680,6 +1680,7 @@ export type Product = {
   Autostore?: Maybe<Scalars['Boolean']>;
   DCPRODUCTs?: Maybe<Array<Maybe<DcProduct>>>;
   Description?: Maybe<Scalars['String']>;
+  ExcludeFromAutostore?: Maybe<Scalars['Boolean']>;
   INVENTORies?: Maybe<Array<Maybe<Inventory>>>;
   LastAutostoreSync?: Maybe<Scalars['String']>;
   LastUpdated?: Maybe<Scalars['String']>;
@@ -1778,6 +1779,7 @@ export type Query = {
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
   fetchProductMICFromMerp?: Maybe<Scalars['String']>;
   fetchProductTypes?: Maybe<Array<Maybe<ProductType>>>;
+  fetchProductVelocity?: Maybe<Scalars['String']>;
   fetchReceiptLines?: Maybe<Array<Maybe<ReceiptL>>>;
   fetchSuggetionLocationForSorting?: Maybe<Array<Maybe<SuggetionLocation>>>;
   fetchSystemAudits?: Maybe<Array<Maybe<Imtrigger>>>;
@@ -1967,6 +1969,11 @@ export type QueryFetchProductInfoFromMerpArgs = {
 };
 
 export type QueryFetchProductMicFromMerpArgs = {
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
+};
+
+export type QueryFetchProductVelocityArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
 };
@@ -3313,8 +3320,18 @@ export type UpdateOrderLineDetail = {
 };
 
 export type UpdateProduct = {
+  Autostore?: InputMaybe<Scalars['Boolean']>;
+  Description?: InputMaybe<Scalars['String']>;
   ExcludeFromAutostore?: InputMaybe<Scalars['Boolean']>;
   LastAutostoreSync?: InputMaybe<Scalars['String']>;
+  LastUpdated?: InputMaybe<Scalars['String']>;
+  MICPartNumber?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCodeID?: InputMaybe<Scalars['Int']>;
+  ProductTier?: InputMaybe<Scalars['String']>;
+  ProductTypeID?: InputMaybe<Scalars['Int']>;
+  UOM?: InputMaybe<Scalars['String']>;
+  Velocity?: InputMaybe<Scalars['String']>;
   _id: Scalars['Int'];
 };
 
@@ -3565,7 +3582,7 @@ export type UpdateProductMutationVariables = Types.Exact<{
 export type UpdateProductMutation = {
   __typename?: 'Mutation';
   updateProduct?: {
-    __typename?: 'UpdatedProduct';
+    __typename?: 'Product';
     LastUpdated?: string | null;
   } | null;
 };
