@@ -11,6 +11,7 @@ import {
   FetchInventoryInUserContainerGQL,
   FetchItnInfoByContainerforStockingGQL,
   MoveInventoryToContainerForStockingGQL,
+  MoveInventoryToContainerForStockingToOmsGQL,
   UpdateInventoryAfterSortingGQL,
   UpdateNotFoundForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
@@ -32,6 +33,7 @@ export class StockingService {
   constructor(
     private _userC: UserContainerService,
     private _move: MoveInventoryToContainerForStockingGQL,
+    private _movetoUser: MoveInventoryToContainerForStockingToOmsGQL,
     private _verifyBarcode: FetchItnInfoByContainerforStockingGQL,
     private _noFound: UpdateNotFoundForStockingGQL,
     private _insertLog: Create_EventLogsGQL,
@@ -106,11 +108,10 @@ export class StockingService {
     if (!this._userC.userContainerID) {
       throw new Error('Container not found');
     }
-    return this._move
+    return this._movetoUser
       .mutate({
-        ITN: ITN,
-        User: this._userInfo.userName,
-        BinLocation: this._userInfo.userName,
+        InventoryID: this._itn.itnInfo().InventoryID,
+        UserContainer: this._userC.userContainerID,
       })
       .pipe(
         switchMap(() => {

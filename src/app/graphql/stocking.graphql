@@ -97,6 +97,13 @@ mutation moveInventoryToContainerForStocking(
   itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
 }
 
+mutation moveInventoryToContainerForStockingToOms(
+  $InventoryID: Int!
+  $UserContainer: Int!
+) {
+  updateInventory(_id: $InventoryID, Inventory: { ContainerID: $UserContainer })
+}
+
 mutation updateNotFoundForStocking(
   $ITNList: [String]!
   $linkList: [insertInventorySuspectReason]!

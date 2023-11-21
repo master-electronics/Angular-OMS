@@ -3520,6 +3520,17 @@ export type MoveInventoryToContainerForStockingMutation = {
   itnLocationChange?: boolean | null;
 };
 
+export type MoveInventoryToContainerForStockingToOmsMutationVariables =
+  Types.Exact<{
+    InventoryID: Types.Scalars['Int'];
+    UserContainer: Types.Scalars['Int'];
+  }>;
+
+export type MoveInventoryToContainerForStockingToOmsMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
+};
+
 export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
   ITNList:
     | Array<Types.InputMaybe<Types.Scalars['String']>>
@@ -3730,6 +3741,31 @@ export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<
   MoveInventoryToContainerForStockingMutationVariables
 > {
   document = MoveInventoryToContainerForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MoveInventoryToContainerForStockingToOmsDocument = gql`
+  mutation moveInventoryToContainerForStockingToOms(
+    $InventoryID: Int!
+    $UserContainer: Int!
+  ) {
+    updateInventory(
+      _id: $InventoryID
+      Inventory: { ContainerID: $UserContainer }
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MoveInventoryToContainerForStockingToOmsGQL extends Apollo.Mutation<
+  MoveInventoryToContainerForStockingToOmsMutation,
+  MoveInventoryToContainerForStockingToOmsMutationVariables
+> {
+  document = MoveInventoryToContainerForStockingToOmsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
