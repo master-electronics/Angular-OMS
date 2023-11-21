@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
@@ -18,6 +18,7 @@ import { LabelService, ITNinfo } from '../../data/label';
 import { LocationStrategy } from '@angular/common';
 import { PrinterButtomComponent } from 'src/app/shared/ui/button/print-button.component';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     FormsModule,
     ReactiveFormsModule,
     SingleInputformComponent,
+    GreenButtonComponent,
     PrinterButtomComponent,
   ],
   template: `
@@ -47,6 +49,7 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
       [isvalid]="this.inputForm.valid"
     ></single-input-form>
     <printer-button
+      *ngIf="label.getItnInList(label.currentItnIndex())()"
       class=" absolute bottom-1 right-1 h-64 w-64"
       [ITN]="label.getItnInList(label.currentItnIndex())()"
       [PARTNUMBER]="receipt.partNumber()"
@@ -77,7 +80,7 @@ export class PrintITNComponent implements OnInit {
 
   ngOnInit(): void {
     this._ui.changeSteps(3);
-    this.data$ = this._actRoute.data.pipe(map((res) => res.print));
+    this.data$ = of(true);
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
     });

@@ -1,8 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
-  catchError,
   combineLatest,
-  delay,
+  forkJoin,
   map,
   Observable,
   retry,
@@ -160,7 +159,7 @@ export class LabelService {
   });
 
   getItnInList(index: number) {
-    return computed(() => this._ITNList()[index].ITN);
+    return computed(() => this._ITNList()[index]?.ITN);
   }
 
   /**
@@ -174,7 +173,6 @@ export class LabelService {
       )
       .pipe(
         tap((res) => {
-          // save ITN to next space.
           this.updateItnListITN(res.data.createITN, this.currentItnIndex() + 1);
           Logger.devOnly(
             'LabelService',
@@ -211,8 +209,7 @@ export class LabelService {
               },
             }),
           });
-        }),
-        retry({ count: 3, delay: 500 })
+        })
       );
   }
 
