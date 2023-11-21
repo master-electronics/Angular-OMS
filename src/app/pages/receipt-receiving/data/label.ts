@@ -1,5 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { combineLatest, delay, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  delay,
+  map,
+  Observable,
+  retry,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   CheckBinLocationGQL,
   UpdateAfterReceivingGQL,
@@ -203,7 +212,7 @@ export class LabelService {
             }),
           });
         }),
-        delay(500)
+        retry({ count: 3, delay: 500 })
       );
   }
 
