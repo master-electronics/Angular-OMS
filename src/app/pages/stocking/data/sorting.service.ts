@@ -85,6 +85,10 @@ export class SortingService {
           });
         }),
         switchMap(() => {
+          this._itn.itnInfo.update((info) => ({
+            ...info,
+            BinLocation: Barcode,
+          }));
           const oldLogs = {
             UserName: this._userInfo.userName,
             UserEventID: sqlData.Event_Stocking_SortingDone,

@@ -45,6 +45,13 @@ export const StockingRoutes: Routes = [
           ),
       },
       {
+        path: 'verifysorting',
+        loadComponent: () =>
+          import('./feature/sorting/verifySorting.component').then(
+            (m) => m.VerifySortingComponent
+          ),
+      },
+      {
         path: 'scantarget',
         resolve: { containerID: ScanTargetResolver },
         loadComponent: () =>

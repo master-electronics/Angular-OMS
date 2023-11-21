@@ -93,7 +93,9 @@ export class LocationComponent implements OnInit {
       tmp.trim().length === 16 ? tmp.trim().replace(/-/g, '') : tmp.trim();
     this.data$ = this._sort.moveItn$(Barcode).pipe(
       map(() => {
-        this._router.navigate(['../itn'], { relativeTo: this._actRoute });
+        this._router.navigate(['../verifysorting'], {
+          relativeTo: this._actRoute,
+        });
       }),
       catchError((error) => {
         return of({

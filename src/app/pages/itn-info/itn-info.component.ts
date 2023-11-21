@@ -9,16 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import {
-  Subject,
-  catchError,
-  filter,
-  forkJoin,
-  map,
-  of,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { Subject, catchError, map, of, switchMap } from 'rxjs';
 import {
   FetchProductVelocityGQL,
   FindInventoryGQL,
@@ -79,7 +70,7 @@ export class ItnInfoComponent {
     private _fetchVelocity: FetchProductVelocityGQL,
     private _updaeVelocity: UpdateProductVelocityGQL
   ) {
-    this.data$ = of(_);
+    this.data$ = of('_');
   }
 
   onSubmit(): void {
@@ -138,8 +129,7 @@ export class ItnInfoComponent {
           delete current[key];
         }
       });
-      // remove any leftover undefined values from the delete
-      // operation on an array
+      // remove any leftover undefined values from the delete operation on an array
       if (_.isArray(current)) _.pull(current, undefined);
 
       return current;
