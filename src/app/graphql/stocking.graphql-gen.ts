@@ -3506,18 +3506,19 @@ export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
 
 export type UpdateInventoryAfterSortingMutation = {
   __typename?: 'Mutation';
-  itnLocationChange?: boolean | null;
+  itnChange?: boolean | null;
 };
 
 export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
   User: Types.Scalars['String'];
   ITN: Types.Scalars['String'];
   BinLocation: Types.Scalars['String'];
+  Suspect: Types.Scalars['String'];
 }>;
 
 export type MoveInventoryToContainerForStockingMutation = {
   __typename?: 'Mutation';
-  itnLocationChange?: boolean | null;
+  itnChange?: boolean | null;
 };
 
 export type MoveInventoryToContainerForStockingToOmsMutationVariables =
@@ -3706,7 +3707,7 @@ export const UpdateInventoryAfterSortingDocument = gql`
     $BinLocation: String!
     $ITN: String!
   ) {
-    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+    itnChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
   }
 `;
 
@@ -3728,8 +3729,14 @@ export const MoveInventoryToContainerForStockingDocument = gql`
     $User: String!
     $ITN: String!
     $BinLocation: String!
+    $Suspect: String!
   ) {
-    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+    itnChange(
+      User: $User
+      ITN: $ITN
+      BinLocation: $BinLocation
+      Suspect: $Suspect
+    )
   }
 `;
 

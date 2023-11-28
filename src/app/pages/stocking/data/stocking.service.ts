@@ -6,13 +6,12 @@ import {
   Injectable,
   signal,
 } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   FetchInventoryInUserContainerGQL,
   FetchItnInfoByContainerforStockingGQL,
   MoveInventoryToContainerForStockingGQL,
   MoveInventoryToContainerForStockingToOmsGQL,
-  UpdateInventoryAfterSortingGQL,
   UpdateNotFoundForStockingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -38,7 +37,6 @@ export class StockingService {
     private _noFound: UpdateNotFoundForStockingGQL,
     private _insertLog: Create_EventLogsGQL,
     private _ItnInUser: FetchInventoryInUserContainerGQL,
-    private _updateInventory: UpdateInventoryAfterSortingGQL,
     private _itn: ItnInfoService,
     private _userInfo: StorageUserInfoService,
     private _log: EventLogService
@@ -364,11 +362,12 @@ export class StockingService {
    * @returns
    */
   public putAway$() {
-    return this._updateInventory
+    return this._move
       .mutate({
         User: this._userInfo.userName,
         BinLocation: this._itn.itnInfo().BinLocation,
         ITN: this._itn.itnInfo().ITN,
+        Suspect: 'N',
       })
       .pipe(
         tap(() => {

@@ -86,15 +86,21 @@ mutation updateInventoryAfterSorting(
   $BinLocation: String!
   $ITN: String!
 ) {
-  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  itnChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
 }
 
 mutation moveInventoryToContainerForStocking(
   $User: String!
   $ITN: String!
   $BinLocation: String!
+  $Suspect: String!
 ) {
-  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  itnChange(
+    User: $User
+    ITN: $ITN
+    BinLocation: $BinLocation
+    Suspect: $Suspect
+  )
 }
 
 mutation moveInventoryToContainerForStockingToOms(

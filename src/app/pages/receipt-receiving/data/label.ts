@@ -137,8 +137,6 @@ export class LabelService {
   /**
    * Selecter
    */
-
-  //
   remaining = computed(() => {
     let sum = 0;
     this._ITNList().map((item) => (sum += item.quantity));
