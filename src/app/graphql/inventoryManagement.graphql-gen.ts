@@ -681,6 +681,7 @@ export type Mutation = {
   changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
+  clearAudits?: Maybe<Array<Maybe<Audit>>>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
@@ -692,6 +693,7 @@ export type Mutation = {
   createInventoryFromOMS?: Maybe<Scalars['Boolean']>;
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteAudit?: Maybe<Audit>;
+  deleteAudits?: Maybe<Audit>;
   deleteAutostoreOrderLineHistory?: Maybe<Autostoreorderline>;
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -839,6 +841,11 @@ export type MutationCleanContainerFromPrevOrderArgs = {
   OrderID: Scalars['Int'];
 };
 
+export type MutationClearAuditsArgs = {
+  DistributionCenter?: InputMaybe<Scalars['String']>;
+  Username?: InputMaybe<Scalars['String']>;
+};
+
 export type MutationClearItnUserDefaultTemplateArgs = {
   UserID: Scalars['Int'];
 };
@@ -887,6 +894,10 @@ export type MutationDeleteAndInsertRouteTableArgs = {
 export type MutationDeleteAuditArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
   TypeID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationDeleteAuditsArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
@@ -1855,6 +1866,7 @@ export type Query = {
   findUsers?: Maybe<Array<Maybe<User>>>;
   findVendor?: Maybe<Vendor>;
   findVendorByPO?: Maybe<Vendor>;
+  getAuditCount?: Maybe<Scalars['Int']>;
   getIMAdjustReasons?: Maybe<Array<Maybe<Imadjustreason>>>;
   getNextSubAudit?: Maybe<Array<Maybe<Audit>>>;
   getSearchLocation?: Maybe<Array<Maybe<Searchlocation>>>;
@@ -3689,6 +3701,26 @@ export type GetImAdjustReasonsQuery = {
   } | null> | null;
 };
 
+export type GetAuditCountQueryVariables = Types.Exact<{ [key: string]: never }>;
+
+export type GetAuditCountQuery = {
+  __typename?: 'Query';
+  getAuditCount?: number | null;
+};
+
+export type ClearAuditsMutationVariables = Types.Exact<{
+  username?: Types.InputMaybe<Types.Scalars['String']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type ClearAuditsMutation = {
+  __typename?: 'Mutation';
+  clearAudits?: Array<{
+    __typename?: 'AUDIT';
+    _id?: number | null;
+  } | null> | null;
+};
+
 export type UpdateLastUpdatedMutationVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
   typeID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -3752,6 +3784,15 @@ export type DeleteAuditMutationVariables = Types.Exact<{
 export type DeleteAuditMutation = {
   __typename?: 'Mutation';
   deleteAudit?: { __typename?: 'AUDIT'; _id?: number | null } | null;
+};
+
+export type DeleteAuditsMutationVariables = Types.Exact<{
+  inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type DeleteAuditsMutation = {
+  __typename?: 'Mutation';
+  deleteAudits?: { __typename?: 'AUDIT'; _id?: number | null } | null;
 };
 
 export type CloseAuditMutationVariables = Types.Exact<{
@@ -4276,6 +4317,46 @@ export class GetImAdjustReasonsGQL extends Apollo.Query<
     super(apollo);
   }
 }
+export const GetAuditCountDocument = gql`
+  query getAuditCount {
+    getAuditCount
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetAuditCountGQL extends Apollo.Query<
+  GetAuditCountQuery,
+  GetAuditCountQueryVariables
+> {
+  document = GetAuditCountDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ClearAuditsDocument = gql`
+  mutation clearAudits($username: String, $distributionCenter: String) {
+    clearAudits(Username: $username, DistributionCenter: $distributionCenter) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ClearAuditsGQL extends Apollo.Mutation<
+  ClearAuditsMutation,
+  ClearAuditsMutationVariables
+> {
+  document = ClearAuditsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const UpdateLastUpdatedDocument = gql`
   mutation updateLastUpdated(
     $inventoryID: Int
@@ -4402,6 +4483,27 @@ export class DeleteAuditGQL extends Apollo.Mutation<
   DeleteAuditMutationVariables
 > {
   document = DeleteAuditDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const DeleteAuditsDocument = gql`
+  mutation deleteAudits($inventoryID: Int) {
+    deleteAudits(InventoryID: $inventoryID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeleteAuditsGQL extends Apollo.Mutation<
+  DeleteAuditsMutation,
+  DeleteAuditsMutationVariables
+> {
+  document = DeleteAuditsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

@@ -1,0 +1,21 @@
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  padding-bottom: 10px;
+}
+.backButton {
+  background-color: #1f2937;
+  color: #9ca3af;
+}
+.backButton:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+.buttonContainer {
+  max-width: 200px;
+  width: 100%;
+  display: inline-block;
+}

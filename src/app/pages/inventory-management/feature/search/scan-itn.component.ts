@@ -434,6 +434,11 @@ export class ScanITN implements OnInit {
                         });
 
                         return res;
+                      }),
+                      catchError((error) => {
+                        return of({
+                          error: { message: error.message, type: 'error' },
+                        });
                       })
                     );
                 })

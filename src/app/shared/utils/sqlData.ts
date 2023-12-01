@@ -140,4 +140,5 @@ export const sqlData = {
   Event_IM_Search_Location_Scanned: 4200,
   Event_IM_Search_ITN_Scanned: 4300,
   Event_IM_Search_ITN_Location_Updated: 4305,
+  Event_IM_Search_Audit_Closed_NF: 4310,
 };

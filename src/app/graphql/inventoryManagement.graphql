@@ -213,6 +213,16 @@ query getIMAdjustReasons {
   }
 }
 
+query getAuditCount {
+  getAuditCount
+}
+
+mutation clearAudits($username: String, $distributionCenter: String) {
+  clearAudits(Username: $username, DistributionCenter: $distributionCenter) {
+    _id
+  }
+}
+
 mutation updateLastUpdated($inventoryID: Int, $typeID: Int, $lastUpdated: String) {
   updateLastUpdated(InventoryID: $inventoryID, TypeID: $typeID, LastUpdated: $lastUpdated) {
     _id
@@ -262,6 +272,14 @@ mutation deleteAudit(
   deleteAudit(
     InventoryID: $inventoryID
     TypeID: $typeID
+  ) {
+    _id
+  }
+}
+
+mutation deleteAudits($inventoryID: Int) {
+  deleteAudits(
+    InventoryID: $inventoryID
   ) {
     _id
   }

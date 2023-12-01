@@ -22,7 +22,7 @@ import {
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
-import { ShelfBarcodeBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { ShelfBarcodeBarcodeAltRegex } from 'src/app/shared/utils/dataRegex';
 import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -76,7 +76,7 @@ export class ScanLocation implements OnInit {
   public inputForm = this._fb.nonNullable.group({
     barcode: [
       '',
-      [Validators.required, Validators.pattern(ShelfBarcodeBarcodeRegex)],
+      [Validators.required, Validators.pattern(ShelfBarcodeBarcodeAltRegex)],
     ],
   });
 

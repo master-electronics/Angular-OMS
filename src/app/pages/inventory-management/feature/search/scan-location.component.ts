@@ -82,10 +82,31 @@ import { AuditService } from '../../data/audit.service';
       [isvalid]="this.inputForm.valid"
     >
     </single-input-form>
+    <div style="height: 20px"></div>
+    <ng-container *ngIf="showNoAdjacent">
+      <div nz-row [nzGutter]="8">
+        <div nz-col nzSpan="10" nzOffset="7" class="grid h-12">
+          <button
+            (click)="noAdjacent()"
+            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button"
+          >
+            Done Searching
+          </button>
+        </div>
+      </div>
+    </ng-container>
     <ng-container *ngIf="this.showTimeoutAlert">
       <popup-modal
         (clickSubmit)="resetTimeout()"
         [message]="timeoutAlert"
+      ></popup-modal>
+    </ng-container>
+    <ng-container *ngIf="this.adjacentMessage">
+      <popup-modal
+        (clickSubmit)="this.adjacentMessage = null"
+        (clickCancel)="this.adjacentMessage = null"
+        [message]="adjacentMessage"
       ></popup-modal>
     </ng-container>
   `,
@@ -116,6 +137,8 @@ export class ScanLocation implements OnInit {
   timeoutSeconds = 0;
   showTimeoutAlert;
   timeoutAlert;
+  showNoAdjacent = false;
+  adjacentMessage;
 
   ngOnInit(): void {
     const currentAudit: Audit = JSON.parse(
@@ -124,6 +147,10 @@ export class ScanLocation implements OnInit {
 
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
+        if (res.Location.location.length == 0) {
+          sessionStorage.removeItem('searchLocations');
+          console.log('no adjacent found');
+        }
         const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
         this.locations = [];
 
@@ -154,9 +181,22 @@ export class ScanLocation implements OnInit {
           const timeoutTimer = interval(1000);
           this.subscription = timeoutTimer.subscribe((val) => this.timer());
 
+          const open = this.locations.find((item) => item.Status == 'open');
+          if (!open) {
+            this.adjacentMessage =
+              "No adjacent locations found. Scan a location to search. When done click 'Done Searching'";
+            this.showNoAdjacent = true;
+          }
+
           return of(true);
         }
 
+        if (res.Location.location.length == 0) {
+          this.adjacentMessage =
+            "No adjacent locations found. Scan a location to search. When done click 'Done Searching'";
+          this.showNoAdjacent = true;
+          return of(true);
+        }
         res.Location.location.forEach((location) => {
           this.locations.push({
             Barcode: location.Barcode,
@@ -246,15 +286,9 @@ export class ScanLocation implements OnInit {
 
   onSubmit(): void {
     const barcode = this.inputForm.value.barcode.replace(/-/g, '').trim();
-    const location = this.locations.find(
-      (item) => item.Barcode == barcode && item.Status != 'done'
-    );
 
-    if (!location) {
-      this.data$ = of({
-        error: { message: 'Incorrect Location!', type: 'error' },
-      });
-    } else {
+    const open = this.locations.find((item) => item.Status == 'open');
+    if (!open) {
       const userEventLog = [
         {
           UserEventID: sqlData.Event_IM_Search_Location_Scanned,
@@ -294,14 +328,21 @@ export class ScanLocation implements OnInit {
                 }
               }),
               map((res) => {
-                const loc = this.locations.find(
-                  (loc) => loc.Barcode == barcode
+                const loc = {
+                  Barcode: barcode,
+                  Status: 'active',
+                };
+
+                let locs = JSON.parse(
+                  sessionStorage.getItem('searchLocations')
                 );
-                loc.Status = 'active';
-                sessionStorage.setItem(
-                  'searchLocations',
-                  JSON.stringify(this.locations)
-                );
+
+                if (!locs) {
+                  locs = [];
+                }
+
+                locs.push(loc);
+                sessionStorage.setItem('searchLocations', JSON.stringify(locs));
                 this._router.navigate(['../scan-itn'], {
                   relativeTo: this._actRoute,
                 });
@@ -314,6 +355,76 @@ export class ScanLocation implements OnInit {
           });
         })
       );
+    } else {
+      const location = this.locations.find(
+        (item) => item.Barcode == barcode && item.Status != 'done'
+      );
+
+      if (!location) {
+        this.data$ = of({
+          error: { message: 'Incorrect Location!', type: 'error' },
+        });
+      } else {
+        const userEventLog = [
+          {
+            UserEventID: sqlData.Event_IM_Search_Location_Scanned,
+            UserName: this.userInfo.userName,
+            DistributionCenter: environment.DistributionCenter,
+            Message: 'Location: ' + barcode,
+          },
+        ];
+
+        const eventLog = [
+          {
+            UserName: this.userInfo.userName,
+            EventTypeID: sqlData.Event_IM_Search_Location_Scanned,
+            Log: JSON.stringify({
+              DistributionCenter: environment.DistributionCenter,
+              Location: barcode,
+            }),
+          },
+        ];
+
+        this.data$ = this._eventLog.insertLog(userEventLog, eventLog).pipe(
+          switchMap((res) => {
+            return this._findContainer
+              .fetch(
+                {
+                  Container: {
+                    DistributionCenter: environment.DistributionCenter,
+                    Barcode: barcode,
+                  },
+                },
+                { fetchPolicy: 'network-only' }
+              )
+              .pipe(
+                tap((res) => {
+                  if (!res.data.findContainer) {
+                    throw new Error('Location not found');
+                  }
+                }),
+                map((res) => {
+                  const loc = this.locations.find(
+                    (loc) => loc.Barcode == barcode
+                  );
+                  loc.Status = 'active';
+                  sessionStorage.setItem(
+                    'searchLocations',
+                    JSON.stringify(this.locations)
+                  );
+                  this._router.navigate(['../scan-itn'], {
+                    relativeTo: this._actRoute,
+                  });
+                })
+              );
+          }),
+          catchError((error) => {
+            return of({
+              error: { message: error.message, type: 'error' },
+            });
+          })
+        );
+      }
     }
   }
 
@@ -321,6 +432,56 @@ export class ScanLocation implements OnInit {
     this._router.navigate(['../../scan-itn'], {
       relativeTo: this._actRoute,
     });
+  }
+
+  noAdjacent() {
+    const userEventLogs = {
+      UserEventID: sqlData.Event_IM_Search_Audit_Closed_NF,
+      UserName: this.userInfo.userName,
+      DistributionCenter: environment.DistributionCenter,
+      InventoryTrackingNumber: JSON.parse(
+        sessionStorage.getItem('currentAudit')
+      ).Inventory.ITN,
+    };
+
+    const eventLogs = {
+      UserName: this.userInfo.userName,
+      EventTypeID: sqlData.Event_IM_Search_Audit_Closed_NF,
+      Log: JSON.stringify({
+        DistributionCenter: environment.DistributionCenter,
+        InventoryTrackingNumber: JSON.parse(
+          sessionStorage.getItem('currentAudit')
+        ).Inventory.ITN,
+      }),
+    };
+
+    this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
+      switchMap(() => {
+        const SuspectData = [
+          {
+            InventoryID: JSON.parse(sessionStorage.getItem('currentAudit'))
+              .InventoryID,
+            Reason:
+              'InventoryTrackingNumber: ' +
+              JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN +
+              ' Not found during Audit search',
+          },
+        ];
+        return this._auditService.insertSuspect(SuspectData);
+      }),
+      switchMap(() => {
+        return this._auditService.deleteAudits(
+          JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID
+        );
+      }),
+      switchMap((res) => {
+        this._router.navigate(['../../scan-itn'], {
+          relativeTo: this._actRoute,
+        });
+
+        return of(res);
+      })
+    );
   }
 
   ngOnDestroy() {
