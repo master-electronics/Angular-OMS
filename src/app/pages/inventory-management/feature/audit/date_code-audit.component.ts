@@ -63,6 +63,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       controlName="dateCode"
       title="Enter Date Code:"
       [isvalid]="this.inputForm.valid"
+      [maxLength]="4"
     >
     </single-input-form>
     <div style="height: 20px"></div>

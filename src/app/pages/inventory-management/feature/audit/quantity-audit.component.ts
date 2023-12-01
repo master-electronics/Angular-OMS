@@ -64,6 +64,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       controlName="quantity"
       title="Enter Quantity:"
       [isvalid]="this.inputForm.valid"
+      [maxLength]="15"
     >
     </single-input-form>
     <single-input-form
@@ -76,6 +77,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       controlName="quantity"
       title="Confirm Quantity:"
       [isvalid]="this.inputForm.valid"
+      [maxLength]="15"
     >
     </single-input-form>
     <div style="height: 200px;"></div>
@@ -83,6 +85,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       [inputString]="this.inputForm.value.quantity"
       (outputString)="onChange($event)"
       layout="number"
+      [numberOnly]="true"
     ></simple-keyboard>
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
@@ -133,7 +136,10 @@ export class QuantityAudit implements OnInit {
   public close$;
   public info$;
   public inputForm = this._fb.nonNullable.group({
-    quantity: ['', [Validators.required]],
+    quantity: [
+      '',
+      [Validators.required, Validators.pattern(/^[0-9]+(\.?[0-9]+)?$/)],
+    ],
   });
 
   counts: number[] = [];
@@ -557,6 +563,9 @@ export class QuantityAudit implements OnInit {
                 )
                 .pipe(
                   switchMap(() => {
+                    if (Number(qty) == currentAudit.Inventory.Quantity) {
+                      this.counts = [];
+                    }
                     return this._auditService.updateLastUpdated(
                       currentAudit.InventoryID,
                       20,
@@ -572,9 +581,15 @@ export class QuantityAudit implements OnInit {
                   }),
                   switchMap(() => {
                     if (Number(qty) == currentAudit.Inventory.Quantity) {
+                      setTimeout(() => {
+                        this.counts = [];
+                      }, 1000);
                       //correct, don't need confirmation
-                      const typeID = Number(qty) == 0 ? null : 20;
-                      this.closeAudit(qty, typeID);
+
+                      setTimeout(() => {
+                        const typeID = Number(qty) == 0 ? null : 20;
+                        this.closeAudit(qty, typeID);
+                      }, 5000);
                     }
 
                     return of(true);

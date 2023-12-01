@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AuditResolver } from './utils/resolver/audit.resolver';
 import { SubAuditResolver } from './utils/resolver/subAudit.resolver';
 import { SearchLocationResolver } from './utils/resolver/search-location.resolver';
+import { ManagementTriggerResolver } from './utils/resolver/management.resolver';
 import { AuditService } from './data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { SystemTriggerResolver } from './utils/resolver/system-trigger.resolver';
@@ -14,6 +15,7 @@ export const InventoryMangementRoutes: Routes = [
       SubAuditResolver,
       SystemTriggerResolver,
       SearchLocationResolver,
+      ManagementTriggerResolver,
       AuditService,
       EventLogService,
     ],
@@ -39,6 +41,14 @@ export const InventoryMangementRoutes: Routes = [
         loadComponent: () =>
           import('./feature/system-trigger/system-trigger.component').then(
             (m) => m.SystemTrigger
+          ),
+      },
+      {
+        path: 'management',
+        resolve: { InitData: ManagementTriggerResolver },
+        loadComponent: () =>
+          import('./feature/maintenance/maintenance.component').then(
+            (m) => m.Maintenance
           ),
       },
       {

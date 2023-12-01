@@ -58,6 +58,7 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
               [type]="inputType"
               autocomplete="off"
               [placeholder]="placeholder"
+              [maxlength]="maxLength"
               #input
             />
             <!-- error mesage -->
@@ -117,6 +118,7 @@ export class SingleInputformComponent implements OnInit {
   @Input() controlName = 'input';
   @Input() inputType = 'text';
   @Input() placeholder = '';
+  @Input() maxLength = null;
   @Input() title = '';
   @Input() isvalid = true;
   @Input() backButtonText = 'Back';

@@ -11,6 +11,7 @@ import {
   FindNextAuditGQL,
   InventoryUpdateGQL,
   DeleteAuditGQL,
+  DeleteAuditsGQL,
   CloseAuditGQL,
   CloseAuditsGQL,
   GetNextSubAuditGQL,
@@ -25,6 +26,8 @@ import {
   FetchSystemAuditListGQL,
   UpdateSystemTriggerGQL,
   InsertSystemTriggerGQL,
+  ClearAuditsGQL,
+  GetAuditCountGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -35,6 +38,7 @@ export class AuditService {
     private _findNextAudit: FindNextAuditGQL,
     private _inventoryUpdate: InventoryUpdateGQL,
     private _deleteAudit: DeleteAuditGQL,
+    private _deleteAudits: DeleteAuditsGQL,
     private _closeAudit: CloseAuditGQL,
     private _closeAudits: CloseAuditsGQL,
     private _nextSubAudit: GetNextSubAuditGQL,
@@ -48,7 +52,9 @@ export class AuditService {
     private _auditTypes: FetchAuditTypesGQL,
     private _systemAuditList: FetchSystemAuditListGQL,
     private _updateSystemTrigger: UpdateSystemTriggerGQL,
-    private _insertSystemTrigger: InsertSystemTriggerGQL
+    private _insertSystemTrigger: InsertSystemTriggerGQL,
+    private _clearAudits: ClearAuditsGQL,
+    private _auditCount: GetAuditCountGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -226,6 +232,12 @@ export class AuditService {
     });
   }
 
+  public deleteAudits(InventoryID: number) {
+    return this._deleteAudits.mutate({
+      inventoryID: InventoryID,
+    });
+  }
+
   public closeAudit(
     InventoryID: number,
     TypeID: number,
@@ -253,6 +265,17 @@ export class AuditService {
           return of(res);
         })
       );
+  }
+
+  public clearAudits(Username: string, DistributionCenter: string) {
+    return this._clearAudits.mutate({
+      username: Username,
+      distributionCenter: DistributionCenter,
+    });
+  }
+
+  public auditCount() {
+    return this._auditCount.fetch({}, { fetchPolicy: 'network-only' });
   }
 
   public closeAudits(ITN: string) {

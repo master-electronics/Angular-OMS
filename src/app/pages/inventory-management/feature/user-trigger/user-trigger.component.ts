@@ -384,15 +384,13 @@ export class UserTrigger {
 
     const itn =
       this.inputForm.value.itn != '' ? this.inputForm.value.itn : null;
-    const loc =
-      this.inputForm.value.location != ''
-        ? this.inputForm.value.location
-        : null;
+    const loc = this.inputForm.value.location
+      ? this.inputForm.value.location.replace(/-/g, '').trim()
+      : null;
 
-    const endLoc =
-      this.inputForm.value.endLocation != ''
-        ? this.inputForm.value.endLocation
-        : null;
+    const endLoc = this.inputForm.value.endLocation
+      ? this.inputForm.value.endLocation.replace(/-/g, '').trim()
+      : null;
 
     const prc =
       this.inputForm.value.prc != '' ? this.inputForm.value.prc : null;
@@ -449,10 +447,13 @@ export class UserTrigger {
         {
           itn: this.inputForm.value.itn ? this.inputForm.value.itn : null,
           barcodeStart: this.inputForm.value.location
-            ? this.inputForm.value.location.toString()
+            ? this.inputForm.value.location.replace(/-/g, '').trim().toString()
             : null,
           barcodeEnd: this.inputForm.value.endLocation
-            ? this.inputForm.value.endLocation.toString()
+            ? this.inputForm.value.endLocation
+                .replace(/-/g, '')
+                .trim()
+                .toString()
             : null,
           prc: this.inputForm.value.prc
             ? this.inputForm.value.prc.toString()

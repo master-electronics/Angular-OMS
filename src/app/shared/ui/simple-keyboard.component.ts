@@ -32,6 +32,7 @@ export class SimpleKeyboardComponent implements OnChanges {
   keyboard: Keyboard;
   @Input() inputString;
   @Input() layout = 'default';
+  @Input() numberOnly = false;
   @Output() outputString: EventEmitter<string> = new EventEmitter();
 
   ngOnChanges(): void {
@@ -39,6 +40,7 @@ export class SimpleKeyboardComponent implements OnChanges {
   }
 
   ngAfterViewInit() {
+    const lastRow = this.numberOnly ? ' 0 {backspace}' : '{abc} 0 {backspace}';
     asapScheduler.schedule(() => {
       this.keyboard = new Keyboard({
         onChange: (input) => this.onChange(input),
@@ -59,7 +61,7 @@ export class SimpleKeyboardComponent implements OnChanges {
             `< > * " ' : ; ! ? {backspace}`,
             '{numbers} , {space} . {shift}',
           ],
-          numbers: ['1 2 3', '4 5 6', '7 8 9', '{abc} 0 {backspace}'],
+          numbers: ['1 2 3', '4 5 6', '7 8 9', lastRow],
         },
         display: {
           '{numbers}': '123',
