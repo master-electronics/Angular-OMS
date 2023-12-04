@@ -2122,6 +2122,7 @@ export type QueryFindLocalErrorLogsArgs = {
 
 export type QueryFindNextAuditArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2749,6 +2750,7 @@ export type ImTrigger = {
 export type InputAudit = {
   CreatedDatetime?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Int']>;
   TypeID?: InputMaybe<Scalars['Int']>;
@@ -3558,6 +3560,7 @@ export type ValidateFilterQuery = {
 export type FindNextAuditQueryVariables = Types.Exact<{
   userID?: Types.InputMaybe<Types.Scalars['Int']>;
   barcode?: Types.InputMaybe<Types.Scalars['String']>;
+  distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 export type FindNextAuditQuery = {
@@ -4121,8 +4124,16 @@ export class ValidateFilterGQL extends Apollo.Query<
   }
 }
 export const FindNextAuditDocument = gql`
-  query findNextAudit($userID: Int, $barcode: String) {
-    findNextAudit(UserID: $userID, Barcode: $barcode) {
+  query findNextAudit(
+    $userID: Int
+    $barcode: String
+    $distributionCenter: String
+  ) {
+    findNextAudit(
+      UserID: $userID
+      Barcode: $barcode
+      DistributionCenter: $distributionCenter
+    ) {
       _id
       TypeID
       InventoryID

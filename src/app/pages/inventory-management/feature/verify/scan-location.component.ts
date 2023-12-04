@@ -74,10 +74,7 @@ export class ScanLocation implements OnInit {
   public data$;
   public info$;
   public inputForm = this._fb.nonNullable.group({
-    barcode: [
-      '',
-      [Validators.required, Validators.pattern(ShelfBarcodeBarcodeAltRegex)],
-    ],
+    barcode: ['', [Validators.required]],
   });
 
   message;

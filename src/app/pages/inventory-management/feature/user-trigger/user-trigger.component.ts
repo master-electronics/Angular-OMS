@@ -528,6 +528,7 @@ export class UserTrigger {
           audits.push({
             TypeID: Number(type.value),
             InventoryID: Number(item._id),
+            InventoryTrackingNumber: item.ITN,
             LastUpdated: new Date(Date.now()).toISOString(),
             CreatedDatetime: new Date(Date.now()).toISOString(),
           });
