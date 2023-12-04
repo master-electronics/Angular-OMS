@@ -178,8 +178,8 @@ export class ScanLocation implements OnInit {
             },
           };
 
-          //const timeoutTimer = interval(1000);
-          //this.subscription = timeoutTimer.subscribe((val) => this.timer());
+          const timeoutTimer = interval(1000);
+          this.subscription = timeoutTimer.subscribe((val) => this.timer());
 
           const open = this.locations.find((item) => item.Status == 'open');
           if (!open) {
