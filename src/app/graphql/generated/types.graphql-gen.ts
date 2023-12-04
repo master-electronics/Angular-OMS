@@ -2117,6 +2117,7 @@ export type QueryFindLocalErrorLogsArgs = {
 
 export type QueryFindNextAuditArgs = {
   Barcode?: InputMaybe<Scalars['String']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
 
@@ -2744,6 +2745,7 @@ export type ImTrigger = {
 export type InputAudit = {
   CreatedDatetime?: InputMaybe<Scalars['String']>;
   InventoryID?: InputMaybe<Scalars['Int']>;
+  InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Int']>;
   TypeID?: InputMaybe<Scalars['Int']>;

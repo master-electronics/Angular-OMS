@@ -157,7 +157,7 @@ export class ScanLocation implements OnInit {
         if (locs) {
           locs.forEach((loc) => {
             this.locations.push({
-              Barcode: loc.Barcode,
+              Barcode: loc.Barcode.toString().trim(),
               Status: loc.Status == 'done' ? loc.Status : 'open',
             });
           });
@@ -178,8 +178,8 @@ export class ScanLocation implements OnInit {
             },
           };
 
-          const timeoutTimer = interval(1000);
-          this.subscription = timeoutTimer.subscribe((val) => this.timer());
+          //const timeoutTimer = interval(1000);
+          //this.subscription = timeoutTimer.subscribe((val) => this.timer());
 
           const open = this.locations.find((item) => item.Status == 'open');
           if (!open) {
@@ -199,7 +199,7 @@ export class ScanLocation implements OnInit {
         }
         res.Location.location.forEach((location) => {
           this.locations.push({
-            Barcode: location.Barcode,
+            Barcode: location.Barcode.toString().trim(),
             Status: 'open',
           });
         });
@@ -356,6 +356,7 @@ export class ScanLocation implements OnInit {
         })
       );
     } else {
+      const t = 'test';
       const location = this.locations.find(
         (item) => item.Barcode == barcode && item.Status != 'done'
       );
