@@ -1210,6 +1210,7 @@ export type MutationInventoryUpdateArgs = {
   ROHSFlag?: InputMaybe<Scalars['String']>;
   Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
+  VerificationState?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationItnChangeArgs = {
@@ -3772,6 +3773,7 @@ export type InventoryUpdateMutationVariables = Types.Exact<{
   reason: Types.Scalars['String'];
   suspect?: Types.InputMaybe<Types.Scalars['String']>;
   binlocation?: Types.InputMaybe<Types.Scalars['String']>;
+  verificationState?: Types.InputMaybe<Types.Scalars['String']>;
 }>;
 
 export type InventoryUpdateMutation = {
@@ -4450,6 +4452,7 @@ export const InventoryUpdateDocument = gql`
     $reason: String!
     $suspect: String
     $binlocation: String
+    $verificationState: String
   ) {
     inventoryUpdate(
       User: $user
@@ -4461,6 +4464,7 @@ export const InventoryUpdateDocument = gql`
       AdjustmentReason: $reason
       Suspect: $suspect
       BinLocation: $binlocation
+      VerificationState: $verificationState
     )
   }
 `;

@@ -309,6 +309,20 @@ export class ScanITN implements OnInit {
           }
         }),
         switchMap(() => {
+          return this._auditService.inventoryUpdate(
+            this.userInfo.userName,
+            input,
+            'Inventory Management Audit',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'OK'
+          );
+        }),
+        switchMap(() => {
           return this._auditService.updateLastUpdated(
             currentAudit.InventoryID,
             10,

@@ -251,6 +251,7 @@ mutation inventoryUpdate(
   $reason: String!
   $suspect: String
   $binlocation: String
+  $verificationState: String
 ) {
   inventoryUpdate(
     User: $user
@@ -262,6 +263,7 @@ mutation inventoryUpdate(
     AdjustmentReason: $reason
     Suspect: $suspect
     BinLocation: $binlocation
+    VerificationState: $verificationState
   )
 }
 

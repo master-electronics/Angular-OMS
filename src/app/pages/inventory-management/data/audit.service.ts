@@ -212,7 +212,8 @@ export class AuditService {
     Country?: string,
     ROHS?: string,
     Suspect?: string,
-    BinLocation?: string
+    BinLocation?: string,
+    VerificationState?: string
   ) {
     return this._inventoryUpdate.mutate({
       user: Username,
@@ -224,6 +225,7 @@ export class AuditService {
       reason: Reason,
       suspect: Suspect,
       binlocation: BinLocation,
+      verificationState: VerificationState,
     });
   }
 

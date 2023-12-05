@@ -1205,6 +1205,7 @@ export type MutationInventoryUpdateArgs = {
   ROHSFlag?: InputMaybe<Scalars['String']>;
   Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
+  VerificationState?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationItnChangeArgs = {
