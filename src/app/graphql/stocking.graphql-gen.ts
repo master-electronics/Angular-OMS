@@ -1342,6 +1342,8 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
   MICPartNumber?: InputMaybe<Scalars['String']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
+  PackQty?: InputMaybe<Scalars['Float']>;
+  PackType?: InputMaybe<Scalars['String']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
@@ -1773,6 +1775,7 @@ export type Query = {
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
+  fetchGlobalMessages?: Maybe<GlobalMessage>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
@@ -1913,6 +1916,12 @@ export type QueryFetchDataColumnListArgs = {
 
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFetchGlobalMessagesArgs = {
+  MessageType: Scalars['String'];
+  PartNumber: Scalars['String'];
+  ProductCode: Scalars['String'];
 };
 
 export type QueryFetchHoldOnCounterArgs = {
@@ -3561,6 +3570,23 @@ export type UpdateNotFoundForStockingMutation = {
   insertInventorySuspectReason?: boolean | null;
 };
 
+export type FindItnsInUserContainerByNameQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+}>;
+
+export type FindItnsInUserContainerByNameQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      QuantityOnHand: number;
+      InventoryTrackingNumber: string;
+    } | null> | null;
+  } | null;
+};
+
 export const VerifyItnForSortingDocument = gql`
   query verifyITNForSorting($ITN: String!, $DC: String!) {
     findInventory(
@@ -3810,6 +3836,35 @@ export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<
   UpdateNotFoundForStockingMutationVariables
 > {
   document = UpdateNotFoundForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindItnsInUserContainerByNameDocument = gql`
+  query findItnsInUserContainerByName(
+    $Barcode: String!
+    $DistributionCenter: String!
+  ) {
+    findContainer(
+      Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
+    ) {
+      INVENTORies {
+        QuantityOnHand
+        InventoryTrackingNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindItnsInUserContainerByNameGQL extends Apollo.Query<
+  FindItnsInUserContainerByNameQuery,
+  FindItnsInUserContainerByNameQueryVariables
+> {
+  document = FindItnsInUserContainerByNameDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

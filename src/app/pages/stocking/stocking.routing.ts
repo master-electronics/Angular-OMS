@@ -111,6 +111,13 @@ export const StockingRoutes: Routes = [
           ),
       },
       {
+        path: 'personalitns',
+        loadComponent: () =>
+          import('./feature/personal-itns.component').then(
+            (m) => m.PersonalItnsComponent
+          ),
+      },
+      {
         path: 'movetouser',
         loadComponent: () =>
           import('./feature/move-to-user.component').then(

@@ -117,3 +117,17 @@ mutation updateNotFoundForStocking(
   updateNotFoundForStocking(ITNList: $ITNList)
   insertInventorySuspectReason(linkList: $linkList)
 }
+
+query findItnsInUserContainerByName(
+  $Barcode: String!
+  $DistributionCenter: String!
+) {
+  findContainer(
+    Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
+  ) {
+    INVENTORies {
+      QuantityOnHand
+      InventoryTrackingNumber
+    }
+  }
+}
