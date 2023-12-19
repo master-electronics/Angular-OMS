@@ -57,7 +57,7 @@ export class HoldOnCounterComponent implements OnInit {
   }
 
   filterForm = this.fb.group({
-    timeRange: ['', [Validators.required]],
+    timeRange: [[], [Validators.required]],
   });
 
   ngOnInit(): void {
@@ -67,10 +67,12 @@ export class HoldOnCounterComponent implements OnInit {
   onSubmit(): void {
     if (this.filterForm.invalid || this.isLoading) return;
     const selectedDate = this.filterForm.get('timeRange').value;
-    const startDate = new Date(selectedDate.setHours(0, 0, 0, 0)).toISOString();
+    const startDate = new Date(
+      selectedDate[0].setHours(0, 0, 0, 0)
+    ).toISOString();
     this.startDate = startDate;
     const endDate = new Date(
-      selectedDate.setHours(23, 59, 59, 999)
+      selectedDate[1].setHours(23, 59, 59, 999)
     ).toISOString();
 
     // prepare query data then send
