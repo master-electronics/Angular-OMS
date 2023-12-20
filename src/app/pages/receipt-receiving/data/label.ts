@@ -6,6 +6,7 @@ import {
   Observable,
   retry,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 import {
@@ -170,6 +171,7 @@ export class LabelService {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
+        take(1),
         tap((res) => {
           this.updateItnListITN(res.data.createITN, this.currentItnIndex() + 1);
           Logger.devOnly(

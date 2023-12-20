@@ -111,6 +111,7 @@ export class ScanLocationComponent implements OnInit {
           return true;
         }),
         map(() => {
+          this._label.verifyItnListBinLocation();
           this._router.navigate(['../summary'], {
             relativeTo: this._actRoute,
           });
