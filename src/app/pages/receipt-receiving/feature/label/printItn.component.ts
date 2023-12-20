@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from '../../../../shared/ui/input/single-input-form.component';
 import { TabService } from '../../../../shared/ui/step-bar/tab';
@@ -61,7 +61,6 @@ import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.comp
 export class PrintITNComponent implements OnInit {
   public inputForm: FormGroup;
   public data$;
-  public scanAll = false;
   public validators = [
     {
       name: 'label',
@@ -80,7 +79,11 @@ export class PrintITNComponent implements OnInit {
 
   ngOnInit(): void {
     this._ui.changeSteps(3);
-    this.data$ = of(true);
+    this.data$ = this.label.printReceivingLabel$().pipe(
+      catchError((error) => {
+        return of({ error });
+      })
+    );
     this.inputForm = new FormGroup({
       label: new FormControl('', [Validators.required, this.checKLabel()]),
     });
@@ -101,7 +104,7 @@ export class PrintITNComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
       if (!value) {
-        return null;
+        return { label: true };
       }
       const isVaild =
         this.label.ITNList()[this.label.currentItnIndex()].ITN === value;
@@ -121,9 +124,6 @@ export class PrintITNComponent implements OnInit {
 
   public onSubmit(): void {
     if (!this.inputForm.value.label.trim()) {
-      return;
-    }
-    if (this.scanAll) {
       return;
     }
     this.inputForm.setValue({ label: '' });
