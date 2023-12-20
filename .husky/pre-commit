@@ -1,5 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-#Added comment to test
+#Added comment to test prod pipeline
 npx lint-staged
