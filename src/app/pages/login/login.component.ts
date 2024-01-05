@@ -31,6 +31,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
+      style="position: absolute; width: 300px; height: 400px; background-color: red; z-index: 1000"
+    ></div>
+    <div
       class="    
       absolute left-0 top-0 z-50 grid h-full w-full grid-cols-1 grid-rows-1 place-items-center bg-gray-700 bg-cover bg-center"
       style="background-image: url(../../../assets/img/bg_1.svg)"
