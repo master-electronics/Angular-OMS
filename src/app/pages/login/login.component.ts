@@ -31,7 +31,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      style="position: absolute; width: 300px; height: 400px; background-color: red; z-index: 1000"
+      style="position: absolute; width: 305px; height: 400px; background-color: red; z-index: 1000"
     ></div>
     <div
       class="    
