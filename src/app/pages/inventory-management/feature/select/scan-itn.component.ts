@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import {
   Audit,
@@ -46,38 +47,12 @@ import { ReplenishItemResolver } from 'src/app/pages/Autostore-ASN/utils/resolve
     NzGridModule,
     FormsModule,
     AuditInfoComponent,
+    PageHeaderComponent,
   ],
   template: `
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="ITN"
-      title="Scan ITN:"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-input-form>
-    <div style="height: 20px"></div>
+    <page-header headerText="Find the following ITN:"></page-header>
     <ng-container *ngIf="info$ | async as info">
       <audit-info [auditInfo]="audit"></audit-info>
-    </ng-container>
-    <div style="height: 20px"></div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="10" nzOffset="7" class="grid h-12">
-        <button
-          (click)="onNotFound()"
-          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          type="button"
-          [disabled]="nfDisabled"
-        >
-          Not Found
-        </button>
-      </div>
-    </div>
-    <ng-container *ngIf="message">
-      <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
     <ng-container *ngIf="errorMessage">
       <popup-modal
@@ -93,6 +68,38 @@ import { ReplenishItemResolver } from 'src/app/pages/Autostore-ASN/utils/resolve
     </ng-container>
     <div *ngIf="close$ | async"></div>
     <div *ngIf="config$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="string"
+        controlName="ITN"
+        title="Scan ITN:"
+        [isvalid]="this.inputForm.valid"
+      >
+      </single-input-form>
+      <ng-container *ngIf="message">
+        <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
+      </ng-container>
+      <div style="height: 10px;"></div>
+      <div nz-row [nzGutter]="8">
+        <div nz-col nzSpan="10" nzOffset="7" class="grid h-12">
+          <button
+            (click)="onNotFound()"
+            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button"
+          >
+            Not Found
+          </button>
+        </div>
+      </div>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 300px;"></div>
   `,
 })
 export class ScanITN implements OnInit {
@@ -126,14 +133,21 @@ export class ScanITN implements OnInit {
   auditTimeout: number;
   alertTime: number;
   lastUpdated: number;
-  nfDisabled: boolean;
+  inputCounter = 0;
+  inputCounterIntervalID;
 
   ngOnInit() {
+    this.inputForm.valueChanges.subscribe(() => {
+      this.inputCounter = 0;
+      clearInterval(this.inputCounterIntervalID);
+      this.inputCounterIntervalID = setInterval(() => {
+        this.inputCounter++;
+      }, 1000);
+    });
     sessionStorage.removeItem('currentAudit');
     sessionStorage.removeItem('auditITN');
     sessionStorage.removeItem('searchLocations');
     this.audit = null;
-    this.nfDisabled = false;
 
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
@@ -152,7 +166,7 @@ export class ScanITN implements OnInit {
           );
           this.lastUpdated = Number(res.Audit.audit.LastUpdated);
           sessionStorage.setItem('currentAudit', JSON.stringify(this.audit));
-          const timeoutTimer = interval(1000);
+          //const timeoutTimer = interval(1000);
           //this.subscription = timeoutTimer.subscribe((val) => this.timer());
           return of(true);
         }
@@ -228,7 +242,7 @@ export class ScanITN implements OnInit {
   }
 
   onSubmit(): void {
-    this.nfDisabled = true;
+    const inputMethod = this.inputCounter ? 'manual' : 'scanned';
     const input = this.inputForm.value.ITN.trim();
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
@@ -252,7 +266,7 @@ export class ScanITN implements OnInit {
           } else {
             if (ITNBarcodeRegex.test(input)) {
               if (this.audit.Inventory.ITN != input) {
-                return { error: { message: 'Incorrect ITN!', type: 'error' } };
+                throw new Error('Incorrect ITN!');
               }
 
               sessionStorage.setItem('auditITN', this.audit.Inventory.ITN);
@@ -262,7 +276,7 @@ export class ScanITN implements OnInit {
                 UserName: this.userInfo.userName,
                 DistributionCenter: environment.DistributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
-                Message: 'ITN: ' + input,
+                Message: 'ITN: ' + input + ' -- InputMethod: ' + inputMethod,
               });
 
               eventLogs.push({
@@ -299,16 +313,18 @@ export class ScanITN implements OnInit {
                   PackType: currentAudit.Inventory.Product.PackType,
                   PackQuantity: currentAudit.Inventory.Product.PackQty,
                   Cost: currentAudit.Inventory.Product.Cost,
+                  InputMethod: inputMethod,
                 }),
               });
 
               return res;
             }
 
-            return { error: { message: 'Invalid ITN format!', type: 'error' } };
+            throw new Error('Invalid ITN format!');
           }
         }),
-        switchMap(() => {
+        switchMap((res) => {
+          const t = 'test';
           return this._auditService.inventoryUpdate(
             this.userInfo.userName,
             input,
@@ -415,9 +431,7 @@ export class ScanITN implements OnInit {
           return of(res);
         }),
         catchError((error) => {
-          this.errorMessage = error.message;
-
-          return of(true);
+          return of({ error: { message: error, type: 'error' } });
         })
       );
   }

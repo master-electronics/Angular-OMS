@@ -10,6 +10,7 @@ import {
 import {
   FindNextAuditGQL,
   InventoryUpdateGQL,
+  InsertAuditsGQL,
   DeleteAuditGQL,
   DeleteAuditsGQL,
   CloseAuditGQL,
@@ -38,6 +39,7 @@ export class AuditService {
   constructor(
     private _findNextAudit: FindNextAuditGQL,
     private _inventoryUpdate: InventoryUpdateGQL,
+    private _insertAudits: InsertAuditsGQL,
     private _deleteAudit: DeleteAuditGQL,
     private _deleteAudits: DeleteAuditsGQL,
     private _closeAudit: CloseAuditGQL,
@@ -226,6 +228,12 @@ export class AuditService {
       suspect: Suspect,
       binlocation: BinLocation,
       verificationState: VerificationState,
+    });
+  }
+
+  public insertAudits(Audits) {
+    return this._insertAudits.mutate({
+      audits: Audits,
     });
   }
 

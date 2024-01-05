@@ -749,7 +749,7 @@ export type Mutation = {
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
-  inventoryUpdate?: Maybe<Scalars['Boolean']>;
+  inventoryUpdate?: Maybe<UpdateResult>;
   itnChange?: Maybe<Scalars['Boolean']>;
   itnEvent?: Maybe<Itnlifecycle_Report>;
   itnLocationChange?: Maybe<Scalars['Boolean']>;
@@ -2502,6 +2502,12 @@ export type TableData = {
 export type TableKey = {
   __typename?: 'TableKey';
   ID?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateResult = {
+  __typename?: 'UpdateResult';
+  StatusCode?: Maybe<Scalars['String']>;
+  StatusMessage?: Maybe<Scalars['String']>;
 };
 
 export type UpdatedOrder = {

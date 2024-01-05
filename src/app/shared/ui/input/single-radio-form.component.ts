@@ -49,7 +49,6 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
           <div style="height: 10px"></div>
           <div class="relative grow" style="text-align: center;">
             <nz-radio-group
-              [(ngModel)]="radioValue"
               [formControlName]="controlName"
               [id]="controlName"
               [ngClass]="[

@@ -754,7 +754,7 @@ export type Mutation = {
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
-  inventoryUpdate?: Maybe<Scalars['Boolean']>;
+  inventoryUpdate?: Maybe<UpdateResult>;
   itnChange?: Maybe<Scalars['Boolean']>;
   itnEvent?: Maybe<Itnlifecycle_Report>;
   itnLocationChange?: Maybe<Scalars['Boolean']>;
@@ -2509,6 +2509,12 @@ export type TableKey = {
   ID?: Maybe<Scalars['Int']>;
 };
 
+export type UpdateResult = {
+  __typename?: 'UpdateResult';
+  StatusCode?: Maybe<Scalars['String']>;
+  StatusMessage?: Maybe<Scalars['String']>;
+};
+
 export type UpdatedOrder = {
   __typename?: 'UpdatedOrder';
   AutostoreOrderCount?: Maybe<Scalars['Int']>;
@@ -3778,7 +3784,11 @@ export type InventoryUpdateMutationVariables = Types.Exact<{
 
 export type InventoryUpdateMutation = {
   __typename?: 'Mutation';
-  inventoryUpdate?: boolean | null;
+  inventoryUpdate?: {
+    __typename?: 'UpdateResult';
+    StatusCode?: string | null;
+    StatusMessage?: string | null;
+  } | null;
 };
 
 export type DeleteAuditMutationVariables = Types.Exact<{
@@ -4465,7 +4475,10 @@ export const InventoryUpdateDocument = gql`
       Suspect: $suspect
       BinLocation: $binlocation
       VerificationState: $verificationState
-    )
+    ) {
+      StatusCode
+      StatusMessage
+    }
   }
 `;
 

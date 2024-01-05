@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import {
   Audit,
@@ -35,24 +36,30 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
     NzGridModule,
     FormsModule,
     AuditInfoComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header headerText="Verify the following ITN:"></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="ITN"
-      title="Scan ITN:"
-      [isvalid]="this.inputForm.valid"
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
     >
-    </single-input-form>
-    <div style="height: 20px"></div>
-    <div style="height: 20px"></div>
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="string"
+        controlName="ITN"
+        title="Scan ITN:"
+        [isvalid]="this.inputForm.valid"
+      >
+      </single-input-form>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 300px"></div>
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -83,14 +90,7 @@ export class ScanITN implements OnInit {
       const currentAudit: Audit = JSON.parse(
         sessionStorage.getItem('currentAudit')
       );
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-        },
-      };
+      this.auditInfo = currentAudit;
     }
     this.data$ = of(true);
   }

@@ -24,6 +24,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -43,22 +44,14 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     NzGridModule,
     FormsModule,
     AuditInfoComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header headerText="Verify ROHS for the following ITN:"></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <single-radio-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      controlName="rohs"
-      title="Select ROHS:"
-      [options]="options"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-radio-form>
+
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -70,6 +63,23 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <single-radio-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        controlName="rohs"
+        title="Select ROHS:"
+        [options]="options"
+        [isvalid]="this.inputForm.valid"
+      >
+      </single-radio-form>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 3000px;"></div>
   `,
 })
 export class ROHSAudit implements OnInit {
@@ -117,21 +127,7 @@ export class ROHSAudit implements OnInit {
       );
 
       this.lastUpdated = Number(currentAudit.LastUpdated);
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-          Product: {
-            PartNumber: currentAudit.Inventory.Product.PartNumber,
-            ProductCode: {
-              ProductCodeNumber:
-                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-            },
-          },
-        },
-      };
+      this.auditInfo = currentAudit;
     }
 
     this.info$ = this._actRoute.data.pipe(

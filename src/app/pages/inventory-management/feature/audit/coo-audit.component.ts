@@ -29,6 +29,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -59,51 +60,21 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     SubmitButtonComponent,
     SimpleKeyboardComponent,
     MessageBarComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header
+      headerText="Verify Country for the following ITN:"
+    ></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-      <div class="text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
-        <div class="gap-2 md:grid">
-          <label class="mb-0.5 font-bold text-gray-700" for="country">
-            Country
-          </label>
-          <search-list-input
-            (formSubmit)="onSubmit()"
-            controlName="country"
-            [dataSource]="countryList$ | async"
-          ></search-list-input>
-        </div>
-      </div>
-      <div
-        class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
-      >
-        <submit-button [disabled]="inputForm.invalid"> </submit-button>
-        <normal-button
-          class="col-start-3"
-          (buttonClick)="onBack()"
-        ></normal-button>
-      </div>
-    </form>
-    <div style="height: 20px"></div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
-        <button
-          (click)="onNA()"
-          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          type="button"
-        >
-          N/A
-        </button>
-      </div>
-    </div>
-    <div style="height: 200px;"></div>
+    <!--
     <simple-keyboard
       [inputString]="this.inputForm.value.country"
       (outputString)="onChange($event)"
     ></simple-keyboard>
+    -->
     <ng-container *ngIf="data$ | async as data">
       <message-bar
         *ngIf="errorMessage"
@@ -122,6 +93,47 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+        <div class="text-base sm:text-lg md:mx-16  md:text-2xl lg:text-4xl">
+          <div class="gap-2 md:grid">
+            <label class="mb-0.5 font-bold text-gray-700" for="country">
+              Country
+            </label>
+            <search-list-input
+              (formSubmit)="onSubmit()"
+              controlName="country"
+              [dataSource]="countryList$ | async"
+            ></search-list-input>
+          </div>
+        </div>
+        <div
+          class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
+        >
+          <submit-button [disabled]="inputForm.invalid"> </submit-button>
+          <normal-button
+            class="col-start-3"
+            (buttonClick)="onBack()"
+          ></normal-button>
+        </div>
+      </form>
+      <div style="height: 10px"></div>
+      <div nz-row [nzGutter]="8">
+        <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
+          <button
+            (click)="onNA()"
+            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button"
+          >
+            N/A
+          </button>
+        </div>
+      </div>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 300px;"></div>
   `,
 })
 export class COOAudit implements OnInit {
@@ -163,21 +175,7 @@ export class COOAudit implements OnInit {
       );
 
       this.lastUpdated = Number(currentAudit.LastUpdated);
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-          Product: {
-            PartNumber: currentAudit.Inventory.Product.PartNumber,
-            ProductCode: {
-              ProductCodeNumber:
-                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-            },
-          },
-        },
-      };
+      this.auditInfo = currentAudit;
     }
 
     this.info$ = this._actRoute.data.pipe(

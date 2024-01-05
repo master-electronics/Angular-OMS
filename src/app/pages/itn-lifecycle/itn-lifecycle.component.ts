@@ -208,10 +208,10 @@ export class ITNLifecycleComponent implements OnInit {
     const date = new Date();
     const hours = date.getHours();
     console.log(date.getHours());
-    if (hours < 15) {
-      this.timeLock = true;
-      return;
-    }
+    // if (hours < 15) {
+    //   this.timeLock = true;
+    //   return;
+    // }
 
     const sDate: Date = new Date(Date.now());
     const eDate: Date = new Date(Date.now());

@@ -26,6 +26,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -58,145 +59,18 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     LoaderButtonComponent,
     MessageBarComponent,
     SimpleKeyboardComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header
+      headerText="Verify Part Number for the following ITN:"
+    ></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
-      <div class="text-base sm:text-lg md:mx-16 md:text-2xl lg:text-4xl">
-        <div class="gap-2 md:grid" [class.flex]="title.length < 10">
-          <label class="mb-0.5 font-bold text-gray-700" [for]="controlName">
-            {{ title }}
-          </label>
-          <div style="height: 10px"></div>
-          <div class="relative grow" style="text-align: center;">
-            <nz-radio-group
-              [(ngModel)]="radioValue"
-              [formControlName]="controlName"
-              [id]="controlName"
-              [ngClass]="[
-                inputForm.get(controlName).invalid &&
-                inputForm.get(controlName).dirty
-                  ? 'border-red-500'
-                  : 'border-blue-500'
-              ]"
-              nzSize="large"
-              nzButtonStyle="solid"
-              (ngModelChange)="onPartMatchChange()"
-            >
-              <label
-                *ngFor="let option of options"
-                nz-radio-button
-                nzValue="{{ option.value }}"
-                style="margin-left: 35px; margin-right: 35px;"
-              >
-                {{ option.label }}
-              </label>
-            </nz-radio-group>
-            <!-- error mesage -->
-            <div
-              *ngIf="
-                inputForm.get(controlName).invalid &&
-                  inputForm.get(controlName).dirty;
-                else NonError
-              "
-              class="italic text-red-500"
-            >
-              <div *ngIf="inputForm.get(controlName).errors?.['required']">
-                This field is required.
-              </div>
-              <div *ngIf="inputForm.get(controlName).errors?.['pattern']">
-                Invalid Format!
-              </div>
-              <div *ngFor="let validator of validators">
-                <div
-                  *ngIf="inputForm.get(controlName).errors?.[validator.name]"
-                >
-                  {{ validator.message }}
-                </div>
-              </div>
-            </div>
-            <ng-template #NonError>
-              <div class="opacity-0 ">no error</div>
-            </ng-template>
-          </div>
-        </div>
-        <div class="gap-2 md:grid">
-          <div class="relative grow">
-            <textarea
-              formControlName="comment"
-              [ngClass]="[
-                inputForm.get('comment').invalid &&
-                inputForm.get('comment').dirty
-                  ? 'border-red-500'
-                  : 'border-blue-500'
-              ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-              id="comment"
-              type="text"
-              autocomplete="off"
-              placeholder="Comment"
-              (focus)="onInputFocus($event)"
-              #input
-            ></textarea>
-          </div>
-        </div>
-        <div class="gap-2 md:grid">
-          <div class="relative grow">
-            <input
-              formControlName="partNumber"
-              [ngClass]="[
-                inputForm.get('comment').invalid &&
-                inputForm.get('comment').dirty
-                  ? 'border-red-500'
-                  : 'border-blue-500'
-              ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-              id="partNumber"
-              type="text"
-              autocomplete="off"
-              placeholder="Part #"
-              (focus)="onInputFocus($event)"
-              #input
-            />
-          </div>
-        </div>
-        <div class="opacity-0 ">no error</div>
-        <!-- Button area -->
-        <div
-          class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
-        >
-          <submit-button [disabled]="!this.inputForm.valid"> </submit-button>
-          <ng-template #buttonLoading>
-            <loader-button></loader-button>
-          </ng-template>
-          <normal-button
-            class="col-start-3"
-            (buttonClick)="onBack()"
-          ></normal-button>
-        </div>
-        <div *ngIf="data$ | async" class="mt-1 md:mt-3 lg:mt-6">
-          <message-bar
-            [message]="data$.message"
-            [name]="data$.name"
-          ></message-bar>
-        </div>
-      </div>
-    </form>
-    <div style="height: 20px"></div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
-        <button
-          (click)="onNA()"
-          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          type="button"
-        >
-          N/A
-        </button>
-      </div>
-    </div>
+
     <div style="height: 200px;"></div>
+    <!--
     <simple-keyboard
       *ngIf="activeControl == 'comment'"
       [inputString]="this.commentInputString"
@@ -209,6 +83,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       (outputString)="onChange($event)"
       layout="string"
     ></simple-keyboard>
+    -->
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -220,6 +95,144 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+        <div class="text-base sm:text-lg md:mx-16 md:text-2xl lg:text-4xl">
+          <div class="gap-2 md:grid" [class.flex]="title.length < 10">
+            <label class="mb-0.5 font-bold text-gray-700" [for]="controlName">
+              {{ title }}
+            </label>
+            <div style="height: 10px"></div>
+            <div class="relative grow" style="text-align: center;">
+              <nz-radio-group
+                [formControlName]="controlName"
+                [id]="controlName"
+                [ngClass]="[
+                  inputForm.get(controlName).invalid &&
+                  inputForm.get(controlName).dirty
+                    ? 'border-red-500'
+                    : 'border-blue-500'
+                ]"
+                nzSize="large"
+                nzButtonStyle="solid"
+                (ngModelChange)="onPartMatchChange()"
+              >
+                <label
+                  *ngFor="let option of options"
+                  nz-radio-button
+                  nzValue="{{ option.value }}"
+                  style="margin-left: 35px; margin-right: 35px;"
+                >
+                  {{ option.label }}
+                </label>
+              </nz-radio-group>
+              <!-- error mesage -->
+              <div
+                *ngIf="
+                  inputForm.get(controlName).invalid &&
+                    inputForm.get(controlName).dirty;
+                  else NonError
+                "
+                class="italic text-red-500"
+              >
+                <div *ngIf="inputForm.get(controlName).errors?.['required']">
+                  This field is required.
+                </div>
+                <div *ngIf="inputForm.get(controlName).errors?.['pattern']">
+                  Invalid Format!
+                </div>
+                <div *ngFor="let validator of validators">
+                  <div
+                    *ngIf="inputForm.get(controlName).errors?.[validator.name]"
+                  >
+                    {{ validator.message }}
+                  </div>
+                </div>
+              </div>
+              <ng-template #NonError>
+                <div class="opacity-0 ">no error</div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="gap-2 md:grid">
+            <div class="relative grow">
+              <textarea
+                formControlName="comment"
+                [ngClass]="[
+                  inputForm.get('comment').invalid &&
+                  inputForm.get('comment').dirty
+                    ? 'border-red-500'
+                    : 'border-blue-500'
+                ]"
+                class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+                id="comment"
+                type="text"
+                autocomplete="off"
+                placeholder="Comment"
+                (focus)="onInputFocus($event)"
+                #input
+              ></textarea>
+            </div>
+          </div>
+          <div class="gap-2 md:grid">
+            <div class="relative grow">
+              <input
+                formControlName="partNumber"
+                [ngClass]="[
+                  inputForm.get('comment').invalid &&
+                  inputForm.get('comment').dirty
+                    ? 'border-red-500'
+                    : 'border-blue-500'
+                ]"
+                class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+                id="partNumber"
+                type="text"
+                autocomplete="off"
+                placeholder="Part #"
+                (focus)="onInputFocus($event)"
+                #input
+              />
+            </div>
+          </div>
+          <div class="opacity-0 ">no error</div>
+          <!-- Button area -->
+          <div
+            class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
+          >
+            <submit-button [disabled]="!this.inputForm.valid"> </submit-button>
+            <ng-template #buttonLoading>
+              <loader-button></loader-button>
+            </ng-template>
+            <normal-button
+              class="col-start-3"
+              (buttonClick)="onBack()"
+            ></normal-button>
+          </div>
+          <div *ngIf="data$ | async" class="mt-1 md:mt-3 lg:mt-6">
+            <message-bar
+              [message]="data$.message"
+              [name]="data$.name"
+            ></message-bar>
+          </div>
+        </div>
+      </form>
+      <div style="height: 20px"></div>
+      <div nz-row [nzGutter]="8">
+        <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
+          <button
+            (click)="onNA()"
+            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button"
+          >
+            N/A
+          </button>
+        </div>
+      </div>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 300px;"></div>
   `,
 })
 export class PartNumberAudit implements OnInit {
@@ -278,22 +291,7 @@ export class PartNumberAudit implements OnInit {
       );
 
       this.lastUpdated = Number(currentAudit.LastUpdated);
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-          Product: {
-            PartNumber: currentAudit.Inventory.Product.PartNumber,
-            MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
-            ProductCode: {
-              ProductCodeNumber:
-                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-            },
-          },
-        },
-      };
+      this.auditInfo = currentAudit;
     }
 
     this.info$ = this._actRoute.data.pipe(

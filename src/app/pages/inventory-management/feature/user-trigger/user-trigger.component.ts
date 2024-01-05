@@ -39,7 +39,10 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AuditService } from '../../data/audit.service';
+import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { sqlData } from 'src/app/shared/utils/sqlData';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: true,
@@ -225,7 +228,8 @@ export class UserTrigger {
     private _findPRCPartNumITNs: FindImprcPartNumberInventoriesGQL,
     private _validateFilter: ValidateFilterGQL,
     private _fb: FormBuilder,
-    private _auditService: AuditService
+    private _auditService: AuditService,
+    private _eventLog: EventLogService
   ) {}
 
   inputForm: FormGroup;
@@ -508,20 +512,28 @@ export class UserTrigger {
   onOk(): void {
     const audits = [];
     const suspects = [];
+    const userEventLogs = [];
+    const eventLogs = [];
 
     if (this.itnList.length > 0) {
       this.itnList.forEach((item) => {
         suspects.push(
-          this._auditService.inventoryUpdate(
-            this.userInfo.userName,
-            item.ITN,
-            'Inventory Management Audit',
-            '',
-            '',
-            '',
-            '',
-            'true'
-          )
+          this._auditService
+            .inventoryUpdate(
+              this.userInfo.userName,
+              item.ITN,
+              'Inventory Management Audit',
+              '',
+              '',
+              '',
+              '',
+              'true'
+            )
+            .pipe(
+              switchMap((res) => {
+                return of(res);
+              })
+            )
         );
 
         this.includedAuditTypeList.forEach((type) => {
@@ -532,32 +544,55 @@ export class UserTrigger {
             LastUpdated: new Date(Date.now()).toISOString(),
             CreatedDatetime: new Date(Date.now()).toISOString(),
           });
+
+          userEventLogs.push({
+            UserEventID: sqlData.Event_IM_Audit_Created,
+            UserName: this.userInfo.userName,
+            DistributionCenter: environment.DistributionCenter,
+            InventoryTrackingNumber: item.ITN,
+            Message: 'Audit Type ' + type.value + ' created',
+          });
+
+          eventLogs.push({
+            UserName: this.userInfo.userName,
+            EventTypeID: sqlData.Event_IM_Audit_Created,
+            Log: JSON.stringify({
+              DistributionCenter: environment.DistributionCenter,
+              InventoryTrackingNumber: item.ITN,
+              AuditTypeID: type.value,
+            }),
+          });
         });
       });
 
-      this.suspect$ = forkJoin(suspects);
+      this.suspect$ = forkJoin(suspects).pipe(
+        catchError((error) => {
+          this.errorType = 'error';
+          this.error = { message: error.message };
 
-      this.data$ = this._insertAudits
-        .mutate({
-          audits: audits,
+          return of(true);
         })
-        .pipe(
-          tap(() => {
-            this.errorType = 'success';
-            this.error = { message: 'Audits created!' };
-            this.removeAll();
-            this.inputForm.reset();
-            return of(true);
-          }),
-          catchError((error) => {
-            this.errorType = 'error';
-            this.error = { message: error.message };
+      );
 
-            return of({
-              error: { message: error.message, type: 'error' },
-            });
-          })
-        );
+      this.data$ = this._eventLog.insertLog(userEventLogs, eventLogs).pipe(
+        switchMap(() => {
+          return this._auditService.insertAudits(audits);
+        }),
+        tap(() => {
+          this.errorType = 'success';
+          this.error = { message: 'Audits created!' };
+          this.inputForm.reset();
+          return of(true);
+        }),
+        catchError((error) => {
+          this.errorType = 'error';
+          this.error = { message: error.message };
+
+          return of({
+            error: { message: error.message, type: 'error' },
+          });
+        })
+      );
     }
 
     this.message = null;

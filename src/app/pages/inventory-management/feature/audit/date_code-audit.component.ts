@@ -23,6 +23,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -49,41 +50,22 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     FormsModule,
     AuditInfoComponent,
     SimpleKeyboardComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header
+      headerText="Verify Date Code for the following ITN:"
+    ></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="dateCode"
-      title="Enter Date Code:"
-      [isvalid]="this.inputForm.valid"
-      [maxLength]="4"
-    >
-    </single-input-form>
-    <div style="height: 20px"></div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
-        <button
-          (click)="onNA()"
-          class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          type="button"
-        >
-          N/A
-        </button>
-      </div>
-    </div>
-    <div style="height: 200px;"></div>
+    <!--
     <simple-keyboard
       [inputString]="this.inputForm.value.dateCode"
       (outputString)="onChange($event)"
       layout="number"
     ></simple-keyboard>
+    -->
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -95,6 +77,36 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="string"
+        controlName="dateCode"
+        title="Enter Date Code:"
+        [isvalid]="this.inputForm.valid"
+        [maxLength]="4"
+      >
+      </single-input-form>
+      <div style="height: 10px;"></div>
+      <div nz-row [nzGutter]="8">
+        <div nz-col nzSpan="8" nzOffset="8" class="grid h-12">
+          <button
+            (click)="onNA()"
+            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button"
+          >
+            N/A
+          </button>
+        </div>
+      </div>
+      <div style="height: 10px;"></div>
+    </div>
+    <div style="height: 300px;"></div>
   `,
 })
 export class DateCodeAudit implements OnInit {
@@ -131,21 +143,7 @@ export class DateCodeAudit implements OnInit {
       );
 
       this.lastUpdated = Number(currentAudit.LastUpdated);
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-          Product: {
-            PartNumber: currentAudit.Inventory.Product.PartNumber,
-            ProductCode: {
-              ProductCodeNumber:
-                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-            },
-          },
-        },
-      };
+      this.auditInfo = currentAudit;
     }
 
     this.info$ = this._actRoute.data.pipe(

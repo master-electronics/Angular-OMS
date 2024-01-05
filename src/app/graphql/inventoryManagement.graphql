@@ -264,7 +264,10 @@ mutation inventoryUpdate(
     Suspect: $suspect
     BinLocation: $binlocation
     VerificationState: $verificationState
-  )
+  ) {
+    StatusCode
+    StatusMessage
+  }
 }
 
 mutation deleteAudit(

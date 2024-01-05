@@ -55,6 +55,8 @@ export interface Product {
   PackType?: string;
   PackQty?: number;
   Cost?: number;
+  SLC?: string;
+  MSL?: string;
 }
 
 export interface ProductCode {

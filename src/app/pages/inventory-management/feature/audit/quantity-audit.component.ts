@@ -21,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
@@ -49,44 +50,22 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     FormsModule,
     AuditInfoComponent,
     SimpleKeyboardComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header headerText="Count the following ITN:"></page-header>
     <ng-container *ngIf="auditInfo">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <single-input-form
-      *ngIf="counts.length == 0"
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="number"
-      controlName="quantity"
-      title="Enter Quantity:"
-      [isvalid]="this.inputForm.valid"
-      [maxLength]="15"
-    >
-    </single-input-form>
-    <single-input-form
-      *ngIf="counts.length == 1"
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="number"
-      controlName="quantity"
-      title="Confirm Quantity:"
-      [isvalid]="this.inputForm.valid"
-      [maxLength]="15"
-    >
-    </single-input-form>
     <div style="height: 200px;"></div>
+    <!--
     <simple-keyboard
       [inputString]="this.inputForm.value.quantity"
       (outputString)="onChange($event)"
       layout="number"
       [numberOnly]="true"
     ></simple-keyboard>
+    -->
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -98,6 +77,37 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0; background-color: white; width: 95%"
+    >
+      <single-input-form
+        *ngIf="counts.length == 0"
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="number"
+        controlName="quantity"
+        title="Enter Quantity:"
+        [isvalid]="this.inputForm.valid"
+        [maxLength]="15"
+      >
+      </single-input-form>
+      <single-input-form
+        *ngIf="counts.length == 1"
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="number"
+        controlName="quantity"
+        title="Confirm Quantity:"
+        [isvalid]="this.inputForm.valid"
+        [maxLength]="15"
+      >
+      </single-input-form>
+      <div style="height: 10px;"></div>
+    </div>
     <nz-modal
       [(nzVisible)]="reasonsVisible"
       [nzTitle]="adjustReasonTitleTemplate"
@@ -119,6 +129,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
         </nz-radio-group>
       </ng-container>
     </nz-modal>
+    <div style="height: 300px;"></div>
   `,
 })
 export class QuantityAudit implements OnInit {
@@ -177,21 +188,7 @@ export class QuantityAudit implements OnInit {
       this.CurrentAudit = currentAudit;
 
       this.lastUpdated = Number(currentAudit.LastUpdated);
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-          Product: {
-            PartNumber: currentAudit.Inventory.Product.PartNumber,
-            ProductCode: {
-              ProductCodeNumber:
-                currentAudit.Inventory.Product.ProductCode.ProductCodeNumber,
-            },
-          },
-        },
-      };
+      this.auditInfo = this.CurrentAudit;
 
       this.info$ = this._actRoute.data.pipe(
         map((res) => {

@@ -25,6 +25,24 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
       class="text-lg md:text-xl lg:text-4xl"
       (ngSubmit)="onSubmit()"
     >
+      <div
+        id="dropdown"
+        class="z-10 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700"
+      >
+        <ul
+          class=" text-gray-700 dark:text-gray-200"
+          *ngFor="let node of dataSource"
+        >
+          <li>
+            <a
+              (click)="onClick(node)"
+              class="inline-flex w-full px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              {{ node.name }}
+            </a>
+          </li>
+        </ul>
+      </div>
       <div class="relative">
         <input
           [formControlName]="controlName"
@@ -64,24 +82,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
       <ng-template #NonError>
         <div class="opacity-0 ">no error</div>
       </ng-template>
-      <div
-        id="dropdown"
-        class="z-10 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700"
-      >
-        <ul
-          class=" text-gray-700 dark:text-gray-200"
-          *ngFor="let node of dataSource"
-        >
-          <li>
-            <a
-              (click)="onClick(node)"
-              class="inline-flex w-full px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              {{ node.name }}
-            </a>
-          </li>
-        </ul>
-      </div>
     </form>
   `,
 })
