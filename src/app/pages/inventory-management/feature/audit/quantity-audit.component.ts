@@ -17,6 +17,7 @@ import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,7 +25,7 @@ import { AuditInfoComponent } from '../../ui/audit-info.component';
 import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
-import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
+import { SimpleKeyboardComponent } from '../../ui/simple-keyboard.component';
 import {
   Audit,
   AuditType,
@@ -51,6 +52,7 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     AuditInfoComponent,
     SimpleKeyboardComponent,
     PageHeaderComponent,
+    NzIconModule,
   ],
   template: `
     <page-header headerText="Count the following ITN:"></page-header>
@@ -58,14 +60,13 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
     <div style="height: 200px;"></div>
-    <!--
     <simple-keyboard
+      *ngIf="keyBoard"
       [inputString]="this.inputForm.value.quantity"
       (outputString)="onChange($event)"
       layout="number"
       [numberOnly]="true"
     ></simple-keyboard>
-    -->
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -77,6 +78,16 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     </ng-container>
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
+    <div
+      style="position: fixed; bottom: 5px; z-index: 10000; text-align: center; width: 95%;"
+    >
+      <img
+        (click)="keyBoard = !keyBoard"
+        style="display: inline-block;"
+        src="assets/img/keyboard.svg"
+        width="40"
+      />
+    </div>
     <div
       style="position: fixed; bottom: 0; background-color: white; width: 95%"
     >
@@ -170,6 +181,11 @@ export class QuantityAudit implements OnInit {
   Quantity;
   userEventLogs;
   eventLogs;
+  keyBoard;
+
+  test() {
+    this.keyBoard = !this.keyBoard;
+  }
 
   ngOnInit(): void {
     this.userEventLogs = [];
