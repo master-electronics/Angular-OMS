@@ -113,6 +113,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'qct',
+        loadChildren: () =>
+          import('./pages/qc/quality-control.routing').then(
+            (m) => m.QualityControlRoutes
+          ),
+      },
+      {
         path: 'receiptreceiving',
         canActivate: [PrinterGuard],
         loadChildren: () =>
