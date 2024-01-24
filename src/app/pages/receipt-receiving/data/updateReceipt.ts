@@ -218,6 +218,9 @@ export class updateReceiptInfoService {
         Log: JSON.stringify({
           ...JSON.parse(this._eventLog.eventLog.Log),
           ...line,
+          DateCode: this.receiptInfo.DateCode,
+          ROHS: this.receiptInfo.ROHS,
+          ISO3: this.receiptInfo.ISO3,
         }),
       };
     });
