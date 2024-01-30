@@ -6,6 +6,7 @@ import { ScanItnComponent } from './scan-itn/scan-itn.component';
 import { VerifyPackComponent } from './verfiy-pack/verify-pack.component';
 import { GlobalMessagesComponent } from './global-messages/global-messages.component';
 import { RepackComponent } from './repack/repack.component';
+import { LogWeightComponent } from './log-weight.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
       { path: 'globalmessages', component: GlobalMessagesComponent },
       { path: 'verifypack', component: VerifyPackComponent },
       { path: 'repack', component: RepackComponent },
+      { path: 'logweight', component: LogWeightComponent },
       { path: '', pathMatch: 'full', redirectTo: 'scanitn' },
     ],
   },

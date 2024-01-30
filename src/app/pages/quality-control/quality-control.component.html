@@ -2,6 +2,9 @@
   <step-tabs></step-tabs>
   <router-outlet></router-outlet>
 </div>
+<div class="absolute bottom-2 left-2 h-16 w-16" *ngIf="!this.hdi.device">
+  <weight-scale-button></weight-scale-button>
+</div>
 
 <nz-modal
   *ngIf="printerStation$ | async"

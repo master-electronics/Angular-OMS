@@ -1,8 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { QualityControlService } from './quality-control.server';
 import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { HDIService } from 'src/app/shared/data/hdi';
 
 @Component({
   selector: 'quality-control',
@@ -17,7 +16,8 @@ export class QualityControlComponent implements OnInit {
 
   constructor(
     private _title: NavbarTitleService,
-    private _printer: PrinterService
+    private _printer: PrinterService,
+    public hdi: HDIService
   ) {
     this._title.update('Quality Control');
   }

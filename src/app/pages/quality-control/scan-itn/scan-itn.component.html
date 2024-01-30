@@ -39,18 +39,14 @@
           </div>
         </nz-form-item>
 
-        <nz-form-item nz-row *ngIf="alertMessage" nzJustify="center">
+        <nz-form-item
+          nz-row
+          *ngIf="this.qcService.alertMessage()"
+          nzJustify="center"
+        >
           <nz-alert
-            [nzType]="
-              alertType === 'error'
-                ? 'error'
-                : alertType === 'success'
-                ? 'success'
-                : alertType === 'info'
-                ? 'info'
-                : 'warning'
-            "
-            [nzMessage]="alertMessage"
+            [nzType]="this.qcService.alertType()"
+            [nzMessage]="this.qcService.alertMessage()"
             nzShowIcon
             class="w-full"
           ></nz-alert>

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { QcGlobalMessageQuery } from 'src/app/graphql/qualityControl.graphql-gen';
 
@@ -32,6 +33,10 @@ export class QualityControlService {
   public get itemInfo(): itemParams {
     return this._itemInfo.value;
   }
+
+  //alter info
+  public alertType = signal<'error' | 'success' | 'info' | 'warning'>(null);
+  public alertMessage = signal<string>(null);
 }
 
 export interface itemParams {
