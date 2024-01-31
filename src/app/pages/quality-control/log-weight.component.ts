@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
-import { debounceTime, distinctUntilChanged, map, of, startWith } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { HDIService } from 'src/app/shared/data/hdi';
@@ -17,7 +17,7 @@ import { QualityControlService } from './quality-control.server';
   imports: [CommonModule, RouterModule, SubmitButtonComponent],
   template: `
     <h1 class="flex justify-center text-xl font-bold lg:text-4xl">
-      Put Item on the scale
+      Put the ITN's item(s) on the scale
     </h1>
     <h1 class="text-xl font-bold lg:text-3xl">
       Weight: {{ weight$ | async }} {{ this.HDI.unit() }}
@@ -48,7 +48,11 @@ export class LogWeightComponent {
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
     public HDI: HDIService
-  ) {}
+  ) {
+    if (!this.HDI.device) {
+      this._router.navigate(['/qc']);
+    }
+  }
 
   onSubmit(): void {
     if (!this.HDI.weight()) {

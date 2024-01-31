@@ -64,7 +64,7 @@ export class HomeComponent {
           case 'o':
             link = '/agout';
             break;
-          case 'Q':
+          case 'q':
             link = '/qc';
             break;
           case 'r':

@@ -673,6 +673,7 @@ export type MenuGroup = {
 export type Mutation = {
   __typename?: 'Mutation';
   ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
+  addWeightScale?: Maybe<Scalars['Boolean']>;
   changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
@@ -749,7 +750,7 @@ export type Mutation = {
   insertUserEventLogs?: Maybe<Array<Maybe<UserEventLog>>>;
   insertUserZone?: Maybe<Zone>;
   insertValueMap?: Maybe<ValueMap>;
-  inventoryUpdate?: Maybe<Scalars['Boolean']>;
+  inventoryUpdate?: Maybe<UpdateResult>;
   itnChange?: Maybe<Scalars['Boolean']>;
   itnEvent?: Maybe<Itnlifecycle_Report>;
   itnLocationChange?: Maybe<Scalars['Boolean']>;
@@ -757,6 +758,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
+  removeWeightScale?: Maybe<Scalars['Boolean']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1205,6 +1207,7 @@ export type MutationInventoryUpdateArgs = {
   ROHSFlag?: InputMaybe<Scalars['String']>;
   Suspect?: InputMaybe<Scalars['String']>;
   User: Scalars['String'];
+  VerificationState?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationItnChangeArgs = {
@@ -1809,6 +1812,7 @@ export type Query = {
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
   findEventType?: Maybe<Array<Maybe<EventType>>>;
+  findHdiDevice?: Maybe<HdiDevice>;
   findIMInventories?: Maybe<Array<Maybe<Auditinventory>>>;
   findIMPRCInventories?: Maybe<Array<Maybe<Inventory>>>;
   findIMPRCPartNumberInventories?: Maybe<Array<Maybe<Inventory>>>;
@@ -2512,6 +2516,12 @@ export type TableKey = {
   ID?: Maybe<Scalars['Int']>;
 };
 
+export type UpdateResult = {
+  __typename?: 'UpdateResult';
+  StatusCode?: Maybe<Scalars['String']>;
+  StatusMessage?: Maybe<Scalars['String']>;
+};
+
 export type UpdatedOrder = {
   __typename?: 'UpdatedOrder';
   AutostoreOrderCount?: Maybe<Scalars['Int']>;
@@ -2532,6 +2542,7 @@ export type UpdatedOrderLine = {
   OrderLineID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderLineQuantity?: Maybe<Scalars['Float']>;
+  PackQty?: Maybe<Scalars['Int']>;
   PartNumber?: Maybe<Scalars['String']>;
   ProductCodeNumber?: Maybe<Scalars['String']>;
   UOM?: Maybe<Scalars['String']>;
@@ -2742,6 +2753,12 @@ export type EntityTable = {
   __typename?: 'entityTable';
   TableName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type HdiDevice = {
+  __typename?: 'hdiDevice';
+  IP: Scalars['String'];
+  WeightScale: Scalars['Boolean'];
 };
 
 export type ImTrigger = {

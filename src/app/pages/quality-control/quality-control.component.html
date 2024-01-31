@@ -2,9 +2,6 @@
   <step-tabs></step-tabs>
   <router-outlet></router-outlet>
 </div>
-<div class="absolute bottom-2 left-2 h-16 w-16" *ngIf="!this.hdi.device">
-  <weight-scale-button></weight-scale-button>
-</div>
 
 <nz-modal
   *ngIf="printerStation$ | async"
@@ -14,5 +11,18 @@
 >
   <ng-container *nzModalContent>
     <p>{{ modalMessage }}</p>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  *ngIf="weight$ | async"
+  [(nzVisible)]="!this.hdi.device"
+  nzTitle="Weight Scale"
+  (nzOnOk)="connect()"
+>
+  <ng-container *nzModalContent>
+    <p class="text-xl">Connect to the weight scale</p>
+    <p class="font-serif">Remove the weight scale, if you don't have it</p>
+    <link rel="stylesheet" href="/weightscale" />
   </ng-container>
 </nz-modal>
