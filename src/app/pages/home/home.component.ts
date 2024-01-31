@@ -12,7 +12,6 @@ import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { ShortCutService } from 'src/app/shared/services/short-cut.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({

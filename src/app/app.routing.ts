@@ -180,6 +180,13 @@ export const routes: Routes = [
           ).then((m) => m.ClearSuspectInventoryComponent),
       },
       {
+        path: 'weightscalesetting',
+        loadComponent: () =>
+          import(
+            './pages/weight-scale-setting/weight-scale-setting.component'
+          ).then((m) => m.WeightScaleSettingComponent),
+      },
+      {
         path: 'tableview',
         loadChildren: () =>
           import('./pages/table-view/routing').then((m) => m.TableViewRoutes),

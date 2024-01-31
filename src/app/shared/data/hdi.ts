@@ -1,6 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { map } from 'rxjs';
-import { FindWeightScaleConfigGQL } from 'src/app/graphql/qualityControl.graphql-gen';
+import {
+  AddWeightScaleGQL,
+  FindWeightScaleConfigGQL,
+  RemoveWeightScaleGQL,
+} from 'src/app/graphql/qualityControl.graphql-gen';
 import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
 
 @Injectable({
@@ -14,7 +18,11 @@ export class HDIService {
   public unit = signal<string>(null);
   public isConnect = signal<string>(this._sessionStorage.getItem('HidDevice'));
 
-  constructor(private _fetchWeight: FindWeightScaleConfigGQL) {}
+  constructor(
+    private _fetchWeight: FindWeightScaleConfigGQL,
+    private addWeight: AddWeightScaleGQL,
+    private removeWeight: RemoveWeightScaleGQL
+  ) {}
 
   async connectHID() {
     if (!('hid' in navigator)) {
@@ -51,5 +59,13 @@ export class HDIService {
     return this._fetchWeight
       .fetch()
       .pipe(map((res) => res.data.findHdiDevice.WeightScale));
+  }
+
+  addWeightScale$() {
+    return this.addWeight.mutate().pipe(map(() => true));
+  }
+
+  removeWeightScale$() {
+    return this.removeWeight.mutate().pipe(map(() => true));
   }
 }
