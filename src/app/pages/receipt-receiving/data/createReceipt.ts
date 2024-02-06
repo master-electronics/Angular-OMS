@@ -79,10 +79,13 @@ export class CreateReceiptService {
   public getPurchaseOrderInfo$(order: string) {
     this.updatePurchaseInfo({ PurchaseOrderNumber: order });
     return this._fetchpurchase
-      .fetch({
-        PurchaseOrderNumber: order,
-        DistributionCenter: environment.DistributionCenter,
-      })
+      .fetch(
+        {
+          PurchaseOrderNumber: order,
+          DistributionCenter: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
       .pipe(
         tap((res) => {
           if (!res.data.findPurchaseOrderH._id) {

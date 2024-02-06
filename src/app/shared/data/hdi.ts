@@ -29,7 +29,6 @@ export class HDIService {
       console.error('WebHID is not supported in this browser.');
       return;
     }
-
     try {
       const filters = [
         // FairBanks
