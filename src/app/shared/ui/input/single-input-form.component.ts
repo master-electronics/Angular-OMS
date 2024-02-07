@@ -101,6 +101,7 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
             (buttonClick)="onBack()"
           ></normal-button>
         </div>
+
         <div *ngIf="data?.error" class="mt-1 md:mt-3 lg:mt-6">
           <message-bar
             [message]="data?.error.message"

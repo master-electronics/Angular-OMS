@@ -57,16 +57,17 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
   template: `
     <page-header headerText="Count the following ITN:"></page-header>
     <ng-container *ngIf="auditInfo">
-      <audit-info [auditInfo]="auditInfo"></audit-info>
+      <audit-info [auditInfo]="auditInfo" [showGblMsg]="true"></audit-info>
     </ng-container>
     <div style="height: 200px;"></div>
-    <simple-keyboard
+    <!--<simple-keyboard
       *ngIf="keyBoard"
       [inputString]="this.inputForm.value.quantity"
       (outputString)="onChange($event)"
       layout="number"
       [numberOnly]="true"
     ></simple-keyboard>
+    -->
     <ng-container *ngIf="message">
       <popup-modal (clickSubmit)="onBack()" [message]="message"></popup-modal>
     </ng-container>
@@ -79,14 +80,14 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     <div *ngIf="info$ | async"></div>
     <div *ngIf="close$ | async"></div>
     <div
-      style="position: fixed; bottom: 5px; z-index: 10000; text-align: center; width: 95%;"
+      style="position: fixed; bottom: 5px; z-index: 1; text-align: center; width: 95%;"
     >
-      <img
+      <!-- <img
         (click)="keyBoard = !keyBoard"
         style="display: inline-block;"
         src="assets/img/keyboard.svg"
         width="40"
-      />
+      /> -->
     </div>
     <div
       style="position: fixed; bottom: 0; background-color: white; width: 95%"
@@ -594,15 +595,70 @@ export class QuantityAudit implements OnInit {
                   }),
                   switchMap(() => {
                     if (Number(qty) == currentAudit.Inventory.Quantity) {
-                      setTimeout(() => {
-                        this.counts = [];
-                      }, 1000);
+                      //setTimeout(() => {
+                      this.counts = [];
+                      //}, 1000);
                       //correct, don't need confirmation
+                      this.userEventLogs.push({
+                        UserEventID: sqlData.Event_IM_Quantity_Unchanged,
+                        UserName: this.userInfo.userName,
+                        DistributionCenter: environment.DistributionCenter,
+                        InventoryTrackingNumber:
+                          sessionStorage.getItem('auditITN'),
+                        Message: 'Quantity: ' + qty,
+                      });
 
-                      setTimeout(() => {
-                        const typeID = Number(qty) == 0 ? null : 20;
-                        this.closeAudit(qty, typeID);
-                      }, 5000);
+                      this.eventLogs.push({
+                        UserName: this.userInfo.userName,
+                        EventTypeID: sqlData.Event_IM_Quantity_Unchanged,
+                        Log: JSON.stringify({
+                          DistributionCenter: environment.DistributionCenter,
+                          InventoryTrackingNumber:
+                            sessionStorage.getItem('auditITN'),
+                          ParentITN: currentAudit.Inventory.ParentITN,
+                          BinLocation: currentAudit.Container.Barcode,
+                          QuantityEntered: qty,
+                          QuantityOnHand: currentAudit.Inventory.Quantity,
+                          OriginalQuantity:
+                            currentAudit.Inventory.OriginalQuantity,
+                          DateCode: currentAudit.Inventory.DateCode,
+                          CountryOfOrigin: currentAudit.Inventory.COO,
+                          ROHS: currentAudit.Inventory.ROHS,
+                          NotFound: currentAudit.Inventory.NotFound,
+                          Suspect: currentAudit.Inventory.Suspect,
+                          LocatedInAutostore:
+                            currentAudit.Inventory.LocatedInAutostore,
+                          BoundForAutostore:
+                            currentAudit.Inventory.BoundForAutostore,
+                          PartNumber: currentAudit.Inventory.Product.PartNumber,
+                          ProductCode:
+                            currentAudit.Inventory.Product.ProductCode
+                              .ProductCodeNumber,
+                          Description:
+                            currentAudit.Inventory.Product.Description,
+                          ProductTier:
+                            currentAudit.Inventory.Product.ProductTier,
+                          ProductType:
+                            currentAudit.Inventory.Product.ProductType
+                              .ProductType,
+                          ProductTypeDescription:
+                            currentAudit.Inventory.Product.ProductType
+                              .Description,
+                          Velocity: currentAudit.Inventory.Product.Velocity,
+                          MICPartNumber:
+                            currentAudit.Inventory.Product.MICPartNumber,
+                          UOM: currentAudit.Inventory.Product.UOM,
+                          Autostore: currentAudit.Inventory.Product.Autostore,
+                          PackType: currentAudit.Inventory.Product.PackType,
+                          PackQuantity: currentAudit.Inventory.Product.PackQty,
+                          Cost: currentAudit.Inventory.Product.Cost,
+                        }),
+                      });
+
+                      //setTimeout(() => {
+                      const typeID = Number(qty) == 0 ? null : 20;
+                      this.closeAudit(qty, typeID);
+                      //}, 5000);
                     }
 
                     return of(true);
@@ -676,6 +732,56 @@ export class QuantityAudit implements OnInit {
                   this.Quantity = quantity;
                   this.reasonsVisible = true;
                   return of(true);
+                } else {
+                  this.userEventLogs.push({
+                    UserEventID: sqlData.Event_IM_Quantity_Unchanged,
+                    UserName: this.userInfo.userName,
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                    Message: 'Quantity: ' + quantity,
+                  });
+
+                  this.eventLogs.push({
+                    UserName: this.userInfo.userName,
+                    EventTypeID: sqlData.Event_IM_Quantity_Unchanged,
+                    Log: JSON.stringify({
+                      DistributionCenter: environment.DistributionCenter,
+                      InventoryTrackingNumber:
+                        sessionStorage.getItem('auditITN'),
+                      ParentITN: currentAudit.Inventory.ParentITN,
+                      BinLocation: currentAudit.Container.Barcode,
+                      QuantityEntered: quantity,
+                      QuantityOnHand: currentAudit.Inventory.Quantity,
+                      OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                      DateCode: currentAudit.Inventory.DateCode,
+                      CountryOfOrigin: currentAudit.Inventory.COO,
+                      ROHS: currentAudit.Inventory.ROHS,
+                      NotFound: currentAudit.Inventory.NotFound,
+                      Suspect: currentAudit.Inventory.Suspect,
+                      LocatedInAutostore:
+                        currentAudit.Inventory.LocatedInAutostore,
+                      BoundForAutostore:
+                        currentAudit.Inventory.BoundForAutostore,
+                      PartNumber: currentAudit.Inventory.Product.PartNumber,
+                      ProductCode:
+                        currentAudit.Inventory.Product.ProductCode
+                          .ProductCodeNumber,
+                      Description: currentAudit.Inventory.Product.Description,
+                      ProductTier: currentAudit.Inventory.Product.ProductTier,
+                      ProductType:
+                        currentAudit.Inventory.Product.ProductType.ProductType,
+                      ProductTypeDescription:
+                        currentAudit.Inventory.Product.ProductType.Description,
+                      Velocity: currentAudit.Inventory.Product.Velocity,
+                      MICPartNumber:
+                        currentAudit.Inventory.Product.MICPartNumber,
+                      UOM: currentAudit.Inventory.Product.UOM,
+                      Autostore: currentAudit.Inventory.Product.Autostore,
+                      PackType: currentAudit.Inventory.Product.PackType,
+                      PackQuantity: currentAudit.Inventory.Product.PackQty,
+                      Cost: currentAudit.Inventory.Product.Cost,
+                    }),
+                  });
                 }
 
                 this.closeAudit(qty, typeID);

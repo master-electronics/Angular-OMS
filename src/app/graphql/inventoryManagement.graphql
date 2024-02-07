@@ -32,6 +32,15 @@ query verifyAuditLocation($container: searchContainer) {
   }
 }
 
+query findContainerInventory($container: searchContainer) {
+  findContainer(Container: $container) {
+    INVENTORies {
+      _id
+      InventoryTrackingNumber
+    }
+  }
+}
+
 query findProductCode($productCode: searchProductCode) {
   findProductCode(productCode: $productCode) {
     _id
@@ -56,6 +65,41 @@ query findIMInventory($inventory: searchInventory!) {
     }
     Container {
       Barcode
+    }
+  }
+}
+
+query fetchInventory($inventoryIDs: [Int]) {
+  fetchInventory(InventoryIDs: $inventoryIDs) {
+    _id
+    DistributionCenter
+    InventoryTrackingNumber
+    ParentITN
+    BinLocation
+    QuantityOnHand
+    OriginalQuantity
+    DateCode
+    Country {
+      ISO2
+    }
+    ROHS
+    NotFound
+    Suspect
+    LocatedInAutostore
+    BoundForAutostore
+    Product {
+      PartNumber
+      ProductCode {
+        ProductCodeNumber
+      }
+      Description
+      Velocity
+      UOM
+      MICPartNumber
+      Autostore
+      ProductTier
+      PackQty
+      PackType
     }
   }
 }
@@ -147,6 +191,12 @@ query findNextAudit($userID: Int, $barcode: String, $distributionCenter: String)
   }
 }
 
+query fetchGlobalMessages($inventoryId: Int) {
+  fetchGlobalMessages(InventoryID: $inventoryId) {
+    Message
+  }
+}
+
 query getNextSubAudit($inventoryID: Int, $userID: Int) {
   getNextSubAudit(InventoryID: $inventoryID, UserID: $userID) {
     _id
@@ -217,6 +267,27 @@ query getAuditCount {
   getAuditCount
 }
 
+query fetchInventoryAudits($inventoryId: Int) {
+  fetchInventoryAudits(InventoryID: $inventoryId) {
+    Type {
+      Type
+    }
+  }
+}
+
+query fetchPreviousLocation(
+  $itn: String!
+  $binlocation: String!
+) {
+  fetchPreviousLocation(
+    ITN: $itn
+    BinLocation: $binlocation
+  ) {
+    StatusCode
+    StatusMessage
+  }
+}
+
 mutation clearAudits($username: String, $distributionCenter: String) {
   clearAudits(Username: $username, DistributionCenter: $distributionCenter) {
     _id
@@ -270,6 +341,25 @@ mutation inventoryUpdate(
   }
 }
 
+mutation recreateITN(
+  $user: String!
+  $itn: String!
+  $warehouse: String!
+  $binlocation: String!
+  $quantity: String!
+) {
+  recreateITN(
+    User: $user
+    ITN: $itn
+    WAREHOUSE: $warehouse
+    BINLOCATION: $binlocation
+    QUANTITY: $quantity
+  ) {
+    StatusCode
+    StatusMessage
+  }
+}
+
 mutation deleteAudit(
   $inventoryID: Int
   $typeID: Int
@@ -288,6 +378,10 @@ mutation deleteAudits($inventoryID: Int) {
   ) {
     _id
   }
+}
+
+mutation deleteAuditsList($inventoryIDs: [Int]) {
+  deleteAuditsList(InventoryIDs: $inventoryIDs)
 }
 
 mutation closeAudit(

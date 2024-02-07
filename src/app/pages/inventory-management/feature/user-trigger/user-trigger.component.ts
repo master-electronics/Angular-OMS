@@ -560,6 +560,7 @@ export class UserTrigger {
               DistributionCenter: environment.DistributionCenter,
               InventoryTrackingNumber: item.ITN,
               AuditTypeID: type.value,
+              Trigger: 'User Tigger',
             }),
           });
         });

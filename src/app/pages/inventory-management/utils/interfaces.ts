@@ -57,6 +57,7 @@ export interface Product {
   Cost?: number;
   SLC?: string;
   MSL?: string;
+  GlobalMessages?: [GlobalMessage?];
 }
 
 export interface ProductCode {
@@ -68,4 +69,8 @@ export interface ProductType {
   _id?: number;
   ProductType?: string;
   Description?: string;
+}
+
+export interface GlobalMessage {
+  Message?: string;
 }

@@ -322,6 +322,52 @@ export class ROHSAudit implements OnInit {
                   NewROHS: rohs,
                 }),
               });
+            } else {
+              userEventLogs.push({
+                UserEventID: sqlData.Event_IM_ROHS_Updated,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                Message: 'ROHS: ' + rohs,
+              });
+
+              eventLogs.push({
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_ROHS_Updated,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
+                  NewROHS: rohs,
+                }),
+              });
             }
 
             this.data$ = this._eventLog

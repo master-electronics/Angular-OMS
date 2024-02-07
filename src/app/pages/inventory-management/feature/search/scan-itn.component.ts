@@ -23,6 +23,7 @@ import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import {
   Audit,
   AuditType,
@@ -49,23 +50,46 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
     NzGridModule,
     FormsModule,
     AuditInfoComponent,
+    PageHeaderComponent,
   ],
   template: `
+    <page-header headerText="Scan ITNS on shelf:"></page-header>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+      <div nz-col nzSpan="6" class="text-black md:text-lg lg:text-xl">
+        <span class="mr-2 font-medium">Location:</span>
+      </div>
+      <div nz-col nzSpan="13" class="text-black md:text-lg lg:text-xl">
+        <span class="justify-self-start text-blue-600">
+          {{ searchLocation }}
+        </span>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div
+        class="text-base sm:text-lg md:mx-16 md:text-2xl lg:text-4xl"
+        style="width: 100%"
+      >
+        <div class="gap-2 md:grid" style="width: 100%">
+          <label class="mb-0.5 font-bold text-gray-700">Scanned:</label>
+          <label
+            class="mb-0.5 font-bold text-gray-700"
+            style="position: relative; float: right;"
+            >{{ scannedITNs ? scannedITNs?.length : 0 }} ITNs</label
+          >
+        </div>
+      </div>
+    </div>
+    <ng-container *ngFor="let itn of scannedITNs">
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <div nz-col nzSpan="6" class="text-black md:text-lg lg:text-xl">
+          <span class="mr-2 font-medium">{{ itn }}</span>
+        </div>
+      </div>
+    </ng-container>
     <ng-container *ngIf="info$ | async as info">
       <audit-info [auditInfo]="auditInfo"></audit-info>
     </ng-container>
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="itn"
-      title="Scan ITN:"
-      backButtonText="Done"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-input-form>
+
     <ng-container *ngIf="this.showTimeoutAlert">
       <popup-modal
         (clickSubmit)="resetTimeout()"
@@ -79,6 +103,24 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
       ></popup-modal>
     </ng-container>
     <div *ngIf="close$ | async"></div>
+    <div *ngIf="test$ | async"></div>
+    <div
+      style="position: fixed; bottom: 0px; background-color: white; width: 95%"
+    >
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="string"
+        controlName="itn"
+        title="Scan ITN:"
+        backButtonText="Done"
+        [isvalid]="this.inputForm.valid"
+      >
+      </single-input-form>
+      <div style="height: 10px;"></div>
+    </div>
   `,
 })
 export class ScanITN implements OnInit {
@@ -96,6 +138,7 @@ export class ScanITN implements OnInit {
   public data$;
   public info$;
   public close$;
+  public test$;
   public inputForm = this._fb.nonNullable.group({
     itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
@@ -109,13 +152,24 @@ export class ScanITN implements OnInit {
   timeoutSeconds = 0;
   showTimeoutAlert;
   timeoutAlert;
+  scannedITNs = [];
+  isLoading = false;
+  beep = new BeepBeep();
 
   ngOnInit(): void {
+    this.scannedITNs = JSON.parse(sessionStorage.getItem('scannedITNs'));
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
     );
 
+    this.searchLocation = sessionStorage.getItem('searchLocation');
+
     this.lastUpdated = Number(currentAudit.LastUpdated);
+    const audits = [];
+
+    const userEventLogs = [];
+    const eventLogs = [];
+
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
         this.auditTimeout =
@@ -124,6 +178,55 @@ export class ScanITN implements OnInit {
 
         const timeoutTimer = interval(1000);
         this.subscription = timeoutTimer.subscribe((val) => this.timer());
+      }),
+      switchMap((res) => {
+        return this._auditService
+          .fetchContainerInventory({
+            Barcode: sessionStorage.getItem('searchLocation'),
+          })
+          .pipe(
+            map((res) => {
+              res.data.findContainer.INVENTORies.forEach((inv) => {
+                audits.push({
+                  TypeID: 10,
+                  InventoryID: inv._id,
+                  InventoryTrackingNumber: inv.InventoryTrackingNumber,
+                  LastUpdated: new Date(Date.now()).toISOString(),
+                  CreatedDatetime: new Date(Date.now()).toISOString(),
+                  UserID: this.userInfo.userId,
+                });
+
+                userEventLogs.push({
+                  UserEventID: sqlData.Event_IM_Audit_Created,
+                  UserName: this.userInfo.userName,
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: inv.InventoryTrackingNumber,
+                  Message: 'Audit Type 10 created',
+                });
+
+                eventLogs.push({
+                  UserName: this.userInfo.userName,
+                  EventTypeID: sqlData.Event_IM_Audit_Created,
+                  Log: JSON.stringify({
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: inv.InventoryTrackingNumber,
+                    AuditTypeID: 10,
+                    Trigger: 'ITN Location Audit Search',
+                    SearchedITN: JSON.parse(
+                      sessionStorage.getItem('currentAudit')
+                    ).Inventory.ITN,
+                    SearchLocation: sessionStorage.getItem('CurrentLocation'),
+                  }),
+                });
+              });
+            })
+          );
+      }),
+      switchMap(() => {
+        return this._auditService.insertAudits(audits);
+      }),
+      switchMap(() => {
+        return this._eventLog.insertLog(userEventLogs, eventLogs);
       })
     );
 
@@ -188,6 +291,10 @@ export class ScanITN implements OnInit {
   }
 
   onSubmit(): void {
+    this.scannedITNs = sessionStorage.getItem('scannedITNs')
+      ? JSON.parse(sessionStorage.getItem('scannedITNs'))
+      : [];
+
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
     );
@@ -217,6 +324,11 @@ export class ScanITN implements OnInit {
       },
     ];
 
+    if (!this.scannedITNs.includes(itn)) {
+      this.scannedITNs.push(itn);
+    }
+
+    sessionStorage.setItem('scannedITNs', JSON.stringify(this.scannedITNs));
     const closeAuditsUserEventLogs = [];
     const closeAuditsEventLogs = [];
 
@@ -224,7 +336,7 @@ export class ScanITN implements OnInit {
       switchMap((res) => {
         locs = JSON.parse(sessionStorage.getItem('searchLocations'));
         loc = locs?.find((loc) => loc.Status == 'active');
-        barcode = res.data.findInventory.Container.Barcode;
+        barcode = res.data.findInventory?.Container?.Barcode;
 
         if (loc.Barcode != barcode) {
           userEventLogs.push({
@@ -249,15 +361,80 @@ export class ScanITN implements OnInit {
               NewBinLocation: loc.Barcode,
             }),
           });
+
+          return this._auditService
+            .inventoryUpdate(
+              this.userInfo.userName,
+              itn,
+              'Inventory Management Audit',
+              '',
+              '',
+              '',
+              '',
+              '',
+              loc.Barcode
+            )
+            .pipe(
+              switchMap((res) => {
+                if (res.data?.inventoryUpdate?.StatusCode == '400') {
+                  this._router.navigate(['../verify-quantity', itn], {
+                    relativeTo: this._actRoute,
+                  });
+                }
+                return this._auditService.findInventory(
+                  environment.DistributionCenter,
+                  itn.toString()
+                );
+              }),
+              switchMap((res) => {
+                const audits = [];
+
+                if (res.data.findInventory?._id) {
+                  audits.push({
+                    TypeID: 10,
+                    InventoryID: res.data.findInventory._id,
+                    InventoryTrackingNumber: itn,
+                    LastUpdated: new Date(Date.now()).toISOString(),
+                    CreatedDatetime: new Date(Date.now()).toISOString(),
+                    UserID: this.userInfo.userId,
+                  });
+                }
+
+                userEventLogs.push({
+                  UserEventID: sqlData.Event_IM_Audit_Created,
+                  UserName: this.userInfo.userName,
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: itn,
+                  Message: 'Audit Type 10 created',
+                });
+
+                eventLogs.push({
+                  UserName: this.userInfo.userName,
+                  EventTypeID: sqlData.Event_IM_Audit_Created,
+                  Log: JSON.stringify({
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: itn,
+                    AuditTypeID: 10,
+                    Trigger: 'ITN Location Audit Search',
+                    SearchedITN: JSON.parse(
+                      sessionStorage.getItem('currentAudit')
+                    ).Inventory.ITN,
+                    SearchLocation: sessionStorage.getItem('CurrentLocation'),
+                  }),
+                });
+
+                return this._auditService.insertAudits(audits);
+              })
+            );
         }
 
-        return this._eventLog.insertLog(userEventLogs, eventLogs);
+        return of(res);
       }),
       switchMap((res) => {
         return this._auditService.closeAudits(itn).pipe(
           map((res) => {
             res?.data.closeAudits.forEach((audit) => {
-              closeAuditsUserEventLogs.push({
+              userEventLogs.push({
                 UserEventID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                 UserName: this.userInfo.userName,
                 DistributionCenter: environment.DistributionCenter,
@@ -266,7 +443,7 @@ export class ScanITN implements OnInit {
                   found while searching for ITN: ${currentAudit.Inventory.ITN}`,
               });
 
-              closeAuditsEventLogs.push({
+              eventLogs.push({
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                 Log: JSON.stringify({
@@ -281,33 +458,7 @@ export class ScanITN implements OnInit {
         );
       }),
       switchMap((res) => {
-        if (closeAuditsUserEventLogs.length > 0) {
-          const t = 'test';
-          return this._eventLog.insertLog(
-            closeAuditsUserEventLogs,
-            closeAuditsEventLogs
-          );
-        } else {
-          const t = 'test';
-          return of(res);
-        }
-      }),
-      switchMap((res) => {
-        if (loc.Barcode != barcode) {
-          return this._auditService.inventoryUpdate(
-            this.userInfo.userName,
-            itn,
-            'Inventory Management Audit',
-            '',
-            '',
-            '',
-            '',
-            '',
-            loc.Barcode
-          );
-        }
-
-        return of(res);
+        return this._eventLog.insertLog(userEventLogs, eventLogs);
       }),
       switchMap((res) => {
         if (
@@ -326,13 +477,34 @@ export class ScanITN implements OnInit {
           audit.Container.Barcode = loc.Barcode;
           sessionStorage.setItem('currentAudit', JSON.stringify(audit));
 
-          this.message =
-            'Found ITN ' +
-            JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN;
+          const auditList = [];
 
-          return of(res);
+          return this._auditService
+            .fetchInventoryAudits(
+              Number(
+                JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID
+              )
+            )
+            .pipe(
+              map((res) => {
+                let msg = 'You Found ' + itn + '<br/>Pending Audits:<br/>';
+                res.data.fetchInventoryAudits.forEach((audit) => {
+                  msg += audit.Type.Type + '<br/>';
+                  auditList.push(audit);
+                });
+
+                this.message = msg;
+              })
+            );
         }
+        return of(res);
+      }),
+      switchMap((res) => {
+        this.beep.processed(10, 820);
 
+        return of(res);
+      }),
+      switchMap((res) => {
         this._router.navigate(['../scan-itn'], {
           relativeTo: this._actRoute,
         });
@@ -348,14 +520,36 @@ export class ScanITN implements OnInit {
   }
 
   onBack(): void {
-    const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
-    const loc = locs?.find((loc) => loc.Status == 'active');
-    loc.Status = 'done';
-    sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+    this.test$ = this._auditService
+      .LocationSearchDone(
+        sessionStorage.getItem('searchLocation'),
+        JSON.parse(sessionStorage.getItem('scannedITNs')),
+        Number(JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID)
+      )
+      .pipe(
+        switchMap((res) => {
+          sessionStorage.setItem('searchLevel', '2');
+          sessionStorage.removeItem('searchLocation');
+          this._router.navigate(['../scan-location'], {
+            relativeTo: this._actRoute,
+          });
 
-    this._router.navigate(['../scan-location'], {
-      relativeTo: this._actRoute,
-    });
+          return of(res);
+        })
+      );
+
+    // this.test$ = this._auditService.fetchContainerInventory(
+    //   { Barcode: sessionStorage.getItem('searchLocation') },
+    // );
+
+    // const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
+    // const loc = locs?.find((loc) => loc.Status == 'active');
+    // loc.Status = 'done';
+    // sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+
+    // this._router.navigate(['../scan-location'], {
+    //   relativeTo: this._actRoute,
+    // });
   }
 
   onFoundOk() {

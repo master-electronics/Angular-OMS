@@ -23,6 +23,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type ApiResult = {
+  __typename?: 'APIResult';
+  StatusCode?: Maybe<Scalars['String']>;
+  StatusMessage?: Maybe<Scalars['String']>;
+};
+
 export type Asnrejectionreason = {
   __typename?: 'ASNREJECTIONREASON';
   Global?: Maybe<Scalars['Boolean']>;
@@ -283,6 +289,11 @@ export type EventType = {
   _id: Scalars['Int'];
 };
 
+export type Globalmsg = {
+  __typename?: 'GLOBALMSG';
+  Message?: Maybe<Scalars['String']>;
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -297,6 +308,20 @@ export type HoldOnCounter = {
 export type Imadjustreason = {
   __typename?: 'IMADJUSTREASON';
   Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Imaudit = {
+  __typename?: 'IMAUDIT';
+  CreatedDatetime?: Maybe<Scalars['String']>;
+  InventoryID?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  LastUpdated?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Int']>;
+  Trigger?: Maybe<Scalars['String']>;
+  Type?: Maybe<Audittype>;
+  TypeID?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -694,6 +719,7 @@ export type Mutation = {
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteAudit?: Maybe<Audit>;
   deleteAudits?: Maybe<Audit>;
+  deleteAuditsList?: Maybe<Scalars['Boolean']>;
   deleteAutostoreOrderLineHistory?: Maybe<Autostoreorderline>;
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -762,6 +788,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
+  recreateITN?: Maybe<UpdateResult>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -898,6 +925,10 @@ export type MutationDeleteAuditArgs = {
 
 export type MutationDeleteAuditsArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationDeleteAuditsListArgs = {
+  InventoryIDs?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
@@ -1260,6 +1291,14 @@ export type MutationProcessSystemTriggerArgs = {
   Source?: InputMaybe<Scalars['String']>;
   TriggerName?: InputMaybe<Scalars['String']>;
   Username?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationRecreateItnArgs = {
+  BINLOCATION: Scalars['String'];
+  ITN: Scalars['String'];
+  QUANTITY: Scalars['String'];
+  User: Scalars['String'];
+  WAREHOUSE: Scalars['String'];
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
@@ -1699,6 +1738,8 @@ export type Product = {
   MICPartNumber?: Maybe<Scalars['String']>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PURCHASEORDERLs?: Maybe<Array<Maybe<PurchaseOrderL>>>;
+  PackQty?: Maybe<Scalars['Float']>;
+  PackType?: Maybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
@@ -1708,7 +1749,7 @@ export type Product = {
   RECEIPTLs?: Maybe<Array<Maybe<ReceiptL>>>;
   UOM?: Maybe<Scalars['String']>;
   Velocity?: Maybe<Scalars['String']>;
-  _id: Scalars['Int'];
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type ProductCode = {
@@ -1774,11 +1815,14 @@ export type Query = {
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
+  fetchGlobalMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNLifecycleDrillDownRows?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
+  fetchInventory?: Maybe<Array<Maybe<Inventory>>>;
+  fetchInventoryAudits?: Maybe<Array<Maybe<Imaudit>>>;
   fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
@@ -1786,6 +1830,7 @@ export type Query = {
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPickingCalendarSettings?: Maybe<Scalars['String']>;
+  fetchPreviousLocation?: Maybe<ApiResult>;
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
@@ -1916,6 +1961,10 @@ export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
 };
 
+export type QueryFetchGlobalMessagesArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
 export type QueryFetchHoldOnCounterArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
@@ -1942,6 +1991,14 @@ export type QueryFetchItnLifecycleDrillDownRowsArgs = {
 
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFetchInventoryArgs = {
+  InventoryIDs?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+export type QueryFetchInventoryAuditsArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFetchMenuListArgs = {
@@ -1971,6 +2028,11 @@ export type QueryFetchOrderViewArgs = {
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+};
+
+export type QueryFetchPreviousLocationArgs = {
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryFetchPrinterListArgs = {
@@ -3465,7 +3527,7 @@ export type FetchAsnInventoryQuery = {
       QuantityOnHand: number;
       Product: {
         __typename?: 'Product';
-        _id: number;
+        _id?: number | null;
         PartNumber: string;
         UOM?: string | null;
         LastAutostoreSync?: string | null;
@@ -3524,7 +3586,7 @@ export type FindProductQuery = {
   __typename?: 'Query';
   findProduct?: {
     __typename?: 'Product';
-    _id: number;
+    _id?: number | null;
     PartNumber: string;
     LastAutostoreSync?: string | null;
     Description?: string | null;

@@ -110,6 +110,18 @@ export const InventoryMangementRoutes: Routes = [
           import('./feature/search/scan-itn.component').then((m) => m.ScanITN),
       },
       {
+        path: 'audit/search/verify-quantity/:itn',
+        loadComponent: () =>
+          import('./feature/search/verify-quantity.component').then(
+            (m) => m.VerifyQuantity
+          ),
+      },
+      // {
+      //   path: 'audit/search/verify-quantity',
+      //   loadComponent: () =>
+      //     import('./feature/menu.component').then((m) => m.MenuComponent),
+      // },
+      {
         path: 'audit/verify/scan-itn',
         loadComponent: () =>
           import('./feature/verify/scan-itn.component').then((m) => m.ScanITN),

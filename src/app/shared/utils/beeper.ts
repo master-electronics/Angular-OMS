@@ -42,4 +42,20 @@ export class BeepBeep {
     a.start(this.context.currentTime + start);
     a.stop(this.context.currentTime + (start + 0.2));
   }
+
+  processed(vol: number, freq: number) {
+    const a = this.context.createOscillator();
+    const b = this.context.createGain();
+
+    a.connect(b);
+    a.frequency.value = freq;
+    a.type = 'square';
+    b.connect(this.context.destination);
+    b.gain.value = vol * 0.01;
+
+    a.start(this.context.currentTime);
+    a.stop(this.context.currentTime + 0.1);
+
+    return true;
+  }
 }

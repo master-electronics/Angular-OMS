@@ -156,44 +156,47 @@ import { BeepBeep } from 'src/app/shared/utils/beeper';
               </ng-template>
             </div>
           </div>
-          <div class="gap-2 md:grid">
-            <div class="relative grow">
-              <textarea
-                formControlName="comment"
-                [ngClass]="[
-                  inputForm.get('comment').invalid &&
-                  inputForm.get('comment').dirty
-                    ? 'border-red-500'
-                    : 'border-blue-500'
-                ]"
-                class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-                id="comment"
-                type="text"
-                autocomplete="off"
-                placeholder="Comment"
-                (focus)="onInputFocus($event)"
-                #input
-              ></textarea>
+          <!--<ng-component *ngIf="noMatch">-->
+          <div *ngIf="noMatch">
+            <div class="gap-2 md:grid">
+              <div class="relative grow">
+                <textarea
+                  formControlName="comment"
+                  [ngClass]="[
+                    inputForm.get('comment').invalid &&
+                    inputForm.get('comment').dirty
+                      ? 'border-red-500'
+                      : 'border-blue-500'
+                  ]"
+                  class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+                  id="comment"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Comment"
+                  (focus)="onInputFocus($event)"
+                  #input
+                ></textarea>
+              </div>
             </div>
-          </div>
-          <div class="gap-2 md:grid">
-            <div class="relative grow">
-              <input
-                formControlName="partNumber"
-                [ngClass]="[
-                  inputForm.get('comment').invalid &&
-                  inputForm.get('comment').dirty
-                    ? 'border-red-500'
-                    : 'border-blue-500'
-                ]"
-                class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
-                id="partNumber"
-                type="text"
-                autocomplete="off"
-                placeholder="Part #"
-                (focus)="onInputFocus($event)"
-                #input
-              />
+            <div class="gap-2 md:grid">
+              <div class="relative grow">
+                <input
+                  formControlName="partNumber"
+                  [ngClass]="[
+                    inputForm.get('partNumber').invalid &&
+                    inputForm.get('partNumber').dirty
+                      ? 'border-red-500'
+                      : 'border-blue-500'
+                  ]"
+                  class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+                  id="partNumber"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Part #"
+                  (focus)="onInputFocus($event)"
+                  #input
+                />
+              </div>
             </div>
           </div>
           <div class="opacity-0 ">no error</div>
@@ -262,6 +265,7 @@ export class PartNumberAudit implements OnInit {
   timeoutSeconds = 0;
   showTimeoutAlert;
   timeoutAlert;
+  noMatch = false;
 
   options = [
     {
@@ -369,8 +373,10 @@ export class PartNumberAudit implements OnInit {
 
     if (partMatch.value == 'noMatch') {
       comment.setValidators([Validators.required, Validators.minLength(10)]);
+      this.noMatch = true;
     } else {
       comment.setValidators(null);
+      this.noMatch = false;
     }
 
     comment.updateValueAndValidity();
@@ -475,6 +481,52 @@ export class PartNumberAudit implements OnInit {
               eventLogs.push({
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_PartNumber_Updated,
+                Log: JSON.stringify({
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                  ParentITN: currentAudit.Inventory.ParentITN,
+                  BinLocation: currentAudit.Container.Barcode,
+                  QuantityOnHand: currentAudit.Inventory.Quantity,
+                  OriginalQuantity: currentAudit.Inventory.OriginalQuantity,
+                  DateCode: currentAudit.Inventory.DateCode,
+                  CountryOfOrigin: currentAudit.Inventory.COO,
+                  ROHS: currentAudit.Inventory.ROHS,
+                  NotFound: currentAudit.Inventory.NotFound,
+                  Suspect: currentAudit.Inventory.Suspect,
+                  LocatedInAutostore: currentAudit.Inventory.LocatedInAutostore,
+                  BoundForAutostore: currentAudit.Inventory.BoundForAutostore,
+                  PartNumber: currentAudit.Inventory.Product.PartNumber,
+                  ProductCode:
+                    currentAudit.Inventory.Product.ProductCode
+                      .ProductCodeNumber,
+                  Description: currentAudit.Inventory.Product.Description,
+                  ProductTier: currentAudit.Inventory.Product.ProductTier,
+                  ProductType:
+                    currentAudit.Inventory.Product.ProductType.ProductType,
+                  ProductTypeDescription:
+                    currentAudit.Inventory.Product.ProductType.Description,
+                  Velocity: currentAudit.Inventory.Product.Velocity,
+                  MICPartNumber: currentAudit.Inventory.Product.MICPartNumber,
+                  UOM: currentAudit.Inventory.Product.UOM,
+                  Autostore: currentAudit.Inventory.Product.Autostore,
+                  PackType: currentAudit.Inventory.Product.PackType,
+                  PackQuantity: currentAudit.Inventory.Product.PackQty,
+                  Cost: currentAudit.Inventory.Product.Cost,
+                  NewPartNumber: partNumber,
+                }),
+              });
+            } else {
+              userEventLogs.push({
+                UserEventID: sqlData.Event_IM_PartNumber_Unchange,
+                UserName: this.userInfo.userName,
+                DistributionCenter: environment.DistributionCenter,
+                InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
+                Message: 'Part Number: ' + partMatch,
+              });
+
+              eventLogs.push({
+                UserName: this.userInfo.userName,
+                EventTypeID: sqlData.Event_IM_PartNumber_Unchange,
                 Log: JSON.stringify({
                   DistributionCenter: environment.DistributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),

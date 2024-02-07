@@ -86,14 +86,7 @@ export class ScanLocation implements OnInit {
       const currentAudit: Audit = JSON.parse(
         sessionStorage.getItem('currentAudit')
       );
-      this.auditInfo = {
-        Container: {
-          Barcode: currentAudit.Container.Barcode,
-        },
-        Inventory: {
-          ITN: currentAudit.Inventory.ITN,
-        },
-      };
+      this.auditInfo = currentAudit;
     }
     this.data$ = of(true);
   }
@@ -159,9 +152,15 @@ export class ScanLocation implements OnInit {
           );
         }),
         switchMap((res) => {
-          this._router.navigate(['../../scan-itn'], {
-            relativeTo: this._actRoute,
-          });
+          if (sessionStorage.getItem('searching')) {
+            this._router.navigate(['../../search/scan-itn'], {
+              relativeTo: this._actRoute,
+            });
+          } else {
+            this._router.navigate(['../../scan-itn'], {
+              relativeTo: this._actRoute,
+            });
+          }
 
           return of(res);
         }),

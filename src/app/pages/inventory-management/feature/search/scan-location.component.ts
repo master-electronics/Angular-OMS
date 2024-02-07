@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditInfoComponent } from '../../ui/audit-info.component';
+import { PageHeaderComponent } from '../../ui/page-header.component';
 import {
   Audit,
   AuditType,
@@ -49,15 +50,14 @@ import { AuditService } from '../../data/audit.service';
     NzGridModule,
     FormsModule,
     AuditInfoComponent,
+    PageHeaderComponent,
   ],
   template: `
     <ng-container *ngIf="info$ | async as info"> </ng-container>
+    <page-header headerText="{{ headerText }}"></page-header>
     <div *ngIf="locations.length > 0">
       <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32 }">
         <div nz-col nzSpan="14" class="text-black md:text-lg lg:text-xl">
-          <span class="mr-2 font-medium" style="vertical-align: top"
-            >Locations:</span
-          >
           <div
             class="justify-self-start text-blue-600"
             style="display: inline-block;"
@@ -71,31 +71,6 @@ import { AuditService } from '../../data/audit.service';
         </div>
       </div>
     </div>
-    <single-input-form
-      (formSubmit)="onSubmit()"
-      (formBack)="onBack()"
-      [data]="data$ | async"
-      [formGroup]="inputForm"
-      inputType="string"
-      controlName="barcode"
-      title="Scan Location:"
-      [isvalid]="this.inputForm.valid"
-    >
-    </single-input-form>
-    <div style="height: 20px"></div>
-    <ng-container *ngIf="showNoAdjacent">
-      <div nz-row [nzGutter]="8">
-        <div nz-col nzSpan="10" nzOffset="7" class="grid h-12">
-          <button
-            (click)="noAdjacent()"
-            class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-            type="button"
-          >
-            Done Searching
-          </button>
-        </div>
-      </div>
-    </ng-container>
     <ng-container *ngIf="this.showTimeoutAlert">
       <popup-modal
         (clickSubmit)="resetTimeout()"
@@ -109,6 +84,36 @@ import { AuditService } from '../../data/audit.service';
         [message]="adjacentMessage"
       ></popup-modal>
     </ng-container>
+    <div
+      style="position: fixed; bottom: 0px; background-color: white; width: 95%"
+    >
+      <single-input-form
+        (formSubmit)="onSubmit()"
+        (formBack)="onBack()"
+        [data]="data$ | async"
+        [formGroup]="inputForm"
+        inputType="string"
+        controlName="barcode"
+        title="Scan Location:"
+        [isvalid]="this.inputForm.valid"
+      >
+      </single-input-form>
+      <div style="height: 20px"></div>
+      <ng-container *ngIf="showNoAdjacent">
+        <div nz-row [nzGutter]="8">
+          <div nz-col nzSpan="10" nzOffset="7" class="grid h-12">
+            <button
+              (click)="noAdjacent()"
+              class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              type="button"
+            >
+              Done Searching
+            </button>
+          </div>
+        </div>
+      </ng-container>
+      <div style="height: 10px;"></div>
+    </div>
   `,
 })
 export class ScanLocation implements OnInit {
@@ -139,17 +144,31 @@ export class ScanLocation implements OnInit {
   timeoutAlert;
   showNoAdjacent = false;
   adjacentMessage;
+  headerText;
 
   ngOnInit(): void {
+    sessionStorage.removeItem('searching');
+    sessionStorage.removeItem('scannedITNs');
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
     );
 
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
+        if (sessionStorage.getItem('searchLevel') == '1') {
+          this.headerText = 'Scan the following location:';
+          this.locations = [
+            {
+              Barcode: sessionStorage.getItem('CurrentLocation'),
+              Status: 'open',
+            },
+          ];
+          this.data$ = of(true);
+          return of(true);
+        }
+
         if (res.Location.location.length == 0) {
           sessionStorage.removeItem('searchLocations');
-          console.log('no adjacent found');
         }
         const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
         this.locations = [];
@@ -183,6 +202,8 @@ export class ScanLocation implements OnInit {
 
           const open = this.locations.find((item) => item.Status == 'open');
           if (!open) {
+            this.headerText = 'Scan a Location to search';
+            sessionStorage.removeItem('CurrentLocation');
             this.adjacentMessage =
               "No adjacent locations found. Scan a location to search. When done click 'Done Searching'";
             this.showNoAdjacent = true;
@@ -192,6 +213,8 @@ export class ScanLocation implements OnInit {
         }
 
         if (res.Location.location.length == 0) {
+          this.headerText = 'Scan a Location to search';
+          sessionStorage.removeItem('CurrentLocation');
           this.adjacentMessage =
             "No adjacent locations found. Scan a location to search. When done click 'Done Searching'";
           this.showNoAdjacent = true;
@@ -343,6 +366,8 @@ export class ScanLocation implements OnInit {
 
                 locs.push(loc);
                 sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+                sessionStorage.setItem('searchLocation', barcode);
+                sessionStorage.setItem('searching', 'true');
                 this._router.navigate(['../scan-itn'], {
                   relativeTo: this._actRoute,
                 });
@@ -409,10 +434,13 @@ export class ScanLocation implements OnInit {
                     (loc) => loc.Barcode == barcode
                   );
                   loc.Status = 'active';
+                  sessionStorage.setItem('searchLocation', barcode);
+                  sessionStorage.removeItem('scannedITNs');
                   sessionStorage.setItem(
                     'searchLocations',
                     JSON.stringify(this.locations)
                   );
+                  sessionStorage.setItem('searching', 'true');
                   this._router.navigate(['../scan-itn'], {
                     relativeTo: this._actRoute,
                   });

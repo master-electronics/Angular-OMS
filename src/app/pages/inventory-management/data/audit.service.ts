@@ -29,9 +29,19 @@ import {
   InsertSystemTriggerGQL,
   ClearAuditsGQL,
   GetAuditCountGQL,
+  FindContainerInventoryGQL,
+  DeleteAuditsListGQL,
+  FetchInventoryGQL,
+  FetchInventoryAuditsGQL,
+  FetchGlobalMessagesGQL,
+  RecreateItnGQL,
+  FetchPreviousLocationGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
+import { FindInventoryGQL } from 'src/app/graphql/itn_info.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { environment } from 'src/environments/environment';
+import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Injectable()
 export class AuditService {
@@ -57,7 +67,16 @@ export class AuditService {
     private _updateSystemTrigger: UpdateSystemTriggerGQL,
     private _insertSystemTrigger: InsertSystemTriggerGQL,
     private _clearAudits: ClearAuditsGQL,
-    private _auditCount: GetAuditCountGQL
+    private _auditCount: GetAuditCountGQL,
+    private _findContainerInventory: FindContainerInventoryGQL,
+    private _deleteAuditsList: DeleteAuditsListGQL,
+    private _eventLog: EventLogService,
+    private _fetchInventory: FetchInventoryGQL,
+    private _findInv: FindInventoryGQL,
+    private _fetchInvAudits: FetchInventoryAuditsGQL,
+    private _fetchGlobalMessages: FetchGlobalMessagesGQL,
+    private _recreateITN: RecreateItnGQL,
+    private _fetchPrevious: FetchPreviousLocationGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -231,6 +250,22 @@ export class AuditService {
     });
   }
 
+  public recreateITN(
+    Username: string,
+    ITN: string,
+    Warehouse: string,
+    BinLocation: string,
+    Quantity: string
+  ) {
+    return this._recreateITN.mutate({
+      user: Username,
+      itn: ITN,
+      warehouse: Warehouse,
+      binlocation: BinLocation,
+      quantity: Quantity,
+    });
+  }
+
   public insertAudits(Audits) {
     return this._insertAudits.mutate({
       audits: Audits,
@@ -290,6 +325,18 @@ export class AuditService {
     return this._auditCount.fetch({}, { fetchPolicy: 'network-only' });
   }
 
+  public getGlobalMessages(InventoryID: number) {
+    return this._fetchGlobalMessages
+      .fetch({
+        inventoryId: InventoryID,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
   public closeAudits(ITN: string) {
     return this._closeAudits.mutate({
       itn: ITN,
@@ -306,6 +353,151 @@ export class AuditService {
         },
       ],
     });
+  }
+
+  public LocationSearchDone(
+    Barcode: string,
+    ScannedITns: [string],
+    InventoryID: number
+  ) {
+    const ids: [number?] = [];
+
+    return this._findContainerInventory
+      .fetch(
+        {
+          container: { Barcode: Barcode },
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          res.data.findContainer.INVENTORies.forEach((inv) => {
+            const scanned = ScannedITns?.find(
+              (itn) => itn == inv.InventoryTrackingNumber
+            );
+
+            if (!scanned) {
+              if (inv._id != InventoryID) {
+                ids.push(inv._id);
+              }
+            }
+          });
+        }),
+        switchMap(() => {
+          return this.deleteAuditsList(ids);
+        }),
+        switchMap(() => {
+          return this.logNFDuringSearch(ids, Barcode);
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public fetchInventoryAudits(InventoryID: number) {
+    return this._fetchInvAudits
+      .fetch({
+        inventoryId: InventoryID,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public fetchContainerInventory(Container) {
+    return this._findContainerInventory
+      .fetch(
+        {
+          container: Container,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          return res;
+        }),
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public deleteAuditsList(InventoryIDs: [number?]) {
+    return this._deleteAuditsList
+      .mutate({
+        inventoryIDs: InventoryIDs,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new Error(error);
+        })
+      );
+  }
+
+  public findInventory(DistributionCenter: string, ITN: string) {
+    return this._findInv.fetch({
+      DistributionCenter: DistributionCenter,
+      InventoryTrackingNumber: ITN,
+    });
+  }
+
+  logNFDuringSearch(InventoryIDs: [number?], SearchLocation: string) {
+    const userEventLog = [];
+    const eventLog = [];
+
+    return this._fetchInventory.fetch({ inventoryIDs: InventoryIDs }).pipe(
+      map((res) => {
+        res.data.fetchInventory.forEach((inv) => {
+          userEventLog.push({
+            UserEventID: sqlData.Event_IM_Audit_ITN_NF_During_Search,
+            UserName: this.userInfo.userName,
+            DistributionCenter: environment.DistributionCenter,
+            InventoryTrackingNumber: inv._id.toString(),
+            Message: 'Search Location: ' + SearchLocation,
+          });
+
+          eventLog.push({
+            UserName: this.userInfo.userName,
+            EventTypeID: sqlData.Event_IM_Audit_ITN_NF_During_Search,
+            Log: JSON.stringify({
+              SearchLocation: SearchLocation,
+              DistributionCenter: environment.DistributionCenter,
+              InventoryTrackingNumber: inv._id.toString(),
+              ParentITN: inv.ParentITN,
+              BinLocation: inv.BinLocation,
+              QuantityOnHand: inv.QuantityOnHand,
+              OriginalQuantity: inv.OriginalQuantity,
+              DateCode: inv.DateCode,
+              CountryOfOrigin: inv.Country?.ISO2,
+              ROHS: inv.ROHS,
+              NotFound: inv.NotFound,
+              Suspect: inv.Suspect,
+              LocatedInAutostore: inv.LocatedInAutostore,
+              BoundForAutostore: inv.BoundForAutostore,
+              PartNumber: inv.Product.PartNumber,
+              ProductCode: inv.Product.ProductCode.ProductCodeNumber,
+              Description: inv.Product.Description,
+              ProductTier: inv.Product.ProductTier,
+              Velocity: inv.Product.Velocity,
+              MICPartNumber: inv.Product.MICPartNumber,
+              UOM: inv.Product.UOM,
+              Autostore: inv.Product.Autostore,
+              PackType: inv.Product.PackType,
+              PackQty: inv.Product.PackQty,
+            }),
+          });
+        });
+      }),
+      switchMap((res) => {
+        return this._eventLog.insertLog(userEventLog, eventLog);
+      }),
+      catchError((error) => {
+        throw new Error(error);
+      })
+    );
   }
 
   public updateSystemTrigger(
@@ -449,6 +641,22 @@ export class AuditService {
         return auditTypes;
       })
     );
+  }
+
+  public getPreviousLocation(ITN: string, BinLocation: string) {
+    return this._fetchPrevious
+      .fetch(
+        {
+          itn: ITN,
+          binlocation: BinLocation,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(
+        map((res) => {
+          return res.data.fetchPreviousLocation.StatusMessage;
+        })
+      );
   }
 
   public getSystemAuditList(includeDeactivated: boolean): Observable<any> {

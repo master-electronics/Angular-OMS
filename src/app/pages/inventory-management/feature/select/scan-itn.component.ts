@@ -27,6 +27,7 @@ import {
   Inventory,
   Product,
   ProductCode,
+  GlobalMessage,
 } from '../../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
@@ -147,6 +148,7 @@ export class ScanITN implements OnInit {
     sessionStorage.removeItem('currentAudit');
     sessionStorage.removeItem('auditITN');
     sessionStorage.removeItem('searchLocations');
+    sessionStorage.removeItem('searching');
     this.audit = null;
 
     this.info$ = this._actRoute.data.pipe(
@@ -166,10 +168,31 @@ export class ScanITN implements OnInit {
           );
           this.lastUpdated = Number(res.Audit.audit.LastUpdated);
           sessionStorage.setItem('currentAudit', JSON.stringify(this.audit));
-          //const timeoutTimer = interval(1000);
-          //this.subscription = timeoutTimer.subscribe((val) => this.timer());
+          const timeoutTimer = interval(1000);
+          this.subscription = timeoutTimer.subscribe((val) => this.timer());
           return of(true);
         }
+      }),
+      switchMap((res) => {
+        const msgs: [GlobalMessage?] = [];
+        return this._auditService
+          .getGlobalMessages(this.audit.InventoryID)
+          .pipe(
+            map((res) => {
+              res.data.fetchGlobalMessages.forEach((msg) => {
+                msgs.push({
+                  Message: msg.Message,
+                });
+              });
+
+              this.audit.Inventory.Product.GlobalMessages = msgs;
+              sessionStorage.setItem(
+                'currentAudit',
+                JSON.stringify(this.audit)
+              );
+              return of(res);
+            })
+          );
       })
     );
     this.data$ = of(true);
@@ -493,22 +516,27 @@ export class ScanITN implements OnInit {
       },
     ];
 
-    this.data$ = this._eventLog.insertLog(userEventLog, eventLog).pipe(
-      switchMap(() => {
-        return this._auditService.updateLastUpdated(
-          audit.InventoryID,
-          10,
-          new Date(Date.now()).toISOString()
-        );
-      }),
-      map((res) => {
-        this._router.navigate(['../search/scan-location'], {
-          relativeTo: this._actRoute,
-        });
+    this.data$ = this._auditService
+      .getPreviousLocation(
+        audit.Inventory.ITN,
+        sessionStorage.getItem('CurrentLocation')
+      )
+      .pipe(
+        switchMap((res) => {
+          const log = JSON.parse(eventLog[0].Log);
+          log.PreviousLocation = res;
+          eventLog[0].Log = JSON.stringify(log);
 
-        return res;
-      })
-    );
+          return this._eventLog.insertLog(userEventLog, eventLog);
+        }),
+        map((res) => {
+          this._router.navigate(['../search/scan-location'], {
+            relativeTo: this._actRoute,
+          });
+
+          return res;
+        })
+      );
   }
 
   ngOnDestroy() {

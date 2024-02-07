@@ -23,6 +23,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type ApiResult = {
+  __typename?: 'APIResult';
+  StatusCode?: Maybe<Scalars['String']>;
+  StatusMessage?: Maybe<Scalars['String']>;
+};
+
 export type Asnrejectionreason = {
   __typename?: 'ASNREJECTIONREASON';
   Global?: Maybe<Scalars['Boolean']>;
@@ -283,6 +289,11 @@ export type EventType = {
   _id: Scalars['Int'];
 };
 
+export type Globalmsg = {
+  __typename?: 'GLOBALMSG';
+  Message?: Maybe<Scalars['String']>;
+};
+
 export type GlobalMessage = {
   __typename?: 'GlobalMessage';
   comments?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -297,6 +308,20 @@ export type HoldOnCounter = {
 export type Imadjustreason = {
   __typename?: 'IMADJUSTREASON';
   Reason?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['Int']>;
+};
+
+export type Imaudit = {
+  __typename?: 'IMAUDIT';
+  CreatedDatetime?: Maybe<Scalars['String']>;
+  InventoryID?: Maybe<Scalars['Int']>;
+  InventoryTrackingNumber?: Maybe<Scalars['String']>;
+  LastUpdated?: Maybe<Scalars['String']>;
+  Priority?: Maybe<Scalars['Int']>;
+  Trigger?: Maybe<Scalars['String']>;
+  Type?: Maybe<Audittype>;
+  TypeID?: Maybe<Scalars['Int']>;
+  UserID?: Maybe<Scalars['Int']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -694,6 +719,7 @@ export type Mutation = {
   deleteAndInsertRouteTable: Scalars['Boolean'];
   deleteAudit?: Maybe<Audit>;
   deleteAudits?: Maybe<Audit>;
+  deleteAuditsList?: Maybe<Scalars['Boolean']>;
   deleteAutostoreOrderLineHistory?: Maybe<Autostoreorderline>;
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
@@ -762,6 +788,7 @@ export type Mutation = {
   pickOrderForAgOut?: Maybe<OrderForAgOut>;
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
+  recreateITN?: Maybe<UpdateResult>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -898,6 +925,10 @@ export type MutationDeleteAuditArgs = {
 
 export type MutationDeleteAuditsArgs = {
   InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationDeleteAuditsListArgs = {
+  InventoryIDs?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type MutationDeleteAutostoreOrderLineHistoryArgs = {
@@ -1260,6 +1291,14 @@ export type MutationProcessSystemTriggerArgs = {
   Source?: InputMaybe<Scalars['String']>;
   TriggerName?: InputMaybe<Scalars['String']>;
   Username?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationRecreateItnArgs = {
+  BINLOCATION: Scalars['String'];
+  ITN: Scalars['String'];
+  QUANTITY: Scalars['String'];
+  User: Scalars['String'];
+  WAREHOUSE: Scalars['String'];
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
@@ -1699,6 +1738,8 @@ export type Product = {
   MICPartNumber?: Maybe<Scalars['String']>;
   ORDERLINEs?: Maybe<Array<Maybe<OrderLine>>>;
   PURCHASEORDERLs?: Maybe<Array<Maybe<PurchaseOrderL>>>;
+  PackQty?: Maybe<Scalars['Float']>;
+  PackType?: Maybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: ProductCode;
   ProductCodeID: Scalars['Int'];
@@ -1708,7 +1749,7 @@ export type Product = {
   RECEIPTLs?: Maybe<Array<Maybe<ReceiptL>>>;
   UOM?: Maybe<Scalars['String']>;
   Velocity?: Maybe<Scalars['String']>;
-  _id: Scalars['Int'];
+  _id?: Maybe<Scalars['Int']>;
 };
 
 export type ProductCode = {
@@ -1774,11 +1815,14 @@ export type Query = {
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
+  fetchGlobalMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNLifecycleDrillDown?: Maybe<Array<Maybe<ItnLifeCycleDrillDown>>>;
   fetchITNLifecycleDrillDownRows?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
+  fetchInventory?: Maybe<Array<Maybe<Inventory>>>;
+  fetchInventoryAudits?: Maybe<Array<Maybe<Imaudit>>>;
   fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
@@ -1786,6 +1830,7 @@ export type Query = {
   fetchOrderView?: Maybe<Array<Maybe<OrderView>>>;
   fetchPartMessage?: Maybe<GlobalMessage>;
   fetchPickingCalendarSettings?: Maybe<Scalars['String']>;
+  fetchPreviousLocation?: Maybe<ApiResult>;
   fetchPrinterList?: Maybe<Array<Maybe<Printer>>>;
   fetchPrinterStation: Scalars['String'];
   fetchProductInfoFromMerp?: Maybe<Array<Maybe<ProdunctInfoFromMerp>>>;
@@ -1916,6 +1961,10 @@ export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
 };
 
+export type QueryFetchGlobalMessagesArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
+};
+
 export type QueryFetchHoldOnCounterArgs = {
   endDate: Scalars['String'];
   startDate: Scalars['String'];
@@ -1942,6 +1991,14 @@ export type QueryFetchItnLifecycleDrillDownRowsArgs = {
 
 export type QueryFetchItnUserColumnsArgs = {
   userId?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFetchInventoryArgs = {
+  InventoryIDs?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+};
+
+export type QueryFetchInventoryAuditsArgs = {
+  InventoryID?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryFetchMenuListArgs = {
@@ -1971,6 +2028,11 @@ export type QueryFetchOrderViewArgs = {
 export type QueryFetchPartMessageArgs = {
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
+};
+
+export type QueryFetchPreviousLocationArgs = {
+  BinLocation?: InputMaybe<Scalars['String']>;
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryFetchPrinterListArgs = {
@@ -3466,6 +3528,22 @@ export type VerifyAuditLocationQuery = {
   findContainer?: { __typename?: 'Container'; _id: number } | null;
 };
 
+export type FindContainerInventoryQueryVariables = Types.Exact<{
+  container?: Types.InputMaybe<Types.SearchContainer>;
+}>;
+
+export type FindContainerInventoryQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      _id: number;
+      InventoryTrackingNumber: string;
+    } | null> | null;
+  } | null;
+};
+
 export type FindProductCodeQueryVariables = Types.Exact<{
   productCode?: Types.InputMaybe<Types.SearchProductCode>;
 }>;
@@ -3487,7 +3565,7 @@ export type FindImProductQuery = {
   __typename?: 'Query';
   findProduct?: {
     __typename?: 'Product';
-    _id: number;
+    _id?: number | null;
     PartNumber: string;
     ProductCodeID: number;
   } | null;
@@ -3506,6 +3584,47 @@ export type FindImInventoryQuery = {
     Product: { __typename?: 'Product'; PartNumber: string };
     Container: { __typename?: 'Container'; Barcode: string };
   } | null;
+};
+
+export type FetchInventoryQueryVariables = Types.Exact<{
+  inventoryIDs?: Types.InputMaybe<
+    | Array<Types.InputMaybe<Types.Scalars['Int']>>
+    | Types.InputMaybe<Types.Scalars['Int']>
+  >;
+}>;
+
+export type FetchInventoryQuery = {
+  __typename?: 'Query';
+  fetchInventory?: Array<{
+    __typename?: 'Inventory';
+    _id: number;
+    DistributionCenter: string;
+    InventoryTrackingNumber: string;
+    ParentITN?: string | null;
+    BinLocation?: string | null;
+    QuantityOnHand: number;
+    OriginalQuantity?: number | null;
+    DateCode?: string | null;
+    ROHS?: boolean | null;
+    NotFound: boolean;
+    Suspect: boolean;
+    LocatedInAutostore?: boolean | null;
+    BoundForAutostore?: boolean | null;
+    Country?: { __typename?: 'Country'; ISO2: string } | null;
+    Product: {
+      __typename?: 'Product';
+      PartNumber: string;
+      Description?: string | null;
+      Velocity?: string | null;
+      UOM?: string | null;
+      MICPartNumber?: string | null;
+      Autostore?: boolean | null;
+      ProductTier?: string | null;
+      PackQty?: number | null;
+      PackType?: string | null;
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
+    };
+  } | null> | null;
 };
 
 export type FindImInventoriesQueryVariables = Types.Exact<{
@@ -3610,6 +3729,18 @@ export type FindNextAuditQuery = {
     PackType?: string | null;
     PackQty?: number | null;
     Cost?: number | null;
+  } | null> | null;
+};
+
+export type FetchGlobalMessagesQueryVariables = Types.Exact<{
+  inventoryId?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchGlobalMessagesQuery = {
+  __typename?: 'Query';
+  fetchGlobalMessages?: Array<{
+    __typename?: 'GLOBALMSG';
+    Message?: string | null;
   } | null> | null;
 };
 
@@ -3718,6 +3849,32 @@ export type GetAuditCountQuery = {
   getAuditCount?: number | null;
 };
 
+export type FetchInventoryAuditsQueryVariables = Types.Exact<{
+  inventoryId?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type FetchInventoryAuditsQuery = {
+  __typename?: 'Query';
+  fetchInventoryAudits?: Array<{
+    __typename?: 'IMAUDIT';
+    Type?: { __typename?: 'AUDITTYPE'; Type?: string | null } | null;
+  } | null> | null;
+};
+
+export type FetchPreviousLocationQueryVariables = Types.Exact<{
+  itn: Types.Scalars['String'];
+  binlocation: Types.Scalars['String'];
+}>;
+
+export type FetchPreviousLocationQuery = {
+  __typename?: 'Query';
+  fetchPreviousLocation?: {
+    __typename?: 'APIResult';
+    StatusCode?: string | null;
+    StatusMessage?: string | null;
+  } | null;
+};
+
 export type ClearAuditsMutationVariables = Types.Exact<{
   username?: Types.InputMaybe<Types.Scalars['String']>;
   distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
@@ -3791,6 +3948,23 @@ export type InventoryUpdateMutation = {
   } | null;
 };
 
+export type RecreateItnMutationVariables = Types.Exact<{
+  user: Types.Scalars['String'];
+  itn: Types.Scalars['String'];
+  warehouse: Types.Scalars['String'];
+  binlocation: Types.Scalars['String'];
+  quantity: Types.Scalars['String'];
+}>;
+
+export type RecreateItnMutation = {
+  __typename?: 'Mutation';
+  recreateITN?: {
+    __typename?: 'UpdateResult';
+    StatusCode?: string | null;
+    StatusMessage?: string | null;
+  } | null;
+};
+
 export type DeleteAuditMutationVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
   typeID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -3808,6 +3982,18 @@ export type DeleteAuditsMutationVariables = Types.Exact<{
 export type DeleteAuditsMutation = {
   __typename?: 'Mutation';
   deleteAudits?: { __typename?: 'AUDIT'; _id?: number | null } | null;
+};
+
+export type DeleteAuditsListMutationVariables = Types.Exact<{
+  inventoryIDs?: Types.InputMaybe<
+    | Array<Types.InputMaybe<Types.Scalars['Int']>>
+    | Types.InputMaybe<Types.Scalars['Int']>
+  >;
+}>;
+
+export type DeleteAuditsListMutation = {
+  __typename?: 'Mutation';
+  deleteAuditsList?: boolean | null;
 };
 
 export type CloseAuditMutationVariables = Types.Exact<{
@@ -3954,6 +4140,30 @@ export class VerifyAuditLocationGQL extends Apollo.Query<
     super(apollo);
   }
 }
+export const FindContainerInventoryDocument = gql`
+  query findContainerInventory($container: searchContainer) {
+    findContainer(Container: $container) {
+      INVENTORies {
+        _id
+        InventoryTrackingNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindContainerInventoryGQL extends Apollo.Query<
+  FindContainerInventoryQuery,
+  FindContainerInventoryQueryVariables
+> {
+  document = FindContainerInventoryDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const FindProductCodeDocument = gql`
   query findProductCode($productCode: searchProductCode) {
     findProductCode(productCode: $productCode) {
@@ -4022,6 +4232,56 @@ export class FindImInventoryGQL extends Apollo.Query<
   FindImInventoryQueryVariables
 > {
   document = FindImInventoryDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchInventoryDocument = gql`
+  query fetchInventory($inventoryIDs: [Int]) {
+    fetchInventory(InventoryIDs: $inventoryIDs) {
+      _id
+      DistributionCenter
+      InventoryTrackingNumber
+      ParentITN
+      BinLocation
+      QuantityOnHand
+      OriginalQuantity
+      DateCode
+      Country {
+        ISO2
+      }
+      ROHS
+      NotFound
+      Suspect
+      LocatedInAutostore
+      BoundForAutostore
+      Product {
+        PartNumber
+        ProductCode {
+          ProductCodeNumber
+        }
+        Description
+        Velocity
+        UOM
+        MICPartNumber
+        Autostore
+        ProductTier
+        PackQty
+        PackType
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchInventoryGQL extends Apollo.Query<
+  FetchInventoryQuery,
+  FetchInventoryQueryVariables
+> {
+  document = FetchInventoryDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -4199,6 +4459,27 @@ export class FindNextAuditGQL extends Apollo.Query<
     super(apollo);
   }
 }
+export const FetchGlobalMessagesDocument = gql`
+  query fetchGlobalMessages($inventoryId: Int) {
+    fetchGlobalMessages(InventoryID: $inventoryId) {
+      Message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchGlobalMessagesGQL extends Apollo.Query<
+  FetchGlobalMessagesQuery,
+  FetchGlobalMessagesQueryVariables
+> {
+  document = FetchGlobalMessagesDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const GetNextSubAuditDocument = gql`
   query getNextSubAudit($inventoryID: Int, $userID: Int) {
     getNextSubAudit(InventoryID: $inventoryID, UserID: $userID) {
@@ -4359,6 +4640,51 @@ export class GetAuditCountGQL extends Apollo.Query<
     super(apollo);
   }
 }
+export const FetchInventoryAuditsDocument = gql`
+  query fetchInventoryAudits($inventoryId: Int) {
+    fetchInventoryAudits(InventoryID: $inventoryId) {
+      Type {
+        Type
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchInventoryAuditsGQL extends Apollo.Query<
+  FetchInventoryAuditsQuery,
+  FetchInventoryAuditsQueryVariables
+> {
+  document = FetchInventoryAuditsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchPreviousLocationDocument = gql`
+  query fetchPreviousLocation($itn: String!, $binlocation: String!) {
+    fetchPreviousLocation(ITN: $itn, BinLocation: $binlocation) {
+      StatusCode
+      StatusMessage
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchPreviousLocationGQL extends Apollo.Query<
+  FetchPreviousLocationQuery,
+  FetchPreviousLocationQueryVariables
+> {
+  document = FetchPreviousLocationDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const ClearAuditsDocument = gql`
   mutation clearAudits($username: String, $distributionCenter: String) {
     clearAudits(Username: $username, DistributionCenter: $distributionCenter) {
@@ -4495,6 +4821,40 @@ export class InventoryUpdateGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
+export const RecreateItnDocument = gql`
+  mutation recreateITN(
+    $user: String!
+    $itn: String!
+    $warehouse: String!
+    $binlocation: String!
+    $quantity: String!
+  ) {
+    recreateITN(
+      User: $user
+      ITN: $itn
+      WAREHOUSE: $warehouse
+      BINLOCATION: $binlocation
+      QUANTITY: $quantity
+    ) {
+      StatusCode
+      StatusMessage
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RecreateItnGQL extends Apollo.Mutation<
+  RecreateItnMutation,
+  RecreateItnMutationVariables
+> {
+  document = RecreateItnDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const DeleteAuditDocument = gql`
   mutation deleteAudit($inventoryID: Int, $typeID: Int) {
     deleteAudit(InventoryID: $inventoryID, TypeID: $typeID) {
@@ -4532,6 +4892,25 @@ export class DeleteAuditsGQL extends Apollo.Mutation<
   DeleteAuditsMutationVariables
 > {
   document = DeleteAuditsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const DeleteAuditsListDocument = gql`
+  mutation deleteAuditsList($inventoryIDs: [Int]) {
+    deleteAuditsList(InventoryIDs: $inventoryIDs)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeleteAuditsListGQL extends Apollo.Mutation<
+  DeleteAuditsListMutation,
+  DeleteAuditsListMutationVariables
+> {
+  document = DeleteAuditsListDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
