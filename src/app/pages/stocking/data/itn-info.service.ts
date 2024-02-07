@@ -1,6 +1,7 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { map, tap } from 'rxjs';
 import {
+  FindItnsInUserContainerByNameGQL,
   VerifyContainerForSortingGQL,
   VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
@@ -26,7 +27,8 @@ export class ItnInfoService {
   private _sessionStorage = inject(SESSION_STORAGE);
   constructor(
     private _verifyITN: VerifyItnForSortingGQL,
-    private _verifyContainer: VerifyContainerForSortingGQL
+    private _verifyContainer: VerifyContainerForSortingGQL,
+    private _findItn: FindItnsInUserContainerByNameGQL
   ) {
     effect(() => {
       this._sessionStorage.setItem(
@@ -115,5 +117,19 @@ export class ItnInfoService {
           });
         })
       );
+  }
+  /**
+   * personalItns$
+   */
+  public personalItns$(username: string) {
+    return this._findItn
+      .fetch(
+        {
+          Barcode: username,
+          DistributionCenter: environment.DistributionCenter,
+        },
+        { fetchPolicy: 'network-only' }
+      )
+      .pipe(map((res) => res.data.findContainer.INVENTORies));
   }
 }

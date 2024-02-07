@@ -3589,18 +3589,30 @@ export type UpdateInventoryAfterSortingMutationVariables = Types.Exact<{
 
 export type UpdateInventoryAfterSortingMutation = {
   __typename?: 'Mutation';
-  itnLocationChange?: boolean | null;
+  itnChange?: boolean | null;
 };
 
 export type MoveInventoryToContainerForStockingMutationVariables = Types.Exact<{
   User: Types.Scalars['String'];
   ITN: Types.Scalars['String'];
   BinLocation: Types.Scalars['String'];
+  Suspect: Types.Scalars['String'];
 }>;
 
 export type MoveInventoryToContainerForStockingMutation = {
   __typename?: 'Mutation';
-  itnLocationChange?: boolean | null;
+  itnChange?: boolean | null;
+};
+
+export type MoveInventoryToContainerForStockingToOmsMutationVariables =
+  Types.Exact<{
+    InventoryID: Types.Scalars['Int'];
+    UserContainer: Types.Scalars['Int'];
+  }>;
+
+export type MoveInventoryToContainerForStockingToOmsMutation = {
+  __typename?: 'Mutation';
+  updateInventory?: Array<number | null> | null;
 };
 
 export type UpdateNotFoundForStockingMutationVariables = Types.Exact<{
@@ -3616,6 +3628,23 @@ export type UpdateNotFoundForStockingMutation = {
   __typename?: 'Mutation';
   updateNotFoundForStocking?: boolean | null;
   insertInventorySuspectReason?: boolean | null;
+};
+
+export type FindItnsInUserContainerByNameQueryVariables = Types.Exact<{
+  Barcode: Types.Scalars['String'];
+  DistributionCenter: Types.Scalars['String'];
+}>;
+
+export type FindItnsInUserContainerByNameQuery = {
+  __typename?: 'Query';
+  findContainer?: {
+    __typename?: 'Container';
+    INVENTORies?: Array<{
+      __typename?: 'Inventory';
+      QuantityOnHand: number;
+      InventoryTrackingNumber: string;
+    } | null> | null;
+  } | null;
 };
 
 export const VerifyItnForSortingDocument = gql`
@@ -3778,7 +3807,7 @@ export const UpdateInventoryAfterSortingDocument = gql`
     $BinLocation: String!
     $ITN: String!
   ) {
-    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+    itnChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
   }
 `;
 
@@ -3800,8 +3829,14 @@ export const MoveInventoryToContainerForStockingDocument = gql`
     $User: String!
     $ITN: String!
     $BinLocation: String!
+    $Suspect: String!
   ) {
-    itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+    itnChange(
+      User: $User
+      ITN: $ITN
+      BinLocation: $BinLocation
+      Suspect: $Suspect
+    )
   }
 `;
 
@@ -3813,6 +3848,31 @@ export class MoveInventoryToContainerForStockingGQL extends Apollo.Mutation<
   MoveInventoryToContainerForStockingMutationVariables
 > {
   document = MoveInventoryToContainerForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MoveInventoryToContainerForStockingToOmsDocument = gql`
+  mutation moveInventoryToContainerForStockingToOms(
+    $InventoryID: Int!
+    $UserContainer: Int!
+  ) {
+    updateInventory(
+      _id: $InventoryID
+      Inventory: { ContainerID: $UserContainer }
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MoveInventoryToContainerForStockingToOmsGQL extends Apollo.Mutation<
+  MoveInventoryToContainerForStockingToOmsMutation,
+  MoveInventoryToContainerForStockingToOmsMutationVariables
+> {
+  document = MoveInventoryToContainerForStockingToOmsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -3836,6 +3896,35 @@ export class UpdateNotFoundForStockingGQL extends Apollo.Mutation<
   UpdateNotFoundForStockingMutationVariables
 > {
   document = UpdateNotFoundForStockingDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindItnsInUserContainerByNameDocument = gql`
+  query findItnsInUserContainerByName(
+    $Barcode: String!
+    $DistributionCenter: String!
+  ) {
+    findContainer(
+      Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
+    ) {
+      INVENTORies {
+        QuantityOnHand
+        InventoryTrackingNumber
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindItnsInUserContainerByNameGQL extends Apollo.Query<
+  FindItnsInUserContainerByNameQuery,
+  FindItnsInUserContainerByNameQueryVariables
+> {
+  document = FindItnsInUserContainerByNameDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

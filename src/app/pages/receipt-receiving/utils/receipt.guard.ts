@@ -60,22 +60,6 @@ export const ReceiptGuard: CanActivateChildFn = (
     case '/receiptreceiving/label/sacnlocation':
       isActive = _label.ITNList().length > 0;
       break;
-    case '/receiptreceiving/label/summary':
-      // make sure every itn has binlocation, itn
-      if (!_label.ITNList().length) {
-        isActive = false;
-        break;
-      }
-      isActive = !_label.ITNList().some((itn) => {
-        if (!itn.ContainerID) {
-          return true;
-        }
-        if (!itn.ITN) {
-          return true;
-        }
-        return false;
-      });
-      break;
     case '/receiptreceiving/itnlist':
       isActive = _label.ITNList().length > 0;
       break;

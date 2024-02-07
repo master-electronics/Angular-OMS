@@ -86,15 +86,28 @@ mutation updateInventoryAfterSorting(
   $BinLocation: String!
   $ITN: String!
 ) {
-  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  itnChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
 }
 
 mutation moveInventoryToContainerForStocking(
   $User: String!
   $ITN: String!
   $BinLocation: String!
+  $Suspect: String!
 ) {
-  itnLocationChange(User: $User, ITN: $ITN, BinLocation: $BinLocation)
+  itnChange(
+    User: $User
+    ITN: $ITN
+    BinLocation: $BinLocation
+    Suspect: $Suspect
+  )
+}
+
+mutation moveInventoryToContainerForStockingToOms(
+  $InventoryID: Int!
+  $UserContainer: Int!
+) {
+  updateInventory(_id: $InventoryID, Inventory: { ContainerID: $UserContainer })
 }
 
 mutation updateNotFoundForStocking(
@@ -103,4 +116,18 @@ mutation updateNotFoundForStocking(
 ) {
   updateNotFoundForStocking(ITNList: $ITNList)
   insertInventorySuspectReason(linkList: $linkList)
+}
+
+query findItnsInUserContainerByName(
+  $Barcode: String!
+  $DistributionCenter: String!
+) {
+  findContainer(
+    Container: { Barcode: $Barcode, DistributionCenter: $DistributionCenter }
+  ) {
+    INVENTORies {
+      QuantityOnHand
+      InventoryTrackingNumber
+    }
+  }
 }

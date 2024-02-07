@@ -46,7 +46,7 @@ import { ItnInfoService } from '../../data/itn-info.service';
       <popup-modal
         [message]="message"
         (clickSubmit)="popSubmit()"
-        (clickCancel)="cancel()"
+        (clickCancel)="this.message = null"
       ></popup-modal>
     </ng-container>
   `,
@@ -139,6 +139,7 @@ export class MismatchComponent implements OnInit {
 
   notFound(): void {
     let notFound;
+    this.message = null;
     if (!this._stock.verifiedItns()?.length) {
       notFound = this._stock.ITNList();
     } else {
@@ -170,9 +171,5 @@ export class MismatchComponent implements OnInit {
         return of({ error: { message: error.message, name: 'error' } });
       })
     );
-  }
-
-  cancel(): void {
-    this.message = null;
   }
 }

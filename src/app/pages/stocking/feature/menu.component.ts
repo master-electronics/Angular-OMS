@@ -12,7 +12,7 @@ import { StockingService } from '../data/stocking.service';
       <div class="mt-5 grid justify-center gap-20 text-base">
         <a class="" routerLink="/stocking/itn">Sorting</a>
         <a class="" routerLink="/stocking/scantarget">Stocking</a>
-        <a class="" routerLink="/stocking/user">Personal ITNs</a>
+        <a class="" routerLink="/stocking/personalitns">Personal ITNs</a>
         <a class="" routerLink="/stocking/movetouser">Move to Personal</a>
       </div>
     </div>

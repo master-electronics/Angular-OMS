@@ -1,5 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { combineLatest, delay, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  combineLatest,
+  forkJoin,
+  map,
+  Observable,
+  retry,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   CheckBinLocationGQL,
   UpdateAfterReceivingGQL,
@@ -129,8 +138,6 @@ export class LabelService {
   /**
    * Selecter
    */
-
-  //
   remaining = computed(() => {
     let sum = 0;
     this._ITNList().map((item) => (sum += item.quantity));
@@ -151,7 +158,7 @@ export class LabelService {
   });
 
   getItnInList(index: number) {
-    return computed(() => this._ITNList()[index].ITN);
+    return computed(() => this._ITNList()[index]?.ITN);
   }
 
   /**
@@ -164,8 +171,8 @@ export class LabelService {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
+        take(1),
         tap((res) => {
-          // save ITN to next space.
           this.updateItnListITN(res.data.createITN, this.currentItnIndex() + 1);
           Logger.devOnly(
             'LabelService',
@@ -202,8 +209,7 @@ export class LabelService {
               },
             }),
           });
-        }),
-        delay(500)
+        })
       );
   }
 

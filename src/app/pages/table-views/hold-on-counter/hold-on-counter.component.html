@@ -1,10 +1,10 @@
-<div class="container px-4 py-4 mx-auto">
+<div class="container mx-auto px-4 py-4">
   <form nz-form [formGroup]="filterForm">
     <div nz-row nzGutter="8" nzJustify="space-between">
       <nz-form-item nz-col nzSpan="8">
         <nz-form-label nzRequired> Date </nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="timeRange"></nz-date-picker>
+          <nz-range-picker formControlName="timeRange"></nz-range-picker>
         </nz-form-control>
       </nz-form-item>
       <div nz-col nzSpan="8">

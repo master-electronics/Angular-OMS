@@ -161,8 +161,8 @@ export const routes: Routes = [
       {
         path: 'itn_info',
         loadComponent: () =>
-          import('./pages/itn_info/feature/itn_info.component').then(
-            (m) => m.INTInfoComponent
+          import('./pages/itn-info/itn-info.component').then(
+            (m) => m.ItnInfoComponent
           ),
       },
       {

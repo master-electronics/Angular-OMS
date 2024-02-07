@@ -45,6 +45,13 @@ export const StockingRoutes: Routes = [
           ),
       },
       {
+        path: 'verifysorting',
+        loadComponent: () =>
+          import('./feature/sorting/verifySorting.component').then(
+            (m) => m.VerifySortingComponent
+          ),
+      },
+      {
         path: 'scantarget',
         resolve: { containerID: ScanTargetResolver },
         loadComponent: () =>
@@ -101,6 +108,13 @@ export const StockingRoutes: Routes = [
         loadComponent: () =>
           import('./feature/stocking/user-itnlist.component').then(
             (m) => m.UserItnlistComponent
+          ),
+      },
+      {
+        path: 'personalitns',
+        loadComponent: () =>
+          import('./feature/personal-itns.component').then(
+            (m) => m.PersonalItnsComponent
           ),
       },
       {

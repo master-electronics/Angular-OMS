@@ -8,7 +8,6 @@ import { PartResolver } from './utils/resolver/part.resolver';
 import { kickoutService } from './data/kickout';
 import { CreateReceiptService } from './data/createReceipt';
 import { VerifyResolver } from './utils/resolver/verify.resolver';
-import { PrintItnResolver } from './utils/resolver/printItn.resolver';
 import { ItnCountService } from './data/itnCount';
 
 export const ReceivingRoutes: Routes = [
@@ -150,9 +149,6 @@ export const ReceivingRoutes: Routes = [
       },
       {
         path: 'label/printitn',
-        resolve: {
-          print: PrintItnResolver,
-        },
         loadComponent: () =>
           import('./feature/label/printItn.component').then(
             (mod) => mod.PrintITNComponent

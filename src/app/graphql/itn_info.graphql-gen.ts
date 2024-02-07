@@ -3486,7 +3486,6 @@ export type FindInventoryQuery = {
   __typename?: 'Query';
   findInventory?: {
     __typename?: 'Inventory';
-    _id: number;
     DistributionCenter: string;
     InventoryTrackingNumber: string;
     QuantityOnHand: number;
@@ -3495,13 +3494,9 @@ export type FindInventoryQuery = {
     ROHS?: boolean | null;
     OriginalQuantity?: number | null;
     BinLocation?: string | null;
-    ProductID: number;
-    ContainerID: number;
-    CountryID?: number | null;
     NotFound: boolean;
     Country?: {
       __typename?: 'Country';
-      _id: number;
       CountryCode: string;
       CountryName: string;
       ISO2: string;
@@ -3509,122 +3504,109 @@ export type FindInventoryQuery = {
     } | null;
     Container: {
       __typename?: 'Container';
-      _id: number;
       Barcode: string;
       Zone?: number | null;
-      DistributionCenter: string;
       Warehouse?: string | null;
       Row?: string | null;
       Aisle?: string | null;
       Section?: string | null;
       Shelf?: string | null;
       ShelfDetail?: string | null;
-      ContainerTypeID: number;
       ContainerType: {
         __typename?: 'ContainerType';
-        _id: number;
         Name: string;
         IsMobile: boolean;
       };
       USERINFOs?: Array<{
         __typename?: 'UserInfo';
-        _id: number;
         Name: string;
       } | null> | null;
     };
     Product: {
       __typename?: 'Product';
       _id?: number | null;
-      ProductCodeID: number;
       PartNumber: string;
       ProductTier?: string | null;
       Velocity?: string | null;
-      ProductCode: {
-        __typename?: 'ProductCode';
-        _id: number;
-        ProductCodeNumber: string;
-      };
+      ProductCode: { __typename?: 'ProductCode'; ProductCodeNumber: string };
       PURCHASEORDERLs?: Array<{
         __typename?: 'PurchaseOrderL';
-        _id: number;
         PurchaseOrderH: {
           __typename?: 'PurchaseOrderH';
-          _id: number;
           PurchaseOrderNumber: string;
         };
       } | null> | null;
       RECEIPTLs?: Array<{
         __typename?: 'ReceiptL';
-        _id: number;
         LineNumber: number;
         ExpectedQuantity: number;
         ReceiptH: {
           __typename?: 'ReceiptH';
-          _id: number;
           ExpectedArrivalDate?: string | null;
           ReceiptNumber?: string | null;
           Vendor: {
             __typename?: 'Vendor';
-            _id: number;
             VendorName: string;
             VendorNumber: string;
           };
         };
         RECEIPTLDs?: Array<{
           __typename?: 'ReceiptLD';
-          _id: number;
           ExpectedQuantity: number;
-          ReceiptStatus: {
-            __typename?: 'ReceiptStatus';
-            _id: number;
-            Name: string;
-          };
+          ReceiptStatus: { __typename?: 'ReceiptStatus'; Name: string };
         } | null> | null;
       } | null> | null;
     };
     ORDERLINEDETAILs?: Array<{
       __typename?: 'OrderLineDetail';
-      _id: number;
-      OrderID: number;
-      OrderLineID: number;
-      StatusID: number;
       Quantity: number;
-      LastUpdated?: string | null;
       BinLocation?: string | null;
       WMSPriority: number;
-      Status: { __typename?: 'OrderStatus'; _id: number; Name: string };
+      Status: { __typename?: 'OrderStatus'; Name: string };
       OrderLine: {
         __typename?: 'OrderLine';
-        _id: number;
         OrderLineNumber: number;
         Quantity?: number | null;
       };
       Order: {
         __typename?: 'Order';
-        _id: number;
-        DistributionCenter: string;
         OrderNumber: string;
         NOSINumber: string;
-        OrderStatusCode?: string | null;
-        ShipmentMethodID?: string | null;
         OrderType?: string | null;
         isSelected: number;
-        CustomerID?: number | null;
         ShipmentMethod?: {
           __typename?: 'ShipmentMethod';
-          _id: string;
           ShippingMethod: string;
           PriorityPinkPaper: boolean;
         } | null;
         Customer?: {
           __typename?: 'Customer';
-          _id: number;
           CustomerNumber: string;
           CustomerTier: string;
         } | null;
       };
     } | null> | null;
   } | null;
+};
+
+export type FetchProductVelocityQueryVariables = Types.Exact<{
+  ProductCode: Types.Scalars['String'];
+  PartNumber: Types.Scalars['String'];
+}>;
+
+export type FetchProductVelocityQuery = {
+  __typename?: 'Query';
+  fetchProductVelocity?: string | null;
+};
+
+export type UpdateProductVelocityMutationVariables = Types.Exact<{
+  _id: Types.Scalars['Int'];
+  Velocity: Types.Scalars['String'];
+}>;
+
+export type UpdateProductVelocityMutation = {
+  __typename?: 'Mutation';
+  updateProduct?: { __typename?: 'Product'; _id?: number | null } | null;
 };
 
 export const FindInventoryDocument = gql`
@@ -3638,7 +3620,6 @@ export const FindInventoryDocument = gql`
         InventoryTrackingNumber: $InventoryTrackingNumber
       }
     ) {
-      _id
       DistributionCenter
       InventoryTrackingNumber
       QuantityOnHand
@@ -3647,115 +3628,83 @@ export const FindInventoryDocument = gql`
       ROHS
       OriginalQuantity
       BinLocation
-      ProductID
-      ContainerID
-      CountryID
       NotFound
       Country {
-        _id
         CountryCode
         CountryName
         ISO2
         ISO3
       }
       Container {
-        _id
         Barcode
         Zone
-        DistributionCenter
         Warehouse
         Row
         Aisle
         Section
         Shelf
         ShelfDetail
-        ContainerTypeID
         ContainerType {
-          _id
           Name
           IsMobile
         }
         USERINFOs {
-          _id
           Name
         }
       }
       Product {
         _id
-        ProductCodeID
         PartNumber
         ProductTier
         Velocity
         ProductCode {
-          _id
           ProductCodeNumber
         }
         PURCHASEORDERLs {
-          _id
           PurchaseOrderH {
-            _id
             PurchaseOrderNumber
           }
         }
         RECEIPTLs {
-          _id
           LineNumber
           ExpectedQuantity
           ReceiptH {
-            _id
             ExpectedArrivalDate
             ReceiptNumber
             Vendor {
-              _id
               VendorName
               VendorNumber
             }
           }
           RECEIPTLDs {
-            _id
             ExpectedQuantity
             ReceiptStatus {
-              _id
               Name
             }
           }
         }
       }
       ORDERLINEDETAILs {
-        _id
-        OrderID
-        OrderLineID
-        StatusID
         Quantity
-        LastUpdated
         BinLocation
         WMSPriority
         Status {
-          _id
           Name
         }
         OrderLine {
-          _id
           OrderLineNumber
           Quantity
         }
         Order {
-          _id
-          DistributionCenter
           OrderNumber
           NOSINumber
-          OrderStatusCode
-          ShipmentMethodID
           OrderType
           isSelected
-          CustomerID
           ShipmentMethod {
-            _id
             ShippingMethod
             PriorityPinkPaper
           }
           Customer {
-            _id
             CustomerNumber
             CustomerTier
           }
@@ -3773,6 +3722,46 @@ export class FindInventoryGQL extends Apollo.Query<
   FindInventoryQueryVariables
 > {
   document = FindInventoryDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchProductVelocityDocument = gql`
+  query fetchProductVelocity($ProductCode: String!, $PartNumber: String!) {
+    fetchProductVelocity(PartNumber: $PartNumber, ProductCode: $ProductCode)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchProductVelocityGQL extends Apollo.Query<
+  FetchProductVelocityQuery,
+  FetchProductVelocityQueryVariables
+> {
+  document = FetchProductVelocityDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateProductVelocityDocument = gql`
+  mutation updateProductVelocity($_id: Int!, $Velocity: String!) {
+    updateProduct(Product: { _id: $_id, Velocity: $Velocity }) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateProductVelocityGQL extends Apollo.Mutation<
+  UpdateProductVelocityMutation,
+  UpdateProductVelocityMutationVariables
+> {
+  document = UpdateProductVelocityDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
