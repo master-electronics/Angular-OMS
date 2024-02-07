@@ -180,6 +180,7 @@ export type Autostoreprocess = {
   __typename?: 'AUTOSTOREPROCESS';
   LastRun?: Maybe<Scalars['String']>;
   Type?: Maybe<Scalars['String']>;
+  Value?: Maybe<Scalars['String']>;
   _id?: Maybe<Scalars['Int']>;
 };
 
@@ -1377,6 +1378,8 @@ export type MutationUpdateForInventoryFromMerpArgs = {
   LocatedInAutostore?: InputMaybe<Scalars['Boolean']>;
   MICPartNumber?: InputMaybe<Scalars['String']>;
   OriginalQuantity?: InputMaybe<Scalars['Float']>;
+  PackQty?: InputMaybe<Scalars['Float']>;
+  PackType?: InputMaybe<Scalars['String']>;
   ParentITN?: InputMaybe<Scalars['String']>;
   PartNumber: Scalars['String'];
   ProductCode: Scalars['String'];
@@ -1804,6 +1807,7 @@ export type Query = {
   fetchAutostoreMessage?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
   fetchAutostoreOrderMessages?: Maybe<Array<Maybe<Autostoremessage>>>;
+  fetchAutostoreProcess?: Maybe<Autostoreprocess>;
   fetchCommonvariablesForLogs?: Maybe<Array<Maybe<Scalars['String']>>>;
   fetchConfigValue?: Maybe<Omsconfig>;
   fetchDataColumnList?: Maybe<Array<Maybe<DataColumn>>>;
@@ -1938,6 +1942,10 @@ export type QueryFetchAutostoreMessagesArgs = {
 
 export type QueryFetchAutostoreOrderMessagesArgs = {
   MaxRetries?: InputMaybe<Scalars['Int']>;
+};
+
+export type QueryFetchAutostoreProcessArgs = {
+  AutostoreProcess?: InputMaybe<FindAutostoreProcess>;
 };
 
 export type QueryFetchCommonvariablesForLogsArgs = {
@@ -2592,6 +2600,7 @@ export type UpdatedOrderLine = {
   OrderLineID?: Maybe<Scalars['Int']>;
   OrderLineNumber?: Maybe<Scalars['Int']>;
   OrderLineQuantity?: Maybe<Scalars['Float']>;
+  PackQty?: Maybe<Scalars['Int']>;
   PartNumber?: Maybe<Scalars['String']>;
   ProductCodeNumber?: Maybe<Scalars['String']>;
   UOM?: Maybe<Scalars['String']>;
@@ -2779,6 +2788,7 @@ export type AutostoreOrderLine = {
 export type AutostoreProcess = {
   LastRun: Scalars['String'];
   Type: Scalars['String'];
+  Value?: InputMaybe<Scalars['String']>;
 };
 
 export type Entity = {
@@ -2802,6 +2812,11 @@ export type EntityTable = {
   __typename?: 'entityTable';
   TableName?: Maybe<Scalars['String']>;
   _id: Scalars['Int'];
+};
+
+export type FindAutostoreProcess = {
+  Type?: InputMaybe<Scalars['String']>;
+  Value?: InputMaybe<Scalars['String']>;
 };
 
 export type ImTrigger = {

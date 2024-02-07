@@ -8,6 +8,7 @@ query findInventory(
       InventoryTrackingNumber: $InventoryTrackingNumber
     }
   ) {
+    _id
     DistributionCenter
     InventoryTrackingNumber
     QuantityOnHand
