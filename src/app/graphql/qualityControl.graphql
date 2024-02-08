@@ -228,3 +228,17 @@ mutation updateMerpForLastLineAfterQCRepack(
     message
   }
 }
+
+query findWeightScaleConfig {
+  findHdiDevice {
+    WeightScale
+  }
+}
+
+mutation addWeightScale {
+  addWeightScale
+}
+
+mutation removeWeightScale {
+  removeWeightScale
+}
