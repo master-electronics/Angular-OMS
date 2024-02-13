@@ -113,6 +113,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'qct',
+        loadChildren: () =>
+          import('./pages/qc/quality-control.routing').then(
+            (m) => m.QualityControlRoutes
+          ),
+      },
+      {
         path: 'receiptreceiving',
         canActivate: [PrinterGuard],
         loadChildren: () =>
@@ -171,6 +178,13 @@ export const routes: Routes = [
           import(
             './pages/clear-suspect-inventory/clear-suspect-inventory.component'
           ).then((m) => m.ClearSuspectInventoryComponent),
+      },
+      {
+        path: 'weightscalesetting',
+        loadComponent: () =>
+          import(
+            './pages/weight-scale-setting/weight-scale-setting.component'
+          ).then((m) => m.WeightScaleSettingComponent),
       },
       {
         path: 'tableview',

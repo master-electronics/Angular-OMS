@@ -13,3 +13,19 @@
     <p>{{ modalMessage }}</p>
   </ng-container>
 </nz-modal>
+
+<nz-modal
+  *ngIf="weight$ | async"
+  [(nzVisible)]="!this.hdi.device"
+  nzTitle="Weight Scale"
+  (nzOnOk)="connect()"
+>
+  <ng-container *nzModalContent>
+    <p class="text-xl">Connect to the weight scale</p>
+    <p class="font-serif">
+      If the weight scale don't connect to this computer, click on the link to
+      disable.
+    </p>
+    <a href="/weightscalesetting">Setting</a>
+  </ng-container>
+</nz-modal>

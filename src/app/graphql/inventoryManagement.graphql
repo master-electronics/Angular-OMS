@@ -105,17 +105,19 @@ query fetchInventory($inventoryIDs: [Int]) {
 }
 
 query findIMInventories(
-  $itn: String,
-  $barcodeStart: String, 
-  $barcodeEnd: String,
-  $prc: String, 
-  $partNumber: String) {
+  $itn: String
+  $barcodeStart: String
+  $barcodeEnd: String
+  $prc: String
+  $partNumber: String
+) {
   findIMInventories(
     ITN: $itn
-    BarcodeStart: $barcodeStart, 
-    BarcodeEnd: $barcodeEnd,
-    PRC: $prc, 
-    PartNumber: $partNumber) {
+    BarcodeStart: $barcodeStart
+    BarcodeEnd: $barcodeEnd
+    PRC: $prc
+    PartNumber: $partNumber
+  ) {
     _id
     InventoryTrackingNumber
     oldID
@@ -150,8 +152,16 @@ query validateFilter(
   )
 }
 
-query findNextAudit($userID: Int, $barcode: String, $distributionCenter: String) {
-  findNextAudit(UserID: $userID, Barcode: $barcode, DistributionCenter: $distributionCenter) {
+query findNextAudit(
+  $userID: Int
+  $barcode: String
+  $distributionCenter: String
+) {
+  findNextAudit(
+    UserID: $userID
+    Barcode: $barcode
+    DistributionCenter: $distributionCenter
+  ) {
     _id
     TypeID
     InventoryID
@@ -302,8 +312,16 @@ mutation clearAuditsFromTimeout($userID: Int) {
   }
 }
 
-mutation updateLastUpdated($inventoryID: Int, $typeID: Int, $lastUpdated: String) {
-  updateLastUpdated(InventoryID: $inventoryID, TypeID: $typeID, LastUpdated: $lastUpdated) {
+mutation updateLastUpdated(
+  $inventoryID: Int
+  $typeID: Int
+  $lastUpdated: String
+) {
+  updateLastUpdated(
+    InventoryID: $inventoryID
+    TypeID: $typeID
+    LastUpdated: $lastUpdated
+  ) {
     _id
   }
 }
@@ -383,9 +401,7 @@ mutation deleteAudit(
 }
 
 mutation deleteAudits($inventoryID: Int) {
-  deleteAudits(
-    InventoryID: $inventoryID
-  ) {
+  deleteAudits(InventoryID: $inventoryID) {
     _id
   }
 }
@@ -406,11 +422,9 @@ mutation closeAudit(
   }
 }
 
-mutation closeAudits(
-  $itn: String
-) {
-  closeAudits(ITN: $itn) { 
-    _id 
+mutation closeAudits($itn: String) {
+  closeAudits(ITN: $itn) {
+    _id
     InventoryTrackingNumber
   }
 }
@@ -422,23 +436,21 @@ mutation clearTimeoutAudits($seconds: Int) {
 }
 
 mutation updateSystemTrigger(
-  $triggerId: Int, 
-  $trigger: imTrigger, 
-  $auditTypes: [Int]) {
-    updateSystemTrigger(
-      TriggerID: $triggerId,
-      Trigger: $trigger,
-      AuditTypes: $auditTypes) {
-        _id
-    }
+  $triggerId: Int
+  $trigger: imTrigger
+  $auditTypes: [Int]
+) {
+  updateSystemTrigger(
+    TriggerID: $triggerId
+    Trigger: $trigger
+    AuditTypes: $auditTypes
+  ) {
+    _id
+  }
 }
 
-mutation insertSystemTrigger(
-  $trigger: imTrigger,
-  $auditTypes: [Int]) {
-    insertSystemTrigger(
-      Trigger: $trigger,
-      AuditTypes: $auditTypes) {
-        _id
-    }
+mutation insertSystemTrigger($trigger: imTrigger, $auditTypes: [Int]) {
+  insertSystemTrigger(Trigger: $trigger, AuditTypes: $auditTypes) {
+    _id
+  }
 }

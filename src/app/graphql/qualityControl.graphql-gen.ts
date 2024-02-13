@@ -704,6 +704,7 @@ export type MenuGroup = {
 export type Mutation = {
   __typename?: 'Mutation';
   ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
+  addWeightScale?: Maybe<Scalars['Boolean']>;
   changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
@@ -791,6 +792,7 @@ export type Mutation = {
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
   recreateITN?: Maybe<UpdateResult>;
+  removeWeightScale?: Maybe<Scalars['Boolean']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1866,6 +1868,7 @@ export type Query = {
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
   findEventType?: Maybe<Array<Maybe<EventType>>>;
+  findHdiDevice?: Maybe<HdiDevice>;
   findIMInventories?: Maybe<Array<Maybe<Auditinventory>>>;
   findIMPRCInventories?: Maybe<Array<Maybe<Inventory>>>;
   findIMPRCPartNumberInventories?: Maybe<Array<Maybe<Inventory>>>;
@@ -2829,6 +2832,12 @@ export type FindAutostoreProcess = {
   Value?: InputMaybe<Scalars['String']>;
 };
 
+export type HdiDevice = {
+  __typename?: 'hdiDevice';
+  IP: Scalars['String'];
+  WeightScale: Scalars['Boolean'];
+};
+
 export type ImTrigger = {
   Active?: InputMaybe<Scalars['Boolean']>;
   Description?: InputMaybe<Scalars['String']>;
@@ -3751,6 +3760,33 @@ export type UpdateMerpForLastLineAfterQcRepackMutation = {
   };
 };
 
+export type FindWeightScaleConfigQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FindWeightScaleConfigQuery = {
+  __typename?: 'Query';
+  findHdiDevice?: { __typename?: 'hdiDevice'; WeightScale: boolean } | null;
+};
+
+export type AddWeightScaleMutationVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type AddWeightScaleMutation = {
+  __typename?: 'Mutation';
+  addWeightScale?: boolean | null;
+};
+
+export type RemoveWeightScaleMutationVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type RemoveWeightScaleMutation = {
+  __typename?: 'Mutation';
+  removeWeightScale?: boolean | null;
+};
+
 export const FetchPrinterStationDocument = gql`
   query fetchPrinterStation {
     fetchPrinterStation
@@ -4172,6 +4208,65 @@ export class UpdateMerpForLastLineAfterQcRepackGQL extends Apollo.Mutation<
   UpdateMerpForLastLineAfterQcRepackMutationVariables
 > {
   document = UpdateMerpForLastLineAfterQcRepackDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FindWeightScaleConfigDocument = gql`
+  query findWeightScaleConfig {
+    findHdiDevice {
+      WeightScale
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FindWeightScaleConfigGQL extends Apollo.Query<
+  FindWeightScaleConfigQuery,
+  FindWeightScaleConfigQueryVariables
+> {
+  document = FindWeightScaleConfigDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const AddWeightScaleDocument = gql`
+  mutation addWeightScale {
+    addWeightScale
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AddWeightScaleGQL extends Apollo.Mutation<
+  AddWeightScaleMutation,
+  AddWeightScaleMutationVariables
+> {
+  document = AddWeightScaleDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const RemoveWeightScaleDocument = gql`
+  mutation removeWeightScale {
+    removeWeightScale
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RemoveWeightScaleGQL extends Apollo.Mutation<
+  RemoveWeightScaleMutation,
+  RemoveWeightScaleMutationVariables
+> {
+  document = RemoveWeightScaleDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

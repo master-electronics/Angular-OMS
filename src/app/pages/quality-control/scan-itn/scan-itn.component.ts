@@ -57,8 +57,6 @@ import { StorageUserInfoService } from 'src/app/shared/services/storage-user-inf
 })
 export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = false;
-  alertType = 'error';
-  alertMessage = '';
   itemInfo: itemParams;
   private subscription = new Subscription();
   constructor(
@@ -66,7 +64,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
-    private qcService: QualityControlService,
+    public qcService: QualityControlService,
     private logService: EventLogService,
     private eventLog: Create_EventLogsGQL,
     private _userInfo: StorageUserInfoService,
@@ -81,8 +79,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.alertType = this.route.snapshot.queryParams['type'];
-    this.alertMessage = this.route.snapshot.queryParams['message'];
     this.qcService.changeTab(['process', 'wait', 'wait', 'wait']);
     this.logService.initEventLog({
       UserName: this._userInfo.userName,
@@ -100,7 +96,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit(): void {
-    this.alertMessage = '';
+    this.qcService.alertMessage.set('');
     if (this.ITNForm.invalid || this.isLoading) {
       return;
     }
@@ -131,19 +127,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               throw 'Invalid Order Line Detail';
             }
             let error = '';
-            // if (
-            //   !['qc'].includes(
-            //     res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim()
-            //   ) &&
-            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-            //     holdRegex
-            //   ) &&
-            //   !res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.trim().match(
-            //     autostoreRegex
-            //   )
-            // ) {
-            //   error = `The Binlocation ${res.data.findInventory.ORDERLINEDETAILs[0].BinLocation} must be QC or hold or Autostore\n`;
-            // }
             if (
               ![
                 sqlData.droppedQC_ID,
@@ -193,9 +176,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
               WMSPriority: detail.ORDERLINEDETAILs[0].WMSPriority,
               Priority: Order.ShipmentMethod.PriorityPinkPaper,
             };
-            // if (this.itemInfo.isHold) {
-            //   return this.updateQCBin.mutate({ ITN });
-            // }
             return of(true);
           }),
           switchMap(() => {
@@ -258,8 +238,8 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           error: (error) => {
             this.isLoading = false;
-            this.alertType = 'error';
-            this.alertMessage = error;
+            this.qcService.alertType.set('error');
+            this.qcService.alertMessage.set(error);
             this.ITNInput.nativeElement.select();
           },
         })

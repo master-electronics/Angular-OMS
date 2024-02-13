@@ -45,7 +45,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
-import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
 import { PrinterService } from 'src/app/shared/data/printer';
 
 @Component({

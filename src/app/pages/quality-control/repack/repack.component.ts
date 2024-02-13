@@ -43,6 +43,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
+import { HDIService } from 'src/app/shared/data/hdi';
 
 @Component({
   selector: 'repack',
@@ -88,7 +89,8 @@ export class RepackComponent implements OnInit, AfterViewInit {
     private insertUserEventLog: Create_EventLogsGQL,
     private eventLog: EventLogService,
     private _userInfo: StorageUserInfoService,
-    private _location: ChangeItnListForMerpGQL
+    private _location: ChangeItnListForMerpGQL,
+    private _hdi: HDIService
   ) {
     this.titleService.setTitle('qc/repack');
   }
@@ -107,9 +109,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
       this.router.navigate(['qc']);
       return;
     }
-    // if (this.itemInfo.isHold) {
-    //   this.findDetailID();
-    // }
   }
 
   @ViewChild('container') containerInput!: ElementRef;
@@ -117,52 +116,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.containerInput.nativeElement.select();
   }
-
-  // findDetailID(): void {
-  //   this.isLoading = true;
-  //   this.fetchID$ = this.findNewID
-  //     .fetch(
-  //       {
-  //         DistributionCenter: environment.DistributionCenter,
-  //         InventoryTrackingNumber: this.itemInfo.InventoryTrackingNumber,
-  //       },
-  //       { fetchPolicy: 'network-only' }
-  //     )
-  //     .pipe(
-  //       map((res) => {
-  //         this.isLoading = false;
-  //         let message = '';
-  //         if (
-  //           res.data.findInventory.ORDERLINEDETAILs[0].BinLocation.toLowerCase().trim() !==
-  //           'qc'
-  //         ) {
-  //           this.needSearch = true;
-  //           message = `Bin location is not qc, Click search button again!`;
-  //         }
-  //         if (res.data.findInventory.ORDERLINEDETAILs.length > 1) {
-  //           this.needSearch = true;
-  //           message = `More than one record, Click search button again!`;
-  //         }
-  //         if (this.needSearch) {
-  //           this.needSearch = true;
-  //           this.alertType = 'error';
-  //           this.alertMessage = message;
-  //           this.containerInput.nativeElement.select();
-  //         }
-  //         this.itemInfo.OrderLineDetailID =
-  //           res.data.findInventory.ORDERLINEDETAILs[0]._id;
-  //         this.itemInfo.InventoryID = res.data.findInventory._id;
-  //       }),
-  //       catchError((error) => {
-  //         this.isLoading = false;
-  //         this.needSearch = true;
-  //         this.alertType = 'error';
-  //         this.alertMessage = error;
-  //         this.containerInput.nativeElement.select();
-  //         return error;
-  //       })
-  //     );
-  // }
 
   onSubmit(): void {
     this.alertMessage = '';
@@ -410,9 +363,6 @@ export class RepackComponent implements OnInit, AfterViewInit {
           return forkJoin({ updateDetail, updateBin });
         }),
         tap((res: any) => {
-          // if (!res.updateDetail.data.updateOrderLineDetail[0]) {
-          //   throw `${this.itemInfo.InventoryTrackingNumber} Fail to update OrderLineDetail SQL`;
-          // }
           if (!res.updateBin.data.changeItnListForMerp) {
             throw `${this.itemInfo.InventoryTrackingNumber} Fail to update Binlocation in Merp`;
           }
@@ -438,21 +388,25 @@ export class RepackComponent implements OnInit, AfterViewInit {
           return forkJoin(query);
         }),
         switchMap((res: any) => {
-          this.type = 'info';
-          this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}`;
+          this.qcService.alertType.set('info');
+          this.qcService.alertMessage.set(
+            `QC complete for ${this.itemInfo.InventoryTrackingNumber}`
+          );
           if (res.updateStatus) {
+            this.qcService.alertType.set('success');
+            this.qcService.alertMessage.set(
+              `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`
+            );
             this.type = 'success';
-            this.message = `QC complete for ${this.itemInfo.InventoryTrackingNumber}\nQC complete for Order ${this.itemInfo.OrderNumber}`;
           }
           return this.insertlogQuery;
         }),
         map(() => {
-          this.router.navigate(['/qc'], {
-            queryParams: {
-              type: this.type,
-              message: this.message,
-            },
-          });
+          let link = '/qc';
+          if (this._hdi.device) {
+            link = '/qc/logweight';
+          }
+          this.router.navigate([link]);
         }),
         catchError((err) => {
           this.isLoading = false;

@@ -704,6 +704,7 @@ export type MenuGroup = {
 export type Mutation = {
   __typename?: 'Mutation';
   ITNSplitAndPrintLabels: Array<Maybe<Scalars['String']>>;
+  addWeightScale?: Maybe<Scalars['Boolean']>;
   changeItnListForMerp?: Maybe<Scalars['Boolean']>;
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
@@ -791,6 +792,7 @@ export type Mutation = {
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
   recreateITN?: Maybe<UpdateResult>;
+  removeWeightScale?: Maybe<Scalars['Boolean']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1866,6 +1868,7 @@ export type Query = {
   findContainers?: Maybe<Array<Maybe<Container>>>;
   findEventLogs?: Maybe<Array<Maybe<EventLog>>>;
   findEventType?: Maybe<Array<Maybe<EventType>>>;
+  findHdiDevice?: Maybe<HdiDevice>;
   findIMInventories?: Maybe<Array<Maybe<Auditinventory>>>;
   findIMPRCInventories?: Maybe<Array<Maybe<Inventory>>>;
   findIMPRCPartNumberInventories?: Maybe<Array<Maybe<Inventory>>>;
@@ -2827,6 +2830,12 @@ export type EntityTable = {
 export type FindAutostoreProcess = {
   Type?: InputMaybe<Scalars['String']>;
   Value?: InputMaybe<Scalars['String']>;
+};
+
+export type HdiDevice = {
+  __typename?: 'hdiDevice';
+  IP: Scalars['String'];
+  WeightScale: Scalars['Boolean'];
 };
 
 export type ImTrigger = {

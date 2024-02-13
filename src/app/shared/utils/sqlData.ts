@@ -44,6 +44,7 @@ export const sqlData = {
   Event_QC_Hold: 201,
   Event_QC_Done: 202,
   Event_QC_OrderComplete: 203,
+  Event_QC_WeightScale: 210,
   // pulling
   Event_Pulling_Start: 400,
   Event_Pulling_SelectCart: 401,
