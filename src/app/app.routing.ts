@@ -72,11 +72,11 @@ export const routes: Routes = [
             (m) => m.ShelfInventoryModule
           ),
       },
-      {
-        path: 'pulltopick',
-        loadChildren: () =>
-          import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
-      },
+      // {
+      //   path: 'pulltopick',
+      //   loadChildren: () =>
+      //     import('./pages/pull-to-pick/pick.module').then((m) => m.PickModule),
+      // },
       {
         path: 'valuemap',
         loadChildren: () =>

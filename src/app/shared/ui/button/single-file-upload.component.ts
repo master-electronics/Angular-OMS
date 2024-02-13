@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, of, throwError } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -25,25 +24,31 @@ import { environment } from 'src/environments/environment';
         </ul>
       </section>
 
-      <button (click)="onUpload()">Upload the file</button>
+      <button
+        *ngIf="status !== 'uploading'"
+        (click)="onUpload()"
+        class="rounded border-b-4 border-blue-700 bg-blue-500 px-4 py-2 font-bold text-white hover:border-blue-500 hover:bg-blue-400"
+      >
+        Upload the file
+      </button>
 
       <section [ngSwitch]="status">
         <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
         <p *ngSwitchCase="'success'">✅ Done!</p>
         <p *ngSwitchCase="'fail'">❌ Error!</p>
-        <p *ngSwitchDefault>😶 Waiting to upload...</p>
+        <p *ngSwitchCase="'initial'">😶 Waiting to upload...</p>
+        <p *ngSwitchDefault>...</p>
       </section>
     </div>
+    <div *ngIf="upload$ | async"></div>
   `,
 })
 export class SingleFileUploadComponent {
-  status: 'initial' | 'uploading' | 'success' | 'fail' = 'initial';
+  status: 'initial' | 'uploading' | 'success' | 'fail' = null;
   file: File | null = null;
   upload$;
 
   constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {}
 
   onChange(event: any) {
     const file: File = event.target.files[0];
@@ -60,16 +65,9 @@ export class SingleFileUploadComponent {
 
       formData.append('file', this.file, this.file.name);
 
-      this.upload$ = this.http.post(
-        `${environment.apiUrl}/fileUpload/receiving`,
-        formData
-      );
-
-      this.status = 'uploading';
-
-      this.upload$
+      this.upload$ = this.http
+        .post(`${environment.apiUrl}/fileUpload/receiving`, formData)
         .pipe(
-          takeUntilDestroyed(),
           map(() => {
             this.status = 'success';
           }),
@@ -77,8 +75,9 @@ export class SingleFileUploadComponent {
             this.status = 'fail';
             return of(error);
           })
-        )
-        .subscribe();
+        );
+
+      this.status = 'uploading';
     }
   }
 }
