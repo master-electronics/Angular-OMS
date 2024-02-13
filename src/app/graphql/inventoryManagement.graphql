@@ -293,7 +293,7 @@ mutation clearAudits($username: String, $distributionCenter: String) {
     _id
   }
 }
-
+  
 mutation clearAuditsFromTimeout($userID: Int) {
   clearAuditsFromTimeout(
     UserID: $userID
