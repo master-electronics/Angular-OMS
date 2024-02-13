@@ -242,8 +242,17 @@ export class ScanITN implements OnInit {
       1000;
 
     if (secondsRemaining == 0) {
-      this._router.navigate(['../../../menu'], { relativeTo: this._actRoute });
-      return;
+      this.data$ = this._auditService
+        .clearAuditsByTimeout(this.userInfo.userId)
+        .pipe(
+          switchMap((res) => {
+            this._router.navigate(['../../../menu'], {
+              relativeTo: this._actRoute,
+            });
+
+            return of(res);
+          })
+        );
     }
 
     if (secondsRemaining == this.alertTime) {
@@ -325,12 +334,13 @@ export class ScanITN implements OnInit {
     ];
 
     if (!this.scannedITNs.includes(itn)) {
-      this.scannedITNs.push(itn);
+      this.scannedITNs.unshift(itn);
     }
 
     sessionStorage.setItem('scannedITNs', JSON.stringify(this.scannedITNs));
     const closeAuditsUserEventLogs = [];
     const closeAuditsEventLogs = [];
+    let audits = [];
 
     this.data$ = this._auditService.checkBinlocation(itn).pipe(
       switchMap((res) => {
@@ -386,8 +396,8 @@ export class ScanITN implements OnInit {
                   itn.toString()
                 );
               }),
-              switchMap((res) => {
-                const audits = [];
+              switchMap(async (res) => {
+                audits = [];
 
                 if (res.data.findInventory?._id) {
                   audits.push({
@@ -423,7 +433,36 @@ export class ScanITN implements OnInit {
                   }),
                 });
 
-                return this._auditService.insertAudits(audits);
+                return await this._auditService.insertAudits(audits);
+              }),
+              switchMap((res) => {
+                userEventLogs.push({
+                  UserEventID: sqlData.Event_IM_Audit_Closed_ITN_Search,
+                  UserName: this.userInfo.userName,
+                  DistributionCenter: environment.DistributionCenter,
+                  InventoryTrackingNumber: itn,
+                  Message: 'Binlocaton: ' + barcode,
+                });
+
+                eventLogs.push({
+                  UserName: this.userInfo.userName,
+                  EventTypeID: sqlData.Event_IM_Audit_Closed_ITN_Search,
+                  Log: JSON.stringify({
+                    DistributionCenter: environment.DistributionCenter,
+                    InventoryTrackingNumber: itn,
+                    AuditTypeID: 10,
+                    Trigger: 'ITN Location Audit Search',
+                    SearchedITN: JSON.parse(
+                      sessionStorage.getItem('currentAudit')
+                    ).Inventory.ITN,
+                    SearchLocation: sessionStorage.getItem('CurrentLocation'),
+                  }),
+                });
+
+                return this._auditService.closeSearchAudit(
+                  audits[0].InventoryID,
+                  10
+                );
               })
             );
         }

@@ -708,6 +708,7 @@ export type Mutation = {
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearAudits?: Maybe<Array<Maybe<Audit>>>;
+  clearAuditsFromTimeout?: Maybe<Array<Maybe<Audit>>>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
@@ -872,6 +873,10 @@ export type MutationCleanContainerFromPrevOrderArgs = {
 export type MutationClearAuditsArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   Username?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationClearAuditsFromTimeoutArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationClearItnUserDefaultTemplateArgs = {

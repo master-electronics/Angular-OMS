@@ -499,6 +499,14 @@ export class ScanLocation implements OnInit {
         return this._auditService.insertSuspect(SuspectData);
       }),
       switchMap(() => {
+        return this._auditService.inventoryUpdate(
+          this.userInfo.userName,
+          JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN,
+          'Inventory Mangement Audit',
+          '0'
+        );
+      }),
+      switchMap(() => {
         return this._auditService.deleteAudits(
           JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID
         );

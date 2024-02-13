@@ -118,6 +118,7 @@ export const sqlData = {
   Event_IM_System_Trigger_Updated: 4020,
   Event_IM_System_Trigger_AuditType_Added: 4025,
   Event_IM_System_Trigger_AuditTypes_Removed: 4030,
+  Event_IM_Audit_Cleared_By_Timeout: 4085,
   Event_IM_Audit_Completed: 4090,
   Event_IM_Audit_Closed_ITN_Search: 4095,
   Event_IM_Location_Scanned: 4100,

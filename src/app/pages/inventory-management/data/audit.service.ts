@@ -36,6 +36,7 @@ import {
   FetchGlobalMessagesGQL,
   RecreateItnGQL,
   FetchPreviousLocationGQL,
+  ClearAuditsFromTimeoutGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { FindInventoryGQL } from 'src/app/graphql/itn_info.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
@@ -76,7 +77,8 @@ export class AuditService {
     private _fetchInvAudits: FetchInventoryAuditsGQL,
     private _fetchGlobalMessages: FetchGlobalMessagesGQL,
     private _recreateITN: RecreateItnGQL,
-    private _fetchPrevious: FetchPreviousLocationGQL
+    private _fetchPrevious: FetchPreviousLocationGQL,
+    private _clearAuditsFromTimeout: ClearAuditsFromTimeoutGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -267,6 +269,7 @@ export class AuditService {
   }
 
   public insertAudits(Audits) {
+    console.log('A');
     return this._insertAudits.mutate({
       audits: Audits,
     });
@@ -314,10 +317,24 @@ export class AuditService {
       );
   }
 
+  public closeSearchAudit(InventoryID: number, TypeID: number) {
+    console.log('B');
+    return this._closeAudit.mutate({
+      inventoryID: InventoryID,
+      typeID: TypeID,
+    });
+  }
+
   public clearAudits(Username: string, DistributionCenter: string) {
     return this._clearAudits.mutate({
       username: Username,
       distributionCenter: DistributionCenter,
+    });
+  }
+
+  public clearAuditsByTimeout(UserID: number) {
+    return this._clearAuditsFromTimeout.mutate({
+      userID: UserID,
     });
   }
 
@@ -465,7 +482,7 @@ export class AuditService {
             Log: JSON.stringify({
               SearchLocation: SearchLocation,
               DistributionCenter: environment.DistributionCenter,
-              InventoryTrackingNumber: inv._id.toString(),
+              InventoryTrackingNumber: inv.InventoryTrackingNumber,
               ParentITN: inv.ParentITN,
               BinLocation: inv.BinLocation,
               QuantityOnHand: inv.QuantityOnHand,

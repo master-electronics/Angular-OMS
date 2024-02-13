@@ -294,6 +294,14 @@ mutation clearAudits($username: String, $distributionCenter: String) {
   }
 }
 
+mutation clearAuditsFromTimeout($userID: Int) {
+  clearAuditsFromTimeout(
+    UserID: $userID
+  ) {
+    _id
+  }
+}
+
 mutation updateLastUpdated($inventoryID: Int, $typeID: Int, $lastUpdated: String) {
   updateLastUpdated(InventoryID: $inventoryID, TypeID: $typeID, LastUpdated: $lastUpdated) {
     _id
@@ -306,7 +314,9 @@ mutation insertAudits($audits: [inputAudit]) {
   }
 }
 
-mutation insertSuspect($suspect: [inputSuspect]) {
+mutation insertSuspect(
+  $suspect: [inputSuspect]
+) {
   insertSuspect(Suspect: $suspect) {
     _id
   }

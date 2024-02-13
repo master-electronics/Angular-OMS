@@ -708,6 +708,7 @@ export type Mutation = {
   changeQCLineInfo: Response;
   cleanContainerFromPrevOrder?: Maybe<Scalars['Boolean']>;
   clearAudits?: Maybe<Array<Maybe<Audit>>>;
+  clearAuditsFromTimeout?: Maybe<Array<Maybe<Audit>>>;
   clearITNUserDefaultTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   clearMerpTote: Response;
   clearSuspectInventory: Scalars['Boolean'];
@@ -872,6 +873,10 @@ export type MutationCleanContainerFromPrevOrderArgs = {
 export type MutationClearAuditsArgs = {
   DistributionCenter?: InputMaybe<Scalars['String']>;
   Username?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationClearAuditsFromTimeoutArgs = {
+  UserID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationClearItnUserDefaultTemplateArgs = {
@@ -3903,6 +3908,18 @@ export type ClearAuditsMutation = {
   } | null> | null;
 };
 
+export type ClearAuditsFromTimeoutMutationVariables = Types.Exact<{
+  userID?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type ClearAuditsFromTimeoutMutation = {
+  __typename?: 'Mutation';
+  clearAuditsFromTimeout?: Array<{
+    __typename?: 'AUDIT';
+    _id?: number | null;
+  } | null> | null;
+};
+
 export type UpdateLastUpdatedMutationVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
   typeID?: Types.InputMaybe<Types.Scalars['Int']>;
@@ -4716,6 +4733,27 @@ export class ClearAuditsGQL extends Apollo.Mutation<
   ClearAuditsMutationVariables
 > {
   document = ClearAuditsDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ClearAuditsFromTimeoutDocument = gql`
+  mutation clearAuditsFromTimeout($userID: Int) {
+    clearAuditsFromTimeout(UserID: $userID) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ClearAuditsFromTimeoutGQL extends Apollo.Mutation<
+  ClearAuditsFromTimeoutMutation,
+  ClearAuditsFromTimeoutMutationVariables
+> {
+  document = ClearAuditsFromTimeoutDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
