@@ -298,6 +298,15 @@ query fetchPreviousLocation(
   }
 }
 
+query fetchLocationAudits {
+  fetchLocationAudits{
+    _id
+    InventoryTrackingNumber,
+    Trigger,
+    Priority
+  }
+}
+
 mutation clearAudits($username: String, $distributionCenter: String) {
   clearAudits(Username: $username, DistributionCenter: $distributionCenter) {
     _id

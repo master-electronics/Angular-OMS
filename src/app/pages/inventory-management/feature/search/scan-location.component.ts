@@ -81,6 +81,7 @@ import { AuditService } from '../../data/audit.service';
       <popup-modal
         (clickSubmit)="this.adjacentMessage = null"
         (clickCancel)="this.adjacentMessage = null"
+        [cancelVisible]="showCancel"
         [message]="adjacentMessage"
       ></popup-modal>
     </ng-container>
@@ -145,6 +146,7 @@ export class ScanLocation implements OnInit {
   showNoAdjacent = false;
   adjacentMessage;
   headerText;
+  showCancel = false;
 
   ngOnInit(): void {
     sessionStorage.removeItem('searching');

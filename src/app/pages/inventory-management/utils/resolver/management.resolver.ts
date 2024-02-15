@@ -5,10 +5,13 @@ import { catchError, forkJoin, of } from 'rxjs';
 
 @Injectable()
 export class ManagementTriggerResolver {
-  constructor(private _autidService: AuditService) {}
+  constructor(private _auditService: AuditService) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this._autidService.auditCount().pipe(
+    return forkJoin({
+      auditCount: this._auditService.auditCount(),
+      auditPriority: this._auditService.fetchLocationAudits(),
+    }).pipe(
       catchError((error) => {
         return of({ error });
       })

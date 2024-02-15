@@ -543,6 +543,7 @@ export class UserTrigger {
             InventoryTrackingNumber: item.ITN,
             LastUpdated: new Date(Date.now()).toISOString(),
             CreatedDatetime: new Date(Date.now()).toISOString(),
+            Trigger: 'User Trigger',
           });
 
           userEventLogs.push({

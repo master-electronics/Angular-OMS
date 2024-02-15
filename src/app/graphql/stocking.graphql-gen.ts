@@ -1834,6 +1834,7 @@ export type Query = {
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchInventory?: Maybe<Array<Maybe<Inventory>>>;
   fetchInventoryAudits?: Maybe<Array<Maybe<Imaudit>>>;
+  fetchLocationAudits?: Maybe<Array<Maybe<Imaudit>>>;
   fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
@@ -2851,6 +2852,7 @@ export type InputAudit = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Int']>;
+  Trigger?: InputMaybe<Scalars['String']>;
   TypeID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };

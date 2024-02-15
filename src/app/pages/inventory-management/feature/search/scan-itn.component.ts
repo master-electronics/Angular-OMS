@@ -194,6 +194,7 @@ export class ScanITN implements OnInit {
                   LastUpdated: new Date(Date.now()).toISOString(),
                   CreatedDatetime: new Date(Date.now()).toISOString(),
                   UserID: this.userInfo.userId,
+                  Trigger: 'Location Search',
                 });
 
                 userEventLogs.push({
@@ -504,11 +505,11 @@ export class ScanITN implements OnInit {
           itn ==
           JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN
         ) {
-          locs.forEach((loc) => {
-            loc.Status = 'done';
-          });
+          // locs.forEach((loc) => {
+          //   loc.Status = 'done';
+          // });
 
-          sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+          // sessionStorage.setItem('searchLocations', JSON.stringify(locs));
           const audit: Audit = JSON.parse(
             sessionStorage.getItem('currentAudit')
           );
@@ -567,6 +568,19 @@ export class ScanITN implements OnInit {
       )
       .pipe(
         switchMap((res) => {
+          const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
+          const loc = locs?.find(
+            (loc) => loc.Barcode == sessionStorage.getItem('searchLocation')
+          );
+
+          if (loc) {
+            loc.Status = 'done';
+            sessionStorage.setItem('searchLocations', JSON.stringify(locs));
+          }
+
+          return of(res);
+        }),
+        switchMap((res) => {
           sessionStorage.setItem('searchLevel', '2');
           sessionStorage.removeItem('searchLocation');
           this._router.navigate(['../scan-location'], {
@@ -576,19 +590,6 @@ export class ScanITN implements OnInit {
           return of(res);
         })
       );
-
-    // this.test$ = this._auditService.fetchContainerInventory(
-    //   { Barcode: sessionStorage.getItem('searchLocation') },
-    // );
-
-    // const locs = JSON.parse(sessionStorage.getItem('searchLocations'));
-    // const loc = locs?.find((loc) => loc.Status == 'active');
-    // loc.Status = 'done';
-    // sessionStorage.setItem('searchLocations', JSON.stringify(locs));
-
-    // this._router.navigate(['../scan-location'], {
-    //   relativeTo: this._actRoute,
-    // });
   }
 
   onFoundOk() {
@@ -649,7 +650,7 @@ export class ScanITN implements OnInit {
               },
             ];
 
-            this.close$ = this._eventLog
+            this.data$ = this._eventLog
               .insertLog(closerUserEventLog, closeEventLog)
               .pipe(
                 switchMap((res) => {
@@ -662,11 +663,12 @@ export class ScanITN implements OnInit {
                     )
                     .pipe(
                       map((res) => {
-                        this._router.navigate(['../../scan-itn'], {
+                        this.message = null;
+                        this._router.navigate(['../scan-itn'], {
                           relativeTo: this._actRoute,
                         });
 
-                        return res;
+                        return of(true);
                       }),
                       catchError((error) => {
                         return of({

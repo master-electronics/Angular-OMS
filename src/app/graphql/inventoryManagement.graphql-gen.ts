@@ -1834,6 +1834,7 @@ export type Query = {
   fetchITNUserColumns?: Maybe<Array<Maybe<ItnUserColumn>>>;
   fetchInventory?: Maybe<Array<Maybe<Inventory>>>;
   fetchInventoryAudits?: Maybe<Array<Maybe<Imaudit>>>;
+  fetchLocationAudits?: Maybe<Array<Maybe<Imaudit>>>;
   fetchMenuList?: Maybe<Array<Maybe<Menu>>>;
   fetchOrderLineDetailforWMSCount?: Maybe<Array<Maybe<OrderLineDetail>>>;
   fetchOrderLineMessage?: Maybe<GlobalMessage>;
@@ -2851,6 +2852,7 @@ export type InputAudit = {
   InventoryTrackingNumber?: InputMaybe<Scalars['String']>;
   LastUpdated?: InputMaybe<Scalars['String']>;
   Priority?: InputMaybe<Scalars['Int']>;
+  Trigger?: InputMaybe<Scalars['String']>;
   TypeID?: InputMaybe<Scalars['Int']>;
   UserID?: InputMaybe<Scalars['Int']>;
 };
@@ -3904,6 +3906,21 @@ export type FetchPreviousLocationQuery = {
   } | null;
 };
 
+export type FetchLocationAuditsQueryVariables = Types.Exact<{
+  [key: string]: never;
+}>;
+
+export type FetchLocationAuditsQuery = {
+  __typename?: 'Query';
+  fetchLocationAudits?: Array<{
+    __typename?: 'IMAUDIT';
+    _id?: number | null;
+    InventoryTrackingNumber?: string | null;
+    Trigger?: string | null;
+    Priority?: number | null;
+  } | null> | null;
+};
+
 export type ClearAuditsMutationVariables = Types.Exact<{
   username?: Types.InputMaybe<Types.Scalars['String']>;
   distributionCenter?: Types.InputMaybe<Types.Scalars['String']>;
@@ -4721,6 +4738,30 @@ export class FetchPreviousLocationGQL extends Apollo.Query<
   FetchPreviousLocationQueryVariables
 > {
   document = FetchPreviousLocationDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const FetchLocationAuditsDocument = gql`
+  query fetchLocationAudits {
+    fetchLocationAudits {
+      _id
+      InventoryTrackingNumber
+      Trigger
+      Priority
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FetchLocationAuditsGQL extends Apollo.Query<
+  FetchLocationAuditsQuery,
+  FetchLocationAuditsQueryVariables
+> {
+  document = FetchLocationAuditsDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
