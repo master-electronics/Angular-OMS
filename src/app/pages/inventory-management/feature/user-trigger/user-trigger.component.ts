@@ -11,6 +11,7 @@ import {
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FetchAuditTypesGQL } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import {
   VerifyAuditLocationGQL,
@@ -57,6 +58,7 @@ import { environment } from 'src/environments/environment';
     MessageBarComponent,
     PopupModalComponent,
     NzButtonModule,
+    NzSelectModule,
   ],
   template: `
     <div *ngIf="data$ | async"></div>
@@ -171,6 +173,17 @@ import { environment } from 'src/environments/environment';
       </form>
     </div>
     <div class="flexContainer">
+      <div class="title">Priority</div>
+      <nz-select [ngModel]="priority" style="width: 200px">
+        <nz-option nzValue="1" nzLabel="1"></nz-option>
+        <nz-option nzValue="2" nzLabel="2"></nz-option>
+        <nz-option nzValue="3" nzLabel="3"></nz-option>
+        <nz-option nzValue="4" nzLabel="4"></nz-option>
+        <nz-option nzValue="5" nzLabel="5"></nz-option>
+        <nz-option nzValue="6" nzLabel="6"></nz-option>
+      </nz-select>
+    </div>
+    <div class="flexContainer">
       <div class="buttonContainer">
         <button
           nz-button
@@ -257,6 +270,7 @@ export class UserTrigger {
   locationITNList;
   prcITNList;
   itnList;
+  priority = '1';
 
   ngOnInit(): void {
     this.data$ = this._fetchAuditTypes
@@ -544,6 +558,7 @@ export class UserTrigger {
             LastUpdated: new Date(Date.now()).toISOString(),
             CreatedDatetime: new Date(Date.now()).toISOString(),
             Trigger: 'User Trigger',
+            Priority: Number(this.priority),
           });
 
           userEventLogs.push({
@@ -562,6 +577,7 @@ export class UserTrigger {
               InventoryTrackingNumber: item.ITN,
               AuditTypeID: type.value,
               Trigger: 'User Tigger',
+              Priority: this.priority,
             }),
           });
         });

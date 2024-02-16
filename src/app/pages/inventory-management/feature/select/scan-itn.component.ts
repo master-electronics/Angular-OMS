@@ -347,7 +347,6 @@ export class ScanITN implements OnInit {
           }
         }),
         switchMap((res) => {
-          const t = 'test';
           return this._auditService.inventoryUpdate(
             this.userInfo.userName,
             input,

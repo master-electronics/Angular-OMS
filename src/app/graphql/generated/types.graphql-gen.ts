@@ -787,12 +787,14 @@ export type Mutation = {
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
   recreateITN?: Maybe<UpdateResult>;
+  removeAudit?: Maybe<Audit>;
   removeWeightScale?: Maybe<Scalars['Boolean']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
   updateASNReplenishmentItem?: Maybe<Asnreplenishmentitem>;
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
+  updateAudit?: Maybe<Array<Maybe<Audit>>>;
   updateAutostoreASN?: Maybe<Autostoreasnheader>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
   updateAutostoreProcess?: Maybe<Autostoreprocess>;
@@ -1304,6 +1306,10 @@ export type MutationRecreateItnArgs = {
   WAREHOUSE: Scalars['String'];
 };
 
+export type MutationRemoveAuditArgs = {
+  ID?: InputMaybe<Scalars['Int']>;
+};
+
 export type MutationRollbackAutostoreOrderLinesArgs = {
   AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
@@ -1331,6 +1337,11 @@ export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
+};
+
+export type MutationUpdateAuditArgs = {
+  Audit?: InputMaybe<InputAudit>;
+  ID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationUpdateAutostoreAsnArgs = {

@@ -38,6 +38,8 @@ import {
   FetchPreviousLocationGQL,
   ClearAuditsFromTimeoutGQL,
   FetchLocationAuditsGQL,
+  RemoveAuditGQL,
+  UpdateAuditGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { FindInventoryGQL } from 'src/app/graphql/itn_info.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
@@ -80,7 +82,9 @@ export class AuditService {
     private _recreateITN: RecreateItnGQL,
     private _fetchPrevious: FetchPreviousLocationGQL,
     private _clearAuditsFromTimeout: ClearAuditsFromTimeoutGQL,
-    private _fetchLocationAudits: FetchLocationAuditsGQL
+    private _fetchLocationAudits: FetchLocationAuditsGQL,
+    private _removeAudit: RemoveAuditGQL,
+    private _updateAudit: UpdateAuditGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -142,6 +146,19 @@ export class AuditService {
       inventoryID: InventoryID,
       typeID: TypeID,
       lastUpdated: LastUpdated,
+    });
+  }
+
+  public removeAudit(ID: number) {
+    return this._removeAudit.mutate({
+      id: ID,
+    });
+  }
+
+  public updateAudit(ID: number, Priority: number) {
+    return this._updateAudit.mutate({
+      id: ID,
+      audit: { Priority: Priority },
     });
   }
 

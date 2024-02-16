@@ -409,6 +409,24 @@ mutation deleteAudit(
   }
 }
 
+mutation updateAudit(
+  $id: Int
+  $audit: inputAudit
+) {
+  updateAudit(
+    ID: $id
+    Audit: $audit
+  ) {
+    _id
+  }
+}
+
+mutation removeAudit($id: Int) {
+  removeAudit(ID: $id) {
+    _id
+  }
+}
+
 mutation deleteAudits($inventoryID: Int) {
   deleteAudits(InventoryID: $inventoryID) {
     _id

@@ -195,6 +195,7 @@ export class ScanITN implements OnInit {
                   CreatedDatetime: new Date(Date.now()).toISOString(),
                   UserID: this.userInfo.userId,
                   Trigger: 'Location Search',
+                  Priority: 6,
                 });
 
                 userEventLogs.push({
@@ -383,7 +384,8 @@ export class ScanITN implements OnInit {
               '',
               '',
               '',
-              loc.Barcode
+              loc.Barcode,
+              'OK'
             )
             .pipe(
               switchMap((res) => {
@@ -408,6 +410,8 @@ export class ScanITN implements OnInit {
                     LastUpdated: new Date(Date.now()).toISOString(),
                     CreatedDatetime: new Date(Date.now()).toISOString(),
                     UserID: this.userInfo.userId,
+                    Trigger: 'Location Search',
+                    Priority: 6,
                   });
                 }
 
@@ -466,9 +470,20 @@ export class ScanITN implements OnInit {
                 );
               })
             );
+        } else {
+          return this._auditService.inventoryUpdate(
+            this.userInfo.userName,
+            itn,
+            'Inventory Management Audit',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'OK'
+          );
         }
-
-        return of(res);
       }),
       switchMap((res) => {
         return this._auditService.closeAudits(itn).pipe(

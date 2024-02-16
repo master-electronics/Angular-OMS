@@ -792,12 +792,14 @@ export type Mutation = {
   printITNLabel: Response;
   processSystemTrigger?: Maybe<Scalars['String']>;
   recreateITN?: Maybe<UpdateResult>;
+  removeAudit?: Maybe<Audit>;
   removeWeightScale?: Maybe<Scalars['Boolean']>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
   updateASNReplenishmentItem?: Maybe<Asnreplenishmentitem>;
   updateAfterReceiving?: Maybe<Scalars['Boolean']>;
+  updateAudit?: Maybe<Array<Maybe<Audit>>>;
   updateAutostoreASN?: Maybe<Autostoreasnheader>;
   updateAutostoreMessage?: Maybe<Autostoremessage>;
   updateAutostoreProcess?: Maybe<Autostoreprocess>;
@@ -1309,6 +1311,10 @@ export type MutationRecreateItnArgs = {
   WAREHOUSE: Scalars['String'];
 };
 
+export type MutationRemoveAuditArgs = {
+  ID?: InputMaybe<Scalars['Int']>;
+};
+
 export type MutationRollbackAutostoreOrderLinesArgs = {
   AutostoreOrderHID?: InputMaybe<Scalars['Int']>;
 };
@@ -1336,6 +1342,11 @@ export type MutationUpdateAfterReceivingArgs = {
   ITNList?: InputMaybe<Array<InputMaybe<ItnAndQuantity>>>;
   Inventory: UpdateInventory;
   ReceiptLID: Scalars['Int'];
+};
+
+export type MutationUpdateAuditArgs = {
+  Audit?: InputMaybe<InputAudit>;
+  ID?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationUpdateAutostoreAsnArgs = {
@@ -4033,6 +4044,28 @@ export type DeleteAuditMutation = {
   deleteAudit?: { __typename?: 'AUDIT'; _id?: number | null } | null;
 };
 
+export type UpdateAuditMutationVariables = Types.Exact<{
+  id?: Types.InputMaybe<Types.Scalars['Int']>;
+  audit?: Types.InputMaybe<Types.InputAudit>;
+}>;
+
+export type UpdateAuditMutation = {
+  __typename?: 'Mutation';
+  updateAudit?: Array<{
+    __typename?: 'AUDIT';
+    _id?: number | null;
+  } | null> | null;
+};
+
+export type RemoveAuditMutationVariables = Types.Exact<{
+  id?: Types.InputMaybe<Types.Scalars['Int']>;
+}>;
+
+export type RemoveAuditMutation = {
+  __typename?: 'Mutation';
+  removeAudit?: { __typename?: 'AUDIT'; _id?: number | null } | null;
+};
+
 export type DeleteAuditsMutationVariables = Types.Exact<{
   inventoryID?: Types.InputMaybe<Types.Scalars['Int']>;
 }>;
@@ -4974,6 +5007,48 @@ export class DeleteAuditGQL extends Apollo.Mutation<
   DeleteAuditMutationVariables
 > {
   document = DeleteAuditDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateAuditDocument = gql`
+  mutation updateAudit($id: Int, $audit: inputAudit) {
+    updateAudit(ID: $id, Audit: $audit) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateAuditGQL extends Apollo.Mutation<
+  UpdateAuditMutation,
+  UpdateAuditMutationVariables
+> {
+  document = UpdateAuditDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const RemoveAuditDocument = gql`
+  mutation removeAudit($id: Int) {
+    removeAudit(ID: $id) {
+      _id
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RemoveAuditGQL extends Apollo.Mutation<
+  RemoveAuditMutation,
+  RemoveAuditMutationVariables
+> {
+  document = RemoveAuditDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
