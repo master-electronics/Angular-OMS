@@ -260,7 +260,7 @@ export class ScanITN implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_ITN_Scanned,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'ITN: ' + input,
               });
@@ -269,7 +269,7 @@ export class ScanITN implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_ITN_Scanned,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: input,
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -326,7 +326,7 @@ export class ScanITN implements OnInit {
                   userEventLogs.push({
                     UserEventID: sqlData.Event_IM_Audit_Completed,
                     UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: this.audit.Inventory.ITN,
                   });
 
@@ -334,7 +334,7 @@ export class ScanITN implements OnInit {
                     UserName: this.userInfo.userName,
                     EventTypeID: sqlData.Event_IM_Audit_Completed,
                     Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       ParentITN: currentAudit.Inventory.ParentITN,
@@ -424,7 +424,7 @@ export class ScanITN implements OnInit {
       {
         UserEventID: sqlData.Event_IM_Audit_ITN_NF,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: audit.Inventory.ITN,
       },
     ];
@@ -434,7 +434,7 @@ export class ScanITN implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_Audit_ITN_NF,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: audit.Inventory.ITN,
           ParentITN: audit.Inventory.ParentITN,
           BinLocation: audit.Container.Barcode,

@@ -256,7 +256,7 @@ export class DropOffComponent implements OnInit, AfterViewInit {
       .fetch(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode: this.containerForm
               .get('containerNumber')
               .value.replace(/-/g, '')

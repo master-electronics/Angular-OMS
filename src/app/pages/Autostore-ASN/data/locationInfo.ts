@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import { FindContainerforAsnGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
-import { environment } from 'src/environments/environment';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class ASNLocationService {
-  constructor(private _findContainer$: FindContainerforAsnGQL) {}
+  constructor(
+    private _findContainer$: FindContainerforAsnGQL,
+    private _userInfo: StorageUserInfoService
+  ) {}
 
   private _ITNs = new BehaviorSubject<any>(null);
 
@@ -14,7 +17,7 @@ export class ASNLocationService {
       .fetch(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode,
           },
         },

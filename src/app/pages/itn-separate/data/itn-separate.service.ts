@@ -7,7 +7,6 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
 import { PrinterService } from 'src/app/shared/data/printer';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 
 interface ItnInfo {
   ITN: string;
@@ -72,7 +71,7 @@ export class ItnSeparateService {
   }
 
   public verifyItn(ITN: string) {
-    return this._itn.fetch({ ITN, DC: environment.DistributionCenter }).pipe(
+    return this._itn.fetch({ ITN, DC: this._userInfo.distributionCenter }).pipe(
       tap((res) => {
         if (!res.data.findInventory?._id) {
           throw new Error("Can't find this ITN!");

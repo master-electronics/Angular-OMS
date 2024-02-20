@@ -39,7 +39,6 @@ import {
 } from 'src/app/graphql/receiving.graphql-gen';
 import { Insert_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -337,7 +336,7 @@ export class ReceiptEntry implements OnInit {
             receiptLineDeleteEventID: sqlData.Event_ReceiptEntry_LineDelete,
             receiptLineDetailDeleteEventID:
               sqlData.Event_ReceiptEntry_LineDetailDelete,
-            distributionCenter: environment.DistributionCenter,
+            distributionCenter: this._userInfo.distributionCenter,
             username: this._userInfo.userName,
           })
           .subscribe({
@@ -350,13 +349,13 @@ export class ReceiptEntry implements OnInit {
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_HeaderDelete,
                     UserName: this._userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this._userInfo.distributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                   },
                 ]);
 
                 const log = {
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                 };
 
@@ -871,14 +870,14 @@ export class ReceiptEntry implements OnInit {
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_HeaderUpdate,
                     UserName: this._userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this._userInfo.distributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                     VendorName: this.vendorNumber.toString(),
                   },
                 ]);
 
                 const log = {
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   VendorName: this.vendorNumber.toString(),
                 };
@@ -941,14 +940,14 @@ export class ReceiptEntry implements OnInit {
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_HeaderCreating,
                   UserName: this._userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   VendorName: this.vendorNumber.toString(),
                 },
               ]);
 
               const log = {
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 ReceiptHeader: Number(this.receiptID),
                 VendorName: this.vendorNumber.toString(),
               };
@@ -1153,14 +1152,14 @@ export class ReceiptEntry implements OnInit {
                   {
                     UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
                     UserName: this._userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this._userInfo.distributionCenter,
                     ReceiptHeader: Number(this.receiptID),
                     ReceiptLine: Number(this.receiptLineID),
                   },
                 ]);
 
                 const log = {
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   ReceiptLine: Number(this.receiptLineID),
                 };
@@ -1184,14 +1183,14 @@ export class ReceiptEntry implements OnInit {
                         {
                           UserEventID: sqlData.Event_ReceiptEntry_LineDelete,
                           UserName: this._userInfo.userName,
-                          DistributionCenter: environment.DistributionCenter,
+                          DistributionCenter: this._userInfo.distributionCenter,
                           ReceiptHeader: Number(this.receiptID),
                           ReceiptLine: Number(this.receiptLineID),
                         },
                       ]);
 
                       const log = {
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this._userInfo.distributionCenter,
                         ReceiptHeader: Number(this.receiptID),
                         ReceiptLine: Number(this.receiptLineID),
                       };
@@ -1479,14 +1478,14 @@ export class ReceiptEntry implements OnInit {
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_LineCreating,
                   UserName: this._userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   ReceiptLine: Number(this.receiptLineID),
                 },
               ]);
 
               const log = {
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 ReceiptHeader: Number(this.receiptID),
                 ReceiptLine: Number(this.receiptLineID),
               };
@@ -1552,14 +1551,14 @@ export class ReceiptEntry implements OnInit {
                 {
                   UserEventID: sqlData.Event_ReceiptEntry_Lineupdate,
                   UserName: this._userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   ReceiptHeader: Number(this.receiptID),
                   ReceiptLine: Number(this.receiptLineID),
                 },
               ]);
 
               const log = {
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 ReceiptHeader: Number(this.receiptID),
                 ReceiptLine: Number(this.receiptLineID),
               };
@@ -1629,7 +1628,7 @@ export class ReceiptEntry implements OnInit {
             //       {
             //         UserEventID: sqlData.Event_ReceiptEntry_LineDetailDelete,
             //         UserName: this._userInfo.userName,
-            //         DistributionCenter: environment.DistributionCenter,
+            //         DistributionCenter: this._userInfo.distributionCenter,
             //         ReceiptHeader: Number(this.receiptID),
             //         ReceiptLine: Number(this.receiptLineID),
             //       },
@@ -1668,7 +1667,7 @@ export class ReceiptEntry implements OnInit {
                                   : sqlData.Event_ReceiptEntry_LineDetailCreating,
                               UserName: this._userInfo.userName,
                               DistributionCenter:
-                                environment.DistributionCenter,
+                                this._userInfo.distributionCenter,
                               ReceiptHeader: Number(this.receiptID),
                               ReceiptLine: Number(this.receiptLineID),
                               Message:
@@ -1682,7 +1681,8 @@ export class ReceiptEntry implements OnInit {
                           ]);
 
                           const log = {
-                            DistributionCenter: environment.DistributionCenter,
+                            DistributionCenter:
+                              this._userInfo.distributionCenter,
                             ReceiptHeader: Number(this.receiptID),
                             ReceiptLine: Number(this.receiptLineID),
                             ReceiptLineDetail: receiptLineDetail._id,

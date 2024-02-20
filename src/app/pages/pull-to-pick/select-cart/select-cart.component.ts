@@ -18,7 +18,6 @@ import { Observable } from 'rxjs';
 import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { CartBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import {
   FetchPickingSettingsGQL,
@@ -129,7 +128,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       .mutate(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode: this.containerForm.value.containerNumber,
           },
           UserID: this.userID,
@@ -171,7 +170,7 @@ export class SelectCartComponent implements OnInit, AfterViewInit {
       .mutate(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode: this.containerForm.value.containerNumber,
           },
           UserID: this.userID,

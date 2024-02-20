@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -15,9 +15,9 @@ import {
   FindInventoryGQL,
   UpdateProductVelocityGQL,
 } from 'src/app/graphql/itn_info.graphql-gen';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: true,
@@ -64,6 +64,7 @@ export class ItnInfoComponent {
       Validators.pattern(ITNBarcodeRegex),
     ]),
   });
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private router: Router,
     private _findInventory: FindInventoryGQL,
@@ -76,7 +77,7 @@ export class ItnInfoComponent {
   onSubmit(): void {
     this.data$ = this._findInventory
       .fetch({
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: this.inputForm.value.itn.trim().toUpperCase(),
       })
       .pipe(

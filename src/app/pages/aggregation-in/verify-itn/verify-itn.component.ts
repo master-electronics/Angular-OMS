@@ -196,7 +196,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         Message: `Relocate ${this.outsetContainer.Barcode} to ${this.endContainer.Barcode}`,
         CustomerNumber: this.outsetContainer.CustomerNumber,
         CustomerTier: this.outsetContainer.CustomerTier,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         PartNumber: node.PartNumber,
         ProductCode: node.ProductCode,
         ProductTier: node.ProductTier,
@@ -242,7 +242,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
         });
       });
       updatequery['updateMerpLog'] = this._updateMerpLog.mutate({
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         FileKeyList: this.endContainer.FileKeyListforAgIn,
         ActionType: 'A',
         Action: 'line_aggregation_in',
@@ -258,7 +258,7 @@ export class VerifyITNComponent implements OnInit, AfterViewInit {
           Message: null,
           CustomerNumber: this.outsetContainer.CustomerNumber,
           CustomerTier: this.outsetContainer.CustomerTier,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           PartNumber: null,
           ProductCode: null,
           ProductTier: null,

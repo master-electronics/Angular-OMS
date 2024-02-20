@@ -5,8 +5,8 @@ import {
   VerifyContainerForSortingGQL,
   VerifyItnForSortingGQL,
 } from 'src/app/graphql/stocking.graphql-gen';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
-import { environment } from 'src/environments/environment';
 
 export interface ItnInfo {
   ITN: string;
@@ -25,6 +25,7 @@ export interface ItnInfo {
 @Injectable()
 export class ItnInfoService {
   private _sessionStorage = inject(SESSION_STORAGE);
+  private _userInfo = inject(StorageUserInfoService);
   constructor(
     private _verifyITN: VerifyItnForSortingGQL,
     private _verifyContainer: VerifyContainerForSortingGQL,
@@ -58,7 +59,7 @@ export class ItnInfoService {
   public verifyPutawayBarcode$(Barcode: string) {
     return this._verifyContainer
       .fetch(
-        { Barcode, DistributionCenter: environment.DistributionCenter },
+        { Barcode, DistributionCenter: this._userInfo.distributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -84,7 +85,7 @@ export class ItnInfoService {
   public verifyITN$(ITN: string) {
     return this._verifyITN
       .fetch(
-        { ITN, DC: environment.DistributionCenter },
+        { ITN, DC: this._userInfo.distributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -126,7 +127,7 @@ export class ItnInfoService {
       .fetch(
         {
           Barcode: username,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )

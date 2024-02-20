@@ -24,7 +24,6 @@ import {
 } from '../../../graphql/qualityControl.graphql-gen';
 import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
 import {
   ChangeItnListForMerpGQL,
   Create_EventLogsGQL,
@@ -135,7 +134,7 @@ export class RepackComponent implements OnInit, AfterViewInit {
     this.submit$ = this.verifyQCRepack
       .fetch(
         {
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           Barcode: barcode,
           OrderID: this.itemInfo.OrderID,
         },
