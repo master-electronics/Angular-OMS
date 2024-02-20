@@ -164,7 +164,7 @@ export class ScanITN implements OnInit {
           this.audit = res.Audit.audit;
           sessionStorage.setItem(
             'CurrentLocation',
-            this.audit.Container.Barcode
+            this.audit.Container.Barcode.trim()
           );
           this.lastUpdated = Number(res.Audit.audit.LastUpdated);
           sessionStorage.setItem('currentAudit', JSON.stringify(this.audit));
