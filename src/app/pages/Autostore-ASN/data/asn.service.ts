@@ -12,7 +12,6 @@ import {
   lastValueFrom,
 } from 'rxjs';
 import { UserContainerService } from 'src/app/shared/data/user-container';
-import { Logger } from 'src/app/shared/services/logger.service';
 import {
   VerifyItnForAsnGQL,
   MoveInventoryToContainerForAsnGQL,
@@ -39,7 +38,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ProductService } from './product.service';
 import { ReplenishmentItem } from '../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { compareAsc } from 'date-fns';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 interface ASNLine {
   lineNumber?: number;
@@ -96,7 +95,8 @@ export class ASNService {
     private _itnChange: ItnChangeGQL,
     private _clearSuspect: ClearSuspectGQL,
     private _updateProduct: UpdateProductGQL,
-    private _globalASNReject: GlobalAsnRejectionGQL
+    private _globalASNReject: GlobalAsnRejectionGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   inventoryList;
@@ -111,7 +111,7 @@ export class ASNService {
       .fetch(
         {
           ITN,
-          DC: environment.DistributionCenter,
+          DC: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )
@@ -127,7 +127,7 @@ export class ASNService {
         switchMap((res) => {
           return this._move.mutate({
             ITN: ITN,
-            DC: environment.DistributionCenter,
+            DC: this._userInfo.distributionCenter,
             ContainerID: this._userC.userContainerID,
             //locatedInAutostore: true,
           });
@@ -146,7 +146,7 @@ export class ASNService {
       move: this._move
         .mutate({
           ITN: ITN,
-          DC: environment.DistributionCenter,
+          DC: this._userInfo.distributionCenter,
           ContainerID: ContainerID,
           boundForAutostore: true,
           suspect: true,

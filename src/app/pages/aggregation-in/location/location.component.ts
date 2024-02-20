@@ -23,7 +23,6 @@ import {
   ToteBarcodeRegex,
 } from '../../../shared/utils/dataRegex';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { Title } from '@angular/platform-browser';
 import {
@@ -164,7 +163,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               this.OrderNumber = this.outsetContainer.OrderNumber;
               this.NOSINumber = this.outsetContainer.NOSINumber;
               FileKeyListforAgOut.push(
-                `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[0].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+                `${this.userInfo.distributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[0].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
               );
               // store locations in Aggregation area.
               if (line.Inventory.Container.Row === 'AG') {
@@ -202,7 +201,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                 ];
                 // set fikekey for ag in
                 this.FileKeyListforAgIn.push(
-                  `${environment.DistributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[toteIndex].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
+                  `${this.userInfo.distributionCenter}${this.OrderNumber}${this.NOSINumber}${this.outsetContainer.ITNsInTote[toteIndex].OrderLineNumber}ag             ${line.Inventory.InventoryTrackingNumber}`
                 );
                 // set for single line AG out.
                 ProductList.push(
@@ -242,7 +241,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         switchMap(() => {
           return this._countOrderItns.fetch(
             {
-              LocationCode: environment.DistributionCenter,
+              LocationCode: this.userInfo.distributionCenter,
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
             },
@@ -264,7 +263,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             updateOrder: this._updateAfterAgOut.mutate({
               OrderID: Number(this.outsetContainer.OrderID),
               OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               toteList: [this.outsetContainer.Barcode],
               OrderNumber: this.OrderNumber,
               NOSINumber: this.NOSINumber,
@@ -300,7 +299,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
               Message: `Single ITN Ag out ${this.outsetContainer.Barcode}`,
               CustomerNumber: this.outsetContainer.CustomerNumber,
               CustomerTier: this.outsetContainer.CustomerTier,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               OrderLineNumber:
                 this.outsetContainer.ITNsInTote[0].OrderLineNumber,
               PartNumber: this.outsetContainer.ITNsInTote[0].PartNumber,
@@ -411,7 +410,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .fetch(
         {
           Barcode: Barcode,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )

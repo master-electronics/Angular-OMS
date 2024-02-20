@@ -10,9 +10,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map, of, tap } from 'rxjs';
 import { ClearSuspectInventoryGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
-import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: true,
@@ -46,7 +46,8 @@ export class ClearSuspectInventoryComponent implements OnInit {
   });
   constructor(
     private router: Router,
-    private clearSuspect: ClearSuspectInventoryGQL
+    private clearSuspect: ClearSuspectInventoryGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +57,7 @@ export class ClearSuspectInventoryComponent implements OnInit {
   onSubmit(): void {
     this.data$ = this.clearSuspect
       .mutate({
-        DC: environment.DistributionCenter,
+        DC: this._userInfo.distributionCenter,
         ITN: this.inputForm.value.ITN,
       })
       .pipe(

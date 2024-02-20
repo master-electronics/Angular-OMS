@@ -226,7 +226,7 @@ export class ROHSAudit implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_ROHS_Entered,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Country of Origin: ' + rohs,
               },
@@ -237,7 +237,7 @@ export class ROHSAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_ROHS_Entered,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -279,7 +279,7 @@ export class ROHSAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_ROHS_Updated,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message:
                   'Original ROHS: ' +
@@ -293,7 +293,7 @@ export class ROHSAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_ROHS_Updated,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -378,7 +378,7 @@ export class ROHSAudit implements OnInit {
                               UserEventID: sqlData.Event_IM_Audit_Completed,
                               UserName: this.userInfo.userName,
                               DistributionCenter:
-                                environment.DistributionCenter,
+                                this.userInfo.distributionCenter,
                               InventoryTrackingNumber:
                                 sessionStorage.getItem('auditITN'),
                             },
@@ -390,7 +390,7 @@ export class ROHSAudit implements OnInit {
                               EventTypeID: sqlData.Event_IM_Audit_Completed,
                               Log: JSON.stringify({
                                 DistributionCenter:
-                                  environment.DistributionCenter,
+                                  this.userInfo.distributionCenter,
                                 InventoryTrackingNumber:
                                   sessionStorage.getItem('auditITN'),
                                 ParentITN: currentAudit.Inventory.ParentITN,

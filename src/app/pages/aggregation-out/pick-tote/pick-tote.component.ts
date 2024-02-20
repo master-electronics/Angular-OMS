@@ -24,11 +24,9 @@ import {
   UpdateAfterAgOutGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { Title } from '@angular/platform-browser';
-import { environment } from 'src/environments/environment';
 import { AggregationOutService } from '../aggregation-out.server';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { EventLogService } from 'src/app/shared/data/eventLog';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -130,7 +128,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                 OrderLineNumber: node.OrderLine.OrderLineNumber,
                 CustomerNumber: node.Order.Customer?.CustomerNumber,
                 CustomerTier: node.Order.Customer?.CustomerTier,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 PartNumber: node.Inventory.Product?.PartNumber,
                 ProductCode:
                   node.Inventory.Product?.ProductCode.ProductCodeNumber,
@@ -156,7 +154,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
                   OrderLineNumber: node.OrderLine.OrderLineNumber,
                   CustomerNumber: node.Order.Customer?.CustomerNumber,
                   CustomerTier: node.Order.Customer?.CustomerTier,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   PartNumber: node.Inventory.Product?.PartNumber,
                   ProductCode:
                     node.Inventory.Product?.ProductCode.ProductCodeNumber,
@@ -238,7 +236,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
   updateSQLAndCheckHazmzd(): void {
     this.buttonLabel = `Ag Out`;
     this.buttonStyles = `bg-green-500`;
-    const fileKey = `${environment.DistributionCenter}${this.urlParams.OrderNumber}${this.urlParams.NOSINumber}`;
+    const fileKey = `${this._userInfo.distributionCenter}${this.urlParams.OrderNumber}${this.urlParams.NOSINumber}`;
     const FileKeyList = [];
     const productSet = new Set<string>();
     const BarcodeList = [];
@@ -272,7 +270,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
         OrderLineNumber: node.OrderLine.OrderLineNumber,
         CustomerNumber: node.Order.Customer?.CustomerNumber,
         CustomerTier: node.Order.Customer?.CustomerTier,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         PartNumber: node.Inventory.Product?.PartNumber,
         ProductCode: node.Inventory.Product?.ProductCode.ProductCodeNumber,
         ProductTier: node.Inventory.Product?.ProductTier,
@@ -295,7 +293,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           OrderLineNumber: node.OrderLine.OrderLineNumber,
           CustomerNumber: node.Order.Customer?.CustomerNumber,
           CustomerTier: node.Order.Customer?.CustomerTier,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           PartNumber: node.Inventory.Product?.PartNumber,
           ProductCode: node.Inventory.Product?.ProductCode.ProductCodeNumber,
           ProductTier: node.Inventory.Product?.ProductTier,
@@ -322,7 +320,7 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
           StatusID: sqlData.agOutComplete_ID,
         },
         toteList: [...toteSet],
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         UserOrStatus: 'Packing',

@@ -30,7 +30,6 @@ import {
   GetAuditCountGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
-import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class AuditService {
@@ -55,7 +54,8 @@ export class AuditService {
     private _updateSystemTrigger: UpdateSystemTriggerGQL,
     private _insertSystemTrigger: InsertSystemTriggerGQL,
     private _clearAudits: ClearAuditsGQL,
-    private _auditCount: GetAuditCountGQL
+    private _auditCount: GetAuditCountGQL,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -140,7 +140,7 @@ export class AuditService {
         {
           userID: this.userInfo.userId,
           barcode: barcode,
-          distributionCenter: environment.DistributionCenter,
+          distributionCenter: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )

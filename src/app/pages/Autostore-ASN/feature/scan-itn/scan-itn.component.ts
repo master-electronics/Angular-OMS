@@ -24,7 +24,6 @@ import {
 } from 'rxjs';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { ReplenishmentItem } from '../../utils/interfaces';
 import { PopupModalComponent } from 'src/app/shared/ui/modal/popup-modal.component';
 import { ITNInfoComponent } from '../../ui/itn-info.component';
@@ -37,7 +36,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { FormsModule } from '@angular/forms';
-import { isTemplateExpression, readJsonConfigFile } from 'typescript';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
@@ -169,7 +167,7 @@ export class ScanITN implements OnInit {
             {
               UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
               UserName: this._userInfo.userName,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               InventoryTrackingNumber:
                 this.replenishmentItem.InventoryTrackingNumber,
             },
@@ -179,7 +177,7 @@ export class ScanITN implements OnInit {
               UserName: this._userInfo.userName,
               EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
               Log: JSON.stringify({
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 data: this.replenishmentItem,
               }),
             },
@@ -229,7 +227,7 @@ export class ScanITN implements OnInit {
           {
             UserEventID: sqlData.Event_Autostore_ASN_ITN_Scanned,
             UserName: this._userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             InventoryTrackingNumber: input,
           },
         ],
@@ -238,7 +236,7 @@ export class ScanITN implements OnInit {
             UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Autostore_ASN_ITN_Scanned,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               InventoryTrackingNumber: input,
             }),
           },
@@ -293,7 +291,7 @@ export class ScanITN implements OnInit {
       userEventLogs.push({
         UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
         UserName: this._userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         InventoryTrackingNumber: JSON.parse(
           sessionStorage.getItem('asnReplenishmentItem')
         ).InventoryTrackingNumber,
@@ -304,7 +302,7 @@ export class ScanITN implements OnInit {
         UserName: this._userInfo.userName,
         EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           data: sessionStorage.getItem('asnReplenishmentItem'),
           RejectReason: rejectReason,
         }),
@@ -333,7 +331,7 @@ export class ScanITN implements OnInit {
             userEventLogs.push({
               UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
               UserName: this._userInfo.userName,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               InventoryTrackingNumber: item.InventoryTrackingNumber,
               Message: rejectReason,
             });
@@ -342,7 +340,7 @@ export class ScanITN implements OnInit {
               UserName: this._userInfo.userName,
               EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
               Log: JSON.stringify({
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 data: item,
                 RejectReason: rejectReason,
               }),
@@ -373,7 +371,7 @@ export class ScanITN implements OnInit {
           {
             UserEventID: sqlData.Event_Autostore_ASN_ITN_Skipped,
             UserName: this._userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             InventoryTrackingNumber: JSON.parse(
               sessionStorage.getItem('asnReplenishmentItem')
             ).InventoryTrackingNumber,
@@ -385,7 +383,7 @@ export class ScanITN implements OnInit {
             UserName: this._userInfo.userName,
             EventTypeID: sqlData.Event_Autostore_ASN_ITN_Skipped,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               data: sessionStorage.getItem('asnReplenishmentItem'),
               RejectReason: rejectReason,
             }),
@@ -444,7 +442,7 @@ export class ScanITN implements OnInit {
               {
                 UserEventID: sqlData.Event_Autostore_ASN_ITN_Presented,
                 UserName: this._userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 InventoryTrackingNumber:
                   this.replenishmentItem.InventoryTrackingNumber,
               },
@@ -454,7 +452,7 @@ export class ScanITN implements OnInit {
                 UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_Autostore_ASN_ITN_Presented,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   data: this.replenishmentItem,
                 }),
               },

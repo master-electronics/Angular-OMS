@@ -32,7 +32,6 @@ import {
   ProductCode,
 } from '../../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { BeepBeep } from 'src/app/shared/utils/beeper';
 
@@ -216,7 +215,7 @@ export class QuantityAudit implements OnInit {
     this.userEventLogs.push({
       UserEventID: sqlData.Event_IM_Quantity_Updated,
       UserName: this.userInfo.userName,
-      DistributionCenter: environment.DistributionCenter,
+      DistributionCenter: this.userInfo.distributionCenter,
       InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
       Message:
         'Original Quantity: ' +
@@ -232,7 +231,7 @@ export class QuantityAudit implements OnInit {
       UserName: this.userInfo.userName,
       EventTypeID: sqlData.Event_IM_Quantity_Updated,
       Log: JSON.stringify({
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
         ParentITN: this.CurrentAudit.Inventory.ParentITN,
         BinLocation: this.CurrentAudit.Container.Barcode,
@@ -316,7 +315,7 @@ export class QuantityAudit implements OnInit {
                     {
                       UserEventID: sqlData.Event_IM_Audit_Completed,
                       UserName: this.userInfo.userName,
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                     },
@@ -327,7 +326,7 @@ export class QuantityAudit implements OnInit {
                       UserName: this.userInfo.userName,
                       EventTypeID: sqlData.Event_IM_Audit_Completed,
                       Log: JSON.stringify({
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this.userInfo.distributionCenter,
                         InventoryTrackingNumber:
                           sessionStorage.getItem('auditITN'),
                         ParentITN: this.CurrentAudit.Inventory.ParentITN,
@@ -508,7 +507,7 @@ export class QuantityAudit implements OnInit {
                     {
                       UserEventID: sqlData.Event_IM_Quantity_Entered,
                       UserName: this.userInfo.userName,
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       Message: 'Quantity: ' + qty,
@@ -519,7 +518,7 @@ export class QuantityAudit implements OnInit {
                       UserName: this.userInfo.userName,
                       EventTypeID: sqlData.Event_IM_Quantity_Entered,
                       Log: JSON.stringify({
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this.userInfo.distributionCenter,
                         InventoryTrackingNumber:
                           sessionStorage.getItem('auditITN'),
                         ParentITN: currentAudit.Inventory.ParentITN,
@@ -608,7 +607,7 @@ export class QuantityAudit implements OnInit {
                 this.userEventLogs.push({
                   UserEventID: sqlData.Event_IM_Quantity_Confirm_Entered,
                   UserName: this.userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   Message: 'Quantity: ' + quantity,
                 });
@@ -617,7 +616,7 @@ export class QuantityAudit implements OnInit {
                   UserName: this.userInfo.userName,
                   EventTypeID: sqlData.Event_IM_Quantity_Confirm_Entered,
                   Log: JSON.stringify({
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                     ParentITN: currentAudit.Inventory.ParentITN,
                     BinLocation: currentAudit.Container.Barcode,
@@ -675,7 +674,7 @@ export class QuantityAudit implements OnInit {
                       {
                         UserEventID: sqlData.Event_IM_Quantity_Confirm_Entered,
                         UserName: this.userInfo.userName,
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this.userInfo.distributionCenter,
                         InventoryTrackingNumber:
                           sessionStorage.getItem('auditITN'),
                         Message: 'Quantity: ' + qty.toString(),
@@ -686,7 +685,7 @@ export class QuantityAudit implements OnInit {
                         UserName: this.userInfo.userName,
                         EventTypeID: sqlData.Event_IM_Quantity_Confirm_Entered,
                         Log: JSON.stringify({
-                          DistributionCenter: environment.DistributionCenter,
+                          DistributionCenter: this.userInfo.distributionCenter,
                           InventoryTrackingNumber:
                             sessionStorage.getItem('auditITN'),
                           ParentITN: currentAudit.Inventory.ParentITN,

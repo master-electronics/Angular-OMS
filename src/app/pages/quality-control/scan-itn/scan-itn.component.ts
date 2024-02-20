@@ -12,7 +12,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { QualityControlService, itemParams } from '../quality-control.server';
 import { ITNBarcodeRegex } from '../../../shared/utils/dataRegex';
@@ -26,7 +26,6 @@ import {
   Update_Merp_QcBinGQL,
 } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NgIf } from '@angular/common';
@@ -62,7 +61,6 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: UntypedFormBuilder,
     private router: Router,
-    private route: ActivatedRoute,
     private titleService: Title,
     public qcService: QualityControlService,
     private logService: EventLogService,
@@ -112,7 +110,7 @@ export class ScanItnComponent implements OnInit, AfterViewInit, OnDestroy {
         .fetch(
           {
             InventoryTrackingNumber: ITN,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
           },
           { fetchPolicy: 'network-only' }
         )

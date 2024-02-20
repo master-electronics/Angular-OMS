@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, filter, switchMap } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { SuspectInventoryGQL } from 'src/app/graphql/receiptReceiving.graphql-gen';
 import { PrinterService } from 'src/app/shared/data/printer';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Injectable()
 export class kickoutService {
+  private _userInfo = inject(StorageUserInfoService);
   private _suspect = inject(SuspectInventoryGQL);
   private _printer = inject(PrinterService);
 
@@ -25,7 +26,7 @@ export class kickoutService {
     if (itn) {
       return this._suspect
         .mutate({
-          DC: environment.DistributionCenter,
+          DC: this._userInfo.distributionCenter,
           ITN: itn,
           reasonIDList: [reasonID],
         })

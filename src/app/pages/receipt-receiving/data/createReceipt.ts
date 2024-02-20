@@ -8,7 +8,6 @@ import {
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 interface PurchaseInfo {
@@ -82,7 +81,7 @@ export class CreateReceiptService {
       .fetch(
         {
           PurchaseOrderNumber: order,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )

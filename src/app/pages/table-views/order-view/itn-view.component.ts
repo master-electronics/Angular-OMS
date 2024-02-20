@@ -4,6 +4,7 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
+  inject,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -21,7 +22,6 @@ import {
 } from '../../../graphql/tableViews.graphql-gen';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { environment } from 'src/environments/environment';
 import { NgFor, AsyncPipe } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -29,6 +29,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'itn-view',
@@ -51,6 +52,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 export class ITNViewComponent implements OnInit, AfterViewInit {
   OrderInfo$;
 
+  private _userInfo = inject(StorageUserInfoService);
   constructor(
     private fb: UntypedFormBuilder,
     private router: Router,
@@ -112,7 +114,7 @@ export class ITNViewComponent implements OnInit, AfterViewInit {
         .fetch(
           {
             Order: {
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               OrderNumber: barcodeSplit[0],
               NOSINumber: barcodeSplit[1],
             },

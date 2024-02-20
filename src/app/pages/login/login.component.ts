@@ -13,7 +13,6 @@ import { Find_Or_Create_UserInfoGQL } from 'src/app/graphql/utilityTools.graphql
 import { CommonModule } from '@angular/common';
 import { UserPasswordComponent } from 'src/app/shared/ui/input/user-password-form.component';
 import { Observable, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import {
   StorageUserInfoService,
   UserInfoStorage,
@@ -93,9 +92,7 @@ export class LoginComponent {
         tap((res) => {
           userInfo = {
             ...userInfo,
-            DistributionCenter: res.DistributionCenter
-              ? res.DistributionCenter
-              : environment.DistributionCenter,
+            DistributionCenter: res.DistributionCenter,
             userId: res._id,
           };
           this.userStorage.saveUserInfo(userInfo);

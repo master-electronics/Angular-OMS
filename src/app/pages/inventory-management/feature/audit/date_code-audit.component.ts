@@ -29,10 +29,6 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 import { dateCodeRegex } from 'src/app/shared/utils/dataRegex';
 import { SimpleKeyboardComponent } from 'src/app/shared/ui/simple-keyboard.component';
-import {
-  DeleteAuditDocument,
-  InventoryUpdateDocument,
-} from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { Audit } from '../../utils/interfaces';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { BeepBeep } from 'src/app/shared/utils/beeper';
@@ -248,7 +244,7 @@ export class DateCodeAudit implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_DateCode_Entered,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Date Code: ' + this.inputForm.value.dateCode,
               },
@@ -259,7 +255,7 @@ export class DateCodeAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_DateCode_Entered,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -302,7 +298,7 @@ export class DateCodeAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_DateCode_Updated,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message:
                   'Original Date Code: ' +
@@ -316,7 +312,7 @@ export class DateCodeAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_DateCode_Updated,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -399,7 +395,7 @@ export class DateCodeAudit implements OnInit {
                               UserEventID: sqlData.Event_IM_Audit_Completed,
                               UserName: this.userInfo.userName,
                               DistributionCenter:
-                                environment.DistributionCenter,
+                                this.userInfo.distributionCenter,
                               InventoryTrackingNumber:
                                 sessionStorage.getItem('auditITN'),
                             },
@@ -411,7 +407,7 @@ export class DateCodeAudit implements OnInit {
                               EventTypeID: sqlData.Event_IM_Audit_Completed,
                               Log: JSON.stringify({
                                 DistributionCenter:
-                                  environment.DistributionCenter,
+                                  this.userInfo.distributionCenter,
                                 InventoryTrackingNumber:
                                   sessionStorage.getItem('auditITN'),
                                 ParentITN: currentAudit.Inventory.ParentITN,
@@ -525,7 +521,7 @@ export class DateCodeAudit implements OnInit {
       {
         UserEventID: sqlData.Event_IM_DateCode_NA,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: audit.Inventory.ITN,
       },
     ];
@@ -535,7 +531,7 @@ export class DateCodeAudit implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_DateCode_NA,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
           ParentITN: audit.Inventory.ParentITN,
           BinLocation: audit.Container.Barcode,
@@ -605,7 +601,7 @@ export class DateCodeAudit implements OnInit {
                   {
                     UserEventID: sqlData.Event_IM_Audit_Completed,
                     UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: audit.Inventory.ITN,
                   },
                 ];
@@ -615,7 +611,7 @@ export class DateCodeAudit implements OnInit {
                     UserName: this.userInfo.userName,
                     EventTypeID: sqlData.Event_IM_Audit_Completed,
                     Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       ParentITN: audit.Inventory.ParentITN,
