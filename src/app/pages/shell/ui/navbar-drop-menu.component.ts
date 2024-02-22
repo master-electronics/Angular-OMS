@@ -19,7 +19,9 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <ul nz-menu>
         <li nz-menu-item>
-          <h1 class=" ml-4 text-sm text-blue-800">DC: {{ DC }}</h1>
+          <a href="/setupdc">
+            <span>DC: {{ DC }}</span>
+          </a>
         </li>
         <li nz-menu-item>
           <button (click)="clickLogout()">

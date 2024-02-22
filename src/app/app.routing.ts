@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { LoginGuard } from './shared/route-guard/login.guard';
 import { AuthGuard } from './shared/route-guard/auth.guard';
 import { PrinterGuard } from './shared/route-guard/printer.guard';
+import { SetupDcComponent } from './pages/setup-DC/setup-Dc.component';
 
 export const routes: Routes = [
   {
@@ -163,6 +164,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/printer-setting/printer-setting.component').then(
             (m) => m.PrinterSettingComponent
+          ),
+      },
+      {
+        path: 'setupdc',
+        loadComponent: () =>
+          import('./pages/setup-DC/setup-Dc.component').then(
+            (m) => SetupDcComponent
           ),
       },
       {
