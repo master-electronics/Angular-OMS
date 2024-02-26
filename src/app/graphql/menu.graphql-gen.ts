@@ -794,6 +794,7 @@ export type Mutation = {
   recreateITN?: Maybe<UpdateResult>;
   removeAudit?: Maybe<Audit>;
   removeWeightScale?: Maybe<Scalars['Boolean']>;
+  replanPick?: Maybe<UpdateResult>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1313,6 +1314,10 @@ export type MutationRecreateItnArgs = {
 
 export type MutationRemoveAuditArgs = {
   ID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationReplanPickArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {

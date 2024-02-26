@@ -378,6 +378,17 @@ mutation inventoryUpdate(
   }
 }
 
+mutation replanPick(
+  $itn: String
+) {
+  replanPick(
+    ITN: $itn
+  ) {
+    StatusCode
+    StatusMessage
+  }
+}
+
 mutation recreateITN(
   $user: String!
   $itn: String!

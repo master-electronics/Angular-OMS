@@ -40,6 +40,7 @@ import {
   FetchLocationAuditsGQL,
   RemoveAuditGQL,
   UpdateAuditGQL,
+  ReplanPickGQL,
 } from 'src/app/graphql/inventoryManagement.graphql-gen';
 import { FindInventoryGQL } from 'src/app/graphql/itn_info.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
@@ -84,7 +85,8 @@ export class AuditService {
     private _clearAuditsFromTimeout: ClearAuditsFromTimeoutGQL,
     private _fetchLocationAudits: FetchLocationAuditsGQL,
     private _removeAudit: RemoveAuditGQL,
-    private _updateAudit: UpdateAuditGQL
+    private _updateAudit: UpdateAuditGQL,
+    private _replanPick: ReplanPickGQL
   ) {}
 
   public get nextSearchLocation$(): Observable<Container> {
@@ -268,6 +270,12 @@ export class AuditService {
       suspect: Suspect,
       binlocation: BinLocation,
       verificationState: VerificationState,
+    });
+  }
+
+  public replanPick(ITN: string) {
+    return this._replanPick.mutate({
+      itn: ITN,
     });
   }
 

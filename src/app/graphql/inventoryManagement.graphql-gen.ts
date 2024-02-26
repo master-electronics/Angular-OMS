@@ -794,6 +794,7 @@ export type Mutation = {
   recreateITN?: Maybe<UpdateResult>;
   removeAudit?: Maybe<Audit>;
   removeWeightScale?: Maybe<Scalars['Boolean']>;
+  replanPick?: Maybe<UpdateResult>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean'];
   updateASNInventory?: Maybe<Scalars['Boolean']>;
@@ -1313,6 +1314,10 @@ export type MutationRecreateItnArgs = {
 
 export type MutationRemoveAuditArgs = {
   ID?: InputMaybe<Scalars['Int']>;
+};
+
+export type MutationReplanPickArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
@@ -4017,6 +4022,19 @@ export type InventoryUpdateMutation = {
   } | null;
 };
 
+export type ReplanPickMutationVariables = Types.Exact<{
+  itn?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type ReplanPickMutation = {
+  __typename?: 'Mutation';
+  replanPick?: {
+    __typename?: 'UpdateResult';
+    StatusCode?: string | null;
+    StatusMessage?: string | null;
+  } | null;
+};
+
 export type RecreateItnMutationVariables = Types.Exact<{
   user: Types.Scalars['String'];
   itn: Types.Scalars['String'];
@@ -4952,6 +4970,28 @@ export class InventoryUpdateGQL extends Apollo.Mutation<
   InventoryUpdateMutationVariables
 > {
   document = InventoryUpdateDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ReplanPickDocument = gql`
+  mutation replanPick($itn: String) {
+    replanPick(ITN: $itn) {
+      StatusCode
+      StatusMessage
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReplanPickGQL extends Apollo.Mutation<
+  ReplanPickMutation,
+  ReplanPickMutationVariables
+> {
+  document = ReplanPickDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

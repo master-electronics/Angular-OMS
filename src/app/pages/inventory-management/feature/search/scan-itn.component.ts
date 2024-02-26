@@ -464,10 +464,14 @@ export class ScanITN implements OnInit {
                   }),
                 });
 
-                return this._auditService.closeSearchAudit(
-                  audits[0].InventoryID,
-                  10
-                );
+                if (audits[0]) {
+                  return this._auditService.closeSearchAudit(
+                    audits[0].InventoryID,
+                    10
+                  );
+                }
+
+                return of(res);
               })
             );
         } else {
@@ -534,23 +538,45 @@ export class ScanITN implements OnInit {
 
           const auditList = [];
 
-          return this._auditService
-            .fetchInventoryAudits(
-              Number(
-                JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID
-              )
-            )
-            .pipe(
-              map((res) => {
-                let msg = 'You Found ' + itn + '<br/>Pending Audits:<br/>';
-                res.data.fetchInventoryAudits.forEach((audit) => {
-                  msg += audit.Type.Type + '<br/>';
-                  auditList.push(audit);
-                });
+          return this._auditService.replanPick(itn).pipe(
+            switchMap((res) => {
+              return this._auditService
+                .fetchInventoryAudits(
+                  Number(
+                    JSON.parse(sessionStorage.getItem('currentAudit'))
+                      .InventoryID
+                  )
+                )
+                .pipe(
+                  map((res) => {
+                    let msg = 'You found ' + itn + '<br/>Panding Audits:<br/>';
+                    res.data.fetchInventoryAudits.forEach((audit) => {
+                      msg += audit.Type.Type + '<br/>';
+                      auditList.push(audit);
+                    });
 
-                this.message = msg;
-              })
-            );
+                    this.message = msg;
+                  })
+                );
+            })
+          );
+          // this._auditService
+          //   .fetchInventoryAudits(
+          //     Number(
+          //       JSON.parse(sessionStorage.getItem('currentAudit')).InventoryID
+          //     )
+          //   )
+          //   .pipe(
+          //     map((res) => {
+          //       let msg = 'You Found ' + itn + '<br/>Pending Audits:<br/>';
+          //       res.data.fetchInventoryAudits.forEach((audit) => {
+          //         msg += audit.Type.Type + '<br/>';
+          //         auditList.push(audit);
+          //       });
+
+          //       this.message = msg;
+          //     })
+          //   );
         }
         return of(res);
       }),
