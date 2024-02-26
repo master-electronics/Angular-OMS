@@ -20,7 +20,6 @@ import { forkJoin, Observable } from 'rxjs';
 import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { ShelfBarcodeBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { PickService } from '../pick.server';
 import { VerifyPositionBarcodeForPullingGQL } from 'src/app/graphql/pick.graphql-gen';
 import { Insert_UserEventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
@@ -119,7 +118,7 @@ export class SelectLocationComponent implements OnInit, AfterViewInit {
       verifyPosition: this._verifyPosition.fetch(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode,
           },
         },

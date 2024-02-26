@@ -90,7 +90,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
     this.query$ = this._verifyContainer
       .fetch(
         {
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           Barcode: this.containerForm.value.containerNumber,
         },
         { fetchPolicy: 'network-only' }
@@ -188,7 +188,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
               NOSINumber: outsetContainer.NOSINumber,
               CustomerNumber: outsetContainer.CustomerNumber,
               CustomerTier: outsetContainer.CustomerTier,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               ShipmentMethod: outsetContainer.ShipmentMethod,
               ShipmentMethodDescription:
                 outsetContainer.ShipmentMethodDescription,
@@ -207,7 +207,7 @@ export class AggregationInComponent implements OnInit, AfterViewInit {
               Message: `Start ${container.Barcode}`,
               CustomerNumber: outsetContainer.CustomerNumber,
               CustomerTier: outsetContainer.CustomerTier,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               PartNumber: item.PartNumber,
               ProductCode: item.ProductCode,
               ProductTier: item.ProductTier,

@@ -21,7 +21,6 @@ import {
   ProductCode,
 } from '../../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -108,7 +107,7 @@ export class ScanITN implements OnInit {
           {
             UserEventID: sqlData.Event_IM_ITN_Scanned,
             UserName: this.userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
             Message: 'ITN: ' + this.inputForm.value.ITN,
           },
@@ -119,7 +118,7 @@ export class ScanITN implements OnInit {
             UserName: this.userInfo.userName,
             EventTypeID: sqlData.Event_IM_ITN_Scanned,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
               ITN: this.inputForm.value.ITN,
             }),

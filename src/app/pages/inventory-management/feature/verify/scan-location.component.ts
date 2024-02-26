@@ -20,7 +20,6 @@ import {
   ProductCode,
 } from '../../utils/interfaces';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { ShelfBarcodeBarcodeAltRegex } from 'src/app/shared/utils/dataRegex';
 import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
@@ -97,7 +96,7 @@ export class ScanLocation implements OnInit {
       .fetch(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             Barcode: barcode,
           },
         },
@@ -114,7 +113,7 @@ export class ScanLocation implements OnInit {
             {
               UserEventID: sqlData.Event_IM_Location_Scanned,
               UserName: this.userInfo.userName,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
               Message: 'BinLocation: ' + barcode,
             },
@@ -125,7 +124,7 @@ export class ScanLocation implements OnInit {
               UserName: this.userInfo.userName,
               EventTypeID: sqlData.Event_IM_Location_Scanned,
               Log: JSON.stringify({
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 BinLocation: barcode,
               }),

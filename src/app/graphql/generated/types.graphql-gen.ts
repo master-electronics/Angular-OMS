@@ -722,6 +722,7 @@ export type Mutation = {
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']>;
   deleteCustomerFromMerp?: Maybe<Scalars['Boolean']>;
+  deleteGlobalMessageFromMerp?: Maybe<Scalars['Boolean']>;
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   deleteInventoryFromMerp?: Maybe<Scalars['Boolean']>;
@@ -807,6 +808,7 @@ export type Mutation = {
   updateForOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']>;
   updateForProductFromMerp?: Maybe<Scalars['Boolean']>;
   updateForPurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']>;
+  updateGlobalMessageFromMerp?: Maybe<Scalars['Boolean']>;
   updateITNLifeCycleProcess?: Maybe<Itnlifecycleprocess>;
   updateITNUserColumns?: Maybe<ItnUserColumns>;
   updateITNUserLevels?: Maybe<ItnUserLevels>;
@@ -952,6 +954,12 @@ export type MutationDeleteContainerFromMerpArgs = {
 
 export type MutationDeleteCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String'];
+};
+
+export type MutationDeleteGlobalMessageFromMerpArgs = {
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  Sequence?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationDeleteItnLevelLimitArgs = {
@@ -1458,6 +1466,18 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   VendorNumber: Scalars['String'];
 };
 
+export type MutationUpdateGlobalMessageFromMerpArgs = {
+  Active?: InputMaybe<Scalars['Boolean']>;
+  Message?: InputMaybe<Scalars['String']>;
+  PackerPrint?: InputMaybe<Scalars['Boolean']>;
+  Packing?: InputMaybe<Scalars['Boolean']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  Picking?: InputMaybe<Scalars['Boolean']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
+  QC?: InputMaybe<Scalars['Boolean']>;
+  Sequence?: InputMaybe<Scalars['String']>;
+};
+
 export type MutationUpdateItnLifeCycleProcessArgs = {
   _id?: InputMaybe<Scalars['Int']>;
   itnLCProcess?: InputMaybe<ItnLifecycleProcess>;
@@ -1837,6 +1857,7 @@ export type Query = {
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
+  fetchGblMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchGlobalMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
@@ -1944,6 +1965,7 @@ export type Query = {
   printQRCodeLabel?: Maybe<Scalars['Boolean']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']>;
   printTextLabel?: Maybe<Scalars['Boolean']>;
+  test?: Maybe<Array<Maybe<Inventory>>>;
   validateAssignment?: Maybe<Scalars['Boolean']>;
   validateFilter?: Maybe<Scalars['Boolean']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
@@ -1987,6 +2009,12 @@ export type QueryFetchDataColumnListArgs = {
 
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']>;
+};
+
+export type QueryFetchGblMessagesArgs = {
+  MessageType?: InputMaybe<Scalars['String']>;
+  PartNumber?: InputMaybe<Scalars['String']>;
+  ProductCode?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryFetchGlobalMessagesArgs = {
@@ -2454,6 +2482,10 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']>;
   ORIENTATION: Scalars['String'];
   PRINTER: Scalars['String'];
+};
+
+export type QueryTestArgs = {
+  ITN?: InputMaybe<Scalars['String']>;
 };
 
 export type QueryValidateAssignmentArgs = {
@@ -3500,6 +3532,7 @@ export type UpdateReceiptLd = {
 
 export type UpdateUserInfo = {
   CartID?: InputMaybe<Scalars['Int']>;
+  DistributionCenter?: InputMaybe<Scalars['String']>;
   Name?: InputMaybe<Scalars['String']>;
   PriorityCutoff?: InputMaybe<Scalars['Int']>;
   PullerLevel?: InputMaybe<Scalars['Int']>;

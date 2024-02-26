@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { FindorCreateUserContainerGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { sqlData } from '../utils/sqlData';
 import { StorageUserInfoService } from '../services/storage-user-info.service';
 import { SESSION_STORAGE } from '../utils/storage';
@@ -31,7 +30,7 @@ export class UserContainerService {
     }
     return this._userContainer
       .mutate({
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
         Barcode: this._userInfo.userName.substring(0, 15),
         ContainerTypeID: sqlData.userType_ID,
       })

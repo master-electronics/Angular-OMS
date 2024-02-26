@@ -7,7 +7,6 @@ import {
 import { Create_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { ItnInfoService } from './itn-info.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
@@ -65,7 +64,7 @@ export class SortingService {
   public moveItn$(Barcode: string) {
     return this._verifyContainer
       .fetch(
-        { Barcode, DistributionCenter: environment.DistributionCenter },
+        { Barcode, DistributionCenter: this._userInfo.distributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(

@@ -32,7 +32,6 @@ import {
   ProductCode,
 } from '../../utils/interfaces';
 import { FindContainerGQL } from 'src/app/graphql/pick.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
@@ -318,7 +317,7 @@ export class ScanITN implements OnInit {
       {
         UserEventID: sqlData.Event_IM_Search_ITN_Scanned,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: itn,
         Message: '',
       },
@@ -329,7 +328,7 @@ export class ScanITN implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_Search_ITN_Scanned,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: itn,
         }),
       },
@@ -354,7 +353,7 @@ export class ScanITN implements OnInit {
           userEventLogs.push({
             UserEventID: sqlData.Event_IM_Search_ITN_Location_Updated,
             UserName: this.userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             InventoryTrackingNumber: itn,
             Message:
               'Original BinLocation: ' +
@@ -367,7 +366,7 @@ export class ScanITN implements OnInit {
             UserName: this.userInfo.userName,
             EventTypeID: sqlData.Event_IM_Search_ITN_Location_Updated,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: itn,
               OriginalBinLocation: barcode,
               NewBinLocation: loc.Barcode,
@@ -496,7 +495,7 @@ export class ScanITN implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: audit.InventoryTrackingNumber,
                 Message: `Audit with _id: ${audit._id} closed.  ITN: ${audit.InventoryTrackingNumber}
                   found while searching for ITN: ${currentAudit.Inventory.ITN}`,
@@ -506,7 +505,7 @@ export class ScanITN implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   AuditID: audit._id,
                   InventoryTrackingNumber: audit.InventoryTrackingNumber,
                   SearchedITN: currentAudit.Inventory.ITN,
@@ -647,7 +646,7 @@ export class ScanITN implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_Audit_Completed,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: currentAudit.Inventory.ITN,
               },
             ];
@@ -657,7 +656,7 @@ export class ScanITN implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_Audit_Completed,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,

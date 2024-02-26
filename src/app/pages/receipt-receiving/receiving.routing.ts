@@ -182,6 +182,13 @@ export const ReceivingRoutes: Routes = [
             (m) => m.KickoutItnComponent
           ),
       },
+      {
+        path: 'fileupload',
+        loadComponent: () =>
+          import('./feature/file-upload.component').then(
+            (m) => m.FileUploadComponent
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'receipt' },
     ],
   },

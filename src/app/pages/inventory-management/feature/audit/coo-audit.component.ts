@@ -322,7 +322,7 @@ export class COOAudit implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_COO_Entered,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Country of Origin: ' + coo,
               },
@@ -333,7 +333,7 @@ export class COOAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_COO_Entered,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -375,7 +375,7 @@ export class COOAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_COO_Updated,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message:
                   'Original COO: ' +
@@ -389,7 +389,7 @@ export class COOAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_COO_Updated,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -519,7 +519,7 @@ export class COOAudit implements OnInit {
                               UserEventID: sqlData.Event_IM_Audit_Completed,
                               UserName: this.userInfo.userName,
                               DistributionCenter:
-                                environment.DistributionCenter,
+                                this.userInfo.distributionCenter,
                               InventoryTrackingNumber:
                                 sessionStorage.getItem('auditITN'),
                             },
@@ -531,7 +531,7 @@ export class COOAudit implements OnInit {
                               EventTypeID: sqlData.Event_IM_Audit_Completed,
                               Log: JSON.stringify({
                                 DistributionCenter:
-                                  environment.DistributionCenter,
+                                  this.userInfo.distributionCenter,
                                 InventoryTrackingNumber:
                                   sessionStorage.getItem('auditITN'),
                                 ParentITN: currentAudit.Inventory.ParentITN,
@@ -698,7 +698,7 @@ export class COOAudit implements OnInit {
       {
         UserEventID: sqlData.Event_IM_COO_NA,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: audit.Inventory.ITN,
       },
     ];
@@ -708,7 +708,7 @@ export class COOAudit implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_COO_NA,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
           ParentITN: audit.Inventory.ParentITN,
           BinLocation: audit.Container.Barcode,
@@ -778,7 +778,7 @@ export class COOAudit implements OnInit {
                   {
                     UserEventID: sqlData.Event_IM_Audit_Completed,
                     UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: audit.Inventory.ITN,
                   },
                 ];
@@ -788,7 +788,7 @@ export class COOAudit implements OnInit {
                     UserName: this.userInfo.userName,
                     EventTypeID: sqlData.Event_IM_Audit_Completed,
                     Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       ParentITN: audit.Inventory.ParentITN,

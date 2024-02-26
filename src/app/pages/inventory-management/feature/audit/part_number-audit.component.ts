@@ -30,7 +30,6 @@ import { PageHeaderComponent } from '../../ui/page-header.component';
 import { AuditService } from '../../data/audit.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { Audit } from '../../utils/interfaces';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
@@ -418,7 +417,7 @@ export class PartNumberAudit implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_PartNumber_Entered,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Part Number: ' + this.inputForm.value.partMatch,
               },
@@ -429,7 +428,7 @@ export class PartNumberAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_PartNumber_Entered,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -468,7 +467,7 @@ export class PartNumberAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_PartNumber_Updated,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message:
                   'Original Part Number: ' +
@@ -482,7 +481,7 @@ export class PartNumberAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_PartNumber_Updated,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
@@ -638,7 +637,7 @@ export class PartNumberAudit implements OnInit {
                               UserEventID: sqlData.Event_IM_Audit_Completed,
                               UserName: this.userInfo.userName,
                               DistributionCenter:
-                                environment.DistributionCenter,
+                                this.userInfo.distributionCenter,
                               InventoryTrackingNumber:
                                 sessionStorage.getItem('auditITN'),
                             },
@@ -650,7 +649,7 @@ export class PartNumberAudit implements OnInit {
                               EventTypeID: sqlData.Event_IM_Audit_Completed,
                               Log: JSON.stringify({
                                 DistributionCenter:
-                                  environment.DistributionCenter,
+                                  this.userInfo.distributionCenter,
                                 InventoryTrackingNumber:
                                   sessionStorage.getItem('auditITN'),
                                 ParentITN: currentAudit.Inventory.ParentITN,
@@ -763,7 +762,7 @@ export class PartNumberAudit implements OnInit {
       {
         UserEventID: sqlData.Event_IM_PartNumber_NA,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: audit.Inventory.ITN,
       },
     ];
@@ -773,7 +772,7 @@ export class PartNumberAudit implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_PartNumber_NA,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
           ParentITN: audit.Inventory.ParentITN,
           BinLocation: audit.Container.Barcode,
@@ -843,7 +842,7 @@ export class PartNumberAudit implements OnInit {
                   {
                     UserEventID: sqlData.Event_IM_Audit_Completed,
                     UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: audit.Inventory.ITN,
                   },
                 ];
@@ -853,7 +852,7 @@ export class PartNumberAudit implements OnInit {
                     UserName: this.userInfo.userName,
                     EventTypeID: sqlData.Event_IM_Audit_Completed,
                     Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       ParentITN: audit.Inventory.ParentITN,

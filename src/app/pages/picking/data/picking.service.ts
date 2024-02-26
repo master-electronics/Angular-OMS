@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -14,6 +14,7 @@ import {
 } from 'src/app/graphql/picking.graphql-gen';
 import { Insert_EventLogsGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { UserContainerService } from 'src/app/shared/data/user-container';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { environment } from 'src/environments/environment';
 
@@ -43,6 +44,7 @@ export interface SamanageInfo {
 
 @Injectable()
 export class PickingService {
+  userInfo = inject(StorageUserInfoService);
   constructor(
     private _userC: UserContainerService,
     private _fetchITNInfo: FetchInfoForPickingGQL,
@@ -68,7 +70,7 @@ export class PickingService {
     return this._fetchITNInfo
       .fetch({
         InventoryTrackingNumber: itn,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
       })
       .pipe(
         tap((res) => {

@@ -385,7 +385,7 @@ export class Maintenance implements OnInit {
 
   clearAudits() {
     this.clear$ = this._auditService
-      .clearAudits(this.userInfo.userName, environment.DistributionCenter)
+      .clearAudits(this.userInfo.userName, this.userInfo.distributionCenter)
       .pipe(
         map((res) => {
           this.auditCount = 0;

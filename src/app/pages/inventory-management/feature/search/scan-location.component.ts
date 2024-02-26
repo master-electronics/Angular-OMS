@@ -318,7 +318,7 @@ export class ScanLocation implements OnInit {
         {
           UserEventID: sqlData.Event_IM_Search_Location_Scanned,
           UserName: this.userInfo.userName,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           Message: 'Location: ' + barcode,
         },
       ];
@@ -328,7 +328,7 @@ export class ScanLocation implements OnInit {
           UserName: this.userInfo.userName,
           EventTypeID: sqlData.Event_IM_Search_Location_Scanned,
           Log: JSON.stringify({
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             Location: barcode,
           }),
         },
@@ -340,7 +340,7 @@ export class ScanLocation implements OnInit {
             .fetch(
               {
                 Container: {
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   Barcode: barcode,
                 },
               },
@@ -397,7 +397,7 @@ export class ScanLocation implements OnInit {
           {
             UserEventID: sqlData.Event_IM_Search_Location_Scanned,
             UserName: this.userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             Message: 'Location: ' + barcode,
           },
         ];
@@ -407,7 +407,7 @@ export class ScanLocation implements OnInit {
             UserName: this.userInfo.userName,
             EventTypeID: sqlData.Event_IM_Search_Location_Scanned,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               Location: barcode,
             }),
           },
@@ -419,7 +419,7 @@ export class ScanLocation implements OnInit {
               .fetch(
                 {
                   Container: {
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     Barcode: barcode,
                   },
                 },
@@ -469,7 +469,7 @@ export class ScanLocation implements OnInit {
     const userEventLogs = {
       UserEventID: sqlData.Event_IM_Search_Audit_Closed_NF,
       UserName: this.userInfo.userName,
-      DistributionCenter: environment.DistributionCenter,
+      DistributionCenter: this.userInfo.distributionCenter,
       InventoryTrackingNumber: JSON.parse(
         sessionStorage.getItem('currentAudit')
       ).Inventory.ITN,
@@ -479,7 +479,7 @@ export class ScanLocation implements OnInit {
       UserName: this.userInfo.userName,
       EventTypeID: sqlData.Event_IM_Search_Audit_Closed_NF,
       Log: JSON.stringify({
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         InventoryTrackingNumber: JSON.parse(
           sessionStorage.getItem('currentAudit')
         ).Inventory.ITN,

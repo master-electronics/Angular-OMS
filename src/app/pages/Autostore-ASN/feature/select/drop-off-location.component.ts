@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
-import { environment } from 'src/environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ASNService } from '../../data/asn.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
@@ -128,7 +127,7 @@ export class ASNDropOffLocation implements OnInit {
                     {
                       UserEventID: sqlData.Event_Autostore_ASN_Submitted,
                       UserName: this._userInfo.userName,
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this._userInfo.distributionCenter,
                       Message:
                         'Location: ' +
                         asnContainer.Barcode +
@@ -141,7 +140,7 @@ export class ASNDropOffLocation implements OnInit {
                       UserName: this._userInfo.userName,
                       EventTypeID: sqlData.Event_Autostore_ASN_Submitted,
                       Log: JSON.stringify({
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this._userInfo.distributionCenter,
                         Location: asnContainer.Barcode,
                         ASNID: res,
                       }),

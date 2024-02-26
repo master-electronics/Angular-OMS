@@ -37,6 +37,7 @@ import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service
           <div class="grid grid-flow-col items-center gap-2">
             <nav-drop-menu
               [userName]="this.userInfo.userName"
+              [DC]="this.userInfo.distributionCenter"
               (logout)="logout()"
             ></nav-drop-menu>
             <div class="md:hidden">

@@ -19,6 +19,11 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <ul nz-menu>
         <li nz-menu-item>
+          <a href="/setupdc">
+            <span>DC: {{ DC }}</span>
+          </a>
+        </li>
+        <li nz-menu-item>
           <button (click)="clickLogout()">
             <div class="flex flex-row">
               <span>Logout</span>
@@ -31,6 +36,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 })
 export class NavbarDropMenuComponent {
   @Input() userName: string;
+  @Input() DC: string;
   @Output() logout: EventEmitter<null> = new EventEmitter();
 
   public clickLogout() {

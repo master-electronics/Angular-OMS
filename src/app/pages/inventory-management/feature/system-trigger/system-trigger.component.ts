@@ -474,7 +474,7 @@ export class SystemTrigger implements OnInit {
         {
           UserEventID: sqlData.Event_IM_System_Trigger_Updated,
           UserName: this.userInfo.userName,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           Message:
             'SystemTriggerID: ' +
             this.selectedAuditID +
@@ -492,7 +492,7 @@ export class SystemTrigger implements OnInit {
           UserName: this.userInfo.userName,
           EventTypeID: sqlData.Event_IM_System_Trigger_Updated,
           Log: JSON.stringify({
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             SystemTriggerID: this.selectedAuditID,
             SystemTriggerName: name,
             SystemTriggerDescription: description,
@@ -577,7 +577,7 @@ export class SystemTrigger implements OnInit {
         {
           UserEventID: sqlData.Event_IM_System_Trigger_Created,
           UserName: this.userInfo.userName,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           Message:
             'SystemTriggerID: ' +
             this.selectedAuditID +
@@ -595,7 +595,7 @@ export class SystemTrigger implements OnInit {
           UserName: this.userInfo.userName,
           EventTypeID: sqlData.Event_IM_System_Trigger_Created,
           Log: JSON.stringify({
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             SystemTriggerID: this.selectedAuditID,
             SystemTriggerName: name,
             SystemTriggerDescription: description,
@@ -807,7 +807,7 @@ export class SystemTrigger implements OnInit {
       {
         UserEventID: sqlData.Event_IM_System_Trigger_Updated,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         Message: 'SystemTriggerID: ' + ID,
       },
     ];
@@ -817,7 +817,7 @@ export class SystemTrigger implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_System_Trigger_Updated,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           SystemTriggerID: ID,
           SystemTriggerActive: true,
         }),
@@ -879,7 +879,7 @@ export class SystemTrigger implements OnInit {
       {
         UserEventID: sqlData.Event_IM_System_Trigger_Updated,
         UserName: this.userInfo.userName,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this.userInfo.distributionCenter,
         Message: 'SystemTriggerID: ' + ID,
       },
     ];
@@ -889,7 +889,7 @@ export class SystemTrigger implements OnInit {
         UserName: this.userInfo.userName,
         EventTypeID: sqlData.Event_IM_System_Trigger_Updated,
         Log: JSON.stringify({
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           SystemTriggerID: ID,
           SystemTriggerActive: false,
         }),

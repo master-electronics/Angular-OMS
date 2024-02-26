@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   OnInit,
+  inject,
 } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -13,11 +14,11 @@ import { NavbarTitleService } from '../../shared/services/navbar-title.service';
 import { AggregationShelfBarcodeRegex } from '../../shared/utils/dataRegex';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { catchError, map } from 'rxjs/operators';
 import { ShelfInventoryService } from './shelf-inventory.server';
 import { FindItNsByShelfGQL } from 'src/app/graphql/utilityTools.graphql-gen';
 import { sqlData } from 'src/app/shared/utils/sqlData';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'shelf-inventory',
@@ -30,6 +31,7 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
   alertType = 'error';
   search$ = new Observable();
 
+  private _userInfo = inject(StorageUserInfoService);
   constructor(
     private _title: NavbarTitleService,
     private router: Router,
@@ -67,7 +69,7 @@ export class ShelfInventoryComponent implements AfterViewInit, OnInit {
     this.isLoading = true;
     const barcode = this.barcodeForm.get('barcode').value;
     const containerInfo = {
-      DistributionCenter: environment.DistributionCenter,
+      DistributionCenter: this._userInfo.distributionCenter,
       Warehouse: barcode.substring(0, 2),
       Row: barcode.substring(3, 5),
       Aisle: barcode.substring(6, 8),

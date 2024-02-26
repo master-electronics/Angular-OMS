@@ -1,4 +1,10 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  inject,
+} from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormControl,
@@ -19,8 +25,8 @@ import {
   FindOrderForSearchBarcodeGQL,
 } from '../../graphql/searchBarcode.graphql-gen';
 import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 
 @Component({
   selector: 'search-barcode',
@@ -37,6 +43,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
   displayITN = [];
   displayOrder = [];
 
+  private _userInfo = inject(StorageUserInfoService);
   constructor(
     private _title: NavbarTitleService,
     private fb: UntypedFormBuilder,
@@ -83,7 +90,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.isContainer = true;
         const containerInfo = {
           Barcode: barcode,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
         };
         this.search$ = this.searchContainer
           .fetch({ Container: containerInfo }, { fetchPolicy: 'network-only' })
@@ -97,7 +104,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
       if (AggregationShelfBarcodeRegex.test(barcode)) {
         this.isContainer = true;
         const containerInfo = {
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           Warehouse: barcode.substring(0, 2),
           Row: barcode.substring(3, 5),
           Aisle: barcode.substring(6, 8),
@@ -138,7 +145,7 @@ export class SearchBarcodeComponent implements AfterViewInit {
         this.search$ = this.searchOrder
           .fetch(
             {
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this._userInfo.distributionCenter,
               OrderNumber: barcodeSplit[0],
               NOSINumber: barcodeSplit[1],
             },

@@ -26,7 +26,6 @@ import {
   UpdatePullingNotFoundGQL,
   VerifyCartAndUpdateGQL,
 } from 'src/app/graphql/pick.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzWaveModule } from 'ng-zorro-antd/core/wave';
@@ -180,7 +179,7 @@ export class PullITNComponent implements OnInit, AfterViewInit {
       .mutate(
         {
           Container: {
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this._userInfo.distributionCenter,
             Barcode: this._pickService.cartInfo.barcode,
           },
           UserID,

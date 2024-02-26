@@ -19,7 +19,6 @@ import {
   PickOrderForAgOutGQL,
   VerifyOrderForAgOutGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { of, throwError } from 'rxjs';
 import { AggregationOutService } from './aggregation-out.server';
 import { sqlData } from 'src/app/shared/utils/sqlData';
@@ -121,7 +120,7 @@ export class AggregationOutComponent implements OnInit, AfterViewInit {
     this.verifyOrder$ = this.verifyOrder
       .fetch(
         {
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this._userInfo.distributionCenter,
           OrderNumber,
           NOSINumber,
         },

@@ -167,7 +167,7 @@ export class LabelService {
   public printReceivingLabel$() {
     return this._itn
       .mutate(
-        { LocationCode: environment.DistributionCenter },
+        { LocationCode: this._userInfo.distributionCenter },
         { fetchPolicy: 'network-only' }
       )
       .pipe(
@@ -220,7 +220,7 @@ export class LabelService {
     return this._container
       .fetch({
         Barcode,
-        DistributionCenter: environment.DistributionCenter,
+        DistributionCenter: this._userInfo.distributionCenter,
       })
       .pipe(
         tap((res) => {
@@ -251,7 +251,7 @@ export class LabelService {
   public updateAfterReceving(): Observable<any> {
     const line = this._receipt.receiptInfoAfterFilter()[0];
     const Inventory = {
-      DistributionCenter: environment.DistributionCenter,
+      DistributionCenter: this._userInfo.distributionCenter,
       ProductID: line.ProductID,
       ROHS: this._partInfo.receiptInfo.ROHS,
     };

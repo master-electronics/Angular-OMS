@@ -9,8 +9,6 @@ import {
   FormBuilder,
 } from '@angular/forms';
 import { VerifyAsnLocationGQL } from 'src/app/graphql/autostoreASN.graphql-gen';
-import { FindInventoryByUserGQL } from 'src/app/graphql/utilityTools.graphql-gen';
-import { environment } from 'src/environments/environment';
 import { catchError, combineLatest, map, Observable, of, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ASNService } from '../../data/asn.service';
@@ -118,7 +116,7 @@ export class ASNLocation implements OnInit {
               {
                 UserEventID: sqlData.Event_Autostore_ASN_Location_Scanned,
                 UserName: this._userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this._userInfo.distributionCenter,
                 InventoryTrackingNumber: this.selectedITN,
                 Message: 'Location: ' + barcode,
               },
@@ -128,7 +126,7 @@ export class ASNLocation implements OnInit {
                 UserName: this._userInfo.userName,
                 EventTypeID: sqlData.Event_Autostore_ASN_Location_Scanned,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this._userInfo.distributionCenter,
                   InventoryTrackingNumber: this.selectedITN,
                   Location: barcode,
                 }),

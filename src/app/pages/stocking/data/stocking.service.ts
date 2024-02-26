@@ -19,7 +19,6 @@ import { EventLogService } from 'src/app/shared/data/eventLog';
 import { UserContainerService } from 'src/app/shared/data/user-container';
 import { Logger } from 'src/app/shared/services/logger.service';
 import { sqlData } from 'src/app/shared/utils/sqlData';
-import { environment } from 'src/environments/environment';
 import { ItnInfo, ItnInfoService } from './itn-info.service';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { SESSION_STORAGE } from 'src/app/shared/utils/storage';
@@ -149,7 +148,7 @@ export class StockingService {
       .fetch(
         {
           Barcode,
-          DC: environment.DistributionCenter,
+          DC: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )

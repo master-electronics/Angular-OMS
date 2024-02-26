@@ -45,7 +45,6 @@ import {
 import { FindInventoryGQL } from 'src/app/graphql/itn_info.graphql-gen';
 import { StorageUserInfoService } from 'src/app/shared/services/storage-user-info.service';
 import { EventLogService } from 'src/app/shared/services/eventLog.service';
-import { environment } from 'src/environments/environment';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 
 @Injectable()
@@ -73,6 +72,7 @@ export class AuditService {
     private _insertSystemTrigger: InsertSystemTriggerGQL,
     private _clearAudits: ClearAuditsGQL,
     private _auditCount: GetAuditCountGQL,
+    private _userInfo: StorageUserInfoService,
     private _findContainerInventory: FindContainerInventoryGQL,
     private _deleteAuditsList: DeleteAuditsListGQL,
     private _eventLog: EventLogService,
@@ -184,7 +184,7 @@ export class AuditService {
         {
           userID: this.userInfo.userId,
           barcode: barcode,
-          distributionCenter: environment.DistributionCenter,
+          distributionCenter: this._userInfo.distributionCenter,
         },
         { fetchPolicy: 'network-only' }
       )
