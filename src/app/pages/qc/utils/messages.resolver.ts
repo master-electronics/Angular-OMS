@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import {
-  ActivatedRoute,
   ActivatedRouteSnapshot,
   ResolveFn,
   Router,
@@ -13,12 +12,11 @@ export const MessagesResolver: ResolveFn<any> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
   order: OrderService = inject(OrderService),
-  router: Router = inject(Router),
-  actRoute: ActivatedRoute = inject(ActivatedRoute)
+  router: Router = inject(Router)
 ): Observable<any> => {
   return order.fetchGlobalMessages$().pipe(
     catchError((err) => {
-      router.navigate(['../verify'], { relativeTo: actRoute });
+      router.navigate(['/qct/verify']);
       return of(err);
     })
   );

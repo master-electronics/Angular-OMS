@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { TabService } from 'src/app/shared/ui/step-bar/tab';
 import { OrderService } from './data-access/order';
 import { MessagesResolver } from './utils/messages.resolver';
+import { QualityControlGuard } from './utils/quality-control.guard';
 
 export const QualityControlRoutes: Routes = [
   {
@@ -9,6 +10,7 @@ export const QualityControlRoutes: Routes = [
     providers: [TabService, OrderService],
     loadComponent: () =>
       import('./shell.component').then((m) => m.QualityControlShell),
+    canActivateChild: [QualityControlGuard],
     children: [
       {
         path: 'scanitn',
@@ -25,6 +27,13 @@ export const QualityControlRoutes: Routes = [
         loadComponent: () =>
           import('./feature/global-messages.component').then(
             (m) => m.GlobalMessagesComponent
+          ),
+      },
+      {
+        path: 'verify',
+        loadComponent: () =>
+          import('./feature/verfiy-pack.component').then(
+            (m) => m.VerifyComponent
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'scanitn' },

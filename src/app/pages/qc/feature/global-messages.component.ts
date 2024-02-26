@@ -1,20 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
+import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    SingleInputformComponent,
-    CommonModule,
-    ReactiveFormsModule,
-    NzDescriptionsModule,
-  ],
+  imports: [CommonModule, GreenButtonComponent, NormalButtonComponent],
   template: `
     <div *ngIf="data">
       <h2 class="text-xl font-semibold text-gray-900">Order Line Messages:</h2>
@@ -36,12 +29,23 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
         </li>
       </ul>
     </div>
+    <div class="grid grid-rows-2 justify-center gap-10">
+      <green-button
+        class="h-16 w-32"
+        buttonText="Add"
+        (buttonClick)="onSubmit()"
+      ></green-button>
+      <normal-button
+        class="h-16 w-32"
+        buttonText="Remove"
+        (buttonClick)="onBack()"
+      ></normal-button>
+    </div>
   `,
 })
 export class GlobalMessagesComponent {
   public data;
   constructor(
-    private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
     private _router: Router
   ) {

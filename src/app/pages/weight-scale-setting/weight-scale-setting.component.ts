@@ -40,7 +40,10 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
 })
 export class WeightScaleSettingComponent {
   public change$: Observable<{ name: string; message: string }>;
-  constructor(private _router: Router, private _hdi: HDIService) {}
+  constructor(
+    private _router: Router,
+    private _hdi: HDIService
+  ) {}
 
   add(): void {
     this.change$ = this._hdi.addWeightScale$().pipe(
