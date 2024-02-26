@@ -38,7 +38,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
     </div>
   `,
 })
-export class VerifyComponent {
+export class HoldOnComponent {
   public data;
   constructor(
     private _fb: FormBuilder,
