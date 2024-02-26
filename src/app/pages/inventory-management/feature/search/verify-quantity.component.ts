@@ -200,7 +200,7 @@ export class VerifyQuantity implements OnInit {
       .recreateITN(
         this.userInfo.userName,
         ITN,
-        environment.DistributionCenter,
+        this.userInfo.distributionCenter,
         BinLocation,
         Quantity.toString()
       )
@@ -211,7 +211,7 @@ export class VerifyQuantity implements OnInit {
             {
               UserEventID: sqlData.Event_IM_Search_ITN_Recreated,
               UserName: this.userInfo.userName,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: ITN,
               Message:
                 'BinLocation: ' + BinLocation + ' --- Quantity: ' + Quantity,
@@ -223,7 +223,7 @@ export class VerifyQuantity implements OnInit {
               UserName: this.userInfo.userName,
               EventTypeID: sqlData.Event_IM_Search_ITN_Recreated,
               Log: JSON.stringify({
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: ITN,
                 BinLocation: BinLocation,
                 Quantity: Quantity,
@@ -293,7 +293,7 @@ export class VerifyQuantity implements OnInit {
                     {
                       UserEventID: sqlData.Event_IM_Audit_Completed,
                       UserName: this.userInfo.userName,
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                     },
@@ -304,7 +304,7 @@ export class VerifyQuantity implements OnInit {
                       UserName: this.userInfo.userName,
                       EventTypeID: sqlData.Event_IM_Audit_Completed,
                       Log: JSON.stringify({
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this.userInfo.distributionCenter,
                         InventoryTrackingNumber:
                           sessionStorage.getItem('auditITN'),
                         ParentITN: this.CurrentAudit.Inventory.ParentITN,
@@ -474,7 +474,7 @@ export class VerifyQuantity implements OnInit {
             {
               UserEventID: sqlData.Event_IM_Quantity_Entered,
               UserName: this.userInfo.userName,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: this.itn,
               Message: 'Quantity: ' + qty,
             },
@@ -484,7 +484,7 @@ export class VerifyQuantity implements OnInit {
               UserName: this.userInfo.userName,
               EventTypeID: sqlData.Event_IM_Quantity_Entered,
               Log: JSON.stringify({
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: this.itn,
                 BinLocation: sessionStorage.getItem('CurrentLocation'),
                 QuantityEntered: qty,
@@ -514,7 +514,7 @@ export class VerifyQuantity implements OnInit {
         this.userEventLogs.push({
           UserEventID: sqlData.Event_IM_Quantity_Confirm_Entered,
           UserName: this.userInfo.userName,
-          DistributionCenter: environment.DistributionCenter,
+          DistributionCenter: this.userInfo.distributionCenter,
           InventoryTrackingNumber: this.itn,
           Message: 'Quantity: ' + quantity,
         });
@@ -523,7 +523,7 @@ export class VerifyQuantity implements OnInit {
           UserName: this.userInfo.userName,
           EventTypeID: sqlData.Event_IM_Quantity_Confirm_Entered,
           Log: JSON.stringify({
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
             BinLocation: sessionStorage.getItem('CurrentLocation'),
             QuantityEntered: quantity,
@@ -546,7 +546,7 @@ export class VerifyQuantity implements OnInit {
               {
                 UserEventID: sqlData.Event_IM_Quantity_Confirm_Entered,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: this.itn,
                 Message: 'Quantity: ' + qty.toString(),
               },
@@ -556,7 +556,7 @@ export class VerifyQuantity implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_Quantity_Confirm_Entered,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: this.itn,
                   BinLocation: sessionStorage.getItem('CurrentLocation'),
                   QuantityEntered: qty,

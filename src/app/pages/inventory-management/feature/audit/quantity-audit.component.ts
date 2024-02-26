@@ -601,7 +601,7 @@ export class QuantityAudit implements OnInit {
                       this.userEventLogs.push({
                         UserEventID: sqlData.Event_IM_Quantity_Unchanged,
                         UserName: this.userInfo.userName,
-                        DistributionCenter: environment.DistributionCenter,
+                        DistributionCenter: this.userInfo.distributionCenter,
                         InventoryTrackingNumber:
                           sessionStorage.getItem('auditITN'),
                         Message: 'Quantity: ' + qty,
@@ -611,7 +611,7 @@ export class QuantityAudit implements OnInit {
                         UserName: this.userInfo.userName,
                         EventTypeID: sqlData.Event_IM_Quantity_Unchanged,
                         Log: JSON.stringify({
-                          DistributionCenter: environment.DistributionCenter,
+                          DistributionCenter: this.userInfo.distributionCenter,
                           InventoryTrackingNumber:
                             sessionStorage.getItem('auditITN'),
                           ParentITN: currentAudit.Inventory.ParentITN,
@@ -735,7 +735,7 @@ export class QuantityAudit implements OnInit {
                   this.userEventLogs.push({
                     UserEventID: sqlData.Event_IM_Quantity_Unchanged,
                     UserName: this.userInfo.userName,
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                     Message: 'Quantity: ' + quantity,
                   });
@@ -744,7 +744,7 @@ export class QuantityAudit implements OnInit {
                     UserName: this.userInfo.userName,
                     EventTypeID: sqlData.Event_IM_Quantity_Unchanged,
                     Log: JSON.stringify({
-                      DistributionCenter: environment.DistributionCenter,
+                      DistributionCenter: this.userInfo.distributionCenter,
                       InventoryTrackingNumber:
                         sessionStorage.getItem('auditITN'),
                       ParentITN: currentAudit.Inventory.ParentITN,

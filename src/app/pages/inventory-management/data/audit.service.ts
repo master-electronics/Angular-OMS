@@ -497,7 +497,7 @@ export class AuditService {
           userEventLog.push({
             UserEventID: sqlData.Event_IM_Audit_ITN_NF_During_Search,
             UserName: this.userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             InventoryTrackingNumber: inv._id.toString(),
             Message: 'Search Location: ' + SearchLocation,
           });
@@ -507,7 +507,7 @@ export class AuditService {
             EventTypeID: sqlData.Event_IM_Audit_ITN_NF_During_Search,
             Log: JSON.stringify({
               SearchLocation: SearchLocation,
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: inv.InventoryTrackingNumber,
               ParentITN: inv.ParentITN,
               BinLocation: inv.BinLocation,

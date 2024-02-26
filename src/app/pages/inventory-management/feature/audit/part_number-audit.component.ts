@@ -518,7 +518,7 @@ export class PartNumberAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_PartNumber_Unchange,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Part Number: ' + partMatch,
               });
@@ -527,7 +527,7 @@ export class PartNumberAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_PartNumber_Unchange,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,

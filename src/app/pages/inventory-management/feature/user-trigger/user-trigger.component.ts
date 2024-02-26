@@ -594,7 +594,7 @@ export class UserTrigger {
           userEventLogs.push({
             UserEventID: sqlData.Event_IM_Audit_Created,
             UserName: this.userInfo.userName,
-            DistributionCenter: environment.DistributionCenter,
+            DistributionCenter: this.userInfo.distributionCenter,
             InventoryTrackingNumber: item.ITN,
             Message: 'Audit Type ' + type.value + ' created',
           });
@@ -603,7 +603,7 @@ export class UserTrigger {
             UserName: this.userInfo.userName,
             EventTypeID: sqlData.Event_IM_Audit_Created,
             Log: JSON.stringify({
-              DistributionCenter: environment.DistributionCenter,
+              DistributionCenter: this.userInfo.distributionCenter,
               InventoryTrackingNumber: item.ITN,
               AuditTypeID: type.value,
               Trigger: 'User Tigger',

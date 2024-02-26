@@ -347,7 +347,7 @@ export class DateCodeAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_DateCode_Unchanged,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'Date Code: ' + dateCode,
               });
@@ -356,7 +356,7 @@ export class DateCodeAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_DateCode_Unchanged,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,

@@ -200,7 +200,7 @@ export class ScanITN implements OnInit {
                 userEventLogs.push({
                   UserEventID: sqlData.Event_IM_Audit_Created,
                   UserName: this.userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: inv.InventoryTrackingNumber,
                   Message: 'Audit Type 10 created',
                 });
@@ -209,7 +209,7 @@ export class ScanITN implements OnInit {
                   UserName: this.userInfo.userName,
                   EventTypeID: sqlData.Event_IM_Audit_Created,
                   Log: JSON.stringify({
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: inv.InventoryTrackingNumber,
                     AuditTypeID: 10,
                     Trigger: 'ITN Location Audit Search',
@@ -394,7 +394,7 @@ export class ScanITN implements OnInit {
                   });
                 }
                 return this._auditService.findInventory(
-                  environment.DistributionCenter,
+                  this.userInfo.distributionCenter,
                   itn.toString()
                 );
               }),
@@ -417,7 +417,7 @@ export class ScanITN implements OnInit {
                 userEventLogs.push({
                   UserEventID: sqlData.Event_IM_Audit_Created,
                   UserName: this.userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: itn,
                   Message: 'Audit Type 10 created',
                 });
@@ -426,7 +426,7 @@ export class ScanITN implements OnInit {
                   UserName: this.userInfo.userName,
                   EventTypeID: sqlData.Event_IM_Audit_Created,
                   Log: JSON.stringify({
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: itn,
                     AuditTypeID: 10,
                     Trigger: 'ITN Location Audit Search',
@@ -443,7 +443,7 @@ export class ScanITN implements OnInit {
                 userEventLogs.push({
                   UserEventID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                   UserName: this.userInfo.userName,
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: itn,
                   Message: 'Binlocaton: ' + barcode,
                 });
@@ -452,7 +452,7 @@ export class ScanITN implements OnInit {
                   UserName: this.userInfo.userName,
                   EventTypeID: sqlData.Event_IM_Audit_Closed_ITN_Search,
                   Log: JSON.stringify({
-                    DistributionCenter: environment.DistributionCenter,
+                    DistributionCenter: this.userInfo.distributionCenter,
                     InventoryTrackingNumber: itn,
                     AuditTypeID: 10,
                     Trigger: 'ITN Location Audit Search',

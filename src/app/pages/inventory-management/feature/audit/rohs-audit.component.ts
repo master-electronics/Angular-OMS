@@ -326,7 +326,7 @@ export class ROHSAudit implements OnInit {
               userEventLogs.push({
                 UserEventID: sqlData.Event_IM_ROHS_Updated,
                 UserName: this.userInfo.userName,
-                DistributionCenter: environment.DistributionCenter,
+                DistributionCenter: this.userInfo.distributionCenter,
                 InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                 Message: 'ROHS: ' + rohs,
               });
@@ -335,7 +335,7 @@ export class ROHSAudit implements OnInit {
                 UserName: this.userInfo.userName,
                 EventTypeID: sqlData.Event_IM_ROHS_Updated,
                 Log: JSON.stringify({
-                  DistributionCenter: environment.DistributionCenter,
+                  DistributionCenter: this.userInfo.distributionCenter,
                   InventoryTrackingNumber: sessionStorage.getItem('auditITN'),
                   ParentITN: currentAudit.Inventory.ParentITN,
                   BinLocation: currentAudit.Container.Barcode,
