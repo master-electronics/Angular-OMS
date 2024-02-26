@@ -235,6 +235,6 @@ export class SummaryComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/label/assign');
+    this._router.navigateByUrl('receiptreceiving');
   }
 }
