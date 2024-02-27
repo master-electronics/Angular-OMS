@@ -446,6 +446,9 @@ export class ScanITN implements OnInit {
           return of(res);
         }),
         switchMap((res) => {
+          return this._auditService.replanPick(input);
+        }),
+        switchMap((res) => {
           this._router.navigate([route], {
             relativeTo: this._actRoute,
           });
