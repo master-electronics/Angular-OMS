@@ -1,49 +1,32 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { VerifyInfoComponent } from '../ui/verify-info.component';
+import { OrderService } from '../data-access/order';
 
 @Component({
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    SingleInputformComponent,
-    CommonModule,
-    ReactiveFormsModule,
-    NzDescriptionsModule,
-  ],
+  imports: [CommonModule, VerifyInfoComponent],
   template: `
-    <div *ngIf="data">
-      <h2 class="text-xl font-semibold text-gray-900">Order Line Messages:</h2>
-      <ul
-        *ngFor="let message of data.orderLine"
-        class="max-w-md ml-4 space-y-1 text-gray-500 text-xl list-inside "
-      >
-        <li>
-          {{ message }}
-        </li>
-      </ul>
-      <h2 class="text-xl font-semibold text-gray-900">Part Messages:</h2>
-      <ul
-        *ngFor="let message of data.part"
-        class="max-w-md ml-4 space-y-1 text-gray-500 text-xl list-inside "
-      >
-        <li>
-          {{ message }}
-        </li>
-      </ul>
-    </div>
+    <verify-info
+      [imgUrl]="imgUrl"
+      [itnInfo]="order.itnInfo"
+      [HML]=""
+      [productUrl]=""
+      [specSheetUrl]=""
+    ></verify-info>
+    <div class="divider">Order Detail</div>
+    <div class="divider">Count</div>
   `,
 })
 export class VerifyComponent {
   public data;
+  public imgUrl = 'https://www.onlinecomponents.com/images/parts/largeimages/';
   constructor(
-    private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    public order: OrderService
   ) {
     this.data = this._actRoute.data.pipe();
   }

@@ -10,7 +10,7 @@ export const QualityControlRoutes: Routes = [
     providers: [TabService, OrderService],
     loadComponent: () =>
       import('./shell.component').then((m) => m.QualityControlShell),
-    canActivateChild: [QualityControlGuard],
+    // canActivateChild: [QualityControlGuard],
     children: [
       {
         path: 'scanitn',

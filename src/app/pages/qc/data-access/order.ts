@@ -9,7 +9,7 @@ import { sqlData } from 'src/app/shared/utils/sqlData';
 import { AutoStoreBarcodeRegex } from 'src/app/shared/utils/dataRegex';
 import { EventLogService } from 'src/app/shared/data/eventLog';
 
-interface QcItnInfo {
+export interface QcItnInfo {
   InventoryTrackingNumber: string;
   InventoryID: number;
   OrderLineDetailID: number;
@@ -50,7 +50,11 @@ export class OrderService {
   public setItnInfo(info: QcItnInfo) {
     this._itnInfo.set(info);
   }
-
+  /**
+   * fetch orderline detail information by ITN. Then insert event log.
+   * @param itn search the ITN infomation
+   * @returns boolean
+   */
   public verifyQcItn$(itn: string) {
     return this._verifyItn
       .fetch(
@@ -61,6 +65,7 @@ export class OrderService {
         { fetchPolicy: 'network-only' }
       )
       .pipe(
+        // verify this ITN.
         tap((res) => {
           if (!res.data.findInventory.ORDERLINEDETAILs?.length) {
             throw 'Can not find this order';
@@ -86,6 +91,7 @@ export class OrderService {
             throw error;
           }
         }),
+        // save ITN information.
         tap((res) => {
           const detail = res.data.findInventory;
           const Order = res.data.findInventory.ORDERLINEDETAILs[0].Order;
@@ -120,6 +126,7 @@ export class OrderService {
             Priority: Order.ShipmentMethod.PriorityPinkPaper,
           });
         }),
+        // insert event log.
         switchMap(() => {
           this._log.initOldLog({
             UserName: this._userInfo.userName,
@@ -154,7 +161,8 @@ export class OrderService {
   }
 
   /**
-   *
+   * search orderline message and part message. If no messages throw error.
+   * @returns {orderLine: [string], part: [string]}
    */
   public fetchGlobalMessages$() {
     return this._message
@@ -174,12 +182,6 @@ export class OrderService {
           ) {
             throw new Error('No messages!');
           }
-        }),
-        map((res) => {
-          return {
-            orderLine: res.data.fetchOrderLineMessage?.comments,
-            part: res.data.fetchPartMessage?.comments,
-          };
         })
       );
   }

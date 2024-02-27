@@ -43,7 +43,7 @@ export class QualityControlShell {
     },
     { title: 'Messages' },
     { title: 'Verifiy' },
-    { title: 'Hold On' },
+    { title: 'Weight' },
     {
       title: 'Repack',
     },

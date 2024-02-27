@@ -251,10 +251,10 @@
             alertType === 'error'
               ? 'error'
               : alertType === 'success'
-              ? 'success'
-              : alertType === 'info'
-              ? 'info'
-              : 'warning'
+                ? 'success'
+                : alertType === 'info'
+                  ? 'info'
+                  : 'warning'
           "
           [nzMessage]="alertMessage"
           nzShowIcon
