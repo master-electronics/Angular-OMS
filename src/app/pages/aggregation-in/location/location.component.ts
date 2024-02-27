@@ -344,6 +344,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.type = 'warning';
             this.message += `\nThis order contains hazardous materials`;
           }
+          if (!res.updateOrder.data.deleteAndInsertRouteTable) {
+            this.type = 'error';
+            this.message += '\nConveyor Error!';
+          }
           return this._insertLog.mutate({ oldLogs, eventLogs });
         }),
         map(() => {

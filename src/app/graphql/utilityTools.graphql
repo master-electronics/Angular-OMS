@@ -94,6 +94,13 @@ mutation changeItnListForMerp($ITNList: [InventoryUpdateForMerp]!) {
   changeItnListForMerp(ITNList: $ITNList)
 }
 
+mutation changeDCSetting($UserID: Int!, $DistributionCenter: String!) {
+  updateUserInfo(
+    UserInfo: { DistributionCenter: $DistributionCenter }
+    _id: $UserID
+  )
+}
+
 # mutation sendMail($Subject: String!, $Text: String!, $Recipients: String!) {
 #   sendMail(Subject: $Subject, Text: $Text, Recipients: $Recipients)
 # }
