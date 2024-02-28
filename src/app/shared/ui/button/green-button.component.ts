@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   Input,
@@ -9,20 +10,32 @@ import {
 @Component({
   standalone: true,
   selector: 'green-button',
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
       (click)="onClick()"
-      class="h-full w-full rounded-lg bg-green-700 font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+      class="w-full btn btn-sm btn-active btn-accent hover:bg-teal-400 hover:text-gray-600 md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
+      *ngIf="!loading; else buttonLoading"
     >
       {{ buttonText }}
     </button>
+    <ng-template #buttonLoading>
+      <button
+        type="button"
+        class="w-full no-animation btn btn-sm btn-accent md:btn-md lg:btn-lg"
+      >
+        <span class="loading loading-spinner"></span>
+        loading
+      </button>
+    </ng-template>
   `,
 })
 export class GreenButtonComponent {
   @Input() disabled = false;
+  @Input() loading = false;
   @Input() buttonText = 'Back';
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 

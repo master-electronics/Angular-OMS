@@ -20,7 +20,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NormalButtonComponent } from '../button/normal-button.component';
 import { SubmitButtonComponent } from '../button/submit-button.component';
 import { MessageBarComponent } from '../message-bar.component';
-import { LoaderButtonComponent } from '../button/loader-button.component';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @Component({
@@ -32,7 +31,6 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     NzSkeletonModule,
     NormalButtonComponent,
     SubmitButtonComponent,
-    LoaderButtonComponent,
     MessageBarComponent,
     NzIconModule,
     NzRadioModule,
@@ -101,11 +99,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
         <div
           class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
         >
-          <submit-button *ngIf="data; else buttonLoading" [disabled]="!isvalid">
+          <submit-button [loading]="!data" [disabled]="!isvalid">
           </submit-button>
-          <ng-template #buttonLoading>
-            <loader-button></loader-button>
-          </ng-template>
           <normal-button
             class="col-start-3"
             (buttonClick)="onBack()"

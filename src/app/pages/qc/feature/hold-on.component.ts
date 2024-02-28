@@ -38,7 +38,7 @@ import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-f
     </div>
   `,
 })
-export class RepackComponent {
+export class HoldOnComponent {
   public data;
   constructor(
     private _fb: FormBuilder,

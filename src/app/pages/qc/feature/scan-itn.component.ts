@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { of } from 'rxjs';
-import { NavbarTitleService } from 'src/app/shared/services/navbar-title.service';
+import { catchError, map, of } from 'rxjs';
 import { SingleInputformComponent } from 'src/app/shared/ui/input/single-input-form.component';
 import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
+import { OrderService } from '../data-access/order';
 
 @Component({
   standalone: true,
@@ -29,30 +28,40 @@ import { ITNBarcodeRegex } from 'src/app/shared/utils/dataRegex';
   `,
 })
 export class ScanItnComponent {
+  public data$;
   constructor(
-    private title: Title,
-    private _title: NavbarTitleService,
     private _fb: FormBuilder,
     private _actRoute: ActivatedRoute,
-    private _router: Router
-  ) {}
+    private _router: Router,
+    private _order: OrderService
+  ) {
+    this.data$ = of(true);
+    this._order.setItnInfo(null);
+  }
 
-  public data$;
   public inputForm = this._fb.nonNullable.group({
     itn: ['', [Validators.required, Validators.pattern(ITNBarcodeRegex)]],
   });
 
-  ngOnInit(): void {
-    this.title.setTitle('Sorting');
-    this._title.update('Sorting');
-    this.data$ = of(true);
-  }
-
   onSubmit(): void {
-    //
+    if (!this.inputForm.value.itn) {
+      return;
+    }
+    this.data$ = this._order.verifyQcItn$(this.inputForm.value.itn).pipe(
+      map(() => {
+        this._router.navigate(['../globalmessages'], {
+          relativeTo: this._actRoute,
+        });
+      }),
+      catchError((err) => {
+        return of({
+          error: { message: err, type: 'error' },
+        });
+      })
+    );
   }
 
   onBack(): void {
-    this._router.navigate(['../'], { relativeTo: this._actRoute });
+    this._router.navigate(['/'], { relativeTo: this._actRoute });
   }
 }

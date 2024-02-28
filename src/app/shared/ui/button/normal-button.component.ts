@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   Input,
@@ -9,20 +10,32 @@ import {
 @Component({
   standalone: true,
   selector: 'normal-button',
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
       (click)="onClick()"
-      class="h-full w-full rounded-lg border border-gray-200 bg-gray-100 font-medium text-gray-900 hover:bg-gray-200 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+      class="w-full hover:bg-gray-700 hover:text-gray-200 btn btn-sm btn-active md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
+      *ngIf="!loading; else buttonLoading"
     >
       {{ buttonText }}
     </button>
+    <ng-template #buttonLoading>
+      <button
+        type="button"
+        class="w-full no-animation btn btn-sm btn-primary md:btn-md lg:btn-lg"
+      >
+        <span class="loading loading-spinner"></span>
+        loading
+      </button>
+    </ng-template>
   `,
 })
 export class NormalButtonComponent {
   @Input() disabled = false;
+  @Input() loading = false;
   @Input() buttonText = 'Back';
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 

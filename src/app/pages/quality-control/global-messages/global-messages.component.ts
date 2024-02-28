@@ -104,7 +104,7 @@ export class GlobalMessagesComponent implements OnInit {
           this.isLoading = false;
           this.alertType = 'error';
           this.alertMessage = error;
-          return throwError(error);
+          return error(error);
         })
       );
   }

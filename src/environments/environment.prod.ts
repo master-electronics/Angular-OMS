@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   apiUrl: 'http://10.10.1.39:4000',
+  omsUrl: 'http://10.10.1.39:5051',
   graphql: 'http://10.10.1.39:3000/graphql',
   GTM_ID: 'GTM-KS8744D',
   changelogurl: 'https://master-electronics.gitbook.io/wms/',

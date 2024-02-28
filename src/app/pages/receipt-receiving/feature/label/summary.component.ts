@@ -21,7 +21,6 @@ import { EditInfoComponent } from './edit-info.component';
 import { GreenButtonComponent } from 'src/app/shared/ui/button/green-button.component';
 import { PrinterService } from 'src/app/shared/data/printer';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
-import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { ReceiptInfoService } from '../../data/ReceiptInfo';
 
@@ -35,7 +34,6 @@ import { ReceiptInfoService } from '../../data/ReceiptInfo';
     SubmitButtonComponent,
     GreenButtonComponent,
     NormalButtonComponent,
-    LoaderButtonComponent,
     AuthModalComponent,
     EditInfoComponent,
     MessageBarComponent,
@@ -235,6 +233,6 @@ export class SummaryComponent implements OnInit {
   }
 
   public onBack(): void {
-    this._router.navigateByUrl('receiptreceiving/label/assign');
+    this._router.navigateByUrl('receiptreceiving');
   }
 }

@@ -88,7 +88,7 @@ export class ReceiptComponent implements OnInit {
   };
 
   public onBack(): void {
-    this._router.navigate(['/receiptreceiving']);
+    this._router.navigate(['/home']);
   }
 
   public create(): void {

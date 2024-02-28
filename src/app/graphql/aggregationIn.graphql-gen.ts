@@ -3708,6 +3708,62 @@ export type UpdateAfterAgOutMutation = {
   };
 };
 
+export type ConveyorAfterAgOutMutationVariables = Types.Exact<{
+  toteList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+export type ConveyorAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  deleteAndInsertRouteTable: boolean;
+};
+
+export type MerpAfterAgOutMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  ITNList:
+    | Array<Types.InputMaybe<Types.InventoryUpdateForMerp>>
+    | Types.InputMaybe<Types.InventoryUpdateForMerp>;
+  OrderNumber: Types.Scalars['String'];
+  NOSINumber: Types.Scalars['String'];
+  MerpStatus: Types.Scalars['String'];
+  UserOrStatus: Types.Scalars['String'];
+  FileKeyList: Array<Types.Scalars['String']> | Types.Scalars['String'];
+  ActionType: Types.Scalars['String'];
+  Action: Types.Scalars['String'];
+}>;
+
+export type MerpAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  changeItnListForMerp?: boolean | null;
+  updateMerpOrderStatus: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+  updateMerpWMSLog: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+};
+
+export type SqlAfterAgOutMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String'];
+  toteList:
+    | Array<Types.InputMaybe<Types.Scalars['String']>>
+    | Types.InputMaybe<Types.Scalars['String']>;
+  OrderID: Types.Scalars['Int'];
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+}>;
+
+export type SqlAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  updateOrderLineDetail?: Array<number | null> | null;
+  updateOrder?: Array<number | null> | null;
+  updateContainerList?: Array<number | null> | null;
+};
+
 export type UpdateStatusAfterAgInMutationVariables = Types.Exact<{
   InventoryIDList:
     | Array<Types.InputMaybe<Types.Scalars['Int']>>
@@ -4063,6 +4119,109 @@ export class UpdateAfterAgOutGQL extends Apollo.Mutation<
   UpdateAfterAgOutMutationVariables
 > {
   document = UpdateAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ConveyorAfterAgOutDocument = gql`
+  mutation ConveyorAfterAgOut($toteList: [String]!) {
+    deleteAndInsertRouteTable(lpnList: $toteList)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ConveyorAfterAgOutGQL extends Apollo.Mutation<
+  ConveyorAfterAgOutMutation,
+  ConveyorAfterAgOutMutationVariables
+> {
+  document = ConveyorAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MerpAfterAgOutDocument = gql`
+  mutation MerpAfterAgOut(
+    $DistributionCenter: String!
+    $ITNList: [InventoryUpdateForMerp]!
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $MerpStatus: String!
+    $UserOrStatus: String!
+    $FileKeyList: [String!]!
+    $ActionType: String!
+    $Action: String!
+  ) {
+    changeItnListForMerp(ITNList: $ITNList)
+    updateMerpOrderStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $MerpStatus
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+    updateMerpWMSLog(
+      FileKeyList: $FileKeyList
+      LocationCode: $DistributionCenter
+      ActionType: $ActionType
+      Action: $Action
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MerpAfterAgOutGQL extends Apollo.Mutation<
+  MerpAfterAgOutMutation,
+  MerpAfterAgOutMutationVariables
+> {
+  document = MerpAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SqlAfterAgOutDocument = gql`
+  mutation SqlAfterAgOut(
+    $DistributionCenter: String!
+    $toteList: [String]!
+    $OrderID: Int!
+    $OrderLineDetail: updateOrderLineDetail!
+  ) {
+    updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+    updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+    updateContainerList(
+      BarcodeList: $toteList
+      DistributionCenter: $DistributionCenter
+      Container: {
+        Warehouse: "10"
+        Row: "CV"
+        Aisle: null
+        Section: null
+        Shelf: null
+        ShelfDetail: null
+      }
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SqlAfterAgOutGQL extends Apollo.Mutation<
+  SqlAfterAgOutMutation,
+  SqlAfterAgOutMutationVariables
+> {
+  document = SqlAfterAgOutDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

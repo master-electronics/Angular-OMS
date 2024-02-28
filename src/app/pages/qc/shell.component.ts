@@ -39,12 +39,13 @@ export class QualityControlShell {
 
   private readonly steps = [
     {
-      title: 'Create',
+      title: 'Scan ITN',
     },
-    { title: 'Verify' },
-    { title: 'Update' },
+    { title: 'Messages' },
+    { title: 'Verifiy' },
+    { title: 'Weight' },
     {
-      title: 'Label',
+      title: 'Repack',
     },
   ];
 }

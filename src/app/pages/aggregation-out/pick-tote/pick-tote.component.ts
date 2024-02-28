@@ -19,8 +19,11 @@ import { ToteBarcodeRegex } from '../../../shared/utils/dataRegex';
 import { NavbarTitleService } from '../../../shared/services/navbar-title.service';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
+  ConveyorAfterAgOutGQL,
   FetchContainerForAgoutPickGQL,
   FetchHazardMaterialLevelGQL,
+  MerpAfterAgOutGQL,
+  SqlAfterAgOutGQL,
   UpdateAfterAgOutGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
 import { Title } from '@angular/platform-browser';
@@ -87,7 +90,9 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
     private _fetchLocation: FetchContainerForAgoutPickGQL,
     private _fetchHazard: FetchHazardMaterialLevelGQL,
     private _insertUserEvnetLog: Create_EventLogsGQL,
-    private _updateAfterQC: UpdateAfterAgOutGQL,
+    private _merp: MerpAfterAgOutGQL,
+    private _sql: SqlAfterAgOutGQL,
+    private _conveyor: ConveyorAfterAgOutGQL,
     private _userInfo: StorageUserInfoService
   ) {
     this._titleService.setTitle('agout/pick');
@@ -314,21 +319,27 @@ export class PickToteComponent implements OnInit, OnDestroy, AfterViewInit {
       };
     });
     this.updateSQL$ = forkJoin({
-      updateOrder: this._updateAfterQC.mutate({
-        OrderID: Number(this.urlParams.OrderID),
-        OrderLineDetail: {
-          StatusID: sqlData.agOutComplete_ID,
-        },
-        toteList: [...toteSet],
+      merp: this._merp.mutate({
         DistributionCenter: this._userInfo.distributionCenter,
+        ITNList,
         OrderNumber: this.urlParams.OrderNumber,
         NOSINumber: this.urlParams.NOSINumber,
         UserOrStatus: 'Packing',
         MerpStatus: String(sqlData.agOutComplete_ID),
         FileKeyList,
         ActionType: 'A',
-        ITNList,
         Action: 'line_aggregation_out',
+      }),
+      sql: this._sql.mutate({
+        DistributionCenter: this._userInfo.distributionCenter,
+        toteList: [...toteSet],
+        OrderID: Number(this.urlParams.OrderID),
+        OrderLineDetail: {
+          StatusID: sqlData.agOutComplete_ID,
+        },
+      }),
+      conveyor: this._conveyor.mutate({
+        toteList: [...toteSet],
       }),
       checkHazmzd: this._fetchHazard.fetch(
         { ProductList: productList },
