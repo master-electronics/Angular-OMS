@@ -26,9 +26,12 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { sqlData } from 'src/app/shared/utils/sqlData';
 import { Title } from '@angular/platform-browser';
 import {
+  ConveyorAfterAgOutGQL,
   CountOrderItnsFromMerpGQL,
   FetchHazardMaterialLevelGQL,
   FetchLocationAndOrderDetailForAgInGQL,
+  MerpAfterAgOutGQL,
+  SqlAfterAgOutGQL,
   UpdateAfterAgOutGQL,
   VerifyContainerForAggregationInGQL,
 } from 'src/app/graphql/aggregationIn.graphql-gen';
@@ -125,7 +128,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private _countOrderItns: CountOrderItnsFromMerpGQL,
     private _agInService: AggregationInService,
     private _insertLog: Create_EventLogsGQL,
-    private _eventLog: EventLogService
+    private _eventLog: EventLogService,
+    private _merp: MerpAfterAgOutGQL,
+    private _sql: SqlAfterAgOutGQL,
+    private _conveyor: ConveyorAfterAgOutGQL
   ) {
     this._titleService.setTitle('agin/location');
   }
@@ -260,18 +266,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         // swith to ag out update observeable If this is single Line ITN
         switchMap(() => {
           return forkJoin({
-            updateOrder: this._updateAfterAgOut.mutate({
-              OrderID: Number(this.outsetContainer.OrderID),
-              OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
+            merp: this._merp.mutate({
               DistributionCenter: this.userInfo.distributionCenter,
-              toteList: [this.outsetContainer.Barcode],
-              OrderNumber: this.OrderNumber,
-              NOSINumber: this.NOSINumber,
-              UserOrStatus: 'Packing',
-              MerpStatus: String(sqlData.agOutComplete_ID),
-              FileKeyList: FileKeyListforAgOut,
-              ActionType: 'A',
-              Action: 'line_aggregation_out',
               ITNList: [
                 {
                   ITN: singleITN,
@@ -279,6 +275,22 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
                   User: this.userInfo.userName,
                 },
               ],
+              OrderNumber: this.OrderNumber,
+              NOSINumber: this.NOSINumber,
+              UserOrStatus: 'Packing',
+              MerpStatus: String(sqlData.agOutComplete_ID),
+              FileKeyList: FileKeyListforAgOut,
+              ActionType: 'A',
+              Action: 'line_aggregation_out',
+            }),
+            sql: this._sql.mutate({
+              DistributionCenter: this.userInfo.distributionCenter,
+              toteList: [this.outsetContainer.Barcode],
+              OrderID: Number(this.outsetContainer.OrderID),
+              OrderLineDetail: { StatusID: sqlData.agOutComplete_ID },
+            }),
+            conveyor: this._conveyor.mutate({
+              toteList: [this.outsetContainer.Barcode],
             }),
             checkHazmzd: this._fetchHazard.fetch(
               { ProductList: ProductList },
@@ -344,7 +356,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
             this.type = 'warning';
             this.message += `\nThis order contains hazardous materials`;
           }
-          if (!res.updateOrder.data.deleteAndInsertRouteTable) {
+          if (!res.conveyor.data.deleteAndInsertRouteTable) {
             this.type = 'error';
             this.message += '\nConveyor Error!';
           }

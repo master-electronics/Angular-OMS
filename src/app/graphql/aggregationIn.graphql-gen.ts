@@ -728,7 +728,7 @@ export type Mutation = {
   createContainer?: Maybe<Scalars['Boolean']['output']>;
   createITN: Scalars['String']['output'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']['output']>;
-  deleteAndInsertRouteTable: Scalars['Boolean']['output'];
+  deleteAndInsertRouteTable?: Maybe<Scalars['Boolean']['output']>;
   deleteAudit?: Maybe<Audit>;
   deleteAudits?: Maybe<Audit>;
   deleteAuditsList?: Maybe<Scalars['Boolean']['output']>;
@@ -736,6 +736,7 @@ export type Mutation = {
   deleteAutostoreOrderLines?: Maybe<Autostoreorderline>;
   deleteContainerFromMerp?: Maybe<Scalars['Boolean']['output']>;
   deleteCustomerFromMerp?: Maybe<Scalars['Boolean']['output']>;
+  deleteGlobalMessageFromMerp?: Maybe<Scalars['Boolean']['output']>;
   deleteITNLevelLimit?: Maybe<Array<Maybe<ItnUserLevelLimit>>>;
   deleteITNUserTemplate?: Maybe<Array<Maybe<ItnUserTemplate>>>;
   deleteInventoryFromMerp?: Maybe<Scalars['Boolean']['output']>;
@@ -803,6 +804,7 @@ export type Mutation = {
   recreateITN?: Maybe<UpdateResult>;
   removeAudit?: Maybe<Audit>;
   removeWeightScale?: Maybe<Scalars['Boolean']['output']>;
+  replanPick?: Maybe<UpdateResult>;
   rollbackAutostoreOrderLines?: Maybe<Autostoreorderline>;
   suspectInventory: Scalars['Boolean']['output'];
   updateASNInventory?: Maybe<Scalars['Boolean']['output']>;
@@ -820,6 +822,7 @@ export type Mutation = {
   updateForOrderLineDetailFromMerp?: Maybe<Scalars['Boolean']['output']>;
   updateForProductFromMerp?: Maybe<Scalars['Boolean']['output']>;
   updateForPurchaseOrderLineFromMerp?: Maybe<Scalars['Boolean']['output']>;
+  updateGlobalMessageFromMerp?: Maybe<Scalars['Boolean']['output']>;
   updateITNLifeCycleProcess?: Maybe<Itnlifecycleprocess>;
   updateITNUserColumns?: Maybe<ItnUserColumns>;
   updateITNUserLevels?: Maybe<ItnUserLevels>;
@@ -965,6 +968,12 @@ export type MutationDeleteContainerFromMerpArgs = {
 
 export type MutationDeleteCustomerFromMerpArgs = {
   CustomerNumber: Scalars['String']['input'];
+};
+
+export type MutationDeleteGlobalMessageFromMerpArgs = {
+  PartNumber?: InputMaybe<Scalars['String']['input']>;
+  ProductCode?: InputMaybe<Scalars['String']['input']>;
+  Sequence?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type MutationDeleteItnLevelLimitArgs = {
@@ -1324,6 +1333,10 @@ export type MutationRemoveAuditArgs = {
   ID?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type MutationReplanPickArgs = {
+  ITN?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type MutationRollbackAutostoreOrderLinesArgs = {
   AutostoreOrderHID?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1465,6 +1478,18 @@ export type MutationUpdateForPurchaseOrderLineFromMerpArgs = {
   UnitOfMeasure?: InputMaybe<Scalars['String']['input']>;
   VendorName: Scalars['String']['input'];
   VendorNumber: Scalars['String']['input'];
+};
+
+export type MutationUpdateGlobalMessageFromMerpArgs = {
+  Active?: InputMaybe<Scalars['Boolean']['input']>;
+  Message?: InputMaybe<Scalars['String']['input']>;
+  PackerPrint?: InputMaybe<Scalars['Boolean']['input']>;
+  Packing?: InputMaybe<Scalars['Boolean']['input']>;
+  PartNumber?: InputMaybe<Scalars['String']['input']>;
+  Picking?: InputMaybe<Scalars['Boolean']['input']>;
+  ProductCode?: InputMaybe<Scalars['String']['input']>;
+  QC?: InputMaybe<Scalars['Boolean']['input']>;
+  Sequence?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type MutationUpdateItnLifeCycleProcessArgs = {
@@ -1848,6 +1873,7 @@ export type Query = {
   fetchDataTableList?: Maybe<Array<Maybe<DataTable>>>;
   fetchDistributionCenterList?: Maybe<Array<Maybe<DistributionCenter>>>;
   fetchEntityList?: Maybe<Array<Maybe<Entity>>>;
+  fetchGblMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchGlobalMessages?: Maybe<Array<Maybe<Globalmsg>>>;
   fetchHoldOnCounter?: Maybe<Array<Maybe<HoldOnCounter>>>;
   fetchITNLifecycle?: Maybe<Array<Maybe<ItnLifeCycle_Report>>>;
@@ -1955,6 +1981,7 @@ export type Query = {
   printQRCodeLabel?: Maybe<Scalars['Boolean']['output']>;
   printReceivingITNLabel?: Maybe<Scalars['Boolean']['output']>;
   printTextLabel?: Maybe<Scalars['Boolean']['output']>;
+  test?: Maybe<Array<Maybe<Inventory>>>;
   validateAssignment?: Maybe<Scalars['Boolean']['output']>;
   validateFilter?: Maybe<Scalars['Boolean']['output']>;
   verifyASNLocation?: Maybe<Array<Maybe<Inventory>>>;
@@ -1998,6 +2025,12 @@ export type QueryFetchDataColumnListArgs = {
 
 export type QueryFetchEntityListArgs = {
   type?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type QueryFetchGblMessagesArgs = {
+  MessageType?: InputMaybe<Scalars['String']['input']>;
+  PartNumber?: InputMaybe<Scalars['String']['input']>;
+  ProductCode?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryFetchGlobalMessagesArgs = {
@@ -2465,6 +2498,10 @@ export type QueryPrintTextLabelArgs = {
   LINE4?: InputMaybe<Scalars['String']['input']>;
   ORIENTATION: Scalars['String']['input'];
   PRINTER: Scalars['String']['input'];
+};
+
+export type QueryTestArgs = {
+  ITN?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryValidateAssignmentArgs = {
@@ -3669,7 +3706,7 @@ export type UpdateAfterAgOutMutation = {
   __typename?: 'Mutation';
   updateOrderLineDetail?: Array<number | null> | null;
   updateOrder?: Array<number | null> | null;
-  deleteAndInsertRouteTable: boolean;
+  deleteAndInsertRouteTable?: boolean | null;
   changeItnListForMerp?: boolean | null;
   updateContainerList?: Array<number | null> | null;
   updateMerpOrderStatus: {
@@ -3682,6 +3719,64 @@ export type UpdateAfterAgOutMutation = {
     success: boolean;
     message?: string | null;
   };
+};
+
+export type ConveyorAfterAgOutMutationVariables = Types.Exact<{
+  toteList:
+    | Array<Types.InputMaybe<Types.Scalars['String']['input']>>
+    | Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+export type ConveyorAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  deleteAndInsertRouteTable?: boolean | null;
+};
+
+export type MerpAfterAgOutMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String']['input'];
+  ITNList:
+    | Array<Types.InputMaybe<Types.InventoryUpdateForMerp>>
+    | Types.InputMaybe<Types.InventoryUpdateForMerp>;
+  OrderNumber: Types.Scalars['String']['input'];
+  NOSINumber: Types.Scalars['String']['input'];
+  MerpStatus: Types.Scalars['String']['input'];
+  UserOrStatus: Types.Scalars['String']['input'];
+  FileKeyList:
+    | Array<Types.Scalars['String']['input']>
+    | Types.Scalars['String']['input'];
+  ActionType: Types.Scalars['String']['input'];
+  Action: Types.Scalars['String']['input'];
+}>;
+
+export type MerpAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  changeItnListForMerp?: boolean | null;
+  updateMerpOrderStatus: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+  updateMerpWMSLog: {
+    __typename?: 'Response';
+    success: boolean;
+    message?: string | null;
+  };
+};
+
+export type SqlAfterAgOutMutationVariables = Types.Exact<{
+  DistributionCenter: Types.Scalars['String']['input'];
+  toteList:
+    | Array<Types.InputMaybe<Types.Scalars['String']['input']>>
+    | Types.InputMaybe<Types.Scalars['String']['input']>;
+  OrderID: Types.Scalars['Int']['input'];
+  OrderLineDetail: Types.UpdateOrderLineDetail;
+}>;
+
+export type SqlAfterAgOutMutation = {
+  __typename?: 'Mutation';
+  updateOrderLineDetail?: Array<number | null> | null;
+  updateOrder?: Array<number | null> | null;
+  updateContainerList?: Array<number | null> | null;
 };
 
 export type UpdateStatusAfterAgInMutationVariables = Types.Exact<{
@@ -4041,6 +4136,109 @@ export class UpdateAfterAgOutGQL extends Apollo.Mutation<
   UpdateAfterAgOutMutationVariables
 > {
   document = UpdateAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ConveyorAfterAgOutDocument = gql`
+  mutation ConveyorAfterAgOut($toteList: [String]!) {
+    deleteAndInsertRouteTable(lpnList: $toteList)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ConveyorAfterAgOutGQL extends Apollo.Mutation<
+  ConveyorAfterAgOutMutation,
+  ConveyorAfterAgOutMutationVariables
+> {
+  document = ConveyorAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const MerpAfterAgOutDocument = gql`
+  mutation MerpAfterAgOut(
+    $DistributionCenter: String!
+    $ITNList: [InventoryUpdateForMerp]!
+    $OrderNumber: String!
+    $NOSINumber: String!
+    $MerpStatus: String!
+    $UserOrStatus: String!
+    $FileKeyList: [String!]!
+    $ActionType: String!
+    $Action: String!
+  ) {
+    changeItnListForMerp(ITNList: $ITNList)
+    updateMerpOrderStatus(
+      OrderNumber: $OrderNumber
+      NOSINumber: $NOSINumber
+      Status: $MerpStatus
+      UserOrStatus: $UserOrStatus
+    ) {
+      success
+      message
+    }
+    updateMerpWMSLog(
+      FileKeyList: $FileKeyList
+      LocationCode: $DistributionCenter
+      ActionType: $ActionType
+      Action: $Action
+    ) {
+      success
+      message
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MerpAfterAgOutGQL extends Apollo.Mutation<
+  MerpAfterAgOutMutation,
+  MerpAfterAgOutMutationVariables
+> {
+  document = MerpAfterAgOutDocument;
+  client = 'wmsNodejs';
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SqlAfterAgOutDocument = gql`
+  mutation SqlAfterAgOut(
+    $DistributionCenter: String!
+    $toteList: [String]!
+    $OrderID: Int!
+    $OrderLineDetail: updateOrderLineDetail!
+  ) {
+    updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+    updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+    updateContainerList(
+      BarcodeList: $toteList
+      DistributionCenter: $DistributionCenter
+      Container: {
+        Warehouse: "10"
+        Row: "CV"
+        Aisle: null
+        Section: null
+        Shelf: null
+        ShelfDetail: null
+      }
+    )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SqlAfterAgOutGQL extends Apollo.Mutation<
+  SqlAfterAgOutMutation,
+  SqlAfterAgOutMutationVariables
+> {
+  document = SqlAfterAgOutDocument;
   client = 'wmsNodejs';
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

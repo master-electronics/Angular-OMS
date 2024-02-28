@@ -144,6 +144,64 @@ mutation updateAfterAgOut(
   )
 }
 
+mutation ConveyorAfterAgOut($toteList: [String]!) {
+  deleteAndInsertRouteTable(lpnList: $toteList)
+}
+
+mutation MerpAfterAgOut(
+  $DistributionCenter: String!
+  $ITNList: [InventoryUpdateForMerp]!
+  $OrderNumber: String!
+  $NOSINumber: String!
+  $MerpStatus: String!
+  $UserOrStatus: String!
+  $FileKeyList: [String!]!
+  $ActionType: String!
+  $Action: String!
+) {
+  changeItnListForMerp(ITNList: $ITNList)
+  updateMerpOrderStatus(
+    OrderNumber: $OrderNumber
+    NOSINumber: $NOSINumber
+    Status: $MerpStatus
+    UserOrStatus: $UserOrStatus
+  ) {
+    success
+    message
+  }
+  updateMerpWMSLog(
+    FileKeyList: $FileKeyList
+    LocationCode: $DistributionCenter
+    ActionType: $ActionType
+    Action: $Action
+  ) {
+    success
+    message
+  }
+}
+
+mutation SqlAfterAgOut(
+  $DistributionCenter: String!
+  $toteList: [String]!
+  $OrderID: Int!
+  $OrderLineDetail: updateOrderLineDetail!
+) {
+  updateOrderLineDetail(OrderID: $OrderID, OrderLineDetail: $OrderLineDetail)
+  updateOrder(_id: $OrderID, Order: { isSelected: 0 })
+  updateContainerList(
+    BarcodeList: $toteList
+    DistributionCenter: $DistributionCenter
+    Container: {
+      Warehouse: "10"
+      Row: "CV"
+      Aisle: null
+      Section: null
+      Shelf: null
+      ShelfDetail: null
+    }
+  )
+}
+
 mutation updateStatusAfterAgIn($InventoryIDList: [Int]!, $StatusID: Int!) {
   updateOrderLineDetailList(
     InventoryIDList: $InventoryIDList
