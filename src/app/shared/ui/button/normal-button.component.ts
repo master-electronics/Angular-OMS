@@ -15,7 +15,7 @@ import {
   template: `
     <button
       (click)="onClick()"
-      class="w-full hover:bg-gray-700 hover:text-gray-200 btn btn-xs btn-active sm:btn-sm md:btn-md lg:btn-lg"
+      class="w-full hover:bg-gray-700 hover:text-gray-200 btn btn-sm btn-active md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
       *ngIf="!loading; else buttonLoading"
@@ -25,7 +25,7 @@ import {
     <ng-template #buttonLoading>
       <button
         type="button"
-        class="w-full no-animation btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg"
+        class="w-full no-animation btn btn-sm btn-primary md:btn-md lg:btn-lg"
       >
         <span class="loading loading-spinner"></span>
         loading

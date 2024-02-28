@@ -18,14 +18,14 @@ import { CommonModule } from '@angular/common';
       type="submit"
       [disabled]="disabled"
       (click)="onClick()"
-      class="w-full btn btn-xs btn-active btn-primary hover:bg-indigo-400 hover:text-gray-600 sm:btn-sm md:btn-md lg:btn-lg"
+      class="w-full btn btn-sm btn-active btn-primary hover:bg-indigo-400 hover:text-gray-600 md:btn-md lg:btn-lg"
     >
       {{ buttonText }}
     </button>
     <ng-template #buttonLoading>
       <button
         type="button"
-        class="w-full no-animation btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg"
+        class="w-full no-animation btn btn-sm btn-primary md:btn-md lg:btn-lg"
       >
         <span class="loading loading-spinner"></span>
         loading
