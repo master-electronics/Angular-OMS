@@ -5,18 +5,17 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { LoaderButtonComponent } from './loader-button.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'red-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LoaderButtonComponent, CommonModule],
+  imports: [CommonModule],
   template: `
     <button
       (click)="onClick()"
-      class="h-full w-full rounded-lg bg-red-700 font-medium text-white hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-red-200  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+      class="w-full hover:bg-pink-400 hover:text-gray-600 btn btn-secondary btn-xs btn-active sm:btn-sm md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
       *ngIf="!loading; else buttonLoading"
@@ -24,13 +23,19 @@ import { CommonModule } from '@angular/common';
       {{ buttonText }}
     </button>
     <ng-template #buttonLoading>
-      <loader-button></loader-button>
+      <button
+        type="button"
+        class="w-full no-animation btn btn-xs btn-secondary sm:btn-sm md:btn-md lg:btn-lg"
+      >
+        <span class="loading loading-spinner"></span>
+        loading
+      </button>
     </ng-template>
   `,
 })
 export class RedButtonComponent {
   @Input() disabled = false;
-  @Input() loading;
+  @Input() loading = false;
   @Input() buttonText = 'Cancel';
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 

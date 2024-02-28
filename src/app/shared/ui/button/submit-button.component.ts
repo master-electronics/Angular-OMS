@@ -5,32 +5,37 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { LoaderButtonComponent } from './loader-button.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'submit-button',
-  imports: [LoaderButtonComponent, CommonModule],
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
-      (click)="onClick()"
-      class="h-full w-full  rounded-lg bg-blue-700 font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:bg-blue-200 dark:bg-blue-600 dark:focus:ring-blue-800"
+      *ngIf="!loading; else buttonLoading"
       type="submit"
       [disabled]="disabled"
-      *ngIf="!loading; else buttonLoading"
+      (click)="onClick()"
+      class="w-full btn btn-xs btn-active btn-primary hover:bg-indigo-400 hover:text-gray-600 sm:btn-sm md:btn-md lg:btn-lg"
     >
       {{ buttonText }}
     </button>
     <ng-template #buttonLoading>
-      <loader-button></loader-button>
+      <button
+        type="button"
+        class="w-full no-animation btn btn-xs btn-primary sm:btn-sm md:btn-md lg:btn-lg"
+      >
+        <span class="loading loading-spinner"></span>
+        loading
+      </button>
     </ng-template>
   `,
 })
 export class SubmitButtonComponent {
   @Input() disabled = false;
-  @Input() loading;
+  @Input() loading = false;
   @Input() buttonText = 'Submit';
   @Output() buttonClick: EventEmitter<null> = new EventEmitter();
 

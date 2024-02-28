@@ -20,7 +20,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
-import { LoaderButtonComponent } from '../button/loader-button.component';
 
 @Component({
   standalone: true,
@@ -31,7 +30,6 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
     NzSkeletonModule,
     NormalButtonComponent,
     SubmitButtonComponent,
-    LoaderButtonComponent,
     MessageBarComponent,
     NzIconModule,
   ],
@@ -93,26 +91,13 @@ import { LoaderButtonComponent } from '../button/loader-button.component';
         <div
           class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
         >
-          <button
-            type="submit"
-            *ngIf="!!data; else loadingButton"
-            [disabled]="!isvalid"
-            class="btn btn-xs btn-active btn-primary sm:btn-sm md:btn-md lg:btn-lg"
-          >
-            Submit
-          </button>
-          <ng-template #loadingButton>
-            <button class="btn btn-xs btn-active sm:btn-sm md:btn-md lg:btn-lg">
-              <span class="loading loading-spinner"></span>
-              loading
-            </button>
-          </ng-template>
-          <button
-            (click)="onBack()"
-            class="col-start-3 btn btn-xs btn-active sm:btn-sm md:btn-md lg:btn-lg"
-          >
-            {{ backButtonText }}
-          </button>
+          <submit-button [loading]="!data" [disabled]="!isvalid">
+          </submit-button>
+          <normal-button
+            [buttonText]="backButtonText"
+            class="col-start-3"
+            (buttonClick)="onBack()"
+          ></normal-button>
         </div>
         <div *ngIf="data?.error" class="mt-1 md:mt-3 lg:mt-6">
           <message-bar

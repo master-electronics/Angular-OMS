@@ -10,7 +10,7 @@ export class AuthenticationService {
   http = inject(HttpClient);
 
   public userAuthentication(username: string, password: string) {
-    return this.http.post(`${environment.omsUrl}/auth/login`, {
+    return this.http.post(`${environment.apiUrl}/authjwt/login`, {
       username,
       password,
     });

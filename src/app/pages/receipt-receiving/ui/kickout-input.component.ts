@@ -15,7 +15,6 @@ import {
 } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
@@ -29,7 +28,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     MessageBarComponent,
     SubmitButtonComponent,
     NormalButtonComponent,
-    LoaderButtonComponent,
     NzRadioModule,
   ],
   selector: 'kickout-input-form',

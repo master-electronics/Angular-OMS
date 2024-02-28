@@ -14,7 +14,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { LoaderButtonComponent } from 'src/app/shared/ui/button/loader-button.component';
 import { NormalButtonComponent } from 'src/app/shared/ui/button/normal-button.component';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
 import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
@@ -28,7 +27,6 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
     MessageBarComponent,
     SubmitButtonComponent,
     NormalButtonComponent,
-    LoaderButtonComponent,
   ],
   selector: 'generate-receipt-input',
   template: `
@@ -111,11 +109,8 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
       <div
         class="grid h-12 w-full grid-cols-3 gap-3 sm:h-16 md:mt-6 md:h-24 lg:h-36"
       >
-        <submit-button (buttonClick)="onSubmit()" *ngIf="data; else loading">
+        <submit-button (buttonClick)="onSubmit()" [loading]="data">
         </submit-button>
-        <ng-template #loading>
-          <loader-button></loader-button>
-        </ng-template>
         <normal-button
           class="col-start-3"
           (buttonClick)="onBack()"

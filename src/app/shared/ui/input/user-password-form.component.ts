@@ -16,7 +16,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { SubmitButtonComponent } from 'src/app/shared/ui/button/submit-button.component';
-import { LoaderButtonComponent } from '../button/loader-button.component';
 import { MessageBarComponent } from '../message-bar.component';
 
 @Component({
@@ -26,7 +25,6 @@ import { MessageBarComponent } from '../message-bar.component';
     FormsModule,
     ReactiveFormsModule,
     SubmitButtonComponent,
-    LoaderButtonComponent,
     MessageBarComponent,
   ],
   selector: 'user-password-form',
@@ -86,12 +84,9 @@ import { MessageBarComponent } from '../message-bar.component';
         <submit-button
           [buttonText]="buttonText"
           (buttonClick)="onSubmit()"
-          *ngIf="data; else loading"
+          [loading]="!data"
         >
         </submit-button>
-        <ng-template #loading>
-          <loader-button></loader-button>
-        </ng-template>
       </div>
     </form>
   `,
