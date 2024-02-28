@@ -51,7 +51,7 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
                   ? 'border-red-500'
                   : 'border-blue-500'
               ]"
-              class="focus:shadow-outline h-fit w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none md:text-2xl lg:text-4xl"
+              class="input w-full input-sm md:input-md lg:input-lg"
               [id]="controlName"
               [type]="inputType"
               autocomplete="off"
