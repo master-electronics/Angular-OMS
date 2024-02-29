@@ -355,7 +355,7 @@ export class ScanITN implements OnInit {
             '',
             '',
             '',
-            '',
+            'N',
             '',
             'OK'
           );

@@ -382,7 +382,7 @@ export class ScanITN implements OnInit {
               '',
               '',
               '',
-              '',
+              'N',
               loc.Barcode,
               'OK'
             )
@@ -482,7 +482,7 @@ export class ScanITN implements OnInit {
             '',
             '',
             '',
-            '',
+            'N',
             '',
             'OK'
           );
@@ -536,7 +536,6 @@ export class ScanITN implements OnInit {
           sessionStorage.setItem('currentAudit', JSON.stringify(audit));
 
           const auditList = [];
-
           return this._auditService.replanPick(itn).pipe(
             switchMap((res) => {
               return this._auditService
@@ -559,6 +558,7 @@ export class ScanITN implements OnInit {
                 );
             })
           );
+
           // this._auditService
           //   .fetchInventoryAudits(
           //     Number(
