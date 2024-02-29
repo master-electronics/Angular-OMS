@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <button
       (click)="onClick()"
-      class="w-full hover:bg-pink-400 hover:text-gray-600 btn btn-secondary btn-sm btn-active md:btn-md lg:btn-lg"
+      class="w-full hover:bg-pink-400 btn btn-secondary btn-sm btn-active md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
       *ngIf="!loading; else buttonLoading"

@@ -48,8 +48,8 @@ import { MessageBarComponent } from 'src/app/shared/ui/message-bar.component';
               [ngClass]="[
                 inputForm.get(controlName).invalid &&
                 inputForm.get(controlName).dirty
-                  ? 'border-red-500'
-                  : 'border-blue-500'
+                  ? 'input-error'
+                  : 'input-bordered'
               ]"
               class="input w-full input-sm md:input-md lg:input-lg"
               [id]="controlName"

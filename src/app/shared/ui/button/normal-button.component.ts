@@ -15,7 +15,7 @@ import {
   template: `
     <button
       (click)="onClick()"
-      class="w-full hover:bg-gray-700 hover:text-gray-200 btn btn-sm btn-active md:btn-md lg:btn-lg"
+      class="w-full hover:bg-gray-300 btn btn-sm btn-active md:btn-md lg:btn-lg"
       type="button"
       [disabled]="disabled"
       *ngIf="!loading; else buttonLoading"
