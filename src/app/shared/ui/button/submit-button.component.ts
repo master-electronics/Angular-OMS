@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
       type="submit"
       [disabled]="disabled"
       (click)="onClick()"
-      class="w-full btn btn-sm btn-active btn-primary hover:bg-indigo-400 hover:text-gray-600 md:btn-md lg:btn-lg"
+      class="w-full btn btn-sm btn-active btn-primary hover:bg-indigo-400 md:btn-md lg:btn-lg"
     >
       {{ buttonText }}
     </button>

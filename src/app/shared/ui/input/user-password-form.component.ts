@@ -52,6 +52,7 @@ import { MessageBarComponent } from '../message-bar.component';
           type="text"
           name="username"
           id="username"
+          placeholder="User name"
           class="grow border-transparent focus:border-transparent focus:ring-0 input-sm md:input-md lg:input-lg"
           #username
         />
@@ -76,6 +77,7 @@ import { MessageBarComponent } from '../message-bar.component';
         <input
           autocomplete="off"
           formControlName="password"
+          placeholder="Password"
           type="password"
           name="password"
           id="password"
