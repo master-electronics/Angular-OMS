@@ -155,6 +155,11 @@ export class ScanLocation implements OnInit {
       sessionStorage.getItem('currentAudit')
     );
 
+    if (sessionStorage.getItem('itnFound')) {
+      sessionStorage.removeItem('itnFound');
+      this._router.navigate(['../../scan-itn'], { relativeTo: this._actRoute });
+    }
+
     this.info$ = this._actRoute.data.pipe(
       map((res) => {
         if (sessionStorage.getItem('searchLevel') == '1') {

@@ -156,6 +156,7 @@ export class ScanITN implements OnInit {
   beep = new BeepBeep();
 
   ngOnInit(): void {
+    sessionStorage.removeItem('itnFound');
     this.scannedITNs = JSON.parse(sessionStorage.getItem('scannedITNs'));
     const currentAudit: Audit = JSON.parse(
       sessionStorage.getItem('currentAudit')
@@ -483,7 +484,7 @@ export class ScanITN implements OnInit {
             '',
             '',
             'N',
-            '',
+            this.searchLocation,
             'OK'
           );
         }
@@ -523,6 +524,7 @@ export class ScanITN implements OnInit {
           itn ==
           JSON.parse(sessionStorage.getItem('currentAudit')).Inventory.ITN
         ) {
+          sessionStorage.setItem('itnFound', '1');
           // locs.forEach((loc) => {
           //   loc.Status = 'done';
           // });
@@ -547,7 +549,7 @@ export class ScanITN implements OnInit {
                 )
                 .pipe(
                   map((res) => {
-                    let msg = 'You found ' + itn + '<br/>Panding Audits:<br/>';
+                    let msg = 'You found ' + itn + '<br/>Pending Audits:<br/>';
                     res.data.fetchInventoryAudits.forEach((audit) => {
                       msg += audit.Type.Type + '<br/>';
                       auditList.push(audit);
