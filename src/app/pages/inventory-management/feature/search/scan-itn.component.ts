@@ -538,28 +538,37 @@ export class ScanITN implements OnInit {
           sessionStorage.setItem('currentAudit', JSON.stringify(audit));
 
           const auditList = [];
-          return this._auditService.replanPick(itn).pipe(
-            switchMap((res) => {
-              return this._auditService
-                .fetchInventoryAudits(
-                  Number(
-                    JSON.parse(sessionStorage.getItem('currentAudit'))
-                      .InventoryID
+          return this._auditService
+            .replanPick(
+              itn,
+              JSON.parse(sessionStorage.getItem('currentAudit')).LocationCode,
+              JSON.parse(sessionStorage.getItem('currentAudit'))
+                .OrderNumberNOSI,
+              JSON.parse(sessionStorage.getItem('currentAudit')).OrderLineNumber
+            )
+            .pipe(
+              switchMap((res) => {
+                return this._auditService
+                  .fetchInventoryAudits(
+                    Number(
+                      JSON.parse(sessionStorage.getItem('currentAudit'))
+                        .InventoryID
+                    )
                   )
-                )
-                .pipe(
-                  map((res) => {
-                    let msg = 'You found ' + itn + '<br/>Pending Audits:<br/>';
-                    res.data.fetchInventoryAudits.forEach((audit) => {
-                      msg += audit.Type.Type + '<br/>';
-                      auditList.push(audit);
-                    });
+                  .pipe(
+                    map((res) => {
+                      let msg =
+                        'You found ' + itn + '<br/>Pending Audits:<br/>';
+                      res.data.fetchInventoryAudits.forEach((audit) => {
+                        msg += audit.Type.Type + '<br/>';
+                        auditList.push(audit);
+                      });
 
-                    this.message = msg;
-                  })
-                );
-            })
-          );
+                      this.message = msg;
+                    })
+                  );
+              })
+            );
 
           // this._auditService
           //   .fetchInventoryAudits(
@@ -582,7 +591,7 @@ export class ScanITN implements OnInit {
         return of(res);
       }),
       switchMap((res) => {
-        this.beep.processed(10, 820);
+        this.beep.processed(100, 820);
 
         return of(res);
       }),

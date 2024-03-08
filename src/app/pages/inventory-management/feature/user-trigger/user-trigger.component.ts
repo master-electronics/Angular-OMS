@@ -125,9 +125,9 @@ import { environment } from 'src/environments/environment';
         </select>
       </div>
     </div>
-    <div class="flexContainer">
-      <div class="title">Select Filter</div>
-      <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+      <div class="flexContainer">
+        <div class="title">Select Filter</div>
         <div class="flexContainer">
           <div class="inputBox">
             <input
@@ -170,19 +170,42 @@ import { environment } from 'src/environments/environment';
             />
           </div>
         </div>
-      </form>
-    </div>
-    <div class="flexContainer">
-      <div class="title">Priority</div>
-      <nz-select [ngModel]="priority" style="width: 200px">
-        <nz-option nzValue="1" nzLabel="1"></nz-option>
-        <nz-option nzValue="2" nzLabel="2"></nz-option>
-        <nz-option nzValue="3" nzLabel="3"></nz-option>
-        <nz-option nzValue="4" nzLabel="4"></nz-option>
-        <nz-option nzValue="5" nzLabel="5"></nz-option>
-        <nz-option nzValue="6" nzLabel="6"></nz-option>
-      </nz-select>
-    </div>
+      </div>
+      <div class="flexContainer">
+        <div class="title">Priority</div>
+        <div class="inputBox">
+          <nz-select formControlName="priority" style="width: 200px;">
+            <nz-option nzValue="1" nzLabel="1"></nz-option>
+            <nz-option nzValue="2" nzLabel="2"></nz-option>
+            <nz-option nzValue="3" nzLabel="3"></nz-option>
+            <nz-option nzValue="4" nzLabel="4"></nz-option>
+            <nz-option nzValue="5" nzLabel="5"></nz-option>
+            <nz-option nzValue="6" nzLabel="6"></nz-option>
+          </nz-select>
+        </div>
+        <div class="inputBox">
+          <input
+            nz-input
+            placeholder="Location Code"
+            formControlName="locationCode"
+          />
+        </div>
+        <div class="inputBox">
+          <input
+            nz-input
+            placeholder="OrderNOSI"
+            formControlName="orderNumberNOSI"
+          />
+        </div>
+        <div class="inputBox">
+          <input
+            nz-input
+            placeholder="Order Line #"
+            formControlName="orderLineNumber"
+          />
+        </div>
+      </div>
+    </form>
     <div class="flexContainer">
       <div class="buttonContainer">
         <button
@@ -271,6 +294,15 @@ export class UserTrigger {
   prcITNList;
   itnList;
   priority = '1';
+  locationCode;
+  orderNumberNOSI;
+  orderLineNumber;
+
+  test(value: string): void {
+    console.log(value);
+    this.priority = value;
+    console.log(this.priority);
+  }
 
   ngOnInit(): void {
     this.data$ = this._fetchAuditTypes
@@ -315,6 +347,30 @@ export class UserTrigger {
         },
       ],
       partNumber: [
+        {
+          value: null,
+          disabled: false,
+        },
+      ],
+      priority: [
+        {
+          value: '1',
+          disabled: false,
+        },
+      ],
+      locationCode: [
+        {
+          value: null,
+          disabled: false,
+        },
+      ],
+      orderNumberNOSI: [
+        {
+          value: null,
+          disabled: false,
+        },
+      ],
+      orderLineNumber: [
         {
           value: null,
           disabled: false,
@@ -588,7 +644,10 @@ export class UserTrigger {
             LastUpdated: new Date(Date.now()).toISOString(),
             CreatedDatetime: new Date(Date.now()).toISOString(),
             Trigger: 'User Trigger',
-            Priority: Number(this.priority),
+            Priority: Number(this.inputForm.value.priority),
+            LocationCode: this.inputForm.value.locationCode?.toString(),
+            OrderNumberNOSI: this.inputForm.value.orderNumberNOSI?.toString(),
+            OrderLineNumber: this.inputForm.value.orderLineNumber?.toString(),
           });
 
           userEventLogs.push({
@@ -607,7 +666,10 @@ export class UserTrigger {
               InventoryTrackingNumber: item.ITN,
               AuditTypeID: type.value,
               Trigger: 'User Tigger',
-              Priority: this.priority,
+              Priority: this.inputForm.value.priority?.toString(),
+              LocationCode: this.inputForm.value.locationCode?.toString(),
+              OrderNumberNOSI: this.inputForm.value.orderNumberNOSI?.toString(),
+              OrderLineNumber: this.inputForm.value.orderLineNumber?.toString(),
             }),
           });
         });
@@ -630,6 +692,9 @@ export class UserTrigger {
           this.errorType = 'success';
           this.error = { message: 'Audits created!' };
           this.inputForm.reset();
+          this.inputForm.patchValue({
+            priority: '1',
+          });
           return of(true);
         }),
         catchError((error) => {

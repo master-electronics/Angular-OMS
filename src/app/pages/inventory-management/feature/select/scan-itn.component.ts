@@ -174,6 +174,9 @@ export class ScanITN implements OnInit {
         }
       }),
       switchMap((res) => {
+        if (!this.audit) {
+          return of(res);
+        }
         const msgs: [GlobalMessage?] = [];
         return this._auditService
           .getGlobalMessages(this.audit.InventoryID)
@@ -446,7 +449,12 @@ export class ScanITN implements OnInit {
           return of(res);
         }),
         switchMap((res) => {
-          return this._auditService.replanPick(input);
+          return this._auditService.replanPick(
+            input,
+            JSON.parse(sessionStorage.getItem('currentAudit')).LocationCode,
+            JSON.parse(sessionStorage.getItem('currentAudit')).OrderNumberNOSI,
+            JSON.parse(sessionStorage.getItem('currentAudit')).OrderLineNumber
+          );
         }),
         switchMap((res) => {
           this._router.navigate([route], {

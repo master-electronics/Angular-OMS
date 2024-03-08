@@ -246,13 +246,13 @@ export class Maintenance implements OnInit {
           this.priorityTableData.push({
             _id: audit._id,
             InventoryTrackingNumber: audit.InventoryTrackingNumber,
-            Priority: audit.Priority.toString(),
+            Priority: audit.Priority?.toString(),
             Trigger: audit.Trigger,
           });
           this.priorityTableDataOrig.push({
             _id: audit._id,
             InventoryTrackingNumber: audit.InventoryTrackingNumber,
-            Priority: audit.Priority.toString(),
+            Priority: audit.Priority?.toString(),
             Trigger: audit.Trigger,
           });
         });
@@ -371,8 +371,6 @@ export class Maintenance implements OnInit {
     const audit = this.priorityTableData.find((item) => item._id == id);
 
     if (audit) {
-      console.log(id);
-      console.log(Number(audit.Priority));
       this.data$ = this._auditService.updateAudit(id, Number(audit.Priority));
     }
 

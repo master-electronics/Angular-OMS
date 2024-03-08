@@ -166,6 +166,9 @@ query findNextAudit(
     TypeID
     InventoryID
     Type
+    LocationCode
+    OrderNumberNOSI
+    OrderLineNumber
     UserID
     Order
     InventoryTrackingNumber
@@ -380,9 +383,15 @@ mutation inventoryUpdate(
 
 mutation replanPick(
   $itn: String
+  $locationCode: String
+  $orderNumberNOSI: String
+  $orderLineNumber: String
 ) {
   replanPick(
     ITN: $itn
+    LocationCode: $locationCode
+    OrderNumberNOSI: $orderNumberNOSI
+    OrderLineNumber: $orderLineNumber
   ) {
     StatusCode
     StatusMessage

@@ -3,6 +3,9 @@ export interface Audit {
   TypeID?: number;
   Type?: AuditType;
   InventoryID?: number;
+  LocationCode?: string;
+  OrderNumberNOSI?: string;
+  OrderLineNumber?: string;
   Inventory?: Inventory;
   Container?: Container;
   UserID?: number;

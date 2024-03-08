@@ -200,6 +200,9 @@ export class AuditService {
                 Type: data.Type,
                 Order: data.Order,
               },
+              LocationCode: data.LocationCode,
+              OrderNumberNOSI: data.OrderNumberNOSI,
+              OrderLineNumber: data.OrderLineNumber,
               InventoryID: data.InventoryID,
               Inventory: {
                 ITN: data.InventoryTrackingNumber,
@@ -273,9 +276,17 @@ export class AuditService {
     });
   }
 
-  public replanPick(ITN: string) {
+  public replanPick(
+    ITN: string,
+    LocationCode: string,
+    OrderNumberNOSI: string,
+    OrderLineNumber: string
+  ) {
     return this._replanPick.mutate({
       itn: ITN,
+      locationCode: LocationCode,
+      orderNumberNOSI: OrderNumberNOSI,
+      orderLineNumber: OrderLineNumber,
     });
   }
 
