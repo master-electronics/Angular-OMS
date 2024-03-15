@@ -458,33 +458,33 @@ export class UserTrigger {
 
     if (!this.inputForm.value.itn) {
       if (
-        this.inputForm.value.location.toUpperCase() == 'QC' ||
-        this.inputForm.value.location.toUpperCase() == 'AUTOSTORE' ||
-        this.inputForm.value.location.toUpperCase() == 'VA' ||
-        this.inputForm.value.location.toUpperCase() == 'SHIPPING HOLD' ||
-        this.inputForm.value.location.toUpperCase() == 'PACKING' ||
-        this.inputForm.value.location.toUpperCase().includes('AG') ||
-        this.inputForm.value.location.toUpperCase().includes('OS')
+        this.inputForm.value.location?.toUpperCase() == 'QC' ||
+        this.inputForm.value.location?.toUpperCase() == 'AUTOSTORE' ||
+        this.inputForm.value.location?.toUpperCase() == 'VA' ||
+        this.inputForm.value.location?.toUpperCase() == 'SHIPPING HOLD' ||
+        this.inputForm.value.location?.toUpperCase() == 'PACKING' ||
+        this.inputForm.value.location?.toUpperCase().includes('AG') ||
+        this.inputForm.value.location?.toUpperCase().includes('OS')
       ) {
         this.error = { message: 'Location not allowed!' };
         return;
       }
     }
 
-    if (!this.inputForm.value.itn) {
-      if (
-        this.inputForm.value.endLocation.toUpperCase() == 'QC' ||
-        this.inputForm.value.endLocation.toUpperCase() == 'AUTOSTORE' ||
-        this.inputForm.value.endLocation.toUpperCase() == 'VA' ||
-        this.inputForm.value.endLocation.toUpperCase() == 'SHIPPING HOLD' ||
-        this.inputForm.value.endLocation.toUpperCase() == 'PACKING' ||
-        this.inputForm.value.endLocation.toUpperCase().includes('AG') ||
-        this.inputForm.value.endLocation.toUpperCase().includes('OS')
-      ) {
-        this.error = { message: 'Location not allowed!' };
-        return;
-      }
-    }
+    // if (!this.inputForm.value.itn) {
+    //   if (
+    //     this.inputForm.value.endLocation.toUpperCase() == 'QC' ||
+    //     this.inputForm.value.endLocation.toUpperCase() == 'AUTOSTORE' ||
+    //     this.inputForm.value.endLocation.toUpperCase() == 'VA' ||
+    //     this.inputForm.value.endLocation.toUpperCase() == 'SHIPPING HOLD' ||
+    //     this.inputForm.value.endLocation.toUpperCase() == 'PACKING' ||
+    //     this.inputForm.value.endLocation.toUpperCase().includes('AG') ||
+    //     this.inputForm.value.endLocation.toUpperCase().includes('OS')
+    //   ) {
+    //     this.error = { message: 'Location not allowed!' };
+    //     return;
+    //   }
+    // }
 
     const itn =
       this.inputForm.value.itn != '' ? this.inputForm.value.itn : null;
