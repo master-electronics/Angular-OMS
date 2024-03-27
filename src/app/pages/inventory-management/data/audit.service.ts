@@ -277,12 +277,14 @@ export class AuditService {
   }
 
   public replanPick(
+    User: string,
     ITN: string,
     LocationCode: string,
     OrderNumberNOSI: string,
     OrderLineNumber: string
   ) {
     return this._replanPick.mutate({
+      user: User,
       itn: ITN,
       locationCode: LocationCode,
       orderNumberNOSI: OrderNumberNOSI,

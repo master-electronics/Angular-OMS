@@ -382,12 +382,14 @@ mutation inventoryUpdate(
 }
 
 mutation replanPick(
+  $user: String
   $itn: String
   $locationCode: String
   $orderNumberNOSI: String
   $orderLineNumber: String
 ) {
   replanPick(
+    User: $user
     ITN: $itn
     LocationCode: $locationCode
     OrderNumberNOSI: $orderNumberNOSI

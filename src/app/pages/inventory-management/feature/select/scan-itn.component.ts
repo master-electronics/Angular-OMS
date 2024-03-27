@@ -112,7 +112,8 @@ export class ScanITN implements OnInit {
     private _router: Router,
     private _auditService: AuditService,
     private _eventLog: EventLogService,
-    private _configService: OMSConfigService
+    private _configService: OMSConfigService,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   public data$;
@@ -450,6 +451,7 @@ export class ScanITN implements OnInit {
         }),
         switchMap((res) => {
           return this._auditService.replanPick(
+            this._userInfo.userName,
             input,
             JSON.parse(sessionStorage.getItem('currentAudit')).LocationCode,
             JSON.parse(sessionStorage.getItem('currentAudit')).OrderNumberNOSI,

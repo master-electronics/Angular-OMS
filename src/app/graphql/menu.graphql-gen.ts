@@ -731,7 +731,7 @@ export type Mutation = {
   createContainer?: Maybe<Scalars['Boolean']['output']>;
   createITN: Scalars['String']['output'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']['output']>;
-  deleteAndInsertRouteTable: Scalars['Boolean']['output'];
+  deleteAndInsertRouteTable?: Maybe<Scalars['Boolean']['output']>;
   deleteAudit?: Maybe<Audit>;
   deleteAudits?: Maybe<Audit>;
   deleteAuditsList?: Maybe<Scalars['Boolean']['output']>;
@@ -1344,6 +1344,7 @@ export type MutationReplanPickArgs = {
   LocationCode?: InputMaybe<Scalars['String']['input']>;
   OrderLineNumber?: InputMaybe<Scalars['String']['input']>;
   OrderNumberNOSI?: InputMaybe<Scalars['String']['input']>;
+  User?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
@@ -2919,6 +2920,9 @@ export type InputAudit = {
   InventoryID?: InputMaybe<Scalars['Int']['input']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']['input']>;
   LastUpdated?: InputMaybe<Scalars['String']['input']>;
+  LocationCode?: InputMaybe<Scalars['String']['input']>;
+  OrderLineNumber?: InputMaybe<Scalars['String']['input']>;
+  OrderNumberNOSI?: InputMaybe<Scalars['String']['input']>;
   Priority?: InputMaybe<Scalars['Int']['input']>;
   Trigger?: InputMaybe<Scalars['String']['input']>;
   TypeID?: InputMaybe<Scalars['Int']['input']>;

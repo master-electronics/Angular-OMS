@@ -731,7 +731,7 @@ export type Mutation = {
   createContainer?: Maybe<Scalars['Boolean']['output']>;
   createITN: Scalars['String']['output'];
   createInventoryFromOMS?: Maybe<Scalars['Boolean']['output']>;
-  deleteAndInsertRouteTable: Scalars['Boolean']['output'];
+  deleteAndInsertRouteTable?: Maybe<Scalars['Boolean']['output']>;
   deleteAudit?: Maybe<Audit>;
   deleteAudits?: Maybe<Audit>;
   deleteAuditsList?: Maybe<Scalars['Boolean']['output']>;
@@ -1344,6 +1344,7 @@ export type MutationReplanPickArgs = {
   LocationCode?: InputMaybe<Scalars['String']['input']>;
   OrderLineNumber?: InputMaybe<Scalars['String']['input']>;
   OrderNumberNOSI?: InputMaybe<Scalars['String']['input']>;
+  User?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type MutationRollbackAutostoreOrderLinesArgs = {
@@ -2919,6 +2920,9 @@ export type InputAudit = {
   InventoryID?: InputMaybe<Scalars['Int']['input']>;
   InventoryTrackingNumber?: InputMaybe<Scalars['String']['input']>;
   LastUpdated?: InputMaybe<Scalars['String']['input']>;
+  LocationCode?: InputMaybe<Scalars['String']['input']>;
+  OrderLineNumber?: InputMaybe<Scalars['String']['input']>;
+  OrderNumberNOSI?: InputMaybe<Scalars['String']['input']>;
   Priority?: InputMaybe<Scalars['Int']['input']>;
   Trigger?: InputMaybe<Scalars['String']['input']>;
   TypeID?: InputMaybe<Scalars['Int']['input']>;
@@ -4079,6 +4083,7 @@ export type InventoryUpdateMutation = {
 };
 
 export type ReplanPickMutationVariables = Types.Exact<{
+  user?: Types.InputMaybe<Types.Scalars['String']['input']>;
   itn?: Types.InputMaybe<Types.Scalars['String']['input']>;
   locationCode?: Types.InputMaybe<Types.Scalars['String']['input']>;
   orderNumberNOSI?: Types.InputMaybe<Types.Scalars['String']['input']>;
@@ -5039,12 +5044,14 @@ export class InventoryUpdateGQL extends Apollo.Mutation<
 }
 export const ReplanPickDocument = gql`
   mutation replanPick(
+    $user: String
     $itn: String
     $locationCode: String
     $orderNumberNOSI: String
     $orderLineNumber: String
   ) {
     replanPick(
+      User: $user
       ITN: $itn
       LocationCode: $locationCode
       OrderNumberNOSI: $orderNumberNOSI

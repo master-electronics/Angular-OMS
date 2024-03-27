@@ -131,7 +131,8 @@ export class ScanITN implements OnInit {
     private _findContainer: FindContainerGQL,
     private _router: Router,
     private _eventLog: EventLogService,
-    private _auditService: AuditService
+    private _auditService: AuditService,
+    private _userInfo: StorageUserInfoService
   ) {}
 
   public data$;
@@ -540,6 +541,7 @@ export class ScanITN implements OnInit {
           const auditList = [];
           return this._auditService
             .replanPick(
+              this._userInfo.userName,
               itn,
               JSON.parse(sessionStorage.getItem('currentAudit')).LocationCode,
               JSON.parse(sessionStorage.getItem('currentAudit'))
