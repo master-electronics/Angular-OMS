@@ -5,8 +5,9 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:4000',
-  omsUrl: 'http://localhost:5051',
+  authUrl: 'http://localhost:6001',
   graphql: 'http://localhost:3000/graphql',
+  nestjsGateway: 'http://localhost:6500/graphql',
   GTM_ID: 'GTM-KS8744D',
   changelogurl: 'https://master-electronics.gitbook.io/wms/',
   idleTimeInMinutes: 20,
